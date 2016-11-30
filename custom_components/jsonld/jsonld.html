@@ -1,0 +1,27 @@
+<dom-module id="json-ld">
+  <template></template>
+  <script>
+    Polymer({
+      is: 'json-ld',
+      
+      properties: {
+        jsonld: {
+          type: Object,
+          observer: '_jsonldChanged'
+        }
+      },
+
+      _jsonldChanged: function () {
+        var graph = this.jsonld['@graph'];
+
+        var el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.text = JSON.stringify({
+          "@context": "http://schema.org",
+          "@graph": graph
+        });
+        document.querySelector('body').appendChild(el);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,204 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="my-app">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+
+        display: block;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+
+        padding: 0 16px;
+
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+
+        font-weight: bold;
+      }
+    </style>
+
+    <!-- retrieve menu items -->
+    <iron-ajax id="wp_menu" auto url="http://wppolymer.dev/wp-json/wp-api-menus/v2/menu-locations/main_menu" handle-as="json" on-response="_retrievedMenu"></iron-ajax>
+  
+    <!-- define routing -->
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <!-- drawer -->
+    <app-drawer-layout fullbleed>
+      <app-drawer>
+        <app-toolbar>Menu</app-toolbar>
+        <template is="dom-if" if="[[ menu.length ]]">
+
+          <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+            <template is="dom-repeat" id="menu" items="[[ menu ]]" as="menuItem">
+              <a href="[[ menuItem.url ]]">
+                <span>[[ menuItem.title ]]</span>
+              </a>
+            </template>
+          </iron-selector>
+
+        </template>
+      </app-drawer>
+
+      <!-- main content -->
+      <app-header-layout has-scrolling-region>
+        
+        <!-- content header -->
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>My App</div>
+          </app-toolbar>
+        </app-header>
+        
+        <!-- content pages -->
+        <iron-pages
+          selected="[[page]]"
+          attr-for-selected="name"
+          fallback-selection="view404"
+          role="main">
+          <template is="dom-repeat" id="pages" items="[[ menu ]]" as="pageItem">
+            <page-template name="[[ pageItem.title ]]" data="[[ pageItem ]]"></page-template>
+          </template>
+        </iron-pages>
+
+      </app-header-layout>
+    </app-drawer-layout>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-app',
+
+      /** 
+       * @name properties
+       * @description all properties this component uses
+       */
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged' // when this var changes call this function
+        }
+      },
+
+      /**
+       * @name observers
+       * @description observe if a function is called
+       */
+      observers: [
+        '_routePageChanged(routeData.page)'
+      ],
+
+
+
+      /* ---------------- PRIVATE ---------------- */
+      /** 
+       * @name _routePageChanged
+       * @description set the page to the page var or home if not set
+       */
+      _routePageChanged: function(page) {
+        console.log(page);
+        this.page = page || 'homepage';
+      },
+
+      /** 
+       * @name _pageChanged
+       * @description when the page variable changes handle stuff
+       */
+      _pageChanged: function(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('page-template.html');
+
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      /** 
+       * @name _showPage404
+       * @description sets the page variable to the 404 page
+       */
+      _showPage404: function() {
+
+        this.page = 'view404';
+      },
+
+      /* ---------------- PUBLIC ---------------- */
+      /**
+       * @name ready
+       * @description when the dom for this element is ready
+       */
+      ready: function() {
+        console.log('route: ', this.route);
+        console.log('routeData: ', this.routeData);
+        console.log('subroute: ', this.subroute);
+        console.log('page: ', this.page);
+        console.log('pages: ', this.pages);
+        console.log('menu: ', this.menu);
+      },
+
+      /** 
+       * @name retrievedMenu
+       * @description process the retrieved menu
+       */
+      _retrievedMenu: function(e) {
+        this.menu = e.detail.response;
+
+        this.menu.forEach(function(item) {
+          item.title = item.title.toLowerCase();
+          item.url = '/' + item.url.split('/')[3];
+        });
+      }
+    });     
+  </script>
+</dom-module>

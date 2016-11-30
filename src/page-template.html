@@ -1,0 +1,66 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="page-template">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+    
+    <iron-ajax id="wp_posts" auto url="http://wppolymer.dev/wp-json/wp/v2/pages/{{ data.object_id }}" handle-as="json" on-response="_retrievePage"></iron-ajax>
+
+    <div class="card">
+      <h2>menu-id: {{ data.ID }}</h2>
+      <h1>menu-title: {{ data.title }}</h1>
+    </div>
+
+    <template is="dom-repeat" id="pages" items="[[ page.acf.page_builder ]]" as="pageComponent">
+      <div class="card">
+        <h2>page-id: {{ page.id }}</h2>
+        <h2>acf-title: {{ pageComponent.header_title }}</h2>
+        <p>acf-imgurl: {{ pageComponent.header_img }}</p>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    var PageTemplate = {
+      is: 'page-template',
+      properties: {
+        data: {
+          type: Object
+        }
+      },
+
+      /** 
+       * @name retrievedPages
+       * @description process the retrieved pages
+       */
+      _retrievePage: function(e) {
+        this.page = e.detail.response;
+        console.log(this.page);
+      },
+
+      ready: function() {
+        console.log(this.data);
+      }
+
+    };
+
+    Polymer(PageTemplate);
+  </script>
+</dom-module>
