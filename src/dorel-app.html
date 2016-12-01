@@ -22,7 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 
-<dom-module id="my-app">
+<dom-module id="dorel-app">
   <template>
     <style>
       :host {
@@ -62,6 +62,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-weight: bold;
       }
     </style>
+    
+    <!-- analytics -->
+    <dorel-analytics key="GTM-TW3TM86"></dorel-analytics>
 
     <!-- retrieve menu items -->
     <iron-ajax id="wp_menu" auto url="http://wppolymer.dev/wp-json/wp-api-menus/v2/menu-locations/main_menu" handle-as="json" on-response="_retrievedMenu"></iron-ajax>
@@ -106,10 +109,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages
           selected="[[page]]"
           attr-for-selected="name"
-          fallback-selection="view404"
+          fallback-selection="404"
           role="main">
           <template is="dom-repeat" id="pages" items="[[ menu ]]" as="pageItem">
-            <page-template name="[[ pageItem.title ]]" data="[[ pageItem ]]"></page-template>
+            <dorel-page name="[[ pageItem.title ]]" data="[[ pageItem ]]"></dorel-page>
+            <dorel-404 name="404"></dorel-404>
           </template>
         </iron-pages>
 
@@ -119,7 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'my-app',
+      is: 'dorel-app',
 
       /** 
        * @name properties
@@ -159,7 +163,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       _pageChanged: function(page) {
         // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('page-template.html');
+        var resolvedPageUrl = this.resolveUrl('dorel-page.html');
 
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
@@ -170,7 +174,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       _showPage404: function() {
 
-        this.page = 'view404';
+        this.page = '404';
       },
 
       /* ---------------- PUBLIC ---------------- */

@@ -1,3 +1,10 @@
+// Load pre-caching Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/assets/js/service-worker.js');
+  });
+}
+
 /**
  * @license
  * Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
