@@ -1,21 +1,21 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<dom-module id="dorel-analytics">
+<dom-module id="dorel-google-tag-manager">
   <template>
     <noscript>
-      <iframe src={{_computeSrc(key)}} height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      <iframe src={{_computeSrc(cid)}} height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-analytics',
+      is: 'dorel-google-tag-manager',
 
       properties: {
         /**
-         * `key` is the container ID
+         * `cid` is the container ID
          */
-        key: {
+        cid: {
           type: String,
         }
       },
@@ -27,12 +27,12 @@
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer',this.key);
+        })(window,document,'script','dataLayer',this.cid);
       },
 
       // Element Behavior
-      _computeSrc: function(key) {
-        return '//www.googletagmanager.com/ns.html?id=' + key;
+      _computeSrc: function(cid) {
+        return '//www.googletagmanager.com/ns.html?id=' + cid;
       }
     });
   </script>
