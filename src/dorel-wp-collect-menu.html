@@ -1,0 +1,77 @@
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="dorel-wp-collect-menu">
+  <template>
+    <style>
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+
+        padding: 0 16px;
+
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+
+        font-weight: bold;
+      }
+    </style>
+
+    <iron-ajax auto url="http://wppolymer.dev/wp-json/wp-api-menus/v2/menu-locations/main_menu" handle-as="json" on-response="_menuLoaded"></iron-ajax>
+
+    <template is="dom-if" if="[[ menu.length ]]">
+      <iron-selector class="drawer-list" role="navigation"
+        selected="[[ page ]]" 
+        attr-for-selected="name">
+
+        <template id="menu" is="dom-repeat" items="[[ menu ]]" as="menuItem">
+          <a href="[[ menuItem.url ]]" name="[[ menuItem.title ]]">
+            <span>[[ menuItem.title ]]</span>
+          </a>
+        </template>
+
+      </iron-selector>
+    </template>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "dorel-wp-collect-menu",
+    properties: {
+      menu: {
+        type: Array,
+        reflectToAttribute: true,
+        notify: true
+      }
+    },
+    attached: function () {
+      this.menu = [];
+    },
+
+    /** 
+     * @name retrievedMenu
+     * @description process the retrieved menu
+     */
+    _menuLoaded: function (data) {
+      var menu = data.detail.response;
+
+      // iterate over all menu items, alter its title and set the right url
+      menu.forEach(function(item) {
+        item.title = item.title.toLowerCase();
+        item.url = '/' + item.url.split('/')[3];
+      });
+
+      this.menu = menu;
+    }
+  });
+</script>

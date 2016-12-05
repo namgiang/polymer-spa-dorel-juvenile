@@ -1,17 +1,7 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="dorel-shared-styles.html">
 
-<dom-module id="dorel-page">
+<dom-module id="dorel-wp-collect-page">
   <template>
     <style include="dorel-shared-styles">
       :host {
@@ -21,7 +11,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     
-    <iron-ajax id="wp_posts" auto url="http://wppolymer.dev/wp-json/wp/v2/pages/{{ data.object_id }}" handle-as="json" on-response="_retrievePage"></iron-ajax>
+    <iron-ajax id="wp_posts" 
+      auto 
+      url="http://wppolymer.dev/wp-json/wp/v2/pages/{{ data.object_id }}" 
+      handle-as="json" 
+      on-response="_retrievePage"></iron-ajax>
 
     <div class="card">
       <h2>menu-id: {{ data.ID }}</h2>
@@ -38,8 +32,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    var PageTemplate = {
-      is: 'dorel-page',
+    Polymer({
+      is: 'dorel-wp-collect-page',
       properties: {
         data: {
           type: Object
@@ -58,9 +52,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ready: function() {
         console.log(this.data);
       }
-
-    };
-
-    Polymer(PageTemplate);
+    });
   </script>
 </dom-module>
