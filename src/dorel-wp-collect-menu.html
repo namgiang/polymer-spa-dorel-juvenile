@@ -1,0 +1,27 @@
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="dorel-wp-collect-menu">
+  <template>
+    <iron-ajax auto url="http://wppolymer.dev/wp-json/wp-api-menus/v2/menu-locations/main_menu" handle-as="json" on-response="menuLoaded"></iron-ajax>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "dorel-wp-collect-menu",
+    properties: {
+      menu: {
+        type: Array,
+        reflectToAttribute: true,
+        notify: true
+      }
+    },
+    attached: function () {
+      this.menu = [];
+    },
+
+    menuLoaded: function (data) {
+      this.menu = data.detail.response;
+    }
+  });
+</script>
