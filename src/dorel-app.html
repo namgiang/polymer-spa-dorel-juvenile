@@ -1,13 +1,3 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -73,22 +63,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <dorel-wp-collect-menu menu-location="main_menu" menu="{{ menu }}"></dorel-wp-collect-menu>
   
     <!-- define routing -->
-    <app-location route="{{route}}"></app-location>
+    <app-location route="{{ route }}"></app-location>
     <app-route
-        route="{{route}}"
+        route="{{ route }}"
         pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+        data="{{ routeData }}"
+        tail="{{ subroute }}"></app-route>
 
     <!-- drawer -->
     <app-drawer-layout fullbleed>
       <app-drawer>
         <app-toolbar>Menu</app-toolbar>
-        <template is="dom-if" if="[[ menu.length ]]">
 
-          <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-            <template is="dom-repeat" id="menu" items="[[ menu ]]" as="menuItem">
-              <a href="[[ menuItem.url ]]">
+        <template is="dom-if" if="[[ menu.length ]]">
+          <iron-selector class="drawer-list" role="navigation"
+            selected="[[ page ]]" 
+            attr-for-selected="name">
+            <template id="menu" is="dom-repeat" items="[[ menu ]]" as="menuItem">
+              <a href="[[ menuItem.url ]]" name="[[ menuItem.title ]]">
                 <span>[[ menuItem.title ]]</span>
               </a>
             </template>
@@ -104,18 +96,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div main-title>My App</div>
+            <div main-title>App Title</div>
           </app-toolbar>
         </app-header>
         
         <!-- content pages -->
         <iron-pages
-          selected="[[page]]"
-          attr-for-selected="name"
+          selected="[[ pageID ]]"
+          attr-for-selected="page-id"
           fallback-selection="404"
           role="main">
           <template is="dom-repeat" id="pages" items="[[ menu ]]" as="pageItem">
-            <dorel-page name="[[ pageItem.title ]]" data="[[ pageItem ]]"></dorel-page>
+            <dorel-page name="[[ pageItem.title ]]" page-id="[[ pageItem.object_id ]]" data="[[ pageItem ]]"></dorel-page>
             <dorel-404 name="404"></dorel-404>
           </template>
         </iron-pages>
@@ -137,6 +129,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged' // when this var changes call this function
+        },
+        menu: {
+          type: Array
+        },
+        pageID: {
+          type: Number
         }
       },
 
@@ -145,7 +143,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(routeData.page)'
+        '_routePageChanged(routeData.page)',
+        '_setPageId(page, menu)'
       ],
 
 
@@ -156,7 +155,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @description set the page to the page var or home if not set
        */
       _routePageChanged: function(page) {
-        console.log(page);
         this.page = page || 'homepage';
       },
 
@@ -165,9 +163,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @description when the page variable changes handle stuff
        */
       _pageChanged: function(page) {
-        // Load page import on demand. Show 404 page if fails
+        // set the page template url
         var resolvedPageUrl = this.resolveUrl('dorel-page.html');
 
+        // Load page import on demand. Show 404 page if fails
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
 
@@ -176,22 +175,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @description sets the page variable to the 404 page
        */
       _showPage404: function() {
-
         this.page = '404';
-      },
-
-      /* ---------------- PUBLIC ---------------- */
-      /**
-       * @name ready
-       * @description when the dom for this element is ready
-       */
-      ready: function() {
-        console.log('route: ', this.route);
-        console.log('routeData: ', this.routeData);
-        console.log('subroute: ', this.subroute);
-        console.log('page: ', this.page);
-        console.log('pages: ', this.pages);
-        console.log('menu: ', this.menu);
       },
 
       /** 
@@ -199,12 +183,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @description process the retrieved menu
        */
       _retrievedMenu: function(e) {
+        // catch the response and set it to the menu variable
         this.menu = e.detail.response;
 
+        // iterate over all menu items, alter its title and set the right url
         this.menu.forEach(function(item) {
           item.title = item.title.toLowerCase();
           item.url = '/' + item.url.split('/')[3];
         });
+      },
+
+      /**
+       * @name _setPageId
+       * @description set the current pageId by matching it with the
+       * current menu item chosen
+       */
+      _setPageId: function(page, menu) {
+        var pageID;
+
+        menu.forEach(function(item) {
+          if( page === item.title.toLowerCase() ) {
+            pageID = item.object_id;
+          }
+        });
+
+        this.pageID = pageID;
       }
     });     
   </script>
