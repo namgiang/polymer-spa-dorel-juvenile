@@ -14,6 +14,7 @@
 
 <link rel="import" href="dorel-analytics.html">
 <link rel="import" href="dorel-wp-collect-menu.html">
+<link rel="import" href="dorel-wp-collect-page.html">
 
 <dom-module id="dorel-app">
   <template>
@@ -32,35 +33,10 @@
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
       }
-
-      .drawer-list {
-        margin: 0 20px;
-      }
-
-      .drawer-list a {
-        display: block;
-
-        padding: 0 16px;
-
-        text-decoration: none;
-
-        color: var(--app-secondary-color);
-
-        line-height: 40px;
-      }
-
-      .drawer-list a.iron-selected {
-        color: black;
-
-        font-weight: bold;
-      }
     </style>
     
     <!-- analytics -->
     <dorel-analytics key="GTM-TW3TM86"></dorel-analytics>
-
-    <!-- retrieve menu items -->
-    <dorel-wp-collect-menu menu-location="main_menu" menu="{{ menu }}"></dorel-wp-collect-menu>
   
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -75,40 +51,45 @@
       <app-drawer>
         <app-toolbar>Menu</app-toolbar>
 
-        <template is="dom-if" if="[[ menu.length ]]">
-          <iron-selector class="drawer-list" role="navigation"
-            selected="[[ page ]]" 
-            attr-for-selected="name">
-            <template id="menu" is="dom-repeat" items="[[ menu ]]" as="menuItem">
-              <a href="[[ menuItem.url ]]" name="[[ menuItem.title ]]">
-                <span>[[ menuItem.title ]]</span>
-              </a>
-            </template>
-          </iron-selector>
-
-        </template>
+        <!-- retrieve menu items -->
+        <dorel-wp-collect-menu 
+          menu-location="main_menu" 
+          menu="{{ menu }}"></dorel-wp-collect-menu>
       </app-drawer>
 
       <!-- main content -->
       <app-header-layout has-scrolling-region>
         
         <!-- content header -->
-        <app-header condenses reveals effects="waterfall">
+        <app-header 
+          condenses 
+          reveals 
+          effects="waterfall">
           <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <paper-icon-button 
+              icon="menu" 
+              drawer-toggle></paper-icon-button>
             <div main-title>App Title</div>
           </app-toolbar>
         </app-header>
         
         <!-- content pages -->
-        <iron-pages
-          selected="[[ pageID ]]"
-          attr-for-selected="page-id"
-          fallback-selection="404"
-          role="main">
-          <template is="dom-repeat" id="pages" items="[[ menu ]]" as="pageItem">
-            <dorel-page name="[[ pageItem.title ]]" page-id="[[ pageItem.object_id ]]" data="[[ pageItem ]]"></dorel-page>
+        <iron-pages role="main" 
+          selected="{{ currentPage.object_id }}" 
+          attr-for-selected="page-id" 
+          fallback-selection="404">
+
+          <template id="pages" 
+            is="dom-repeat" 
+            items="[[ menu ]]" 
+            as="pageItem">
+
+            <dorel-wp-collect-page
+              name="[[ pageItem.title ]]" 
+              page-id="[[ pageItem.object_id ]]" 
+              data="[[ pageItem ]]"></dorel-wp-collect-page>
             <dorel-404 name="404"></dorel-404>
+
           </template>
         </iron-pages>
 
@@ -127,13 +108,14 @@
       properties: {
         page: {
           type: String,
-          reflectToAttribute: true,
           observer: '_pageChanged' // when this var changes call this function
         },
+        
         menu: {
           type: Array
         },
-        pageID: {
+
+        currentPage: {
           type: Number
         }
       },
@@ -144,12 +126,9 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setPageId(page, menu)'
+        '_setCurrentPage(page, menu)'
       ],
 
-
-
-      /* ---------------- PRIVATE ---------------- */
       /** 
        * @name _routePageChanged
        * @description set the page to the page var or home if not set
@@ -164,7 +143,7 @@
        */
       _pageChanged: function(page) {
         // set the page template url
-        var resolvedPageUrl = this.resolveUrl('dorel-page.html');
+        var resolvedPageUrl = this.resolveUrl('dorel-wp-collect-page.html');
 
         // Load page import on demand. Show 404 page if fails
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
@@ -178,37 +157,20 @@
         this.page = '404';
       },
 
-      /** 
-       * @name retrievedMenu
-       * @description process the retrieved menu
-       */
-      _retrievedMenu: function(e) {
-        // catch the response and set it to the menu variable
-        this.menu = e.detail.response;
-
-        // iterate over all menu items, alter its title and set the right url
-        this.menu.forEach(function(item) {
-          item.title = item.title.toLowerCase();
-          item.url = '/' + item.url.split('/')[3];
-        });
-      },
-
       /**
-       * @name _setPageId
+       * @name _setCurrentPage
        * @description set the current pageId by matching it with the
        * current menu item chosen
        */
-      _setPageId: function(page, menu) {
-        var pageID;
+      _setCurrentPage: function(page, menu) {
+        // if menu array has no items
+        if( !menu.length ) { return; }
 
-        menu.forEach(function(item) {
-          if( page === item.title.toLowerCase() ) {
-            pageID = item.object_id;
-          }
+        // map the page variable to the item in the menu array and set it 
+        this.currentPage = menu.find(function(item) {
+          return (page === item.title.toLowerCase()) ? item.object_id : false;
         });
-
-        this.pageID = pageID;
       }
-    });     
+    });
   </script>
 </dom-module>
