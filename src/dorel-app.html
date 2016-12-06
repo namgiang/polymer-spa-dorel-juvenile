@@ -11,10 +11,9 @@
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-
-<link rel="import" href="dorel-google-tag-manager.html">
-<link rel="import" href="dorel-wp-collect-menu.html">
-<link rel="import" href="dorel-wp-collect-page.html">
+<link rel="import" href="../bower_components/google-tag-manager/google-tag-manager.html">
+<link rel="import" href="../bower_components/wp-collect-pages/wp-collect-page.html">
+<link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html">
 
 <dom-module id="dorel-app">
   <template>
@@ -33,10 +32,31 @@
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
       }
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+
+        padding: 0 16px;
+
+        text-decoration: none;
+
+        color: var(--app-secondary-color);
+
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+
+        font-weight: bold;
+      }
     </style>
     
     <!-- analytics -->
-    <dorel-google-tag-manager cid="GTM-TW3TM86"></dorel-google-tag-manager>
+    <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
   
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -52,9 +72,25 @@
         <app-toolbar>Menu</app-toolbar>
 
         <!-- retrieve menu items -->
-        <dorel-wp-collect-menu 
+        <wp-collect-menu
+          wp-url="[[ wpUrl ]]"
           menu-location="main_menu" 
-          menu="{{ menu }}"></dorel-wp-collect-menu>
+          menu-data="{{ menuData }}">
+          <template is="dom-if" if="[[ menuData.length ]]">
+            <iron-selector class="drawer-list" role="navigation"
+              selected="[[ page ]]" 
+              attr-for-selected="name">
+
+              <template id="menu" is="dom-repeat" items="[[ menuData ]]" as="menuItem">
+                <a href="[[ menuItem.url ]]" name="[[ menuItem.title ]]">
+                  <span>[[ menuItem.title ]]</span>
+                </a>
+              </template>
+
+            </iron-selector>
+          </template>    
+        </wp-collect-menu>
+
       </app-drawer>
 
       <!-- main content -->
@@ -81,13 +117,19 @@
 
           <template id="pages" 
             is="dom-repeat" 
-            items="[[ menu ]]" 
+            items="[[ menuData ]]" 
             as="pageItem">
 
-            <dorel-wp-collect-page
-              name="[[ pageItem.title ]]" 
-              page-id="[[ pageItem.object_id ]]" 
-              data="[[ pageItem ]]"></dorel-wp-collect-page>
+            <wp-collect-page
+              wp-url="[[ wpUrl ]]"
+              page-id="[[ pageItem.object_id ]]"
+              page-data="{{ pageData }}">
+              <div class="card">
+                <h2>page-id: [[ pageData.id ]]</h2>
+              </div>  
+
+            </wp-collect-page>
+
             <dorel-404 name="404"></dorel-404>
 
           </template>
@@ -106,12 +148,17 @@
        * @description all properties this component uses
        */
       properties: {
+        wpUrl: {
+          type: String,
+          value: '//wppolymer.dev'
+        },
+
         page: {
           type: String,
           observer: '_pageChanged' // when this var changes call this function
         },
         
-        menu: {
+        menuData: {
           type: Array
         },
 
@@ -126,7 +173,7 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setCurrentPage(page, menu)'
+        '_setCurrentPage(page, menuData)'
       ],
 
       /** 
@@ -143,7 +190,7 @@
        */
       _pageChanged: function(page) {
         // set the page template url
-        var resolvedPageUrl = this.resolveUrl('dorel-wp-collect-page.html');
+        var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
 
         // Load page import on demand. Show 404 page if fails
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
