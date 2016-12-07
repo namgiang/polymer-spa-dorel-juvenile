@@ -6,11 +6,25 @@ This template is a starting point for all Dorel Juvenile's branded websites. Tog
 
 ### Setup
 
+##### Requirements
+
+You will need a running Wordpress instance to make all ajax requests work. In this tutorial we use:
+
+    http://wppolymer.dev
+
 ##### Prerequisites
 
-Install [polymer-cli](https://github.com/Polymer/polymer-cli):
+Clone this repository:
+    
+    git clone git@github.com:dorel/polymer-spa-dorel-juvenile.git
 
-    npm install -g polymer-cli
+Open src/dorel-app.html and replace the following line
+    
+    value: [((wpurl))]
+
+by the following
+
+    value: '//wppolymer.dev'
 
 ### Start the development server
 
