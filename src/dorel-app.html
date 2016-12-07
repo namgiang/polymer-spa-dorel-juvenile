@@ -123,9 +123,11 @@
             <wp-collect-page
               wp-url="[[ wpUrl ]]"
               page-id="[[ pageItem.object_id ]]"
-              page-data="{{ pageData }}">
+              page-data="{{ index }}">
+                
+              <!-- page content -->
               <div class="card">
-                <h2>page-id: [[ pageData.id ]]</h2>
+                <h2>page-id: [[ index.id ]]</h2>
               </div>  
 
             </wp-collect-page>
@@ -150,7 +152,7 @@
       properties: {
         wpUrl: {
           type: String,
-          value: '//wppolymer.dev'
+          value: [((wp-url))]
         },
 
         page: {
@@ -190,10 +192,10 @@
        */
       _pageChanged: function(page) {
         // set the page template url
-        var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
+        // var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
 
         // Load page import on demand. Show 404 page if fails
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        // this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
 
       /** 
