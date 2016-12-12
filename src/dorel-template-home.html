@@ -1,0 +1,47 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="dorel-template-home">
+  <template>
+    <style></style>
+
+    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+      <span>template: {{ templateData.acf.page_template }}</span>
+
+      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
+          <h1>card {{ component.card_title }}</h1>
+        </template>
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
+          <h1>header {{ component.header_title }}</h1>
+        </template>
+
+      </template>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-home',
+      properties: {
+        templateData: {
+          type: String
+        }
+      },
+
+      _isPageComponent: function(response, cname) {
+        return response === cname;
+      }
+    });
+  </script>
+</dom-module>
