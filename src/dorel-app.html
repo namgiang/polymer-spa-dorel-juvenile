@@ -16,6 +16,8 @@
 <link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html">
 <link rel="import" href="../bower_components/beautify-json/beautify-json.html">
 
+<link rel="import" href="../src/dorel-template.html">
+
 <dom-module id="dorel-app">
   <template>
     <style>
@@ -131,9 +133,13 @@
                 <h2>page-id: [[ index.id ]]</h2>
               </div>
               
-              <template is="dom-if" if='{{index}}'>
+              <dorel-template 
+                template-name="{{ index.acf.page_template }}"
+                template-data="{{ index }}"></dorel-template>
+
+              <template is="dom-if" if="{{ index }}">
                 <beautify-json
-                  output="{{index}}" highlight></beautify-json>
+                  output="{{ index }}" highlight></beautify-json>
               </template>
 
             </wp-collect-page>
@@ -197,11 +203,12 @@
        * @description when the page variable changes handle stuff
        */
       _pageChanged: function(page) {
+        console.log(page);
         // set the page template url
-        // var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
+        var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
 
         // Load page import on demand. Show 404 page if fails
-        // this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
 
       /** 
