@@ -10,13 +10,15 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/google-tag-manager/google-tag-manager.html">
-<link rel="import" href="../bower_components/wp-collect-pages/wp-collect-page.html">
-<link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html">
+<!-- <link rel="import" href="../bower_components/wp-collect-pages/wp-collect-page.html">
+<link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html"> -->
 <link rel="import" href="../bower_components/beautify-json/beautify-json.html">
 
 <link rel="import" href="dorel-tabs.html">
 <link rel="import" href="dorel-tab.html">
 <link rel="import" href="dorel-template.html">
+<link rel="import" href="dorel-wp-collect-menu.html">
+<link rel="import" href="dorel-wp-collect-page.html">
 
 <dom-module id="dorel-app">
   <template>
@@ -195,9 +197,9 @@
               icon="menu"
               on-click="_toggleDrawer"
               aria-label="Categories">
-              menu
+              M
           </paper-icon-button>
-          <a class="back-btn" href="/list/[[categoryName]]" tabindex="-1">
+          <a class="back-btn" href="[[ menuItem.url ]]" tabindex="-1">
             <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
           </a>
         </div>
@@ -286,10 +288,11 @@
           </template>
 
         </wp-collect-page>
-
+        
         <dorel-404 name="404"></dorel-404>
 
       </template>
+
     </iron-pages>
 
     <footer>
@@ -371,10 +374,13 @@
 
       /** 
        * @name _routePageChanged
-       * @description set the page to the page var or home if not set
+       * @description when routeData.page has changed this function will
+       * set this.page variable and scroll to the top of the page. If the drawer
+       * is opened it will be closed
+       * @param page this will be the routeData.page variable that has been changed/set
        */
       _routePageChanged: function(page) {
-        this.page = page || 'home';
+        this.page = page || 'homepage';
 
         // Scroll to the top of the page on every *route* change. Use `Polymer.AppLayout.scroll`
         // with `behavior: 'silent'` to disable header scroll effects during the scroll.
@@ -385,7 +391,10 @@
 
       /** 
        * @name _pageChanged
-       * @description when the page variable changes handle stuff
+       * @description when the page variable changes lazyload the page
+       * or retrieve it all the way.
+       * @param page the page we need to transition to
+       * @param oldPage the previous page
        */
       _pageChanged: function(page, oldPage) {
         if (page != null) {
@@ -395,7 +404,7 @@
           // other routes are lazy loaded
           } else {
             // this.importHref(
-            //   this.resolveUrl('shop-' + page + '.html'),
+            //   this.resolveUrl('dorel-template.html'),
             //   function() {
             //     this._pageLoaded(Boolean(oldPage));
             //   }, null, true);
@@ -418,7 +427,7 @@
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
-            this.importHref(this.resolveUrl('lazy-resources.html'), function() {
+            this.importHref(this.resolveUrl('dorel-lazy-resources.html'), function() {
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/service-worker.js');
@@ -448,7 +457,6 @@
 
       _toggleDrawer: function() {
         this.drawerOpened = !this.drawerOpened;
-        console.log(this.drawerOpened);
       },
 
       /** 
@@ -486,12 +494,10 @@
       },
 
       _computeShouldShowTabs: function(page, smallScreen) {
-        console.log(page, smallScreen);
-        return page && !smallScreen;
+        return (typeof page !== 'undefined') && !smallScreen;
       },
 
       _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
-        console.log(_shouldShowTabs, loadComplete);
         return _shouldShowTabs && loadComplete;
       },
 

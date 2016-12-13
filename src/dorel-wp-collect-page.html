@@ -7,16 +7,32 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
-<dom-module id="dorel-collect-page">
+<!--
+Polymer 1.2 element for collecting the Wordpress menus in combination with the WP Rest API and WP Rest API Menus.
+
+Example:
+
+    <wp-collect-page
+      wp-url="//YOUR-WORDPRESS-URL"
+      page-id="PAGE_ID"
+      page-data="VARIABLE_NAME">
+
+      <h1>[[ VARIABLE_NAME.title ]]</h1>
+
+    </wp-collect-page>
+
+@demo demo/index.html
+-->
+<dom-module id="wp-collect-page">
   <template>
     <style></style>
     
     <iron-ajax id="wp_posts" 
       auto 
-      url="[[ wpUrl ]]/wp-json/wp/v2/pages/[[ pageId ]]" 
+      url="../assets/data/page-id_[[ pageId ]].json" 
       handle-as="json" 
       on-response="_retrievePage"></iron-ajax>
 

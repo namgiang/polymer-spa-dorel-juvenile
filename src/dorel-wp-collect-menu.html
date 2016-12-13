@@ -1,0 +1,87 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<!--
+Polymer 1.2 element for collecting a Wordpress menu in combination with the WP Rest API and WP Rest API Menus. This element retrieves a menu by menu location. It exposes the retrieved menu by the menu binding.
+
+Example:
+
+    <wp-collect-menu 
+      menu-location="MENU_LOCATION"
+      menu="{{ menu }}"></wp-collect-menu>
+
+@demo demo/index.html
+-->
+<dom-module id="wp-collect-menu">
+  <template>
+    <style>
+    </style>
+
+    <iron-ajax 
+      auto 
+      url="../assets/data/[[ menuLocation ]].json" 
+      handle-as="json" 
+      on-response="_menuLoaded"></iron-ajax>
+
+    <content></content>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "wp-collect-menu",
+    properties: {
+
+      /**
+       * `menuData` this variable is reflected
+       * by two way binding in order to use it in your
+       * template.
+       */
+      menuData: {
+        type: Array,
+        reflectToAttribute: true,
+        notify: true
+      },
+
+      /**
+       * `menuLocation` fill in the menu_location name
+       * defined in your Wordpress installation
+       */
+      menuLocation: {
+        type: String
+      },
+
+      /**
+       * `wpUrl` this is the url to your Wordpress instance
+       */
+      wpUrl: {
+        type: String
+      }
+    },
+
+    /** 
+     * @name _menuLoaded
+     * @description process the retrieved menu
+     */
+    _menuLoaded: function (data) {
+      var menu = data.detail.response;
+
+      // iterate over all menu items, alter its title and set the right url
+      menu.forEach(function(item) {
+        item.title = item.title.toLowerCase();
+        item.url = '/' + item.url.split('/')[3];
+      });
+
+      this.menuData = menu;
+    }
+  });
+</script>
