@@ -19,23 +19,45 @@
 <!-- maxi cosi -->
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
-<link rel="import" href="../bower_components/app-layout/app-toolbar/helpers.html">
+<!--link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html"-->
 <link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
 
-<link rel="import" href="maxicosi/components/maxicosi-logo.html">
-<link rel="import" href="maxicosi/components/maxicosi-search-small.html">
-<link rel="import" href="maxicosi/sections/maxicosi-footer.html">
+<link rel="import" href="maxicosi/molecules/maxicosi-logo.html">
+<link rel="import" href="maxicosi/molecules/maxicosi-search-small.html">
+<link rel="import" href="maxicosi/molecules/maxicosi-select-language.html">
+<link rel="import" href="maxicosi/organisms/maxicosi-footer.html">
 
 <dom-module id="dorel-app">
   <template>
     <style>
-      /* new styling */
-      app-toolbar {
-        background-color: red;
+      /* 
+       * new styling 
+       */
+      header {
+        padding: 0 1.5rem 0 0; /* add logo spacing for padding */
         @apply --layout-horizontal;
+        @apply --layout-justified;
       }
 
-      /* refactor from here */
+      .flex-end-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+
+      .flex {
+        @apply(--layout-flex);
+      }
+
+      .header-search,
+      .header-language {
+        padding: 0 0.2rem; /* add component padding */
+        @apply(--layout-center);
+        @apply(--layout-horizontal);
+      }
+
+      /* 
+       * refactor from here 
+       */
       :host {
         display: block;
         position: relative;
@@ -171,11 +193,11 @@
       <app-header-layout>
         <app-header id="header" effects="waterfall" fixed="[[smallScreen]]" condenses="[[!smallScreen]]" reveals="[[!smallScreen]]">
 
-        <app-toolbar>
+        <header>
 
           <!-- at the moment hidden -->
           <!-- perhaps: reveals="[[smallScreen]]" -->
-          <div class="left-bar-item">
+          <!--div class="left-bar-item">
             <paper-icon-button
                 class="menu-btn"
                 icon="menu"
@@ -186,19 +208,23 @@
             <a class="back-btn" href="[[ menuItem.url ]]" tabindex="-1">
               <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
             </a>
-          </div>
+          </div-->
 
-          <div class="left-item" main-title>
+          <div class="flex">
             <a href="/" aria-label="Dorel SPA">
               <maxicosi-logo></maxicosi-logo>
             </a>
           </div>
 
-          <div class="">
+          <div class="header-search">
             <maxicosi-search-small></maxicosi-search-small>
           </div>
 
-        <app-toolbar>
+          <div class="header-language">
+            <maxicosi-select-language></maxicosi-select-language>
+          </div>
+
+        </header>
 
         <!-- retrieve menu items -->
         <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
@@ -259,23 +285,23 @@
           wp-url="[[ wpUrl ]]"
           page-id="[[ pageItem.object_id ]]"
           page-data="{{ index }}">
-            
+
           <!-- page content -->
-          <div class="card">
+          <!--div class="card">
             <h2>page-id: [[ index.id ]]</h2>
-          </div>
-          
+          </div-->
+
           <dorel-template 
             template-name="{{ index.template }}"
             template-data="{{ index }}"></dorel-template>
 
-          <template is="dom-if" if="{{ index }}">
+          <!--template is="dom-if" if="{{ index }}">
             <beautify-json
               output="{{ index }}" highlight></beautify-json>
-          </template>
+          </template-->
 
         </wp-collect-page>
-        
+
         <dorel-404 name="404"></dorel-404>
 
       </template>
