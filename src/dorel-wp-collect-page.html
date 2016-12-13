@@ -1,0 +1,81 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<!--
+Polymer 1.2 element for collecting the Wordpress menus in combination with the WP Rest API and WP Rest API Menus.
+
+Example:
+
+    <wp-collect-page
+      wp-url="//YOUR-WORDPRESS-URL"
+      page-id="PAGE_ID"
+      page-data="VARIABLE_NAME">
+
+      <h1>[[ VARIABLE_NAME.title ]]</h1>
+
+    </wp-collect-page>
+
+@demo demo/index.html
+-->
+<dom-module id="wp-collect-page">
+  <template>
+    <style></style>
+    
+    <iron-ajax id="wp_posts" 
+      auto 
+      url="../assets/data/page-id_[[ pageId ]].json" 
+      handle-as="json" 
+      on-response="_retrievePage"></iron-ajax>
+
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'wp-collect-page',
+      properties: {
+        /**
+         * `pageData` this variable is reflected
+         * by two way binding in order to use it in your
+         * template.
+         */
+        pageData: {
+          type: Object,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        /**
+         * `pageId` of the Wordpress ID of the page
+         */
+        pageId: {
+          type: Number
+        },
+
+        /**
+         * `wpUrl` of the url of the Wordpress instance
+         */
+        wpUrl: {
+          type: String
+        }
+      },
+
+      /** 
+       * @name retrievedPages
+       * @description process the retrieved pages
+       */
+      _retrievePage: function(e) {
+        this.pageData = e.detail.response;
+      }
+    });
+  </script>
+</dom-module>

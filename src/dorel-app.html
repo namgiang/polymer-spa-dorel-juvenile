@@ -1,60 +1,177 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/google-tag-manager/google-tag-manager.html">
-<link rel="import" href="../bower_components/wp-collect-pages/wp-collect-page.html">
-<link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html">
+<!-- <link rel="import" href="../bower_components/wp-collect-pages/wp-collect-page.html">
+<link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html"> -->
 <link rel="import" href="../bower_components/beautify-json/beautify-json.html">
 
-<link rel="import" href="../src/dorel-template.html">
+<link rel="import" href="dorel-tabs.html">
+<link rel="import" href="dorel-tab.html">
+<link rel="import" href="dorel-template.html">
+<link rel="import" href="dorel-wp-collect-menu.html">
+<link rel="import" href="dorel-wp-collect-page.html">
 
 <dom-module id="dorel-app">
   <template>
     <style>
       :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
-
         display: block;
+        position: relative;
+        padding-top: 130px;
+        padding-bottom: 64px;
+        min-height: 100vh;
+        --app-primary-color: #202020;
+        --app-secondary-color: #757575;
+        --app-accent-color: #172C50;
+        --paper-button-ink-color: var(--app-accent-color);
+        --paper-icon-button-ink-color: var(--app-accent-color);
+        --paper-spinner-color: var(--app-accent-color);
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: var(--app-primary-color);
       }
 
       app-header {
-        color: #fff;
-        background-color: var(--app-primary-color);
+        @apply(--layout-fixed-top);
+        z-index: 1;
+        background-color: rgba(255, 255, 255, 0.95);
+        --app-header-shadow: {
+          box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
+          height: 10px;
+          bottom: -10px;
+        };
       }
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
+
+      paper-icon-button {
+        color: var(--app-primary-color);
       }
+
+      .logo {
+        text-align: center;
+      }
+
+      .logo a {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        color: var(--app-primary-color);
+        text-decoration: none;
+        /* required for IE 11, so this <a> can receive pointer events */
+        display: inline-block;
+        pointer-events: auto;
+      }
+
+      .left-bar-item {
+        width: 40px;
+      }
+
+      .menu-btn {
+        display: none;
+      }
+      
+      :host(:not([page=detail])) .back-btn {
+        display: none;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      #tabContainer {
+        position: relative;
+        height: 66px;
+      }
+
+      dorel-tabs, dorel-tab {
+        --dorel-tab-overlay: {
+          border-bottom: 2px solid var(--app-accent-color);
+        };
+      }
+
+      dorel-tabs {
+        height: 100%;
+      }
+
+      dorel-tab {
+        margin: 0 10px;
+      }
+
+      dorel-tab a {
+        display: inline-block;
+        outline: none;
+        padding: 9px 5px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        color: var(--app-primary-color);
+      }
+
       .drawer-list {
         margin: 0 20px;
       }
 
       .drawer-list a {
         display: block;
-
         padding: 0 16px;
-
-        text-decoration: none;
-
-        color: var(--app-secondary-color);
-
         line-height: 40px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
       }
 
       .drawer-list a.iron-selected {
         color: black;
-
         font-weight: bold;
+      }
+
+      app-drawer {
+        z-index: 3;
+      }
+
+      iron-pages {
+        max-width: 1440px;
+        margin: 0 auto;
+      }
+
+      footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        margin-top: 20px;
+        line-height: 24px;
+      }
+
+      footer > a {
+        color: var(--app-secondary-color);
+        text-decoration: none;
+      }
+
+      footer > a:hover {
+        text-decoration: underline;
+      }
+
+      /* small screen */
+      @media (max-width: 767px) {
+        :host {
+          padding-top: 64px;
+        }
+
+        .menu-btn {
+          display: block;
+        }
+
+        :host([page=detail]) .menu-btn {
+          display: none;
+        }
       }
     </style>
     
@@ -69,91 +186,125 @@
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
 
-    <!-- drawer -->
-    <app-drawer-layout fullbleed>
-      <app-drawer>
-        <app-toolbar>Menu</app-toolbar>
+    <iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
 
-        <!-- retrieve menu items -->
+    <!-- drawer -->
+    <app-header role="navigation" id="header" effects="waterfall" condenses reveals>
+      <app-toolbar>
+        <div class="left-bar-item">
+          <paper-icon-button
+              class="menu-btn"
+              icon="menu"
+              on-click="_toggleDrawer"
+              aria-label="Categories">
+              M
+          </paper-icon-button>
+          <a class="back-btn" href="[[ menuItem.url ]]" tabindex="-1">
+            <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
+          </a>
+        </div>
+        <div class="logo" main-title><a href="/" aria-label="Dorel SPA">Dorel SPA</a></div>
+
+        <!-- <div class="cart-btn-container">
+          <a href="/cart" tabindex="-1">
+            <paper-icon-button icon="shopping-cart" aria-label$="Shopping cart: [[_computePluralizedQuantity(numItems)]]"></paper-icon-button>
+          </a>
+          <div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>
+        </div> -->
+      </app-toolbar>
+
+      <!-- retrieve menu items -->
+      <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
         <wp-collect-menu
           wp-url="[[ wpUrl ]]"
           menu-location="main_menu" 
           menu-data="{{ menuData }}">
+
           <template is="dom-if" if="[[ menuData.length ]]">
-            <iron-selector class="drawer-list" role="navigation"
-              selected="[[ page ]]" 
+            <dorel-tabs
+              selected="[[ page ]]"
               attr-for-selected="name">
-
-              <template id="menu" is="dom-repeat" items="[[ menuData ]]" as="menuItem">
-                <a href="[[ menuItem.url ]]" name="[[ menuItem.title ]]">
-                  <span>[[ menuItem.title ]]</span>
-                </a>
+              <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+                <dorel-tab name="[[menuItem.title]]">
+                  <a href="[[menuItem.url]]">[[menuItem.title]]</a>
+                </dorel-tab>
               </template>
-
-            </iron-selector>
-          </template>    
-        </wp-collect-menu>
-
-      </app-drawer>
-
-      <!-- main content -->
-      <app-header-layout has-scrolling-region>
-        
-        <!-- content header -->
-        <app-header 
-          condenses 
-          reveals 
-          effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button 
-              icon="menu" 
-              drawer-toggle></paper-icon-button>
-            <div main-title>App Title</div>
-          </app-toolbar>
-        </app-header>
-        
-        <!-- content pages -->
-        <iron-pages role="main" 
-          selected="{{ currentPage.object_id }}" 
-          attr-for-selected="page-id" 
-          fallback-selection="404">
-
-          <template id="pages" 
-            is="dom-repeat" 
-            items="[[ menuData ]]" 
-            as="pageItem">
-
-            <wp-collect-page
-              wp-url="[[ wpUrl ]]"
-              page-id="[[ pageItem.object_id ]]"
-              page-data="{{ index }}">
-                
-              <!-- page content -->
-              <div class="card">
-                <h2>page-id: [[ index.id ]]</h2>
-              </div>
-              
-              <dorel-template 
-                template-name="{{ index.acf.page_template }}"
-                template-data="{{ index }}"></dorel-template>
-
-              <template is="dom-if" if="{{ index }}">
-                <beautify-json
-                  output="{{ index }}" highlight></beautify-json>
-              </template>
-
-            </wp-collect-page>
-
-            <dorel-404 name="404"></dorel-404>
-
+            </dorel-tabs>
           </template>
-        </iron-pages>
 
-      </app-header-layout>
-    </app-drawer-layout>
+        </wp-collect-menu>
+      </div>
+    </app-header>
+
+    <!-- Lazy-create the drawer for small screen sizes. -->
+    <template is="dom-if" if="[[ _shouldRenderDrawer ]]">
+      <!-- Two-way bind `drawerOpened` since app-drawer can update `opened` itself. -->
+      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
+        <wp-collect-menu
+          wp-url="[[ wpUrl ]]"
+          menu-location="main_menu" 
+          menu-data="{{ menuData }}">
+
+          <iron-selector role="navigation" class="drawer-list" 
+            selected="[[ page ]]" 
+            attr-for-selected="name">
+            <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+              <a name="[[ menuItem.title ]]" href="/list/[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+            </template>
+          </iron-selector>
+
+        </wp-collect-menu>
+      </app-drawer>
+    </template>
+        
+    <!-- content pages -->
+    <iron-pages role="main" 
+      selected="{{ currentPage.object_id }}" 
+      attr-for-selected="page-id" 
+      fallback-selection="404">
+
+      <template id="pages" 
+        is="dom-repeat" 
+        items="[[ menuData ]]" 
+        as="pageItem">
+
+        <wp-collect-page
+          wp-url="[[ wpUrl ]]"
+          page-id="[[ pageItem.object_id ]]"
+          page-data="{{ index }}">
+            
+          <!-- page content -->
+          <div class="card">
+            <h2>page-id: [[ index.id ]]</h2>
+          </div>
+          
+          <dorel-template 
+            template-name="{{ index.template }}"
+            template-data="{{ index }}"></dorel-template>
+
+          <template is="dom-if" if="{{ index }}">
+            <beautify-json
+              output="{{ index }}" highlight></beautify-json>
+          </template>
+
+        </wp-collect-page>
+        
+        <dorel-404 name="404"></dorel-404>
+
+      </template>
+
+    </iron-pages>
+
+    <footer>
+      <a href="https://dorel.io">Made by Dorel Juvenile Australia Team</a>
+      <div class="demo-label">Demo Only</div>
+    </footer>
   </template>
 
   <script>
+    // performance logging
+    window.performance && performance.mark && performance.mark('dorel-app - before register');
+
     Polymer({
       is: 'dorel-app',
 
@@ -178,6 +329,18 @@
 
         currentPage: {
           type: Number
+        },
+
+        _shouldShowTabs: {
+          computed: '_computeShouldShowTabs(page, smallScreen)'
+        },
+
+        _shouldRenderTabs: {
+          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
+        },
+
+        _shouldRenderDrawer: {
+          computed: '_computeShouldRenderDrawer(smallScreen, loadComplete)'
         }
       },
 
@@ -190,25 +353,110 @@
         '_setCurrentPage(page, menuData)'
       ],
 
+      listeners: {
+        'announce': '_onAnnounce',
+        'dom-change': '_domChange'
+      },
+
+      created: function() {
+        window.performance && performance.mark && performance.mark('dorel-app.created');
+        // Custom elements polyfill safe way to indicate an element has been upgraded.
+        this.removeAttribute('unresolved');
+      },
+
+      ready: function() {
+        // listen for online/offline
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.listen(window, 'online', '_notifyNetworkStatus');
+          this.listen(window, 'offline', '_notifyNetworkStatus');
+        });
+      },
+
       /** 
        * @name _routePageChanged
-       * @description set the page to the page var or home if not set
+       * @description when routeData.page has changed this function will
+       * set this.page variable and scroll to the top of the page. If the drawer
+       * is opened it will be closed
+       * @param page this will be the routeData.page variable that has been changed/set
        */
       _routePageChanged: function(page) {
         this.page = page || 'homepage';
+
+        // Scroll to the top of the page on every *route* change. Use `Polymer.AppLayout.scroll`
+        // with `behavior: 'silent'` to disable header scroll effects during the scroll.
+        Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+        // Close the drawer - in case the *route* change came from a link in the drawer.
+        this.drawerOpened = false;
       },
 
       /** 
        * @name _pageChanged
-       * @description when the page variable changes handle stuff
+       * @description when the page variable changes lazyload the page
+       * or retrieve it all the way.
+       * @param page the page we need to transition to
+       * @param oldPage the previous page
        */
-      _pageChanged: function(page) {
-        // console.log(page);
-        // // set the page template url
-        // var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
+      _pageChanged: function(page, oldPage) {
+        if (page != null) {
+          // home route is eagerly loaded
+          if (page == 'home') {
+            this._pageLoaded(Boolean(oldPage));
+          // other routes are lazy loaded
+          } else {
+            // this.importHref(
+            //   this.resolveUrl('dorel-template.html'),
+            //   function() {
+            //     this._pageLoaded(Boolean(oldPage));
+            //   }, null, true);
+          }
+        }
+      },
 
-        // // Load page import on demand. Show 404 page if fails
-        // this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      _pageLoaded: function(shouldResetLayout) {
+        this._ensureLazyLoaded();
+        if (shouldResetLayout) {
+          // The size of the header depends on the page (e.g. on some pages the tabs
+          // do not appear), so reset the header's layout only when switching pages.
+          this.async(function() {
+            this.$.header.resetLayout();
+          }, 1);
+        }
+      },
+
+      _ensureLazyLoaded: function() {
+        // load lazy resources after render and set `loadComplete` when done.
+        if (!this.loadComplete) {
+          Polymer.RenderStatus.afterNextRender(this, function() {
+            this.importHref(this.resolveUrl('dorel-lazy-resources.html'), function() {
+              // Register service worker if supported.
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+              }
+              this._notifyNetworkStatus();
+              this.loadComplete = true;
+            });
+          });
+        }
+      },
+
+      _notifyNetworkStatus: function() {
+        var oldOffline = this.offline;
+        this.offline =  !navigator.onLine;
+        // Show the snackbar if the user is offline when starting a new session
+        // or if the network status changed.
+        if (this.offline || (!this.offline && oldOffline === true)) {
+          if (!this._networkSnackbar) {
+            this._networkSnackbar = document.createElement('dorel-snackbar');
+            Polymer.dom(this.root).appendChild(this._networkSnackbar);
+          }
+          Polymer.dom(this._networkSnackbar).innerHTML = this.offline ?
+              'You are offline' : 'You are online';
+          this._networkSnackbar.open();
+        }
+      },
+
+      _toggleDrawer: function() {
+        this.drawerOpened = !this.drawerOpened;
       },
 
       /** 
@@ -232,6 +480,29 @@
         this.currentPage = menu.find(function(item) {
           return (page === item.title.toLowerCase()) ? item.object_id : false;
         });
+      },
+
+      // This is for performance logging only.
+      _domChange: function(e) {
+        if (window.performance && performance.mark && !this.__loggedDomChange) {
+          var target = Polymer.dom(e).rootTarget;
+          if (target.domHost.is.match(this.page)) {
+            this.__loggedDomChange = true;
+            performance.mark(target.domHost.is + '.domChange');
+          }
+        }
+      },
+
+      _computeShouldShowTabs: function(page, smallScreen) {
+        return (typeof page !== 'undefined') && !smallScreen;
+      },
+
+      _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
+        return _shouldShowTabs && loadComplete;
+      },
+
+      _computeShouldRenderDrawer: function(smallScreen, loadComplete) {
+        return smallScreen && loadComplete;
       }
     });
   </script>
