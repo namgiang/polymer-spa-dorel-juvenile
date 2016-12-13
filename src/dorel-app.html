@@ -1,8 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
-<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
@@ -20,9 +16,26 @@
 <link rel="import" href="dorel-wp-collect-menu.html">
 <link rel="import" href="dorel-wp-collect-page.html">
 
+<!-- maxi cosi -->
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/helpers.html">
+<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
+
+<link rel="import" href="maxicosi/components/maxicosi-logo.html">
+<link rel="import" href="maxicosi/components/maxicosi-search-small.html">
+<link rel="import" href="maxicosi/sections/maxicosi-footer.html">
+
 <dom-module id="dorel-app">
   <template>
     <style>
+      /* new styling */
+      app-toolbar {
+        background-color: red;
+        @apply --layout-horizontal;
+      }
+
+      /* refactor from here */
       :host {
         display: block;
         position: relative;
@@ -52,21 +65,6 @@
 
       paper-icon-button {
         color: var(--app-primary-color);
-      }
-
-      .logo {
-        text-align: center;
-      }
-
-      .logo a {
-        font-size: 16px;
-        font-weight: 600;
-        letter-spacing: 0.3em;
-        color: var(--app-primary-color);
-        text-decoration: none;
-        /* required for IE 11, so this <a> can receive pointer events */
-        display: inline-block;
-        pointer-events: auto;
       }
 
       .left-bar-item {
@@ -140,25 +138,6 @@
         margin: 0 auto;
       }
 
-      footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        margin-top: 20px;
-        line-height: 24px;
-      }
-
-      footer > a {
-        color: var(--app-secondary-color);
-        text-decoration: none;
-      }
-
-      footer > a:hover {
-        text-decoration: underline;
-      }
-
       /* small screen */
       @media (max-width: 767px) {
         :host {
@@ -173,6 +152,7 @@
           display: none;
         }
       }
+
     </style>
     
     <!-- analytics -->
@@ -188,53 +168,60 @@
 
     <iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
 
-    <!-- drawer -->
-    <app-header role="navigation" id="header" effects="waterfall" condenses reveals>
-      <app-toolbar>
-        <div class="left-bar-item">
-          <paper-icon-button
-              class="menu-btn"
-              icon="menu"
-              on-click="_toggleDrawer"
-              aria-label="Categories">
-              M
-          </paper-icon-button>
-          <a class="back-btn" href="[[ menuItem.url ]]" tabindex="-1">
-            <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
-          </a>
+      <app-header-layout>
+        <app-header id="header" effects="waterfall" fixed="[[smallScreen]]" condenses="[[!smallScreen]]" reveals="[[!smallScreen]]">
+
+        <app-toolbar>
+
+          <!-- at the moment hidden -->
+          <!-- perhaps: reveals="[[smallScreen]]" -->
+          <div class="left-bar-item">
+            <paper-icon-button
+                class="menu-btn"
+                icon="menu"
+                on-click="_toggleDrawer"
+                aria-label="Categories">
+                M
+            </paper-icon-button>
+            <a class="back-btn" href="[[ menuItem.url ]]" tabindex="-1">
+              <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
+            </a>
+          </div>
+
+          <div class="left-item" main-title>
+            <a href="/" aria-label="Dorel SPA">
+              <maxicosi-logo></maxicosi-logo>
+            </a>
+          </div>
+
+          <div class="">
+            <maxicosi-search-small></maxicosi-search-small>
+          </div>
+
+        <app-toolbar>
+
+        <!-- retrieve menu items -->
+        <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
+          <wp-collect-menu
+            wp-url="[[ wpUrl ]]"
+            menu-location="main_menu" 
+            menu-data="{{ menuData }}">
+            <template is="dom-if" if="[[ menuData.length ]]">
+              <dorel-tabs
+                selected="[[ page ]]"
+                attr-for-selected="name">
+                <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+                  <dorel-tab name="[[menuItem.title]]">
+                    <a href="[[menuItem.url]]">[[menuItem.title]]</a>
+                  </dorel-tab>
+                </template>
+              </dorel-tabs>
+            </template>
+          </wp-collect-menu>
         </div>
-        <div class="logo" main-title><a href="/" aria-label="Dorel SPA">Dorel SPA</a></div>
 
-        <!-- <div class="cart-btn-container">
-          <a href="/cart" tabindex="-1">
-            <paper-icon-button icon="shopping-cart" aria-label$="Shopping cart: [[_computePluralizedQuantity(numItems)]]"></paper-icon-button>
-          </a>
-          <div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>
-        </div> -->
-      </app-toolbar>
-
-      <!-- retrieve menu items -->
-      <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
-        <wp-collect-menu
-          wp-url="[[ wpUrl ]]"
-          menu-location="main_menu" 
-          menu-data="{{ menuData }}">
-
-          <template is="dom-if" if="[[ menuData.length ]]">
-            <dorel-tabs
-              selected="[[ page ]]"
-              attr-for-selected="name">
-              <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
-                <dorel-tab name="[[menuItem.title]]">
-                  <a href="[[menuItem.url]]">[[menuItem.title]]</a>
-                </dorel-tab>
-              </template>
-            </dorel-tabs>
-          </template>
-
-        </wp-collect-menu>
-      </div>
-    </app-header>
+      </app-header>
+    </app-header-layout>
 
     <!-- Lazy-create the drawer for small screen sizes. -->
     <template is="dom-if" if="[[ _shouldRenderDrawer ]]">
@@ -295,10 +282,8 @@
 
     </iron-pages>
 
-    <footer>
-      <a href="https://dorel.io">Made by Dorel Juvenile Australia Team</a>
-      <div class="demo-label">Demo Only</div>
-    </footer>
+    <maxicosi-footer></maxicosi-footer>
+
   </template>
 
   <script>
