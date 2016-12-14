@@ -1,0 +1,86 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="dorel-template-home">
+  <template>
+    <style>
+      .product-overview > paper-card {
+        max-width: 300px;
+      }
+    </style>
+
+    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+      <span>template: {{ templateData.template }}</span>
+
+      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
+
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
+          <h1>header {{ component.header_title }}</h1>
+        </template>
+
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
+          <h1>card {{ component.card_title }}</h1>
+        </template>
+        
+      </template>
+    </template>
+
+    <maxicosi-hero></maxicosi-hero>
+
+    <div class="product-overview">
+      <paper-card heading="Strollers" image="http://placehold.it/350x150/6BA539/000000" alt="Strollers">
+        <!--div class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Audax negotium, dicerem impudens, nisi hoc institutum postea translatum ad philosophos nostros esset. 
+        </div-->
+        <!--div class="card-actions">
+          <paper-button>Share</paper-button>
+          <paper-button>Explore!</paper-button>
+        </div-->
+      </paper-card>
+      <paper-card heading="Car seats" image="http://placehold.it/350x150/FF671F/000000" alt="Car seats">
+        <!--div class="card-content">
+          Cupiditates non Epicuri divisione finiebat, sed sua satietate. An eum discere ea mavis, quae cum plane perdidiceriti nihil sciat? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Nescio quo modo praetervolavit oratio.
+        </div-->
+        <!--div class="card-actions">
+          <paper-button>Share</paper-button>
+          <paper-button>Explore!</paper-button>
+        </div-->
+      </paper-card>
+      <paper-card heading="Travel cots" image="http://placehold.it/350x150/CE0058/000000" alt="Travel Cots">
+        <!--div class="card-content">
+          Cupiditates non Epicuri divisione finiebat, sed sua satietate. An eum discere ea mavis, quae cum plane perdidiceriti nihil sciat? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Nescio quo modo praetervolavit oratio.
+        </div-->
+        <!--div class="card-actions">
+          <paper-button>Share</paper-button>
+          <paper-button>Explore!</paper-button>
+        </div-->
+      </paper-card>
+    </div>
+
+  </template>
+
+
+  <script>
+    Polymer({
+      is: 'dorel-template-home',
+      properties: {
+        templateData: {
+          type: String
+        }
+      },
+
+      _isPageComponent: function(response, cname) {
+        return response === cname;
+      }
+    });
+  </script>
+</dom-module>
