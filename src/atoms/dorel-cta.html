@@ -7,25 +7,33 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<dom-module id="dorel-cta">
 
-<dom-module id="dorel-404">
   <template>
-    <style>
-      :host {
-        display: block;
 
-        padding: 10px 20px;
+    <style is="custom-style">
+      .theme-cta-primary {
+        /* ... */
       }
     </style>
 
-    Oops you hit a 404. <a href="/">Head back to home.</a>
+    <a href="{{href}}" class="theme-cta-primary">
+      <content></content>
+    </a>
+
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-404'
+      is: 'dorel-cta',
+      properties: {
+        link: {
+          type: String
+        }
+      },
     });
   </script>
+
 </dom-module>
