@@ -8,35 +8,46 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../atoms/dorel-iconset-simple.html">
+<link rel="import" href="../atoms/dorel-back-to-top.html">
 
 <dom-module id="dorel-footer">
 
   <template>
 
-    <style>
-      footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        text-align: center;
-        margin-top: 20px;
-        line-height: 24px;
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      .footer-media-links {
+        background-color: var(--theme-brand-color-royal-blue);
+        padding: 20px;
       }
-
-      footer > a {
-        color: var(--app-secondary-color);
+      .footer-media-links a {
+        color: white;
         text-decoration: none;
+        text-align: center;
+        min-width: 100px;
+        padding: 3px 20px;
+        font-size: 13px;
+        white-space: nowrap;
       }
-
-      footer > a:hover {
-        text-decoration: underline;
+      .footer-media-links a span {
+        line-height: 24px;
+        margin-left: 8px;
       }
     </style>
 
     <footer>
-      <a href="https://dorel.io">Made by Dorel Juvenile</a>
-      <div class="demo-label">Demo Only</div>
+      <section class="footer-media-links">
+        <div class="layout horizontal center center-justified">
+          <a href="#"><iron-icon icon="social-iconset:youtube" style="fill:grey"></iron-icon><span>Maxi Cosi</span></a>
+          <a href="#"><iron-icon icon="social-iconset:twitter" style="fill:grey"></iron-icon><span>@Maxi Cosi</span></a>
+          <a href="#"><iron-icon icon="social-iconset:facebook" style="fill:grey"></iron-icon><span>Maxi-Cosi</span></a>
+        </div>
+      </section>
+      <section>
+        <dorel-back-to-top></dorel-back-to-top>
+      </section>
     </footer>
 
   </template>
