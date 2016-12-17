@@ -8,15 +8,73 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"> -->
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+<link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../atoms/dorel-next-section.html">
 
 <dom-module id="dorel-template-marketing">
   <template>
-    <style></style>
+    <style is="custom-style" include="theme-maxicosi-shared-styles">
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .standout {
+        width: 100%;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .standout-column {
+        @apply(--layout-flex);
+      }
+      .headline-custom {
+        font-size: 50px;
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
+      }
+      .display1 {
+        @apply(--theme-size-display1);
+        @apply(--theme-heading);
+      }
+      p {
+        @apply(--theme-bodycopy);
+      }
+      .standout-column p,
+      .bound-to-p-width {
+        /* smaller max width since font size is large */
+        max-width: 36rem;
+      }
+      .bg-clr-brand {
+        background-color: var(--theme-brand-color);
+      }
+      .bg-skewed {
+        transform: skewY(5deg);
+        margin-top: -100px;
+      }
+      .bg-skewed-unskew {
+        transform: skewY(-5deg);
+      }
+      .standout-skew-content {
+        margin-top: 100px;
+      }
+      .standout-second {
+        margin-top: 300px;
+      }
+      .center-image {
+        margin: 0 auto;
+        display: block;
+      }
+      .standout-product-image {
+        max-width: 490px;
+        width: 60%;
+      }
+    </style>
 
-    
     <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <span>template: {{ templateData.template }}</span>
-      
+      <!--span>template: {{ templateData.template }}</span>
+
       <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
         
         <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
@@ -27,7 +85,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <h1>card {{ component.card_title }}</h1>
         </template>
 
-      </template>
+      </template-->
+
+      <section class="standout">
+        <div class="layout horizontal">
+          <div class="standout-column text-center">
+            <h1 class="headline-custom">Your story <br>starts here</h1>
+            <dorel-next-section></dorel-next-section>
+          </div>
+          <div class="standout-column">
+          </div>
+        </div>
+      </section>
+
+      <section class="standout standout-second">
+        <div class="bg-clr-brand bg-skewed">
+          <div class="bg-skewed-unskew">
+            <div class="layout horizontal">
+              <div class="standout-column">
+                <img class="center-image standout-product-image" src="../../assets/images/temp_maxicosi_mura-plus-transparent.png"  alt="alternative text" />
+              </div>
+              <div class="standout-column">
+                <div class="standout-skew-content">
+                  <h2 class="display1">Strollers</h2>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Audeo dicere, inquit. Eam stabilem appellas. Animum autem reliquis rebus ita perfecit, ut corpus; Hanc ergo intuens debet institutum illud quasi signum absolvere.</p>
+                  <div class="bound-to-p-width">
+                    <dorel-next-section></dorel-next-section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="standout">
+        <div class="layout horizontal">
+          <div class="standout-column">
+            <p>a first column on the left</p>
+          </div>
+          <div class="standout-column">
+            <h2 class="display1">Title of this right column</h2>
+            <p>a second column on the right</p>
+            <dorel-cta href="#">Link to another page</dorel-cta>
+          </div>
+        </div>
+      </section>
+
     </template>
   </template>
 
@@ -44,5 +148,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return response === cname;
       }
     });
+
+    /* change body background, only on this marketing page */
+    // var body = document.getElementsByTagName("BODY")[0];
+    // body.style.backgroundColor = "grey";
+    // body.style.backgroundImage = "url('../../assets/images/quinny_full-size-image-2.jpeg')";
+
   </script>
 </dom-module>
