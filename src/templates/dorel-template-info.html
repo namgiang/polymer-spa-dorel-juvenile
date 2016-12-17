@@ -9,12 +9,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
 <dom-module id="dorel-template-info">
   <template>
-    <style></style>
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      .display1 {}
+    </style>
     
     <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <span>template: {{ templateData.template }}</span>
+      <!--span>template: {{ templateData.template }}</span>
       
       <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
         
@@ -27,7 +36,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
 
       </template>
-    </template>
+    </template-->
+
+    <section class="subsribe">
+      <p class="display1">Get the latest news</p>
+      <form>
+        <paper-input label="username" id="inputWithButton">
+          <iron-icon icon="mail" prefix></iron-icon>
+          <div suffix>@email.com</div>
+          <paper-icon-button suffix onclick="clearInput()" icon="clear" alt="clear" title="clear">
+          </paper-icon-button>
+        </paper-input>
+        <paper-button raised>Raised button</paper-button>
+      </form>
+    </section>
+
   </template>
 
   <script>
@@ -38,6 +61,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String
         }
       },
+
+      function clearInput() {
+        document.getElementById('inputWithButton').value = '';
+      }
 
       _isPageComponent: function(response, cname) {
         return response === cname;
