@@ -1,0 +1,27 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="dorel-template-marketing">
+  <template>
+    <style></style>
+
+    
+    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+      <span>template: {{ templateData.template }}</span>
+      
+      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
+          <h1>header {{ component.header_title }}</h1>
+        </template>
+
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
+          <h1>card {{ component.card_title }}</h1>
+        </template>
+
+      </template>
+    </template>
+  </template>
+
+  <script>Polymer({is:"dorel-template-marketing",properties:{templateData:{type:String}},_isPageComponent:function(e,t){return e===t}});</script>
+</dom-module>
+</body></html>

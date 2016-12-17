@@ -1,0 +1,16 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+
+</head><body><dom-module id="wp-collect-page">
+  <template>
+    <style></style>
+    
+    <iron-ajax id="wp_posts" auto="" url="[[ wpUrl ]]/pages/[[ pageId ]]" handle-as="json" on-response="_retrievePage"></iron-ajax>
+
+    <content></content>
+  </template>
+
+  <script>Polymer({is:"wp-collect-page",properties:{pageData:{type:Object,reflectToAttribute:!0,notify:!0},pageId:{type:Number},wpUrl:{type:String}},_retrievePage:function(e){this.pageData=e.detail.response}});</script>
+</dom-module>
+</body></html>
