@@ -9,13 +9,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
 <dom-module id="dorel-cta">
 
   <template>
 
-    <style is="custom-style">
-      .theme-cta-primary {
-        /* ... */
+    <style is="custom-style" include="theme-maxicosi-shared-styles">
+      [class^="theme-cta-"] {
+        font-size: 16px;
+        line-height: 20px;
+        padding: 12px 22px 13px;
+        text-decoration: none;
+        border-radius: var(--theme-border-radius-large);
+        border-width: 2px;
+        border-style: solid;
+      }
+      [class*="-primary"] {
+        color: white;
+        border-color: var(--theme-color-cta);
+        background-color: var(--theme-color-cta);
+      }
+      [class*="-secondary"] {
+        color: var(--theme-brand-color-accent-dark-grey);
+        border-color: var(--theme-brand-color-accent-medium-grey);
+      }
+      .light {
+        color: white;
+        border-color: rgba(255, 255, 255, 0.3);
       }
     </style>
 
@@ -29,7 +50,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'dorel-cta',
       properties: {
-        link: {
+        href: {
           type: String
         }
       },
