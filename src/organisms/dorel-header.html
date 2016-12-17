@@ -17,52 +17,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <style>
       /* 
-       * new styling 
+       * iron-flex reusable classes 
        */
-      header {
-        padding: 0 1.5rem 0 0; /* add logo spacing for padding */
+      .horizontal {
         @apply(--layout-horizontal);
-        @apply(--layout-justified);
       }
-
       .flex-end-justified {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
       }
-
       .flex {
         @apply(--layout-flex);
       }
-
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      /* 
+       * custom classes 
+       */
       .header-search,
       .header-language {
         padding: 0 0.2rem; /* add component padding */
-        @apply(--layout-center);
-        @apply(--layout-horizontal);
+      }
+      .header-utility {
+        padding: 0 1.5rem 0 0; /* add logo spacing for padding */
       }
     </style>
-    
-    <header>
-      
-      <!-- logo -->
-      <div class="flex">
-        <a href="/" aria-label="Dorel SPA">
-          <dorel-logo></dorel-logo>
-        </a>
-      </div>
-      <!--// logo -->
 
-      <!-- search -->
-      <div class="header-search">
-        <dorel-search-small></dorel-search-small>
+    <header class="layout horizontal">
+
+      <div class="flex layout horizontal">
+        <div>
+          <!-- logo -->
+          <a href="/" aria-label="Dorel SPA">
+            <dorel-logo></dorel-logo>
+          </a>
+          <!--// logo -->
+        </div>
+        <div class="vertical-center">
+          <content></content>
+        </div>
       </div>
-      <!--// search -->
-      
-      <!-- language -->
-      <div class="header-language">
-        <dorel-select-language></dorel-select-language>
+
+      <div class="header-utility layout horizontal">
+        <!-- search -->
+        <div class="header-search vertical-center">
+          <dorel-search-small></dorel-search-small>
+        </div>
+        <!--// search -->
+        <!-- language -->
+        <div class="header-language vertical-center">
+          <dorel-select-language></dorel-select-language>
+        </div>
+        <!--// language -->
       </div>
-      <!--// language -->
 
     </header>
 

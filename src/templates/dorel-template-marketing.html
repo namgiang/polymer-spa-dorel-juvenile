@@ -17,9 +17,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="dorel-template-marketing">
   <template>
     <style is="custom-style" include="theme-maxicosi-shared-styles">
+      /* 
+       * iron-flex reusable classes 
+       */
       .horizontal {
         @apply(--layout-horizontal);
       }
+      .center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+      /* 
+       * custom classes 
+       */
       .standout {
         width: 100%;
       }
@@ -36,6 +46,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .display1 {
         @apply(--theme-size-display1);
+        @apply(--theme-heading);
+      }
+      .headline {
+        @apply(--theme-size-headline);
         @apply(--theme-heading);
       }
       p {
@@ -56,8 +70,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .bg-skewed-unskew {
         transform: skewY(-5deg);
       }
-      .standout-skew-content {
-        margin-top: 100px;
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
       }
       .standout-second {
         margin-top: 300px;
@@ -69,6 +84,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .standout-product-image {
         max-width: 490px;
         width: 60%;
+      }
+      .minus-offset {
+        margin-top: -50px;
+      }
+      .standout-section-end {
+        padding: 10rem 0;
       }
     </style>
 
@@ -88,12 +109,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template-->
 
       <section class="standout">
-        <div class="layout horizontal">
+        <div class="horizontal">
+          <div class="standout-column">
+          </div>
           <div class="standout-column text-center">
             <h1 class="headline-custom">Your story <br>starts here</h1>
             <dorel-next-section></dorel-next-section>
-          </div>
-          <div class="standout-column">
           </div>
         </div>
       </section>
@@ -101,33 +122,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <section class="standout standout-second">
         <div class="bg-clr-brand bg-skewed">
           <div class="bg-skewed-unskew">
-            <div class="layout horizontal">
-              <div class="standout-column">
-                <img class="center-image standout-product-image" src="../../assets/images/temp_maxicosi_mura-plus-transparent.png"  alt="alternative text" />
-              </div>
-              <div class="standout-column">
-                <div class="standout-skew-content">
-                  <h2 class="display1">Strollers</h2>
+            <div class="horizontal">
+              <div class="standout-column minus-offset">
+                <div class="standout-content">
+                  <h2 class="headline">Strollers</h2>
                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Audeo dicere, inquit. Eam stabilem appellas. Animum autem reliquis rebus ita perfecit, ut corpus; Hanc ergo intuens debet institutum illud quasi signum absolvere.</p>
                   <div class="bound-to-p-width">
                     <dorel-next-section></dorel-next-section>
                   </div>
                 </div>
               </div>
+              <div class="standout-column minus-offset">
+                <img class="center-image standout-product-image" src="../../assets/images/temp_maxicosi_mura-plus-transparent.png"  alt="alternative text" />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+
       <section class="standout">
-        <div class="layout horizontal">
+        <div class="horizontal">
           <div class="standout-column">
-            <p>a first column on the left</p>
+            <div class="standout-content">
+              <p>a first column on the left</p>
+            </div>
           </div>
           <div class="standout-column">
-            <h2 class="display1">Title of this right column</h2>
+            <div class="standout-content">
+              <p>second column</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="standout standout-section-end">
+        <div class="center-justified">
+          <div class="text-center">
+            <p class="headline-custom">Not by chance, by design</p>
             <p>a second column on the right</p>
-            <dorel-cta href="#">Link to another page</dorel-cta>
+            <dorel-cta href="#">Primary call to action</dorel-cta>
           </div>
         </div>
       </section>
