@@ -13,18 +13,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../atoms/dorel-iconset-simple.html">
 <link rel="import" href="../atoms/dorel-back-to-top.html">
 
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
 <dom-module id="dorel-footer">
 
   <template>
 
     <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
-      .footer-media-links {
+      /* 
+       * iron-flex reusable classes 
+       */
+      /*.flex-end-justified {
+         @apply(--layout-horizontal);
+         @apply(--layout-end-justified);
+       }*/
+       .flexchild {
+         @apply(--layout-flex);
+       }
+       .flex2child {
+         @apply(--layout-flex-2);
+       }
+       .flex3child {
+         @apply(--layout-flex-3);
+       }
+      /* 
+       * custom classes 
+       */
+       footer {
         background-color: var(--theme-brand-color-royal-blue);
-        padding: 20px;
-      }
-      .footer-media-links a {
+        padding: var(--theme-component-space-inner);
+       }
+       footer a,
+       .footer-text {
         color: white;
         text-decoration: none;
+        @apply(--theme-ie-bodycopy);
+       }
+       .footer-heading {
+        margin-bottom: .5rem;
+        @apply(--theme-bodycopy);
+        color: var(--theme-brand-color);
+        font-size: 1rem;
+       }
+      .footer-media-links {
+        padding: 1.5rem;
+        /*background-color: var(--theme-brand-color-royal-blue);*/
+      }
+      .footer-media-link {
         text-align: center;
         min-width: 100px;
         padding: 3px 20px;
@@ -35,17 +70,65 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         line-height: 24px;
         margin-left: 8px;
       }
+      .footer-back-to-top {
+        padding: 1rem 0 0;
+      }
+      /* lists not enumerated */
+      .not-enum {
+        margin-left: 0;
+      }
+      .not-enum li {
+        list-style-type: none;
+      }
+      .footer-disclaimer {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
     </style>
 
     <footer>
       <section class="footer-media-links">
         <div class="layout horizontal center center-justified">
-          <a href="#"><iron-icon icon="social-iconset:youtube" style="fill:grey"></iron-icon><span>Maxi Cosi</span></a>
-          <a href="#"><iron-icon icon="social-iconset:twitter" style="fill:grey"></iron-icon><span>@Maxi Cosi</span></a>
-          <a href="#"><iron-icon icon="social-iconset:facebook" style="fill:grey"></iron-icon><span>Maxi-Cosi</span></a>
+          <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:youtube" style="fill:rgb(0, 150, 195)"></iron-icon><span>Maxi Cosi</span></a>
+          <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:twitter" style="fill:rgb(0, 150, 195)"></iron-icon><span>@Maxi Cosi</span></a>
+          <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:facebook" style="fill:rgb(0, 150, 195)"></iron-icon><span>Maxi-Cosi</span></a>
         </div>
       </section>
-      <section>
+      <section class="footer-info layout horizontal">
+        <div class="layout vertical flex3child">
+          <div class="footer-disclaimer">
+            <span class="footer-text">Copyright © 2017 Dorel Europe. All Rights Reserved.</span>
+            <span class="footer-text">A division of Dorel Juvenile.</span>
+            <!--div><img width="200" src="../../assets/images/dorel.svg" alt="#" /></div-->
+          </div>
+        </div>
+        <div class="flexchild">
+          <ul class="not-enum">
+            <li class="footer-heading">Company</li>
+            <li><a href="#">Working at Maxi Cosi</a></li>
+            <li><a href="#">Cookies</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+        <div class="flexchild">
+          <ul class="not-enum">
+            <li class="footer-heading">Service</li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="flexchild">
+          <ul class="not-enum">
+            <li class="footer-heading">Brands</li>
+            <li><a href="#">Quinny</a></li>
+            <li><a href="#">Baby Art</a></li>
+            <li><a href="#">Safety 1st</a></li>
+            <li><a href="#">Tiny Love</a></li>
+          </ul>
+        </div>
+
+      </section>
+      <section class="footer-back-to-top">
         <dorel-back-to-top></dorel-back-to-top>
       </section>
     </footer>
