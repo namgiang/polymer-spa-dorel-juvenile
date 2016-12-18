@@ -9,16 +9,64 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+<link rel="import" href="../organisms/dorel-hero.html">
 
 <dom-module id="dorel-template-home">
   <template>
-    <style>
-      .product-overview > paper-card {
-        max-width: 300px;
+    <style is="custom-style shadow">
+      /* 
+       * iron-flex reusable classes 
+       */
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      /* 
+       * custom classes 
+       */
+       /*.category-section p {
+         @apply --theme-bodycopy;
+       }*/
+       /* mixin for shadow transition --shadow-transition (paper-styles/shadow.html)  */
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
+      }
+      p {
+        @apply(--theme-bodycopy);
+      }
+      .strollers {
+        --dorel-section-standout-skewed-bg: {
+          /*background-color: var(--theme-brand-color-accent-green);*/
+          background-color: white;
+        };
+      }
+      .car-seats {
+        display: flex;
+        margin-top: calc(75px + 50px); /* 75 px is offset for dorel-section-standout */
+      }
+
+      .category-section paper-card {
+         margin: -10px auto 0 auto;
+         display: block;
+         max-width: 340px;
+         @apply(--shadow-elevation-6dp);
       }
     </style>
 
-    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+    <!--template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
       <span>template: {{ templateData.template }}</span>
 
       <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
@@ -32,42 +80,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
         
       </template>
-    </template>
+    </template-->
 
-    <maxicosi-hero></maxicosi-hero>
+    <dorel-hero></dorel-hero>
 
-    <div class="product-overview">
-      <paper-card heading="Strollers" image="http://placehold.it/350x150/6BA539/000000" alt="Strollers">
-        <!--div class="card-content">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Audax negotium, dicerem impudens, nisi hoc institutum postea translatum ad philosophos nostros esset. 
-        </div-->
-        <!--div class="card-actions">
-          <paper-button>Share</paper-button>
-          <paper-button>Explore!</paper-button>
-        </div-->
-      </paper-card>
-      <paper-card heading="Car seats" image="http://placehold.it/350x150/FF671F/000000" alt="Car seats">
-        <!--div class="card-content">
-          Cupiditates non Epicuri divisione finiebat, sed sua satietate. An eum discere ea mavis, quae cum plane perdidiceriti nihil sciat? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Nescio quo modo praetervolavit oratio.
-        </div-->
-        <!--div class="card-actions">
-          <paper-button>Share</paper-button>
-          <paper-button>Explore!</paper-button>
-        </div-->
-      </paper-card>
-      <paper-card heading="Travel cots" image="http://placehold.it/350x150/CE0058/000000" alt="Travel Cots">
-        <!--div class="card-content">
-          Cupiditates non Epicuri divisione finiebat, sed sua satietate. An eum discere ea mavis, quae cum plane perdidiceriti nihil sciat? Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Nescio quo modo praetervolavit oratio.
-        </div-->
-        <!--div class="card-actions">
-          <paper-button>Share</paper-button>
-          <paper-button>Explore!</paper-button>
-        </div-->
-      </paper-card>
-    </div>
+    <dorel-section-standout class="category-section strollers" skewed>
+      <dorel-section-standout-column>
+        <div class="standout-content">
+          <h1 class="theme-headline">Strollers</h1>
+          <p>Little intro containing content about strollers. Consectetur adipiscing elit. Duo Reges: constructio interrete. Isto modo ne improbos quidem, si essent boni viri. Quamquam te quidem video minime esse deterritum. Qua tu etiam inprudens utebare non numquam.</p>
+        </div>
+      </dorel-section-standout-column>
+      <dorel-section-standout-column>
+        <paper-card class="flex" heading="Product title" image="../../assets/images/maxicosi_stroller_travelsystem_muraplus4.jpeg" alt="Product title"></paper-card>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
+    <dorel-section-standout class="category-section car-seats">
+      <dorel-section-standout-column>
+        <paper-card heading="Product title" image="../../assets/images/maxicosi_stroller_travelsystem_muraplus4.jpeg" alt="Product title"></paper-card>
+      </dorel-section-standout-column>
+      <dorel-section-standout-column>
+        <div class="standout-content">
+          <h1 class="theme-headline">Car Seats</h1>
+          <p>Little intro containing content about car-seats. Consectetur adipiscing elit. Duo Reges: constructio interrete. Isto modo ne improbos quidem, si essent boni viri. Quamquam te quidem video minime esse deterritum. Qua tu etiam inprudens utebare non numquam.</p>
+        </div>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
+    <dorel-section-standout class="category-section travel-cots">
+      <dorel-section-standout-column>
+        <div class="standout-content">
+          <h1 class="theme-headline">Travel Cots</h1>
+          <p>Little intro containing content about car-seats. Consectetur adipiscing elit. Duo Reges: constructio interrete. Isto modo ne improbos quidem, si essent boni viri. Quamquam te quidem video minime esse deterritum. Qua tu etiam inprudens utebare non numquam.</p>
+        </div>
+      </dorel-section-standout-column>
+      <dorel-section-standout-column>
+        <paper-card heading="Product title" image="../../assets/images/maxicosi_stroller_travelsystem_muraplus4.jpeg" alt="Product title"></paper-card>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
 
   </template>
-
 
   <script>
     Polymer({

@@ -11,8 +11,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!-- <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html"> -->
 <link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../atoms/dorel-next-section.html">
+
+<!-- make this custom element rather than part of atom setup -->
+<link rel="import" href="../organisms/dorel-section-standout.html">
+<link rel="import" href="../organisms/dorel-section-standout-column.html">
 
 <dom-module id="dorel-template-marketing">
   <template>
@@ -30,67 +35,64 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       /* 
        * custom classes 
        */
-      .standout {
-        width: 100%;
-      }
       .text-center {
         text-align: center;
-      }
-      .standout-column {
-        @apply(--layout-flex);
-      }
-      .headline-custom {
-        font-size: 50px;
-        @apply(--theme-heading);
-        max-width: none !important; /* reset max width so text is centered */
       }
       .display1 {
         @apply(--theme-size-display1);
         @apply(--theme-heading);
       }
-      .headline {
-        @apply(--theme-size-headline);
-        @apply(--theme-heading);
-      }
       p {
         @apply(--theme-bodycopy);
       }
-      .standout-column p,
-      .bound-to-p-width {
-        /* smaller max width since font size is large */
-        max-width: 36rem;
-      }
-      .bg-clr-brand {
-        background-color: var(--theme-brand-color);
-      }
-      .bg-skewed {
-        transform: skewY(5deg);
-        margin-top: -100px;
-      }
-      .bg-skewed-unskew {
-        transform: skewY(-5deg);
+      .headline-custom {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
       }
       .standout-content {
         margin-top: 30px;
         padding: 3rem 7rem;
       }
-      .standout-second {
-        margin-top: 300px;
-      }
-      .center-image {
-        margin: 0 auto;
-        display: block;
+      .standout-content p,
+      .bound-to-p-width {
+        /* smaller max width since font size is large */
+        max-width: 36rem;
       }
       .standout-product-image {
         max-width: 490px;
         width: 60%;
       }
-      .minus-offset {
-        margin-top: -50px;
+      .center-image {
+        margin: 0 auto;
+        display: block;
+      }
+      dorel-section-standout.bg-color-brand {
+        --dorel-section-standout-skewed-bg: {
+          background-color: var(--theme-brand-color);
+        };
+      }
+      .standout-first {
+        --dorel-section-standout: {
+          height:500px;
+        };
+      }
+      .standout-first  dorel-section-standout-column {
+        --dorel-section-standout-column: {
+          margin-top: 20px;
+        };
+      }
+      .standout-second dorel-section-standout-column {
+        --dorel-section-standout-column: {
+          margin-top: -50px; /* make the image in front of previous background */
+        };
       }
       .standout-section-end {
         padding: 10rem 0;
       }
+      /*.start {
+        margin-top: 50px;
+      }*/
     </style>
 
     <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
@@ -108,53 +110,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       </template-->
 
-      <section class="standout">
-        <div class="horizontal">
-          <div class="standout-column">
-          </div>
-          <div class="standout-column text-center">
-            <h1 class="headline-custom">Your story <br>starts here</h1>
-            <dorel-next-section></dorel-next-section>
-          </div>
-        </div>
-      </section>
+      <dorel-section-standout class="standout-first">
+        <dorel-section-standout-column>
+        </dorel-section-standout-column>
+        <dorel-section-standout-column class="text-center start">
+          <h1 class="headline-custom">Your story <br>starts here</h1>
+          <dorel-next-section></dorel-next-section>
+        </dorel-section-standout-column>
+      </dorel-section-standout>
 
-      <section class="standout standout-second">
-        <div class="bg-clr-brand bg-skewed">
-          <div class="bg-skewed-unskew">
-            <div class="horizontal">
-              <div class="standout-column minus-offset">
-                <div class="standout-content">
-                  <h2 class="headline">Strollers</h2>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Audeo dicere, inquit. Eam stabilem appellas. Animum autem reliquis rebus ita perfecit, ut corpus; Hanc ergo intuens debet institutum illud quasi signum absolvere.</p>
-                  <div class="bound-to-p-width">
-                    <dorel-next-section></dorel-next-section>
-                  </div>
-                </div>
-              </div>
-              <div class="standout-column minus-offset">
-                <img class="center-image standout-product-image" src="../../assets/images/temp_maxicosi_mura-plus-transparent.png"  alt="alternative text" />
-              </div>
+      <dorel-section-standout class="bg-color-brand standout-second" skewed>
+        <dorel-section-standout-column>
+          <div class="standout-content">
+            <h2 class="headline-custom">Strollers</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Audeo dicere, inquit. Eam stabilem appellas. Animum autem reliquis rebus ita perfecit, ut corpus; Hanc ergo intuens debet institutum illud quasi signum absolvere.</p>
+            <div class="bound-to-p-width">
+              <dorel-next-section next-section-text="Scroll to learn how ..."></dorel-next-section>
             </div>
           </div>
-        </div>
-      </section>
+        </dorel-section-standout-column>
+        <dorel-section-standout-column>
+          <img class="center-image standout-product-image" src="../../assets/images/temp_maxicosi_mura-plus-transparent.png"  alt="alternative text" />
+        </dorel-section-standout-column>
+      </dorel-section-standout>
 
-
-      <section class="standout">
-        <div class="horizontal">
-          <div class="standout-column">
-            <div class="standout-content">
-              <p>a first column on the left</p>
-            </div>
+      <dorel-section-standout>
+        <dorel-section-standout-column>
+          <div class="standout-content">
+            <p>a first column on the left</p>
           </div>
-          <div class="standout-column">
-            <div class="standout-content">
-              <p>second column</p>
-            </div>
+        </dorel-section-standout-column>
+        <dorel-section-standout-column>
+          <div class="standout-content">
+            <p>second column</p>
           </div>
-        </div>
-      </section>
+        </dorel-section-standout-column>
+      </dorel-section-standout>
 
       <section class="standout standout-section-end">
         <div class="center-justified">
