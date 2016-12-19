@@ -1,0 +1,203 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<!--
+if using `skewed` the background will get a skewed background.
+
+```html
+<dorel-section-standout>
+</dorel-section-standout>
+```
+
+Attribute | Description         | Default
+----------|---------------------|----------------------------------------
+`skewed` | Will make the background of the element skewed. | Not skewed
+
+## Styling
+
+Mixin | Description | Default
+------|-------------|----------
+`--dorel-section-standout` | Applies to the standout section | {}
+`--dorel-section-standout-skewed-bg` | Applies to the background color. | background-color: #ccc; {}
+
+-->
+
+<dom-module id="dorel-section-standout">
+  <template>
+    <style is="custom-style">
+      :host {
+        height: 100%;
+      }
+      /* 
+       * iron-flex reusable classes 
+       */
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      .center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+      /* 
+       * custom classes 
+       */
+      .standout {
+        width: 100%;
+        @apply(--dorel-section-standout);
+      }
+      .bg-clr-brand {
+        background-color: #ccc;
+        @apply(--dorel-section-standout-skewed-bg);
+      }
+      .bg-skewed {
+        transform: skewY(5deg);
+        margin-top: -75px; /* compensate for skewed background */
+      }
+      .bg-skewed-unskew {
+        transform: skewY(-5deg);
+      }
+
+
+      /* 
+       * custom classes 
+       */
+       /*.category-section p {
+         @apply --theme-bodycopy;
+       }*/
+       /* mixin for shadow transition --shadow-transition (paper-styles/shadow.html)  */
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
+      }
+      p {
+        @apply(--theme-bodycopy);
+      }
+      .strollers {
+        --dorel-section-standout-skewed-bg: {
+          /*background-color: var(--theme-brand-color-accent-green);*/
+          background-color: white;
+        };
+      }
+      .car-seats {
+        display: flex;
+        margin-top: calc(75px + 50px); /* 75 px is offset for dorel-section-standout */
+      }
+
+      .category-section paper-card {
+         margin: -10px auto 0 auto;
+         display: block;
+         max-width: 340px;
+         @apply(--shadow-elevation-6dp);
+      }
+    </style>
+
+    <section class="standout">
+  
+      <!-- add this markup if 'skewed' is true -->
+      <template 
+        is="dom-if" 
+        if="[[ standoutData.standout_skewed ]]">
+
+        <div class="bg-skewed bg-clr-brand" 
+          style$="background-color: {{ standoutData.standout_background_color }};">
+          <div class="bg-skewed-unskew">
+
+      </template>
+      <!--// add this markup if 'skewed' is true -->
+      
+
+      <div class="horizontal">
+        
+        <!-- define markup depending on even/odd index -->
+        <template 
+          is="dom-if" 
+          if="{{ _isEven(standoutIndex) }}">
+          <dorel-section-standout-column>
+            <div class="standout-content">
+              <h2 class="theme-headline">[[ standoutData.standout_title ]]
+  {{ standoutIndex }}</h2>
+              [[ standoutData.standout_content ]]
+            </div>
+          </dorel-section-standout-column>
+
+          <dorel-section-standout-column>
+            <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
+              heading="[[ standoutData.standout_image_title ]]" 
+              image="[[ standoutData.standout_image ]]"></paper-card>
+          </dorel-section-standout-column>
+        </template>
+        
+        <template 
+          is="dom-if" 
+          if="{{ !_isEven(standoutIndex) }}">
+          <dorel-section-standout-column>
+            <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
+              heading="[[ standoutData.standout_image_title ]]" 
+              image="[[ standoutData.standout_image ]]"></paper-card>
+          </dorel-section-standout-column>
+
+          <dorel-section-standout-column>
+            <div class="standout-content">
+              <h2 class="theme-headline">[[ standoutData.standout_title ]]
+  {{ standoutIndex }}</h2>
+              [[ standoutData.standout_content ]]
+            </div>
+          </dorel-section-standout-column>
+        </template>
+
+
+      </div>
+
+      <!-- add this markup if 'skewed' is true -->
+      <template 
+        is="dom-if" 
+        if="[[ standoutData.standout_skewed ]]">
+
+          </div>
+        </div>
+
+      </template>
+      <!--// add this markup if 'skewed' is true -->
+
+    </section>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-standout',
+
+      _isEven: function(index) {
+        return index % 2 == 0;
+      },
+
+      ready: function() {
+        this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
+      }
+    });
+
+  </script>
+
+</dom-module>
