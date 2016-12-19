@@ -109,7 +109,7 @@ Mixin | Description | Default
         margin-top: calc(75px + 50px); /* 75 px is offset for dorel-section-standout */
       }
 
-      .category-section paper-card {
+      paper-card {
          margin: -10px auto 0 auto;
          display: block;
          max-width: 340px;
@@ -136,7 +136,7 @@ Mixin | Description | Default
                 <dorel-section-standout-column>
                   <div class="standout-content">
                     <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
-                    [[ standoutData.standout_content ]]
+                    <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
                   </div>
                 </dorel-section-standout-column>
 
@@ -159,7 +159,7 @@ Mixin | Description | Default
                 <dorel-section-standout-column>
                   <div class="standout-content">
                     <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
-                    [[ standoutData.standout_content ]]
+                    <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
                   </div>
                 </dorel-section-standout-column>
               </template>
@@ -189,7 +189,7 @@ Mixin | Description | Default
             <dorel-section-standout-column>
               <div class="standout-content">
                 <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
-                [[ standoutData.standout_content ]]
+                <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
               </div>
             </dorel-section-standout-column>
 
@@ -212,7 +212,7 @@ Mixin | Description | Default
             <dorel-section-standout-column>
               <div class="standout-content">
                 <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
-                [[ standoutData.standout_content ]]
+                <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
               </div>
             </dorel-section-standout-column>
           </template>
@@ -230,6 +230,7 @@ Mixin | Description | Default
 
     Polymer({
       is: 'dorel-section-standout',
+
       _isEven: function(index) {
         console.log(index % 2 == 0);
         return index % 2 == 0;
