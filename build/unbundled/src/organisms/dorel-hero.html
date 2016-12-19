@@ -1,33 +1,72 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/dorel/theme-dorel-shared-styles.html">
+<link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
 
 <link rel="import" href="../atoms/dorel-cta.html">
+
+
 
 </head><body><dom-module id="dorel-hero" include="theme-dorel-shared-styles">
 
   <template>
 
     <style>
-      .theme-font-subhead {
-        font-size: var(--theme-size-subhead);
-        @apply --theme-heading;
+      /* 
+       * iron-flex reusable classes 
+       */
+      .horizontal {
+        @apply(--layout-horizontal);
       }
-      .theme-font-display1 {
-        font-size: var(--theme-size-display1);
-        @apply --theme-heading;
+      .flex-end-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
       }
-      .bodycopy p {
-        @apply --theme-bodycopy;
+      .flex {
+        @apply(--layout-flex);
+      }
+      .flex-2 {
+        @apply(--layout-flex-2);
+      }
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      /* 
+       * custom classes 
+       */
+      .hero {
+        /*background-image: url("../../assets/images/quinny_full-size-image.jpeg");
+        background-size: cover;*/
+        background-color: var(--theme-brand-color); 
+        /*padding: 3rem 0 16rem;*/
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      .hero p {
+        @apply(--theme-bodycopy);
+      }
+      .hero-bg {
+        @apply(--dorel-hero-bg);
       }
     </style>
 
-    <p class="theme-size-subhead">Lorem ipsum</p>
-    <h1 class="theme-display1">Headline in this font</h1>
-    <div class="bodycopy">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. An nisi populari fama? Indicant pueri, in quibus ut in speculis natura cernitur. Duo Reges: constructio interrete. In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Semper enim ex eo, quod maximas partes continet latissimeque funditur, tota res appellatur.</p>
-    </div>
+    <section class="layout horizontal hero hero-bg">
 
-    <dorel-cta href="/" primary="">Link text</dorel-cta>
+      <div class="flex">
+      </div>
+
+      <div class="flex-2">
+        
+        <h1 class="theme-headline">{{ heroTitle }}</h1>
+        <div class="bodycopy">{{ heroContent }}</div>
+        
+      </div>
+      
+      <div class="flex">
+      </div>
+
+    </section>
 
   </template>
 

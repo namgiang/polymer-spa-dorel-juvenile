@@ -6,54 +6,63 @@
 
 </head><body><dom-module id="dorel-header">
   <template>
-    <style>
+    <style is="custom-style">
       /* 
-       * new styling 
+       * iron-flex reusable classes 
        */
-      header {
-        padding: 0 1.5rem 0 0; /* add logo spacing for padding */
-        @apply --layout-horizontal;
-        @apply --layout-justified;
+      .horizontal {
+        @apply(--layout-horizontal);
       }
-
       .flex-end-justified {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
       }
-
       .flex {
         @apply(--layout-flex);
       }
-
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      /* 
+       * custom classes 
+       */
       .header-search,
       .header-language {
         padding: 0 0.2rem; /* add component padding */
-        @apply(--layout-center);
-        @apply(--layout-horizontal);
+      }
+      .header-utility {
+        padding: 0 var(--theme-component-space-inner) 0 0; /* add logo spacing for padding */
       }
     </style>
-    
-    <header>
-      
-      
-      <div class="flex">
-        <a href="/" aria-label="Dorel SPA">
-          <dorel-logo></dorel-logo>
-        </a>
-      </div>
-      
 
-      
-      <div class="header-search">
-        <dorel-search-small></dorel-search-small>
+    <header class="layout horizontal">
+
+      <div class="flex layout horizontal">
+        <div>
+          
+          <a href="/" aria-label="Dorel SPA">
+            <dorel-logo></dorel-logo>
+          </a>
+          
+        </div>
+        <div class="vertical-center">
+          <content></content>
+        </div>
       </div>
-      
-      
-      
-      <div class="header-language">
-        <dorel-select-language></dorel-select-language>
+
+      <div class="header-utility layout horizontal">
+        
+        <div class="header-search vertical-center">
+          <dorel-search-small></dorel-search-small>
+        </div>
+        
+        
+        <div class="header-language vertical-center">
+          <dorel-select-language></dorel-select-language>
+        </div>
+        
       </div>
-      
 
     </header>
 

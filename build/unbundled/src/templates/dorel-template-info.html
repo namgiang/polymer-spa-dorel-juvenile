@@ -1,26 +1,244 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+
+<link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
+
 </head><body><dom-module id="dorel-template-info">
   <template>
-    <style></style>
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      /* 
+       * reusable classes 
+       */
+       .flexchild {
+         @apply(--layout-flex);
+       }
+       .flex2child {
+         @apply(--layout-flex-2);
+       }
+       .flex3child {
+         @apply(--layout-flex-3);
+       }
+      p {
+        @apply(--theme-bodycopy);
+      }
+      .display2 {
+        font-size: var(--theme-size-display2);
+        @apply(--theme-heading);
+      }
+      /* 
+       * this component classes 
+       */
+
+      dorel-section-standout.bg-color-background {
+        --dorel-section-standout-bg: {
+          background-color: var(--theme-color-background);
+        };
+      }
+      .subscribe {
+        --dorel-section-standout-column: {
+          /*max-width: 700px;*/
+          padding-bottom: 2rem;
+        };
+      }
+      .container-form-subscribe {
+        padding: var(--theme-component-space-inner);
+      }
+      .text-center {
+        text-align: center;
+      }
+      .button-submit-form {
+        margin-top: 1.5rem;
+      }
+      .section-about-hero {
+        background-color: var(--theme-brand-color);
+      }
+      dorel-hero {
+        --dorel-hero-bg: {
+          min-height: 540px; /* temporary */
+          background-image: url('../../assets/images/child-father-boat.jpg');
+          background-size: cover;
+          background-position: 0 -230px;;
+          background-repeat: no-repeat;
+        };
+      }
+      .section-about-careers {
+        --dorel-section-standout-bg: {
+          min-height: 540px; /* temporary */
+          background-image: url('../../assets/images/office-space-6.jpg'); /* office-space-6, office-space-3 */
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        };
+      }
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
+      }
+      .hero-standout-content {
+        text-align: right;
+        margin: 70px;
+        padding: 2rem 3rem;
+      }
+      .hero-standout-content .hero-standout-headline {
+        font-size: 2.8rem;
+        color: var(--theme-brand-color-royal-blue);
+      }
+      .hero-standout-headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
+      }
+      .career-standout-headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+      }
+      .section-contact {
+        --dorel-section-standout-skewed-bg: {
+          /*background-color: var(--theme-brand-color-accent-green);*/
+          background-color: white;
+        };
+      }
+      .section-contact-column {
+        --dorel-section-standout-column: {
+          padding-top: 2.5rem;
+          padding-bottom: 3.5rem;
+        };
+      }
+      .section-contact-wide-card {
+        width: 60%;
+        @apply(--shadow-elevation-4dp);
+      }
+      .contact-information {
+        background-color: var(--theme-brand-color-royal-blue);
+      }
+      .career-standout-content {
+        margin: 70px;
+        padding: 2rem 3rem;
+        background-color: white;
+        @apply(--shadow-elevation-12dp);
+      }
+      .contact-content {
+        padding: 1.5rem 3rem 3rem;
+      }
+
+    </style>
+
     
-    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <span>template: {{ templateData.template }}</span>
-      
-      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
-        
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
-          <h1>header {{ component.header_title }}</h1>
-        </template>
 
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
-          <h1>card {{ component.card_title }}</h1>
-        </template>
+    
+    
+    <dorel-hero hero-title="[[ templateData.acf.hero_title ]]" hero-content="">
+    </dorel-hero>
 
-      </template>
-    </template>
+    <section class="standout">
+      <div class="horizontal">
+        <div class="standout-column">
+          <div class="standout-content">
+            <h1 class="hero-standout-headline">The best stories start with strong foundations.</h1>
+            <p>A child’s development into the world happens between zero and three.
+            That fundamental journey begins with a critical one – the one home from the hospital.</p>
+            <p>We’ve always been part of this pivotal moment, and we believe in doing everything we can to help
+            parents at the start of creating a new life.</p>
+            <p>Like an embrace that carries you before you can walk, or a nest on the transition into flight,
+            millions of new beginnings have started with Maxi-Cosi.</p>
+          </div>
+        </div>
+        <div class="standout-column">
+          
+        </div>
+      </div>
+    </section>
+
+    <section class="standout">
+      <div class="horizontal">
+        <div class="section-contact">
+          <div class="section-contact-column" centered="">
+            <div class="standout-column">
+              <div class="section-contact-wide-card">
+                <div class="layout horizontal">
+                  <div class="flex2child contact-content">
+                    <h2 class="display2">Get in touch</h2>
+                    <p>Do you have a question for or about Maxi-Cosi?</p>
+                    <form class="form-send-message">
+                      <paper-input required="" label="Name" allowed-pattern="[a-zA-Z]"></paper-input>
+                      <paper-input required="" label="Surname" allowed-pattern="[a-zA-Z]"></paper-input>
+                      <paper-input required="" label="E-mail"></paper-input>
+                      <paper-input label="Phone"></paper-input>
+
+                      <paper-textarea label="Textarea label" rows="3"></paper-textarea>
+                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
+                      </paper-icon-button>
+                    </form>
+                  </div>
+                  <div class="flexchild contact-content contact-information">
+                    <h2 class="display2">Contact information</h2>
+                    <ul class="not-enum">
+                      <li><iron-icon icon="communication:phone" prefix=""></iron-icon>Phone: ...</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="standout">
+      <div class="horizontal">
+        <div class="bg-color-background">
+          <div class="subscribe" centered="">
+            <div class="standout-column">
+              <div class="container-form-subscribe layout vertical">
+                <div class="text-center">
+                  <p class="display1">Get the latest news</p>
+                </div>
+                <div>
+                  <form class="form-subscribe">
+                    <paper-input label="email@address.com" id="inputWithButton">
+                      <iron-icon icon="mail" prefix=""></iron-icon>
+                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
+                      </paper-icon-button>
+                    </paper-input>
+                    <div class="text-center">
+                      <paper-button class="button-submit-form" raised="">Raised button</paper-button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="standout">
+      <div class="horizontal">
+        <div class="section-about-careers">
+          <div class="standout-column">
+            
+          </div>
+          <div class="standout-column">
+            <div class="standout-content career-standout-content">
+              <h1 class="career-standout-headline">Careers</h1>
+              <p>Look apply etc.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </template>
 
-  <script>Polymer({is:"dorel-template-info",properties:{templateData:{type:String}},_isPageComponent:function(e,t){return e===t}});</script>
+  <script>Polymer({is:"dorel-template-info",properties:{templateData:{type:String}},clearInput:function(){document.getElementById("inputWithButton").value=""},_isPageComponent:function(t,e){return t===e}});</script>
 </dom-module>
 </body></html>

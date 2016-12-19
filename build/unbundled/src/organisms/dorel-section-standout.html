@@ -1,0 +1,181 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+
+
+</head><body><dom-module id="dorel-section-standout">
+  <template>
+    <style is="custom-style">
+      :host {
+        height: 100%;
+      }
+      /* 
+       * iron-flex reusable classes 
+       */
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      .center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+      /* 
+       * custom classes 
+       */
+      .standout {
+        width: 100%;
+        @apply(--dorel-section-standout);
+      }
+      .bg-standout {
+        @apply(--dorel-section-standout-bg);
+      }
+      .bg-clr-brand {
+        background-color: #ccc;
+        @apply(--dorel-section-standout-skewed-bg);
+      }
+      .bg-skewed {
+        transform: skewY(5deg);
+        margin-top: -75px; /* compensate for skewed background */
+      }
+      .bg-skewed-unskew {
+        transform: skewY(-5deg);
+      }
+
+
+      /* 
+       * custom classes 
+       */
+       /*.category-section p {
+         @apply --theme-bodycopy;
+       }*/
+       /* mixin for shadow transition --shadow-transition (paper-styles/shadow.html)  */
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
+      }
+      p {
+        @apply(--theme-bodycopy);
+      }
+      .strollers {
+        --dorel-section-standout-skewed-bg: {
+          /*background-color: var(--theme-brand-color-accent-green);*/
+          background-color: white;
+        };
+      }
+      .car-seats {
+        display: flex;
+        margin-top: calc(75px + 50px); /* 75 px is offset for dorel-section-standout */
+      }
+
+      .category-section paper-card {
+         margin: -10px auto 0 auto;
+         display: block;
+         max-width: 340px;
+         @apply(--shadow-elevation-6dp);
+      }
+    </style>
+
+    <section class="standout bg-standout">
+  
+      
+      <template is="dom-if" if="[[ standoutData.standout_skewed ]]">
+
+        <div class="bg-skewed bg-clr-brand" style$="background-color: {{ standoutData.standout_background_color }};">
+          <div class="bg-skewed-unskew">
+            <div class="horizontal">
+        
+              
+              <template is="dom-if" if="{{ _isEven(standoutIndex) }}">
+                <dorel-section-standout-column>
+                  <div class="standout-content">
+                    <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+                    [[ standoutData.standout_content ]]
+                  </div>
+                </dorel-section-standout-column>
+
+                <dorel-section-standout-column>
+                  <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]" heading="[[ standoutData.standout_image_title ]]" image="[[ standoutData.standout_image ]]"></paper-card>
+                </dorel-section-standout-column>
+              </template>
+              
+              <template is="dom-if" if="{{ !_isEven(standoutIndex) }}">
+                <dorel-section-standout-column>
+                  <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]" heading="[[ standoutData.standout_image_title ]]" image="[[ standoutData.standout_image ]]"></paper-card>
+                </dorel-section-standout-column>
+
+                <dorel-section-standout-column>
+                  <div class="standout-content">
+                    <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+                    [[ standoutData.standout_content ]]
+                  </div>
+                </dorel-section-standout-column>
+              </template>
+
+
+            </div>
+          </div>
+        </div>
+
+      </template>
+      
+      
+
+      
+
+      
+      <template is="dom-if" if="[[ !standoutData.standout_skewed ]]">
+
+        <div class="horizontal">
+  
+          
+          <template is="dom-if" if="{{ _isEven(standoutIndex) }}">
+            <dorel-section-standout-column>
+              <div class="standout-content">
+                <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+                [[ standoutData.standout_content ]]
+              </div>
+            </dorel-section-standout-column>
+
+            <dorel-section-standout-column>
+              <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]" heading="[[ standoutData.standout_image_title ]]" image="[[ standoutData.standout_image ]]"></paper-card>
+            </dorel-section-standout-column>
+          </template>
+          
+          <template is="dom-if" if="{{ !_isEven(standoutIndex) }}">
+            <dorel-section-standout-column>
+              <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]" heading="[[ standoutData.standout_image_title ]]" image="[[ standoutData.standout_image ]]"></paper-card>
+            </dorel-section-standout-column>
+
+            <dorel-section-standout-column>
+              <div class="standout-content">
+                <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+                [[ standoutData.standout_content ]]
+              </div>
+            </dorel-section-standout-column>
+          </template>
+
+        </div>
+
+      </template>
+      
+
+    </section>
+
+  </template>
+
+  <script>Polymer({is:"dorel-section-standout",_isEven:function(o){return console.log(o%2==0),o%2==0},ready:function(){this.bgColor="undefined"==typeof this.bgColor?"#dcdcdc":this.bgColor}});</script>
+
+</dom-module></body></html>

@@ -13,39 +13,66 @@
 <link rel="import" href="../bower_components/beautify-json/beautify-json.html">
 
 <link rel="import" href="organisms/dorel-header.html">
+<link rel="import" href="organisms/dorel-footer.html">
 
 <link rel="import" href="molecules/dorel-tabs.html">
 <link rel="import" href="molecules/dorel-tab.html">
 <link rel="import" href="molecules/dorel-wp-collect-menu.html">
 <link rel="import" href="molecules/dorel-wp-collect-page.html">
 
+<link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 <link rel="import" href="templates/dorel-template.html">
 
 </head><body><dom-module id="dorel-app">
   <template>
-    <style>
+    <style is="custom-style" include="theme-maxicosi-shared-styles">
       /* 
-       * refactor from here 
+       * Application wide styling
+       * - Will define standard styling for components
        */
       :host {
-        display: block;
-        position: relative;
+        /*display: block;
+        position: relative;*/
         padding-top: 130px;
         padding-bottom: 64px;
         min-height: 100vh;
-        --app-primary-color: #202020;
+
+        --primary-color: var(--theme-brand-color);
+        color: var(--theme-primary-text-color);
+
         --app-secondary-color: #757575;
         --app-accent-color: #172C50;
         --paper-button-ink-color: var(--app-accent-color);
         --paper-icon-button-ink-color: var(--app-accent-color);
         --paper-spinner-color: var(--app-accent-color);
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        color: var(--app-primary-color);
+      }
+
+      :root {
+
+        --paper-input-container-underline: {
+          border-bottom: 2px solid var(--theme-brand-color);
+        };
+
+        --paper-input-container-focus-color: var(--theme-brand-color-royal-blue);
+
+        --paper-input-container-label-focus: {
+          color: var(--theme-brand-color-royal-blue);
+        };
+
+      }
+
+      /*
+       * this file styling:
+       */
+
+      app-header-layout {
+        z-index: 9999; /* overrule default */
       }
 
       app-header {
         @apply(--layout-fixed-top);
-        z-index: 1;
+        /*z-index: 1;*/
         background-color: rgba(255, 255, 255, 0.95);
         --app-header-shadow: {
           box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
@@ -79,9 +106,11 @@
         height: 66px;
       }
 
-      dorel-tabs, dorel-tab {
+      dorel-tab {
         --dorel-tab-overlay: {
-          border-bottom: 2px solid var(--app-accent-color);
+          color: red;
+          
+          /*border-bottom: 2px solid var(--theme-color-active);*/
         };
       }
 
@@ -94,13 +123,19 @@
       }
 
       dorel-tab a {
-        display: inline-block;
+        text-decoration: none;
         outline: none;
         padding: 9px 5px;
-        font-size: 13px;
-        font-weight: 500;
-        text-decoration: none;
-        color: var(--app-primary-color);
+        color: var(--theme-primary-text-color);
+        @apply(--theme-ui);
+        /*display: inline-block;*/
+        /*color: var(--app-primary-color);*/
+      }
+
+      .iron-selected a {
+        font-weight: bold;
+        color: yellow;
+        color: var(--theme-brand-color);
       }
 
       .drawer-list {
@@ -122,11 +157,6 @@
 
       app-drawer {
         z-index: 3;
-      }
-
-      iron-pages {
-        max-width: 1440px;
-        margin: 0 auto;
       }
 
       /* small screen */
@@ -158,28 +188,22 @@
     <app-header-layout>
       <app-header id="header" effects="waterfall" fixed="[[smallScreen]]" condenses="[[!smallScreen]]" reveals="[[!smallScreen]]">
 
-        <dorel-header></dorel-header>
-
-        
-        <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
-
-          <wp-collect-menu wp-url="[[ wpUrl ]]" menu-location="main_menu" menu-data="{{ menuData }}">
-
-            <template is="dom-if" if="[[ menuData.length ]]">
-
-              <dorel-tabs selected="[[ page ]]" attr-for-selected="name">
-                <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
-                  <dorel-tab name="[[menuItem.title]]">
-                    <a href="[[menuItem.url]]">[[menuItem.title]]</a>
-                  </dorel-tab>
-                </template>
-              </dorel-tabs>
-
-            </template>
-
-          </wp-collect-menu>
-
-        </div>
+        <dorel-header>
+          
+          <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
+            <wp-collect-menu wp-url="[[ wpUrl ]]" menu-location="main_menu" menu-data="{{ menuData }}">
+              <template is="dom-if" if="[[ menuData.length ]]">
+                <dorel-tabs selected="[[ page ]]" attr-for-selected="name">
+                  <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+                    <dorel-tab name="[[menuItem.title]]">
+                      <a href="[[menuItem.url]]">[[menuItem.title]]</a>
+                    </dorel-tab>
+                  </template>
+                </dorel-tabs>
+              </template>
+            </wp-collect-menu>
+          </div>
+        </dorel-header>
 
         
         
@@ -212,8 +236,6 @@
 
           <dorel-template template-name="{{ index.template }}" template-data="{{ index }}"></dorel-template>
 
-          
-
         </wp-collect-page>
 
       </template>
@@ -221,7 +243,8 @@
     </iron-pages>
 
     <dorel-footer></dorel-footer>
+
   </template>
 
-  <script>window.performance&&performance.mark&&performance.mark("dorel-app - before register"),Polymer({is:"dorel-app",properties:{debug:{type:Boolean,value:!1},page:{type:String,observer:"_pageChanged"},menuData:{type:Array},currentPage:{type:Number},_shouldShowTabs:{computed:"_computeShouldShowTabs(page, smallScreen)"},_shouldRenderTabs:{computed:"_computeShouldRenderTabs(_shouldShowTabs, loadComplete)"},_shouldRenderDrawer:{computed:"_computeShouldRenderDrawer(smallScreen, loadComplete)"}},observers:["_routePageChanged(routeData.page)","_setCurrentPage(page, menuData)"],listeners:{announce:"_onAnnounce","dom-change":"_domChange"},created:function(){window.performance&&performance.mark&&performance.mark("dorel-app.created"),this.removeAttribute("unresolved")},ready:function(){this.debug?this.wpUrl="../../assets/data":this.wpUrl="/wp-json/wp-api-menus/v2",Polymer.RenderStatus.afterNextRender(this,function(){this.listen(window,"online","_notifyNetworkStatus"),this.listen(window,"offline","_notifyNetworkStatus")})},_routePageChanged:function(e){this.page=e||"homepage",Polymer.AppLayout.scroll({top:0,behavior:"silent"}),this.drawerOpened=!1},_pageChanged:function(e,o){null!=e&&"home"==e&&this._pageLoaded(Boolean(o))},_pageLoaded:function(e){this._ensureLazyLoaded(),e&&this.async(function(){this.$.header.resetLayout()},1)},_ensureLazyLoaded:function(){this.loadComplete||Polymer.RenderStatus.afterNextRender(this,function(){this.importHref(this.resolveUrl("../atoms/dorel-lazy-resources.html"),function(){"serviceWorker"in navigator&&navigator.serviceWorker.register("../../service-worker.js"),this._notifyNetworkStatus(),this.loadComplete=!0})})},_notifyNetworkStatus:function(){var e=this.offline;this.offline=!navigator.onLine,(this.offline||!this.offline&&e===!0)&&(this._networkSnackbar||(this._networkSnackbar=document.createElement("dorel-snackbar"),Polymer.dom(this.root).appendChild(this._networkSnackbar)),Polymer.dom(this._networkSnackbar).innerHTML=this.offline?"You are offline":"You are online",this._networkSnackbar.open())},_toggleDrawer:function(){this.drawerOpened=!this.drawerOpened},_showPage404:function(){this.page="404"},_setCurrentPage:function(e,o){o.length&&(this.currentPage=o.find(function(o){return console.log(o),e===o.url.substring(1)&&o.object_id}))},_domChange:function(e){if(window.performance&&performance.mark&&!this.__loggedDomChange){var o=Polymer.dom(e).rootTarget;o.domHost.is.match(this.page)&&(this.__loggedDomChange=!0,performance.mark(o.domHost.is+".domChange"))}},_computeShouldShowTabs:function(e,o){return"undefined"!=typeof e&&!o},_computeShouldRenderTabs:function(e,o){return e&&o},_computeShouldRenderDrawer:function(e,o){return e&&o}});</script>
+  <script>window.performance&&performance.mark&&performance.mark("dorel-app - before register"),Polymer({is:"dorel-app",properties:{debug:{type:Boolean,value:!0},page:{type:String,observer:"_pageChanged"},menuData:{type:Array},currentPage:{type:Number},_shouldShowTabs:{computed:"_computeShouldShowTabs(page, smallScreen)"},_shouldRenderTabs:{computed:"_computeShouldRenderTabs(_shouldShowTabs, loadComplete)"},_shouldRenderDrawer:{computed:"_computeShouldRenderDrawer(smallScreen, loadComplete)"}},observers:["_routePageChanged(routeData.page)","_setCurrentPage(page, menuData)"],listeners:{announce:"_onAnnounce","dom-change":"_domChange"},created:function(){window.performance&&performance.mark&&performance.mark("dorel-app.created"),this.removeAttribute("unresolved")},ready:function(){this.debug?this.wpUrl="../../assets/data":this.wpUrl="//polymer-wp.dev/wp-json",Polymer.RenderStatus.afterNextRender(this,function(){this.listen(window,"online","_notifyNetworkStatus"),this.listen(window,"offline","_notifyNetworkStatus")})},_routePageChanged:function(e){this.page=e||"homepage",Polymer.AppLayout.scroll({top:0,behavior:"silent"}),this.drawerOpened=!1},_pageChanged:function(e,o){null!=e&&"home"==e&&this._pageLoaded(Boolean(o))},_pageLoaded:function(e){this._ensureLazyLoaded(),e&&this.async(function(){this.$.header.resetLayout()},1)},_ensureLazyLoaded:function(){this.loadComplete||Polymer.RenderStatus.afterNextRender(this,function(){this.importHref(this.resolveUrl("../atoms/dorel-lazy-resources.html"),function(){"serviceWorker"in navigator&&navigator.serviceWorker.register("../../service-worker.js"),this._notifyNetworkStatus(),this.loadComplete=!0})})},_notifyNetworkStatus:function(){var e=this.offline;this.offline=!navigator.onLine,(this.offline||!this.offline&&e===!0)&&(this._networkSnackbar||(this._networkSnackbar=document.createElement("dorel-snackbar"),Polymer.dom(this.root).appendChild(this._networkSnackbar)),Polymer.dom(this._networkSnackbar).innerHTML=this.offline?"You are offline":"You are online",this._networkSnackbar.open())},_toggleDrawer:function(){this.drawerOpened=!this.drawerOpened},_showPage404:function(){this.page="404"},_setCurrentPage:function(e,o){o.length&&(this.currentPage=o.find(function(o){return console.log(o),e===o.url.substring(1)&&o.object_id}))},_domChange:function(e){if(window.performance&&performance.mark&&!this.__loggedDomChange){var o=Polymer.dom(e).rootTarget;o.domHost.is.match(this.page)&&(this.__loggedDomChange=!0,performance.mark(o.domHost.is+".domChange"))}},_computeShouldShowTabs:function(e,o){return"undefined"!=typeof e&&!o},_computeShouldRenderTabs:function(e,o){return e&&o},_computeShouldRenderDrawer:function(e,o){return e&&o}});</script>
 </dom-module></body></html>

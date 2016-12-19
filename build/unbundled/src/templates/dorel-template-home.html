@@ -1,50 +1,28 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 </head><body><dom-module id="dorel-template-home">
   <template>
-    <style>
-      .product-overview > paper-card {
-        max-width: 300px;
+    <style is="custom-style shadow">
+      dorel-hero {
+        --dorel-hero-bg: {
+          padding: 3rem 0 16rem;
+        };
       }
+
     </style>
+    
+    <dorel-hero hero-title="[[ templateData.acf.hero_title ]]" hero-content="[[ templateData.acf.hero_content ]]"></dorel-hero>
 
-    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <span>template: {{ templateData.template }}</span>
+    <template is="dom-if" if="[[ templateData.acf.standout.length ]]">
+      <template is="dom-repeat" items="[[ templateData.acf.standout ]]" as="standoutData">
 
-      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
+        <dorel-section-standout class="category-section" standout-data="[[ standoutData ]]" standout-index="[[ index ]]"></dorel-section-standout>
 
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
-          <h1>header {{ component.header_title }}</h1>
-        </template>
-
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
-          <h1>card {{ component.card_title }}</h1>
-        </template>
-        
       </template>
     </template>
 
-    <maxicosi-hero></maxicosi-hero>
-
-    <div class="product-overview">
-      <paper-card heading="Strollers" image="http://placehold.it/350x150/6BA539/000000" alt="Strollers">
-        
-        
-      </paper-card>
-      <paper-card heading="Car seats" image="http://placehold.it/350x150/FF671F/000000" alt="Car seats">
-        
-        
-      </paper-card>
-      <paper-card heading="Travel cots" image="http://placehold.it/350x150/CE0058/000000" alt="Travel Cots">
-        
-        
-      </paper-card>
-    </div>
-
   </template>
 
-
-  <script>Polymer({is:"dorel-template-home",properties:{templateData:{type:String}},_isPageComponent:function(e,t){return e===t}});</script>
+  <script>Polymer({is:"dorel-template-home",properties:{templateData:{type:String}},ready:function(e,t){return e===t}});</script>
 </dom-module>
 </body></html>
