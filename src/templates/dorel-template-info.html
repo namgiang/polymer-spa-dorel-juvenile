@@ -13,6 +13,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
 <!-- make this custom element rather than part of atom setup -->
 <link rel="import" href="../organisms/dorel-section-standout.html">
@@ -23,6 +28,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="dorel-template-info">
   <template>
     <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      /* 
+       * reusable classes 
+       */
+       .flexchild {
+         @apply(--layout-flex);
+       }
+       .flex2child {
+         @apply(--layout-flex-2);
+       }
+       .flex3child {
+         @apply(--layout-flex-3);
+       }
+      p {
+        @apply(--theme-bodycopy);
+      }
+      .display2 {
+        font-size: var(--theme-size-display2);
+        @apply(--theme-heading);
+      }
+      /* 
+       * this component classes 
+       */
+
       dorel-section-standout.bg-color-background {
         --dorel-section-standout-bg: {
           background-color: var(--theme-color-background);
@@ -40,13 +68,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .text-center {
         text-align: center;
       }
-      .display1 {
-        font-size: var(--theme-size-display1);
-        @apply(--theme-heading);
-      }
       .button-submit-form {
         margin-top: 1.5rem;
       }
+      .section-about-hero {
+        background-color: var(--theme-brand-color);
+      }
+      .section-about-hero {
+        --dorel-section-standout-bg: {
+          min-height: 540px; /* temporary */
+          background-image: url('../../assets/images/child-father-boat.jpg');
+          background-size: cover;
+          background-position: 0 -230px;;
+          background-repeat: no-repeat;
+        };
+      }
+      .section-about-careers {
+        --dorel-section-standout-bg: {
+          min-height: 540px; /* temporary */
+          background-image: url('../../assets/images/office-space-6.jpg'); /* office-space-6, office-space-3 */
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        };
+      }
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
+      }
+      .hero-standout-content {
+        text-align: right;
+        margin: 70px;
+        padding: 2rem 3rem;
+      }
+      .hero-standout-content .hero-standout-headline {
+        font-size: 2.8rem;
+        color: var(--theme-brand-color-royal-blue);
+      }
+      .hero-standout-headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
+      }
+      .career-standout-headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+      }
+      .section-contact {
+        --dorel-section-standout-skewed-bg: {
+          /*background-color: var(--theme-brand-color-accent-green);*/
+          background-color: white;
+        };
+      }
+      .section-contact-column {
+        --dorel-section-standout-column: {
+          padding-top: 2.5rem;
+          padding-bottom: 3.5rem;
+        };
+      }
+      .section-contact-wide-card {
+        width: 60%;
+        @apply(--shadow-elevation-4dp);
+      }
+      .contact-information {
+        background-color: var(--theme-brand-color-royal-blue);
+      }
+      .career-standout-content {
+        margin: 70px;
+        padding: 2rem 3rem;
+        background-color: white;
+        @apply(--shadow-elevation-12dp);
+      }
+
 
     </style>
 
@@ -66,6 +159,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </template>
     </template-->
 
+    <dorel-section-standout class="section-about-hero">
+      <dorel-section-standout-column>
+        <!-- ... -->
+      </dorel-section-standout-column>
+      <dorel-section-standout-column>
+        <div class="hero-standout-content">
+          <h1 class="hero-standout-headline">Helping new parents turn beginnings into stories</h1>
+        </div>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
+    <dorel-section-standout>
+      <dorel-section-standout-column>
+        <div class="standout-content">
+          <h1 class="hero-standout-headline">The best stories start with strong foundations.</h1>
+          <p>A child’s development into the world happens between zero and three.
+          That fundamental journey begins with a critical one – the one home from the hospital.</p>
+          <p>We’ve always been part of this pivotal moment, and we believe in doing everything we can to help
+          parents at the start of creating a new life.</p>
+          <p>Like an embrace that carries you before you can walk, or a nest on the transition into flight,
+          millions of new beginnings have started with Maxi-Cosi.</p>
+        </div>
+      </dorel-section-standout-column>
+      <dorel-section-standout-column>
+        <!-- ... -->
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
+    <dorel-section-standout class="section-contact">
+      <dorel-section-standout-column class="section-contact-column" centered>
+        <div class="section-contact-wide-card">
+          <div class="layout horizontal">
+            <div class="flex2child">
+              <h2 class="display2">Get in touch</h2>
+              <p>Do you have a question for or about Maxi-Cosi?</p>
+              <form class="form-send-message">
+                <paper-input required label="Name" allowed-pattern="[a-zA-Z]"></paper-input>
+                <paper-input required label="Surname" allowed-pattern="[a-zA-Z]"></paper-input>
+                <paper-input required label="E-mail"></paper-input>
+                <paper-input label="Phone"></paper-input>
+
+                <paper-textarea label="Textarea label" rows="3"></paper-textarea>
+                <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
+                </paper-icon-button>
+              </form>
+            </div>
+            <div class="flexchild contact-information">
+              <h2 class="display2">Contact information</h2>
+              <ul class="not-enum">
+                <li><iron-icon icon="communication:phone" prefix></iron-icon>Phone: ...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
     <dorel-section-standout class="bg-color-background">
       <dorel-section-standout-column class="subscribe" centered>
         <div class="container-form-subscribe layout vertical">
@@ -84,6 +234,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
             </form>
           </div>
+        </div>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
+    <dorel-section-standout class="section-about-careers">
+      <dorel-section-standout-column>
+        <!-- ... -->
+      </dorel-section-standout-column>
+      <dorel-section-standout-column>
+        <div class="standout-content career-standout-content">
+          <h1 class="career-standout-headline">Careers</h1>
+          <p>Look apply etc.</p>
         </div>
       </dorel-section-standout-column>
     </dorel-section-standout>
