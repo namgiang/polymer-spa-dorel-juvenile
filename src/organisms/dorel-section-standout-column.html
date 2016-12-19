@@ -1,0 +1,80 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!--
+```html
+<dorel-section-standout>
+</dorel-section-standout>
+```
+
+Attribute | Description         | Default
+----------|---------------------|----------------------------------------
+`centered` | Will make the element center it's inner content. | Not centered
+
+## Styling
+
+Mixin | Description | Default
+------|-------------|----------
+`--dorel-section-standout-column` | Applies to the standout column | {}
+
+-->
+
+<dom-module id="dorel-section-standout-column">
+  <template>
+    <style is="custom-style">
+      :host {
+        @apply(--layout-flex);
+      }
+      .standout-column {
+        @apply(--layout-flex);
+        @apply(--layout-center); /* vertically align */
+        @apply(--dorel-section-standout-column);
+      }
+      .standout-column-center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+    </style>
+
+    <template is="dom-if" if="{{centered}}"  as="component">
+      <div class="standout-column standout-column-center-justified">
+        <content></content>
+      </div>
+    </template>
+
+    <template is="dom-if" if="{{!centered}}"  as="component">
+      <div class="standout-column">
+        <content></content>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-standout-column',
+
+      properties: {
+        /**
+         * Centers the column
+         */
+        centered: {
+          type: Boolean,
+          value: false
+        }
+      }
+
+    });
+
+  </script>
+
+</dom-module>

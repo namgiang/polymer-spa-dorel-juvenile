@@ -8,52 +8,46 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
 
 <link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
 
-<dom-module id="dorel-cta">
+<dom-module id="dorel-back-to-top">
 
   <template>
 
-    <style is="custom-style" include="theme-maxicosi-shared-styles">
-      [class^="theme-cta-"] {
-        font-size: 16px;
-        line-height: 20px;
-        padding: 15px 22px 16px;
-        text-decoration: none;
+    <style is="custom-style" include="iron-flex iron-flex-alignment theme-maxicosi-shared-styles">
+      .back-to-top {
+        width: 56px;
+        height: 56px;
+        background-color: var(--theme-brand-color-accent-dark-grey);
         border-radius: var(--theme-border-radius-large);
-        border-width: 2px;
-        border-style: solid;
       }
-      [class*="-primary"] {
+      .back-to-top:hover {
+        cursor: pointer;
+      }
+      .back-to-top iron-icon {
         color: white;
-        border-color: var(--theme-color-cta);
-        background-color: var(--theme-color-cta);
       }
-      [class*="-secondary"] {
-        color: var(--theme-brand-color-accent-dark-grey);
-        border-color: var(--theme-brand-color-accent-medium-grey);
-      }
-      .light {
-        color: white;
-        border-color: rgba(255, 255, 255, 0.3);
+      .flex-center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-center);
       }
     </style>
 
-    <a href="{{href}}" class="theme-cta-primary">
-      <content></content>
-    </a>
+    <div class="layout horizontal center center-justified">
+      <div class="back-to-top flex-center-justified">
+        <iron-icon icon="editor:vertical-align-top" class=""></iron-icon>
+      </div>
+    </div>
 
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-cta',
-      properties: {
-        href: {
-          type: String
-        }
-      },
+      is: 'dorel-back-to-top',
     });
   </script>
 
