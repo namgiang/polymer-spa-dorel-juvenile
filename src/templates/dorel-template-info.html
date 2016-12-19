@@ -9,11 +9,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<!-- make this custom element rather than part of atom setup -->
+<link rel="import" href="../organisms/dorel-section-standout.html">
+<link rel="import" href="../organisms/dorel-section-standout-column.html">
+
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
 <dom-module id="dorel-template-info">
   <template>
-    <style></style>
-    
-    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      dorel-section-standout.bg-color-background {
+        --dorel-section-standout-bg: {
+          background-color: var(--theme-color-background);
+        };
+      }
+      .subscribe {
+        --dorel-section-standout-column: {
+          /*max-width: 700px;*/
+          padding-bottom: 2rem;
+        };
+      }
+      .container-form-subscribe {
+        padding: var(--theme-component-space-inner);
+      }
+      .text-center {
+        text-align: center;
+      }
+      .display1 {
+        font-size: var(--theme-size-display1);
+        @apply(--theme-heading);
+      }
+      .button-submit-form {
+        margin-top: 1.5rem;
+      }
+
+    </style>
+
+    <!--template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
       <span>template: {{ templateData.template }}</span>
       
       <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
@@ -27,7 +64,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
 
       </template>
-    </template>
+    </template-->
+
+    <dorel-section-standout class="bg-color-background">
+      <dorel-section-standout-column class="subscribe" centered>
+        <div class="container-form-subscribe layout vertical">
+          <div class="text-center">
+            <p class="display1">Get the latest news</p>
+          </div>
+          <div>
+            <form class="form-subscribe">
+              <paper-input label="email@address.com" id="inputWithButton">
+                <iron-icon icon="mail" prefix></iron-icon>
+                <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
+                </paper-icon-button>
+              </paper-input>
+              <div class="text-center">
+                <paper-button class="button-submit-form" raised>Raised button</paper-button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </dorel-section-standout-column>
+    </dorel-section-standout>
+
   </template>
 
   <script>
@@ -37,6 +97,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         templateData: {
           type: String
         }
+      },
+
+      clearInput: function() {
+        document.getElementById('inputWithButton').value = '';
       },
 
       _isPageComponent: function(response, cname) {
