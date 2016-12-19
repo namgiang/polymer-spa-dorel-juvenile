@@ -26,6 +26,7 @@ Attribute | Description         | Default
 Mixin | Description | Default
 ------|-------------|----------
 `--dorel-section-standout` | Applies to the standout section | {}
+`--dorel-section-standout-bg` | Applies to the standout section bg (not skewed) | {}
 `--dorel-section-standout-skewed-bg` | Applies to the background color. | background-color: #ccc; {}
 
 -->
@@ -53,6 +54,9 @@ Mixin | Description | Default
         width: 100%;
         @apply(--dorel-section-standout);
       }
+      .bg-standout {
+        @apply(--dorel-section-standout-bg);
+      }
       .bg-clr-brand {
         background-color: #ccc;
         @apply(--dorel-section-standout-skewed-bg);
@@ -66,7 +70,7 @@ Mixin | Description | Default
       }
     </style>
 
-    <section class="standout">
+    <section class="standout bg-standout">
 
       <template is="dom-if" if="{{skewed}}"  as="component">
         <div class="bg-skewed bg-clr-brand">
@@ -101,14 +105,8 @@ Mixin | Description | Default
           type: Boolean,
           value: false
         }
-      },
-
-      /* if (this.skewed) */
-
-      _isSkewed: function(skewTest) {
-        console.log(skewTest);
-        // return ...;
       }
+
     });
 
   </script>
