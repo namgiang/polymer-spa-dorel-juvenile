@@ -9,7 +9,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
-
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
@@ -21,15 +20,7 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       /* 
        * reusable classes 
        */
-       .flexchild {
-         @apply(--layout-flex);
-       }
-       .flex2child {
-         @apply(--layout-flex-2);
-       }
-       .flex3child {
-         @apply(--layout-flex-3);
-       }
+
       .display2 {
         font-size: var(--theme-size-display2);
         @apply(--theme-heading);
@@ -70,7 +61,7 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       .section-about-hero {
         background-color: var(--theme-brand-color);
       }
-      .section-about-careers {
+      .section-careers {
         --dorel-layout-section-bg: {
           min-height: 540px; /* temporary */
           background-image: url('../../assets/images/office-space-6.jpg'); /* office-space-6, office-space-3 */
@@ -87,7 +78,7 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       dorel-column-content p {
         @apply(--theme-bodycopy);
       }
-      .career-standout-headline {
+      .headline {
         font-size: 2em;
         @apply(--theme-heading);
       }
@@ -103,25 +94,9 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
           padding-bottom: 3.5rem;
         };
       }
-      .section-contact-wide-card {
-        width: 60%;
-        @apply(--shadow-elevation-4dp);
-      }
-      .contact-information {
-        background-color: var(--theme-brand-color-royal-blue);
-      }
-      .career-standout-content {
-        margin: 70px;
-        padding: 2rem 3rem;
-        background-color: white;
-        @apply(--shadow-elevation-12dp);
-      }
-      .contact-content {
-        padding: 1.5rem 3rem 3rem;
-      }
-
-
     </style>
+
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
 
     <!--template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
       <span>template: {{ templateData.template }}</span>
@@ -148,7 +123,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 
     <dorel-layout-section>
       <dorel-layout-section-column>
-
         <!--
         dorel-column-content: 
         See description in component file for description of this element
@@ -162,66 +136,20 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
           <p>Like an embrace that carries you before you can walk, or a nest on the transition into flight,
           millions of new beginnings have started with Maxi-Cosi.</p>
         </dorel-column-content>
-
       </dorel-layout-section-column>
       <dorel-layout-section-column>
-        <p>testing</p>
+        <dorel-column-content>
+          <p>second column</p>
+        </dorel-column-content>
       </dorel-layout-section-column>
     </dorel-layout-section>
 
-
-    <!--section class="standout">
-      <div class="horizontal">
-        <div class="standout-column ">
-          <div class="standout-content">
-            <h1 class="hero-standout-headline">The best stories start with strong foundations.</h1>
-            <p>A child’s development into the world happens between zero and three.
-            That fundamental journey begins with a critical one – the one home from the hospital.</p>
-            <p>We’ve always been part of this pivotal moment, and we believe in doing everything we can to help
-            parents at the start of creating a new life.</p>
-            <p>Like an embrace that carries you before you can walk, or a nest on the transition into flight,
-            millions of new beginnings have started with Maxi-Cosi.</p>
-          </div>
-        </div>
-        <div class="standout-column">
-        </div>
-      </div>
-    </section-->
-
-    <section class="standout">
-      <div class="horizontal">
-        <div class="section-contact">
-          <div class="section-contact-column" centered>
-            <div class="standout-column">
-              <div class="section-contact-wide-card">
-                <div class="layout horizontal">
-                  <div class="flex2child contact-content">
-                    <h2 class="display2">Get in touch</h2>
-                    <p>Do you have a question for or about Maxi-Cosi?</p>
-                    <form class="form-send-message">
-                      <paper-input required label="Name" allowed-pattern="[a-zA-Z]"></paper-input>
-                      <paper-input required label="Surname" allowed-pattern="[a-zA-Z]"></paper-input>
-                      <paper-input required label="E-mail"></paper-input>
-                      <paper-input label="Phone"></paper-input>
-
-                      <paper-textarea label="Textarea label" rows="3"></paper-textarea>
-                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
-                      </paper-icon-button>
-                    </form>
-                  </div>
-                  <div class="flexchild contact-content contact-information">
-                    <h2 class="display2">Contact information</h2>
-                    <ul class="not-enum">
-                      <li><iron-icon icon="communication:phone" prefix></iron-icon>Phone: ...</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <dorel-layout-section>
+      <dorel-layout-section-column><!-- centered$="{{isAtLeast800px}}" -->
+        <dorel-card-contact>
+        </dorel-card-contact>
+      </dorel-layout-section-column>
+    </dorel-layout-section>
 
     <section class="standout">
       <div class="horizontal">
@@ -251,21 +179,19 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       </div>
     </section>
 
-    <section class="standout">
-      <div class="horizontal">
-        <div class="section-about-careers">
-          <div class="standout-column">
-            <!-- ... -->
+    <dorel-layout-section class="section-careers">
+      <dorel-layout-section-column>
+        <!-- ... -->
+      </dorel-layout-section-column>
+      <dorel-layout-section-column>
+        <dorel-column-content><!--  make this a standout column content (white bg, fly overlay, in front of image) -->
+          <div class="">
+            <h1 class="headline">Careers</h1>
+            <p>Look apply etc.</p>
           </div>
-          <div class="standout-column">
-            <div class="standout-content career-standout-content">
-              <h1 class="career-standout-headline">Careers</h1>
-              <p>Look apply etc.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+        </dorel-column-content>
+      </dorel-layout-section-column>
+    </dorel-layout-section>
 
   </template>
 
