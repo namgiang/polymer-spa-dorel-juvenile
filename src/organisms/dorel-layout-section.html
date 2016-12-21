@@ -1,0 +1,121 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+
+<!--
+if using `skewed` the background will get a skewed background.
+
+```html
+<dorel-layout-section>
+</dorel-layout-section>
+```
+
+Attribute | Description         | Default
+----------|---------------------|----------------------------------------
+`skewed` | Will make the background of the element skewed. | Not skewed
+
+## Styling
+
+Mixin | Description | Default
+------|-------------|----------
+`--dorel-layout-section` | Applies to the standout section | {}
+`--dorel-layout-section-bg` | Applies to the standout section bg (not skewed) | {}
+`--dorel-layout-section-skewed-bg` | Applies to the background color. | background-color: #ccc; {}
+
+-->
+
+<dom-module id="dorel-layout-section">
+  <template>
+    <style is="custom-style">
+      :host {
+        height: 100%;
+      }
+      /* 
+       * iron-flex reusable classes 
+       */
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      .center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+      /* 
+       * custom classes 
+       */
+      .standout {
+        width: 100%;
+        @apply(--dorel-layout-section);
+      }
+      .bg-standout {
+        @apply(--dorel-layout-section-bg);
+      }
+      .bg-clr-brand {
+        background-color: #ccc;
+        @apply(--dorel-layout-section-skewed-bg);
+      }
+      .bg-skewed {
+        transform: skewY(5deg);
+        margin-top: -75px; /* compensate for skewed background */
+      }
+      .bg-skewed-unskew {
+        transform: skewY(-5deg);
+      }
+      .standout-content {
+        margin-top: 30px;
+        padding: 3rem 7rem;
+      }
+    </style>
+
+    <section class="standout bg-standout">
+
+      <template is="dom-if" if="{{skewed}}"  as="component">
+        <div class="bg-skewed bg-clr-brand">
+          <div class="bg-skewed-unskew">
+            <div class="horizontal">
+              <content></content>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if" if="{{!skewed}}"  as="component">
+        <div class="horizontal">
+          <content></content>
+        </div>
+      </template>
+
+    </section>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-layout-section'
+    });
+
+  </script>
+
+</dom-module>
