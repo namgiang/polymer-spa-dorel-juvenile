@@ -1,48 +1,51 @@
 <!--
 @license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/dorel/theme-dorel-shared-styles.html">
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
 
 <!--
 ```html
 <dorel-column-content>
 </dorel-column-content>
 ```
+
+# Description
+Is always used to represent tekst from a wysiwyg editor. 
+It will have the correct paddings and spacings applied 
+to it based on the screen size.
+
+So typically you'd only have <h1>, <h2>, <p> tags in it. 
+But also am image is possible in this bodycopy.
+
 -->
 
 <dom-module id="dorel-column-content">
   <template>
     <style is="custom-style">
       /* 
-       * iron-flex reusable classes 
+       * Only style horizontal spacing (padding-left, padding-right),
+       * vertical spacing (padding-top, padding-bottom) is mainly 
+       * done by section spacing in other component
        */
-      .horizontal {
-        @apply(--layout-horizontal);
-      }
-      .flex {
-        @apply(--layout-flex);
-      }
       .column-content {
-        margin-top: 30px;
-        padding: 3rem 7rem;
+        padding: 1rem var(--theme-component-space-inner);
       }
-      .column-content p {
-        @apply(--theme-bodycopy);
+      .column-content[wide-content] {
+        padding: 1rem  var(--theme-component-space-inner-medium);
+      }
+      .column-content[layout-wide-extra] {
+        padding: 1rem var(--theme-component-space-inner-large);
       }
     </style>
 
-    <section class="layout horizontal">
-      <div class="flex column-content">
-        <content></content>
-      </div>
-    </section>
+    <iron-media-query query="(min-width:800px) and (max-width:1200px)" query-matches="{{isBetween800_1200px}}"></iron-media-query>
+    <iron-media-query query="(min-width:1200px)" query-matches="{{isAtLeast1200px}}"></iron-media-query>
+
+    <div class="column-content" layout-wide$="{{isBetween800_1200px}}" layout-wide-extra$="{{isAtLeast1200px}}">
+      <content></content>
+    </div>
 
   </template>
 
@@ -50,17 +53,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     Polymer({
       is: 'dorel-column-content',
-
-      properties: {
-        /**
-         * Centers the column
-         */
-        centered: {
-          type: Boolean,
-          value: false
-        }
-      }
-
     });
 
   </script>
