@@ -4,11 +4,8 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/paper-styles/shadow.html">
-
 <!--
-if using `skewed` the background will get a skewed background.
+
 
 ```html
 <dorel-layout-section>
@@ -26,7 +23,6 @@ Mixin | Description | Default
 `--dorel-layout-section` | Applies to the standout section | {}
 `--dorel-layout-section-bg` | Applies to the standout section bg (not skewed) | {}
 `--dorel-layout-section-skewed-bg` | Applies to the background color. | background-color: #ccc; {}
-
 -->
 
 <dom-module id="dorel-layout-section">
@@ -35,18 +31,11 @@ Mixin | Description | Default
       :host {
         height: 100%;
       }
-      /* 
-       * iron-flex reusable classes 
-       */
-      .horizontal {
-        @apply(--layout-horizontal);
+      .container-content {
+        @apply(--layout-vertical);
       }
-      .flex {
-        @apply(--layout-flex);
-      }
-      .vertical-center {
+      .container-content[wide-layout] {
         @apply(--layout-horizontal);
-        @apply(--layout-center);
       }
       .theme-headline {
         font-size: var(--theme-size-headline);
@@ -63,40 +52,42 @@ Mixin | Description | Default
         width: 100%;
         @apply(--dorel-layout-section);
       }
-      .bg-standout {
+      .standout-bg {
         @apply(--dorel-layout-section-bg);
       }
-      .bg-clr-brand {
-        background-color: #ccc;
+      .standout-skew-bg {
+        transform: skewY(5deg);
+        background-color: #efefef;
+        margin-top: -75px; /* compensate for skewed background */
         @apply(--dorel-layout-section-skewed-bg);
       }
-      .bg-skewed {
-        transform: skewY(5deg);
-        margin-top: -75px; /* compensate for skewed background */
-      }
-      .bg-skewed-unskew {
+      .standout-skewed-unskew {
         transform: skewY(-5deg);
-      }
-      .standout-content {
-        margin-top: 30px;
-        padding: 3rem 7rem;
       }
     </style>
 
-    <section class="standout bg-standout">
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
 
+    <section class="standout standout-bg">
+
+      <!-- 
+      TODO:
+      - Remove duplicate code in the conditional. 
+        Make the conditional in a way that the extra div's are 
+        appended around the inner content.
+      -->
       <template is="dom-if" if="{{skewed}}"  as="component">
-        <div class="bg-skewed bg-clr-brand">
-          <div class="bg-skewed-unskew">
-            <div class="horizontal">
+        <div class="standout-skew-bg">
+          <div class="standout-skewed-unskew">
+            <div class="container-content" layoutwide$="{{isAtLeast800px}}">
               <content></content>
             </div>
           </div>
         </div>
       </template>
 
-      <template is="dom-if" if="{{!skewed}}"  as="component">
-        <div class="horizontal">
+      <template is="dom-if" if="{{!skewed}}" as="component">
+        <div class="container-content" wide-layout$="{{isAtLeast800px}}">
           <content></content>
         </div>
       </template>
@@ -106,11 +97,18 @@ Mixin | Description | Default
   </template>
 
   <script>
-
     Polymer({
-      is: 'dorel-layout-section'
+      is: 'dorel-layout-section',
+      properties: {
+        /**
+         * Skewes the background of the section
+         */
+        skewed: {
+          type: Boolean,
+          value: false
+        }
+      }
     });
-
   </script>
 
 </dom-module>
