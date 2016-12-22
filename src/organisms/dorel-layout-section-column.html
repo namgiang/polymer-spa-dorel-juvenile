@@ -1,18 +1,13 @@
 <!--
 @license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <!--
 ```html
-<dorel-section-standout>
-</dorel-section-standout>
+<dorel-layout-section-column>
+</dorel-layout-section-column>
 ```
 
 Attribute | Description         | Default
@@ -23,20 +18,20 @@ Attribute | Description         | Default
 
 Mixin | Description | Default
 ------|-------------|----------
-`--dorel-section-standout-column` | Applies to the standout column | {}
+`--dorel-layout-section-column` | Applies to the standout column | {}
 
 -->
 
-<dom-module id="dorel-section-standout-column">
+<dom-module id="dorel-layout-section-column">
   <template>
     <style is="custom-style">
       :host {
-        @apply(--layout-flex);
+        width: 100%;
       }
       .standout-column {
         @apply(--layout-flex);
         @apply(--layout-center); /* vertically align */
-        @apply(--dorel-section-standout-column);
+        @apply(--dorel-layout-section-column);
       }
       .standout-column-center-justified {
         @apply(--layout-horizontal);
@@ -50,7 +45,7 @@ Mixin | Description | Default
       </div>
     </template>
 
-    <template is="dom-if" if="{{!centered}}"  as="component">
+    <template is="dom-if" if="{{!centered}}" as="component">
       <div class="standout-column">
         <content></content>
       </div>
@@ -61,7 +56,7 @@ Mixin | Description | Default
   <script>
 
     Polymer({
-      is: 'dorel-section-standout-column',
+      is: 'dorel-layout-section-column',
 
       properties: {
         /**
