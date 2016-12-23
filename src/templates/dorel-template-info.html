@@ -46,9 +46,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       .text-center {
         text-align: center;
       }
-      .button-submit-form {
-        margin-top: 1.5rem;
-      }
       dorel-hero {
         --dorel-hero-bg: {
           min-height: 540px; /* temporary */
@@ -60,15 +57,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       }
       .section-about-hero {
         background-color: var(--theme-brand-color);
-      }
-      .section-careers {
-        --dorel-layout-section-bg: {
-          min-height: 540px; /* temporary */
-          background-image: url('../../assets/images/office-space-6.jpg'); /* office-space-6, office-space-3 */
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-        };
       }
       .column-headline {
         font-size: 2em;
@@ -98,30 +86,10 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 
     <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
 
-    <!--template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <span>template: {{ templateData.template }}</span>
-      
-      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
-        
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'header') }}">
-          <h1>header {{ component.header_title }}</h1>
-        </template>
-
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
-          <h1>card {{ component.card_title }}</h1>
-        </template>
-
-      </template>
-    </template-->
-
-    <!-- hero-title: [[ templateData.acf.hero_title ]] -->
-    <!-- hero-content: [[ templateData.acf.hero_content ]] -->
     <dorel-hero
       hero-title="[[ templateData.acf.hero_title ]]" 
       hero-content="">
     </dorel-hero>
-
-
 
     <dorel-layout-section>
       <dorel-layout-section-column>
@@ -150,8 +118,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       </dorel-layout-section-column>
     </dorel-layout-section>
 
-
-
     <dorel-layout-section>
       <dorel-layout-section-column>
         <dorel-column-content>
@@ -173,7 +139,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       </dorel-layout-section-column>
     </dorel-layout-section>
 
-
     <dorel-layout-section>
       <dorel-layout-section-column>
         <dorel-column-content>
@@ -188,7 +153,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
         </dorel-column-content>
       </dorel-layout-section-column>
     </dorel-layout-section>
-
 
     <dorel-layout-section>
       <dorel-layout-section-column>
@@ -208,56 +172,95 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
       </dorel-layout-section-column>
     </dorel-layout-section>
 
-
-
     <dorel-layout-section>
-      <dorel-layout-section-column><!-- centered$="{{isAtLeast800px}}" -->
+      <dorel-layout-section-column centered>
         <dorel-card-contact>
         </dorel-card-contact>
       </dorel-layout-section-column>
     </dorel-layout-section>
 
-    <section class="standout">
-      <div class="horizontal">
-        <div class="bg-color-background">
-          <div class="subscribe" centered>
-            <div class="standout-column">
-              <div class="container-form-subscribe layout vertical">
-                <div class="text-center">
-                  <p class="display1">Get the latest news</p>
-                </div>
-                <div>
-                  <form class="form-subscribe">
-                    <paper-input label="email@address.com" id="inputWithButton">
-                      <iron-icon icon="mail" prefix></iron-icon>
-                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
-                      </paper-icon-button>
-                    </paper-input>
-                    <div class="text-center">
-                      <paper-button class="button-submit-form" raised>Raised button</paper-button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <dorel-layout-section class="section-careers">
-      <dorel-layout-section-column>
-        <!-- ... -->
-      </dorel-layout-section-column>
-      <dorel-layout-section-column>
-        <dorel-column-content><!--  make this a standout column content (white bg, fly overlay, in front of image) -->
-          <div class="">
-            <h1 class="headline">Careers</h1>
-            <p>Look apply etc.</p>
-          </div>
-        </dorel-column-content>
+    <dorel-layout-section>
+      <dorel-layout-section-column centered>
+        <dorel-subscribe-mailinglist headline="Get the latest news">
+        </dorel-subscribe-mailinglist>
       </dorel-layout-section-column>
     </dorel-layout-section>
+
+
+    <!-- One column hero section (defaults to the left side) -->
+    <dorel-hero 
+      hero-title="[[ templateData.acf.hero_title ]]"
+      hero-content=""
+      class="section-careers">
+      <style>
+        .section-careers {
+          --dorel-hero-bg: {
+            background-image: url('../../assets/images/office-space-3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+          };
+        }
+      </style>
+      <dorel-hero-column
+        hero-column-title="Default one column"
+        call-to-action-href="#">
+        <p>This is the default one column layout for the hero section.</p>
+      </dorel-hero-column>
+    </dorel-hero>
+
+    <!-- Two column hero section (not more than two columns are allowed...)
+    <dorel-hero 
+      hero-title="[[ templateData.acf.hero_title ]]"
+      hero-content=""
+      class="section-careers">
+      <style>
+        .section-careers {
+          --dorel-hero-bg: {
+            background-image: url('../../assets/images/office-space-6.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+          };
+        }
+      </style>
+      <dorel-hero-column
+        hero-column-title="Column title"
+        call-to-action-href="#">
+        <p>Example of the a two column hero section</p>
+      </dorel-hero-column>
+      <dorel-hero-column
+        hero-column-title="Another column title"
+        call-to-action-href="#">
+        <p>This would be the second column</p>
+      </dorel-hero-column>
+    </dorel-hero-->
+
+    <!-- Two column hero section (not more than two columns are allowed...) -->
+    <dorel-hero 
+      hero-title="[[ templateData.acf.hero_title ]]"
+      hero-content=""
+      class="section-careers"
+      align-right>
+      <style>
+        .section-careers {
+          --dorel-hero-bg: {
+            background-image: url('../../assets/images/office-space-6.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+          };
+        }
+      </style>
+      
+      <dorel-hero-column
+        hero-column-title="Right hero column example"
+        call-to-action-href="#"
+        align-right>
+        <p>This would be a column</p>
+      </dorel-hero-column>
+    </dorel-hero>
+
 
   </template>
 

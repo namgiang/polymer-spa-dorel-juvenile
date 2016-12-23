@@ -22,14 +22,13 @@ if using `skewed` the background will get a skewed background.
   <template>
 
     <style>
-      :host {
-        width: 100%; /* full width for mobile */
-        @apply(--layout-flex);
-      }
       .hero-column-standout {
         background-color: white;
         @apply(--shadow-elevation-12dp);
         margin: var(--theme-component-space-inner); /* outer spacing so image of section is visible */
+      }
+      .hero-column-standout[small-layout] {
+        @apply(--layout-flex); /* makes it full-width on smaller screens */
       }
       .hero-column-standout[wide-layout] {
         width: auto;
@@ -58,7 +57,7 @@ if using `skewed` the background will get a skewed background.
 
     <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
 
-    <div class="hero-column-standout hero-standout-content hero-column-standout-vertical" wide-layout$="{{isAtLeast800px}}">
+    <div class="hero-column-standout hero-standout-content hero-column-standout-vertical" small-layout$={{!isAtLeast800px}} wide-layout$="{{isAtLeast800px}}">
       <div>
         <h1 hidden$="[[!hero-column-title]]" class="theme-headline">[[hero-column-title]]</h1>
       </div>

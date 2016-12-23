@@ -43,16 +43,17 @@ Mixin | Description | Default
       .dorel-hero-section[wide-layout] {
         min-heigth: 540px;
       }
-      /* optional class
-       * - centers the inner column vertically 
-       */
-      .vertical-center-inner-column {
+      .dorel-hero-section[align-default] {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
+      .dorel-hero-section[align-right] {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
     </style>
 
-    <section class="dorel-hero-section vertical-center-inner-column hero-bg" wide-layout$="{{isAtLeast800px}}">
+    <section class="dorel-hero-section hero-bg" align-default$="[[!alignRight]]" align-right$="[[alignRight]]" wide-layout$="{{isAtLeast800px}}">
       <content></content>
     </section>
 
@@ -62,7 +63,12 @@ Mixin | Description | Default
 
     Polymer({
       is: 'dorel-hero',
-
+      properties: {
+        alignRight: {
+          type: Boolean,
+          value: false
+        }
+      }
     });
 
   </script>
