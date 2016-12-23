@@ -6,11 +6,11 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 
-
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
 <link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
+<link rel="import" href="../organisms/dorel-column-content.html">
 
 </head><body><dom-module id="dorel-template-info">
   <template>
@@ -64,7 +64,7 @@
       dorel-hero {
         --dorel-hero-bg: {
           min-height: 540px; /* temporary */
-          background-image: url('../../assets/images/child-father-boat.jpg');
+          /*background-image: url('../../assets/images/child-father-boat.jpg');*/
           background-size: cover;
           background-position: 0 -230px;;
           background-repeat: no-repeat;
@@ -129,113 +129,31 @@
       .contact-content {
         padding: 1.5rem 3rem 3rem;
       }
-
+    .headline-custom {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
+      }
     </style>
 
-    
-
-    
-    
-    <dorel-hero hero-title="[[ templateData.acf.hero_title ]]" hero-content="">
-    </dorel-hero>
-
-    <section class="standout">
-      <div class="horizontal">
-        <div class="standout-column">
-          <div class="standout-content">
-            <h1 class="hero-standout-headline">The best stories start with strong foundations.</h1>
-            <p>A child’s development into the world happens between zero and three.
-            That fundamental journey begins with a critical one – the one home from the hospital.</p>
-            <p>We’ve always been part of this pivotal moment, and we believe in doing everything we can to help
-            parents at the start of creating a new life.</p>
-            <p>Like an embrace that carries you before you can walk, or a nest on the transition into flight,
-            millions of new beginnings have started with Maxi-Cosi.</p>
-          </div>
-        </div>
-        <div class="standout-column">
+    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
           
-        </div>
-      </div>
-    </section>
+          <dorel-hero hero-bg="[[ component.hero_image ]]">
+          </dorel-hero>
+        </template>
 
-    <section class="standout">
-      <div class="horizontal">
-        <div class="section-contact">
-          <div class="section-contact-column" centered="">
-            <div class="standout-column">
-              <div class="section-contact-wide-card">
-                <div class="layout horizontal">
-                  <div class="flex2child contact-content">
-                    <h2 class="display2">Get in touch</h2>
-                    <p>Do you have a question for or about Maxi-Cosi?</p>
-                    <form class="form-send-message">
-                      <paper-input required="" label="Name" allowed-pattern="[a-zA-Z]"></paper-input>
-                      <paper-input required="" label="Surname" allowed-pattern="[a-zA-Z]"></paper-input>
-                      <paper-input required="" label="E-mail"></paper-input>
-                      <paper-input label="Phone"></paper-input>
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'column_content') }}">
+          <dorel-column-content>
+            <h1 class="headline-custom">[[ component.column_content_title ]]</h1>
+            <dorel-safe-html html="[[ component.column_content_text ]]"></dorel-safe-html>
+          </dorel-column-content>
+        </template>
 
-                      <paper-textarea label="Textarea label" rows="3"></paper-textarea>
-                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
-                      </paper-icon-button>
-                    </form>
-                  </div>
-                  <div class="flexchild contact-content contact-information">
-                    <h2 class="display2">Contact information</h2>
-                    <ul class="not-enum">
-                      <li><iron-icon icon="communication:phone" prefix=""></iron-icon>Phone: ...</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="standout">
-      <div class="horizontal">
-        <div class="bg-color-background">
-          <div class="subscribe" centered="">
-            <div class="standout-column">
-              <div class="container-form-subscribe layout vertical">
-                <div class="text-center">
-                  <p class="display1">Get the latest news</p>
-                </div>
-                <div>
-                  <form class="form-subscribe">
-                    <paper-input label="email@address.com" id="inputWithButton">
-                      <iron-icon icon="mail" prefix=""></iron-icon>
-                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
-                      </paper-icon-button>
-                    </paper-input>
-                    <div class="text-center">
-                      <paper-button class="button-submit-form" raised="">Raised button</paper-button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="standout">
-      <div class="horizontal">
-        <div class="section-about-careers">
-          <div class="standout-column">
-            
-          </div>
-          <div class="standout-column">
-            <div class="standout-content career-standout-content">
-              <h1 class="career-standout-headline">Careers</h1>
-              <p>Look apply etc.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </template>
+    </template>
 
   </template>
 
