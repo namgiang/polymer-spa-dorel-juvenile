@@ -19,7 +19,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="dorel-column-content">
   <template>
-    <style is="custom-style">
+    <style is="custom-style" include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      :host p {
+        @apply(--theme-bodycopy);
+      }
+
       /* 
        * iron-flex reusable classes 
        */
@@ -33,6 +37,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
       }
+      .column-headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
+      }
+      .headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+      }
       .column-content {
         margin: 0 auto;
         padding: 3rem 7rem;
@@ -45,6 +58,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <section class="layout horizontal">
       <div class="column-content">
+        <h1 class="column-headline">[[ contentTitle ]]</h1>
+        <dorel-safe-html html="[[ content ]]"></dorel-safe-html>
         <content></content>
       </div>
     </section>
