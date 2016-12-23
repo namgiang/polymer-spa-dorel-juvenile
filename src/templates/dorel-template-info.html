@@ -3,18 +3,15 @@
 Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
-
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
 <link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
-<link rel="import" href="../organisms/dorel-column-content.html">
 
 <dom-module id="dorel-template-info">
   <template>
@@ -72,18 +69,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
           background-repeat: no-repeat;
         };
       }
-      .column-headline {
-        font-size: 2em;
-        @apply(--theme-heading);
-        max-width: none !important; /* reset max width so text is centered */
-      }
-      dorel-column-content p {
-        @apply(--theme-bodycopy);
-      }
-      .headline {
-        font-size: 2em;
-        @apply(--theme-heading);
-      }
       .section-contact {
         --dorel-layout-section-skewed-bg: {
           /*background-color: var(--theme-brand-color-accent-green);*/
@@ -96,20 +81,24 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
           padding-bottom: 3.5rem;
         };
       }
+
+      .column-headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+        max-width: none !important; /* reset max width so text is centered */
+      }
+      dorel-column-content p {
+        @apply(--theme-bodycopy);
+      }
+      .headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+      }
     </style>
 
     <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
-
-    <!--template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <span>template: {{ templateData.template }}</span>
-    </template-->
-
-    <!-- hero-title: [[ templateData.acf.hero_title ]] -->
-    <!-- hero-content: [[ templateData.acf.hero_content ]] -->
-    <dorel-hero
-      hero-title="[[ templateData.acf.hero_title ]]" 
-      hero-content="">
-    </dorel-hero>
+    
+    <dorel-page-builder builder-data="[[ templateData.acf.page_builder ]]"></dorel-page-builder>
 
     <dorel-layout-section>
       <dorel-layout-section-column>
@@ -196,10 +185,6 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 
       clearInput: function() {
         document.getElementById('inputWithButton').value = '';
-      },
-
-      _isPageComponent: function(response, cname) {
-        return response === cname;
       }
     });
   </script>
