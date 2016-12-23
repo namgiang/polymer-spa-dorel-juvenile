@@ -39,17 +39,9 @@ Mixin | Description | Default
       }
     </style>
 
-    <template is="dom-if" if="{{centered}}"  as="component">
-      <div class="standout-column standout-column-center-justified">
-        <content></content>
-      </div>
-    </template>
-
-    <template is="dom-if" if="{{!centered}}" as="component">
-      <div class="standout-column">
-        <content></content>
-      </div>
-    </template>
+    <div class="standout-column" class$="{{ isCenteredClass(component.align) }}">
+      <content></content>
+    </div>
 
   </template>
 
@@ -58,14 +50,9 @@ Mixin | Description | Default
     Polymer({
       is: 'dorel-layout-section-column',
 
-      properties: {
-        /**
-         * Centers the column
-         */
-        centered: {
-          type: Boolean,
-          value: false
-        }
+      _getClasses: function (centered) {
+        if (completed) classes += ' standout-column-center-justified';
+        return classes;
       }
 
     });
