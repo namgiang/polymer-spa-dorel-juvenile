@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="https://dev.cdn.dorel.io/includes/brands/dorel/theme-dorel-shared-styles.html">
 
 <link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../molecules/dorel-column-content.html">
 
 <!--
 if using `skewed` the background will get a skewed background.
@@ -32,73 +33,27 @@ Mixin | Description | Default
   <template>
 
     <style>
-      /* 
-       * iron-flex reusable classes 
+      .hero-bg {
+        background-color: var(--theme-brand-color); 
+        @apply(--dorel-hero-bg);
+      }
+      .dorel-hero-section {
+        min-height: 300px; /* temporary */
+      }
+      .dorel-hero-section[wide-layout] {
+        min-heigth: 540px;
+      }
+      /* optional class
+       * - centers the inner column vertically 
        */
-      .horizontal {
-        @apply(--layout-horizontal);
-      }
-      .flex-end-justified {
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
-      }
-      .flex {
-        @apply(--layout-flex);
-      }
-      .flex-2 {
-        @apply(--layout-flex-2);
-      }
-      .vertical-center {
+      .vertical-center-inner-column {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
-      /* 
-       * custom classes 
-       */
-      .hero {
-        /*background-image: url("../../assets/images/quinny_full-size-image.jpeg");
-        background-size: cover;*/
-        background-color: var(--theme-brand-color); 
-        /*padding: 3rem 0 16rem;*/
-      }
-      .theme-headline {
-        font-size: var(--theme-size-headline);
-        @apply(--theme-heading);
-      }
-      .hero p {
-        @apply(--theme-bodycopy);
-      }
-      .hero-bg {
-        @apply(--dorel-hero-bg);
-      }
-
-      /* revamp this */
-      .hero-standout-content {
-        text-align: right;
-        margin: 70px;
-        padding: 2rem 3rem;
-      }
-      .hero-standout-content .hero-standout-headline {
-        font-size: 2.8rem;
-        color: var(--theme-brand-color-royal-blue);
-      }
     </style>
 
-    <section class="layout horizontal hero hero-bg">
-
-      <div class="flex">
-      </div>
-
-      <div class="flex-2">
-        <!--p class="theme-size-subhead">Lorem ipsum</p-->
-        <h1 class="theme-headline">{{ heroTitle }}</h1>
-        <div class="bodycopy">{{ heroContent }}</div>
-        <!--dorel-cta href="/" primary>Link text</dorel-cta-->
-      </div>
-      
-      <div class="flex">
-      </div>
-
+    <section class="dorel-hero-section vertical-center-inner-column hero-bg" wide-layout$="{{isAtLeast800px}}">
+      <content></content>
     </section>
 
   </template>
@@ -106,7 +61,8 @@ Mixin | Description | Default
   <script>
 
     Polymer({
-      is: 'dorel-hero'
+      is: 'dorel-hero',
+
     });
 
   </script>
