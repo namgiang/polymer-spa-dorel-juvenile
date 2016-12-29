@@ -34,52 +34,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
         <!--// dorel hero -->
 
-        <!-- dorel content column -->
+        <!-- dorel content_wrapper -->
         <template 
           is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'column_content') }}">
-          <dorel-column-content
-            content-title="[[ component.column_content_title ]]"
-            content="[[ component.column_content_text ]]">
-          </dorel-column-content>
-        </template>
-        <!--// dorel content column -->
-
-        <!-- dorel CONTENT-WRAP -->
-        <template 
-          is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrap') }}">
+          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrapper') }}">
           <dorel-layout-section>
+            <dorel-column-content>
 
-            <!-- content_columns -->
-            <template
-              is="dom-repeat" 
-              items="[[ component.content_wrap_builder ]]" 
-              as="wrapComponent">
-              <dorel-layout-section-column>
-                <dorel-column-content>
+              <dorel-content-wrapper
+                content-title="[[ component.content_wrapper_title ]]"
+                content-html="[[ component.content_wrapper_text ]]"></dorel-content-wrapper>
 
-                  <!-- dorel content column -->
-                  <template 
-                    is="dom-if" 
-                    if="{{ _isPageComponent(wrapComponent.acf_fc_layout, 'column_content') }}">
-                    <dorel-column-content>
-
-                      <h2>[[ wrapComponent.column_content_title ]]</h2>
-                      <dorel-safe-html html="[[ wrapComponent.column_content_text ]]"></dorel-safe-html>
-                    </dorel-column-content>
-                  </template>
-                  <!--// dorel content column -->
-
-                </dorel-column-content>
-              </dorel-layout-section-column>
-
-            </template>
-            <!--// content_columns -->
+            </dorel-column-content>
           </dorel-layout-section>
         </template>
-        <!--// dorel content-wrap -->
+        <!--// dorel content_wrapper -->
 
+        <!-- dorel column-wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
+          <dorel-layout-section>
+          
+            <dorel-page-builder builder-data="[[ component.columns ]]"></dorel-page-builder>
+
+          </dorel-layout-section>
+        </template>
+        <!--// dorel column-wrapper -->
+
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'column_half') }}">
+          <dorel-layout-section-column>
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+        </template>
 
       </template>
     </template>
