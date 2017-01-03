@@ -1,0 +1,98 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="dorel-page-builder">
+  <template>
+
+    <style is="custom-style">
+      dorel-layout-section dorel-page-builder {
+        width: 100%;
+        display: flex;
+      }
+    </style>
+
+    <!-- show when acf.page_builder has components -->
+    <template 
+      is="dom-if" 
+      if="{{ builderData.length }}">
+      <!-- iterate over page_builder components -->
+      <template
+        is="dom-repeat" 
+        items="[[ builderData ]]" 
+        as="component">
+        
+        <!-- dorel hero -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
+          <dorel-hero
+            hero-bg="[[ component.hero_image ]]"
+            hero-content="[[ component.hero_content ]]"
+            hero-title="[[ component.hero_title ]]">
+          </dorel-hero>
+        </template>
+        <!--// dorel hero -->
+
+        <!-- dorel content_wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrapper') }}">
+          <!-- content-wrapper -->
+          <dorel-content-wrapper
+            content-title="[[ component.content_wrapper_title ]]"
+            content-html="[[ component.content_wrapper_text ]]"></dorel-content-wrapper>
+        </template>
+        <!--// dorel content_wrapper -->
+
+        <!-- dorel column-wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
+          <!-- column-wrapper -->
+          <dorel-layout-section>
+          
+            <dorel-page-builder builder-data="[[ component.columns ]]"></dorel-page-builder>
+
+          </dorel-layout-section>
+        </template>
+        <!--// dorel column-wrapper -->
+
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'column_half') }}">
+          <!-- column-half -->
+          <dorel-layout-section-column>
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+        </template>
+
+      </template>
+    </template>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-page-builder',
+
+      _isPageComponent: function(response, cname) {
+        return response === cname;
+      }
+    });
+
+  </script>
+
+</dom-module>

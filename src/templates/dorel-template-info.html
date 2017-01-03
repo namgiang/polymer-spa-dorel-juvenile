@@ -1,25 +1,17 @@
 <!--
 @license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
-
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
 <link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
-<link rel="import" href="../organisms/dorel-column-content.html">
 
 <dom-module id="dorel-template-info">
   <template>
@@ -27,18 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       /* 
        * reusable classes 
        */
-       .flexchild {
-         @apply(--layout-flex);
-       }
-       .flex2child {
-         @apply(--layout-flex-2);
-       }
-       .flex3child {
-         @apply(--layout-flex-3);
-       }
-      p {
-        @apply(--theme-bodycopy);
-      }
+
       .display2 {
         font-size: var(--theme-size-display2);
         @apply(--theme-heading);
@@ -48,12 +29,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
       dorel-section-standout.bg-color-background {
-        --dorel-section-standout-bg: {
+        --dorel-layout-section-bg: {
           background-color: var(--theme-color-background);
         };
       }
       .subscribe {
-        --dorel-section-standout-column: {
+        --dorel-layout-section-column: {
           /*max-width: 700px;*/
           padding-bottom: 2rem;
         };
@@ -67,9 +48,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .button-submit-form {
         margin-top: 1.5rem;
       }
-      .section-about-hero {
-        background-color: var(--theme-brand-color);
-      }
       dorel-hero {
         --dorel-hero-bg: {
           min-height: 540px; /* temporary */
@@ -79,8 +57,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-repeat: no-repeat;
         };
       }
-      .section-about-careers {
-        --dorel-section-standout-bg: {
+      .section-about-hero {
+        background-color: var(--theme-brand-color);
+      }
+      .section-careers {
+        --dorel-layout-section-bg: {
           min-height: 540px; /* temporary */
           background-image: url('../../assets/images/office-space-6.jpg'); /* office-space-6, office-space-3 */
           background-size: cover;
@@ -88,83 +69,108 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           background-repeat: no-repeat;
         };
       }
-      .standout-content {
-        margin-top: 30px;
-        padding: 3rem 7rem;
-      }
-      .hero-standout-content {
-        text-align: right;
-        margin: 70px;
-        padding: 2rem 3rem;
-      }
-      .hero-standout-content .hero-standout-headline {
-        font-size: 2.8rem;
-        color: var(--theme-brand-color-royal-blue);
-      }
-      .hero-standout-headline {
-        font-size: 2em;
-        @apply(--theme-heading);
-        max-width: none !important; /* reset max width so text is centered */
-      }
-      .career-standout-headline {
-        font-size: 2em;
-        @apply(--theme-heading);
-      }
       .section-contact {
-        --dorel-section-standout-skewed-bg: {
+        --dorel-layout-section-skewed-bg: {
           /*background-color: var(--theme-brand-color-accent-green);*/
           background-color: white;
         };
       }
       .section-contact-column {
-        --dorel-section-standout-column: {
+        --dorel-layout-section-column: {
           padding-top: 2.5rem;
           padding-bottom: 3.5rem;
         };
       }
-      .section-contact-wide-card {
-        width: 60%;
-        @apply(--shadow-elevation-4dp);
-      }
-      .contact-information {
-        background-color: var(--theme-brand-color-royal-blue);
-      }
-      .career-standout-content {
-        margin: 70px;
-        padding: 2rem 3rem;
-        background-color: white;
-        @apply(--shadow-elevation-12dp);
-      }
-      .contact-content {
-        padding: 1.5rem 3rem 3rem;
-      }
-    .headline-custom {
-        font-size: var(--theme-size-headline);
+
+      .column-headline {
+        font-size: 2em;
         @apply(--theme-heading);
         max-width: none !important; /* reset max width so text is centered */
       }
+      dorel-column-content p {
+        @apply(--theme-bodycopy);
+      }
+      .headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+      }
     </style>
 
-    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
-        
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
-          <!-- <h1>[[ component.hero_title ]]</h1>
-          <h2>[[ component.hero_image ]]</h2> -->
-          <dorel-hero
-            hero-bg="[[ component.hero_image ]]">
-          </dorel-hero>
-        </template>
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+    
+    <dorel-page-builder builder-data="[[ templateData.acf.page_builder ]]"></dorel-page-builder>
 
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'column_content') }}">
-          <dorel-column-content>
-            <h1 class="headline-custom">[[ component.column_content_title ]]</h1>
-            <dorel-safe-html html="[[ component.column_content_text ]]"></dorel-safe-html>
-          </dorel-column-content>
-        </template>
+    <dorel-layout-section>
+      <dorel-layout-section-column>
+        <!--
+        dorel-column-content: 
+        See description in component file for description of this element
+        -->
+        <dorel-column-content>
+          <h1 class="column-headline">The best stories start with strong foundations.</h1>
+          <p>A child’s development into the world happens between zero and three.
+          That fundamental journey begins with a critical one – the one home from the hospital.</p>
+          <p>We’ve always been part of this pivotal moment, and we believe in doing everything we can to help
+          parents at the start of creating a new life.</p>
+          <p>Like an embrace that carries you before you can walk, or a nest on the transition into flight,
+          millions of new beginnings have started with Maxi-Cosi.</p>
+        </dorel-column-content>
+      </dorel-layout-section-column>
+      <dorel-layout-section-column>
+        <dorel-column-content>
+          <p>second column</p>
+        </dorel-column-content>
+      </dorel-layout-section-column>
+    </dorel-layout-section>
 
-      </template>
-    </template>
+    <dorel-layout-section>
+      <dorel-layout-section-column><!-- centered$="{{isAtLeast800px}}" -->
+        <dorel-card-contact>
+        </dorel-card-contact>
+      </dorel-layout-section-column>
+    </dorel-layout-section>
+
+    <section class="standout">
+      <div class="horizontal">
+        <div class="bg-color-background">
+          <div class="subscribe" centered>
+            <div class="standout-column">
+              <div class="container-form-subscribe layout vertical">
+                <div class="text-center">
+                  <p class="display1">Get the latest news</p>
+                </div>
+                <div>
+                  <form class="form-subscribe">
+                    <paper-input label="email@address.com" id="inputWithButton">
+                      <iron-icon icon="mail" prefix></iron-icon>
+                      <paper-icon-button onclick="clearInput()" icon="clear" alt="clear" title="clear">
+                      </paper-icon-button>
+                    </paper-input>
+                    <div class="text-center">
+                      <paper-button class="button-submit-form" raised>Raised button</paper-button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <dorel-layout-section class="section-careers">
+      <dorel-layout-section-column>
+        <!-- ... -->
+      </dorel-layout-section-column>
+      <dorel-layout-section-column>
+        <dorel-column-content><!--  make this a standout column content (white bg, fly overlay, in front of image) -->
+          <div class="">
+            <h1 class="headline">Careers</h1>
+            <p>Look apply etc.</p>
+          </div>
+        </dorel-column-content>
+      </dorel-layout-section-column>
+    </dorel-layout-section>
 
   </template>
 
@@ -179,10 +185,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       clearInput: function() {
         document.getElementById('inputWithButton').value = '';
-      },
-
-      _isPageComponent: function(response, cname) {
-        return response === cname;
       }
     });
   </script>

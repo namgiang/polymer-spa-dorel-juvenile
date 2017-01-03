@@ -26,37 +26,30 @@ Example:
 
 @demo demo/index.html
 -->
-<dom-module id="wp-collect-page">
+<dom-module id="dorel-wp-collect-pages">
   <template>
     <style></style>
     
     <iron-ajax id="wp_posts" 
       auto 
-      url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" 
-      handle-as="json"
-      last-response="{{ pageData }}"></iron-ajax>
+      url="[[ wpUrl ]]/wp/v2/pages" 
+      handle-as="json" 
+      last-response="{{ pagesData }}"></iron-ajax>
   </template>
 
   <script>
     Polymer({
-      is: 'wp-collect-page',
+      is: 'dorel-wp-collect-pages',
       properties: {
         /**
          * `pageData` this variable is reflected
          * by two way binding in order to use it in your
          * template.
          */
-        pageData: {
+        pagesData: {
           type: Object,
           reflectToAttribute: true,
           notify: true
-        },
-
-        /**
-         * `pageId` of the Wordpress ID of the page
-         */
-        pageId: {
-          type: Number
         },
 
         /**

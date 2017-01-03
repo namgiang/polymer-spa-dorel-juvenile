@@ -1,0 +1,62 @@
+<!--
+@license
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!--
+```html
+<dorel-layout-section-column>
+</dorel-layout-section-column>
+```
+
+Attribute | Description         | Default
+----------|---------------------|----------------------------------------
+`centered` | Will make the element center it's inner content. | Not centered
+
+## Styling
+
+Mixin | Description | Default
+------|-------------|----------
+`--dorel-layout-section-column` | Applies to the standout column | {}
+
+-->
+
+<dom-module id="dorel-layout-section-column">
+  <template>
+    <style is="custom-style">
+      :host {
+        width: 100%;
+      }
+      .standout-column {
+        @apply(--layout-flex);
+        @apply(--layout-center); /* vertically align */
+        @apply(--dorel-layout-section-column);
+      }
+      .standout-column-center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+    </style>
+
+    <div class="standout-column" class$="{{ isCenteredClass(component.align) }}">
+      <content></content>
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-layout-section-column',
+
+      _getClasses: function (centered) {
+        if (completed) classes += ' standout-column-center-justified';
+        return classes;
+      }
+
+    });
+
+  </script>
+
+</dom-module>
