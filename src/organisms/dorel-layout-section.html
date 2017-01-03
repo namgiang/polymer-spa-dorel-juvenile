@@ -75,10 +75,11 @@ Mixin | Description | Default
       -->
       <template 
         is="dom-if" 
-        if="{{skewed}}">
-        <div class="standout-skew-bg">
+        if="{{ standoutSkewed }}">
+        <div class="standout-skew-bg"
+          style$="background-color: {{ standoutBgColor }};">
           <div class="standout-skewed-unskew">
-            <div class="container-content" wide-layout$="{{isAtLeast800px}}">
+            <div class="container-content" wide-layout$="{{ isAtLeast800px }}">
               <content></content>
             </div>
           </div>
@@ -87,8 +88,8 @@ Mixin | Description | Default
 
       <template 
         is="dom-if" 
-        if="{{!skewed}}">
-        <div class="container-content" wide-layout$="{{isAtLeast800px}}">
+        if="{{ !standoutSkewed }}">
+        <div class="container-content" wide-layout$="{{ isAtLeast800px }}">
           <content></content>
         </div>
       </template>
@@ -104,7 +105,7 @@ Mixin | Description | Default
         /**
          * Skewes the background of the section
          */
-        skewed: {
+        standoutSkewed: {
           type: Boolean,
           value: false
         }

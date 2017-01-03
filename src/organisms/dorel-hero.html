@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
 
 <link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../organisms/dorel-column-content.html">
 
 <!--
 if using `skewed` the background will get a skewed background.
@@ -31,64 +32,38 @@ Mixin | Description | Default
 
   <template>
     <style>
-      /* 
-       * iron-flex reusable classes 
-       */
-      .horizontal {
-        @apply(--layout-horizontal);
+      .hero-bg {
+        background-color: var(--theme-brand-color); 
+        @apply(--dorel-hero-bg);
       }
-      .flex-end-justified {
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
+      .dorel-hero-section {
+        min-height: 300px; /* temporary */
       }
-      .flex {
-        @apply(--layout-flex);
+      .dorel-hero-section[wide-layout] {
+        min-heigth: 540px;
       }
-      .flex-2 {
-        @apply(--layout-flex-2);
-      }
-      .vertical-center {
+      .dorel-hero-section[align-default] {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
-      /* 
-       * custom classes 
-       */
-      .hero {
-        /*background-image: url("../../assets/images/quinny_full-size-image.jpeg");
-        background-size: cover;*/
-        background-color: var(--theme-brand-color); 
-        /*padding: 3rem 0 16rem;*/
-      }
-      .theme-headline {
-        font-size: var(--theme-size-headline);
-        @apply(--theme-heading);
-      }
-      .hero p {
-        @apply(--theme-bodycopy);
-      }
-      .hero-bg {
-        @apply(--dorel-hero-bg);
-      }
-
-      /* revamp this */
-      .hero-standout-content {
-        text-align: right;
-        margin: 70px;
-        padding: 2rem 3rem;
-      }
-      .hero-standout-content .hero-standout-headline {
-        font-size: 2.8rem;
-        color: var(--theme-brand-color-royal-blue);
+      .dorel-hero-section[align-right] {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
       }
     </style>
 
-    <section class="layout horizontal hero hero-bg" style$="background-image: url([[ heroBg ]]);">
+    <section class="dorel-hero-section hero-bg" 
+      style$="background-image: url([[ heroBg ]]);"
+      align-default$="[[ !alignRight ]]" 
+      align-right$="[[ alignRight ]]" 
+      wide-layout$="{{ isAtLeast800px }}">
 
       <div class="flex">
       </div>
 
       <div class="flex-2">
+
+        <content></content>
         <!--p class="theme-size-subhead">Lorem ipsum</p-->
         <h1 class="theme-headline">[[ heroTitle ]]</h1>
         <div class="bodycopy">
@@ -99,7 +74,6 @@ Mixin | Description | Default
       
       <div class="flex">
       </div>
-
     </section>
 
   </template>
@@ -107,7 +81,13 @@ Mixin | Description | Default
   <script>
 
     Polymer({
-      is: 'dorel-hero'
+      is: 'dorel-hero',
+      properties: {
+        alignRight: {
+          type: Boolean,
+          value: false
+        }
+      }
     });
 
   </script>

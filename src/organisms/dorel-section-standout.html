@@ -116,10 +116,55 @@ Mixin | Description | Default
          @apply(--shadow-elevation-6dp);
       }
     </style>
+    
+
+    <dorel-layout-section
+      standout-skewed="[[ standoutData.standout_skewed ]]"
+      standout-bg-color="[[ standoutData.standout_background_color ]]">
+
+      <!-- EVEN -->
+      <template 
+        is="dom-if" 
+        if="{{ _isEven(standoutIndex) }}">
+        <dorel-layout-section-column>
+          <dorel-column-content>
+            <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+            <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
+          </dorel-column-content>
+        </dorel-layout-section-column>
+
+        <dorel-layout-section-column>
+          <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
+            heading="[[ standoutData.standout_image_title ]]" 
+            image="[[ standoutData.standout_image ]]"></paper-card>
+        </dorel-layout-section-column>
+      </template>
+
+      <!-- ODD -->
+      <template 
+        is="dom-if" 
+        if="{{ !_isEven(standoutIndex) }}">
+        <dorel-layout-section-column>
+          <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
+            heading="[[ standoutData.standout_image_title ]]" 
+            image="[[ standoutData.standout_image ]]"></paper-card>
+        </dorel-layout-section-column>
+
+        <dorel-layout-section-column>
+          <dorel-column-content>
+            <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+            <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
+          </dorel-column-content>
+        </dorel-layout-section-column>
+      </template>
+
+    </dorel-layout-section>
+
+    
+    <!-- commented Remi's code by Marnix
 
     <section class="standout bg-standout">
-  
-      <!-- add this markup if 'skewed' is true -->
+    
       <template 
         is="dom-if" 
         if="[[ standoutData.standout_skewed ]]">
@@ -127,62 +172,54 @@ Mixin | Description | Default
         <div class="bg-skewed bg-clr-brand" 
           style$="background-color: {{ standoutData.standout_background_color }};">
           <div class="bg-skewed-unskew">
-            <div class="horizontal">
         
-              <!-- define markup depending on even/odd index -->
-              <template 
-                is="dom-if" 
-                if="{{ _isEven(standoutIndex) }}">
-                <dorel-section-standout-column>
-                  <div class="standout-content">
-                    <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
-                    <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
-                  </div>
-                </dorel-section-standout-column>
+            <template 
+              is="dom-if" 
+              if="{{ _isEven(standoutIndex) }}">
+              <dorel-section-standout-column>
+                <div class="standout-content">
+                  <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+                  <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
+                </div>
+              </dorel-section-standout-column>
 
-                <dorel-section-standout-column>
-                  <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
-                    heading="[[ standoutData.standout_image_title ]]" 
-                    image="[[ standoutData.standout_image ]]"></paper-card>
-                </dorel-section-standout-column>
-              </template>
+              <dorel-section-standout-column>
+                <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
+                  heading="[[ standoutData.standout_image_title ]]" 
+                  image="[[ standoutData.standout_image ]]"></paper-card>
+              </dorel-section-standout-column>
+            </template>
               
-              <template 
-                is="dom-if" 
-                if="{{ !_isEven(standoutIndex) }}">
-                <dorel-section-standout-column>
-                  <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
-                    heading="[[ standoutData.standout_image_title ]]" 
-                    image="[[ standoutData.standout_image ]]"></paper-card>
-                </dorel-section-standout-column>
+            <template 
+              is="dom-if" 
+              if="{{ !_isEven(standoutIndex) }}">
+              <dorel-section-standout-column>
+                <paper-card class="flex" alt="[[ standoutData.standout_image_title ]]"
+                  heading="[[ standoutData.standout_image_title ]]" 
+                  image="[[ standoutData.standout_image ]]"></paper-card>
+              </dorel-section-standout-column>
 
-                <dorel-section-standout-column>
-                  <div class="standout-content">
-                    <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
-                    <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
-                  </div>
-                </dorel-section-standout-column>
-              </template>
+              <dorel-section-standout-column>
+                <div class="standout-content">
+                  <h2 class="theme-headline">[[ standoutData.standout_title ]]</h2>
+                  <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
+                </div>
+              </dorel-section-standout-column>
+            </template>
 
 
-            </div><!--// horizontal -->
-          </div><!--// unskew -->
-        </div><!--// skewed -->
+            </div>
+          </div>
+        </div>
 
       </template>
-      <!--// add this markup if 'skewed' is true -->
       
-
-      
-
-      <!-- add this markup if 'skewed' is false -->
       <template 
         is="dom-if" 
         if="[[ !standoutData.standout_skewed ]]">
 
         <div class="horizontal">
-  
-          <!-- define markup depending on even/odd index -->
+
           <template 
             is="dom-if" 
             if="{{ _isEven(standoutIndex) }}">
@@ -217,12 +254,11 @@ Mixin | Description | Default
             </dorel-section-standout-column>
           </template>
 
-        </div><!--// horizontal -->
+        </div>
 
       </template>
-      <!--// END add this markup if 'skewed' is false -->
 
-    </section>
+    </section> -->
 
   </template>
 
@@ -230,6 +266,12 @@ Mixin | Description | Default
 
     Polymer({
       is: 'dorel-section-standout',
+
+      properties: {
+        standoutData: {
+          type: Object
+        }
+      },
 
       _isEven: function(index) {
         console.log(index % 2 == 0);
