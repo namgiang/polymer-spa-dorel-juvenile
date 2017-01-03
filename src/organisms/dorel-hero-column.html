@@ -1,0 +1,90 @@
+<!--
+@license
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/dorel/theme-dorel-shared-styles.html">
+
+<link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../molecules/dorel-column-content.html">
+
+<!--
+if using `skewed` the background will get a skewed background.
+
+```html
+<dorel-hero-column>
+</dorel-hero-column>
+```
+-->
+
+<dom-module id="dorel-hero-column" include="theme-dorel-shared-styles iron-flex iron-flex-classes">
+
+  <template>
+
+    <style>
+      .hero-column-standout {
+        background-color: white;
+        @apply(--shadow-elevation-12dp);
+        margin: var(--theme-component-space-inner); /* outer spacing so image of section is visible */
+      }
+      .hero-column-standout[small-layout] {
+        @apply(--layout-flex); /* makes it full-width on smaller screens */
+      }
+      .hero-column-standout[wide-layout] {
+        width: auto;
+        margin: var(--theme-component-space-inner-large); /* outer spacing so image of section is visible */
+      }
+      .hero-standout-content[wide-layout] {
+        /* 30/100th of the viewport width */
+        min-width: 30vw;
+        max-width: 30vw;
+      }
+      .hero-column-standout-vertical {
+        @apply(--layout-vertical); /* stacks column inner div's vertical */
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      .hero-standout-content {
+        padding: 1rem var(--theme-component-space-inner);
+      }
+      .hero-standout-content .hero-standout-headline {
+        font-size: 2.8rem;
+        color: var(--theme-brand-color-royal-blue);
+      }
+    </style>
+
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+
+    <div class="hero-column-standout hero-standout-content hero-column-standout-vertical" small-layout$={{!isAtLeast800px}} wide-layout$="{{isAtLeast800px}}">
+      <div>
+        <h1 hidden$="[[!hero-column-title]]" class="theme-headline">[[hero-column-title]]</h1>
+      </div>
+      <div>
+        <content></content>
+      </div>
+      <div>
+        <dorel-cta hidden$="[[!call-to-action-href]]" href="[[call-to-action-href]]" secondary>Secondary cta</dorel-cta>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-hero-column',
+      properties: {
+        heroColumnTitle: {
+          type: String
+        },
+        callToActionHref: {
+          type: String
+        }
+      },
+    });
+
+  </script>
+
+</dom-module>

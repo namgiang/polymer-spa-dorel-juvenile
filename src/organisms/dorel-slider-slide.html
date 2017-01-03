@@ -1,0 +1,95 @@
+<!--
+@license
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
+<!--
+```html
+<dorel-slider-slide>
+</dorel-slider-slide>
+```
+-->
+
+<dom-module id="dorel-slider-slide">
+  <template>
+    <style is="custom-style">
+      img {
+        width: 100%;
+        z-index: 1;
+      }
+      .slide-image-overlay {
+        position: absolute;
+        z-index: 11;
+      }
+      .slide-image-content {
+        background-color: white;
+        padding: var(--theme-component-space-inner);
+        margin: 1rem 3rem; /* location in the slide */
+      }
+      .title-text {
+
+      }
+    </style>
+
+    <article>
+      <div class="slide-image-overlay">
+        <div class="slide-image-content">
+          <div class$="title-text" hidden$="[[!heading]]">[[heading]]</div>
+        </div>
+      </div>
+      <img
+        hidden$="[[!image]]"
+        src="[[image]]"
+        alt="[[alt]]" />
+
+      <content></content>
+    </article>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-slider-slide',
+
+      properties: {
+
+        /**
+         * The title of the card.
+         */
+        heading: {
+          type: String,
+          value: '',
+          observer: '_headingChanged'
+        },
+
+        /**
+         * The url of the title image of the card.
+         */
+        image: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * The text alternative of the card's title image.
+         */
+        alt: {
+          type: String
+        },
+
+      },
+
+      _headingChanged: function(heading) {
+        var label = this.getAttribute('aria-label');
+        this.setAttribute('aria-label', heading);
+      },
+
+    });
+
+  </script>
+
+</dom-module>
