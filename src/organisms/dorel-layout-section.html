@@ -75,11 +75,23 @@ Mixin | Description | Default
       -->
       <template 
         is="dom-if" 
-        if="{{skewed}}">
+        if="{{ standoutData.standout_skewed }}">
         <div class="standout-skew-bg">
           <div class="standout-skewed-unskew">
             <div class="container-content" wide-layout$="{{isAtLeast800px}}">
-              <content></content>
+              <dorel-layout-section-column>
+                <dorel-column-content>
+                  <h1 class="column-headline">[[ standoutData.standout_title ]]</h1>
+                  <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
+                </dorel-column-content>
+              </dorel-layout-section-column>
+
+              <dorel-layout-section-column>
+                <dorel-column-content>
+                  <h1 class="column-headline">[[ standoutData.standout_title ]]</h1>
+                  <dorel-safe-html html="[[ standoutData.standout_content ]]"></dorel-safe-html>
+                </dorel-column-content>
+              </dorel-layout-section-column>
             </div>
           </div>
         </div>
@@ -87,9 +99,13 @@ Mixin | Description | Default
 
       <template 
         is="dom-if" 
-        if="{{!skewed}}">
+        if="{{!standoutData.standout_skewed}}">
         <div class="container-content" wide-layout$="{{isAtLeast800px}}">
-          <content></content>
+          <dorel-layout-section-column>
+            <dorel-column-content>
+              <h1 class="column-headline">[[ standoutData.standout_title ]]</h1>
+            </dorel-column-content>
+          </dorel-layout-section-column>
         </div>
       </template>
 
