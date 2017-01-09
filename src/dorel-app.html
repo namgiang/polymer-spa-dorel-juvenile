@@ -191,11 +191,12 @@
     <!-- retrieve all menu items from wordpress -->
     <dorel-wp-collect-menu
       wp-url="[[ wpUrl ]]"
-      menu-location="main_menu" 
+      menu-location="main_menu"
       menu-data="{{ menuData }}"></dorel-wp-collect-menu>
 
     <!-- retrieve all pages from wordpress -->
-    <dorel-wp-collect-pages id="wp_posts"
+    <dorel-wp-collect-pages 
+      id="wp_posts"
       wp-url="[[ wpUrl ]]"
       pages-data="{{ pages }}"></dorel-wp-collect-pages>
     
@@ -207,27 +208,28 @@
         reveals="[[ !smallScreen ]]">
 
         <dorel-header>
-          <!-- retrieve menu items -->
           <div id="tabContainer" sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-            <template is="dom-if" if="[[ menuData.length ]]">
+            <template 
+              is="dom-if" 
+              if="[[ menuData.length ]]">
               <dorel-tabs
                 selected="[[ page ]]"
                 attr-for-selected="name">
-                <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+                <template 
+                  is="dom-repeat" 
+                  items="[[ menuData ]]" 
+                  as="menuItem" 
+                  initial-count="4">
+
                   <dorel-tab name="[[ menuItem.title ]]">
                     <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
                   </dorel-tab>
+
                 </template>
               </dorel-tabs>
             </template>
           </div>
         </dorel-header>
-
-        <!-- 
-        Conditional that checks if there are subpages
-        - use case: when tab 'Products' is clicked, this one folds out
-        -->
-        <!-- <maxicosi-menu-products></maxicosi-menu-products> -->
 
       </app-header>
     </app-header-layout>
@@ -331,6 +333,7 @@
       },
 
       ready: function() {
+
         if (this.debug) {
           this.wpUrl = '../../assets/data';
         } else {
