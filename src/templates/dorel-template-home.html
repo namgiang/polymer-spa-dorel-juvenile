@@ -35,74 +35,74 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <!--dorel-hero
-      hero-title="[[ templateData.acf.hero_title ]]"
-      hero-content="[[ templateData.acf.hero_content ]]"></dorel-hero-->
-
-      <!-- Lifestyle image slider -->
-      <dorel-slider>
-        <dorel-slider-slide heading="slide 1" image="../../assets/images/office-space-2.jpg" alt="slide 1 image">
-        </dorel-slider-slide>
-        <dorel-slider-slide heading="slide 2" image="../../assets/images/office-space-3.jpg" alt="slide 2 image">
-        </dorel-slider-slide>
-      </dorel-slider>
-
+    <!-- check if we have acf items -->
+    <template 
+      is="dom-if" 
+      if="[[ templateData.acf.length ]]">
       <template
         is="dom-repeat" 
-        items="[[ templateData.acf.standout ]]" 
-        as="standoutData">
-          
-          <dorel-section-standout
-            standout-data="[[ standoutData ]]"
-            standout-index="[[ index ]]"></dorel-section-standout>
+        items="[[ templateData.acf ]]"
+        as="component">
+        
+
+
+
+
+        <!-- hero section -->
+        <template
+          is="dom-if" 
+          if="{{ _isPageComponent(component, 'hero') }}">
+            
+          <dorel-hero hero-data="[[ component ]]"></dorel-hero>
+
+        </template>
+        <!--// hero section -->
+
+
+
+
 
       </template>
 
-      <!-- 1. Car seats (product category) -->
-      <dorel-layout-section>
-        <dorel-layout-section-column>          
-          <h2>Car seats</h2>
-          <p>benefits etc.</p>
-          <dorel-cta href="#">View Car seats</dorel-cta>
-        </dorel-layout-section-column>
-        <dorel-layout-section-column>
-          <p>column. make this an image that's entirely clickable</p>
-        </dorel-layout-section-column>
-      </dorel-layout-section>
-
-      <!-- 2. Strollers (product category) -->
-      <dorel-layout-section>
-        <dorel-layout-section-column>
-          <p>column</p>
-        </dorel-layout-section-column>
-        <dorel-layout-section-column>
-          <h2>Strollers</h2>
-          <dorel-cta href="#">View Strollers</dorel-cta>
-        </dorel-layout-section-column>
-      </dorel-layout-section>
-
-      <!-- 3. Community -->
-      <dorel-layout-section>
-        <dorel-layout-section-column>
-          <h2>Community</h2>
-        </dorel-layout-section-column>
-      </dorel-layout-section>
-
-      </template>
     </template>
+
+
+
+
+
+
+    <!-- standout sections -->
+    <template
+      is="dom-repeat" 
+      items="[[ templateData.acf.standout ]]">
+        
+      <dorel-section-standout
+        standout-data="[[ item ]]"
+        standout-index="[[ index ]]"></dorel-section-standout>
+
+    </template>
+    <!--// standout sections -->
+
+
+
+
 
   </template>
 
   <script>
     Polymer({
       is: 'dorel-template-home',
+
       properties: {
+        
         templateData: {
           type: String
         }
+
       },
 
-      ready: function(response, cname) {
+      _isPageComponent: function(response, cname) {
+        console.log(response, cname);
         return response === cname;
       }
     });

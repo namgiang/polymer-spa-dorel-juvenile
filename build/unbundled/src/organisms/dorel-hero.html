@@ -2,76 +2,55 @@
 <link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
 
 <link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../organisms/dorel-column-content.html">
 
 
 
 </head><body><dom-module id="dorel-hero" include="theme-dorel-shared-styles">
 
   <template>
-
     <style>
-      /* 
-       * iron-flex reusable classes 
-       */
-      .horizontal {
-        @apply(--layout-horizontal);
+      .hero-bg {
+        background-color: var(--theme-brand-color); 
+        @apply(--dorel-hero-bg);
       }
-      .flex-end-justified {
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
+      .dorel-hero-section {
+        /* min-height: 300px; temporary */
       }
-      .flex {
-        @apply(--layout-flex);
+      .dorel-hero-section[wide-layout] {
+        min-heigth: 540px;
       }
-      .flex-2 {
-        @apply(--layout-flex-2);
-      }
-      .vertical-center {
+      .dorel-hero-section.left {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
-      /* 
-       * custom classes 
-       */
-      .hero {
-        /*background-image: url("../../assets/images/quinny_full-size-image.jpeg");
-        background-size: cover;*/
-        background-color: var(--theme-brand-color); 
-        /*padding: 3rem 0 16rem;*/
-      }
-      .theme-headline {
-        font-size: var(--theme-size-headline);
-        @apply(--theme-heading);
-      }
-      .hero p {
-        @apply(--theme-bodycopy);
-      }
-      .hero-bg {
-        @apply(--dorel-hero-bg);
+      .dorel-hero-section.right {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
       }
     </style>
 
-    <section class="layout horizontal hero hero-bg" style$="background-image: url([[ heroBg ]]);">
+    <section class$="[[ heroData.hero_column_align ]] dorel-hero-section hero-bg" style$="
+        background-image: url([[ heroData.hero_bg_image ]]); 
+        background-color: [[ heroData.hero_bg_color ]];" wide-layout$="{{ isAtLeast800px }}">
 
       <div class="flex">
       </div>
 
       <div class="flex-2">
-        
-        <h1 class="theme-headline">[[ heroTitle ]]</h1>
-        <div class="bodycopy">
-          <dorel-safe-html html="[[ heroContent ]]"></dorel-safe-html>
-        </div>
-        
+        <template is="dom-if" if="[[ heroData.hero_column_toggle ]]">
+          
+          <dorel-hero-column column-data="[[ heroData.hero_column_components ]]"></dorel-hero-column>
+
+        </template>
       </div>
       
       <div class="flex">
       </div>
-
     </section>
 
   </template>
 
-  <script>Polymer({is:"dorel-hero"});</script>
+  <script>Polymer({is:"dorel-hero",properties:{heroAlign:{type:String,value:"left"},heroBg:{type:String,value:""},heroBgColor:{type:String,value:""},heroTitle:{type:String,value:""},heroContent:{type:String,value:""}}});</script>
 
 </dom-module></body></html>

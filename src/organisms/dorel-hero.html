@@ -37,39 +37,39 @@ Mixin | Description | Default
         @apply(--dorel-hero-bg);
       }
       .dorel-hero-section {
-        min-height: 300px; /* temporary */
+        /* min-height: 300px; temporary */
       }
       .dorel-hero-section[wide-layout] {
         min-heigth: 540px;
       }
-      .dorel-hero-section[align-default] {
+      .dorel-hero-section.left {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
-      .dorel-hero-section[align-right] {
+      .dorel-hero-section.right {
         @apply(--layout-horizontal);
         @apply(--layout-end-justified);
       }
     </style>
 
-    <section class="dorel-hero-section hero-bg" 
-      style$="background-image: url([[ heroBg ]]);"
-      align-default$="[[ !alignRight ]]" 
-      align-right$="[[ alignRight ]]" 
+    <section
+      class$="[[ heroData.hero_column_align ]] dorel-hero-section hero-bg"
+      style$="
+        background-image: url([[ heroData.hero_bg_image ]]); 
+        background-color: [[ heroData.hero_bg_color ]];"
       wide-layout$="{{ isAtLeast800px }}">
 
       <div class="flex">
       </div>
 
       <div class="flex-2">
+        <template
+          is="dom-if"
+          if="[[ heroData.hero_column_toggle ]]">
+          
+          <dorel-hero-column column-data="[[ heroData.hero_column_components ]]"></dorel-hero-column>
 
-        <content></content>
-        <!--p class="theme-size-subhead">Lorem ipsum</p-->
-        <h1 class="theme-headline">[[ heroTitle ]]</h1>
-        <div class="bodycopy">
-          <dorel-safe-html html="[[ heroContent ]]"></dorel-safe-html>
-        </div>
-        <!--dorel-cta href="/" primary>Link text</dorel-cta-->
+        </template>
       </div>
       
       <div class="flex">
@@ -83,10 +83,32 @@ Mixin | Description | Default
     Polymer({
       is: 'dorel-hero',
       properties: {
-        alignRight: {
-          type: Boolean,
-          value: false
+
+        heroAlign: {
+          type: String,
+          value: 'left'
+        },
+
+        heroBg: {
+          type: String,
+          value: ''
+        },
+
+        heroBgColor: {
+          type: String,
+          value: ''
+        },
+
+        heroTitle: {
+          type: String,
+          value: ''
+        },
+
+        heroContent: {
+          type: String,
+          value: ''
         }
+
       }
     });
 

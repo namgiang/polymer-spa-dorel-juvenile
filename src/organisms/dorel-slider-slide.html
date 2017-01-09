@@ -35,19 +35,34 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
     </style>
 
     <article>
-      <div class="slide-image-overlay">
-        <div class="slide-image-content">
-          <div class$="title-text" hidden$="[[!heading]]">[[heading]]</div>
+     <h1 style="background: red;">[[slideData]]</h1>
+      <!-- header -->
+      <template
+        is="dom-if"
+        if="{{ _hasValue(slideData.slide_card_title) }}">
+
+        <div class="slide-image-overlay">
+          <div class="slide-image-content">
+            <header class$="title-text">[[ slideData.slide_card_title ]]</header>
+          </div>
         </div>
-      </div>
-      <img
-        hidden$="[[!image]]"
-        src="[[image]]"
-        alt="[[alt]]" />
 
-      <content></content>
+      </template>
+      <!--// header -->
+      
+      <!-- image -->
+      <template
+        is="dom-if"
+        if="{{ _hasValue(slideData.slide_image) }}">
+
+        <img
+          src="[[ slideData.slide_image ]]"
+          alt="[[ slideData.slide_image_alt ]]" />
+
+      </template>
+      <!--// image -->
+
     </article>
-
   </template>
 
   <script>
@@ -60,33 +75,28 @@ Copyright (c) 2016 Dorel Juvenile. All rights reserved.
         /**
          * The title of the card.
          */
-        heading: {
-          type: String,
-          value: '',
-          observer: '_headingChanged'
+        slideData: {
+          type: Object
         },
 
-        /**
-         * The url of the title image of the card.
-         */
-        image: {
-          type: String,
-          value: ''
-        },
-
-        /**
-         * The text alternative of the card's title image.
-         */
-        alt: {
-          type: String
-        },
+        slideIndex: {
+          type: Number,
+          observer: '_slideChanged'
+        }
 
       },
 
-      _headingChanged: function(heading) {
+      _hasValue: function(val) {
+        return (typeof val !== '' || val !== 'undefined' || val);
+      },
+
+      _slideChanged: function() {
         var label = this.getAttribute('aria-label');
-        this.setAttribute('aria-label', heading);
+        this.setAttribute('aria-label', this.slideIndex);
       },
+
+      ready: function() {
+      }
 
     });
 

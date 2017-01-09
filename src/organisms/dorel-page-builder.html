@@ -17,6 +17,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 100%;
         display: flex;
       }
+
+      dorel-hero {
+        --dorel-hero-bg: {
+          min-height: 540px; /* temporary */
+          background-size: cover;
+          background-position: 0 -230px;;
+          background-repeat: no-repeat;
+        };
+      }
     </style>
 
     <!-- show when acf.page_builder has components -->
@@ -28,61 +37,132 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         is="dom-repeat" 
         items="[[ builderData ]]" 
         as="component">
-        
-        <!-- dorel hero -->
-        <template 
-          is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
-          <dorel-hero
-            hero-bg="[[ component.hero_image ]]"
-            hero-content="[[ component.hero_content ]]"
-            hero-title="[[ component.hero_title ]]">
-          </dorel-hero>
-        </template>
-        <!--// dorel hero -->
 
-        <!-- dorel content_wrapper -->
+
+
+
+
+        <!-- dorel card -->
         <template 
           is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrapper') }}">
-          <!-- content-wrapper -->
-          <dorel-content-wrapper
-            content-title="[[ component.content_wrapper_title ]]"
-            content-html="[[ component.content_wrapper_text ]]"></dorel-content-wrapper>
+          if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
+
+          <dorel-card card-data="[[ component ]]"></dorel-card>
+
         </template>
-        <!--// dorel content_wrapper -->
+        <!--// dorel card -->
+
+
+
+
 
         <!-- dorel column-wrapper -->
         <template 
           is="dom-if" 
           if="{{ _isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
-          <!-- column-wrapper -->
-          <dorel-layout-section>
           
+          <dorel-layout-section>
             <dorel-page-builder builder-data="[[ component.columns ]]"></dorel-page-builder>
-
           </dorel-layout-section>
+
         </template>
         <!--// dorel column-wrapper -->
 
+
+
+
+        <!-- column_half -->
         <template 
           is="dom-if" 
           if="{{ _isPageComponent(component.acf_fc_layout, 'column_half') }}">
+
           <!-- column-half -->
-          <dorel-layout-section-column>
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
             <dorel-column-content>
               
               <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
 
             </dorel-column-content>
           </dorel-layout-section-column>
-        </template>
 
-      </template>
-    </template>
+        </template>
+        <!--// column_half -->
+
+
+
+
+
+        <!-- dorel content_wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrapper') }}">
+
+          <dorel-content-wrapper
+            content-title="[[ component.content_wrapper_title ]]"
+            content-html="[[ component.content_wrapper_text ]]"></dorel-content-wrapper>
+
+        </template>
+        <!--// dorel content_wrapper -->
+
+
+
+
+
+        <!-- dorel hero -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
+
+          <dorel-hero hero-data="[[ component ]]"></dorel-hero>
+
+        </template>
+        <!--// dorel hero -->
+
+
+
+
+
+        <!-- dorel slider -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'slider') }}">
+
+          <dorel-slider>
+            <dorel-slider-slide
+              slide-data="[[ component.slides ]]"
+              slide-index="0">
+            </dorel-slider-slide>
+
+            <dorel-slider-slide
+              slide-data="[[ component.slides ]]"
+              slide-index="1">
+            </dorel-slider-slide>
+          </dorel-slider>
+
+          <!--
+          <template
+            is="dom-repeat" 
+            items="[[ component.slides ]]">
+            <dorel-slider-slide
+              slide-data="[[ item ]]"
+              slide-index="{{ index }}">
+            </dorel-slider-slide>
+
+          </template>
+          -->
+
+        </template>
+        <!--// dorel slider -->
+
+
+
+
+
+      </template><!--// dom-repeat -->
+    </template><!--// dom-if -->
 
   </template>
-
+  
   <script>
 
     Polymer({

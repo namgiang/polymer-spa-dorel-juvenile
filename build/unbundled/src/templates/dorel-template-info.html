@@ -1,16 +1,13 @@
 <html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
-
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
-
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 
 <link rel="import" href="../../assets/cdn/theme-maxicosi-shared-styles.html">
-<link rel="import" href="../organisms/dorel-column-content.html">
 
 </head><body><dom-module id="dorel-template-info">
   <template>
@@ -18,18 +15,7 @@
       /* 
        * reusable classes 
        */
-       .flexchild {
-         @apply(--layout-flex);
-       }
-       .flex2child {
-         @apply(--layout-flex-2);
-       }
-       .flex3child {
-         @apply(--layout-flex-3);
-       }
-      p {
-        @apply(--theme-bodycopy);
-      }
+
       .display2 {
         font-size: var(--theme-size-display2);
         @apply(--theme-heading);
@@ -39,12 +25,12 @@
        */
 
       dorel-section-standout.bg-color-background {
-        --dorel-section-standout-bg: {
+        --dorel-layout-section-bg: {
           background-color: var(--theme-color-background);
         };
       }
       .subscribe {
-        --dorel-section-standout-column: {
+        --dorel-layout-section-column: {
           /*max-width: 700px;*/
           padding-bottom: 2rem;
         };
@@ -55,23 +41,12 @@
       .text-center {
         text-align: center;
       }
-      .button-submit-form {
-        margin-top: 1.5rem;
-      }
       .section-about-hero {
         background-color: var(--theme-brand-color);
       }
-      dorel-hero {
-        --dorel-hero-bg: {
-          min-height: 540px; /* temporary */
-          /*background-image: url('../../assets/images/child-father-boat.jpg');*/
-          background-size: cover;
-          background-position: 0 -230px;;
-          background-repeat: no-repeat;
-        };
-      }
-      .section-about-careers {
-        --dorel-section-standout-bg: {
+
+      .section-careers {
+        --dorel-layout-section-bg: {
           min-height: 540px; /* temporary */
           background-image: url('../../assets/images/office-space-6.jpg'); /* office-space-6, office-space-3 */
           background-size: cover;
@@ -79,84 +54,68 @@
           background-repeat: no-repeat;
         };
       }
-      .standout-content {
-        margin-top: 30px;
-        padding: 3rem 7rem;
-      }
-      .hero-standout-content {
-        text-align: right;
-        margin: 70px;
-        padding: 2rem 3rem;
-      }
-      .hero-standout-content .hero-standout-headline {
-        font-size: 2.8rem;
-        color: var(--theme-brand-color-royal-blue);
-      }
-      .hero-standout-headline {
+
+      .column-headline {
         font-size: 2em;
         @apply(--theme-heading);
         max-width: none !important; /* reset max width so text is centered */
       }
-      .career-standout-headline {
+
+      dorel-column-content p {
+        @apply(--theme-bodycopy);
+      }
+
+      .headline {
         font-size: 2em;
         @apply(--theme-heading);
       }
+
       .section-contact {
-        --dorel-section-standout-skewed-bg: {
+        --dorel-layout-section-skewed-bg: {
           /*background-color: var(--theme-brand-color-accent-green);*/
           background-color: white;
         };
       }
+
       .section-contact-column {
-        --dorel-section-standout-column: {
+        --dorel-layout-section-column: {
           padding-top: 2.5rem;
           padding-bottom: 3.5rem;
         };
       }
-      .section-contact-wide-card {
-        width: 60%;
-        @apply(--shadow-elevation-4dp);
-      }
-      .contact-information {
-        background-color: var(--theme-brand-color-royal-blue);
-      }
-      .career-standout-content {
-        margin: 70px;
-        padding: 2rem 3rem;
-        background-color: white;
-        @apply(--shadow-elevation-12dp);
-      }
-      .contact-content {
-        padding: 1.5rem 3rem 3rem;
-      }
-    .headline-custom {
-        font-size: var(--theme-size-headline);
+
+      .column-headline {
+        font-size: 2em;
         @apply(--theme-heading);
         max-width: none !important; /* reset max width so text is centered */
       }
+      dorel-column-content p {
+        @apply(--theme-bodycopy);
+      }
+      .headline {
+        font-size: 2em;
+        @apply(--theme-heading);
+      }
     </style>
 
-    <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
-      <template is="dom-repeat" items="{{ templateData.acf.page_builder }}" as="component">
-        
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
-          
-          <dorel-hero hero-bg="[[ component.hero_image ]]">
-          </dorel-hero>
-        </template>
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+    
+    <dorel-page-builder builder-data="[[ templateData.acf.page_builder ]]"></dorel-page-builder>
+    
+    
 
-        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'column_content') }}">
-          <dorel-column-content>
-            <h1 class="headline-custom">[[ component.column_content_title ]]</h1>
-            <dorel-safe-html html="[[ component.column_content_text ]]"></dorel-safe-html>
-          </dorel-column-content>
-        </template>
+    
 
-      </template>
-    </template>
+
+    
+    
+
+    
+    
+
 
   </template>
 
-  <script>Polymer({is:"dorel-template-info",properties:{templateData:{type:String}},clearInput:function(){document.getElementById("inputWithButton").value=""},_isPageComponent:function(t,e){return t===e}});</script>
+  <script>Polymer({is:"dorel-template-info",properties:{templateData:{type:String}},clearInput:function(){document.getElementById("inputWithButton").value=""}});</script>
 </dom-module>
 </body></html>
