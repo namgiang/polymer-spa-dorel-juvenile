@@ -52,13 +52,13 @@ Mixin | Description | Default
       .standout-bg {
         @apply(--dorel-layout-section-bg);
       }
-      .standout-skew-bg {
+      .layout-skew-bg {
         transform: skewY(5deg);
         background-color: #efefef;
         margin-top: -75px; /* compensate for skewed background */
         @apply(--dorel-layout-section-skewed-bg);
       }
-      .standout-skewed-unskew {
+      .layout-skewed-unskew {
         transform: skewY(-5deg);
       }
     </style>
@@ -73,12 +73,13 @@ Mixin | Description | Default
         Make the conditional in a way that the extra div's are 
         appended around the inner content.
       -->
+      <span style="background: red;">{{ layoutSkewed }}</span>
       <template 
         is="dom-if" 
-        if="{{ standoutSkewed }}">
-        <div class="standout-skew-bg"
-          style$="background-color: {{ standoutBgColor }};">
-          <div class="standout-skewed-unskew">
+        if="{{ layoutSkewed }}">
+        <div class="layout-skew-bg"
+          style$="background-color: {{ layoutBgColor }};">
+          <div class="layout-skewed-unskew">
             <div class="container-content" wide-layout$="{{ isAtLeast800px }}">
               <content></content>
             </div>
@@ -88,8 +89,9 @@ Mixin | Description | Default
 
       <template 
         is="dom-if" 
-        if="{{ !standoutSkewed }}">
-        <div class="container-content" wide-layout$="{{ isAtLeast800px }}">
+        if="{{ !layoutSkewed }}">
+        <div class="container-content" wide-layout$="{{ isAtLeast800px }}"
+          style$="background-color: {{ layoutBgColor }};">
           <content></content>
         </div>
       </template>
