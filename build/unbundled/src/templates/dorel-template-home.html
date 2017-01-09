@@ -2,27 +2,73 @@
 
 </head><body><dom-module id="dorel-template-home">
   <template>
-    <style is="custom-style shadow">
+    <style is="custom-style" include="shadow">
       dorel-hero {
         --dorel-hero-bg: {
           padding: 3rem 0 16rem;
         };
       }
-
+      .car-seats {
+        display: flex;
+        margin-top: calc(75px + 50px); /* 75 px is offset for dorel-layout-section */
+      }
+      .category-section paper-card {
+         margin: -10px auto 0 auto;
+         display: block;
+         max-width: 340px;
+         @apply(--shadow-elevation-6dp);
+      }
+      .strollers {
+        --dorel-layout-section-skewed-bg: {
+          /*background-color: var(--theme-brand-color-accent-green);*/
+          background-color: white;
+        };
+      }
     </style>
+
     
-    <dorel-hero hero-title="[[ templateData.acf.hero_title ]]" hero-content="[[ templateData.acf.hero_content ]]"></dorel-hero>
+    <template is="dom-if" if="[[ templateData.acf.length ]]">
+      <template is="dom-repeat" items="[[ templateData.acf ]]" as="component">
+        
 
-    <template is="dom-if" if="[[ templateData.acf.standout.length ]]">
-      <template is="dom-repeat" items="[[ templateData.acf.standout ]]" as="standoutData">
 
-        <dorel-section-standout class="category-section" standout-data="[[ standoutData ]]" standout-index="[[ index ]]"></dorel-section-standout>
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component, 'hero') }}">
+            
+          <dorel-hero hero-data="[[ component ]]"></dorel-hero>
+
+        </template>
+        
+
+
+
+
 
       </template>
+
     </template>
+
+
+
+
+
+
+    
+    <template is="dom-repeat" items="[[ templateData.acf.standout ]]">
+        
+      <dorel-section-standout standout-data="[[ item ]]" standout-index="[[ index ]]"></dorel-section-standout>
+
+    </template>
+    
+
+
+
+
 
   </template>
 
-  <script>Polymer({is:"dorel-template-home",properties:{templateData:{type:String}},ready:function(e,t){return e===t}});</script>
+  <script>Polymer({is:"dorel-template-home",properties:{templateData:{type:String}},_isPageComponent:function(e,t){return console.log(e,t),e===t}});</script>
 </dom-module>
 </body></html>

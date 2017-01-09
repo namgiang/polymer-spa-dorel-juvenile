@@ -1,0 +1,56 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/maxicosi/theme-maxicosi-shared-styles.html">
+
+
+
+</head><body><dom-module id="dorel-slider-slide">
+  <template>
+    <style is="custom-style">
+      img {
+        width: 100%;
+        z-index: 1;
+      }
+      .slide-image-overlay {
+        position: absolute;
+        z-index: 11;
+      }
+      .slide-image-content {
+        background-color: white;
+        padding: var(--theme-component-space-inner);
+        margin: 1rem 3rem; /* location in the slide */
+      }
+      .title-text {
+
+      }
+    </style>
+
+    <article>
+     <h1 style="background: red">[[slideData]]</h1>
+      
+      <template is="dom-if" if="{{ _hasValue(slideData.slide_card_title) }}">
+
+        <div class="slide-image-overlay">
+          <div class="slide-image-content">
+            <header class$="title-text">[[ slideData.slide_card_title ]]</header>
+          </div>
+        </div>
+
+      </template>
+      
+      
+      
+      <template is="dom-if" if="{{ _hasValue(slideData.slide_image) }}">
+
+        <img src="[[ slideData.slide_image ]]" alt="[[ slideData.slide_image_alt ]]">
+
+      </template>
+      
+
+    </article>
+  </template>
+
+  <script>Polymer({is:"dorel-slider-slide",properties:{slideData:{type:Object},slideIndex:{type:Number,observer:"_slideChanged"}},_hasValue:function(e){return""!=typeof e||"undefined"!==e||e},_slideChanged:function(){this.getAttribute("aria-label");this.setAttribute("aria-label",this.slideIndex)},ready:function(){}});</script>
+
+</dom-module>
+</body></html>

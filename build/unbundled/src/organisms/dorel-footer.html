@@ -11,25 +11,6 @@
   <template>
 
     <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
-      /* 
-       * iron-flex reusable classes 
-       */
-      /*.flex-end-justified {
-         @apply(--layout-horizontal);
-         @apply(--layout-end-justified);
-       }*/
-       .flexchild {
-         @apply(--layout-flex);
-       }
-       .flex2child {
-         @apply(--layout-flex-2);
-       }
-       .flex3child {
-         @apply(--layout-flex-3);
-       }
-      /* 
-       * custom classes 
-       */
        footer {
         background-color: var(--theme-brand-color-royal-blue);
         padding: var(--theme-component-space-inner);
@@ -47,8 +28,7 @@
         font-size: 1rem;
        }
       .footer-media-links {
-        padding: 1.5rem;
-        /*background-color: var(--theme-brand-color-royal-blue);*/
+        padding: var(--theme-component-space-inner);
       }
       .footer-media-link {
         text-align: center;
@@ -66,7 +46,7 @@
       }
       /* lists not enumerated */
       .not-enum {
-        margin-left: 0;
+        padding-left: 0;
       }
       .not-enum li {
         list-style-type: none;
@@ -75,9 +55,20 @@
         margin-top: 1rem;
         margin-bottom: 1rem;
       }
+      footer[layoutwide] .footer-info {
+        @apply(--layout-horizontal);
+       }
+      footer[layoutwide] .footer-menu {
+         @apply(--layout-flex);
+       }
+       footer[layoutwide] .footer-disclaimer {
+         @apply(--layout-flex-3);
+       }
     </style>
 
-    <footer>
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+
+    <footer layoutwide$="{{isAtLeast800px}}">
       <section class="footer-media-links">
         <div class="layout horizontal center center-justified">
           <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:youtube" style="fill:rgb(0, 150, 195)"></iron-icon><span>Maxi Cosi</span></a>
@@ -85,15 +76,13 @@
           <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:facebook" style="fill:rgb(0, 150, 195)"></iron-icon><span>Maxi-Cosi</span></a>
         </div>
       </section>
-      <section class="footer-info layout horizontal">
-        <div class="layout vertical flex3child">
-          <div class="footer-disclaimer">
-            <span class="footer-text">Copyright © 2017 Dorel Europe. All Rights Reserved.</span>
-            <span class="footer-text">A division of Dorel Juvenile.</span>
-            
-          </div>
+      <section class="footer-info">
+        <div class="layout vertical footer-disclaimer">
+          <span class="footer-text">Copyright © 2017 Dorel Europe. All Rights Reserved.</span>
+          <span class="footer-text">A division of Dorel Juvenile.</span>
+          
         </div>
-        <div class="flexchild">
+        <div class="footer-menu">
           <ul class="not-enum">
             <li class="footer-heading">Company</li>
             <li><a href="#">Working at Maxi Cosi</a></li>
@@ -101,14 +90,14 @@
             <li><a href="#">Disclaimer</a></li>
           </ul>
         </div>
-        <div class="flexchild">
+        <div class="footer-menu">
           <ul class="not-enum">
             <li class="footer-heading">Service</li>
             <li><a href="#">FAQ</a></li>
             <li><a href="#">Contact</a></li>
           </ul>
         </div>
-        <div class="flexchild">
+        <div class="footer-menu">
           <ul class="not-enum">
             <li class="footer-heading">Brands</li>
             <li><a href="#">Quinny</a></li>

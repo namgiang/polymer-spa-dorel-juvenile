@@ -6,11 +6,9 @@
   <template>
     <style></style>
     
-    <iron-ajax id="wp_posts" auto="" url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" handle-as="json" on-response="_retrievePage"></iron-ajax>
-
-    <content></content>
+    <iron-ajax id="wp_posts" auto="" url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" handle-as="json" last-response="{{ pageData }}"></iron-ajax>
   </template>
 
-  <script>Polymer({is:"wp-collect-page",properties:{pageData:{type:Object,reflectToAttribute:!0,notify:!0},pageId:{type:Number},wpUrl:{type:String}},_retrievePage:function(e){this.pageData=e.detail.response}});</script>
+  <script>Polymer({is:"wp-collect-page",properties:{pageData:{type:Object,reflectToAttribute:!0,notify:!0},pageId:{type:Number},wpUrl:{type:String}}});</script>
 </dom-module>
 </body></html>
