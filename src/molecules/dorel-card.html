@@ -1,0 +1,77 @@
+<!--
+@license
+Copyright (c) 2016 Dorel Juvenile. All rights reserved.
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="https://dev.cdn.dorel.io/includes/brands/dorel/theme-dorel-shared-styles.html">
+
+<link rel="import" href="../atoms/dorel-cta.html">
+
+<!--
+
+```html
+<dorel-card card-data="object with all data for the card">
+</dorel-card>
+```
+-->
+
+<dom-module id="dorel-card" include="theme-dorel-shared-styles iron-flex iron-flex-classes">
+
+  <template>
+    <style>
+    </style>
+
+    <!-- cardTitle -->
+    <template
+      is="dom-if"
+      if="{{ _hasValue(cardData.card_title) }}">
+      <div>
+        <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
+      </div>
+    </template>
+    <!--// cardTitle -->
+    
+    <!-- cardContent -->
+    <template
+      is="dom-if"
+      if="{{ _hasValue(cardData.card_content) }}">
+      <div>
+        <dorel-safe-html html="[[ cardData.card_content ]]"></dorel-safe-html>
+      </div>
+    </template>
+    <!--// cardContent -->
+    
+    <!-- ctaToggle -->
+    <template
+      is="dom-if"
+      if="{{ cardData.card_cta_toggle }}">
+      <div>
+        <dorel-cta href="[[ cardData.card_cta_href ]]" secondary>[[ cardData.card_cta_text ]]</dorel-cta>
+      </div>
+    </template>
+    <!--// ctaToggle -->
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-card',
+
+      properties: {
+
+        cardTitle: {
+          type: String,
+          value: ''
+        }
+
+      },
+
+      _hasValue: function(val) {
+        return (typeof val !== '' || val !== 'undefined' || val);
+      }
+    });
+
+  </script>
+
+</dom-module>
