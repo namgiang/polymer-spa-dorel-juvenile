@@ -19,7 +19,6 @@ if using `skewed` the background will get a skewed background.
 <dom-module id="dorel-hero-column" include="theme-dorel-shared-styles iron-flex iron-flex-classes">
 
   <template>
-
     <style>
       .hero-column-standout {
         background-color: white;
@@ -53,19 +52,15 @@ if using `skewed` the background will get a skewed background.
         color: var(--theme-brand-color-royal-blue);
       }
     </style>
+      
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>    
 
-    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+    <div class="hero-column-standout hero-standout-content hero-column-standout-vertical"
+      small-layout$="{{ !isAtLeast800px }}"
+      wide-layout$="{{ isAtLeast800px }}">
 
-    <div class="hero-column-standout hero-standout-content hero-column-standout-vertical" small-layout$={{!isAtLeast800px}} wide-layout$="{{isAtLeast800px}}">
-      <div>
-        <h1 hidden$="[[!hero-column-title]]" class="theme-headline">[[hero-column-title]]</h1>
-      </div>
-      <div>
-        <content></content>
-      </div>
-      <div>
-        <dorel-cta hidden$="[[!call-to-action-href]]" href="[[call-to-action-href]]" secondary>Secondary cta</dorel-cta>
-      </div>
+      <dorel-page-builder builder-data="[[ columnData ]]"></dorel-page-builder>
+
     </div>
 
   </template>
@@ -74,14 +69,19 @@ if using `skewed` the background will get a skewed background.
 
     Polymer({
       is: 'dorel-hero-column',
+
       properties: {
-        heroColumnTitle: {
-          type: String
-        },
-        callToActionHref: {
-          type: String
+
+        cardTitle: {
+          type: String,
+          value: ''
         }
+
       },
+
+      _hasValue: function(val) {
+        return (typeof val !== '' || val !== 'undefined' || val);
+      }
     });
 
   </script>
