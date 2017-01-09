@@ -8,19 +8,15 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../bower_components/google-tag-manager/google-tag-manager.html">
 <link rel="import" href="../bower_components/beautify-json/beautify-json.html">
 
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
 <link rel="import" href="organisms/dorel-header.html">
-<link rel="import" href="organisms/dorel-footer.html">
-
 
 <link rel="import" href="molecules/dorel-tabs.html">
 <link rel="import" href="molecules/dorel-tab.html">
 <link rel="import" href="molecules/dorel-wp-collect-menu.html">
-
 <link rel="import" href="molecules/dorel-wp-collect-pages.html">
 <link rel="import" href="molecules/dorel-wp-collect-page.html">
 <link rel="import" href="molecules/dorel-card-contact.html">
@@ -181,9 +177,6 @@
       }
 
     </style>
-    
-    <!-- analytics -->
-    <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
   
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -194,6 +187,17 @@
         tail="{{ subroute }}"></app-route>
 
     <iron-media-query query="max-width: 767px" query-matches="{{ smallScreen }}"></iron-media-query>
+
+    <!-- retrieve all menu items from wordpress -->
+    <dorel-wp-collect-menu
+      wp-url="[[ wpUrl ]]"
+      menu-location="main_menu" 
+      menu-data="{{ menuData }}"></dorel-wp-collect-menu>
+
+    <!-- retrieve all pages from wordpress -->
+    <dorel-wp-collect-pages id="wp_posts"
+      wp-url="[[ wpUrl ]]"
+      pages-data="{{ pages }}"></dorel-wp-collect-pages>
     
     <app-header-layout>
       <app-header id="header" 
@@ -205,22 +209,17 @@
         <dorel-header>
           <!-- retrieve menu items -->
           <div id="tabContainer" sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-            <wp-collect-menu
-              wp-url="[[ wpUrl ]]"
-              menu-location="main_menu" 
-              menu-data="{{ menuData }}">
-              <template is="dom-if" if="[[ menuData.length ]]">
-                <dorel-tabs
-                  selected="[[ page ]]"
-                  attr-for-selected="name">
-                  <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
-                    <dorel-tab name="[[ menuItem.title ]]">
-                      <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                    </dorel-tab>
-                  </template>
-                </dorel-tabs>
-              </template>
-            </wp-collect-menu>
+            <template is="dom-if" if="[[ menuData.length ]]">
+              <dorel-tabs
+                selected="[[ page ]]"
+                attr-for-selected="name">
+                <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+                  <dorel-tab name="[[ menuItem.title ]]">
+                    <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                  </dorel-tab>
+                </template>
+              </dorel-tabs>
+            </template>
           </div>
         </dorel-header>
 
@@ -237,27 +236,15 @@
     <template is="dom-if" if="[[ _shouldRenderDrawer ]]">
       <!-- Two-way bind `drawerOpened` since app-drawer can update `opened` itself. -->
       <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
-        <wp-collect-menu
-          wp-url="[[ wpUrl ]]"
-          menu-location="main_menu" 
-          menu-data="{{ menuData }}">
-
-          <iron-selector role="navigation" class="drawer-list" 
-            selected="[[ page ]]" 
-            attr-for-selected="name">
-            <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
-              <a name="[[ menuItem.title ]]" href="/list/[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-            </template>
-          </iron-selector>
-
-        </wp-collect-menu>
+        <iron-selector role="navigation" class="drawer-list" 
+          selected="[[ page ]]" 
+          attr-for-selected="name">
+          <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+            <a name="[[ menuItem.title ]]" href="/list/[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+          </template>
+        </iron-selector>
       </app-drawer>
     </template>
-    
-    <!-- retrieve all pages from wordpress -->
-    <dorel-wp-collect-pages id="wp_posts"
-      wp-url="[[ wpUrl ]]"
-      pages-data="{{ pages }}"></dorel-wp-collect-pages>
 
     <!-- content pages -->
     <iron-pages role="main"
@@ -277,8 +264,6 @@
       </template>
 
     </iron-pages>
-
-    <dorel-footer></dorel-footer>
 
   </template>
 
@@ -367,11 +352,12 @@
        * @param page this will be the routeData.page variable that has been changed/set
        */
       _routePageChanged: function(page) {
-        this.page = page || 'homepage';
+        this.page = page || 'home';
 
         // Scroll to the top of the page on every *route* change. Use `Polymer.AppLayout.scroll`
         // with `behavior: 'silent'` to disable header scroll effects during the scroll.
         Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+
         // Close the drawer - in case the *route* change came from a link in the drawer.
         this.drawerOpened = false;
       },
@@ -385,17 +371,21 @@
        */
       _pageChanged: function(page, oldPage) {
         if (page != null) {
+          
           // home route is eagerly loaded
           if (page == 'home') {
             this._pageLoaded(Boolean(oldPage));
+
           // other routes are lazy loaded
           } else {
+
             // this.importHref(
-            //   this.resolveUrl('dorel-template.html'),
+            //   this.resolveUrl('templates/dorel-template.html'),
             //   function() {
             //     this._pageLoaded(Boolean(oldPage));
             //   }, null, true);
           }
+
         }
       },
 
@@ -414,10 +404,10 @@
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
-            this.importHref(this.resolveUrl('../atoms/dorel-lazy-resources.html'), function() {
+            this.importHref(this.resolveUrl('atoms/dorel-lazy-resources.html'), function() {
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('../../service-worker.js');
+                navigator.serviceWorker.register('../service-worker.js');
               }
               this._notifyNetworkStatus();
               this.loadComplete = true;
@@ -429,6 +419,7 @@
       _notifyNetworkStatus: function() {
         var oldOffline = this.offline;
         this.offline =  !navigator.onLine;
+
         // Show the snackbar if the user is offline when starting a new session
         // or if the network status changed.
         if (this.offline || (!this.offline && oldOffline === true)) {
@@ -490,6 +481,14 @@
 
       _computeShouldRenderDrawer: function(smallScreen, loadComplete) {
         return smallScreen && loadComplete;
+      },
+
+      _hasTemplate: function(templateName) {
+        return (templateName) ? true : false;
+      },
+
+      _isTemplate: function(templateName, templateCase) {
+        return templateName === templateCase;
       }
     });
   </script>
