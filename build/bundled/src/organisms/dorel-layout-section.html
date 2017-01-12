@@ -1,0 +1,70 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+
+
+</head><body><dom-module id="dorel-layout-section">
+  <template>
+    <style is="custom-style">
+      .container-content {
+        @apply(--layout-vertical);
+      }
+      .container-content[wide-layout] {
+        @apply(--layout-horizontal);
+      }
+      .theme-headline {
+        font-size: var(--theme-size-headline);
+        @apply(--theme-heading);
+      }
+      .center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+      /* 
+       * custom classes 
+       */
+      .standout {
+        width: 100%;
+        @apply(--dorel-layout-section);
+      }
+      .standout-bg {
+        @apply(--dorel-layout-section-bg);
+      }
+      .layout-skew-bg {
+        transform: skewY(5deg);
+        background-color: #efefef;
+        margin-top: -75px; /* compensate for skewed background */
+        @apply(--dorel-layout-section-skewed-bg);
+      }
+      .layout-skewed-unskew {
+        transform: skewY(-5deg);
+      }
+    </style>
+
+    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+
+    <section class="standout standout-bg">
+
+      
+      <template is="dom-if" if="{{ layoutSkewed }}">
+        <div class="layout-skew-bg" style$="background-color: {{ layoutBgColor }};">
+          <div class="layout-skewed-unskew">
+            <div class="container-content" wide-layout$="{{ isAtLeast800px }}">
+              <content></content>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if" if="{{ !layoutSkewed }}">
+        <div class="container-content" wide-layout$="{{ isAtLeast800px }}" style$="background-color: {{ layoutBgColor }};">
+          <content></content>
+        </div>
+      </template>
+
+    </section>
+
+  </template>
+
+  <script>Polymer({is:"dorel-layout-section",properties:{standoutSkewed:{type:Boolean,value:!1}}});</script>
+
+</dom-module></body></html>
