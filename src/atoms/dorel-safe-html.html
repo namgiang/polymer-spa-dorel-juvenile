@@ -3,7 +3,7 @@
 <dom-module id="dorel-safe-html">
 
   <template>
-    <span>{{ html }}</span>
+    <div id="content"></div>
   </template>
 
   <script>
@@ -13,12 +13,13 @@
       properties: {
         html: {
           type: String,
-          value: ''
+          value: '',
+          observer: '_htmlChanged'
         }
       },
 
-      ready: function() {
-        this.innerHTML = (typeof this.html === 'undefined') ? '' : this.html;
+      _htmlChanged: function() {
+        this.$.content.innerHTML = (typeof this.html === 'undefined') ? '' : this.html;
       }
     });
   </script>
