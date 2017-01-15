@@ -35,58 +35,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <!-- check if we have acf items -->
-    <template 
-      is="dom-if" 
-      if="[[ templateData.acf.length ]]">
-      <template
-        is="dom-repeat" 
-        items="[[ templateData.acf ]]"
-        as="component">
-        
-
-
-
-
-        <!-- hero section -->
-        <template
-          is="dom-if" 
-          if="{{ _isPageComponent(component, 'hero') }}">
-            
-          <dorel-hero hero-data="[[ component ]]"></dorel-hero>
-
-        </template>
-        <!--// hero section -->
-
-
-
-
-
-      </template>
-
-    </template>
-
-
-
-
-
-
-    <!-- standout sections -->
-    <template
-      is="dom-repeat" 
-      items="[[ templateData.acf.standout ]]">
-        
-      <dorel-section-standout
-        standout-data="[[ item ]]"
-        standout-index="[[ index ]]"></dorel-section-standout>
-
-    </template>
-    <!--// standout sections -->
-
-
-
-
-
+    <dorel-page-builder builder-data="[[ templateData.acf.page_builder ]]"></dorel-page-builder>
+    
   </template>
 
   <script>
