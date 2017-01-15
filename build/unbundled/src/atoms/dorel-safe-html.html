@@ -3,9 +3,9 @@
 </head><body><dom-module id="dorel-safe-html">
 
   <template>
-    <span>{{ html }}</span>
+    <div id="content"></div>
   </template>
 
-  <script>Polymer({is:"dorel-safe-html",properties:{html:{type:String,value:""}},ready:function(){this.innerHTML="undefined"==typeof this.html?"":this.html}});</script>
+  <script>Polymer({is:"dorel-safe-html",properties:{html:{type:String,value:"",observer:"_htmlChanged"}},_htmlChanged:function(){this.$.content.innerHTML="undefined"==typeof this.html?"":this.html}});</script>
 
 </dom-module></body></html>
