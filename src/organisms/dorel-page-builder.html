@@ -10,6 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="organisms/dorel-layout-section.html">
+<link rel="import" href="organisms/dorel-layout-section-column.html">
+
 <dom-module id="dorel-page-builder">
   <template>
 
@@ -40,7 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         as="component">
 
 
-
+    
 
 
         <!-- dorel card -->
@@ -61,7 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <template 
           is="dom-if" 
           if="{{ _isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
-          
+
           <dorel-layout-section>
             <dorel-page-builder builder-data="[[ component.columns ]]"></dorel-page-builder>
           </dorel-layout-section>
@@ -72,11 +75,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
 
+        <!-- column_full -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'column_full') }}">
+
+          <!-- column-half -->
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+
+        </template>
+        <!--// column_full -->
+
+
+
+
+
         <!-- column_half -->
         <template 
           is="dom-if" 
           if="{{ _isPageComponent(component.acf_fc_layout, 'column_half') }}">
-
+          
           <!-- column-half -->
           <dorel-layout-section-column column-align="[[ component.column_align ]]">
             <dorel-column-content>
