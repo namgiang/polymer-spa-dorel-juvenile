@@ -5,9 +5,9 @@
   <template>
     <style></style>
     
-    <iron-ajax auto="" url="[[ wpUrl ]]/wp/v2/pages" handle-as="json" last-response="{{ pagesData }}"></iron-ajax>
+    <iron-ajax auto="" url="[[ wpUrl ]]/wp/v2/pages" handle-as="json" on-response="_pagesLoaded"></iron-ajax>
   </template>
 
-  <script>Polymer({is:"dorel-wp-collect-pages",properties:{pagesData:{type:Object,reflectToAttribute:!0,notify:!0},wpUrl:{type:String}}});</script>
+  <script>Polymer({is:"dorel-wp-collect-pages",properties:{pagesData:{type:Object,reflectToAttribute:!0,notify:!0},wpUrl:{type:String}},_pagesLoaded:function(e){var t=e.detail.response;t.forEach(function(e){var t=e.template.slice(0,-4),a=t.replace("page-","");e.template=a}),this.pagesData=t}});</script>
 </dom-module>
 </body></html>
