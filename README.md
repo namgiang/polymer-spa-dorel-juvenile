@@ -14,6 +14,9 @@ You will need a running Wordpress instance to make all ajax requests work. In th
 
 ##### Prerequisites
 
+- Polymer CLI: Read installing instructions on the [polymer website](https://www.polymer-project.org/1.0/start/toolbox/set-up).
+- Bower: run `$ bower install` on initial setup
+
 Clone this repository:
     
     git clone git@github.com:dorel/polymer-spa-dorel-juvenile.git
