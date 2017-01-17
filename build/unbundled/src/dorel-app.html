@@ -1,19 +1,18 @@
 <html><head><link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
-<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
+
+
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
-<link rel="import" href="../bower_components/google-tag-manager/google-tag-manager.html">
+
 
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
+<link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
 
 </head><body><dom-module id="dorel-app">
@@ -73,6 +72,35 @@
           height: 10px;
           bottom: -10px;
         };
+      }
+
+      /* 
+       * iron-flex reusable classes 
+       */
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+      .flex-end-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+      .flex {
+        @apply(--layout-flex);
+      }
+      .vertical-center {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      /* 
+       * custom classes 
+       */
+      .header-search,
+      .header-language {
+        padding: 0 0.2rem; /* add component padding */
+      }
+      .header-utility {
+        padding: 0 var(--theme-component-space-inner) 0 0; /* add logo spacing for padding */
       }
 
       paper-icon-button {
@@ -187,24 +215,56 @@
     
     <app-header-layout>
       <app-header id="header" effects="waterfall" fixed="[[ smallScreen ]]" condenses="[[ !smallScreen ]]" reveals="[[ !smallScreen ]]">
+  
+        <header class="layout horizontal">
 
-        <dorel-header>
-          <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-            <template is="dom-if" if="[[ menuData.length ]]">
+          <div class="flex layout horizontal">
+            
+            <div>
+              <a href="/" aria-label="Dorel SPA">
+                <dorel-logo></dorel-logo>
+              </a>
+            </div>
+            
 
-              <dorel-tabs selected="[[ page ]]" attr-for-selected="name">
-                <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+            
+            <div class="vertical-center">
+              <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
+                <template is="dom-if" if="[[ menuData.length ]]">
 
-                  <dorel-tab name="[[ menuItem.title ]]">
-                    <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                  </dorel-tab>
+                  <dorel-tabs selected="[[ page ]]" attr-for-selected="name">
+                    <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
 
+                      <dorel-tab name="[[ menuItem.title ]]">
+                        <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                      </dorel-tab>
+
+                    </template>
+                  </dorel-tabs>
+                  
                 </template>
-              </dorel-tabs>
-              
-            </template>
+              </div>
+            </div>
+            
           </div>
-        </dorel-header>
+
+          
+          <div class="header-utility layout horizontal">
+            
+            <div class="header-search vertical-center">
+              <dorel-search-small></dorel-search-small>
+            </div>
+            
+
+            
+            <div class="header-language vertical-center">
+              <dorel-select-language></dorel-select-language>
+            </div>
+            
+          </div>
+          
+
+        </header>
 
       </app-header>
     </app-header-layout>
@@ -216,7 +276,7 @@
     <iron-pages role="main" selected="{{ currentPage.object_id }}" attr-for-selected="page-id">
       
       <template is="dom-repeat" items="[[ pages ]]" as="page">
-
+        
         <dorel-template page-id="[[ page.id ]]" template-name="[[ page.template ]]" template-data="[[ page ]]"></dorel-template>
 
       </template>
