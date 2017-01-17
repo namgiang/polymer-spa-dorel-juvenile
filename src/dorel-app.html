@@ -238,14 +238,10 @@
         display: block;
       }
 
-/*      .hidden {
+      .hidden {
         display: none;
         visibility: hidden;
       }
-      .hidden * {
-        display: none;
-        visibility: hidden; 
-      }*/
 
       @keyframes fadein {
           from { opacity: 0; }
@@ -690,9 +686,15 @@
         });
 
         window.addEventListener('dorel-footer-attached', function() {
-          this.$["placeholder-header"].setAttribute("style", "display:none");
-          this.$["placeholder-body"].setAttribute("style", "display:none");
-          this.$["placeholder-footer"].setAttribute("style", "display:none");
+
+          // this.$["placeholder-header"].setAttribute("style", "display:none");
+          // this.$["placeholder-body"].setAttribute("style", "display:none");
+          // this.$["placeholder-footer"].setAttribute("style", "display:none");
+
+          this.$["placeholder-header"].className += " hidden";
+          this.$["placeholder-body"].className += " hidden";
+          this.$["placeholder-footer"].className += " hidden";
+
         }.bind(this));
 
       },
