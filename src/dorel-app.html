@@ -1,10 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<!-- <link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html"> -->
-<!-- <link rel="import" href="../bower_components/app-layout/helpers/helpers.html"> -->
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
@@ -23,22 +26,14 @@
        * - Will define standard styling for components
        */
       :host {
-        /*display: block;
-        position: relative;*/
+
+        display: block;
+        position: relative;
         padding-top: 130px;
         padding-bottom: 64px;
         min-height: 100vh;
-
         --primary-color: var(--theme-brand-color);
         color: var(--theme-primary-text-color);
-
-        /*
-        --app-secondary-color: #757575;
-        --app-accent-color: #172C50;
-        --paper-button-ink-color: var(--app-accent-color);
-        --paper-icon-button-ink-color: var(--app-accent-color);
-        --paper-spinner-color: var(--app-accent-color);
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);*/
       }
 
       :root {
@@ -59,13 +54,9 @@
        * this file styling:
        */
 
-      app-header-layout {
-        z-index: 9999; /* overrule default */
-      }
-
       app-header {
         @apply(--layout-fixed-top);
-        /*z-index: 1;*/
+        z-index: 1;
         background-color: rgba(255, 255, 255, 0.95);
         --app-header-shadow: {
           box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
@@ -195,13 +186,21 @@
           display: none;
         }
       }
+      
+      #content {
+        min-height: 350px;
+      }
 
+      iron-pages {
+        max-width: 1440px;
+        margin: 0 auto;
+      }
 
-      /* 
+      /**
        * Placeholder styling
        */
-
       .placeholder-header-styling {
+        margin-top: -130px;
         width: 100%;
         height: 106px;
         display: block;
@@ -216,7 +215,7 @@
         width: 100%;
         height: 300px;
         display: block;
-        background-color: #efefef;
+        background-color: #fff;
         -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
            -moz-animation: fadein 1s; /* Firefox < 16 */
             -ms-animation: fadein 1s; /* Internet Explorer */
@@ -267,27 +266,26 @@
           from { opacity: 0; }
           to   { opacity: 1; }
       }
-
-      /* 
+      /**
        * temporary duplicate footer styling 
        */
-
-       footer {
+      footer {
         background-color: var(--theme-brand-color-royal-blue);
         padding: var(--theme-component-space-inner);
-       }
-       footer a,
-       .footer-text {
+      }
+
+      footer a,
+      .footer-text {
         color: white;
         text-decoration: none;
         @apply(--theme-ie-bodycopy);
-       }
-       .footer-heading {
+      }
+      .footer-heading {
         margin-bottom: .5rem;
         @apply(--theme-bodycopy);
         color: var(--theme-brand-color);
         font-size: 1rem;
-       }
+      }
       .footer-media-links {
         padding: var(--theme-component-space-inner);
       }
@@ -318,14 +316,54 @@
       }
       footer[layoutwide] .footer-info {
         @apply(--layout-horizontal);
-       }
+      }
       footer[layoutwide] .footer-menu {
-         @apply(--layout-flex);
-       }
-       footer[layoutwide] .footer-disclaimer {
-         @apply(--layout-flex-3);
-       }
+        @apply(--layout-flex);
+      }
+      footer[layoutwide] .footer-disclaimer {
+        @apply(--layout-flex-3);
+      }
 
+      .spinner {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        margin: 100px auto;
+      }
+
+      .double-bounce1, .double-bounce2 {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background-color: #333;
+        opacity: 0.6;
+        position: absolute;
+        top: 5vh;
+        left: 0;
+        
+        -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+        animation: sk-bounce 2.0s infinite ease-in-out;
+      }
+
+      .double-bounce2 {
+        -webkit-animation-delay: -1.0s;
+        animation-delay: -1.0s;
+      }
+
+      @-webkit-keyframes sk-bounce {
+        0%, 100% { -webkit-transform: scale(0.0) }
+        50% { -webkit-transform: scale(1.0) }
+      }
+
+      @keyframes sk-bounce {
+        0%, 100% { 
+          transform: scale(0.0);
+          -webkit-transform: scale(0.0);
+        } 50% { 
+          transform: scale(1.0);
+          -webkit-transform: scale(1.0);
+        }
+      }
     </style>
 
     <!-- analytics -->
@@ -453,6 +491,10 @@
 
     </div><!-- // END #placeholder-header -->
     <div id="placeholder-body" class="placeholder-body-styling">
+      <div class="spinner">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
+      </div>
     </div><!-- // END #placeholder-body -->
 
     <div id="placeholder-footer" class="placeholder-footer-styling">
@@ -503,74 +545,63 @@
       </footer>
     </div><!-- // END #placeholder-footer -->
 
-    <app-header-layout>
-      <app-header 
-        id="header"
-        effects="waterfall" 
-        fixed="[[ smallScreen ]]" 
-        condenses="[[ !smallScreen ]]" 
-        reveals="[[ !smallScreen ]]">
-  
-        <header class="layout horizontal">
+    <app-header
+      role="navigation"
+      id="header"
+      effects="waterfall" 
+      fixed="[[ smallScreen ]]" 
+      condenses="[[ !smallScreen ]]" 
+      reveals="[[ !smallScreen ]]">
 
-          <div class="flex layout horizontal">
-            <!-- logo -->
-            <div>
-              <a href="/" aria-label="Dorel SPA">
-                <dorel-logo></dorel-logo>
-              </a>
-            </div>
-            <!--// logo -->
+      <header class="layout horizontal">
 
-            <!-- menu -->
-            <div class="vertical-center">
-              <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-                <template 
-                  is="dom-if" 
-                  if="[[ menuData.length ]]">
-
-                  <dorel-tabs
-                    selected="[[ page ]]"
-                    attr-for-selected="name">
-                    <template 
-                      is="dom-repeat" 
-                      items="[[ menuData ]]" 
-                      as="menuItem" 
-                      initial-count="4">
-
-                      <dorel-tab name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                      </dorel-tab>
-
-                    </template>
-                  </dorel-tabs>
-                  
-                </template>
-              </div>
-            </div>
-            <!--// menu -->
+        <div class="flex layout horizontal">
+          <div>
+            <a href="/" aria-label="Dorel SPA">
+              <dorel-logo></dorel-logo>
+            </a>
           </div>
 
-          <!-- submenu -->
-          <div class="header-utility layout horizontal">
-            <!-- search -->
-            <div class="header-search vertical-center">
-              <dorel-search-small></dorel-search-small>
-            </div>
-            <!--// search -->
+          <div class="vertical-center">
+            <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
+              <template 
+                is="dom-if" 
+                if="[[ menuData.length ]]">
 
-            <!-- language -->
-            <div class="header-language vertical-center">
-              <dorel-select-language></dorel-select-language>
+                <dorel-tabs
+                  selected="[[ page ]]"
+                  attr-for-selected="name">
+                  <template 
+                    is="dom-repeat" 
+                    items="[[ menuData ]]" 
+                    as="menuItem" 
+                    initial-count="4">
+
+                    <dorel-tab name="[[ menuItem.title ]]">
+                      <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                    </dorel-tab>
+
+                  </template>
+                </dorel-tabs>
+                
+              </template>
             </div>
-            <!--// language -->
           </div>
-          <!--// submenu -->
+        </div>
 
-        </header>
+        <div class="header-utility layout horizontal">
+          <div class="header-search vertical-center">
+            <dorel-search-small></dorel-search-small>
+          </div>
 
-      </app-header>
-    </app-header-layout>
+          <div class="header-language vertical-center">
+            <dorel-select-language></dorel-select-language>
+          </div>
+        </div>
+
+      </header>
+
+    </app-header>
 
     <!-- Lazy-create the drawer for small screen sizes. -->
     <!-- <template is="dom-if" if="[[ _shouldRenderDrawer ]]">
@@ -586,23 +617,25 @@
     </template> -->
 
     <!-- content pages -->
-    <iron-pages role="main"
-      selected="{{ currentPage.object_id }}"
-      attr-for-selected="page-id">
-      
-      <template
-        is="dom-repeat"
-        items="[[ pages ]]"
-        as="page">
-        
-        <dorel-template
-          page-id="[[ page.id ]]"
-          template-name="[[ page.template ]]"
-          template-data="[[ page ]]"></dorel-template>
+    <section id="content">
+      <iron-pages role="main"
+        selected="{{ currentPage.object_id }}"
+        attr-for-selected="page-id">
 
-      </template>
+        <template
+          is="dom-repeat"
+          items="[[ pages ]]"
+          as="page">
+          
+          <dorel-template
+            page-id="[[ page.id ]]"
+            template-name="[[ page.template ]]"
+            template-data="[[ page ]]"></dorel-template>
 
-    </iron-pages>
+        </template>
+
+      </iron-pages>
+    </section>
 
     <dorel-footer></dorel-footer>
 
