@@ -5,6 +5,18 @@
  */
 var gulp  = require('gulp');
 var shell = require('gulp-shell');
+var imagemin = require('gulp-imagemin');
+
+/**
+ * Compress images
+ */
+gulp.task('compress-images', function () {
+  var dest = './build/assets/img';
+
+  return gulp.src('./assets/images/*')
+    .pipe(imagemin())
+    .pipe(gulp.dest('./assets/images/'));
+});
 
 /**
  * Task for building polymer
@@ -29,4 +41,4 @@ gulp.task('generate-service-worker', ['build-polymer'],function(callback) {
 /**
  * Generate all (this script should run)
  */
-gulp.task('build', ['build-polymer', 'generate-service-worker']);
+gulp.task('build', ['compress-images', 'build-polymer', 'generate-service-worker']);
