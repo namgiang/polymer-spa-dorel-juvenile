@@ -15,9 +15,14 @@
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
-<link rel="import" href="organisms/dorel-app-placeholder.html">
+<link rel="import" href="dorel-app-placeholder.html">
+
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
+<link rel="import" href="atoms/dorel-gtm-data-layer.html">
+
+<!-- enable global variables -->
+<script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
 
 <dom-module id="dorel-app">
   <template>
@@ -312,13 +317,11 @@
     <!-- retrieve all menu items from wordpress -->
     <dorel-wp-collect-menu
       wp-url="[[ wpUrl ]]"
-      menu-location="main_menu"
-      menu-data="{{ menuData }}"></dorel-wp-collect-menu>
+      menu-location="main_menu"></dorel-wp-collect-menu>
 
     <!-- retrieve all pages from wordpress -->
     <dorel-wp-collect-pages
-      wp-url="[[ wpUrl ]]"
-      pages-data="{{ pages }}"></dorel-wp-collect-pages>
+      wp-url="[[ wpUrl ]]"></dorel-wp-collect-pages>
 
     <dorel-app-placeholder></dorel-app-placeholder>
 
@@ -343,14 +346,14 @@
             <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
               <template 
                 is="dom-if" 
-                if="[[ menuData.length ]]">
+                if="{{ globals.Dorel.collect.menuItems.length }}">
 
                 <dorel-tabs
                   selected="[[ page ]]"
                   attr-for-selected="name">
                   <template 
                     is="dom-repeat" 
-                    items="[[ menuData ]]" 
+                    items="{{ globals.Dorel.collect.menuItems }}" 
                     as="menuItem" 
                     initial-count="4">
 
@@ -396,12 +399,12 @@
     <!-- content pages -->
     <section id="content">
       <iron-pages role="main"
-        selected="{{ currentPage.object_id }}"
+        selected="{{ currentMenuItem.object_id }}"
         attr-for-selected="page-id">
 
         <template
           is="dom-repeat"
-          items="[[ pages ]]"
+          items="[[ globals.Dorel.collect.pages ]]"
           as="page">
           
           <dorel-template
@@ -416,9 +419,12 @@
 
     <dorel-footer></dorel-footer>
 
+    <dorel-gtm-data-layer gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer>
+
   </template>
 
   <script>
+
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
@@ -467,7 +473,8 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setCurrentPage(page, menuData)'
+        '_setCurrentMenuItem(page, globals.Dorel.collect.menuItems)',
+        '_setCurrentPage(page, globals.Dorel.collect.pages)'
       ],
 
       listeners: {
@@ -476,6 +483,9 @@
 
       created: function() {
         window.performance && performance.mark && performance.mark('dorel-app.created');
+
+        // Create the Dorel global
+        Polymer.globalsManager.set('Dorel', { collect: {} });
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
@@ -494,7 +504,6 @@
           this.listen(window, 'online', '_notifyNetworkStatus');
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
-
       },
 
       /** 
@@ -557,11 +566,11 @@
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
-            this.importHref(this.resolveUrl('dorel-lazy-resources.html'), function() {
+            this.importHref(this.resolveUrl('dorel-app-resources.html'), function() {
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('../service-worker.js');
+                // navigator.serviceWorker.register('../service-worker.js');
               }
 
               this._notifyNetworkStatus();
@@ -601,18 +610,42 @@
       },
 
       /**
-       * @name _setCurrentPage
-       * @description set the current pageId by matching it with the
-       * current menu item chosen
+       * @name _setCurrentMenuItem
+       * @description set the current menu item by matching the slug
+       * to the menu items url
        */
-      _setCurrentPage: function(page, menu) {
+      _setCurrentMenuItem: function(page, menuItems) {
+        var menu = this.globals.Dorel.collect.menuItems;
+
         // if menu array has no items
         if( !menu.length ) { return; }
 
         // map the page variable to the item in the menu array and set it 
-        this.currentPage = menu.find(function(item) {
+        this.currentMenuItem = menu.find(function(item) {
           return (page === item.url.substring(1)) ? item.object_id : false;
         });
+
+        // set the global currentMenuItem
+        Polymer.globalsManager.set('Dorel.currentMenuItem', this.currentMenuItem);
+      },
+
+      /**
+       * @name _setCurrentPage
+       * @description set the current page in the globals
+       */
+      _setCurrentPage: function(page, pages) {
+        var pages = this.globals.Dorel.collect.pages;
+
+        // if menu array has no items
+        if( !pages.length ) { return; }
+
+        // map the page variable to the item in the menu array and set it 
+        this.currentPage = pages.find(function(item) {
+          return (page === item.slug) ? item : null;
+        });
+
+        // set the global currentPage
+        Polymer.globalsManager.set('Dorel.currentPage', this.currentPage);
       },
 
       // This is for performance logging only.
