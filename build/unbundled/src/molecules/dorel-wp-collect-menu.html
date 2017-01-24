@@ -1,9 +1,7 @@
 <html><head></head><body><dom-module id="dorel-wp-collect-menu">
   <template>
-    <style>
-    </style>
     <iron-ajax auto="" url="[[ wpUrl ]]/wp-api-menus/v2/menu-locations/[[ menuLocation ]]" handle-as="json" on-response="_menuLoaded"></iron-ajax>
   </template>
 </dom-module>
 
-<script>Polymer({is:"dorel-wp-collect-menu",properties:{menuData:{type:Array,reflectToAttribute:!0,notify:!0},menuLocation:{type:String},wpUrl:{type:String}},_menuLoaded:function(t){var e=t.detail.response;e.forEach(function(t){t.title=t.title.toLowerCase(),t.url="/"+t.url.split("/")[3]}),this.menuData=e}});</script></body></html>
+<script>Polymer({is:"dorel-wp-collect-menu",properties:{menuData:{type:Array,reflectToAttribute:!0,notify:!0},menuLocation:{type:String},wpUrl:{type:String}},_menuLoaded:function(e){var t=e.detail.response;t.forEach(function(e){e.title=e.title.toLowerCase(),e.url="/"+e.url.split("/")[3]}),Polymer.globalsManager.set("Dorel.collect.menuItems",t)}});</script></body></html>
