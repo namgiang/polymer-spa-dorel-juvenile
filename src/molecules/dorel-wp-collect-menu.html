@@ -1,7 +1,5 @@
 <dom-module id="dorel-wp-collect-menu">
   <template>
-    <style>
-    </style>
     <iron-ajax 
       auto 
       url="[[ wpUrl ]]/wp-api-menus/v2/menu-locations/[[ menuLocation ]]" 
@@ -47,15 +45,16 @@
      * @description process the retrieved menu
      */
     _menuLoaded: function (data) {
-      var menu = data.detail.response;
+      var menuItems = data.detail.response;
 
       // iterate over all menu items, alter its title and set the right url
-      menu.forEach(function(item) {
+      menuItems.forEach(function(item) {
         item.title = item.title.toLowerCase();
         item.url = '/' + item.url.split('/')[3];
       });
-      
-      this.menuData = menu;
+
+      // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+      Polymer.globalsManager.set('Dorel.collect.menuItems', menuItems);
     }
   });
 </script>

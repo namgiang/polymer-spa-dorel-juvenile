@@ -15,9 +15,13 @@
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
-<link rel="import" href="organisms/dorel-app-placeholder.html">
+<link rel="import" href="dorel-app-placeholder.html">
+
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
+
+<!-- enable global variables -->
+<script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
 
 <dom-module id="dorel-app">
   <template>
@@ -312,13 +316,11 @@
     <!-- retrieve all menu items from wordpress -->
     <dorel-wp-collect-menu
       wp-url="[[ wpUrl ]]"
-      menu-location="main_menu"
-      menu-data="{{ menuData }}"></dorel-wp-collect-menu>
+      menu-location="main_menu"></dorel-wp-collect-menu>
 
     <!-- retrieve all pages from wordpress -->
     <dorel-wp-collect-pages
-      wp-url="[[ wpUrl ]]"
-      pages-data="{{ pages }}"></dorel-wp-collect-pages>
+      wp-url="[[ wpUrl ]]"></dorel-wp-collect-pages>
 
     <dorel-app-placeholder></dorel-app-placeholder>
 
@@ -343,14 +345,14 @@
             <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
               <template 
                 is="dom-if" 
-                if="[[ menuData.length ]]">
+                if="{{ globals.Dorel.collect.menuItems.length }}">
 
                 <dorel-tabs
                   selected="[[ page ]]"
                   attr-for-selected="name">
                   <template 
                     is="dom-repeat" 
-                    items="[[ menuData ]]" 
+                    items="{{ globals.Dorel.collect.menuItems }}" 
                     as="menuItem" 
                     initial-count="4">
 
@@ -401,7 +403,7 @@
 
         <template
           is="dom-repeat"
-          items="[[ pages ]]"
+          items="[[ globals.Dorel.collect.pages ]]"
           as="page">
           
           <dorel-template
@@ -412,6 +414,8 @@
         </template>
 
       </iron-pages>
+
+      <beautify-json output="{{ globals.Dorel }}"></beautify-json>
     </section>
 
     <dorel-footer></dorel-footer>
@@ -419,6 +423,7 @@
   </template>
 
   <script>
+
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
@@ -467,7 +472,7 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setCurrentPage(page, menuData)'
+        '_setCurrentPage(page, globals.Dorel.collect.menuItems)'
       ],
 
       listeners: {
@@ -495,6 +500,8 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
+        // Create the Dorel global
+        Polymer.globalsManager.set('Dorel', { collect: {} });
       },
 
       /** 
@@ -557,11 +564,11 @@
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
-            this.importHref(this.resolveUrl('dorel-lazy-resources.html'), function() {
+            this.importHref(this.resolveUrl('dorel-app-resources.html'), function() {
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('../service-worker.js');
+                // navigator.serviceWorker.register('../service-worker.js');
               }
 
               this._notifyNetworkStatus();
@@ -605,7 +612,9 @@
        * @description set the current pageId by matching it with the
        * current menu item chosen
        */
-      _setCurrentPage: function(page, menu) {
+      _setCurrentPage: function(page) {
+        var menu = this.globals.Dorel.collect.menuItems;
+
         // if menu array has no items
         if( !menu.length ) { return; }
 
@@ -613,6 +622,8 @@
         this.currentPage = menu.find(function(item) {
           return (page === item.url.substring(1)) ? item.object_id : false;
         });
+        console.log(this.currentPage);
+        console.log(this.globals.Dorel.collect.menuItems);
       },
 
       // This is for performance logging only.
