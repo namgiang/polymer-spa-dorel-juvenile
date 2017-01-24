@@ -1,0 +1,45 @@
+<html><head><link rel="import" href="../polymer/polymer.html">
+
+
+</head><body><dom-module id="beautify-json">
+  <template>
+    <style>
+      ::host {
+        display: block;
+        border: 1px solid red;
+      }
+        
+      .default {
+        outline: 1px solid #ccc;
+        margin: 5px; 
+        padding: 10px 20px;
+      }
+
+      .highlighted {
+        background: #212121;
+        color: #89ddff;
+        outline: 1px solid #ccc;
+        margin: 5px; 
+        padding: 10px 20px;
+      }
+
+      ::selection {
+        background: #c8c8c8; /* WebKit/Blink Browsers */
+      }
+
+      ::-moz-selection {
+        background: #c8c8c8; /* Gecko Browsers */
+      }
+
+      .key { color: #82aaff; }
+      .string { color: #c3e176; }
+      .number { color: #f78c6c; }
+      .boolean { color: #f78c6c; }
+      .null { color: #f78c6c; }
+    </style>
+    <pre id="output" class$="{{ elClass }}">{{ output }}</pre>
+  </template>
+
+  <script>Polymer({is:"beautify-json",properties:{highlight:{type:Boolean,value:!1},output:{type:Object,observer:"_jsonChanged"}},ready:function(){this.elClass=this.highlight?"highlighted":"default"},_jsonChanged:function(){if("object"==typeof this.output){var t=JSON.stringify(this.output,void 0,2),e=this.highlight?this._syntaxHighlight(t):t;Polymer.dom(this.$.output).innerHTML=e}},_syntaxHighlight:function(t){return t=t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"),t.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,function(t){var e="number";return/^"/.test(t)?e=/:$/.test(t)?"key":"string":/true|false/.test(t)?e="boolean":/null/.test(t)&&(e="null"),'<span class="'+e+'">'+t+"</span>"})}});</script>
+</dom-module>
+</body></html>
