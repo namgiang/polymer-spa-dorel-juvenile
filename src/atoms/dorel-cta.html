@@ -1,7 +1,5 @@
 <dom-module id="dorel-cta">
-
   <template>
-
     <style is="custom-style" include="theme-maxicosi-shared-styles dorel-animate-classes">
       [class^="theme-cta-"] {
         font-size: 16px;
@@ -61,8 +59,19 @@
         }
       },
 
-      clickEvent: function() {
-        console.log(this, this.type, this.href);
+      clickEvent: function(e) {
+        var event = e;
+
+        // GTM event
+        Polymer.globalsManager.set('Dorel.events', {
+          event_dom: event,
+          element: this,
+          action: 'tbd',
+          attributes: {
+            href: this.href,
+            handler: this['on-click']
+          }
+        });
       },
 
       _isAnchor: function(val) {

@@ -485,7 +485,11 @@
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
-        Polymer.globalsManager.set('Dorel', { collect: {} });
+        Polymer.globalsManager.set('Dorel', { 
+          collect: {},
+          current: {},
+          events: {}
+        });
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
@@ -570,7 +574,7 @@
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('../service-worker.js');
+                // navigator.serviceWorker.register('../service-worker.js');
               }
 
               this._notifyNetworkStatus();
@@ -626,7 +630,7 @@
         });
 
         // set the global currentMenuItem
-        Polymer.globalsManager.set('Dorel.currentMenuItem', this.currentMenuItem);
+        Polymer.globalsManager.set('Dorel.current.menuItem', this.currentMenuItem);
       },
 
       /**
@@ -645,7 +649,7 @@
         });
 
         // set the global currentPage
-        Polymer.globalsManager.set('Dorel.currentPage', this.currentPage);
+        Polymer.globalsManager.set('Dorel.current.page', this.currentPage);
       },
 
       // This is for performance logging only.
