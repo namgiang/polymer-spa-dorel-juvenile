@@ -1,0 +1,57 @@
+<dom-module id="dorel-wp-collect-widgets">
+  <template>
+    <style></style>
+    
+    <iron-ajax 
+      auto 
+      url="[[ wpUrl ]]/wp-rest-api-sidebars/v1/sidebars/footer-widget-area" 
+      handle-as="json"
+      on-response="_widgetsLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-widgets',
+
+      properties: {
+        /**
+         * `pageData` this variable is reflected
+         * by two way binding in order to use it in your
+         * template.
+         */
+        widgetsData: {
+          type: Object,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        /**
+         * `wpUrl` of the url of the Wordpress instance
+         */
+        wpUrl: {
+          type: String
+        }
+      },
+
+      /** 
+       * @name _widgetsLoaded
+       * @description process the retrieved pages
+       */
+      _widgetsLoaded: function (data) {
+        var widgets = data.detail.response;
+        console.log(widgets);
+
+        // iterate over all menu items, alter its title and set the right url
+        // pages.forEach(function(page) {
+        //   var template = page.template.slice(0, -4);
+        //   var pageName = template.replace('page-','');
+
+        //   page.template = pageName;
+        // });
+        
+        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+        Polymer.globalsManager.set('Dorel.collect.widgets', widgets);
+      }
+    });
+  </script>
+</dom-module>
