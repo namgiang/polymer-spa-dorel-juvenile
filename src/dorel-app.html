@@ -11,22 +11,23 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
+<link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
 
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
-<link rel="import" href="dorel-app-placeholder.html">
-
+<link rel="import" href="atoms/dorel-gtm-data-layer.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
-<link rel="import" href="atoms/dorel-gtm-data-layer.html">
+
+<link rel="import" href="dorel-app-placeholder.html">
 
 <!-- enable global variables -->
 <script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
 
 <dom-module id="dorel-app">
   <template>
-    <style is="custom-style" include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
       /* 
        * Application wide styling
        * - Will define standard styling for components
@@ -301,8 +302,11 @@
       }
     </style>
 
-    <!-- analytics -->
+    <!-- analytics
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
+    -->
+    <!-- <dorel-gtm-data-layer
+      gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer> -->
   
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -314,17 +318,25 @@
 
     <iron-media-query query="max-width: 767px" query-matches="{{ smallScreen }}"></iron-media-query>
 
-    <!-- retrieve all menu items from wordpress -->
-    <dorel-wp-collect-menu
-      wp-url="[[ wpUrl ]]"
-      menu-location="main_menu"></dorel-wp-collect-menu>
-
-    <!-- retrieve all pages from wordpress -->
-    <dorel-wp-collect-pages
-      wp-url="[[ wpUrl ]]"></dorel-wp-collect-pages>
-
+    <!-- loading placeholder -->
     <dorel-app-placeholder></dorel-app-placeholder>
 
+    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
+    <dorel-wp-collect-menu-locations
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
+
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+
+    <!-- collect all pages from wordpress -->
+    <dorel-wp-collect-pages
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-pages>
+
+    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
+    <dorel-wp-collect-widgets
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
+  
     <app-header
       role="navigation"
       id="header"
@@ -346,14 +358,14 @@
             <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
               <template 
                 is="dom-if" 
-                if="{{ globals.Dorel.collect.menuItems.length }}">
+                if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
 
                 <dorel-tabs
                   selected="[[ page ]]"
                   attr-for-selected="name">
                   <template 
                     is="dom-repeat" 
-                    items="{{ globals.Dorel.collect.menuItems }}" 
+                    items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
                     as="menuItem" 
                     initial-count="4">
 
@@ -365,6 +377,7 @@
                 </dorel-tabs>
                 
               </template>
+
             </div>
           </div>
         </div>
@@ -398,6 +411,7 @@
 
     <!-- content pages -->
     <section id="content">
+
       <iron-pages role="main"
         selected="{{ currentMenuItem.object_id }}"
         attr-for-selected="page-id">
@@ -419,8 +433,6 @@
 
     <dorel-footer></dorel-footer>
 
-    <dorel-gtm-data-layer gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer>
-
   </template>
 
   <script>
@@ -438,7 +450,7 @@
       properties: {
         debug: {
           type: Boolean,
-          value: false /* Set to false for production reasons */
+          value: false // Set to false for production reasons
         },
 
         page: {
@@ -473,8 +485,9 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setCurrentMenuItem(page, globals.Dorel.collect.menuItems)',
-        '_setCurrentPage(page, globals.Dorel.collect.pages)'
+        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
+        '_setCurrentPage(page, globals.Dorel.collect.pages)',
+        '_dorelChanged(globals.Dorel.*)'
       ],
 
       listeners: {
@@ -485,7 +498,8 @@
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
-        Polymer.globalsManager.set('Dorel', { 
+        Polymer.globalsManager.set('Dorel', {
+          wpUrl: {}, // will be a string later (bug inside globalsManager)
           collect: {},
           current: {},
           events: {}
@@ -496,12 +510,9 @@
       },
 
       ready: function() {
-
-        if (this.debug) {
-          this.wpUrl = '../../assets/data';
-        } else {
-          this.wpUrl = '//polymer-wp.dev/wp-json'
-        }
+        // Define the wpUrl in the globals (object becomes string)
+        Polymer.globalsManager.set('Dorel.wpUrl', 
+          (this.debug) ? '../../assets/data' : '//polymer-wp.dev/wp-json');
 
         // listen for online/offline
         Polymer.RenderStatus.afterNextRender(this, function() {
@@ -618,14 +629,13 @@
        * @description set the current menu item by matching the slug
        * to the menu items url
        */
-      _setCurrentMenuItem: function(page, menuItems) {
-        var menu = this.globals.Dorel.collect.menuItems;
+      _setCurrentMenuItem: function(page, mainMenuItems) {
 
         // if menu array has no items
-        if( !menu.length ) { return; }
+        if( !mainMenuItems.length ) { return; }
 
-        // map the page variable to the item in the menu array and set it 
-        this.currentMenuItem = menu.find(function(item) {
+        // map the page variable to the item in the mainMenuItems array and set it 
+        this.currentMenuItem = mainMenuItems.find(function(item) {
           return (page === item.url.substring(1)) ? item.object_id : false;
         });
 
@@ -661,6 +671,10 @@
             performance.mark(target.domHost.is + '.domChange');
           }
         }
+      },
+
+      _dorelChanged: function(data) {
+        console.info(data);
       },
 
       _computeShouldShowTabs: function(page, smallScreen) {

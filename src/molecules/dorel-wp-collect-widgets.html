@@ -1,0 +1,89 @@
+<dom-module id="dorel-wp-collect-widgets">
+  <template>
+    <iron-ajax 
+      auto 
+      url="[[ endPoint ]]" 
+      handle-as="json"
+      on-response="_widgetAreasLoaded"></iron-ajax>
+
+    <iron-ajax
+      id="widget"
+      url=""
+      handle-as="json"
+      on-response="_widgetsLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-widgets',
+
+      properties: {
+        /**
+         * `widgetsData` this variable is reflected
+         * by two way binding in order to use it in your
+         * template.
+         */
+        widgetsData: {
+          type: Object,
+          reflectToAttribute: true,
+          notify: true
+        }
+      },
+
+      ready: function() {
+        this.endPoint = this.globals.Dorel.wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
+      },
+
+      /** 
+       * @name _widgetAreasLoaded
+       * @description retrieve all the widget areas and then trigger
+       * the rest call to retrieve the widgets
+       */
+      _widgetAreasLoaded: function(data) {
+        var response = data.detail.response;
+        var widgetEl = this.$.widget;
+        var endPoint = this.endPoint;
+
+        // prepare the global collect object
+        Polymer.globalsManager.set('Dorel.collect.widgetAreas', {});
+
+        // iterate over the keys of the response
+        response.forEach(function(widgetArea) {
+
+          // first put the response in the globals to use it later
+          Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + widgetArea.id,
+            widgetArea);
+
+          // for every key retrieve its menuItems
+          widgetEl.url = endPoint + '/' + widgetArea.id;
+          widgetEl.generateRequest();
+        });
+      },
+
+      /** 
+       * @name _widgetsLoaded
+       * @description retrieve all widgets per widget area and place them
+       * accordingly
+       */
+      _widgetsLoaded: function(data) {
+        var response = data.detail.response;
+        var widgetsCollect = this.globals.Dorel.collect.widgetAreas;
+
+        // retrieve the widgetArea id from the url call
+        var urlArr = data.detail.url.split('/');
+        var areaId = urlArr[urlArr.length - 1];
+
+        // iterate over the keys in the response
+        for (var key in widgetsCollect) {
+          if (key === areaId) {
+            // update the global collecto object
+            Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + key, response);
+          }
+        }
+
+        // update the reflected attribute
+        this.widgetsData = this.globals.Dorel.collect.widgetAreas;
+      }
+    });
+  </script>
+</dom-module>
