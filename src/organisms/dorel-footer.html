@@ -1,8 +1,6 @@
 <dom-module id="dorel-footer">
-
   <template>
-
-    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+    <style include="iron-flex iron-flex-alignment">
       footer {
         background-color: var(--theme-brand-color-royal-blue);
         padding: var(--theme-component-space-inner);
@@ -89,12 +87,17 @@
           </a>
         </div>
       </section>
+
       <section class="footer-info">
         <div class="layout vertical footer-disclaimer">
           <span class="footer-text">Copyright © 2017 Dorel Europe. All Rights Reserved.</span>
           <span class="footer-text">A division of Dorel Juvenile.</span>
           <!--div><img width="200" src="../../assets/images/dorel.svg" alt="#" /></div-->
         </div>
+
+        <!-- footer widget area container -->
+        <div id="footer-widget-area"><!-- widgets inserted here --></div>
+
         <div class="footer-menu">
           <ul class="not-enum">
             <li class="footer-heading">Company</li>
@@ -103,6 +106,7 @@
             <li><a href="#">Disclaimer</a></li>
           </ul>
         </div>
+
         <div class="footer-menu">
           <ul class="not-enum">
             <li class="footer-heading">Service</li>
@@ -110,6 +114,7 @@
             <li><a href="#">Contact</a></li>
           </ul>
         </div>
+
         <div class="footer-menu">
           <ul class="not-enum">
             <li class="footer-heading">Brands</li>
@@ -121,22 +126,53 @@
         </div>
 
       </section>
+
       <section class="footer-back-to-top">
         <dorel-back-to-top></dorel-back-to-top>
       </section>
+
     </footer>
 
   </template>
 
   <script>
-
     Polymer({
       is: 'dorel-footer',
-      attached: function() {
 
+      properties: {
+        footerWidgets: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      observers: [
+        '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)'
+      ],
+
+      _areasChanged: function(data) {
+        var footerEl = this;
+
+        // if no data is given jump out
+        if (typeof data === 'undefined' || typeof data.widgets === 'undefined') {
+          return;
+        } else if (data.widgets.length) {
+
+          /**
+           * iterate over every widget inside the footer-widget-area
+           * and append it to the footer-widget-area div
+           */
+          data.widgets.forEach(function(widget) {
+            var footerColumn = document.createElement("div");
+            footerColumn.className = 'footer-menu';
+            footerColumn.innerHTML = widget.rendered;
+
+            footerEl.$['footer-widget-area'].appendChild(footerColumn);
+          });
+        }
+
+        this.footerWidgets = data;
       }
     });
-
   </script>
-
 </dom-module>
