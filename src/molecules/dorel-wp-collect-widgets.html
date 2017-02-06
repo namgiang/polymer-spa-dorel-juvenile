@@ -44,8 +44,7 @@
         var widgetEl = this.$.widget;
         var endPoint = this.endPoint;
 
-        console.log(response);
-
+        // prepare the global collect object
         Polymer.globalsManager.set('Dorel.collect.widgetAreas', {});
 
         // iterate over the keys of the response
@@ -74,12 +73,15 @@
         var urlArr = data.detail.url.split('/');
         var areaId = urlArr[urlArr.length - 1];
 
+        // iterate over the keys in the response
         for (var key in widgetsCollect) {
           if (key === areaId) {
+            // update the global collecto object
             Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + key, response);
           }
         }
 
+        // update the reflected attribute
         this.widgetsData = this.globals.Dorel.collect.widgetAreas;
       }
     });

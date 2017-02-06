@@ -11,6 +11,7 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
+<link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
 
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
@@ -26,7 +27,7 @@
 
 <dom-module id="dorel-app">
   <template>
-    <style is="custom-style" include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
       /* 
        * Application wide styling
        * - Will define standard styling for components
@@ -323,6 +324,10 @@
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
+
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
 
     <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages
