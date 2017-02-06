@@ -65,7 +65,7 @@
       }
 
       // place all the menu locations in the collect menus object
-      this.globals.Dorel.collect.menus = response;
+      Polymer.globalsManager.set('Dorel.collect.menus', response);
     },
 
     /** 
@@ -87,7 +87,8 @@
       });
 
       // place the menu items in the right key inside the collect
-      this.globals.Dorel.collect.menus[menuLocation]['items'] = response;
+      Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation, {});
+      Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation + '.items', response);
 
       // set the menuData (two way data binding for the app)
       this.menuData = this.globals.Dorel.collect.menus;

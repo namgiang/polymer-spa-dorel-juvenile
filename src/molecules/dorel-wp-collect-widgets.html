@@ -1,7 +1,5 @@
 <dom-module id="dorel-wp-collect-widgets">
   <template>
-    <style></style>
-    
     <iron-ajax 
       auto 
       url="[[ endPoint ]]" 
@@ -21,35 +19,19 @@
 
       properties: {
         /**
-         * `pageData` this variable is reflected
+         * `widgetsData` this variable is reflected
          * by two way binding in order to use it in your
          * template.
          */
-        widgetAreas: {
+        widgetsData: {
           type: Object,
           reflectToAttribute: true,
           notify: true
-        },
-
-        /**
-         * `wpUrl` of the url of the Wordpress instance
-         */
-        wpUrl: {
-          type: String
-        },
-
-        /**
-         * `widgetIndex` used to keep track of the number
-         * in the array of widgetAreas and placement of the widgets
-         */
-        widgetIndex: {
-          type: Number,
-          value: ''
         }
       },
 
       ready: function() {
-        this.endPoint = this.wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
+        this.endPoint = this.globals.Dorel.wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
       },
 
       /** 
@@ -58,20 +40,25 @@
        * the rest call to retrieve the widgets
        */
       _widgetAreasLoaded: function(data) {
-        this.widgetAreas = data.detail.response;
+        var response = data.detail.response;
         var widgetEl = this.$.widget;
         var endPoint = this.endPoint;
-        var widgetIndex = this.widgetIndex;
+
+        console.log(response);
+
+        Polymer.globalsManager.set('Dorel.collect.widgetAreas', {});
 
         // iterate over the keys of the response
-        this.widgetAreas.forEach(function(widgetArea) {
+        response.forEach(function(widgetArea) {
+
+          // first put the response in the globals to use it later
+          Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + widgetArea.id,
+            widgetArea);
+
           // for every key retrieve its menuItems
           widgetEl.url = endPoint + '/' + widgetArea.id;
           widgetEl.generateRequest();
         });
-        
-        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
-        Polymer.globalsManager.set('Dorel.collect.widgetAreas', this.widgetAreas);
       },
 
       /** 
@@ -81,21 +68,19 @@
        */
       _widgetsLoaded: function(data) {
         var response = data.detail.response;
-        console.log(response);
+        var widgetsCollect = this.globals.Dorel.collect.widgetAreas;
 
         // retrieve the widgetArea id from the url call
         var urlArr = data.detail.url.split('/');
         var areaId = urlArr[urlArr.length - 1];
 
-        // place the widgets in the right index
-        this.widgetAreas.forEach(function(widgetArea) {
-          if (widgetArea.id === areaId) {
-            widgetArea.widgets = response.widgets;
+        for (var key in widgetsCollect) {
+          if (key === areaId) {
+            Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + key, response);
           }
-        });
+        }
 
-        // set the widgetAreas (two way data binding for the app)
-        this.globals.Dorel.collect.widgetAreas = this.widgetAreas;
+        this.widgetsData = this.globals.Dorel.collect.widgetAreas;
       }
     });
   </script>
