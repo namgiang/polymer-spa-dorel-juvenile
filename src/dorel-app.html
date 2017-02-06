@@ -15,11 +15,11 @@
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
-<link rel="import" href="dorel-app-placeholder.html">
-
+<link rel="import" href="atoms/dorel-gtm-data-layer.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
-<link rel="import" href="atoms/dorel-gtm-data-layer.html">
+
+<link rel="import" href="dorel-app-placeholder.html">
 
 <!-- enable global variables -->
 <script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
@@ -304,6 +304,8 @@
     <!-- analytics
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
     -->
+    <!-- <dorel-gtm-data-layer
+      gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer> -->
   
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -318,19 +320,17 @@
     <!-- loading placeholder -->
     <dorel-app-placeholder></dorel-app-placeholder>
 
-    <!-- retrieve all menu items from wordpress -->
+    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations
-      wp-url="[[ wpUrl ]]"
-      menu-data="{{ menuData }}"></dorel-wp-collect-menu-locations>
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
-    <!-- retrieve all pages from wordpress -->
+    <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages
-      wp-url="[[ wpUrl ]]"></dorel-wp-collect-pages>
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-pages>
 
-    <!-- collect the widgets -->
+    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
     <dorel-wp-collect-widgets
-      wp-url="[[ wpUrl ]]"
-      widget-data="{{ widgetAreas }}"></dorel-wp-collect-widgets>
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
   
     <app-header
       role="navigation"
@@ -351,17 +351,16 @@
 
           <div class="vertical-center">
             <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-              
               <template 
                 is="dom-if" 
-                if="{{ menuData.main_menu.items.length }}">
+                if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
 
                 <dorel-tabs
                   selected="[[ page ]]"
                   attr-for-selected="name">
                   <template 
                     is="dom-repeat" 
-                    items="{{ menuData.main_menu.items }}" 
+                    items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
                     as="menuItem" 
                     initial-count="4">
 
@@ -372,6 +371,12 @@
                   </template>
                 </dorel-tabs>
                 
+              </template>
+
+              <template 
+                is="dom-if" 
+                if="{{ !globals.Dorel.collect.menus.main_menu.items.length }}">
+                <span>No menu defined for the Main Menu location</span>
               </template>
 
             </div>
@@ -429,8 +434,6 @@
 
     <dorel-footer></dorel-footer>
 
-    <dorel-gtm-data-layer gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer>
-
   </template>
 
   <script>
@@ -448,7 +451,7 @@
       properties: {
         debug: {
           type: Boolean,
-          value: false /* Set to false for production reasons */
+          value: false // Set to false for production reasons
         },
 
         page: {
@@ -483,7 +486,7 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setCurrentMenuItem(page, menuData.main_menu.items)',
+        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
         '_setCurrentPage(page, globals.Dorel.collect.pages)',
         '_dorelChanged(globals.Dorel.*)'
       ],
@@ -496,7 +499,8 @@
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
-        Polymer.globalsManager.set('Dorel', { 
+        Polymer.globalsManager.set('Dorel', {
+          wpUrl: {}, // will be a string later (bug inside globalsManager)
           collect: {},
           current: {},
           events: {}
@@ -507,12 +511,9 @@
       },
 
       ready: function() {
-
-        if (this.debug) {
-          this.wpUrl = '../../assets/data';
-        } else {
-          this.wpUrl = '//polymer-wp.dev/wp-json'
-        }
+        // Define the wpUrl in the globals (object becomes string)
+        Polymer.globalsManager.set('Dorel.wpUrl', 
+          (this.debug) ? '../../assets/data' : '//polymer-wp.dev/wp-json');
 
         // listen for online/offline
         Polymer.RenderStatus.afterNextRender(this, function() {
@@ -630,6 +631,7 @@
        * to the menu items url
        */
       _setCurrentMenuItem: function(page, mainMenuItems) {
+
         // if menu array has no items
         if( !mainMenuItems.length ) { return; }
 
@@ -673,7 +675,7 @@
       },
 
       _dorelChanged: function(data) {
-        // console.info(data);
+        console.info(data);
       },
 
       _computeShouldShowTabs: function(page, smallScreen) {
