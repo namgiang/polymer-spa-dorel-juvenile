@@ -1,39 +1,46 @@
 <dom-module id="dorel-card" include="theme-dorel-shared-styles iron-flex iron-flex-classes">
-
   <template>
-    <style>
+    <style include="theme-dorel-shared-styles polymer-bootstrap-min">
+      .card {
+        @apply(--shadow-elevation-12dp);
+        background-color: rgba(255, 255, 255, .8);
+        border-radius: 45px;
+        margin: var(--theme-component-space-inner); /* outer spacing so image of section is visible */
+        padding: 1rem 1.5rem;
+      }
     </style>
 
-    <!-- cardTitle -->
-    <template
-      is="dom-if"
-      if="{{ _hasValue(cardData.card_title) }}">
-      <div>
+    <div class="card">
+    
+      <!-- cardTitle -->
+      <template
+        is="dom-if"
+        if="{{ _hasValue(cardData.card_title) }}">
         <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
-      </div>
-    </template>
-    <!--// cardTitle -->
-    
-    <!-- cardContent -->
-    <template
-      is="dom-if"
-      if="{{ _hasValue(cardData.card_content) }}">
-      <div>
-        <dorel-safe-html html="[[ cardData.card_content ]]"></dorel-safe-html>
-      </div>
-    </template>
-    <!--// cardContent -->
-    
-    <!-- ctaToggle -->
-    <template
-      is="dom-if"
-      if="{{ cardData.card_cta_toggle }}">
-      <div>
-        <dorel-cta type="[[ cardData.card_cta_type ]]" href="[[ cardData.card_cta_href ]]" secondary>[[ cardData.card_cta_text ]]</dorel-cta>
-      </div>
-    </template>
-    <!--// ctaToggle -->
+      </template>
+      <!--// cardTitle -->
+      
+      <!-- cardContent -->
+      <template
+        is="dom-if"
+        if="{{ _hasValue(cardData.card_text) }}">
+        <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+      </template>
+      <!--// cardContent -->
+      
+      <!-- ctaToggle -->
+      <template
+        is="dom-if"
+        if="{{ _hasValue(cardData.card_cta_toggle) }}">
+        <dorel-cta 
+          type="[[ cardData.card_cta_type ]]" 
+          link="[[ cardData.card_cta_link ]]"
+          secondary>[[ cardData.card_cta_text ]]</dorel-cta>
+        </div>
+      </template>
+      <!--// ctaToggle -->
 
+    </div>
   </template>
 
   <script>
@@ -43,9 +50,8 @@
 
       properties: {
 
-        cardTitle: {
-          type: String,
-          value: ''
+        cardData: {
+          type: Object
         }
 
       },
