@@ -1,46 +1,99 @@
-<dom-module id="dorel-card" include="theme-dorel-shared-styles iron-flex iron-flex-classes">
+<dom-module id="dorel-card">
   <template>
-    <style include="theme-dorel-shared-styles polymer-bootstrap-min">
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
       .card {
-        @apply(--shadow-elevation-12dp);
         background-color: rgba(255, 255, 255, .8);
         border-radius: 45px;
         margin: var(--theme-component-space-inner); /* outer spacing so image of section is visible */
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.5rem 2rem 1.5rem;
+      }
+      .card.skewed {
+        transform: skewY(-4deg);
+      }
+      .card.skewed .card-wrap {
+        transform: skewY(4deg);
+      }
+      .card-wrap .theme-headline {
+        @apply(--theme-heading);
       }
     </style>
-
-    <div class="card">
     
-      <!-- cardTitle -->
-      <template
-        is="dom-if"
-        if="{{ _hasValue(cardData.card_title) }}">
-        <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
-      </template>
-      <!--// cardTitle -->
-      
-      <!-- cardContent -->
-      <template
-        is="dom-if"
-        if="{{ _hasValue(cardData.card_text) }}">
-        <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
-      </template>
-      <!--// cardContent -->
-      
-      <!-- ctaToggle -->
-      <template
-        is="dom-if"
-        if="{{ _hasValue(cardData.card_cta_toggle) }}">
-        <dorel-cta 
-          type="[[ cardData.card_cta_type ]]" 
-          link="[[ cardData.card_cta_link ]]"
-          secondary>[[ cardData.card_cta_text ]]</dorel-cta>
-        </div>
-      </template>
-      <!--// ctaToggle -->
+    <template
+      is="dom-if"
+      if="{{ _hasValue(skewed) }}">
 
-    </div>
+      <div class="card skewed container-fluid">
+        <div class="card-wrap">
+      
+        <!-- cardTitle -->
+        <template
+          is="dom-if"
+          if="{{ _hasValue(cardData.card_title) }}">
+          <h2 class="theme-headline">[[ cardData.card_title ]]</h2>
+        </template>
+        <!--// cardTitle -->
+        
+        <!-- cardContent -->
+        <template
+          is="dom-if"
+          if="{{ _hasValue(cardData.card_text) }}">
+          <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+        </template>
+        <!--// cardContent -->
+        
+        <!-- ctaToggle -->
+        <template
+          is="dom-if"
+          if="{{ _hasValue(cardData.card_cta_toggle) }}">
+          <dorel-cta 
+            class="pull-right"
+            type="[[ cardData.card_cta_type ]]" 
+            link="[[ cardData.card_cta_link ]]">[[ cardData.card_cta_text ]]</dorel-cta>
+          </div>
+        </template>
+        <!--// ctaToggle -->
+        
+        </div>
+      </div>
+
+    </template>
+
+    <template
+      is="dom-if"
+      if="{{ !_hasValue(skewed) }}">
+
+      <div class="card">
+      
+        <!-- cardTitle -->
+        <template
+          is="dom-if"
+          if="{{ _hasValue(cardData.card_title) }}">
+          <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
+        </template>
+        <!--// cardTitle -->
+        
+        <!-- cardContent -->
+        <template
+          is="dom-if"
+          if="{{ _hasValue(cardData.card_text) }}">
+          <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+        </template>
+        <!--// cardContent -->
+        
+        <!-- ctaToggle -->
+        <template
+          is="dom-if"
+          if="{{ _hasValue(cardData.card_cta_toggle) }}">
+          <dorel-cta 
+            type="[[ cardData.card_cta_type ]]" 
+            link="[[ cardData.card_cta_link ]]">[[ cardData.card_cta_text ]]</dorel-cta>
+          </div>
+        </template>
+        <!--// ctaToggle -->
+
+      </div>
+
+    </template>
   </template>
 
   <script>
@@ -52,6 +105,10 @@
 
         cardData: {
           type: Object
+        },
+
+        skewed: {
+          type: Boolean
         }
 
       },
