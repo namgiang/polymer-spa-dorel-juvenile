@@ -1,0 +1,74 @@
+<dom-module id="dorel-section-indigo">
+  <template>
+    <style include="polymer-bootstrap-min">
+      paper-card {
+         margin: -10px auto 0 auto;
+         display: block;
+         max-width: 340px;
+         @apply(--shadow-elevation-6dp);
+      }
+    </style>
+    
+    <section class="section-indigo container">
+      <div class="row">
+        
+        <!-- product column -->
+        <div class$="col-md-6 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
+          style$="
+            background-image: url([[ indigoData.product_column_background_image ]]); 
+            background-color: [[ indigoData.product_column_background_color ]];">
+
+          <template
+            is="dom-if"
+            if="indigoData.product_column_image">
+            <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
+              image="[[ indigoData.product_column_image ]]"></paper-card>
+          </template>
+
+        </div>
+
+        <!-- content column -->
+        <div class="col-md-5">
+          <template
+            is="dom-if"
+            if="indigoData.content_column_title">
+            <h2 class="theme-headline">[[ indigoData.content_column_title ]]</h2>
+          </template>
+          
+          <template
+            is="dom-if"
+            if="indigoData.content_column_text">
+            <dorel-safe-html html="[[ indigoData.content_column_text ]]"></dorel-safe-html>
+          </template>
+          
+          <template
+            is="dom-if"
+            if="indigoData.content_column_cta_toggle">
+            <dorel-cta
+              type="[[ indigoData.content_column_cta_type ]]" 
+              href="[[ indigoData.content_column_cta_href ]]"
+              secondary>[[ indigoData.content_column_cta_text ]]</dorel-cta>
+          </template>
+        </div>
+
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-indigo',
+
+      properties: {
+        indigoData: {
+          type: Object
+        }
+      },
+
+      ready: function() {
+        this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
+      }
+    });
+  </script>
+</dom-module>
+ No newline at end of file
