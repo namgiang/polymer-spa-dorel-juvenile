@@ -1,0 +1,75 @@
+<dom-module id="dorel-section-hero">
+  <template>
+    <style include="theme-dorel-shared-styles polymer-bootstrap-min">
+      .section-hero {
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        min-height: 540px;
+      }
+    </style>
+
+    <section class="section-hero container-fluid"
+      style$="background-image: url([[ heroData.background_image ]]); background-color: [[ heroData.background_color ]];"
+      layoutwide$="{{ isAtLeast800px }}">
+
+      <template
+        is="dom-if"
+        if="[[ heroData.card.length ]]">
+        <div class="container">
+          <div class="row">
+            <div class$="col-sm-4 pull-[[ heroData.card_alignment ]]">
+              
+              <template
+                is="dom-repeat"
+                items="[[ heroData.card ]]"
+                as="card">
+                <dorel-card card-data="[[ card ]]"></dorel-card>
+              </template>
+
+            </div>
+          </div>
+        </div>
+      </template>
+
+    </section>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-hero',
+      properties: {
+
+        heroAlign: {
+          type: String,
+          value: 'left'
+        },
+
+        heroBg: {
+          type: String,
+          value: ''
+        },
+
+        heroBgColor: {
+          type: String,
+          value: ''
+        },
+
+        heroTitle: {
+          type: String,
+          value: ''
+        },
+
+        heroContent: {
+          type: String,
+          value: ''
+        }
+
+      }
+    });
+
+  </script>
+
+</dom-module>

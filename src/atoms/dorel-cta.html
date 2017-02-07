@@ -32,7 +32,7 @@
     <template
       is="dom-if"
       if="{{ _isAnchor(type) }}">
-      <a href="{{ href }}" class="theme-cta-primary hvr-pop"
+      <a href="{{ url }}" class="theme-cta-primary hvr-pop"
         on-click="clickEvent">
         <content></content>
       </a>
@@ -54,9 +54,18 @@
       is: 'dorel-cta',
 
       properties: {
-        href: {
+        link: {
+          type: String,
+          observer: '_linkChanged'
+        },
+        url: {
           type: String
         }
+      },
+
+      _linkChanged: function(newVal, oldVal) {
+        // Alter href
+        this.url = '/' + newVal.split('/')[3];
       },
 
       clickEvent: function(e) {
