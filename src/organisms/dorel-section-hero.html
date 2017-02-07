@@ -1,33 +1,72 @@
 <dom-module id="dorel-section-hero">
   <template>
     <style include="theme-dorel-shared-styles polymer-bootstrap-min">
-      .section-hero {
+      .section-heroes {
+        margin-bottom: 100px;
+        margin-top: 100px;
+        transform: skewY(5deg);
+      }
+      .section-heroes .container {
+        transform: skewY(-5deg);
+      }
+      .section-hero .section-hero-wrap {
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;
         min-height: 540px;
       }
+      .section-hero-wrap .container {
+        padding-top: 10rem;
+        padding-bottom: 10rem;
+      }
     </style>
-
-    <section class="section-hero container-fluid"
-      style$="background-image: url([[ heroData.background_image ]]); background-color: [[ heroData.background_color ]];"
-      layoutwide$="{{ isAtLeast800px }}">
+    
+    <!-- media queries -->
+    <iron-media-query query="(min-width : 320px) and (max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <section class="section-heroes container-fluid"
+      mobile-small$="{{ mobileSmall }}"
+      mobile-medium$="{{ mobileMedium }}"
+      tablets$="{{ tablets }}"
+      desktop-small$="{{ desktopSmall }}"
+      desktop-full$="{{ desktopFull }}">
 
       <template
-        is="dom-if"
-        if="[[ heroData.card.length ]]">
-        <div class="container">
-          <div class="row">
-            <div class$="col-sm-4 pull-[[ heroData.card_alignment ]]">
-              
-              <template
-                is="dom-repeat"
-                items="[[ heroData.card ]]"
-                as="card">
-                <dorel-card card-data="[[ card ]]"></dorel-card>
-              </template>
+        is="dom-repeat"
+        items="[[ heroData.hero ]]"
+        as="hero">
+        <div class="section-hero">
+          <div class="section-hero-wrap row"
+            style$="background-image: url([[ hero.background_image ]]); background-color: [[ hero.background_color ]];">
 
-            </div>
+            <template
+              is="dom-if"
+              if="[[ hero.card.length ]]">
+              <div class="container">
+                <div class="row">
+                  <div class$="col-sm-6 pull-[[ hero.card_alignment ]]">
+                    
+                    <template
+                      is="dom-repeat"
+                      items="[[ hero.card ]]"
+                      as="card">
+                      <dorel-card card-data="[[ card ]]" skewed></dorel-card>
+                    </template>
+
+                  </div>
+                </div>
+              </div>
+            </template>
+
           </div>
         </div>
       </template>
@@ -39,35 +78,7 @@
   <script>
 
     Polymer({
-      is: 'dorel-section-hero',
-      properties: {
-
-        heroAlign: {
-          type: String,
-          value: 'left'
-        },
-
-        heroBg: {
-          type: String,
-          value: ''
-        },
-
-        heroBgColor: {
-          type: String,
-          value: ''
-        },
-
-        heroTitle: {
-          type: String,
-          value: ''
-        },
-
-        heroContent: {
-          type: String,
-          value: ''
-        }
-
-      }
+      is: 'dorel-section-hero'
     });
 
   </script>
