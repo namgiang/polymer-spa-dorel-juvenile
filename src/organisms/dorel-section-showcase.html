@@ -1,0 +1,116 @@
+<dom-module id="dorel-section-showcase">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .section-showcase {}
+      
+      .section-showcase .showcase-gallery {
+        display: table;
+      }
+      .section-showcase .showcase-gallery > * {
+        display: table-cell;
+      }
+      .section-showcase .showcase-gallery-roll {
+        list-style-type: none;
+        padding: 0;
+        width: 110px;
+      }
+      .section-showcase .showcase-gallery-view {
+        overflow: hidden;
+      }
+      .section-showcase .showcase-gallery-view img {
+        width: 100%;
+      }
+    </style>
+
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <template
+      is="dom-if"
+      if="[[ showcaseData ]]">
+
+      <section class="section-showcase container"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}"
+        tablets$="{{ tablets }}"
+        desktop-small$="{{ desktopSmall }}"
+        desktop-full$="{{ desktopFull }}">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="showcase-gallery">
+              <template
+                is="dom-if"
+                if="[[ showcaseData.showcase_gallery.length ]]">
+                <ul class="showcase-gallery-roll">
+                  <template
+                    is="dom-repeat"
+                    items="[[ showcaseData.showcase_gallery ]]"
+                    as="galleryItem">
+                    <li>
+                      <img src="[[ galleryItem.sizes.medium ]]" width="110" />
+                    </li>
+                  </template>
+                </ul>
+              </template>
+
+              <div class="showcase-gallery-view">
+                <img src="{{ currentImage.url }}" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-offset-1 col-md-5">
+            <h1>[[ showcaseData.showcase_title ]]</h1>
+            <template
+              is="dom-if"
+              if="[[ showcaseData.showcase_usps.length ]]">  
+              <dorel-inline-usps
+                usps-data="[[ showcaseData.showcase_usps ]]"></dorel-inline-usps>
+            </template>
+          </div>
+        </div>
+      </section>
+
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-showcase',
+
+      properties: {
+        gallery: {
+          type: Array,
+          value: []
+        },
+
+        currentImage: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_updateView'
+        }
+      },
+
+      ready: function() {
+        // reset current image to the first one in the array
+        this.currentImage = this.showcaseData.showcase_gallery[0];
+      },
+
+      _updateView: function(newVal, oldVal) {
+        this.currentImage = newVal;
+      }
+    });
+  </script>
+</dom-module>
