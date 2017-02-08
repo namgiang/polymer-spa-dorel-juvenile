@@ -1,0 +1,103 @@
+<dom-module id="dorel-section-multi">
+  <template>
+    <style include="theme-dorel-shared-styles polymer-bootstrap-min">
+      .section-multi {
+        margin: 50px auto;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        background-color: #F5F5F5;
+      }
+
+      .section-multi .multi-title {
+        text-align: center;
+      }
+    </style>
+    
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <section class="section-multi container-fluid"
+      mobile-small$="{{ mobileSmall }}"
+      mobile-medium$="{{ mobileMedium }}"
+      tablets$="{{ tablets }}"
+      desktop-small$="{{ desktopSmall }}"
+      desktop-full$="{{ desktopFull }}">
+
+      <template
+        is="dom-if"
+        if="[[ multiData.multi_title ]]">
+        <div class="row">
+          <h2 class="col-xs-12 multi-title">[[ multiData.multi_title ]]</h2>
+        </div>
+      </template>
+
+      <template
+        is="dom-if"
+        if="[[ multiData.multi_columns.length ]]">
+        <template
+          is="dom-repeat"
+          items="[[ multiData.multi_columns ]]"
+          as="col">
+          <template
+            is="dom-if"
+            if="[[ col.column_components.length ]]">
+
+            <div class$="col-sm-{{ columnWidth }}">
+            
+              <dorel-page-builder
+                builder-data="[[ col.column_components ]]"></dorel-page-builder>
+
+            </div>
+
+          </template>
+        </template>
+      </template>
+
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-multi',
+
+      properties: {
+
+        multiData: {
+          type: Object
+        },
+
+        columnAmount: {
+          type: Number,
+          value: 0,
+          observer: '_defineColumnWidth'
+        },
+
+        columnWidth: {
+          type: Number,
+          value: 0
+        }
+
+      },
+
+      ready: function() {
+        this.columnAmount = this.multiData.multi_columns.length;
+      },
+
+      _defineColumnWidth: function(newVal, oldVal) {
+        this.columnWidth = 12 / this.columnAmount;
+      }
+    });
+
+  </script>
+
+</dom-module>
