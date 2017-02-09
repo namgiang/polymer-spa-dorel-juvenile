@@ -1,6 +1,6 @@
 <dom-module id="dorel-section-multi">
   <template>
-    <style include="theme-dorel-shared-styles polymer-bootstrap-min">
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
       .section-multi {
         margin: 50px auto;
         padding-top: 50px;
@@ -9,7 +9,12 @@
       }
 
       .section-multi .multi-title {
+        @apply(--theme-heading);
+        font-size: 2.3rem;
+        font-weight: bolder;
         text-align: center;
+        margin-bottom: 6rem;
+        width: 100%;
       }
     </style>
     
@@ -39,27 +44,29 @@
           <h2 class="col-xs-12 multi-title">[[ multiData.multi_title ]]</h2>
         </div>
       </template>
-
+      
       <template
         is="dom-if"
         if="[[ multiData.multi_columns.length ]]">
-        <template
-          is="dom-repeat"
-          items="[[ multiData.multi_columns ]]"
-          as="col">
+        <div class="row">
           <template
-            is="dom-if"
-            if="[[ col.column_components.length ]]">
+            is="dom-repeat"
+            items="[[ multiData.multi_columns ]]"
+            as="col">
+            <template
+              is="dom-if"
+              if="[[ col.column_components.length ]]">
 
-            <div class$="col-sm-{{ columnWidth }}">
-            
-              <dorel-page-builder
-                builder-data="[[ col.column_components ]]"></dorel-page-builder>
+              <div class$="col-sm-{{ columnWidth }}">
+              
+                <dorel-page-builder
+                  builder-data="[[ col.column_components ]]"></dorel-page-builder>
 
-            </div>
+              </div>
 
+            </template>
           </template>
-        </template>
+        </div>
       </template>
 
     </section>
@@ -94,6 +101,7 @@
       },
 
       _defineColumnWidth: function(newVal, oldVal) {
+        // var columnOffset = 12 - this.columnAmount;
         this.columnWidth = 12 / this.columnAmount;
       }
     });
