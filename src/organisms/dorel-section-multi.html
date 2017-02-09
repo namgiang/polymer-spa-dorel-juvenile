@@ -5,7 +5,6 @@
         margin: 50px auto;
         padding-top: 50px;
         padding-bottom: 50px;
-        background-color: #F5F5F5;
       }
 
       .section-multi .multi-title {
@@ -31,6 +30,7 @@
       query-matches="{{ desktopFull }}"></iron-media-query>
     
     <section class="section-multi container-fluid"
+      style$="background-color: [[ multiData.multi_background_color ]];"
       mobile-small$="{{ mobileSmall }}"
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
@@ -44,29 +44,65 @@
           <h2 class="col-xs-12 multi-title">[[ multiData.multi_title ]]</h2>
         </div>
       </template>
-      
+
       <template
         is="dom-if"
         if="[[ multiData.multi_columns.length ]]">
-        <div class="row">
-          <template
-            is="dom-repeat"
-            items="[[ multiData.multi_columns ]]"
-            as="col">
+
+      
+        <template
+          is="dom-if"
+          if="[[ _isFullWidth(multiData.multi_columns_container) ]]">
+          <div class="row">
             <template
-              is="dom-if"
-              if="[[ col.column_components.length ]]">
+              is="dom-repeat"
+              items="[[ multiData.multi_columns ]]"
+              as="col">
+              <template
+                is="dom-if"
+                if="[[ col.column_components.length ]]">
 
-              <div class$="col-sm-{{ columnWidth }}">
-              
-                <dorel-page-builder
-                  builder-data="[[ col.column_components ]]"></dorel-page-builder>
+                <div class$="col-sm-{{ columnWidth }}">
+                
+                  <dorel-page-builder
+                    builder-data="[[ col.column_components ]]"></dorel-page-builder>
 
-              </div>
+                </div>
 
+              </template>
             </template>
-          </template>
-        </div>
+          </div>
+        </template>
+
+
+        <template
+          is="dom-if"
+          if="[[ !_isFullWidth(multiData.multi_columns_container) ]]">
+          <div class="row">
+            <div class="container">
+              <div class="row">
+                <template
+                  is="dom-repeat"
+                  items="[[ multiData.multi_columns ]]"
+                  as="col">
+                  <template
+                    is="dom-if"
+                    if="[[ col.column_components.length ]]">
+
+                    <div class$="col-sm-{{ columnWidth }}">
+                    
+                      <dorel-page-builder
+                        builder-data="[[ col.column_components ]]"></dorel-page-builder>
+
+                    </div>
+
+                  </template>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
+
       </template>
 
     </section>
@@ -103,6 +139,10 @@
       _defineColumnWidth: function(newVal, oldVal) {
         // var columnOffset = 12 - this.columnAmount;
         this.columnWidth = 12 / this.columnAmount;
+      },
+
+      _isFullWidth: function(container) {
+        return (typeof container !== 'undefined' && container === 'full-width');
       }
     });
 
