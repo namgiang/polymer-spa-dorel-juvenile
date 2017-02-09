@@ -6,6 +6,37 @@
         padding-top: 50px;
         padding-bottom: 50px;
       }
+
+      .column-headline {
+        text-align: center;
+      }
+
+      .included-wrap .accessoiry-wrap {
+        text-align: center;
+      }
+      .included-wrap .accessoiry-wrap img {
+        margin: 0 auto;
+      }
+      .included-wrap .accessoiry-wrap h4 {
+        text-align: center;
+        width: 100%;
+      }
+
+      .optional-wrap .optional-img-wrap {
+        text-align: center;
+      }
+      .optional-wrap .optional-img-wrap img {
+        margin: 0 auto;
+      }
+
+      .optional-wrap .optional-cta-wrap h3 {
+        text-align: center;
+        width: 100%;
+      }
+      .optional-wrap .optional-cta-wrap .list-group {
+        border: 0;
+        border-radius: 0;
+      }
     </style>
     
     <!-- media queries -->
@@ -21,80 +52,71 @@
       query-matches="{{ desktopFull }}"></iron-media-query>
     
     <section class="section-related-accessoiries container-fluid"
-      style$="background-color: [[ multiData.multi_background_color ]];"
       mobile-small$="{{ mobileSmall }}"
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
       desktop-small$="{{ desktopSmall }}"
       desktop-full$="{{ desktopFull }}">
-
-      <template
-        is="dom-if"
-        if="[[ multiData.multi_title ]]">
-        <div class="row">
-          <h2 class="col-xs-12 multi-title">[[ multiData.multi_title ]]</h2>
-        </div>
-      </template>
-
-      <template
-        is="dom-if"
-        if="[[ multiData.multi_columns.length ]]">
-
       
+
+      <div class="row">
         <template
           is="dom-if"
-          if="[[ _isFullWidth(multiData.multi_columns_container) ]]">
-          <div class="row">
-            <template
-              is="dom-repeat"
-              items="[[ multiData.multi_columns ]]"
-              as="col">
+          if="[[ relAccData.included_accessoiries.length ]]">
+          <div class="col-xs-12 col-md-4">
+            <div class="row included-wrap">
+              <h2 class="column-headline">Included Accessoiries</h2>
               <template
-                is="dom-if"
-                if="[[ col.column_components.length ]]">
+                is="dom-repeat"
+                items="[[ relAccData.included_accessoiries ]]"
+                as="accessoiry">
 
-                <div class$="col-sm-{{ columnWidth }}">
-                
-                  <dorel-page-builder
-                    builder-data="[[ col.column_components ]]"></dorel-page-builder>
-
+                <div class="col-xs-6 accessoiry-wrap">
+                  <img class="img-responsive" src="[[ accessoiry.accessoiry_image ]]" alt="" />
+                  <h4>[[ accessoiry.accessoiry_title ]]</h4>
                 </div>
 
               </template>
-            </template>
-          </div>
-        </template>
-
-
-        <template
-          is="dom-if"
-          if="[[ !_isFullWidth(multiData.multi_columns_container) ]]">
-          <div class="row">
-            <div class="container">
-              <div class="row">
-                <template
-                  is="dom-repeat"
-                  items="[[ multiData.multi_columns ]]"
-                  as="col">
-                  <template
-                    is="dom-if"
-                    if="[[ col.column_components.length ]]">
-
-                    <div class$="col-sm-{{ columnWidth }}">
-                    
-                      <dorel-page-builder
-                        builder-data="[[ col.column_components ]]"></dorel-page-builder>
-
-                    </div>
-
-                  </template>
-                </template>
-              </div>
             </div>
           </div>
         </template>
 
-      </template>
+        <template
+          is="dom-if"
+          if="[[ relAccData.optional_accessoiries.length ]]">
+          <div class="col-xs-12 col-md-8">
+            <div class="row optional-wrap">
+              <h2 class="column-headline">Optional Accessoiries</h2>
+              <template
+                is="dom-repeat"
+                items="[[ relAccData.optional_accessoiries ]]"
+                as="accessoiry">
+
+                  <div class="col-sm-12 col-md-6">
+                    <div class="row">
+                      <div class="col-xs-6 optional-img-wrap">
+                        <img class="img-responsive" src="[[ accessoiry.accessoiry_image ]]" alt="" />
+                      </div>
+
+                      <div class="col-xs-6 optional-cta-wrap">
+                        <h3>[[ accessoiry.accessoiry_title ]]</h3>
+                        <ul class="list-group">
+                          <!-- <li class="list-group-item">
+                            <a href="">Add to basket</a>
+                          </li> -->
+                          <li class="list-group-item">
+                            <a href="#">&raquo; See details</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
 
     </section>
   </template>
@@ -106,34 +128,14 @@
 
       properties: {
 
-        multiData: {
+        relAccData: {
           type: Object
-        },
-
-        columnAmount: {
-          type: Number,
-          value: 0,
-          observer: '_defineColumnWidth'
-        },
-
-        columnWidth: {
-          type: Number,
-          value: 0
         }
 
       },
 
       ready: function() {
-        this.columnAmount = this.multiData.multi_columns.length;
-      },
-
-      _defineColumnWidth: function(newVal, oldVal) {
-        // var columnOffset = 12 - this.columnAmount;
-        this.columnWidth = 12 / this.columnAmount;
-      },
-
-      _isFullWidth: function(container) {
-        return (typeof container !== 'undefined' && container === 'full-width');
+        console.log(this.relAccData);
       }
     });
 
