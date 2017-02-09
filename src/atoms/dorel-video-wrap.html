@@ -1,0 +1,56 @@
+<dom-module id="dorel-video-wrap">
+  <template>
+    <style is="custom-style" include="theme-maxicosi-shared-styles dorel-animate-classes polymer-bootstrap-min">
+      .video-wrap {
+        text-align: center;
+      }
+      .video-wrap iframe {
+        margin: 0 auto;
+        width: 100%;
+        min-height: 315px;
+      }
+    </style>
+    
+    <template
+      is="dom-if"
+      if="[[ _hasValue(videoId) ]]">
+
+      <template
+        is="dom-if"
+        if="[[ _isYoutube(videoType) ]]">
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/[[ videoId ]]" frameborder="0" allowfullscreen></iframe>
+        </div>
+      </template>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-video-wrap',
+
+      properties: {
+        videoId: {
+          type: String,
+          value: '',
+          observer: '_defineVideoUrl'
+        }
+      },
+
+      _hasValue: function(val) {
+        return (typeof val !== 'undefined' || val !== null);
+      },
+
+      _isYoutube: function(type) {
+        return (typeof type !== 'undefined' && type === 'youtube');
+      },
+
+      _defineVideoUrl: function(newVal, oldVal) {
+        // https://www.youtube.com/embed/0zUUVyWAyRs
+      }
+    });
+  </script>
+
+</dom-module>
