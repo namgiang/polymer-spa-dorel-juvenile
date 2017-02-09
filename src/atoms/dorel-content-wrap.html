@@ -1,7 +1,54 @@
 <dom-module id="dorel-content-wrap">
   <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .column-headline {
+        @apply(--theme-heading);
+        font-size: 1.5rem;
+        text-align: center;
+      }
+    </style>
+    
+    <!-- check if we have a titleType -->
+    <template
+      is="dom-if"
+      if="{{ _hasValue(titleType) }}">
+      <template
+        is="dom-if"
+        if="{{ _isH1(titleType) }}">
+        <h1 class="column-headline">[[ contentTitle ]]</h1>
+      </template>
 
-    <h1 class="column-headline">[[ contentTitle ]]</h1>
+      <template
+        is="dom-if"
+        if="{{ _isH2(titleType) }}">
+        <h2 class="column-headline">[[ contentTitle ]]</h2>
+      </template>
+
+      <template
+        is="dom-if"
+        if="{{ _isH3(titleType) }}">
+        <h3 class="column-headline">[[ contentTitle ]]</h3>
+      </template>
+
+      <template
+        is="dom-if"
+        if="{{ _isH4(titleType) }}">
+        <h4 class="column-headline">[[ contentTitle ]]</h4>
+      </template>
+
+      <template
+        is="dom-if"
+        if="{{ _isH5(titleType) }}">
+        <h5 class="column-headline">[[ contentTitle ]]</h5>
+      </template>
+
+      <template
+        is="dom-if"
+        if="{{ _isH6(titleType) }}">
+        <h6 class="column-headline">[[ contentTitle ]]</h6>
+      </template>
+    </template>
+
     <dorel-safe-html html="[[ contentHtml ]]"></dorel-safe-html>
 
   </template>
@@ -11,8 +58,35 @@
     Polymer({
       is: 'dorel-content-wrap',
 
-      properties: {}
+      properties: {},
 
+      _hasValue: function(val) {
+        return (typeof val !== 'undefined' || val === null || val !== '');
+      },
+
+      _isH1: function(type) {
+        return (type === 'h1');
+      },
+
+      _isH2: function(type) {
+        return (type === 'h2');
+      },
+
+      _isH3: function(type) {
+        return (type === 'h3');
+      },
+
+      _isH4: function(type) {
+        return (type === 'h4');
+      },
+
+      _isH5: function(type) {
+        return (type === 'h5');
+      },
+
+      _isH6: function(type) {
+        return (type === 'h6');
+      },
     });
 
   </script>
