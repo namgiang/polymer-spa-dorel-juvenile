@@ -1,0 +1,215 @@
+<dom-module id="dorel-header">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      /* 
+       * header-top
+       * @description: header-top is the grey top bar that is only visible
+       * for smallscreens
+       */
+      .header-top {
+        background-color: #E6E6E6;
+        padding: 5px;
+        position: relative;
+        float: left;
+        width: 100%;
+      }
+      .header-top-menu .menu-btn,
+      .header-top-menu .menu-text {
+        float: left;
+        position: relative;
+      }
+      .header-top-menu .menu-text {
+        padding: 11px 0 0 0;
+        font-size: .8rem;
+      }
+
+      .header-top-utilities {
+        float: right;
+        position: relative;
+        margin: 0;
+      }
+      .header-top-utilities .list-group-item {
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+      }
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+
+    <app-header
+      role="navigation"
+      id="header"
+      effects="waterfall" 
+      fixed="[[ _isHeaderFixed() ]]" 
+      condenses="[[ !smallScreen ]]" 
+      reveals="[[ !smallScreen ]]">
+
+      <header class="container-fluid">
+
+        <div class="row">
+          <div class="header-top">
+            <div class="header-top-menu">
+              <paper-icon-button
+                  class="menu-btn"
+                  icon="menu"
+                  on-click="_toggleDrawer"
+                  aria-label="menu">
+              </paper-icon-button>
+              <span class="menu-text">Menu</span>
+            </div>
+
+            <ul class="header-top-utilities list-group">
+              <li class="list-group-item">
+                <paper-icon-button
+                  icon="search"
+                  on-click="_toggleDrawer"
+                  aria-label="search">
+                </paper-icon-button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="row header-main">
+          <div class="container-fluid">
+            <div>
+              <a href="/" aria-label="Dorel SPA">
+                <dorel-logo></dorel-logo>
+              </a>
+            </div>
+
+            <div class="vertical-center">
+              <div 
+                sticky$="[[ _shouldShowTabs ]]"
+                hidden$="[[ !_shouldShowTabs ]]">
+
+                <template 
+                  is="dom-if" 
+                  if="[[_shouldRenderTabs]]">
+                  <template 
+                    is="dom-if" 
+                    if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+
+                    <dorel-tabs
+                      selected="[[ page ]]"
+                      attr-for-selected="name">
+                      <template 
+                        is="dom-repeat" 
+                        items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
+                        as="menuItem" 
+                        initial-count="4">
+
+                        <dorel-tab name="[[ menuItem.title ]]">
+                          <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                        </dorel-tab>
+
+                      </template>
+                    </dorel-tabs>
+                    
+                  </template>
+                </template>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="header-utility layout horizontal">
+            <div class="header-search vertical-center">
+              <dorel-search-small></dorel-search-small>
+            </div>
+
+            <div class="header-language vertical-center">
+              <dorel-select-language></dorel-select-language>
+            </div>
+          </div>
+        </div>
+      </header>
+
+    </app-header>
+
+    <!-- Lazy-create the drawer for small screen sizes. -->
+    <template 
+      is="dom-if" 
+      if="[[ _shouldRenderDrawer ]]">
+      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
+
+        <template 
+          is="dom-if" 
+          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+
+          <iron-selector role="navigation" class="drawer-list" 
+            selected="[[ page ]]" 
+            attr-for-selected="name">
+          
+            <template 
+              is="dom-repeat" 
+              items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+              as="menuItem" 
+              initial-count="4">
+              <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+            </template>
+          
+          </iron-selector>
+
+        </template>
+      </app-drawer>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-header',
+
+      properties: {
+        loadComplete: {
+          type: Boolean
+        },
+
+        page: {
+          type: String
+        }
+
+        _shouldShowTabs: {
+          computed: '_computeShouldShowTabs(page)'
+        },
+
+        _shouldRenderTabs: {
+          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
+        },
+
+        _shouldRenderDrawer: {
+          computed: '_computeShouldRenderDrawer(loadComplete)'
+        }
+      },
+
+      _toggleDrawer: function() {
+        this.drawerOpened = !this.drawerOpened;
+      },
+
+      _computeShouldShowTabs: function(page) {
+        console.log('page', page);
+        return (typeof page !== 'undefined') && (!this.mobileSmall || !this.mobileMedium || !this.tablets);
+      },
+
+      _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
+        return _shouldShowTabs && loadComplete;
+      },
+
+      _computeShouldRenderDrawer: function(loadComplete) {
+        return loadComplete && (this.mobileSmall || this.mobileMedium || this.tablets);
+      },
+    });
+  </script>
+</dom-module>

@@ -27,20 +27,17 @@
 
 <dom-module id="dorel-app">
   <template>
-    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min iron-flex iron-flex-alignment">
       /* 
        * Application wide styling
        * - Will define standard styling for components
        */
       :host {
-
-        display: block;
-        position: relative;
-        padding-top: 130px;
-        padding-bottom: 64px;
-        min-height: 100vh;
         --primary-color: var(--theme-brand-color);
         color: var(--theme-primary-text-color);
+        display: block;
+        position: relative;
+        min-height: 100vh;
       }
 
       :root {
@@ -90,9 +87,7 @@
         @apply(--layout-center);
       }
 
-      /* 
-       * custom classes 
-       */
+
       .header-search,
       .header-language {
         padding: 0 0.2rem; /* add component padding */
@@ -182,7 +177,6 @@
       /* small screen */
       @media (max-width: 767px) {
         :host {
-          padding-top: 64px;
         }
 
         .menu-btn {
@@ -337,77 +331,8 @@
     <dorel-wp-collect-widgets
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
   
-    <app-header
-      role="navigation"
-      id="header"
-      effects="waterfall" 
-      fixed="[[ smallScreen ]]" 
-      condenses="[[ !smallScreen ]]" 
-      reveals="[[ !smallScreen ]]">
-
-      <header class="layout horizontal">
-
-        <div class="flex layout horizontal">
-          <div>
-            <a href="/" aria-label="Dorel SPA">
-              <dorel-logo></dorel-logo>
-            </a>
-          </div>
-
-          <div class="vertical-center">
-            <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-              <template 
-                is="dom-if" 
-                if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-
-                <dorel-tabs
-                  selected="[[ page ]]"
-                  attr-for-selected="name">
-                  <template 
-                    is="dom-repeat" 
-                    items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
-                    as="menuItem" 
-                    initial-count="4">
-
-                    <dorel-tab name="[[ menuItem.title ]]">
-                      <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                    </dorel-tab>
-
-                  </template>
-                </dorel-tabs>
-                
-              </template>
-
-            </div>
-          </div>
-        </div>
-
-        <div class="header-utility layout horizontal">
-          <div class="header-search vertical-center">
-            <dorel-search-small></dorel-search-small>
-          </div>
-
-          <div class="header-language vertical-center">
-            <dorel-select-language></dorel-select-language>
-          </div>
-        </div>
-
-      </header>
-
-    </app-header>
-
-    <!-- Lazy-create the drawer for small screen sizes. -->
-    <!-- <template is="dom-if" if="[[ _shouldRenderDrawer ]]">
-      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
-        <iron-selector role="navigation" class="drawer-list" 
-          selected="[[ page ]]" 
-          attr-for-selected="name">
-          <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
-            <a name="[[ menuItem.title ]]" href="/list/[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-          </template>
-        </iron-selector>
-      </app-drawer>
-    </template> -->
+    <dorel-header 
+      load-complete="{{ loadComplete }}"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -463,18 +388,6 @@
 
         currentPage: {
           type: Number
-        },
-
-        _shouldShowTabs: {
-          computed: '_computeShouldShowTabs(page, smallScreen)'
-        },
-
-        _shouldRenderTabs: {
-          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
-        },
-
-        _shouldRenderDrawer: {
-          computed: '_computeShouldRenderDrawer(smallScreen, loadComplete)'
         }
       },
 
@@ -611,10 +524,6 @@
         }
       },
 
-      _toggleDrawer: function() {
-        this.drawerOpened = !this.drawerOpened;
-      },
-
       /** 
        * @name _showPage404
        * @description sets the page variable to the 404 page
@@ -674,18 +583,6 @@
 
       _dorelChanged: function(data) {
         console.info(data);
-      },
-
-      _computeShouldShowTabs: function(page, smallScreen) {
-        return (typeof page !== 'undefined') && !smallScreen;
-      },
-
-      _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
-        return _shouldShowTabs && loadComplete;
-      },
-
-      _computeShouldRenderDrawer: function(smallScreen, loadComplete) {
-        return smallScreen && loadComplete;
       },
 
       _hasTemplate: function(templateName) {
