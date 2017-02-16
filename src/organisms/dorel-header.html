@@ -239,7 +239,31 @@
                       initial-count="4">
 
                       <dorel-tab name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+
+                        <template
+                          is="dom-if"
+                          if="[[ menuItem.children.length ]]">
+                          <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            [[ menuItem.title ]] <span class="caret"></span>
+                          </a>
+
+                          <ul class="dropdown-menu">
+                            <template
+                              is="dom-repeat"
+                              items="[[ menuItem.children ]]"
+                              as="child">
+                              <li>
+                                <a href="[[ child.url ]]">[[ child.title ]]</a>
+                              </li>
+                            </template>
+                          </ul>
+                        </template>
+
+                        <template
+                          is="dom-if"
+                          if="[[ !menuItem.children.length ]]">
+                          <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                        </template>
                       </dorel-tab>
 
                     </template>
