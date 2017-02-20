@@ -239,7 +239,35 @@
                       initial-count="4">
 
                       <dorel-tab name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+
+                        <template
+                          is="dom-if"
+                          if="[[ menuItem.children.length ]]">
+
+                          <paper-dropdown-menu label="[[ menuItem.title ]]">
+                            <paper-listbox class="dropdown-content">
+
+                              <template
+                                is="dom-repeat"
+                                items="[[ menuItem.children ]]"
+                                as="child">
+                                <paper-item>
+                                  <dorel-cta
+                                    link="[[ child.url ]]">
+                                    [[ child.title ]]
+                                  </dorel-cta>
+                                </paper-item>
+                              </template>
+                            </paper-listbox>
+                          </paper-dropdown-menu>
+
+                        </template>
+
+                        <template
+                          is="dom-if"
+                          if="[[ !menuItem.children.length ]]">
+                          <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                        </template>
                       </dorel-tab>
 
                     </template>
