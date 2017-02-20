@@ -243,20 +243,24 @@
                         <template
                           is="dom-if"
                           if="[[ menuItem.children.length ]]">
-                          <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            [[ menuItem.title ]] <span class="caret"></span>
-                          </a>
 
-                          <ul class="dropdown-menu">
-                            <template
-                              is="dom-repeat"
-                              items="[[ menuItem.children ]]"
-                              as="child">
-                              <li>
-                                <a href="[[ child.url ]]">[[ child.title ]]</a>
-                              </li>
-                            </template>
-                          </ul>
+                          <paper-dropdown-menu label="[[ menuItem.title ]]">
+                            <paper-listbox class="dropdown-content">
+
+                              <template
+                                is="dom-repeat"
+                                items="[[ menuItem.children ]]"
+                                as="child">
+                                <paper-item>
+                                  <dorel-cta
+                                    link="[[ child.url ]]">
+                                    [[ child.title ]]
+                                  </dorel-cta>
+                                </paper-item>
+                              </template>
+                            </paper-listbox>
+                          </paper-dropdown-menu>
+
                         </template>
 
                         <template
