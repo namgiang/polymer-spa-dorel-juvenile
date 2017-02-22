@@ -1,0 +1,47 @@
+<dom-module id="dorel-section-slideshow">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .section-slideshow {}
+    </style>
+
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <template
+      is="dom-if"
+      if="[[ slideshowData ]]">
+
+      <section class="section-slideshow container"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}"
+        tablets$="{{ tablets }}"
+        desktop-small$="{{ desktopSmall }}"
+        desktop-full$="{{ desktopFull }}">
+        <beautify-json output="{{slideshowData}}"></beautify-json>
+      </section>
+
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-slideshow',
+
+      properties: {
+      },
+
+      ready: function() {
+      }
+    });
+  </script>
+</dom-module>
