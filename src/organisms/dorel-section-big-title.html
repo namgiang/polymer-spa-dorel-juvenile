@@ -1,0 +1,182 @@
+<dom-module id="dorel-section-big-title">
+  <template>
+    <style include="theme-maxi-cosi-shared-styles polymer-bootstrap-min">
+      .section-big-title {
+        display: table;
+        width: 100%;
+      }
+
+      .section-big-title-inner {
+        display: table-cell;
+        vertical-align: middle;
+      }
+  
+      .section-big-title[mobile-small] {
+        height: 180px;
+      }
+      .section-big-title[mobile-small] .section-big-title-inner > * {
+        width: 268px;
+      }
+  
+      .section-big-title[mobile-medium] {
+        height: 260px;
+      }
+      .section-big-title[mobile-medium] .section-big-title-inner > * {
+        width: 384px;
+      }
+  
+      .section-big-title[tablets] {
+        height: 340px;
+      }
+      .section-big-title[tablets] .section-big-title-inner > * {
+        width: 500px;
+      }
+
+  
+      .section-big-title[desktop-small] {
+        height: 420px;
+      }
+      .section-big-title[desktop-full] {
+        height: 420px;
+      }
+      .section-big-title[desktop-small] .section-big-title-inner > *,
+      .section-big-title[desktop-full] .section-big-title-inner > * {
+        width: 616px;
+      }
+
+      .column-headline {
+        @apply(--theme-heading);
+      }
+      h1.column-headline {
+        font-size: 2.4rem;
+      }
+      h2.column-headline {
+        font-size: 2rem;
+      }
+      h3.column-headline {
+        font-size: 1.8rem;
+      }
+      h4.column-headline {
+        font-size: 1.7rem;
+      }
+      h5.column-headline {
+        font-size: 1.6rem;
+      }
+      h6.column-headline {
+        font-size: 1rem;
+      }
+    </style>
+    
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <section class="section-big-title container-fluid"
+      mobile-small$="{{ mobileSmall }}"
+      mobile-medium$="{{ mobileMedium }}"
+      tablets$="{{ tablets }}"
+      desktop-small$="{{ desktopSmall }}"
+      desktop-full$="{{ desktopFull }}"
+      style$="background-color: [[ bigTitleData.background_color ]]">
+      <div class="section-big-title-inner">
+        <template
+          is="dom-if"
+          if="[[ bigTitleData.big_title ]]">
+          
+          <template
+            is="dom-if"
+            if="{{ _hasValue(bigTitleData.big_title_type) }}">
+            <template
+              is="dom-if"
+              if="{{ _isH1(bigTitleData.big_title_type) }}">
+              <h1 class$="column-headline text-[[ bigTitleData.big_title_alignment ]]"
+               style$="color: [[ bigTitleData.big_title_color ]]">[[ bigTitleData.big_title ]]</h1>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _isH2(bigTitleData.big_title_type) }}">
+              <h2 class$="column-headline text-[[ bigTitleData.big_title_alignment ]]"
+               style$="color: [[ bigTitleData.big_title_color ]]">[[ bigTitleData.big_title ]]</h2>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _isH3(bigTitleData.big_title_type) }}">
+              <h3 class$="column-headline text-[[ bigTitleData.big_title_alignment ]]"
+               style$="color: [[ bigTitleData.big_title_color ]]">[[ bigTitleData.big_title ]]</h3>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _isH4(bigTitleData.big_title_type) }}">
+              <h4 class$="column-headline text-[[ bigTitleData.big_title_alignment ]]"
+               style$="color: [[ bigTitleData.big_title_color ]]">[[ bigTitleData.big_title ]]</h4>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _isH5(bigTitleData.big_title_type) }}">
+              <h5 class$="column-headline text-[[ bigTitleData.big_title_alignment ]]"
+               style$="color: [[ bigTitleData.big_title_color ]]">[[ bigTitleData.big_title ]]</h5>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _isH6(bigTitleData.big_title_type) }}">
+              <h6 class$="column-headline text-[[ bigTitleData.big_title_alignment ]]"
+               style$="color: [[ bigTitleData.big_title_color ]]">[[ bigTitleData.big_title ]]</h6>
+            </template>
+          </template>
+
+        </template>
+
+      </div>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-big-title',
+
+      _hasValue: function(val) {
+        return (typeof val !== 'undefined' || val === null || val !== '');
+      },
+
+      _isH1: function(type) {
+        return (type === 'h1');
+      },
+
+      _isH2: function(type) {
+        return (type === 'h2');
+      },
+
+      _isH3: function(type) {
+        return (type === 'h3');
+      },
+
+      _isH4: function(type) {
+        return (type === 'h4');
+      },
+
+      _isH5: function(type) {
+        return (type === 'h5');
+      },
+
+      _isH6: function(type) {
+        return (type === 'h6');
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -1,0 +1,48 @@
+<dom-module id="dorel-section-big-video">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .section-big-video {
+        height: 478px;
+      }
+    </style>
+
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <template
+      is="dom-if"
+      if="[[ videoWrapData ]]">
+      <section class="section-big-video container-fluid"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}"
+        tablets$="{{ tablets }}"
+        desktop-small$="{{ desktopSmall }}"
+        desktop-full$="{{ desktopFull }}">
+        <div class="row">
+
+          <dorel-video-wrap
+            video-type="[[ videoWrapData.video_type ]]"
+            video-id="[[ videoWrapData.video_id ]]"></dorel-video-wrap>
+
+        </div>
+      </section>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-big-video'
+    });
+  </script>
+</dom-module>
