@@ -36,13 +36,6 @@
       },
 
       ready: function() {
-        /**
-         * Template is loaded
-         * for the user this is the moment where he sees the page template
-         * and components
-         */
-        var event = new Event('dorel-template-loaded');
-        window.dispatchEvent(event);
       },
 
       _hasTemplate: function(templateName) {
@@ -53,6 +46,14 @@
         if (templateName !== 'home') {
           this.importHref(this.resolveUrl('dorel-template-' + templateName + '.html'), null, null, true);
         }
+        
+        /**
+         * Template is loaded
+         * for the user this is the moment where he sees the page template
+         * and components
+         */
+        var event = new Event('dorel-template-loaded');
+        window.dispatchEvent(event);
         return templateName === templateCase;
       }
     });
