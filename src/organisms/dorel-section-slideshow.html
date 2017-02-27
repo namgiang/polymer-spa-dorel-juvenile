@@ -2,6 +2,43 @@
   <template>
     <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
       .section-slideshow {}
+      .section-slideshow {
+        position: relative;
+      }
+      .section-slideshow .simple-slider {
+        width: 100%;
+        height: 612px;
+      }
+
+      .section-slideshow .simple-slider-slide {
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: 603px;
+      }
+
+      .slide-button-container {
+        position: absolute;
+        top: 0px;
+        z-index: 12;
+        width: 30px;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        /*box-sizing: border-box;*/
+      }
+      .slide-button-container:hover {
+        cursor: pointer;
+      }
+      .slide-button {
+        color: #FFF;
+      }
+      .prev-button {
+        left: 0px;
+      }
+      .next-button {
+        right: 0px;
+      }
     </style>
 
 
@@ -21,13 +58,53 @@
       is="dom-if"
       if="[[ slideshowData ]]">
 
-      <section class="section-slideshow container"
+      <section
+        class$="section-slideshow {{ _isFullWidth(slideshowData.slideshow_width) }}"
         mobile-small$="{{ mobileSmall }}"
         mobile-medium$="{{ mobileMedium }}"
         tablets$="{{ tablets }}"
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
-        <beautify-json output="{{slideshowData}}"></beautify-json>
+        <div class="row">
+          <div class="col-xs-12">
+
+            <!-- previous button -->
+            <span href="#" class="slide-button-container prev-button"
+              on-click="prevSlide">
+              <iron-icon icon="hardware:keyboard-arrow-left" class="slide-button"></iron-icon>
+            </span>
+            <!--// previous button -->
+
+            <!-- simple-slider -->
+            <simple-slider class="simple-slider" 
+              transition-property="opacity" 
+              start-value="0" 
+              visible-value="1" 
+              end-value="0"
+              auto-reload>
+
+              <template
+                is="dom-repeat"
+                items="[[ slideshowData.slideshow_slides ]]"
+                as="slide">
+                
+                <div class="simple-slider-slide"
+                  style$="
+                    background-image: url([[ slide.slide_image ]]);"></div>
+
+              </template>
+            </simple-slider>
+            <!--// simple slider -->
+            
+            <!-- next button -->
+            <span href="#" class="slide-button-container next-button"
+              on-click="nextSlide">
+              <iron-icon icon="hardware:keyboard-arrow-right" class="slide-button"></iron-icon>
+            </span>
+            <!--// next button -->
+
+          </div>
+        </div>
       </section>
 
     </template>
@@ -40,7 +117,25 @@
       properties: {
       },
 
-      ready: function() {
+      _isFullWidth: function(width) {
+        return (typeof width !== '' || val !== 'undefined' || val === 'full-width') ? 'container-fluid' : 'container';
+      },
+
+      _hasValue: function(val) {
+        return (typeof val !== '' || val !== 'undefined' || val);
+      },
+
+      _slideChanged: function() {
+        var label = this.getAttribute('aria-label');
+        this.setAttribute('aria-label', this.slideIndex);
+      },
+
+      prevSlide: function(e) {
+        this.$$('simple-slider').prev();
+      },
+
+      nextSlide: function(e) {
+        this.$$('simple-slider').next();
       }
     });
   </script>
