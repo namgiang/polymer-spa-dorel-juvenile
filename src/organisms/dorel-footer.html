@@ -13,7 +13,7 @@
        * copyright and footer-menu links
        */
       footer a,
-      .footer-text {
+      #footer-text {
         color: white;
         text-decoration: none;
         @apply(--theme-ie-bodycopy);
@@ -102,6 +102,38 @@
       footer[layoutwide] .footer-disclaimer {
         @apply(--layout-flex-3);
       }
+
+      footer[mobile] .footer-menu {
+        max-height: 30px;
+        overflow: hidden;
+        border-bottom: 1px solid #fff;
+        padding-bottom: 10px;
+        transition: max-height .3s ease-in-out;
+      }
+      footer[mobile] .footer-menu.open {
+        max-height: 1000px!important;
+      }
+
+      footer[mobile] .footer-menu .footer-heading {
+        color: #fff;
+        height: 30px;
+        margin: 0;
+        font-weight: bolder;
+        position: relative;
+        cursor: pointer;
+      }
+      footer[mobile] .footer-menu .footer-heading::before {
+        background-color: white;
+        content: '';
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+      }
+      footer[mobile] .footer-menu.open .footer-heading::before{
+        background-color: grey;
+      }
     </style>
 
     <iron-media-query query="(min-width:601px)" query-matches="{{ isAtLeast800px }}"></iron-media-query>
@@ -148,10 +180,9 @@
 
       <section id="footer-widget-area" class="footer-info">
         <div class="layout vertical footer-disclaimer">
-          <span class="footer-text">
-            <dorel-safe-html html="[[ globals.Dorel.collect.options.footer_copyright ]]"></dorel-safe-html>
+          <span id="footer-text">
+            <!-- copyright is inserted here -->
           </span>
-          <!--div><img width="200" src="../../assets/images/dorel.svg" alt="#" /></div-->
         </div>
 
         <!-- widget areas are inserted here -->
@@ -177,10 +208,53 @@
       },
 
       observers: [
-        '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)'
+        '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)',
+        '_copyrightChanged(globals.Dorel.collect.options.footer_copyright)'
       ],
 
+      listeners: {
+        'click': 'handleHeaderClick',
+      },
+
+      /**
+       * @name: handleHeaderClick
+       * @description: handle the click event on the header tag for the
+       * accordions (mobile only)
+       */
+      handleHeaderClick: function(e) {
+        // return when not clicked on the footer-heading
+        if (typeof Polymer.dom(e).rootTarget.parentNode === 'undefined' 
+          || !Polymer.dom(e).rootTarget.parentNode.classList.contains('footer-menu')) return;
+
+        // if a click on the footer-heading was done
+        if (Polymer.dom(e).rootTarget.parentNode.classList.contains('open')) {
+          Polymer.dom(e).rootTarget.parentNode.classList.remove('open');
+        } else {
+          Polymer.dom(e).rootTarget.parentNode.classList.add('open');
+        }
+      },
+
+      /**
+       * @name: _copyrightChanged
+       * @description: places the copyright text in the designated element
+       */
+      _copyrightChanged: function(copy) {
+        // set the element
+        var footerEl = this;
+
+        // insert the html value
+        if (typeof copy !== 'undefined' || copy !== '') {
+          this.$['footer-text'].innerHTML = copy;
+        }
+      },
+
+      /**
+       * @name: _areasChanged
+       * @description: when the areas are set or changed place them
+       * in there designated element
+       */
       _areasChanged: function(data) {
+        // set the element
         var footerEl = this;
 
         // if no data is given jump out
