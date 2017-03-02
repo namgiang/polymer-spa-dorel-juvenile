@@ -2,7 +2,6 @@
   <template>
     <style include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment iron-flex-layout">
 
-
       /* Refactor the following: */
       app-header {
         @apply(--layout-fixed-top);
@@ -24,8 +23,6 @@
       dorel-tab {
         --dorel-tab-overlay: {
           color: red;
-          
-          /*border-bottom: 2px solid var(--theme-color-active);*/
         };
       }
       dorel-tab {
@@ -37,8 +34,6 @@
         padding: 9px 5px;
         color: var(--theme-primary-text-color);
         @apply(--theme-ui);
-        /*display: inline-block;*/
-        /*color: var(--app-primary-color);*/
       }
 
       /* 
@@ -95,7 +90,6 @@
       #header-main #header-main-utility {
         padding: 35px 0;
       }
-
       header[mobile-small],
       header[mobile-medium] {
         text-align: center;
@@ -104,13 +98,6 @@
       header[mobile-medium] #header-main-logo {
         margin: 0 auto;
       }
-/*      header[mobile-small] #header-main-menu,
-      header[mobile-small] #header-main-utility,
-      header[mobile-medium] #header-main-menu,
-      header[mobile-medium] #header-main-utility {
-        display: none;
-      }*/
-
       header[screenMedium] #header-main-logo {
         float: left;
       }
@@ -120,37 +107,10 @@
         padding: 20px 0px;
         width: 100%;
       }
-      
       header[desktop-small] #header-main-logo,
       header[desktop-full] #header-main-logo {
         float: left;
       }
-/*      header[desktop-small] #header-main-menu,
-      header[desktop-full] #header-main-menu {
-        padding: 40px 0 0 20px;
-      }*/
-
-      /**
-       * helper classes
-       */
-      header[mobile-small] .hidden-md-up,
-      header[mobile-medium] .hidden-md-up,
-      header[screenMedium] .hidden-md-up {
-      }
-      
-      header[mobile-small] .hidden-md-up,
-      header[mobile-medium] .hidden-md-up,
-      header[screenMedium] .hidden-md-up {
-        display: none;
-      }
-      
-
-      header[desktop-small] .hidden-md-down,
-      header[mobile-full] .hidden-md-down,
-      header[screenMedium] .hidden-md-down {
-        display: none;
-      }
-
     </style>
 
     <!-- static beginning AND end media queries -->
@@ -281,23 +241,13 @@
       </app-drawer>
     </template>
 
-
     <!-- search dropdown -->
     <section class="header-search vertical-center">
       <p>Make search dropdown section here</p>
       <!--dorel-search-small></dorel-search-small-->
     </section>
 
-
-
-
   </template>
-
-
-
-
-
-
 
   <script>
     Polymer({
@@ -330,17 +280,14 @@
       },
 
       _computeShouldShowTabs: function(page) {
-        console.log('_shouldShowTabs: ', (typeof page !== 'undefined') && (!this.screenExtraSmall || !this.screenSmall));
         return (typeof page !== 'undefined') && (!this.screenExtraSmall || !this.screenSmall);
       },
 
       _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
-        console.log('_shouldRenderTabs: ', _shouldShowTabs, loadComplete);
         return _shouldShowTabs && loadComplete;
       },
 
       _computeShouldRenderDrawer: function(loadComplete) {
-        console.log('_shouldRenderDrawer: ', loadComplete && (this.screenExtraSmall || this.screenSmall || this.screenMedium));
         return loadComplete && (this.screenExtraSmall || this.screenSmall || this.screenMedium);
       },
     });

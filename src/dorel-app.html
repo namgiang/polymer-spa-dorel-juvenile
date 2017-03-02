@@ -69,6 +69,12 @@
       iron-pages {
         margin: 0 auto;
       }
+
+      .announcer {
+        position: fixed;
+        height: 0;
+        overflow: hidden;
+      }
     </style>
 
     <!-- analytics
@@ -116,7 +122,7 @@
     <dorel-wp-collect-widgets
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
   
-    <dorel-header 
+    <dorel-header
       load-complete="{{ loadComplete }}"
       page="{{ page }}"></dorel-header>
 
@@ -148,6 +154,9 @@
     </section>
 
     <dorel-footer></dorel-footer>
+
+    <!-- a11y announcer -->
+    <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
 
   </template>
 
@@ -191,10 +200,13 @@
         '_routePageChanged(routeData.page)',
         '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
         '_setCurrentPage(page, globals.Dorel.collect.pages)',
-        '_dorelChanged(globals.Dorel.*)'
+        '_dorelChanged(globals.Dorel.*)',
+        '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
       listeners: {
+        'change-section': '_onChangeSection',
+        'announce': '_onAnnounce',
         'dom-change': '_domChange'
       },
 
@@ -225,11 +237,12 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
+        /**
+         * TODO: DIO-322
         // window.addEventListener('dorel-template-loaded', function() {
-
         //   this.$.placeholder.remove();
-
         // }.bind(this));
+         */
       },
 
       /** 
@@ -259,35 +272,48 @@
        */
       _pageChanged: function(page, oldPage) {
         if (page != null) {
+          this._pageLoaded(Boolean(oldPage));
           
-          // home route is eagerly loaded
-          if (page == 'home') {
-            this._pageLoaded(Boolean(oldPage));
+          /**
+           * TODO: check the prpl pattern
+            // home route is eagerly loaded
+            if (page == 'home') {
+              this._pageLoaded(Boolean(oldPage));
 
-          // other routes are lazy loaded
-          } else {
-            this._pageLoaded(Boolean(oldPage));
-            // this.importHref(
-            //   this.resolveUrl('templates/dorel-template.html'),
-            //   function() {
-            //     this._pageLoaded(Boolean(oldPage));
-            //   }, null, true);
-          }
-
+            //other routes are lazy loaded
+            } else {
+              this._pageLoaded(Boolean(oldPage));
+              this.importHref(
+                this.resolveUrl('templates/dorel-template.html'),
+                function() {
+                  this._pageLoaded(Boolean(oldPage));
+                }, null, true);
+            }
+            */
         }
       },
 
+      /**
+       * @name: _pageLoaded
+       * @description: this will make sure the lazyload will start after the
+       * page is loaded.
+       */
       _pageLoaded: function(shouldResetLayout) {
         this._ensureLazyLoaded();
-        if (shouldResetLayout) {
-          // The size of the header depends on the page (e.g. on some pages the tabs
-          // do not appear), so reset the header's layout only when switching pages.
-          this.async(function() {
-            this.$.header.resetLayout();
-          }, 1);
-        }
+        // if (shouldResetLayout) {
+        //   // The size of the header depends on the page (e.g. on some pages the tabs
+        //   // do not appear), so reset the header's layout only when switching pages.
+        //   this.async(function() {
+        //     this.$.header.resetLayout();
+        //   }, 1);
+        // }
       },
 
+      /**
+       * @name: _ensureLazyLoaded
+       * @description: if the load is completed we will add the resources
+       * the service worker will kick in after that.
+       */
       _ensureLazyLoaded: function() {
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
@@ -306,6 +332,11 @@
         }
       },
 
+      /**
+       * @name: _notifyNetworkStatus
+       * @description: checks to see if we have internet connection and
+       * sends notification to the user if offline
+       */
       _notifyNetworkStatus: function() {
         var oldOffline = this.offline;
         this.offline =  !navigator.onLine;
@@ -321,6 +352,41 @@
               'You are offline' : 'You are online';
           this._networkSnackbar.open();
         }
+      },
+
+      /**
+       * @name: _onChangeSection
+       * @description: Elements in the app can notify section changes. Response 
+       * by a11y announcing the section and syncronizing the category.
+       */
+      _onChangeSection: function(event) {
+        var detail = event.detail;
+        this.categoryName = detail.category || '';
+
+        // Announce the page's title
+        if (detail.title) {
+          document.title = detail.title + ' - Maxi Cosi';
+          this._announce(detail.title + ', loaded');
+        }
+      },
+
+      /**
+       * @name: _onAnnounce
+       * @description: starts announcing and setting the label
+       */
+      _onAnnounce: function(e) {
+        this._announce(e.detail);
+      },
+
+      /**
+       * @name: _announce
+       * @description: A11y announce the given message.
+       */
+      _announce: function(message) {
+        this._a11yLabel = '';
+        this.debounce('_a11yAnnouncer', function() {
+          this._a11yLabel = message;
+        }, 100);
       },
 
       /** 
@@ -364,12 +430,28 @@
         this.currentPage = pages.find(function(item) {
           return (page === item.slug) ? item : null;
         });
-
+        
         // set the global currentPage
         Polymer.globalsManager.set('Dorel.current.page', this.currentPage);
       },
 
-      // This is for performance logging only.
+      /**
+       * @name: _currentPageChanged
+       * @description: fire the change-section event, that will set the given
+       * title to its title tag
+       */
+      _currentPageChanged: function(newVal) {
+        if(typeof newVal === 'undefined') return;
+
+        this.fire('change-section', { 
+          title: newVal.title.rendered
+        });
+      },
+
+      /**
+       * @name: _domChange
+       * @description: This is for performance logging only.
+       */
       _domChange: function(e) {
         if (window.performance && performance.mark && !this.__loggedDomChange) {
           var target = Polymer.dom(e).rootTarget;
@@ -380,16 +462,12 @@
         }
       },
 
+      /**
+       * @name: _dorelChanged
+       * @description: this is for logging the global variable only
+       */
       _dorelChanged: function(data) {
-        console.info(data);
-      },
-
-      _hasTemplate: function(templateName) {
-        return (templateName) ? true : false;
-      },
-
-      _isTemplate: function(templateName, templateCase) {
-        return templateName === templateCase;
+        // console.info(data);
       }
     });
 
