@@ -1,41 +1,6 @@
 <dom-module id="dorel-header">
   <template>
-    <style include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment iron-flex-layout">
-
-      /* Refactor the following: */
-      app-header {
-        @apply(--layout-fixed-top);
-        z-index: 1;
-        background-color: rgba(255, 255, 255, 0.95);
-        --app-header-shadow: {
-          box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
-          height: 10px;
-          bottom: -10px;
-        };
-      }
-      app-drawer {
-        z-index: 100;
-      }
-      dorel-tabs {
-        float: left;
-        height: 100%;
-      }
-      dorel-tab {
-        --dorel-tab-overlay: {
-          color: red;
-        };
-      }
-      dorel-tab {
-        margin: 0 10px;
-      }
-      dorel-tab a {
-        text-decoration: none;
-        outline: none;
-        padding: 9px 5px;
-        color: var(--theme-primary-text-color);
-        @apply(--theme-ui);
-      }
-
+    <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment iron-flex-layout">
       /* 
        * header-top
        * @description: header-top is the grey top bar that holds the mobile
@@ -44,6 +9,24 @@
       .header-top {
         background-color: var(--theme-color-background-tertiary);
         padding: 5px;
+      }
+      .container-logo[screenSmall] {
+        height: 140px;
+      }
+      .header-main {
+        padding: var(--theme-component-space-inner);
+      }
+      .menu-spacing {
+        margin-left: var(--theme-component-space-inner);
+      }
+      .mobile-menu-label {
+        line-height: 2rem;
+        font-size: var(--theme-size-ui);
+        @apply --theme-ui;
+      }
+      .paper-icn-big {
+        width: calc(32px + 15px); /* var(--theme-icon-size-big) */
+        height: calc(32px + 15px); /* var(--theme-icon-size-big) */
       }
     </style>
 
@@ -75,19 +58,29 @@
 
       <!-- only small screen header -->
       <template is="dom-if" if="{{ screenSmall }}">
-        <div class="layout vertical wrap">
-          <div id="header-top-menu">
-            <paper-icon-button
-                class="menu-btn"
-                icon="menu"
-                on-click="_toggleDrawer"
-                aria-label="menu">
-            </paper-icon-button>
-            <span class="menu-text">Menu</span>
+        <div class="layout vertical">
+          <div class="layout horizontal justified center header-top">
+            <div>
+              <paper-icon-button
+                  class="paper-icn-big"
+                  icon="menu"
+                  on-click="_toggleDrawer"
+                  aria-label="menu"
+                  style="">
+              </paper-icon-button>
+              <!--span class="mobile-menu-label">Menu</span-->
+            </div>
+            <div>
+              <dorel-user-tools></dorel-user-tools>
+            </div>
           </div>
-          <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
-            <dorel-logo></dorel-logo>
-          </a>
+          <div class="layout horizontal center-center container-logo" screenSmall$="{{screenSmall}}">
+            <div>
+              <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
+                <dorel-logo></dorel-logo>
+              </a>
+            </div>
+          </div>
         </div>
       </template>
 
@@ -95,7 +88,7 @@
       <template is="dom-if" if="{{ screenMedium }}">
         <div class="layout vertical wrap">
           <div>
-            <div class="layout horizontal justified">
+            <div class="layout horizontal justified header-main">
               <div>
                 <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
                   <dorel-logo></dorel-logo>
@@ -114,13 +107,13 @@
 
       <!-- only large screen up header -->
       <template is="dom-if" if="{{ screenLargeUp }}">
-        <div class="layout horizontal">
+        <div class="layout horizontal header-main">
           <div>
             <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
               <dorel-logo></dorel-logo>
             </a>
           </div>
-          <div class="flex layout horizontal center">
+          <div class="flex layout horizontal center menu-spacing">
             <div>
               <dorel-navigation-main></dorel-navigation-main>
             </div>
