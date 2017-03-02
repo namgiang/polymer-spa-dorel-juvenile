@@ -1,20 +1,27 @@
 <dom-module id="dorel-footer">
-
   <template>
-
-    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+    <style include="iron-flex iron-flex-alignment polymer-bootstrap-min">
+      /**
+       * footer wrapper
+       */
       footer {
         background-color: var(--theme-brand-color-royal-blue);
         padding: var(--theme-component-space-inner);
       }
-
+      
+      /**
+       * copyright and footer-menu links
+       */
       footer a,
-      .footer-text {
+      #footer-text {
         color: white;
         text-decoration: none;
         @apply(--theme-ie-bodycopy);
       }
 
+      /**
+       * footer headings
+       */
       .footer-heading {
         margin-bottom: .5rem;
         @apply(--theme-bodycopy);
@@ -22,41 +29,68 @@
         font-size: 1rem;
       }
 
+      /**
+       * footer copyright and disclaimer
+       */
+      .footer-disclaimer {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      /** 
+       * Social media(wrapper)
+       */
       .footer-media-links {
         padding: var(--theme-component-space-inner);
       }
-
       .footer-media-link {
         text-align: center;
-        min-width: 100px;
         padding: 3px 20px;
         font-size: 13px;
         white-space: nowrap;
       }
-
-      .footer-media-links a span {
+      .footer-media-link a span {
         line-height: 24px;
         margin-left: 8px;
       }
-
+      
+      /**
+       * footer back to top
+       */
       .footer-back-to-top {
         padding: 1rem 0 0;
       }
 
       /* lists not enumerated */
-      .not-enum {
-        padding-left: 0;
+      .footer-menu {
+        margin: 1em 0;
+        padding-left: 40px;
       }
-
-      .not-enum li {
+      .footer-menu ul {
+        margin: 0;
+        padding: 0;
+      }
+      .footer-menu li {
+        padding-left: 0;
         list-style-type: none;
       }
-
-      .footer-disclaimer {
-        margin-top: 1rem;
-        margin-bottom: 1rem;
+      
+      /**
+       * MOBILE BREAKPOINT
+       */
+      footer[mobile] {}
+      footer[mobile] .footer-media-link {
       }
-
+      footer[mobile] .footer-media-link span {
+        display: none;
+      }
+      footer[mobile] .footer-menu {
+        padding: 0;
+      }
+      
+      /**
+       * LAYOUTWIDE BREAKPOINT
+       */
       footer[layoutwide] .footer-info {
         @apply(--layout-horizontal);
       }
@@ -68,66 +102,181 @@
       footer[layoutwide] .footer-disclaimer {
         @apply(--layout-flex-3);
       }
+
+      footer[mobile] .footer-menu {
+        max-height: 30px;
+        overflow: hidden;
+        border-bottom: 1px solid #fff;
+        padding-bottom: 10px;
+        transition: max-height .3s ease-in-out;
+      }
+      footer[mobile] .footer-menu.open {
+        max-height: 1000px!important;
+      }
+
+      footer[mobile] .footer-menu .footer-heading {
+        color: #fff;
+        height: 30px;
+        margin: 0;
+        font-weight: bolder;
+        position: relative;
+        cursor: pointer;
+      }
+      footer[mobile] .footer-menu .footer-heading::before {
+        background-color: white;
+        content: '';
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+      }
+      footer[mobile] .footer-menu.open .footer-heading::before{
+        background-color: grey;
+      }
     </style>
 
-    <iron-media-query query="(min-width:800px)" query-matches="{{isAtLeast800px}}"></iron-media-query>
+    <iron-media-query query="(min-width:601px)" query-matches="{{ isAtLeast800px }}"></iron-media-query>
+    <iron-media-query query="(max-width:600px)" query-matches="{{ mobile }}"></iron-media-query>
 
-    <footer layoutwide$="{{isAtLeast800px}}">
-      <section class="footer-media-links">
-        <div class="layout horizontal center center-justified">
-          <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:youtube" style="fill:rgb(0, 150, 195)"></iron-icon><span>Maxi Cosi</span></a>
-          <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:twitter" style="fill:rgb(0, 150, 195)"></iron-icon><span>@Maxi Cosi</span></a>
-          <a class="footer-media-link" href="#"><iron-icon icon="social-iconset:facebook" style="fill:rgb(0, 150, 195)"></iron-icon><span>Maxi-Cosi</span></a>
-        </div>
-      </section>
-      <section class="footer-info">
+    <footer mobile$="{{ mobile }}" layoutwide$="{{ isAtLeast800px }}">
+
+      <!-- check if we need to show the social links -->
+      <template 
+        is="dom-if"
+        if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
+
+        <section class="footer-media-links">
+          <div class="layout horizontal center center-justified">
+
+            <template
+              is="dom-if"
+              if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
+              
+              <template
+                is="dom-repeat"
+                items="[[ globals.Dorel.collect.options.footer_social_links ]]"
+                as="social_link">
+
+                <a class="footer-media-link" href="[[ social_link.social_media_href ]]">
+                  <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]" style="fill:rgb(0, 150, 195)"></iron-icon>
+                  <span>[[ social_link.social_media_text ]]</span>
+                </a>
+
+              </template>
+
+            </template>
+
+            <template
+              is="dom-if"
+              if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
+              <span class="footer-text">Please define your footer social links in the admin area</span>
+            </template>
+
+          </div>
+        </section>
+
+      </template>
+
+      <section id="footer-widget-area" class="footer-info">
         <div class="layout vertical footer-disclaimer">
-          <span class="footer-text">Copyright © 2017 Dorel Europe. All Rights Reserved.</span>
-          <span class="footer-text">A division of Dorel Juvenile.</span>
-          <!--div><img width="200" src="../../assets/images/dorel.svg" alt="#" /></div-->
-        </div>
-        <div class="footer-menu">
-          <ul class="not-enum">
-            <li class="footer-heading">Company</li>
-            <li><a href="#">Working at Maxi Cosi</a></li>
-            <li><a href="#">Cookies</a></li>
-            <li><a href="#">Disclaimer</a></li>
-          </ul>
-        </div>
-        <div class="footer-menu">
-          <ul class="not-enum">
-            <li class="footer-heading">Service</li>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-menu">
-          <ul class="not-enum">
-            <li class="footer-heading">Brands</li>
-            <li><a href="#">Quinny</a></li>
-            <li><a href="#">Baby Art</a></li>
-            <li><a href="#">Safety 1st</a></li>
-            <li><a href="#">Tiny Love</a></li>
-          </ul>
+          <span id="footer-text">
+            <!-- copyright is inserted here -->
+          </span>
         </div>
 
+        <!-- widget areas are inserted here -->
       </section>
+
       <section class="footer-back-to-top">
         <dorel-back-to-top></dorel-back-to-top>
       </section>
+
     </footer>
 
   </template>
 
   <script>
-
     Polymer({
       is: 'dorel-footer',
-      attached: function() {
 
+      properties: {
+        footerWidgets: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      observers: [
+        '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)',
+        '_copyrightChanged(globals.Dorel.collect.options.footer_copyright)'
+      ],
+
+      listeners: {
+        'click': 'handleHeaderClick',
+      },
+
+      /**
+       * @name: handleHeaderClick
+       * @description: handle the click event on the header tag for the
+       * accordions (mobile only)
+       */
+      handleHeaderClick: function(e) {
+        // return when not clicked on the footer-heading
+        if (typeof Polymer.dom(e).rootTarget.parentNode === 'undefined' 
+          || !Polymer.dom(e).rootTarget.parentNode.classList.contains('footer-menu')) return;
+
+        // if a click on the footer-heading was done
+        if (Polymer.dom(e).rootTarget.parentNode.classList.contains('open')) {
+          Polymer.dom(e).rootTarget.parentNode.classList.remove('open');
+        } else {
+          Polymer.dom(e).rootTarget.parentNode.classList.add('open');
+        }
+      },
+
+      /**
+       * @name: _copyrightChanged
+       * @description: places the copyright text in the designated element
+       */
+      _copyrightChanged: function(copy) {
+        // set the element
+        var footerEl = this;
+
+        // insert the html value
+        if (typeof copy !== 'undefined' || copy !== '') {
+          this.$['footer-text'].innerHTML = copy;
+        }
+      },
+
+      /**
+       * @name: _areasChanged
+       * @description: when the areas are set or changed place them
+       * in there designated element
+       */
+      _areasChanged: function(data) {
+        // set the element
+        var footerEl = this;
+
+        // if no data is given jump out
+        if (typeof data === 'undefined' || typeof data.widgets === 'undefined') {
+          return;
+        } else if (data.widgets.length) {
+
+          /**
+           * iterate over every widget inside the footer-widget-area
+           * and append it to the footer-widget-area div
+           */
+          data.widgets.forEach(function(widget) {
+            var footerColumn = document.createElement("div");
+            footerColumn.className = 'footer-menu';
+            footerColumn.innerHTML = widget.rendered;
+
+            footerEl.$['footer-widget-area'].appendChild(footerColumn);
+          });
+        }
+
+        this.footerWidgets = data;
       }
     });
-
   </script>
-
 </dom-module>

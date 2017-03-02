@@ -1,10 +1,8 @@
 <dom-module id="dorel-cta">
-
   <template>
-
-    <style is="custom-style" include="theme-maxicosi-shared-styles dorel-animate-classes">
-      [class^="theme-cta-"] {
-        font-size: 16px;
+    <style is="custom-style" include="theme-maxicosi-shared-styles dorel-animate-classes polymer-bootstrap-min">
+      .theme-cta {
+        font-size: 1rem;
         line-height: 20px;
         padding: 15px 22px 16px;
         text-decoration: none;
@@ -12,15 +10,15 @@
         border-width: 2px;
         border-style: solid;
       }
-      [class*="-primary"] {
+      .theme-cta-primary {
         color: white;
         border-color: var(--theme-color-cta);
         background-color: var(--theme-color-cta);
       }
-      [class*="-primary"]:hover {
+      .theme-cta-primary:hover {
         opacity: 0.9;
       }
-      [class*="-secondary"] {
+      .theme-cta-secondary {
         color: var(--theme-brand-color-accent-dark-grey);
         border-color: var(--theme-brand-color-accent-medium-grey);
       }
@@ -29,21 +27,66 @@
         border-color: rgba(255, 255, 255, 0.3);
       }
     </style>
+    
+    <!-- if type is anchor we are dealing with an anchor -->
+    <template
+      is="dom-if"
+      if="{{ _isDefault(type) }}">
+      <a href="{{ url }}" class$="hvr-pop theme-cta theme-cta-{{ type }}"
+        on-click="clickEvent">
+        <content></content>
+      </a>
+    </template>
 
-    <a href="{{ href }}" class="theme-cta-primary hvr-pop">
-      <content></content>
-    </a>
+    <template
+      is="dom-if"
+      if="{{ !_isDefault(type) }}">
+      <a href="{{ url }}" class$="hvr-pop theme-cta theme-cta-{{ type }}"
+        on-click="clickEvent">
+        <content></content>
+        <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+    </template>
 
   </template>
 
   <script>
     Polymer({
       is: 'dorel-cta',
+
       properties: {
-        href: {
+        link: {
+          type: String,
+          observer: '_linkChanged'
+        },
+        url: {
           type: String
         }
       },
+
+      _linkChanged: function(newVal, oldVal) {
+        // Alter href
+        this.url = '/' + newVal.split('/')[3];
+      },
+
+      clickEvent: function(e) {
+        var event = e;
+
+        // GTM event
+        Polymer.globalsManager.set('Dorel.events', {
+          event_dom: event,
+          element: this,
+          action: 'tbd',
+          attributes: {
+            href: this.href,
+            handler: this['on-click']
+          }
+        });
+      },
+
+      _isDefault: function(type) {
+        return (type === 'primary' || type === 'secondary');
+      }
     });
   </script>
 

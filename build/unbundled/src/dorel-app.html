@@ -14,10 +14,15 @@
 
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
-
-<link rel="import" href="organisms/dorel-app-placeholder.html">
+  
+<link rel="import" href="dorel-app-placeholder.html">
+  
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
+<link rel="import" href="atoms/dorel-gtm-data-layer.html">
+
+
+<script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
 
 </head><body><dom-module id="dorel-app">
   <template>
@@ -306,9 +311,8 @@
     <iron-media-query query="max-width: 767px" query-matches="{{ smallScreen }}"></iron-media-query>
 
     
-    <dorel-wp-collect-menu wp-url="[[ wpUrl ]]" menu-location="main_menu" menu-data="{{ menuData }}"></dorel-wp-collect-menu>
+    <dorel-wp-collect-menu wp-url="[[ wpUrl ]]" menu-location="main_menu"></dorel-wp-collect-menu>
 
-    
     <dorel-wp-collect-pages wp-url="[[ wpUrl ]]" pages-data="{{ pages }}"></dorel-wp-collect-pages>
 
     <dorel-app-placeholder></dorel-app-placeholder>
@@ -326,10 +330,10 @@
 
           <div class="vertical-center">
             <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-              <template is="dom-if" if="[[ menuData.length ]]">
+              <template is="dom-if" if="{{ globals.Dorel.collect.menuItems.length }}">
 
                 <dorel-tabs selected="[[ page ]]" attr-for-selected="name">
-                  <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
+                  <template is="dom-repeat" items="{{ globals.Dorel.collect.menuItems }}" as="menuItem" initial-count="4">
 
                     <dorel-tab name="[[ menuItem.title ]]">
                       <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
@@ -362,9 +366,9 @@
 
     
     <section id="content">
-      <iron-pages role="main" selected="{{ currentPage.object_id }}" attr-for-selected="page-id">
+      <iron-pages role="main" selected="{{ currentMenuItem.object_id }}" attr-for-selected="page-id">
 
-        <template is="dom-repeat" items="[[ pages ]]" as="page">
+        <template is="dom-repeat" items="[[ globals.Dorel.collect.pages ]]" as="page">
           
           <dorel-template page-id="[[ page.id ]]" template-name="[[ page.template ]]" template-data="[[ page ]]"></dorel-template>
 
@@ -375,8 +379,12 @@
 
     <dorel-footer></dorel-footer>
 
+    <dorel-gtm-data-layer gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer>
+
   </template>
 
-  <script>window.performance&&performance.mark&&performance.mark("dorel-app - before register"),Polymer({is:"dorel-app",properties:{debug:{type:Boolean,value:!0},page:{type:String,observer:"_pageChanged"},menuData:{type:Array},currentPage:{type:Number},_shouldShowTabs:{computed:"_computeShouldShowTabs(page, smallScreen)"},_shouldRenderTabs:{computed:"_computeShouldRenderTabs(_shouldShowTabs, loadComplete)"},_shouldRenderDrawer:{computed:"_computeShouldRenderDrawer(smallScreen, loadComplete)"}},observers:["_routePageChanged(routeData.page)","_setCurrentPage(page, menuData)"],listeners:{"dom-change":"_domChange"},created:function(){window.performance&&performance.mark&&performance.mark("dorel-app.created"),this.removeAttribute("unresolved")},ready:function(){this.debug?this.wpUrl="../../assets/data":this.wpUrl="//polymer-wp.dev/wp-json",Polymer.RenderStatus.afterNextRender(this,function(){this.listen(window,"online","_notifyNetworkStatus"),this.listen(window,"offline","_notifyNetworkStatus")})},_routePageChanged:function(e){this.page=e||"home",Polymer.AppLayout.scroll({top:0,behavior:"silent"}),this.drawerOpened=!1},_pageChanged:function(e,o){null!=e&&("home"==e?this._pageLoaded(Boolean(o)):this._pageLoaded(Boolean(o)))},_pageLoaded:function(e){this._ensureLazyLoaded(),e&&this.async(function(){this.$.header.resetLayout()},1)},_ensureLazyLoaded:function(){this.loadComplete||Polymer.RenderStatus.afterNextRender(this,function(){this.importHref(this.resolveUrl("dorel-lazy-resources.html"),function(){"serviceWorker"in navigator&&navigator.serviceWorker.register("../service-worker.js"),this._notifyNetworkStatus(),this.loadComplete=!0})})},_notifyNetworkStatus:function(){var e=this.offline;this.offline=!navigator.onLine,(this.offline||!this.offline&&e===!0)&&(this._networkSnackbar||(this._networkSnackbar=document.createElement("dorel-snackbar"),Polymer.dom(this.root).appendChild(this._networkSnackbar)),Polymer.dom(this._networkSnackbar).innerHTML=this.offline?"You are offline":"You are online",this._networkSnackbar.open())},_toggleDrawer:function(){this.drawerOpened=!this.drawerOpened},_showPage404:function(){this.page="404"},_setCurrentPage:function(e,o){o.length&&(this.currentPage=o.find(function(o){return e===o.url.substring(1)&&o.object_id}))},_domChange:function(e){if(window.performance&&performance.mark&&!this.__loggedDomChange){var o=Polymer.dom(e).rootTarget;o.domHost.is.match(this.page)&&(this.__loggedDomChange=!0,performance.mark(o.domHost.is+".domChange"))}},_computeShouldShowTabs:function(e,o){return"undefined"!=typeof e&&!o},_computeShouldRenderTabs:function(e,o){return e&&o},_computeShouldRenderDrawer:function(e,o){return e&&o},_hasTemplate:function(e){return!!e},_isTemplate:function(e,o){return e===o}});</script>
+
+<script>window.performance&&performance.mark&&performance.mark("dorel-app - before register"),Polymer({is:"dorel-app",properties:{debug:{type:Boolean,value:!0},page:{type:String,observer:"_pageChanged"},menuData:{type:Array},currentPage:{type:Number},_shouldShowTabs:{computed:"_computeShouldShowTabs(page, smallScreen)"},_shouldRenderTabs:{computed:"_computeShouldRenderTabs(_shouldShowTabs, loadComplete)"},_shouldRenderDrawer:{computed:"_computeShouldRenderDrawer(smallScreen, loadComplete)"}},observers:["_routePageChanged(routeData.page)","_setCurrentPage(page, menuData)"],listeners:{"dom-change":"_domChange"},created:function(){window.performance&&performance.mark&&performance.mark("dorel-app.created"),this.removeAttribute("unresolved")},ready:function(){this.debug?this.wpUrl="../../assets/data":this.wpUrl="//polymer-wp.dev/wp-json",Polymer.RenderStatus.afterNextRender(this,function(){this.listen(window,"online","_notifyNetworkStatus"),this.listen(window,"offline","_notifyNetworkStatus")})},_routePageChanged:function(e){this.page=e||"home",Polymer.AppLayout.scroll({top:0,behavior:"silent"}),this.drawerOpened=!1},_pageChanged:function(e,o){null!=e&&("home"==e?this._pageLoaded(Boolean(o)):this._pageLoaded(Boolean(o)))},_pageLoaded:function(e){this._ensureLazyLoaded(),e&&this.async(function(){this.$.header.resetLayout()},1)},_ensureLazyLoaded:function(){this.loadComplete||Polymer.RenderStatus.afterNextRender(this,function(){this.importHref(this.resolveUrl("dorel-lazy-resources.html"),function(){"serviceWorker"in navigator&&navigator.serviceWorker.register("../service-worker.js"),this._notifyNetworkStatus(),this.loadComplete=!0})})},_notifyNetworkStatus:function(){var e=this.offline;this.offline=!navigator.onLine,(this.offline||!this.offline&&e===!0)&&(this._networkSnackbar||(this._networkSnackbar=document.createElement("dorel-snackbar"),Polymer.dom(this.root).appendChild(this._networkSnackbar)),Polymer.dom(this._networkSnackbar).innerHTML=this.offline?"You are offline":"You are online",this._networkSnackbar.open())},_toggleDrawer:function(){this.drawerOpened=!this.drawerOpened},_showPage404:function(){this.page="404"},_setCurrentPage:function(e,o){o.length&&(this.currentPage=o.find(function(o){return e===o.url.substring(1)&&o.object_id}))},_domChange:function(e){if(window.performance&&performance.mark&&!this.__loggedDomChange){var o=Polymer.dom(e).rootTarget;o.domHost.is.match(this.page)&&(this.__loggedDomChange=!0,performance.mark(o.domHost.is+".domChange"))}},_computeShouldShowTabs:function(e,o){return"undefined"!=typeof e&&!o},_computeShouldRenderTabs:function(e,o){return e&&o},_computeShouldRenderDrawer:function(e,o){return e&&o},_hasTemplate:function(e){return!!e},_isTemplate:function(e,o){return e===o}});</script>
+
 </dom-module>
 </body></html>

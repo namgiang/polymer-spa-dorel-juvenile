@@ -1,0 +1,32 @@
+<dom-module id="dorel-gtm-data-layer">
+  <script>
+    Polymer({
+      is: 'dorel-gtm-data-layer',
+
+      properties: {
+        gtmData: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      observers: [
+        '_dataChanged(globals.Dorel.*)'
+      ],
+
+      _dataChanged: function(data) {
+        
+        var eventData = {
+          event: 'polymer_component',
+          value: data
+        }
+
+        console.info(eventData);
+        
+        window.dataLayer = window.dataLayer || [];
+
+        window.dataLayer.push(eventData);
+      }
+    });
+  </script>
+</dom-module>

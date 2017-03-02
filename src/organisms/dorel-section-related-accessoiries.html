@@ -1,0 +1,179 @@
+<dom-module id="dorel-section-related-accessoiries">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .section-related-accessoiries {
+        margin: 50px auto;
+        padding-top: 50px;
+        padding-bottom: 50px;
+      }
+
+      .column-headline {
+        @apply(--theme-heading);
+        text-align: center;
+      }
+      
+      /**
+       * included wrap
+       */
+      .included-wrap .accessoiry-wrap {
+        text-align: center;
+      }
+      .included-wrap .accessoiry-wrap img {
+        margin: 0 auto;
+      }
+      .included-wrap .accessoiry-wrap h4 {
+        text-align: center;
+        width: 100%;
+      }
+
+      .included-wrap h2.column-headline,
+      .optional-wrap h2.column-headline {
+        font-size: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .included-wrap h4.column-headline {
+        font-size: 1rem;
+      }
+      
+      /**
+       * optional wrap
+       */
+
+      .optional-wrap .optional-img-wrap {
+        text-align: center;
+      }
+      .optional-wrap .optional-img-wrap img {
+        margin: 0 auto;
+      }
+      .optional-wrap .optional-cta-wrap h3 {
+        @apply(--theme-heading);
+        font-size: 1.2rem;
+        text-align: left;
+        width: 100%;
+      }
+      .optional-wrap .optional-cta-wrap .list-group {
+        border: 0;
+        border-radius: 0;
+      }
+      .optional-wrap .optional-cta-wrap .list-group-item {
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+      }
+      .optional-wrap .optional-cta-wrap .list-group-item a {
+        color: #000;
+        display: block;
+        font-size: .9rem;
+        padding: 10px 15px 10px 30px;
+        position: relative;
+        width: 100%;
+      }
+      .optional-wrap .optional-cta-wrap .list-group-item a iron-icon {
+        left: 0;
+        top: 8px;
+        position: absolute;
+      }
+    </style>
+    
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <section class="section-related-accessoiries container-fluid"
+      mobile-small$="{{ mobileSmall }}"
+      mobile-medium$="{{ mobileMedium }}"
+      tablets$="{{ tablets }}"
+      desktop-small$="{{ desktopSmall }}"
+      desktop-full$="{{ desktopFull }}">
+      
+
+      <div class="row">
+        <template
+          is="dom-if"
+          if="[[ relAccData.included_accessoiries.length ]]">
+          <div class="col-xs-12 col-md-4">
+            <div class="row included-wrap">
+              <h2 class="column-headline">Included Accessoiries</h2>
+              <template
+                is="dom-repeat"
+                items="[[ relAccData.included_accessoiries ]]"
+                as="accessoiry">
+
+                <div class="col-xs-6 accessoiry-wrap">
+                  <img class="img-responsive" src="[[ accessoiry.accessoiry_image ]]" alt="" />
+                  <h4 class="column-headline">[[ accessoiry.accessoiry_title ]]</h4>
+                </div>
+
+              </template>
+            </div>
+          </div>
+        </template>
+
+        <template
+          is="dom-if"
+          if="[[ relAccData.optional_accessoiries.length ]]">
+          <div class="col-xs-12 col-md-8">
+            <div class="row optional-wrap">
+              <h2 class="column-headline">Optional Accessoiries</h2>
+              <template
+                is="dom-repeat"
+                items="[[ relAccData.optional_accessoiries ]]"
+                as="accessoiry">
+
+                  <div class="col-sm-12 col-md-6">
+                    <div class="row">
+                      <div class="col-xs-6 optional-img-wrap">
+                        <img class="img-responsive" src="[[ accessoiry.accessoiry_image ]]" alt="" />
+                      </div>
+
+                      <div class="col-xs-6 optional-cta-wrap">
+                        <h3>[[ accessoiry.accessoiry_title ]]</h3>
+                        <ul class="list-group">
+                          <!-- <li class="list-group-item">
+                            <a href="">Add to basket</a>
+                          </li> -->
+                          <li class="list-group-item">
+                            <a href="#">
+                              <iron-icon icon="editor:vertical-align-top"></iron-icon> See details
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-related-accessoiries',
+
+      properties: {
+
+        relAccData: {
+          type: Object
+        }
+
+      }
+    });
+
+  </script>
+
+</dom-module>

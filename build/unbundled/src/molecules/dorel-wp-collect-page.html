@@ -2,9 +2,9 @@
   <template>
     <style></style>
     
-    <iron-ajax auto="" url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" handle-as="json" last-response="{{ pageData }}"></iron-ajax>
+    <iron-ajax auto="" url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" handle-as="json" on-response="_pageLoaded"></iron-ajax>
   </template>
 
-  <script>Polymer({is:"wp-collect-page",properties:{pageData:{type:Object,reflectToAttribute:!0,notify:!0},pageId:{type:Number},wpUrl:{type:String}}});</script>
+  <script>Polymer({is:"wp-collect-page",properties:{pageData:{type:Object,reflectToAttribute:!0,notify:!0},pageId:{type:Number},wpUrl:{type:String}},_pageLoaded:function(e){var t=e.detail.response;Polymer.globalsManager.set("Dorel.collect.page",t)}});</script>
 </dom-module>
 </body></html>

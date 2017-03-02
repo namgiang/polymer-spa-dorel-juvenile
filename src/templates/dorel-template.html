@@ -1,9 +1,7 @@
 <link rel="import" href="dorel-template-home.html">
 
 <dom-module id="dorel-template">
-
   <template>
-
     <template is="dom-if" if="{{ _hasTemplate(templateName) }}">
       <template is="dom-if" if="{{ _isTemplate(templateName, 'home') }}">
         <dorel-template-home template-data="{{ templateData }}"></dorel-template-home>
@@ -16,8 +14,11 @@
       <template is="dom-if" if="{{ _isTemplate(templateName, 'marketing') }}">
         <dorel-template-marketing template-data="{{ templateData }}"></dorel-template-marketing>
       </template>
+
+      <template is="dom-if" if="{{ _isTemplate(templateName, 'product-detail') }}">
+        <dorel-template-product-detail template-data="{{ templateData }}"></dorel-template-product-detail>
+      </template>
     </template>
-    
   </template>
 
   <script>
@@ -35,8 +36,6 @@
       },
 
       ready: function() {
-        var event = new Event('dorel-template-loaded');
-        window.dispatchEvent(event);
       },
 
       _hasTemplate: function(templateName) {
@@ -47,6 +46,14 @@
         if (templateName !== 'home') {
           this.importHref(this.resolveUrl('dorel-template-' + templateName + '.html'), null, null, true);
         }
+        
+        /**
+         * Template is loaded
+         * for the user this is the moment where he sees the page template
+         * and components
+         */
+        var event = new Event('dorel-template-loaded');
+        window.dispatchEvent(event);
         return templateName === templateCase;
       }
     });

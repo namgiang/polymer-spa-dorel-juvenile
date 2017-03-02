@@ -1,0 +1,99 @@
+<dom-module id="dorel-wp-collect-menu-locations">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]" 
+      handle-as="json" 
+      on-response="_menuLoaded"></iron-ajax>
+
+    <iron-ajax
+      id="menuItems"
+      url=""
+      handle-as="json"
+      on-response="_menuItemsLoaded"></iron-ajax>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'dorel-wp-collect-menu-locations',
+    properties: {
+
+      /**
+       * `menuData` this variable is reflected
+       * by two way binding in order to use it in your
+       * template.
+       */
+      menuData: {
+        type: Object,
+        reflectToAttribute: true,
+        notify: true
+      },
+
+      /**
+       * `wpUrl` this is the url to your Wordpress instance
+       */
+      wpUrl: {
+        type: String
+      },
+
+      /**
+       * `endPoint`
+       */
+      endPoint: {
+        type: String
+      }
+    },
+
+    ready: function() {
+      this.endPoint = this.wpUrl + '/wp-api-menus/v2/menu-locations';
+    },
+
+    /** 
+     * @name _menuLoaded
+     * @description process the retrieved menu locations
+     */
+    _menuLoaded: function(data) {
+      var response = data.detail.response;
+
+      // iterate over the keys of the response
+      for (var key in response) {
+
+        // for every key retrieve its menuItems
+        this.$.menuItems.url = this.wpUrl + '/wp-api-menus/v2/menu-locations/' + key;
+
+        // kicks off the request, when response is given _menuItemsLoaded is fired
+        this.$.menuItems.generateRequest();
+      }
+
+      // place all the menu locations in the collect menus object
+      Polymer.globalsManager.set('Dorel.collect.menus', response);
+    },
+
+    /** 
+     * @name _menuItemsLoaded
+     * @description This function handles the generateRequest
+     * of the menu items per menu location.
+     */
+    _menuItemsLoaded: function(data) {
+      var response = data.detail.response;
+
+      // retrieve the location name from the url call
+      var urlArr = data.detail.url.split('/');
+      var menuLocation = urlArr[urlArr.length - 1];
+
+      // iterate over all menu items, alter its title and set the right url
+      response.forEach(function(item) {
+        item.title = item.title.toLowerCase();
+        item.url = '/' + item.url.split('/')[3];
+      });
+
+      // place the menu items in the right key inside the collect
+      Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation, {});
+      Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation + '.items', response);
+
+      // set the menuData (two way data binding for the app)
+      this.menuData = this.globals.Dorel.collect.menus;
+    }
+  });
+</script>

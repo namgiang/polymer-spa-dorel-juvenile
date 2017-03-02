@@ -1,7 +1,6 @@
 <dom-module id="dorel-page-builder">
   <template>
-
-    <style is="custom-style">
+    <style>
       dorel-layout-section dorel-page-builder {
         width: 100%;
         display: flex;
@@ -44,6 +43,232 @@
 
 
 
+
+
+        <!-- dorel content_wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrap') }}">
+          
+          <dorel-content-wrap
+            title-type="[[ component.title_type ]]"
+            title-align="[[ component.title_align ]]"
+            content-title="[[ component.title ]]"
+            content-html="[[ component.text ]]"></dorel-content-wrap>
+
+        </template>
+        <!--// dorel content_wrapper -->
+
+
+
+
+
+        <!-- dorel image-wrap -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'image_wrap') }}">
+          
+          <dorel-image-wrap
+            image-url="[[ component.image_url ]]"></dorel-image-wrap>
+
+        </template>
+        <!--// dorel image-wrap -->
+
+
+
+
+
+        <!-- dorel video-wrap -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'video_wrap') }}">
+          
+          <dorel-video-wrap
+            video-type="[[ component.video_type ]]"
+            video-id="[[ component.video_id ]]"></dorel-video-wrap>
+
+        </template>
+        <!--// dorel video-wrap -->
+
+
+
+
+        <!-- section-big-title -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_big_title') }}">
+          
+          <dorel-section-big-title
+            big-title-data="[[ component ]]"></dorel-section-big-title>
+
+        </template>
+        <!--// section-big-title -->
+
+
+
+
+
+        <!-- section-big-video -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_big_video') }}">
+          
+          <dorel-section-big-video
+            video-wrap-data="[[ component ]]"></dorel-section-big-video>
+
+        </template>
+        <!--// section-big-video -->
+
+
+
+
+        <!-- section-cta -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_cta') }}">
+          
+          <dorel-section-cta
+            cta-data="[[ component ]]"></dorel-section-cta>
+
+        </template>
+        <!--// section-cta -->
+
+
+
+
+
+        <!-- dorel section hero -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_hero') }}">
+          
+          <dorel-section-hero hero-data="[[ component ]]"></dorel-section-hero>
+
+        </template>
+        <!--// dorel section hero -->
+
+
+
+
+        <!-- section-indigo -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_indigo') }}">
+          
+          <dorel-section-indigo
+            indigo-data="[[ component ]]"></dorel-section-indigo>
+
+        </template>
+        <!--// section-indigo -->
+
+
+
+
+        <!-- section-multi -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_multi') }}">
+          
+          <dorel-section-multi
+            multi-data="[[ component ]]"></dorel-section-multi>
+
+        </template>
+        <!--// section-multi -->
+
+
+
+
+        <!-- section-related-accessoiries -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_related_accessoiries') }}">
+          
+          <dorel-section-related-accessoiries
+            rel-acc-data="[[ component ]]"></dorel-section-related-accessoiries>
+
+        </template>
+        <!--// section-related-accessoiries -->
+
+
+
+
+        <!-- section-showcase -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_showcase') }}">
+          
+          <dorel-section-showcase
+            showcase-data="[[ component ]]"></dorel-section-showcase>
+
+        </template>
+        <!--// section-showcase -->
+
+
+
+
+        <!-- section-slideshow -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_slideshow') }}">
+          
+          <dorel-section-slideshow
+            slideshow-data="[[ component ]]"></dorel-section-slideshow>
+
+        </template>
+        <!--// section-slideshow -->
+
+
+
+
+        <!-- section-usps -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'section_usps') }}">
+          
+          <dorel-section-usps
+            usps-data="[[ component ]]"></dorel-section-usps>
+
+        </template>
+        <!--// section-usps -->
+
+
+
+
+
+        <!-- dorel slider -->
+        <template 
+          is="dom-if" 
+          if="{{ _isPageComponent(component.acf_fc_layout, 'slider') }}">
+          
+          <dorel-slider>
+            <dorel-slider-slide
+              slide-data="[[ component.slides ]]"
+              slide-index="0">
+            </dorel-slider-slide>
+
+            <dorel-slider-slide
+              slide-data="[[ component.slides ]]"
+              slide-index="1">
+            </dorel-slider-slide>
+          </dorel-slider>
+
+          
+          <template
+            is="dom-repeat" 
+            items="[[ component.slides ]]">
+            <dorel-slider-slide
+              slide-data="[[ item ]]"
+              slide-index="{{ index }}">
+            </dorel-slider-slide>
+
+          </template>
+          
+
+        </template>
+        <!--// dorel slider -->
+
+
+        <!-- ////////////////// TODO: Refactor \\\\\\\\\\\\\\\\\\\ -->
 
 
         <!-- dorel column-wrapper -->
@@ -103,94 +328,12 @@
 
 
 
-        <!-- dorel content_wrapper -->
-        <template 
-          is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrapper') }}">
-          
-          <dorel-content-wrapper
-            content-title="[[ component.content_wrapper_title ]]"
-            content-html="[[ component.content_wrapper_text ]]"></dorel-content-wrapper>
-
-        </template>
-        <!--// dorel content_wrapper -->
-
-
-
-
-
-        <!-- dorel hero -->
-        <template 
-          is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
-          
-          <dorel-hero hero-data="[[ component ]]"></dorel-hero>
-
-        </template>
-        <!--// dorel hero -->
-
-
-
-
-
-        <!-- dorel slider -->
-        <template 
-          is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'slider') }}">
-          
-          <dorel-slider>
-            <dorel-slider-slide
-              slide-data="[[ component.slides ]]"
-              slide-index="0">
-            </dorel-slider-slide>
-
-            <dorel-slider-slide
-              slide-data="[[ component.slides ]]"
-              slide-index="1">
-            </dorel-slider-slide>
-          </dorel-slider>
-
-          
-          <template
-            is="dom-repeat" 
-            items="[[ component.slides ]]">
-            <dorel-slider-slide
-              slide-data="[[ item ]]"
-              slide-index="{{ index }}">
-            </dorel-slider-slide>
-
-          </template>
-          
-
-        </template>
-        <!--// dorel slider -->
-
-
-
-
-        <!-- standout sections -->
-        <template 
-          is="dom-if" 
-          if="{{ _isPageComponent(component.acf_fc_layout, 'standout') }}">
-          
-          <dorel-section-standout
-            standout-data="[[ component ]]"
-            standout-index="[[ index ]]"></dorel-section-standout>
-
-        </template>
-        <!--// standout sections -->
-
-
-
-
-
       </template><!--// dom-repeat -->
     </template><!--// dom-if -->
 
   </template>
   
   <script>
-
     Polymer({
       is: 'dorel-page-builder',
 
@@ -198,7 +341,5 @@
         return response === cname;
       }
     });
-
   </script>
-
 </dom-module>

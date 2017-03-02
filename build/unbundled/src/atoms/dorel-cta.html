@@ -1,7 +1,5 @@
 <html><head></head><body><dom-module id="dorel-cta">
-
   <template>
-
     <style is="custom-style" include="theme-maxicosi-shared-styles dorel-animate-classes">
       [class^="theme-cta-"] {
         font-size: 16px;
@@ -29,14 +27,23 @@
         border-color: rgba(255, 255, 255, 0.3);
       }
     </style>
+    
+    
+    <template is="dom-if" if="{{ _isAnchor(type) }}">
+      <a href="{{ href }}" class="theme-cta-primary hvr-pop" on-click="clickEvent">
+        <content></content>
+      </a>
+    </template>
 
-    <a href="{{ href }}" class="theme-cta-primary hvr-pop">
-      <content></content>
-    </a>
+    <template is="dom-if" if="{{ _isButton(type) }}">
+      <button class="theme-cta-primary hvr-pop" on-click="clickEvent">
+        <content></content>
+      </button>
+    </template>
 
   </template>
 
-  <script>Polymer({is:"dorel-cta",properties:{href:{type:String}}});</script>
+  <script>Polymer({is:"dorel-cta",properties:{href:{type:String}},clickEvent:function(e){var t=e;Polymer.globalsManager.set("Dorel.events",{event_dom:t,element:this,action:"tbd",attributes:{href:this.href,handler:this["on-click"]}})},_isAnchor:function(e){return"undefined"!=typeof e&&"anchor"===e},_isButton:function(e){return"undefined"!=typeof e&&"button"===e}});</script>
 
 </dom-module>
 </body></html>

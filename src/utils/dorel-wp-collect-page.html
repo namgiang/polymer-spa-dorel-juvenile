@@ -1,12 +1,10 @@
 <dom-module id="wp-collect-page">
   <template>
-    <style></style>
-    
     <iron-ajax
       auto 
       url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" 
       handle-as="json"
-      last-response="{{ pageData }}"></iron-ajax>
+      on-response="_pageLoaded"></iron-ajax>
   </template>
 
   <script>
@@ -37,6 +35,13 @@
         wpUrl: {
           type: String
         }
+      },
+
+      _pageLoaded: function(data) {
+        var page = data.detail.response;
+
+        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+        Polymer.globalsManager.set('Dorel.collect.page', page);
       }
     });
   </script>

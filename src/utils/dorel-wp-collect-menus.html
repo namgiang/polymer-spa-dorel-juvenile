@@ -1,0 +1,64 @@
+<dom-module id="dorel-wp-collect-menus">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]" 
+      handle-as="json" 
+      on-response="_menuLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-menus',
+      properties: {
+
+        /**
+         * `menuData` this variable is reflected
+         * by two way binding in order to use it in your
+         * template.
+         */
+        menuData: {
+          type: Array,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        /**
+         * `wpUrl` this is the url to your Wordpress instance
+         */
+        wpUrl: {
+          type: String
+        },
+
+        /**
+         * `endPoint`
+         */
+        endPoint: {
+          type: String
+        }
+      },
+
+      /** 
+       * @name _menuLoaded
+       * @description process the retrieved menu
+       */
+      ready: function() {
+        this.endPoint = this.wpUrl + '/wp-api-menus/v2/menus';
+      },
+
+      /** 
+       * @name _menuLoaded
+       * @description process the retrieved menu
+       */
+      _menuLoaded: function(data) {
+        var response = data.detail.response;
+        
+        console.info('collect-menus: ', response);
+
+        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+        console.error('set globals straight!');
+        // Polymer.globalsManager.set('Dorel.collect.menus', response);
+      }
+    });
+  </script>
+</dom-module>

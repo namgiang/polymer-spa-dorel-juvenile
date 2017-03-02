@@ -1,0 +1,241 @@
+<dom-module id="dorel-section-showcase">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .section-showcase {}
+      
+      .section-showcase .showcase-gallery {
+        display: table;
+      }
+      .section-showcase .showcase-gallery > * {
+        display: table-cell;
+      }
+
+      /**
+       * @name: gallery-roll
+       * @description: small images on the left side (navigator)
+       */
+      .section-showcase ul.showcase-gallery-roll {
+        list-style-type: none;
+        padding: 0;
+        vertical-align: top;
+        width: 110px;
+      }
+      .section-showcase ul.showcase-gallery-roll li {
+        position: relative;
+      }
+      ul.showcase-gallery-roll li .showcase-gallery-overlay {
+        background-color: rgba(255, 255, 255, .7);
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        transition: background-color .3s ease-in-out;
+      }
+      ul.showcase-gallery-roll li .showcase-gallery-overlay.current {
+        background-color: transparent;
+      }
+
+      /**
+       * @name: gallery-view
+       * @description: the view container where the selected image is shown
+       */
+      .section-showcase .showcase-gallery-view {
+        overflow: hidden;
+      }
+      .section-showcase .showcase-gallery-view img {
+        width: 100%;
+      }
+
+      /**
+       * @name: gallery-dots
+       * @description: on mobile we don't show preview images but dots only
+       */
+      .section-showcase .showcase-gallery-list-wrap {
+        background-color: #f5f5f5;
+        text-align: center;
+        padding: 20px 0;
+        position: relative;
+      }
+      ul.showcase-gallery-list {
+        display: inline-block;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        position: relative;
+      }
+      ul.showcase-gallery-list li {
+        float: left;
+        position: relative;
+      }
+      ul.showcase-gallery-list li .showcase-gallery-list-dot {
+        color: #D8D8D8;
+        border-radius: 50%;
+        display: block;
+        height: 40px;
+        margin-left: 20px;
+        transition: color .3s ease-in-out;
+        width: 40px;
+      }
+      ul.showcase-gallery-list li:first-child .showcase-gallery-list-dot {
+        margin: 0;
+      }
+      ul.showcase-gallery-list li .showcase-gallery-list-dot.current {
+        color: #0096C3;
+      }
+
+      /**
+       * Responsive definitions
+       */
+      .section-showcase[mobile-small] .showcase-gallery,
+      .section-showcase[mobile-medium] .showcase-gallery {
+        width: 100%;
+      }
+
+      .section-showcase[mobile-small] ul.showcase-gallery-roll,
+      .section-showcase[mobile-medium] ul.showcase-gallery-roll {
+        display: none;
+      }
+
+      .section-showcase[tablets] .showcase-gallery-list-wrap,
+      .section-showcase[desktop-small] .showcase-gallery-list-wrap,
+      .section-showcase[desktop-full] .showcase-gallery-list-wrap {
+        display: none;
+      }
+    </style>
+
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <template
+      is="dom-if"
+      if="[[ showcaseData ]]">
+
+      <section class="section-showcase container"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}"
+        tablets$="{{ tablets }}"
+        desktop-small$="{{ desktopSmall }}"
+        desktop-full$="{{ desktopFull }}">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="showcase-gallery">
+              <template
+                is="dom-if"
+                if="[[ showcaseData.showcase_gallery.length ]]">
+                <ul class="showcase-gallery-roll">
+                  <template
+                    is="dom-repeat"
+                    items="[[ showcaseData.showcase_gallery ]]"
+                    as="galleryItem">
+                    <li>
+                      <div id$="img-[[ galleryItem.id ]]" 
+                        class$="showcase-gallery-overlay [[ _isCurrentImage(galleryItem, currentImage) ]]"
+                        on-tap="updateImage"></div>
+                      <img src="[[ galleryItem.sizes.medium ]]" width="110" />
+                    </li>
+                  </template>
+                </ul>
+              </template>
+
+              <div class="showcase-gallery-view">
+                <img src="{{ currentImage.url }}" alt="" />
+              </div>
+            </div>
+          </div>
+          
+          <div class="showcase-gallery-list-wrap">
+            <ul class="showcase-gallery-list">
+              <template
+                is="dom-repeat"
+                items="[[ showcaseData.showcase_gallery ]]"
+                as="galleryItem">
+                <li>
+                  <iron-icon
+                    id$="img-[[ galleryItem.id ]]" 
+                    class$="showcase-gallery-list-dot [[ _isCurrentImage(galleryItem, currentImage) ]]"
+                    icon="editor:vertical-align-top"
+                    on-tap="updateImage">
+                  </iron-icon>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div class="col-md-offset-1 col-md-5">
+            <h1 style="display: inline-block">[[ showcaseData.showcase_title ]]</h1>
+            <template
+              is="dom-if"
+              if="[[ showcaseData.showcase_usps.length ]]">  
+              <dorel-inline-usps
+                usps-data="[[ showcaseData.showcase_usps ]]"></dorel-inline-usps>
+            </template>
+          </div>
+        </div>
+      </section>
+
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-showcase',
+
+      properties: {
+        gallery: {
+          type: Array,
+          value: []
+        },
+
+        currentImage: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_updateView'
+        }
+      },
+
+      ready: function() {
+        // reset current image to the first one in the array
+        this.currentImage = this.showcaseData.showcase_gallery[0];
+      },
+
+      updateImage: function(e, detail) {
+        // extract the id and create currentImage var
+        var imageId = e.target.id.split('-')[1];
+        var currentImage = {};
+
+        // find the right gallery image selected
+        this.showcaseData.showcase_gallery.forEach(function(item) {
+          if(item.id === Number(imageId)) {
+            currentImage = item;
+          }
+        });
+
+        // set the currentImage
+        this.currentImage = currentImage;
+      },
+
+      _updateView: function(newVal, oldVal) {
+        this.currentImage = newVal;
+      },
+
+      _isCurrentImage: function(item, currentItem) {
+        if(typeof item === 'undefined' || item === null || item === '' ) return;
+
+        return (currentItem.ID === item.ID) ? 'current' : '';
+      }
+    });
+  </script>
+</dom-module>

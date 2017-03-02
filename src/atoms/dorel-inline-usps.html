@@ -1,0 +1,49 @@
+<dom-module id="dorel-inline-usps">
+  <template>
+    <style is="custom-style" include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      .list-group {
+        border-radius: 0;
+        width: 100%;
+      }
+      .list-group .list-group-item {
+        background: transparent;
+        border: 0;
+        padding-left: 39px;
+        position: relative;
+        width: 100%;
+      }
+      .list-group .list-group-item iron-icon {
+        left: 0;
+        position: absolute;
+      }
+    </style>
+    
+    <ul class="list-group">
+      <template
+        is="dom-repeat"
+        items="[[ uspsData ]]"
+        as="usp">
+        <li class="list-group-item">
+          <iron-icon icon$="icons:[[ usp.usp_icon ]]"></iron-icon>
+          [[ usp.usp_text ]]
+        </li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-inline-usps',
+
+      properties: {
+        uspData: {
+          type: Array,
+          value: []
+        }
+      },
+
+      ready: function() {}
+    });
+  </script>
+
+</dom-module>

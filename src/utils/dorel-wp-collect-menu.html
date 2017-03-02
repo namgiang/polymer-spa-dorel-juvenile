@@ -1,0 +1,78 @@
+<dom-module id="dorel-wp-collect-menu">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]" 
+      handle-as="json" 
+      on-response="_menuLoaded"></iron-ajax>
+  </template>
+  
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-menu',
+      properties: {
+
+        /**
+         * `menuData` this variable is reflected
+         * by two way binding in order to use it in your
+         * template.
+         */
+        menuData: {
+          type: Array,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        /**
+         * `menuId` fill in the menu id
+         * this will retrieve the menu by its id
+         */
+        menuId: {
+          type: String
+        },
+
+        /**
+         * `wpUrl` this is the url to your Wordpress instance
+         */
+        wpUrl: {
+          type: String
+        },
+
+        /**
+         * `endPoint`
+         */
+        endPoint: {
+          type: String
+        }
+      },
+
+      ready: function() {
+        if (typeof this.menuId === 'undefined') {
+          console.error('Please provide the menu-id attribute for <dorel-wp-collect-menu/> or use <dorel-wp-collect-menus/> to retrieve all available menus.');
+          return;
+        }
+
+        // menu-id is given
+        this.endPoint = this.wpUrl + '/wp-api-menus/v2/menus/' + this.menuId;
+      },
+
+      /** 
+       * @name _menuLoaded
+       * @description process the retrieved menu
+       */
+      _menuLoaded: function(data) {
+        var menuItems = data.detail.response;
+
+        // iterate over all menu items, alter its title and set the right url
+        menuItems.forEach(function(item) {
+          item.title = item.title.toLowerCase();
+          item.url = '/' + item.url.split('/')[3];
+        });
+
+        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+        console.error('set globals straight!');
+        // Polymer.globalsManager.set('Dorel.collect.menus', );
+      }
+    });
+  </script>
+</dom-module>

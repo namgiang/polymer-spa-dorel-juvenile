@@ -1,0 +1,106 @@
+<dom-module id="dorel-section-cta">
+  <template>
+    <style include="theme-dorel-shared-styles polymer-bootstrap-min">
+      .section-cta {
+        background-color: #0096C3;
+      }
+      .section-cta .cta-item .cta-item-anchor {
+        color: #fff;
+        display: block;
+        font-family: Armata;
+        font-style: normal;
+        font-weight: normal; /* Maxi Cosi has a friendly heading theme */
+        line-height: var(--theme-text-line-height);
+        -webkit-font-smoothing: antialiased;
+        padding-left: 0;
+        text-align: right;
+        width: 100%;
+      }
+      .section-cta .cta-item .cta-item-img {
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        min-height: 184px;
+      }
+
+      .section-cta[mobile-small] .cta-item .cta-item-anchor {
+        font-size: .9rem;
+        padding-right: 2rem;
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+      }
+
+      .section-cta[mobile-medium] .cta-item .cta-item-anchor {
+        font-size: 1rem;
+        padding-right: 6.5rem;
+        padding-top: 5rem;
+        padding-bottom: 4.9rem;
+      }
+      
+      .section-cta[tablets] .cta-item .cta-item-anchor {
+        font-size: 1rem;
+        padding-right: 3rem;
+        padding-top: 5rem;
+        padding-bottom: 4.9rem;
+      }
+      
+      .section-cta[desktop-small] .cta-item .cta-item-anchor {
+        font-size: 1.2rem;
+        padding-right: 4.3rem;
+        padding-top: 4.4rem;
+      }
+      .section-cta[desktop-full] .cta-item .cta-item-anchor {
+        font-size: 1.5rem;
+        padding-right: 4.5rem;
+        padding-top: 4.5rem;
+      }
+    </style>
+    
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <section class="section-cta container-fluid"
+      mobile-small$="{{ mobileSmall }}"
+      mobile-medium$="{{ mobileMedium }}"
+      tablets$="{{ tablets }}"
+      desktop-small$="{{ desktopSmall }}"
+      desktop-full$="{{ desktopFull }}">
+      <div class="row">
+
+        <template
+          is="dom-repeat"
+          items="[[ ctaData.cta ]]"
+          as="cta">
+          <div class="cta-item col-sm-6">
+            <div class="row">
+              <div class="cta-item-link col-xs-7">
+                <a class="cta-item-anchor" href="[[ cta.cta_link ]]">[[ cta.cta_text ]] &raquo;</a>
+              </div>
+              <div class="cta-item-img col-xs-5"
+                style$="background-image: url([[ cta.cta_image ]]);"></div>
+            </div>
+          </div>
+        </template>
+
+      </div>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-section-cta'
+    });
+
+  </script>
+
+</dom-module>

@@ -1,7 +1,5 @@
 <dom-module id="dorel-wp-collect-pages">
   <template>
-    <style></style>
-    
     <iron-ajax 
       auto 
       url="[[ wpUrl ]]/wp/v2/pages" 
@@ -15,7 +13,7 @@
 
       properties: {
         /**
-         * `pageData` this variable is reflected
+         * `pagesData` this variable is reflected
          * by two way binding in order to use it in your
          * template.
          */
@@ -48,7 +46,11 @@
           page.template = pageName;
         });
         
-        this.pagesData = pages;
+        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+        Polymer.globalsManager.set('Dorel.collect.pages', pages);
+
+        // set the pagesData (two way data binding for the app)
+        this.pagesData = this.globals.Dorel.collect.pages;
       }
     });
   </script>

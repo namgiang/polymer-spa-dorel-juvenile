@@ -1,0 +1,357 @@
+<dom-module id="dorel-header">
+  <template>
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+      app-header {
+        @apply(--layout-fixed-top);
+        z-index: 1;
+        background-color: rgba(255, 255, 255, 0.95);
+        --app-header-shadow: {
+          box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
+          height: 10px;
+          bottom: -10px;
+        };
+      }
+      app-drawer {
+        z-index: 100;
+      }
+      dorel-tabs {
+        float: left;
+        height: 100%;
+      }
+      dorel-tab {
+        --dorel-tab-overlay: {
+          color: red;
+          
+          /*border-bottom: 2px solid var(--theme-color-active);*/
+        };
+      }
+      dorel-tab {
+        margin: 0 10px;
+      }
+      dorel-tab a {
+        text-decoration: none;
+        outline: none;
+        padding: 9px 5px;
+        color: var(--theme-primary-text-color);
+        @apply(--theme-ui);
+        /*display: inline-block;*/
+        /*color: var(--app-primary-color);*/
+      }
+
+      /* 
+       * header-top
+       * @description: header-top is the grey top bar that holds the mobile
+       * menu button or support and cart buttons on desktop
+       */
+      #header-top {
+        background-color: #E6E6E6;
+        padding: 5px;
+        position: relative;
+        float: left;
+        width: 100%;
+      }
+      #header-top #header-top-menu .menu-btn,
+      #header-top #header-top-menu .menu-text {
+        float: left;
+        position: relative;
+      }
+      #header-top #header-top-menu .menu-text {
+        padding: 11px 0 0 0;
+        font-size: .8rem;
+      }
+
+      #header-top #header-top-utilities {
+        float: right;
+        position: relative;
+        margin: 0;
+      }
+      #header-top #header-top-utilities .list-group-item {
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+        float: left;
+        padding: 0;
+        position: relative;
+      }
+      
+      /** 
+       *
+       */
+      #header-main {
+        width: 100%;
+      }
+      #header-main #header-main-logo,
+      #header-main #header-main-menu {
+        position: relative;
+      }
+      #header-main #header-main-logo {
+        display: block;
+        width: 100%;
+        max-width: 330px;
+      }
+      #header-main #header-main-menu {}
+      #header-main #header-main-utility {
+        padding: 35px 0;
+      }
+
+      header[mobile-small],
+      header[mobile-medium] {
+        text-align: center;
+      }
+      header[mobile-small] #header-main-logo,
+      header[mobile-medium] #header-main-logo {
+        margin: 0 auto;
+      }
+      header[mobile-small] #header-main-menu,
+      header[mobile-small] #header-main-utility,
+      header[mobile-medium] #header-main-menu,
+      header[mobile-medium] #header-main-utility {
+        display: none;
+      }
+
+      header[tablets] #header-main-logo {
+        float: left;
+      }
+      header[tablets] #header-main-menu {
+        float: left;
+        border-top: 2px solid #D8D8D8;
+        padding: 20px 0px;
+        width: 100%;
+      }
+      
+      header[desktop-small] #header-main-logo,
+      header[desktop-full] #header-main-logo {
+        float: left;
+      }
+      header[desktop-small] #header-main-menu,
+      header[desktop-full] #header-main-menu {
+        padding: 40px 0 0 20px;
+      }
+
+      /**
+       * helper classes
+       */
+      header[mobile-small] .hidden-md-up,
+      header[mobile-medium] .hidden-md-up,
+      header[tablets] .hidden-md-up {
+      }
+      
+      header[mobile-small] .hidden-md-up,
+      header[mobile-medium] .hidden-md-up,
+      header[tablets] .hidden-md-up {
+        display: none;
+      }
+      
+
+      header[desktop-small] .hidden-md-down,
+      header[mobile-full] .hidden-md-down,
+      header[tablets] .hidden-md-down {
+        display: none;
+      }
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
+
+    <app-header
+      role="navigation"
+      id="header"
+      effects="waterfall" 
+      fixed="[[ _isHeaderFixed() ]]" 
+      condenses="[[ !smallScreen ]]" 
+      reveals="[[ !smallScreen ]]">
+
+      <header class="container-fluid"
+        sticky$="[[ _shouldShowTabs ]]"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}"
+        tablets$="{{ tablets }}"
+        desktop-small$="{{ desktopSmall }}"
+        desktop-full$="{{ desktopFull }}">
+
+        <div class="row">
+          <div id="header-top" class="col-xs-12">
+            <div id="header-top-menu">
+              <paper-icon-button
+                  class="menu-btn"
+                  icon="menu"
+                  on-click="_toggleDrawer"
+                  aria-label="menu">
+              </paper-icon-button>
+              <span class="menu-text">Menu</span>
+            </div>
+
+            <ul id="header-top-utilities" class="list-group">
+              <li class="list-group-item hidden-md-up">
+                <paper-icon-button
+                  icon="editor:vertical-align-top"
+                  on-click="_toggleDrawer"
+                  aria-label="search">
+                </paper-icon-button>
+              </li>
+
+              <li class="list-group-item hidden-md-down">
+                <div class="header-language">
+                  <dorel-select-language></dorel-select-language>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div id="header-main" class="col-xs-12">
+            <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
+              <dorel-logo></dorel-logo>
+            </a>
+
+            <div id="header-main-utility" class="pull-right">
+              <div class="header-search vertical-center">
+                <dorel-search-small></dorel-search-small>
+              </div>
+            </div>
+            
+            <nav id="header-main-menu">
+              <template 
+                is="dom-if" 
+                if="[[ _shouldRenderTabs ]]">
+                <template 
+                  is="dom-if" 
+                  if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+
+                  <dorel-tabs
+                    selected="[[ page ]]"
+                    attr-for-selected="name">
+                    <template 
+                      is="dom-repeat" 
+                      items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
+                      as="menuItem" 
+                      initial-count="4">
+
+                      <dorel-tab name="[[ menuItem.title ]]">
+
+                        <template
+                          is="dom-if"
+                          if="[[ menuItem.children.length ]]">
+
+                          <paper-dropdown-menu label="[[ menuItem.title ]]">
+                            <paper-listbox class="dropdown-content">
+
+                              <template
+                                is="dom-repeat"
+                                items="[[ menuItem.children ]]"
+                                as="child">
+                                <paper-item>
+                                  <dorel-cta
+                                    link="[[ child.url ]]">
+                                    [[ child.title ]]
+                                  </dorel-cta>
+                                </paper-item>
+                              </template>
+                            </paper-listbox>
+                          </paper-dropdown-menu>
+
+                        </template>
+
+                        <template
+                          is="dom-if"
+                          if="[[ !menuItem.children.length ]]">
+                          <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                        </template>
+                      </dorel-tab>
+
+                    </template>
+                  </dorel-tabs>
+                  
+                </template>
+              </template>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+    </app-header>
+
+    <!-- Lazy-create the drawer for small screen sizes. -->
+    <template 
+      is="dom-if" 
+      if="[[ _shouldRenderDrawer ]]">
+      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
+
+        <template 
+          is="dom-if" 
+          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+
+          <iron-selector role="navigation" class="drawer-list" 
+            selected="[[ page ]]" 
+            attr-for-selected="name">
+          
+            <template 
+              is="dom-repeat" 
+              items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+              as="menuItem" 
+              initial-count="4">
+              <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+            </template>
+          
+          </iron-selector>
+
+        </template>
+      </app-drawer>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-header',
+
+      properties: {
+        loadComplete: {
+          type: Boolean
+        },
+
+        page: {
+          type: String
+        },
+
+        _shouldShowTabs: {
+          computed: '_computeShouldShowTabs(page)'
+        },
+
+        _shouldRenderTabs: {
+          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
+        },
+
+        _shouldRenderDrawer: {
+          computed: '_computeShouldRenderDrawer(loadComplete)'
+        }
+      },
+
+      _toggleDrawer: function() {
+        this.drawerOpened = !this.drawerOpened;
+      },
+
+      _computeShouldShowTabs: function(page) {
+        return (typeof page !== 'undefined') && (!this.mobileSmall || !this.mobileMedium);
+      },
+
+      _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
+        return _shouldShowTabs && loadComplete;
+      },
+
+      _computeShouldRenderDrawer: function(loadComplete) {
+        return loadComplete && (this.mobileSmall || this.mobileMedium || this.tablets);
+      },
+    });
+  </script>
+</dom-module>

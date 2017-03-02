@@ -11,30 +11,33 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
+<link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
 
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
-<link rel="import" href="organisms/dorel-app-placeholder.html">
+<link rel="import" href="atoms/dorel-gtm-data-layer.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
 
+<link rel="import" href="dorel-app-placeholder.html">
+
+<!-- enable global variables -->
+<script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
+
 <dom-module id="dorel-app">
   <template>
-    <style is="custom-style" include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min iron-flex iron-flex-alignment">
       /* 
        * Application wide styling
        * - Will define standard styling for components
        */
       :host {
-
-        display: block;
-        position: relative;
-        padding-top: 130px;
-        padding-bottom: 64px;
-        min-height: 100vh;
         --primary-color: var(--theme-brand-color);
         color: var(--theme-primary-text-color);
+        display: block;
+        position: relative;
+        min-height: 100vh;
       }
 
       :root {
@@ -50,254 +53,47 @@
         };
 
       }
-
-      /*
-       * this file styling:
-       */
-
-      app-header {
-        @apply(--layout-fixed-top);
-        z-index: 1;
-        background-color: rgba(255, 255, 255, 0.95);
-        --app-header-shadow: {
-          box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
-          height: 10px;
-          bottom: -10px;
-        };
-      }
-
-      /* 
-       * iron-flex reusable classes 
-       */
-      .horizontal {
-        @apply(--layout-horizontal);
-      }
-      .flex-end-justified {
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
-      }
-      .flex {
-        @apply(--layout-flex);
-      }
-      .vertical-center {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-      }
-
-      /* 
-       * custom classes 
-       */
-      .header-search,
-      .header-language {
-        padding: 0 0.2rem; /* add component padding */
-      }
-      .header-utility {
-        padding: 0 var(--theme-component-space-inner) 0 0; /* add logo spacing for padding */
-      }
-
-      paper-icon-button {
-        color: var(--app-primary-color);
-      }
-
-      .left-bar-item {
-        width: 40px;
-      }
-
-      .menu-btn {
-        display: none;
-      }
       
-      :host(:not([page=detail])) .back-btn {
-        display: none;
+      #main[mobile-small],
+      #main[mobile-medium] {
+        padding-top: 160px;
       }
-
-      [hidden] {
-        display: none !important;
+      #main[tablets] {
+        padding-top: 227px;
       }
-
-      #tabContainer {
-        position: relative;
-        height: 66px;
-      }
-
-      dorel-tab {
-        --dorel-tab-overlay: {
-          color: red;
-          
-          /*border-bottom: 2px solid var(--theme-color-active);*/
-        };
-      }
-
-      dorel-tabs {
-        height: 100%;
-      }
-
-      dorel-tab {
-        margin: 0 10px;
-      }
-
-      dorel-tab a {
-        text-decoration: none;
-        outline: none;
-        padding: 9px 5px;
-        color: var(--theme-primary-text-color);
-        @apply(--theme-ui);
-        /*display: inline-block;*/
-        /*color: var(--app-primary-color);*/
-      }
-
-      .iron-selected a {
-        font-weight: bold;
-        color: yellow;
-        color: var(--theme-brand-color);
-      }
-
-      .drawer-list {
-        margin: 0 20px;
-      }
-
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        line-height: 40px;
-        text-decoration: none;
-        color: var(--app-secondary-color);
-      }
-
-      .drawer-list a.iron-selected {
-        color: black;
-        font-weight: bold;
-      }
-
-      app-drawer {
-        z-index: 3;
-      }
-
-      /* small screen */
-      @media (max-width: 767px) {
-        :host {
-          padding-top: 64px;
-        }
-
-        .menu-btn {
-          display: block;
-        }
-
-        :host([page=detail]) .menu-btn {
-          display: none;
-        }
-      }
-      
-      #content {
-        min-height: 350px;
+      #main[desktop-small],
+      #main[desktop-full] {
+        padding-top: 160px;
       }
 
       iron-pages {
         margin: 0 auto;
       }
 
-      /**
-       * temporary duplicate footer styling 
-       */
-      footer {
-        background-color: var(--theme-brand-color-royal-blue);
-        padding: var(--theme-component-space-inner);
-      }
-
-      footer a,
-      .footer-text {
-        color: white;
-        text-decoration: none;
-        @apply(--theme-ie-bodycopy);
-      }
-      .footer-heading {
-        margin-bottom: .5rem;
-        @apply(--theme-bodycopy);
-        color: var(--theme-brand-color);
-        font-size: 1rem;
-      }
-      .footer-media-links {
-        padding: var(--theme-component-space-inner);
-      }
-      .footer-media-link {
-        text-align: center;
-        min-width: 100px;
-        padding: 3px 20px;
-        font-size: 13px;
-        white-space: nowrap;
-      }
-      .footer-media-links a span {
-        line-height: 24px;
-        margin-left: 8px;
-      }
-      .footer-back-to-top {
-        padding: 1rem 0 0;
-      }
-      /* lists not enumerated */
-      .not-enum {
-        padding-left: 0;
-      }
-      .not-enum li {
-        list-style-type: none;
-      }
-      .footer-disclaimer {
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-      }
-      footer[layoutwide] .footer-info {
-        @apply(--layout-horizontal);
-      }
-      footer[layoutwide] .footer-menu {
-        @apply(--layout-flex);
-      }
-      footer[layoutwide] .footer-disclaimer {
-        @apply(--layout-flex-3);
-      }
-
-      .spinner {
-        width: 40px;
-        height: 40px;
-        position: relative;
-        margin: 100px auto;
-      }
-
-      .double-bounce1, .double-bounce2 {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background-color: #333;
-        opacity: 0.6;
-        position: absolute;
-        top: 5vh;
-        left: 0;
-        
-        -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
-        animation: sk-bounce 2.0s infinite ease-in-out;
-      }
-
-      .double-bounce2 {
-        -webkit-animation-delay: -1.0s;
-        animation-delay: -1.0s;
-      }
-
-      @-webkit-keyframes sk-bounce {
-        0%, 100% { -webkit-transform: scale(0.0) }
-        50% { -webkit-transform: scale(1.0) }
-      }
-
-      @keyframes sk-bounce {
-        0%, 100% { 
-          transform: scale(0.0);
-          -webkit-transform: scale(0.0);
-        } 50% { 
-          transform: scale(1.0);
-          -webkit-transform: scale(1.0);
-        }
+      .announcer {
+        position: fixed;
+        height: 0;
+        overflow: hidden;
       }
     </style>
 
-    <!-- analytics -->
+    <!-- analytics
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
+    -->
+    <!-- <dorel-gtm-data-layer
+      gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer> -->
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)" 
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" 
+      query-matches="{{ desktopFull }}"></iron-media-query>
   
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -307,101 +103,44 @@
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
 
-    <iron-media-query query="max-width: 767px" query-matches="{{ smallScreen }}"></iron-media-query>
+    <!-- loading placeholder -->
+    <!-- <dorel-app-placeholder id="placeholder"></dorel-app-placeholder> -->
 
-    <!-- retrieve all menu items from wordpress -->
-    <dorel-wp-collect-menu
-      wp-url="[[ wpUrl ]]"
-      menu-location="main_menu"
-      menu-data="{{ menuData }}"></dorel-wp-collect-menu>
+    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
+    <dorel-wp-collect-menu-locations
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
-    <!-- retrieve all pages from wordpress -->
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+
+    <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages
-      wp-url="[[ wpUrl ]]"
-      pages-data="{{ pages }}"></dorel-wp-collect-pages>
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-pages>
 
-    <dorel-app-placeholder></dorel-app-placeholder>
-
-    <app-header
-      role="navigation"
-      id="header"
-      effects="waterfall" 
-      fixed="[[ smallScreen ]]" 
-      condenses="[[ !smallScreen ]]" 
-      reveals="[[ !smallScreen ]]">
-
-      <header class="layout horizontal">
-
-        <div class="flex layout horizontal">
-          <div>
-            <a href="/" aria-label="Dorel SPA">
-              <dorel-logo></dorel-logo>
-            </a>
-          </div>
-
-          <div class="vertical-center">
-            <div sticky$="[[ _shouldShowTabs ]]" hidden$="[[ !_shouldShowTabs ]]">
-              <template 
-                is="dom-if" 
-                if="[[ menuData.length ]]">
-
-                <dorel-tabs
-                  selected="[[ page ]]"
-                  attr-for-selected="name">
-                  <template 
-                    is="dom-repeat" 
-                    items="[[ menuData ]]" 
-                    as="menuItem" 
-                    initial-count="4">
-
-                    <dorel-tab name="[[ menuItem.title ]]">
-                      <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                    </dorel-tab>
-
-                  </template>
-                </dorel-tabs>
-                
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div class="header-utility layout horizontal">
-          <div class="header-search vertical-center">
-            <dorel-search-small></dorel-search-small>
-          </div>
-
-          <div class="header-language vertical-center">
-            <dorel-select-language></dorel-select-language>
-          </div>
-        </div>
-
-      </header>
-
-    </app-header>
-
-    <!-- Lazy-create the drawer for small screen sizes. -->
-    <!-- <template is="dom-if" if="[[ _shouldRenderDrawer ]]">
-      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
-        <iron-selector role="navigation" class="drawer-list" 
-          selected="[[ page ]]" 
-          attr-for-selected="name">
-          <template is="dom-repeat" items="[[ menuData ]]" as="menuItem" initial-count="4">
-            <a name="[[ menuItem.title ]]" href="/list/[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-          </template>
-        </iron-selector>
-      </app-drawer>
-    </template> -->
+    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
+    <dorel-wp-collect-widgets
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
+  
+    <dorel-header
+      load-complete="{{ loadComplete }}"
+      page="{{ page }}"></dorel-header>
 
     <!-- content pages -->
-    <section id="content">
-      <iron-pages role="main"
-        selected="{{ currentPage.object_id }}"
-        attr-for-selected="page-id">
+    <main id="main" role="main"
+      mobile-small$="{{ mobileSmall }}"
+      mobile-medium$="{{ mobileMedium }}"
+      tablets$="{{ tablets }}"
+      desktop-small$="{{ desktopSmall }}"
+      desktop-full$="{{ desktopFull }}">
 
+      <iron-pages role="main"
+        selected="{{ globals.Dorel.current.page.id }}"
+        attr-for-selected="page-id">
+  
         <template
           is="dom-repeat"
-          items="[[ pages ]]"
+          items="[[ globals.Dorel.collect.pages ]]"
           as="page">
           
           <dorel-template
@@ -416,9 +155,13 @@
 
     <dorel-footer></dorel-footer>
 
+    <!-- a11y announcer -->
+    <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
+
   </template>
 
   <script>
+
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
@@ -432,7 +175,7 @@
       properties: {
         debug: {
           type: Boolean,
-          value: false /* Set to false for production reasons */
+          value: false // Set to false for production reasons
         },
 
         page: {
@@ -446,18 +189,6 @@
 
         currentPage: {
           type: Number
-        },
-
-        _shouldShowTabs: {
-          computed: '_computeShouldShowTabs(page, smallScreen)'
-        },
-
-        _shouldRenderTabs: {
-          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
-        },
-
-        _shouldRenderDrawer: {
-          computed: '_computeShouldRenderDrawer(smallScreen, loadComplete)'
         }
       },
 
@@ -467,27 +198,38 @@
        */
       observers: [
         '_routePageChanged(routeData.page)',
-        '_setCurrentPage(page, menuData)'
+        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
+        '_setCurrentPage(page, globals.Dorel.collect.pages)',
+        '_dorelChanged(globals.Dorel.*)',
+        '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
       listeners: {
+        'change-section': '_onChangeSection',
+        'announce': '_onAnnounce',
         'dom-change': '_domChange'
       },
 
       created: function() {
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
+        // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
+        Polymer.globalsManager.set('Dorel', {
+          wpUrl: {}, // will be a string later (bug inside globalsManager)
+          collect: {},
+          current: {},
+          events: {}
+        });
+
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
       },
 
       ready: function() {
-
-        if (this.debug) {
-          this.wpUrl = '../../assets/data';
-        } else {
-          this.wpUrl = '//polymer-wp.dev/wp-json'
-        }
+        // Define the wpUrl in the globals (object becomes string)
+        Polymer.globalsManager.set('Dorel.wpUrl', 
+          // (this.debug) ? '../../assets/data' : '//polymer-wp.dev/wp-json');
+          (this.debug) ? '../../assets/data' : '//dorel-spa.local:8000/wp-json');
 
         // listen for online/offline
         Polymer.RenderStatus.afterNextRender(this, function() {
@@ -495,6 +237,12 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
+        /**
+         * TODO: DIO-322
+        // window.addEventListener('dorel-template-loaded', function() {
+        //   this.$.placeholder.remove();
+        // }.bind(this));
+         */
       },
 
       /** 
@@ -524,44 +272,57 @@
        */
       _pageChanged: function(page, oldPage) {
         if (page != null) {
+          this._pageLoaded(Boolean(oldPage));
           
-          // home route is eagerly loaded
-          if (page == 'home') {
-            this._pageLoaded(Boolean(oldPage));
+          /**
+           * TODO: check the prpl pattern
+            // home route is eagerly loaded
+            if (page == 'home') {
+              this._pageLoaded(Boolean(oldPage));
 
-          // other routes are lazy loaded
-          } else {
-            this._pageLoaded(Boolean(oldPage));
-            // this.importHref(
-            //   this.resolveUrl('templates/dorel-template.html'),
-            //   function() {
-            //     this._pageLoaded(Boolean(oldPage));
-            //   }, null, true);
-          }
-
+            //other routes are lazy loaded
+            } else {
+              this._pageLoaded(Boolean(oldPage));
+              this.importHref(
+                this.resolveUrl('templates/dorel-template.html'),
+                function() {
+                  this._pageLoaded(Boolean(oldPage));
+                }, null, true);
+            }
+            */
         }
       },
 
+      /**
+       * @name: _pageLoaded
+       * @description: this will make sure the lazyload will start after the
+       * page is loaded.
+       */
       _pageLoaded: function(shouldResetLayout) {
         this._ensureLazyLoaded();
-        if (shouldResetLayout) {
-          // The size of the header depends on the page (e.g. on some pages the tabs
-          // do not appear), so reset the header's layout only when switching pages.
-          this.async(function() {
-            this.$.header.resetLayout();
-          }, 1);
-        }
+        // if (shouldResetLayout) {
+        //   // The size of the header depends on the page (e.g. on some pages the tabs
+        //   // do not appear), so reset the header's layout only when switching pages.
+        //   this.async(function() {
+        //     this.$.header.resetLayout();
+        //   }, 1);
+        // }
       },
 
+      /**
+       * @name: _ensureLazyLoaded
+       * @description: if the load is completed we will add the resources
+       * the service worker will kick in after that.
+       */
       _ensureLazyLoaded: function() {
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
-            this.importHref(this.resolveUrl('dorel-lazy-resources.html'), function() {
+            this.importHref(this.resolveUrl('dorel-app-resources.html'), function() {
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('../service-worker.js');
+                // navigator.serviceWorker.register('../service-worker.js');
               }
 
               this._notifyNetworkStatus();
@@ -571,6 +332,11 @@
         }
       },
 
+      /**
+       * @name: _notifyNetworkStatus
+       * @description: checks to see if we have internet connection and
+       * sends notification to the user if offline
+       */
       _notifyNetworkStatus: function() {
         var oldOffline = this.offline;
         this.offline =  !navigator.onLine;
@@ -588,8 +354,39 @@
         }
       },
 
-      _toggleDrawer: function() {
-        this.drawerOpened = !this.drawerOpened;
+      /**
+       * @name: _onChangeSection
+       * @description: Elements in the app can notify section changes. Response 
+       * by a11y announcing the section and syncronizing the category.
+       */
+      _onChangeSection: function(event) {
+        var detail = event.detail;
+        this.categoryName = detail.category || '';
+
+        // Announce the page's title
+        if (detail.title) {
+          document.title = detail.title + ' - Maxi Cosi';
+          this._announce(detail.title + ', loaded');
+        }
+      },
+
+      /**
+       * @name: _onAnnounce
+       * @description: starts announcing and setting the label
+       */
+      _onAnnounce: function(e) {
+        this._announce(e.detail);
+      },
+
+      /**
+       * @name: _announce
+       * @description: A11y announce the given message.
+       */
+      _announce: function(message) {
+        this._a11yLabel = '';
+        this.debounce('_a11yAnnouncer', function() {
+          this._a11yLabel = message;
+        }, 100);
       },
 
       /** 
@@ -601,21 +398,60 @@
       },
 
       /**
-       * @name _setCurrentPage
-       * @description set the current pageId by matching it with the
-       * current menu item chosen
+       * @name _setCurrentMenuItem
+       * @description set the current menu item by matching the slug
+       * to the menu items url
        */
-      _setCurrentPage: function(page, menu) {
+      _setCurrentMenuItem: function(page, mainMenuItems) {
+
         // if menu array has no items
-        if( !menu.length ) { return; }
+        if( !mainMenuItems.length ) { return; }
+
+        // map the page variable to the item in the mainMenuItems array and set it 
+        this.currentMenuItem = mainMenuItems.find(function(item) {
+          return (page === item.url.substring(1)) ? item.object_id : false;
+        });
+
+        // set the global currentMenuItem
+        Polymer.globalsManager.set('Dorel.current.menuItem', this.currentMenuItem);
+      },
+
+      /**
+       * @name _setCurrentPage
+       * @description set the current page in the globals
+       */
+      _setCurrentPage: function(page, pages) {
+        var pages = this.globals.Dorel.collect.pages;
+
+        // if menu array has no items
+        if( !pages.length ) { return; }
 
         // map the page variable to the item in the menu array and set it 
-        this.currentPage = menu.find(function(item) {
-          return (page === item.url.substring(1)) ? item.object_id : false;
+        this.currentPage = pages.find(function(item) {
+          return (page === item.slug) ? item : null;
+        });
+        
+        // set the global currentPage
+        Polymer.globalsManager.set('Dorel.current.page', this.currentPage);
+      },
+
+      /**
+       * @name: _currentPageChanged
+       * @description: fire the change-section event, that will set the given
+       * title to its title tag
+       */
+      _currentPageChanged: function(newVal) {
+        if(typeof newVal === 'undefined') return;
+
+        this.fire('change-section', { 
+          title: newVal.title.rendered
         });
       },
 
-      // This is for performance logging only.
+      /**
+       * @name: _domChange
+       * @description: This is for performance logging only.
+       */
       _domChange: function(e) {
         if (window.performance && performance.mark && !this.__loggedDomChange) {
           var target = Polymer.dom(e).rootTarget;
@@ -626,24 +462,12 @@
         }
       },
 
-      _computeShouldShowTabs: function(page, smallScreen) {
-        return (typeof page !== 'undefined') && !smallScreen;
-      },
-
-      _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
-        return _shouldShowTabs && loadComplete;
-      },
-
-      _computeShouldRenderDrawer: function(smallScreen, loadComplete) {
-        return smallScreen && loadComplete;
-      },
-
-      _hasTemplate: function(templateName) {
-        return (templateName) ? true : false;
-      },
-
-      _isTemplate: function(templateName, templateCase) {
-        return templateName === templateCase;
+      /**
+       * @name: _dorelChanged
+       * @description: this is for logging the global variable only
+       */
+      _dorelChanged: function(data) {
+        // console.info(data);
       }
     });
 
