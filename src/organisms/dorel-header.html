@@ -62,11 +62,11 @@
           <div class="layout horizontal justified center header-top">
             <div>
               <paper-icon-button
-                  class="paper-icn-big"
-                  icon="menu"
-                  on-click="_toggleDrawer"
-                  aria-label="menu"
-                  style="">
+                class="paper-icn-big"
+                icon="menu"
+                on-click="_toggleDrawer"
+                aria-label="menu"
+                style="">
               </paper-icon-button>
               <!--span class="mobile-menu-label">Menu</span-->
             </div>
@@ -134,37 +134,61 @@
       if="[[ _shouldRenderDrawer ]]">
       <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
 
-        <template 
-          is="dom-if" 
-          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-
-          <iron-selector role="navigation" class="drawer-list" 
-            selected="[[ page ]]" 
-            attr-for-selected="name">
-          
+        <div class="layout vertical">
+          <div class="layout horizontal justified center header-top">
+            <div>
+              <paper-icon-button
+                class="paper-icn-big"
+                icon="close"
+                on-click="_toggleDrawer"
+                aria-label="close-menu"
+                style="">
+              </paper-icon-button>
+            </div>
+          </div>
+          <div>
             <template 
-              is="dom-repeat" 
-              items="{{ globals.Dorel.collect.menus.main_menu.items }}"
-              as="menuItem" 
-              initial-count="4">
-              <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+              is="dom-if" 
+              if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+              <iron-selector role="navigation" class="drawer-list" 
+                selected="[[ page ]]" 
+                attr-for-selected="name">
+                <paper-menu>
+
+                  <template 
+                    is="dom-repeat" 
+                    items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+                    as="menuItem" 
+                    initial-count="4">
+                    <a href="#" title="#">
+                      <paper-item>[[ menuItem.title ]]</paper-item>
+                    </a>
+                  </template>
+
+                  <!-- if has submenu -->
+                  <paper-submenu>
+                    <paper-item class="menu-trigger">Item with submenu</paper-item>
+                    <paper-menu class="menu-content">
+                      <a href="#" title="#">
+                        <paper-item>Submenu</paper-item>
+                      </a>
+                      <a href="#" title="#">
+                        <paper-item>Submenu</paper-item>
+                      </a>
+                      <a href="#" title="#">
+                        <paper-item>Submenu</paper-item>
+                      </a>
+                    </paper-menu>
+                  </paper-submenu>
+
+                  <paper-item>language selector</paper-item>
+                  <paper-item>support</paper-item>
+                </paper-menu>
+              </iron-selector>
             </template>
+          </div>
+        </div>
 
-            <ul>
-              <li>Menu item 1</li>
-              <li>Menu item 2</li>
-              <li>Menu item 3</li>
-              <li>Menu item 4</li>
-            </ul>
-
-            <ul>
-              <li>language selector</li>
-              <li>support</li>
-            </ul>
-
-          </iron-selector>
-
-        </template>
       </app-drawer>
     </template>
 
