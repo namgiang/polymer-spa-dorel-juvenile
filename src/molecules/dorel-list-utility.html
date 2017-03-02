@@ -1,8 +1,6 @@
 <dom-module id="dorel-list-utility">
-
   <template>
-
-    <style is="custom-style" include="theme-maxicosi-shared-styles">
+    <style is="custom-style" include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment iron-flex-layout">
       ul {
         margin: 0;
         padding: 0;
@@ -12,21 +10,34 @@
         position: relative;
         list-style-type: none;
       }
-    </style>
+      .list-item-utility {
+        padding-left: .5rem; /* var(--theme-molecule-space-inner) */
+      }
+      iron-icon {
+        color: var(--theme-brand-color);
+        margin-right: .25rem; /* var(--theme-atom-space-inner) */
+      }
+      a {
+        color: var(--theme-color-foreground-tertiary);
+        text-decoration: none;
+        line-height: 2rem;
+        font-size: var(--theme-size-ui);
+        @apply --theme-ui;
+      }
 
+    </style>
     <ul>
-      <li>
+      <li class="layout horizontal center list-item-utility">
         <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
         <a href="#">Support</a>
       </li>
-      <li class="list-group-item hidden-md-down">
+      <li class="layout horizontal center list-item-utility">
         <iron-icon icon="dorel-icons:language"></iron-icon>
         <div class="header-language">
           <dorel-select-language></dorel-select-language>
         </div>
       </li>
     </ul>
-
   </template>
 
   <script>
