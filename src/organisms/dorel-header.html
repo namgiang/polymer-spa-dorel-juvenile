@@ -153,19 +153,37 @@
               <iron-selector role="navigation" class="drawer-list" 
                 selected="[[ page ]]" 
                 attr-for-selected="name">
-                <ul>
+                <paper-menu>
+
                   <template 
                     is="dom-repeat" 
                     items="{{ globals.Dorel.collect.menus.main_menu.items }}"
                     as="menuItem" 
                     initial-count="4">
-                    <li>
-                      <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                    </li>
+                    <a href="#" title="#">
+                      <paper-item>[[ menuItem.title ]]</paper-item>
+                    </a>
                   </template>
-                  <li>language selector</li>
-                  <li>support</li>
-                </ul>
+
+                  <!-- if has submenu -->
+                  <paper-submenu>
+                    <paper-item class="menu-trigger">Item with submenu</paper-item>
+                    <paper-menu class="menu-content">
+                      <a href="#" title="#">
+                        <paper-item>Submenu</paper-item>
+                      </a>
+                      <a href="#" title="#">
+                        <paper-item>Submenu</paper-item>
+                      </a>
+                      <a href="#" title="#">
+                        <paper-item>Submenu</paper-item>
+                      </a>
+                    </paper-menu>
+                  </paper-submenu>
+
+                  <paper-item>language selector</paper-item>
+                  <paper-item>support</paper-item>
+                </paper-menu>
               </iron-selector>
             </template>
           </div>
