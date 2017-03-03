@@ -89,7 +89,7 @@
         <!-- product column -->
         <div class$="indigo-column col-xs-12 col-sm-12 col-md-7 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
           style$="
-            background-image: url([[ indigoData.product_column_background_image ]]); 
+            background-image: url([[ _hasBackgroundImage(indigoData.product_column_background_image) ]]); 
             background-color: [[ indigoData.product_column_background_color ]];">
           <div class="indigo-column-overlay"></div>
 
@@ -143,6 +143,10 @@
 
       ready: function() {
         this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
+      },
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/indigo/placeholder.jpg' : img;
       }
     });
   </script>

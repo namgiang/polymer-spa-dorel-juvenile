@@ -13,7 +13,7 @@
       is="dom-if"
       if="[[ imageUrl ]]">
       <div class="image-wrap">
-        <img class="img-responsive" src="[[ imageUrl ]]" alt="" />
+        <img class="img-responsive" src="[[ _hasBackgroundImage(imageUrl) ]]" alt="" />
       </div>
     </template>
 
@@ -21,7 +21,12 @@
 
   <script>
     Polymer({
-      is: 'dorel-image-wrap'
+      is: 'dorel-image-wrap',
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/image-wrap/placeholder.jpg' : img;
+      }
+
     });
   </script>
 

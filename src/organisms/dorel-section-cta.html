@@ -85,7 +85,7 @@
                 <a class="cta-item-anchor" href="[[ cta.cta_link ]]">[[ cta.cta_text ]] &raquo;</a>
               </div>
               <div class="cta-item-img col-xs-5"
-                style$="background-image: url([[ cta.cta_image ]]);"></div>
+                style$="background-image: url([[ _hasBackgroundImage(cta.cta_image) ]]);"></div>
             </div>
           </div>
         </template>
@@ -97,7 +97,11 @@
   <script>
 
     Polymer({
-      is: 'dorel-section-cta'
+      is: 'dorel-section-cta',
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/cta/placeholder.jpg' : img;
+      }
     });
 
   </script>
