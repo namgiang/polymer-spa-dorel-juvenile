@@ -8,6 +8,7 @@
       }
       .indigo-column {
         border-radius: 20px;
+        min-height: 393px;
         max-height: 393px;
       }
       .indigo-column-overlay {
@@ -92,13 +93,9 @@
             background-image: url([[ _hasBackgroundImage(indigoData.product_column_background_image) ]]); 
             background-color: [[ indigoData.product_column_background_color ]];">
           <div class="indigo-column-overlay"></div>
-
-          <template
-            is="dom-if"
-            if="[[ indigoData.product_column_image ]]">
-            <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
-              image="[[ indigoData.product_column_image ]]"></paper-card>
-          </template>
+ 
+          <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
+            image="[[ _hasPaperImage(indigoData.product_column_image) ]]"></paper-card>
 
         </div>
 
@@ -146,6 +143,10 @@
       },
 
       _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/indigo/placeholder.jpg' : img;
+      },
+
+      _hasPaperImage: function(img) {
         return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/indigo/placeholder.jpg' : img;
       }
     });
