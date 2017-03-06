@@ -8,15 +8,45 @@
       .left-spacing {
         margin-left: .5rem; /* var(--theme-molecule-space-inner) */
       }
+      .icn-trigger:hover {
+        cursor: pointer;
+      }
     </style>
 
-    <iron-icon icon="dorel-icons:search" class="icn-big"></iron-icon>
-    <iron-icon icon="dorel-icons:shopping-cart" class="icn-big left-spacing"></iron-icon>
+    <iron-icon 
+      icon="dorel-icons:search" 
+      class="icn-big icn-trigger icn-search-section-trigger"
+      on-click="_toggleSearch">
+      </iron-icon>
+    <iron-icon 
+      icon="dorel-icons:shopping-cart" 
+      class="icn-big left-spacing">
+      </iron-icon>
 
   </template>
   <script>
     Polymer({
       is: 'dorel-user-tools',
+
+      properties: {
+        searchOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
+
+      _toggleSearch: function(e) {
+        // toggle the var that needs to be exposed to the host
+        this.searchOpened = !this.searchOpened;
+
+        // define icon variable needed for setting the attribute
+        var iconAttr = (this.searchOpened) ? 'dorel-icons:close' : 'dorel-icons:search';
+
+        // set icon in attribute
+        Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+      }
+
     });
   </script>
 </dom-module>

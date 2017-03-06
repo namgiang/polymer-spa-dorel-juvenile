@@ -1,0 +1,90 @@
+<dom-module id="dorel-search-drawer">
+  <template>
+    <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+      /**
+       * search dropdown
+       */
+      .section-search-drawer {
+        background-color: var(--theme-brand-color);
+      }
+      .search-container {
+        padding-top: var(--theme-component-space-inner);
+        padding-bottom: var(--theme-component-space-inner);
+      }
+      .search-container[screenSmall] {
+        width: 100%;
+        padding-right: var(--theme-component-space-inner);
+        padding-left: var(--theme-component-space-inner);
+      }
+      .search-container[screenMediumUp] {
+        width: 50%;
+      }
+      .input-light {
+        --paper-input-container-color: var(--theme-color-background-secondary); /* input text when not typing */
+        --paper-input-container-underline: var(--theme-color-background-secondary); /* bottom border when not typing */
+
+        --paper-input-container-input-color: white; /* input text when typing */
+        --paper-input-container-focus-color: white; /* bottom border when typing */
+
+        --paper-input-container-label-focus: {
+          color: var(--theme-color-foreground-tertiary); /* floating label when typing */
+        };
+        --paper-input-container-label-floating: {
+          color: var(--theme-color-foreground-tertiary); /* floating label when not typing, keep the same as --paper-input-container-label-focus */
+        };
+        
+        --paper-input-container-underline: {
+          color: yellow;
+        }
+      }
+    </style>
+
+    <section class="section-search-drawer" id="section-search-drawer" 
+      opened$="{{ searchOpened }}">
+      <div class="layout horizontal center-justified">
+
+        <div class="search-container" 
+          screenMediumUp$="{{ screenMediumUp }}" 
+          screenSmall$="{{ screenSmall }}">
+          <form is="iron-form" method="get" action="/">
+            <paper-input id="search-website" class="input-light" label="Search the website"></paper-input>
+            <paper-autocomplete-suggestions for="search-website" source="[[ accounts ]]"></paper-autocomplete-suggestions>
+            <paper-button raised onclick="_nativeSubmit(event)">Submit</paper-button>
+          </form>
+        </div>
+
+        <script>
+
+          var autocompleteSuggestions = document.querySelector('paper-autocomplete-suggestions');
+
+          // autocompleteSuggestions.source = states;
+
+          // autocompleteSuggestions.addEventListener('autocomplete-selected', function () {
+          //   var paperToast = document.querySelector('paper-toast');
+          //   var selected = event.detail.text;
+          //   paperToast.text = 'Selected: ' + selected;
+          //   paperToast.show();
+          // });
+
+          </script>
+
+      </div>
+      <!--dorel-search-small></dorel-search-small-->
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-search-drawer',
+
+      properties: {
+
+        // Is exposed in host element
+        searchOpened: {
+          type: Boolean
+        }
+        
+      }
+    });
+  </script>
+</dom-module>
