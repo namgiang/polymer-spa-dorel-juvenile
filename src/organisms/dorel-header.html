@@ -160,26 +160,37 @@
                     items="{{ globals.Dorel.collect.menus.main_menu.items }}"
                     as="menuItem" 
                     initial-count="4">
-                    <a href="#" title="#">
-                      <paper-item>[[ menuItem.title ]]</paper-item>
-                    </a>
+                    
+                    <!-- if not children -->
+                    <template
+                      is="dom-if"
+                      if="[[ !menuItem.children.length ]]">
+                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                        <paper-item>[[ menuItem.title ]]</paper-item>
+                      </a>
+                    </template>
+
+                    <!-- if has children (submenu) -->
+                    <template
+                      is="dom-if"
+                      if="[[ menuItem.children.length ]]">
+
+                      <paper-submenu>
+                        <paper-item class="menu-trigger">[[ menuItem.title ]]</paper-item>
+                        <paper-menu class="menu-content">
+                          <template
+                            is="dom-repeat"
+                            items="[[ menuItem.children ]]"
+                            as="child">
+                            <a href="[[ child.url ]]" title="[[ child.title ]]">
+                              <paper-item>[[ child.title ]]</paper-item>
+                            </a>
+                          </template>
+                        </paper-menu>
+                      </paper-submenu>
+                    </template>
                   </template>
 
-                  <!-- if has submenu -->
-                  <paper-submenu>
-                    <paper-item class="menu-trigger">Item with submenu</paper-item>
-                    <paper-menu class="menu-content">
-                      <a href="#" title="#">
-                        <paper-item>Submenu</paper-item>
-                      </a>
-                      <a href="#" title="#">
-                        <paper-item>Submenu</paper-item>
-                      </a>
-                      <a href="#" title="#">
-                        <paper-item>Submenu</paper-item>
-                      </a>
-                    </paper-menu>
-                  </paper-submenu>
 
                   <paper-item>language selector</paper-item>
                   <paper-item>support</paper-item>
