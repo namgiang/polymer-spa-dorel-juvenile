@@ -70,7 +70,7 @@
                 <a href="#" class="dropdown" 
                   on-click="dropdownToggle">
                   [[ menuItem.title ]] 
-                  <iron-icon icon="paper-dropdown-menu:arrow-drop-down"></iron-icon>
+                  <iron-icon class="menu-trigger-icon" icon="dorel-icons:expand-more"></iron-icon>
                 </a>
 
                 <div class="dropdown-menu">
@@ -122,6 +122,16 @@
         e.preventDefault();
 
         this.submenuOpened = !this.submenuOpened;
+
+        var iconAttr = (this.submenuOpened) ? 'dorel-icons:expand-less' : 'dorel-icons:expand-more';
+
+        // also change icon when icon itself is clicked
+        // then set attribute
+        if (Polymer.dom(e).rootTarget.classList.contains('menu-trigger-icon')) {
+          Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+        } else {
+          Polymer.dom(e).rootTarget.querySelector('.menu-trigger-icon').setAttribute('icon', iconAttr);
+        }
       }
     });
   </script>
