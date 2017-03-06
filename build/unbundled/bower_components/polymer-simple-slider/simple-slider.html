@@ -1,9 +1,0 @@
-<html><head><link rel="import" href="../polymer/polymer.html">
-
-<script src="../simple-slider/dist/simpleslider.min.js"></script>
-
-</head><body><dom-element is="simple-slider">
-
-  <script>Polymer({is:"simple-slider",properties:{transitionProperty:{type:String},transitionDuration:{type:Number},transitionDelay:{type:Number},transitionStartDelay:{type:Number},startValue:{type:String},visibleValue:{type:String},endValue:{type:String},noAutoPlay:{type:Boolean}},attached:function(){var t=new window.SimpleSlider(this,{transitionProperty:this.transitionProperty,transitionDuration:this.transitionDuration,transitionDelay:this.transitionDelay,startValue:this.startValue,visibleValue:this.visibleValue,endValue:this.endValue,autoPlay:!this.noAutoPlay,onChange:function(t,e){this.fire("change",{prevIndex:t,nextIndex:e})}.bind(this),onChangeEnd:function(t,e){this.fire("change-end",{prevIndex:t,nextIndex:e})}.bind(this)});t.pauseAutoPlay(),this.__resumeAutoPlay=setTimeout(function(){!this.noAutoPlay&&t.resumeAutoPlay()}.bind(this),this.transitionStartDelay||0),this.slider=t},detached:function(){this.slider.dispose()},actualIndex:function(){return this.slider.actualIndex},change:function(t){this.slider.change(t)},next:function(){this.slider.next()},prev:function(){this.slider.prev()},prevIndex:function(){return this.slider.prevIndex()},nextIndex:function(){return this.slider.nextIndex()},dispose:function(){this.slider.dispose()}});</script>
-</dom-element>
-</body></html>
