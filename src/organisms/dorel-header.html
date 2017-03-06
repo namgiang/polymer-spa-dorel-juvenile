@@ -28,6 +28,9 @@
         width: calc(32px + 15px); /* var(--theme-icon-size-big) */
         height: calc(32px + 15px); /* var(--theme-icon-size-big) */
       }
+      app-drawer {
+        z-index: 1000;
+      }
     </style>
 
     <!-- static beginning AND end media queries -->
@@ -165,7 +168,8 @@
                     <template
                       is="dom-if"
                       if="[[ !menuItem.children.length ]]">
-                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                        on-click="menuClick">
                         <paper-item>[[ menuItem.title ]]</paper-item>
                       </a>
                     </template>
@@ -182,7 +186,8 @@
                             is="dom-repeat"
                             items="[[ menuItem.children ]]"
                             as="child">
-                            <a href="[[ child.url ]]" title="[[ child.title ]]">
+                            <a href="[[ convertUrl(child.url) ]]" title="[[ child.title ]]"
+                              on-click="menuClick">
                               <paper-item>[[ child.title ]]</paper-item>
                             </a>
                           </template>
@@ -224,6 +229,10 @@
           type: String
         },
 
+        _test: {
+          computed: '_computeCloseDrawer(closeDrawer)'
+        },
+
         _shouldShowTabs: {
           computed: '_computeShouldShowTabs(page)'
         },
@@ -235,6 +244,15 @@
         _shouldRenderDrawer: {
           computed: '_computeShouldRenderDrawer(loadComplete)'
         }
+      },
+
+      convertUrl: function(url) {
+        return '/' + url.split('/')[3];
+      },
+
+      menuClick: function() {
+        this.drawerOpened = false;
+        return;
       },
 
       _toggleDrawer: function() {
