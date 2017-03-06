@@ -1,6 +1,6 @@
 <dom-module id="dorel-header">
   <template>
-    <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment iron-flex-layout">
+    <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
       /* 
        * header-top
        * @description: header-top is the grey top bar that holds the mobile
@@ -194,7 +194,7 @@
 
     <!-- search dropdown -->
     <style>
-      .search-drawer {
+      .section-search-drawer {
         background-color: var(--theme-brand-color);
       }
       .search-container {
@@ -228,7 +228,7 @@
         }
       }
     </style>
-    <section class="search-drawer">
+    <section class="section-search-drawer" opened="{{ searchDrawerOpened }}">
       <div class="layout horizontal center-justified">
 
         <div class="search-container" screenMediumUp$="{{screenMediumUp}}" screenSmall$="{{screenSmall}}">
@@ -249,14 +249,15 @@
 
           var autocompleteSuggestions = document.querySelector('paper-autocomplete-suggestions');
 
-          autocompleteSuggestions.source = states;
+          // autocompleteSuggestions.source = states;
 
-          autocompleteSuggestions.addEventListener('autocomplete-selected', function () {
-            var paperToast = document.querySelector('paper-toast');
-            var selected = event.detail.text;
-            paperToast.text = 'Selected: ' + selected;
-            paperToast.show();
-          });
+          // autocompleteSuggestions.addEventListener('autocomplete-selected', function () {
+          //   var paperToast = document.querySelector('paper-toast');
+          //   var selected = event.detail.text;
+          //   paperToast.text = 'Selected: ' + selected;
+          //   paperToast.show();
+          // });
+
           </script>
 
       </div>
@@ -306,11 +307,6 @@
       _computeShouldRenderDrawer: function(loadComplete) {
         return loadComplete && (this.screenExtraSmall || this.screenSmall || this.screenMedium);
       },
-
-      _nativeSubmit(event) {
-        // do stuff for search form
-      },
-    };
     });
   </script>
 </dom-module>
