@@ -28,6 +28,9 @@
         width: calc(32px + 15px); /* var(--theme-icon-size-big) */
         height: calc(32px + 15px); /* var(--theme-icon-size-big) */
       }
+      paper-submenu .menu-content {
+        background-color: var(--theme-color-background-tertiary);
+      }
     </style>
 
     <!-- static beginning AND end media queries -->
@@ -175,8 +178,11 @@
                       is="dom-if"
                       if="[[ menuItem.children.length ]]">
 
-                      <paper-submenu>
-                        <paper-item class="menu-trigger">[[ menuItem.title ]]</paper-item>
+                      <paper-submenu submenu-opened$="{{ subMenuOpened }}">
+                        <paper-item class="menu-trigger layout horizontal justified" on-click="_toggleSubmenuIcon">
+                          [[ menuItem.title ]] 
+                          <iron-icon icon="dorel-icons:expand-more" class="menu-trigger-icon"></iron-icon>
+                        </paper-item>
                         <paper-menu class="menu-content">
                           <template
                             is="dom-repeat"
@@ -190,7 +196,6 @@
                       </paper-submenu>
                     </template>
                   </template>
-
 
                   <paper-item>language selector</paper-item>
                   <paper-item>support</paper-item>
@@ -224,6 +229,14 @@
           type: String
         },
 
+        /** 
+         * Variable gets exposed by the user tools and is exposed
+         * in the dorel-header and piped through to the search-drawer
+         */
+        submenuOpened: {
+          type: Boolean
+        },
+
         _shouldShowTabs: {
           computed: '_computeShouldShowTabs(page)'
         },
@@ -235,10 +248,29 @@
         _shouldRenderDrawer: {
           computed: '_computeShouldRenderDrawer(loadComplete)'
         }
+
       },
 
       _toggleDrawer: function() {
         this.drawerOpened = !this.drawerOpened;
+      },
+
+      _toggleSubmenuIcon: function(e) {
+
+        // toggle the var that needs to be exposed to the host
+        this.subMenuOpened = !this.subMenuOpened;
+
+        // define icon variable needed for setting the attribute
+        var iconAttr = (this.subMenuOpened) ? 'dorel-icons:expand-less' : 'dorel-icons:expand-more';
+
+        // also change icon when icon itself is clicked
+        // then set attribute
+        if (Polymer.dom(e).rootTarget.classList.contains('menu-trigger-icon')) {
+          Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+        } else {
+          Polymer.dom(e).rootTarget.querySelector('.menu-trigger-icon').setAttribute('icon', iconAttr);
+        }
+
       },
 
       _computeShouldShowTabs: function(page) {
