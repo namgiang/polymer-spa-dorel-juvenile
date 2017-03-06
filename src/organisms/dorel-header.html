@@ -1,6 +1,6 @@
 <dom-module id="dorel-header">
   <template>
-    <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment iron-flex-layout">
+    <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
       /* 
        * header-top
        * @description: header-top is the grey top bar that holds the mobile
@@ -74,7 +74,7 @@
               <!--span class="mobile-menu-label">Menu</span-->
             </div>
             <div>
-              <dorel-user-tools></dorel-user-tools>
+              <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
             </div>
           </div>
           <div class="layout horizontal center-center container-logo" screenSmall$="{{screenSmall}}">
@@ -98,7 +98,7 @@
                 </a>
               </div>
               <div class="horizontal layout center">
-                <dorel-user-tools></dorel-user-tools>
+                <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
               </div>
             </div><!-- END horizontal wrap --> 
           </div>
@@ -123,7 +123,7 @@
           </div>
           <div class="layout horizontal center">
             <div>
-              <dorel-user-tools></dorel-user-tools>
+              <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
             </div>
           </div>
         </div>
@@ -208,11 +208,7 @@
       </app-drawer>
     </template>
 
-    <!-- search dropdown -->
-    <section class="header-search vertical-center">
-      <p>Make search dropdown section here</p>
-      <!--dorel-search-small></dorel-search-small-->
-    </section>
+    <dorel-search-drawer search-opened="{{ searchOpened }}"></dorel-search-drawer>
 
   </template>
 
@@ -225,16 +221,30 @@
           type: Boolean
         },
 
-        page: {
-          type: String
-        },
-
         /** 
          * Variable gets exposed by the user tools and is exposed
          * in the dorel-header and piped through to the search-drawer
          */
+        searchOpened: {
+          type: Boolean,
+        },
+
+        page: {
+          type: String
+        },
+
         submenuOpened: {
           type: Boolean
+        },
+        
+        states: {
+          type: Array,
+          value: [
+            {"text": "Alabama", "value": "AL"},
+            {"text": "Alaska", "value": "AK"},
+            {"text": "American Samoa", "value": "AS"},
+            {"text": "Arizona", "value": "AZ"}
+          ]
         },
 
         _shouldShowTabs: {
