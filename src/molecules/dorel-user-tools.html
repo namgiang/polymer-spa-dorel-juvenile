@@ -28,28 +28,24 @@
     Polymer({
       is: 'dorel-user-tools',
 
-      _toggleSearch: function() {
-
-        var button = this.querySelector('.icn-search-section-trigger'),
-            /* this #section-search-drawer is in the dorel-header */
-            collapse = this.querySelector('#section-search-drawer'); // defined in dorel-header.html @line 231
-
-        console.log( this.$$('#section-search-drawer') );
-
-        /* open search drawer */
-        // collapse.toggle()
-
-        /* toggle icon */
-        /* tie icon change in with the drawer state to make sure
-        the icon only changes if drawer is opened */
-
-        // if (collapse.opened) {
-        //   Polymer.dom(button).setAttribute('icon', 'dorel-icons:search')
-        // } else if (!collapse.opened) {
-        //   Polymer.dom(button).setAttribute('icon', 'dorel-icons:close')
-        // }
-
+      properties: {
+        searchOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
       },
+
+      _toggleSearch: function(e) {
+        // toggle the var that needs to be exposed
+        this.searchOpened = !this.searchOpened;
+
+        // define icon
+        var iconAttr = (this.searchOpened) ? 'dorel-icons:close' : 'dorel-icons:search';
+
+        // set icon in attribute
+        Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+      }
 
     });
   </script>

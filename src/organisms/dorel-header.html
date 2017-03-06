@@ -71,7 +71,7 @@
               <!--span class="mobile-menu-label">Menu</span-->
             </div>
             <div>
-              <dorel-user-tools></dorel-user-tools>
+              <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
             </div>
           </div>
           <div class="layout horizontal center-center container-logo" screenSmall$="{{screenSmall}}">
@@ -95,7 +95,7 @@
                 </a>
               </div>
               <div class="horizontal layout center">
-                <dorel-user-tools></dorel-user-tools>
+                <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
               </div>
             </div><!-- END horizontal wrap --> 
           </div>
@@ -120,7 +120,7 @@
           </div>
           <div class="layout horizontal center">
             <div>
-              <dorel-user-tools></dorel-user-tools>
+              <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
             </div>
           </div>
         </div>
@@ -192,78 +192,7 @@
       </app-drawer>
     </template>
 
-    <!-- search dropdown -->
-    <style>
-      .section-search-drawer {
-        background-color: var(--theme-brand-color);
-      }
-      .search-container {
-        padding-top: var(--theme-component-space-inner);
-        padding-bottom: var(--theme-component-space-inner);
-      }
-      .search-container[screenSmall] {
-        width: 100%;
-        padding-right: var(--theme-component-space-inner);
-        padding-left: var(--theme-component-space-inner);
-      }
-      .search-container[screenMediumUp] {
-        width: 50%;
-      }
-      .input-light {
-        --paper-input-container-color: var(--theme-color-background-secondary); /* input text when not typing */
-        --paper-input-container-underline: var(--theme-color-background-secondary); /* bottom border when not typing */
-
-        --paper-input-container-input-color: white; /* input text when typing */
-        --paper-input-container-focus-color: white; /* bottom border when typing */
-
-        --paper-input-container-label-focus: {
-          color: var(--theme-color-foreground-tertiary); /* floating label when typing */
-        };
-        --paper-input-container-label-floating: {
-          color: var(--theme-color-foreground-tertiary); /* floating label when not typing, keep the same as --paper-input-container-label-focus */
-        };
-        
-        --paper-input-container-underline: {
-          color: yellow;
-        }
-      }
-    </style>
-
-    <section class="section-search-drawer" id="section-search-drawer" opened="{{ searchDrawerOpened }}">
-      <div class="layout horizontal center-justified">
-
-        <div class="search-container" screenMediumUp$="{{screenMediumUp}}" screenSmall$="{{screenSmall}}">
-          <form is="iron-form" method="get" action="/">
-            <paper-input id="search-website" class="input-light" label="Search the website"></paper-input>
-            <paper-autocomplete-suggestions for="search-website" source="[[accounts]]"></paper-autocomplete-suggestions>
-            <paper-button raised onclick="_nativeSubmit(event)">Submit</paper-button>
-          </form>
-        </div>
-
-        <script>
-          var states = [
-            {"text": "Alabama", "value": "AL"},
-            {"text": "Alaska", "value": "AK"},
-            {"text": "American Samoa", "value": "AS"},
-            {"text": "Arizona", "value": "AZ"}
-          ];
-
-          var autocompleteSuggestions = document.querySelector('paper-autocomplete-suggestions');
-
-          // autocompleteSuggestions.source = states;
-
-          // autocompleteSuggestions.addEventListener('autocomplete-selected', function () {
-          //   var paperToast = document.querySelector('paper-toast');
-          //   var selected = event.detail.text;
-          //   paperToast.text = 'Selected: ' + selected;
-          //   paperToast.show();
-          // });
-
-          </script>
-
-      </div>
-      <!--dorel-search-small></dorel-search-small-->
-    </section>
+    <dorel-search-drawer search-opened="{{ searchOpened }}"></dorel-search-drawer>
 
   </template>
 
@@ -276,8 +205,22 @@
           type: Boolean
         },
 
+        searchOpened: {
+          type: Boolean,
+        },
+
         page: {
           type: String
+        },
+
+        states: {
+          type: Array,
+          value: [
+            {"text": "Alabama", "value": "AL"},
+            {"text": "Alaska", "value": "AK"},
+            {"text": "American Samoa", "value": "AS"},
+            {"text": "Arizona", "value": "AZ"}
+          ]
         },
 
         _shouldShowTabs: {
