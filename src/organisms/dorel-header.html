@@ -160,11 +160,13 @@
         </div>
 
         <div class="header-item header-item-menu">
-          <dorel-navigation-main></dorel-navigation-main>
+          <dorel-navigation-main mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
         </div>
 
         <div class="header-item header-item-user-tools">
-          <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
+          <dorel-user-tools 
+            search-opened="{{ searchOpened }}" 
+            mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-user-tools>
         </div>
 
         <div class="header-item header-item-search-drawer">
@@ -187,8 +189,8 @@
         },
 
         /** 
-         * Variable gets exposed by the user tools and is exposed
-         * in the dorel-header and piped through to the search-drawer
+         * Variable gets exposed by the dorel-user-tools, 
+         * and is exposed in the dorel-header and piped through to the search-drawer
          */
         searchOpened: {
           type: Boolean,
@@ -201,7 +203,16 @@
         submenuOpened: {
           type: Boolean
         },
-        
+
+        /** 
+         * Variable gets exposed by the dorel-user-tools, 
+         * and is exposed in the dorel-header and piped through to the dorel-navigation-main
+         * 
+         */
+        mobileMenuOpened: {
+          type: Boolean
+        },
+
         states: {
           type: Array,
           value: [
@@ -212,22 +223,6 @@
           ]
         },
 
-        _shouldShowTabs: {
-          computed: '_computeShouldShowTabs(page)'
-        },
-
-        _shouldRenderTabs: {
-          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
-        },
-
-        _shouldRenderDrawer: {
-          computed: '_computeShouldRenderDrawer(loadComplete)'
-        }
-
-      },
-
-      _toggleDrawer: function() {
-        this.drawerOpened = !this.drawerOpened;
       },
 
       _toggleSubmenuIcon: function(e) {
@@ -248,17 +243,6 @@
 
       },
 
-      _computeShouldShowTabs: function(page) {
-        return (typeof page !== 'undefined') && (!this.screenExtraSmall || !this.screenSmall);
-      },
-
-      _computeShouldRenderTabs: function(_shouldShowTabs, loadComplete) {
-        return _shouldShowTabs && loadComplete;
-      },
-
-      _computeShouldRenderDrawer: function(loadComplete) {
-        return loadComplete && (this.screenExtraSmall || this.screenSmall || this.screenMedium);
-      },
     });
   </script>
 </dom-module>

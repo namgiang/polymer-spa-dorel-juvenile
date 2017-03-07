@@ -2,14 +2,6 @@
   <template strip-whitespace>
     <style include="theme-maxicosi-shared-styles  iron-flex iron-flex-alignment">
 
-    :host {
-      background-color: red;
-    }
-
-      #header-main-menu[screenMedium]  {
-        margin: 0 var(--theme-component-space-inner);
-      }
-
       dorel-tab {
         padding-top: 1rem;
         padding-bottom: 1rem;
@@ -32,6 +24,8 @@
 
     </style>
 
+    <iron-media-query query="(max-width : 767px)"
+      query-matches="{{ screenSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
       query-matches="{{ screenMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px)"
@@ -41,23 +35,25 @@
       Lazy-create the drawer for small screen sizes. 
 
       TODO: integrate the drawer for mobile only
-
     -->
-    <template 
+
+    <!--template 
       is="dom-if" 
-      if="[[ _shouldRenderDrawer ]]">
-      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
+      if="[[ _shouldRenderDrawer ]]"-->
+
+
+      <app-drawer opened="{{ mobileMenuOpened }}" swipe-open tabindex="0">
 
         <div class="layout vertical">
           <div class="layout horizontal justified center header-top">
             <div>
-              <paper-icon-button
+              <!--paper-icon-button
                 class="paper-icn-big"
                 icon="close"
                 on-click="_toggleDrawer"
                 aria-label="close-menu"
                 style="">
-              </paper-icon-button>
+              </paper-icon-button-->
             </div>
           </div>
           <div>
@@ -117,7 +113,7 @@
         </div>
 
       </app-drawer>
-    </template>
+    <!--/template-->
 
 
     <!--
@@ -240,7 +236,36 @@
   </template>
   <script>
     Polymer({
+
       is: 'dorel-navigation-main',
+
+      properties: {
+
+        // Is exposed in host element
+        mobileMenuOpened: {
+          type: Boolean
+        },
+
+        // _shouldShowTabs: {
+        //   computed: '_computeShouldShowTabs(page)'
+        // },
+
+        // _shouldRenderTabs: {
+        //   computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
+        // },
+
+        // _shouldRenderDrawer: {
+        //   computed: '_computeShouldRenderDrawer(loadComplete)'
+        // }
+
+      },
+
+
+      // _computeShouldRenderDrawer: function(loadComplete) {
+      //   return loadComplete && (this.screenExtraSmall || this.screenSmall );
+      //   console.log('test!');
+      // },
+
     });
   </script>
 </dom-module>

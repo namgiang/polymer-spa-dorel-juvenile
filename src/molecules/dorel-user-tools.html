@@ -26,9 +26,8 @@
         <paper-icon-button
           class="paper-icn-big"
           icon="menu"
-          on-click="_toggleDrawer"
-          aria-label="menu"
-          style="">
+          on-click="_toggleMobileMenu"
+          aria-label="menu">
         </paper-icon-button>
       </div>
     </template>
@@ -51,11 +50,25 @@
       is: 'dorel-user-tools',
 
       properties: {
+
         searchOpened: {
           type: Boolean,
           value: false,
           notify: true
+        },
+
+        mobileMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
+
+      },
+
+      _toggleMobileMenu: function() {
+        this.mobileMenuOpened = !this.mobileMenuOpened;
+
+        
       },
 
       _toggleSearch: function(e) {
