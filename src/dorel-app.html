@@ -421,14 +421,23 @@
        * @description set the current page in the globals
        */
       _setCurrentPage: function(page, pages) {
-        var pages = this.globals.Dorel.collect.pages;
+        var self = this;
+        var pages = Polymer.globalsManager.get('Dorel.collect.pages');
 
         // if menu array has no items
         if( !pages.length ) { return; }
 
         // map the page variable to the item in the menu array and set it 
         this.currentPage = pages.find(function(item) {
-          return (page === item.slug) ? item : null;
+          switch (page) {
+            case 'products':
+              var path = self.subroute.path.split('/').join('');
+              return (path === item.slug) ? item : null;
+              break;
+
+            default:
+              return (page === item.slug) ? item : null;
+          }
         });
         
         // set the global currentPage
