@@ -7,7 +7,7 @@
       on-response="_pagesLoaded"></iron-ajax>
 
     <iron-ajax 
-      auto 
+      id="products"
       url="[[ wpUrl ]]/wp/v2/products" 
       handle-as="json"
       on-response="_productsLoaded"></iron-ajax>
@@ -23,6 +23,11 @@
          */
         wpUrl: {
           type: String
+        },
+
+        collect: {
+          type: Array,
+          value: []
         }
       },
 
@@ -31,11 +36,11 @@
        * @description process the retrieved pages
        */
       _pagesLoaded: function (data) {
+        var self = this;
+        var productsEl = self.$.products;
         var pages = data.detail.response;
-        if (!pages.length) return;
 
-        // retrieve collect.pages if no pages set empty array
-        var collect = Polymer.globalsManager.get('Dorel.collect.pages') || [];
+        if (!pages.length) return;
 
         // iterate over all pages items, alter its template
         pages.forEach(function(page) {
@@ -45,11 +50,10 @@
           page.template = pageName;
 
           // extend the collect pages object with the new page
-          collect.push(page);
+          self.collect.push(page);
         });
 
-        // set the new collect obj
-        Polymer.globalsManager.set('Dorel.collect.pages', collect);
+        productsEl.generateRequest();
       },
 
       /** 
@@ -57,64 +61,68 @@
        * @description process the retrieved products
        */
       _productsLoaded: function (data) {
+        var self = this;
         var products = data.detail.response;
-        if (!products.length) return;
+        
+        // if we have products we need to add them
+        if (products.length) {
 
-        // retrieve collect.pages if no pages set empty array
-        var collect = Polymer.globalsManager.get('Dorel.collect.pages') || [];
+          // retrieve collect.pages if no pages set empty array
+          var collect = self.collect;
 
-        // iterate over all products items, alter its title and set the right url
-        products.forEach(function(product) {
-          /**
-           * Assign a template to this taxonomy this is used by
-           * the template switcher (dorel-template.html)
-           */
-          product.template = 'product-detail';
-
-          /**
-           * We will alter the acf object to comply to page-builder
-           */ 
-          var acfObj = { page_builder: [] };
-          
-          // run throught the normal response acf
-          for (var acfKey in product.acf.product_detail_builder[0]) {
+          // iterate over all products items, alter its title and set the right url
+          products.forEach(function(product) {
             /**
-             * TODO: refactor! 
-             * For duplicated components we need to suffix them by a number
-             * when placing them in the page_builder we need to strip this number
-             * because we delegate them to the page builder element
+             * Assign a template to this taxonomy this is used by
+             * the template switcher (dorel-template.html)
              */
-            var keyArr = acfKey.split('_');
-            var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
+            product.template = 'product-detail';
 
-            // grab all inner values of the acfType
-            var acfLayout = product.acf.product_detail_builder[0][acfKey][0];
+            /**
+             * We will alter the acf object to comply to page-builder
+             */ 
+            var acfObj = { page_builder: [] };
+            
+            // run throught the normal response acf
+            for (var acfKey in product.acf.product_detail_builder[0]) {
+              /**
+               * TODO: refactor! 
+               * For duplicated components we need to suffix them by a number
+               * when placing them in the page_builder we need to strip this number
+               * because we delegate them to the page builder element
+               */
+              var keyArr = acfKey.split('_');
+              var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
 
-            // if the acfKey has a number we need to strip it
-            if( hasNumber ) {
-              keyArr.pop();
-              acfLayout.acf_fc_layout = keyArr.join('_');
+              // grab all inner values of the acfType
+              var acfLayout = product.acf.product_detail_builder[0][acfKey][0];
 
-              // place the new acf_fc_layout in the page_builder array
-              acfObj.page_builder.push(acfLayout);
-            } else {
-              // set the new acf_fc_layout variable to the key
-              acfLayout.acf_fc_layout = acfKey;
-              
-              // place the new acf_fc_layout in the page_builder array
-              acfObj.page_builder.push(acfLayout);
+              // if the acfKey has a number we need to strip it
+              if( hasNumber ) {
+                keyArr.pop();
+                acfLayout.acf_fc_layout = keyArr.join('_');
+
+                // place the new acf_fc_layout in the page_builder array
+                acfObj.page_builder.push(acfLayout);
+              } else {
+                // set the new acf_fc_layout variable to the key
+                acfLayout.acf_fc_layout = acfKey;
+                
+                // place the new acf_fc_layout in the page_builder array
+                acfObj.page_builder.push(acfLayout);
+              }
             }
-          }
 
-          // replace the old acf object with the new formed acf
-          product.acf = acfObj;
+            // replace the old acf object with the new formed acf
+            product.acf = acfObj;
 
-          // extend the collect pages with the new product page
-          collect.push(product);
-        });
+            // extend the collect pages with the new product page
+            self.collect.push(product);
+          });
+        }
 
         // set the new collect obj
-        Polymer.globalsManager.set('Dorel.collect.pages', collect);
+        Polymer.globalsManager.set('Dorel.collect.pages', self.collect);
       }
     });
   </script>
