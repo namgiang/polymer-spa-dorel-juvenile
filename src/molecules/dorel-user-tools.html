@@ -1,6 +1,6 @@
 <dom-module id="dorel-user-tools">
   <template strip-whitespace>
-    <style>
+    <style is="custom-style">
       .icn-big {
         --iron-icon-height: 32px; /* var(--theme-icon-size-big) */
         --iron-icon-width: 32px; /* var(--theme-icon-size-big) */
@@ -11,17 +11,41 @@
       .icn-trigger:hover {
         cursor: pointer;
       }
+      .icon-toggle-menu {
+        z-index: 1001;
+      }
+      .active {
+        background-color: red;
+      }
     </style>
 
-    <iron-icon 
-      icon="dorel-icons:search" 
-      class="icn-big icn-trigger icn-search-section-trigger"
-      on-click="_toggleSearch">
+    <iron-media-query query="(max-width : 767px)"
+      query-matches="{{ screenSmall }}"></iron-media-query>
+
+
+    <!-- only show hamburger menu on small screens -->
+    <template is="dom-if" if="{{ screenSmall }}">
+      <div>
+        <paper-icon-button
+          class="paper-icn-big icon-toggle-menu"
+          icon="dorel-icons:menu"
+          on-click="_toggleMobileMenu"
+          aria-label="menu">
+        </paper-icon-button>
+      </div>
+    </template>
+
+    <div>
+      <iron-icon 
+        icon="dorel-icons:search" 
+        class="icn-big icn-trigger icn-search-section-trigger"
+        on-click="_toggleSearch">
       </iron-icon>
-    <iron-icon 
-      icon="dorel-icons:shopping-cart" 
-      class="icn-big left-spacing">
+      <iron-icon 
+        icon="dorel-icons:shopping-cart" 
+        class="icn-big left-spacing">
       </iron-icon>
+    </div>
 
   </template>
   <script>
@@ -29,11 +53,29 @@
       is: 'dorel-user-tools',
 
       properties: {
+
         searchOpened: {
           type: Boolean,
           value: false,
           notify: true
+        },
+
+        mobileMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
+
+      },
+
+      _toggleMobileMenu: function(e) {
+        this.mobileMenuOpened = !this.mobileMenuOpened;
+
+        var iconAttr = (this.mobileMenuOpened) ? 'dorel-icons:close' : 'dorel-icons:menu';
+
+        console.log(Polymer.dom(e).rootTarget);
+
+        Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
       },
 
       _toggleSearch: function(e) {
@@ -45,6 +87,13 @@
 
         // set icon in attribute
         Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+
+        if (this.searchOpened && !Polymer.dom(e).rootTarget.classList.contains('active') ) { 
+          Polymer.dom(e).rootTarget.classList.add('active'); 
+        } else { 
+          Polymer.dom(e).rootTarget.classList.remove('active');
+        };
+
       }
 
     });
