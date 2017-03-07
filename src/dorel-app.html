@@ -137,10 +137,9 @@
       <iron-pages role="main"
         selected="{{ globals.Dorel.current.page.id }}"
         attr-for-selected="page-id">
-  
         <template
           is="dom-repeat"
-          items="[[ globals.Dorel.collect.pages ]]"
+          items="{{ globals.Dorel.collect.pages }}"
           as="page">
           
           <dorel-template
@@ -212,7 +211,7 @@
 
       created: function() {
         window.performance && performance.mark && performance.mark('dorel-app.created');
-
+        
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
         Polymer.globalsManager.set('Dorel', {
           wpUrl: {}, // will be a string later (bug inside globalsManager)

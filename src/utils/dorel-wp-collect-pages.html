@@ -19,26 +19,11 @@
 
       properties: {
         /**
-         * `pagesData` this variable is reflected
-         * by two way binding in order to use it in your
-         * template.
-         */
-        pagesData: {
-          type: Object,
-          reflectToAttribute: true,
-          notify: true
-        },
-
-        /**
          * `wpUrl` of the url of the Wordpress instance
          */
         wpUrl: {
           type: String
         }
-      },
-
-      ready: function() {
-        Polymer.globalsManager.set('Dorel.collect.pages', []);
       },
 
       /** 
@@ -47,7 +32,9 @@
        */
       _pagesLoaded: function (data) {
         var pages = data.detail.response;
-        var collect = Polymer.globalsManager.get('Dorel.collect.pages');
+        if (!pages.length) return;
+
+        var collect = Polymer.globalsManager.get('Dorel.collect.pages') || [];
 
         // iterate over all pages items, alter its template
         pages.forEach(function(page) {
@@ -62,9 +49,6 @@
 
         // set the new collect obj
         Polymer.globalsManager.set('Dorel.collect.pages', collect);
-
-        // set the pagesData (two way data binding for the app)
-        this.pagesData = this.globals.Dorel.collect.pages;
       },
 
       /** 
@@ -73,9 +57,9 @@
        */
       _productsLoaded: function (data) {
         var products = data.detail.response;
-        var collect = Polymer.globalsManager.get('Dorel.collect.pages');
+        if (!products.length) return;
 
-        console.log(products);
+        var collect = Polymer.globalsManager.get('Dorel.collect.pages') || [];
 
         // iterate over all products items, alter its title and set the right url
         products.forEach(function(product) {
@@ -102,7 +86,7 @@
             var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
 
             // grab all inner values of the acfType
-            var acfLayout = product.acf[acfKey][0];
+            var acfLayout = product.acf.product_detail_builder[0][acfKey][0];
 
             // if the acfKey has a number we need to strip it
             if( hasNumber ) {
@@ -129,9 +113,6 @@
 
         // set the new collect obj
         Polymer.globalsManager.set('Dorel.collect.pages', products);
-
-        // set the pagesData (two way data binding for the app)
-        this.pagesData = this.globals.Dorel.collect.pages;
       }
     });
   </script>
