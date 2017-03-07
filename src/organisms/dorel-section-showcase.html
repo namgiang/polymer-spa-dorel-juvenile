@@ -142,7 +142,7 @@
                       <div id$="img-[[ galleryItem.id ]]" 
                         class$="showcase-gallery-overlay [[ _isCurrentImage(galleryItem, currentImage) ]]"
                         on-tap="updateImage"></div>
-                      <img src="[[ galleryItem.sizes.medium ]]" width="110" />
+                      <img src="[[ _hasImage(galleryItem.sizes.medium) ]]" width="110" />
                     </li>
                   </template>
                 </ul>
@@ -235,6 +235,10 @@
         if(typeof item === 'undefined' || item === null || item === '' ) return;
 
         return (currentItem.ID === item.ID) ? 'current' : '';
+      },
+
+      _hasImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/showcase/placeholder.jpg' : img;
       }
     });
   </script>

@@ -109,7 +109,7 @@
                 as="accessoiry">
 
                 <div class="col-xs-6 accessoiry-wrap">
-                  <img class="img-responsive" src="[[ accessoiry.accessoiry_image ]]" alt="" />
+                  <img class="img-responsive" src="[[ _hasBackgroundImage(accessoiry.accessoiry_image) ]]" alt="" width="185" height="185" />
                   <h4 class="column-headline">[[ accessoiry.accessoiry_title ]]</h4>
                 </div>
 
@@ -132,7 +132,7 @@
                   <div class="col-sm-12 col-md-6">
                     <div class="row">
                       <div class="col-xs-6 optional-img-wrap">
-                        <img class="img-responsive" src="[[ accessoiry.accessoiry_image ]]" alt="" />
+                        <img class="img-responsive" src="[[ _hasBackgroundImage(accessoiry.accessoiry_image) ]]" alt="" width="185" height="185" />
                       </div>
 
                       <div class="col-xs-6 optional-cta-wrap">
@@ -171,6 +171,10 @@
           type: Object
         }
 
+      },
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/related/placeholder.jpg' : img;
       }
     });
 

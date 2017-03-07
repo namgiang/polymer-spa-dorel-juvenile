@@ -47,7 +47,7 @@
         as="hero">
         <div class="section-hero">
           <div class="section-hero-wrap row"
-            style$="background-image: url([[ hero.background_image ]]); background-color: [[ hero.background_color ]];">
+            style$="background-image: url([[ _hasBackgroundImage(hero.background_image) ]]); background-color: [[ hero.background_color ]];">
 
             <template
               is="dom-if"
@@ -67,6 +67,7 @@
                 </div>
               </div>
             </template>
+          </div>
 
           </div>
         </div>
@@ -79,7 +80,11 @@
   <script>
 
     Polymer({
-      is: 'dorel-section-hero'
+      is: 'dorel-section-hero',
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/hero/placeholder.jpg' : img;
+      }
     });
 
   </script>
