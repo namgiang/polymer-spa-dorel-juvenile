@@ -1,10 +1,9 @@
 <dom-module id="dorel-navigation-main">
   <template strip-whitespace>
     <style include="theme-maxicosi-shared-styles  iron-flex iron-flex-alignment">
-
-    :host {
-      background-color: red;
-    }
+      :host {
+        background-color: red;
+      }
 
       #header-main-menu[screenMedium]  {
         margin: 0 var(--theme-component-space-inner);
@@ -16,21 +15,31 @@
         padding-bottom: 1rem;
         padding-right: 1rem;
       }
-
       dorel-tab a {
         color: var(--theme-primary-text-color);
         text-decoration: none;
         text-transform: capitalize;
       }
-
       dorel-tab a:hover {
         color: var(--theme-color-hover);
       }
-
       dorel-tab:not(:first-child) {
         padding-left: 1rem;
       }
-
+      dorel-tab .dropdown-menu {
+        background-color: #F5F5F5;
+        display: none;
+        left: 0;
+        top: 140px;
+        position: fixed;
+        width: 100%;
+      }
+      dorel-tab[opened] a {
+        background-color: #F5F5F5;
+      }
+      dorel-tab[opened] .dropdown-menu {
+        display: block !important;
+      }
     </style>
 
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
@@ -39,114 +48,91 @@
     <nav id="header-main-menu" role="navigation" screenMedium$="{{ screenMedium }}">
 
       <template 
-          is="dom-if" 
-          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        is="dom-if" 
+        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
 
-          <dorel-tabs
-            selected="[[ page ]]"
-            attr-for-selected="name">
-            <template 
-              is="dom-repeat" 
-              items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
-              as="menuItem" 
-              initial-count="4">
+        <dorel-tabs
+          selected="[[ page ]]"
+          attr-for-selected="name">
+          <template 
+            is="dom-repeat" 
+            items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
+            as="menuItem" 
+            initial-count="4">
 
-              <dorel-tab name="[[ menuItem.title ]]">
+            <dorel-tab name="[[ menuItem.title ]]"
+              opened$="[[ submenuOpened ]]">
 
-                <template
-                  is="dom-if"
-                  if="[[ menuItem.children.length ]]">
-                  <paper-dropdown-menu label="[[ menuItem.title ]]">
-                    <paper-listbox class="dropdown-content">
+              <template
+                is="dom-if"
+                if="[[ menuItem.children.length ]]">
+                
+                <a href="#" class="dropdown" 
+                  on-click="dropdownToggle">
+                  [[ menuItem.title ]] 
+                  <iron-icon class="menu-trigger-icon" icon="dorel-icons:expand-more"></iron-icon>
+                </a>
 
-                      <template
-                        is="dom-repeat"
-                        items="[[ menuItem.children ]]"
-                        as="child">
-                        <paper-item>
-                          <a
-                            href="[[ child.url ]]"
-                            title="">
-                            <!-- [[ child ]] -->
-                            [[ child.title ]]
-                          </a>
-                        </paper-item>
-                      </template>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-                </template>
+                <div class="dropdown-menu">
+                  <ul>
+                    <template
+                      is="dom-repeat"
+                      items="[[ menuItem.children ]]"
+                      as="child">
+                      
+                      <li>
+                        <a href="[[ child.url ]]">[[ child.title ]]</a>
+                      </li>
 
-                <template
-                  is="dom-if"
-                  if="[[ !menuItem.children.length ]]">
-                  <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                </template>
-              </dorel-tab>
+                    </template>
+                  </ul>
+                </div>
 
-            </template>
-          </dorel-tabs>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ !menuItem.children.length ]]">
+                <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+              </template>
+            </dorel-tab>
+
+          </template>
+        </dorel-tabs>
 
       </template>
-
-      <!-- template 
-        is="dom-if" 
-        if="[[ _shouldRenderTabs ]]">
-        <template 
-          is="dom-if" 
-          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-
-          <dorel-tabs
-            selected="[[ page ]]"
-            attr-for-selected="name">
-            <template 
-              is="dom-repeat" 
-              items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
-              as="menuItem" 
-              initial-count="4">
-
-              <dorel-tab name="[[ menuItem.title ]]">
-
-                <template
-                  is="dom-if"
-                  if="[[ menuItem.children.length ]]">
-
-                  <paper-dropdown-menu label="[[ menuItem.title ]]">
-                    <paper-listbox class="dropdown-content">
-
-                      <template
-                        is="dom-repeat"
-                        items="[[ menuItem.children ]]"
-                        as="child">
-                        <paper-item>
-                          <dorel-cta
-                            link="[[ child.url ]]">
-                            [[ child.title ]]
-                          </dorel-cta>
-                        </paper-item>
-                      </template>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-
-                </template>
-
-                <template
-                  is="dom-if"
-                  if="[[ !menuItem.children.length ]]">
-                  <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                </template>
-              </dorel-tab>
-
-            </template>
-          </dorel-tabs>
-
-        </template>
-      </template-->
     </nav>
 
   </template>
   <script>
     Polymer({
       is: 'dorel-navigation-main',
+
+      properties: {
+        submenuOpened: {
+          type: Boolean,
+          value: false  
+        }
+      },
+
+      /**
+       * When a dropdown item is clicked
+       */
+      dropdownToggle: function(e) {
+        e.preventDefault();
+
+        this.submenuOpened = !this.submenuOpened;
+
+        var iconAttr = (this.submenuOpened) ? 'dorel-icons:expand-less' : 'dorel-icons:expand-more';
+
+        // also change icon when icon itself is clicked
+        // then set attribute
+        if (Polymer.dom(e).rootTarget.classList.contains('menu-trigger-icon')) {
+          Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+        } else {
+          Polymer.dom(e).rootTarget.querySelector('.menu-trigger-icon').setAttribute('icon', iconAttr);
+        }
+      }
     });
   </script>
 </dom-module>
