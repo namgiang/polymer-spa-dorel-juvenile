@@ -32,8 +32,7 @@
     <template
       is="dom-if"
       if="{{ _isDefault(type) }}">
-      <a href="{{ url }}" class$="hvr-pop theme-cta theme-cta-{{ type }}"
-        on-click="clickEvent">
+      <a href$="{{ link }}" class$="hvr-pop theme-cta theme-cta-{{ type }}">
         <content></content>
       </a>
     </template>
@@ -41,8 +40,7 @@
     <template
       is="dom-if"
       if="{{ !_isDefault(type) }}">
-      <a href="{{ url }}" class$="hvr-pop theme-cta theme-cta-{{ type }}"
-        on-click="clickEvent">
+      <a href$="{{ link }}" class$="hvr-pop theme-cta theme-cta-{{ type }}">
         <content></content>
         <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
@@ -56,17 +54,11 @@
 
       properties: {
         link: {
-          type: String,
-          observer: '_linkChanged'
+          type: String
         },
         url: {
           type: String
         }
-      },
-
-      _linkChanged: function(newVal, oldVal) {
-        // Alter href
-        this.url = '/' + newVal.split('/')[3];
       },
 
       clickEvent: function(e) {
@@ -82,6 +74,8 @@
             handler: this['on-click']
           }
         });
+
+        return;
       },
 
       _isDefault: function(type) {

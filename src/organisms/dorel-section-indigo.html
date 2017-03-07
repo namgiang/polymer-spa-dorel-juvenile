@@ -4,10 +4,10 @@
       .section-indigo {
         margin-bottom: 50px;
         position: relative;
-        z-index: -1;
       }
       .indigo-column {
         border-radius: 20px;
+        min-height: 393px;
         max-height: 393px;
       }
       .indigo-column-overlay {
@@ -89,16 +89,12 @@
         <!-- product column -->
         <div class$="indigo-column col-xs-12 col-sm-12 col-md-7 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
           style$="
-            background-image: url([[ indigoData.product_column_background_image ]]); 
+            background-image: url([[ _hasBackgroundImage(indigoData.product_column_background_image) ]]); 
             background-color: [[ indigoData.product_column_background_color ]];">
           <div class="indigo-column-overlay"></div>
-
-          <template
-            is="dom-if"
-            if="[[ indigoData.product_column_image ]]">
-            <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
-              image="[[ indigoData.product_column_image ]]"></paper-card>
-          </template>
+ 
+          <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
+            image="[[ _hasPaperImage(indigoData.product_column_image) ]]"></paper-card>
 
         </div>
 
@@ -122,7 +118,9 @@
               if="[[ indigoData.content_column_cta_toggle ]]">
               <dorel-cta
                 type="[[ indigoData.content_column_cta_type ]]" 
-                link="[[ indigoData.content_column_cta_href ]]">[[ indigoData.content_column_cta_text ]]</dorel-cta>
+                link="[[ indigoData.content_column_cta_href ]]">
+                  [[ indigoData.content_column_cta_text ]]
+              </dorel-cta>
             </template>
           </div>
         </div>
@@ -143,6 +141,14 @@
 
       ready: function() {
         this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
+      },
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/indigo/placeholder.jpg' : img;
+      },
+
+      _hasPaperImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/indigo/placeholder.jpg' : img;
       }
     });
   </script>

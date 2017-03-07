@@ -31,6 +31,10 @@
       paper-submenu .menu-content {
         background-color: var(--theme-color-background-tertiary);
       }
+      
+      app-drawer {
+        z-index: 1000;
+      }
     </style>
 
     <!-- static beginning AND end media queries -->
@@ -168,7 +172,8 @@
                     <template
                       is="dom-if"
                       if="[[ !menuItem.children.length ]]">
-                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                        on-click="menuClick">
                         <paper-item>[[ menuItem.title ]]</paper-item>
                       </a>
                     </template>
@@ -188,7 +193,8 @@
                             is="dom-repeat"
                             items="[[ menuItem.children ]]"
                             as="child">
-                            <a href="[[ child.url ]]" title="[[ child.title ]]">
+                            <a href="[[ convertUrl(child.url) ]]" title="[[ child.title ]]"
+                              on-click="menuClick">
                               <paper-item>[[ child.title ]]</paper-item>
                             </a>
                           </template>
@@ -245,6 +251,7 @@
             {"text": "American Samoa", "value": "AS"},
             {"text": "Arizona", "value": "AZ"}
           ]
+
         },
 
         _shouldShowTabs: {
@@ -259,6 +266,15 @@
           computed: '_computeShouldRenderDrawer(loadComplete)'
         }
 
+      },
+
+      convertUrl: function(url) {
+        return '/' + url.split('/')[3];
+      },
+
+      menuClick: function() {
+        this.drawerOpened = false;
+        return;
       },
 
       _toggleDrawer: function() {
