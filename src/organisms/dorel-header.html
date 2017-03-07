@@ -2,8 +2,14 @@
   <template>
     <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
 
-      .header-item-logo {
-        padding: var(--theme-component-space-inner);
+      /* 
+       * header-top
+       * @description: header-top is the grey top bar that holds the mobile
+       * menu button and support and cart buttons on desktop
+       */
+      .header-top {
+        background-color: var(--theme-color-background-tertiary);
+        padding: 5px;
       }
 
       /* 
@@ -55,19 +61,26 @@
         @apply(--layout-wrap);
         @apply(--layout-around-justified);
       }
-      /*header[screenMedium] .header-item-logo {  }*/
+      header[screenMedium] .header-item-logo {
+        order: 1;
+      }
       header[screenMedium] .header-item-menu {
         @apply(--layout-wrap);
+        order: 4;
       }
       header[screenMedium] .header-item-user-tools {
         @apply(--layout-wrap);
+        order: 2;
       }
+      header[screenMedium] .header-item-search-drawer {
+        order: 3;
+      }
+
       /* 
        * screen medium up:
        */
       header[screenMediumUp] .header-item-search-drawer {
         width: 100%;
-        /*@apply(--layout-flex);*/
       }
 
       /* 
@@ -90,32 +103,10 @@
         @apply(--layout-justified);
       }
 
-      /* 
-       * header-top
-       * @description: header-top is the grey top bar that holds the mobile
-       * menu button or support and cart buttons on desktop
-       */
-      .header-top {
-        background-color: var(--theme-color-background-tertiary);
-        padding: 5px;
-      }
-      .container-logo[screenSmall] {
-        height: 140px;
-      }
-      .menu-spacing {
-        margin-left: var(--theme-component-space-inner);
-      }
-      .mobile-menu-label {
-        line-height: 2rem;
-        font-size: var(--theme-size-ui);
-        @apply --theme-ui;
-      }
-      .paper-icn-big {
-        width: calc(32px + 15px); /* var(--theme-icon-size-big) */
-        height: calc(32px + 15px); /* var(--theme-icon-size-big) */
-      }
-      paper-submenu .menu-content {
-        background-color: var(--theme-color-background-tertiary);
+      /* spacing in menu */
+      .header-item-logo,
+      header[screenMediumUp] .header-item-user-tools {
+        padding: var(--theme-component-space-inner);
       }
     </style>
 
