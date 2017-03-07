@@ -117,6 +117,10 @@
       paper-submenu .menu-content {
         background-color: var(--theme-color-background-tertiary);
       }
+      
+      app-drawer {
+        z-index: 1000;
+      }
     </style>
 
     <!-- static beginning AND end media queries -->
@@ -184,6 +188,7 @@
       is: 'dorel-header',
 
       properties: {
+
         loadComplete: {
           type: Boolean
         },
@@ -221,8 +226,22 @@
             {"text": "American Samoa", "value": "AS"},
             {"text": "Arizona", "value": "AZ"}
           ]
+
         },
 
+      },
+
+      convertUrl: function(url) {
+        return '/' + url.split('/')[3];
+      },
+
+      menuClick: function() {
+        this.drawerOpened = false;
+        return;
+      },
+
+      _toggleDrawer: function() {
+        this.drawerOpened = !this.drawerOpened;
       },
 
       _toggleSubmenuIcon: function(e) {

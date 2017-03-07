@@ -90,7 +90,7 @@
                 
                 <div class="simple-slider-slide"
                   style$="
-                    background-image: url([[ slide.slide_image ]]);"></div>
+                    background-image: url([[ _hasBackgroundImage(slide.slide_image) ]]);"></div>
 
               </template>
             </simple-slider>
@@ -136,6 +136,10 @@
 
       nextSlide: function(e) {
         this.$$('simple-slider').next();
+      },
+
+      _hasBackgroundImage: function(img) {
+        return (typeof img === 'undefined' || img === '' || !img) ? 'assets/images/placeholders/slideshow/placeholder.jpg' : img;
       }
     });
   </script>
