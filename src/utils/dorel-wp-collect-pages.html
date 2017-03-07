@@ -5,6 +5,12 @@
       url="[[ wpUrl ]]/wp/v2/pages" 
       handle-as="json"
       on-response="_pagesLoaded"></iron-ajax>
+
+    <iron-ajax 
+      auto 
+      url="[[ wpUrl ]]/wp/v2/products" 
+      handle-as="json"
+      on-response="_productsLoaded"></iron-ajax>
   </template>
 
   <script>
@@ -12,17 +18,6 @@
       is: 'dorel-wp-collect-pages',
 
       properties: {
-        /**
-         * `pagesData` this variable is reflected
-         * by two way binding in order to use it in your
-         * template.
-         */
-        pagesData: {
-          type: Object,
-          reflectToAttribute: true,
-          notify: true
-        },
-
         /**
          * `wpUrl` of the url of the Wordpress instance
          */
@@ -37,20 +32,87 @@
        */
       _pagesLoaded: function (data) {
         var pages = data.detail.response;
+        if (!pages.length) return;
 
-        // iterate over all menu items, alter its title and set the right url
+        var collect = Polymer.globalsManager.get('Dorel.collect.pages') || [];
+
+        // iterate over all pages items, alter its template
         pages.forEach(function(page) {
           var template = page.template.slice(0, -4);
           var pageName = template.replace('page-','');
 
           page.template = pageName;
-        });
-        
-        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
-        Polymer.globalsManager.set('Dorel.collect.pages', pages);
 
-        // set the pagesData (two way data binding for the app)
-        this.pagesData = this.globals.Dorel.collect.pages;
+          // extend the collect pages object with the new page
+          collect.push(page);
+        });
+
+        // set the new collect obj
+        Polymer.globalsManager.set('Dorel.collect.pages', collect);
+      },
+
+      /** 
+       * @name _productsLoaded
+       * @description process the retrieved products
+       */
+      _productsLoaded: function (data) {
+        var products = data.detail.response;
+        if (!products.length) return;
+
+        var collect = Polymer.globalsManager.get('Dorel.collect.pages') || [];
+
+        // iterate over all products items, alter its title and set the right url
+        products.forEach(function(product) {
+          /**
+           * Assign a template to this taxonomy this is used by
+           * the template switcher (dorel-template.html)
+           */
+          product.template = 'product-detail';
+
+          /**
+           * We will alter the acf object to comply to page-builder
+           */ 
+          var acfObj = { page_builder: [] };
+          
+          // run throught the normal response acf
+          for (var acfKey in product.acf.product_detail_builder[0]) {
+            /**
+             * TODO: refactor! 
+             * For duplicated components we need to suffix them by a number
+             * when placing them in the page_builder we need to strip this number
+             * because we delegate them to the page builder element
+             */
+            var keyArr = acfKey.split('_');
+            var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
+
+            // grab all inner values of the acfType
+            var acfLayout = product.acf.product_detail_builder[0][acfKey][0];
+
+            // if the acfKey has a number we need to strip it
+            if( hasNumber ) {
+              keyArr.pop();
+              acfLayout.acf_fc_layout = keyArr.join('_');
+
+              // place the new acf_fc_layout in the page_builder array
+              acfObj.page_builder.push(acfLayout);
+            } else {
+              // set the new acf_fc_layout variable to the key
+              acfLayout.acf_fc_layout = acfKey;
+              
+              // place the new acf_fc_layout in the page_builder array
+              acfObj.page_builder.push(acfLayout);
+            }
+          }
+
+          // replace the old acf object with the new formed acf
+          product.acf = acfObj;
+
+          // extend the collect pages with the new product page
+          collect.push(product);
+        });
+
+        // set the new collect obj
+        Polymer.globalsManager.set('Dorel.collect.pages', products);
       }
     });
   </script>
