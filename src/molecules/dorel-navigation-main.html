@@ -1,11 +1,13 @@
 <dom-module id="dorel-navigation-main">
   <template strip-whitespace>
-    <style include="theme-maxicosi-shared-styles  iron-flex iron-flex-alignment">
+    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
       app-drawer {
         z-index: 1000;
       }
-      app-drawer paper-menu {
-        margin-top: 2.6rem;
+      .menu-spacer-top {
+        height: 2.6rem;
+        width: 100%;
+        display: flex;
       }
       dorel-tab {
         padding-top: 1rem;
@@ -37,6 +39,9 @@
       dorel-tab[opened] .dropdown-menu {
         display: block !important;
       }
+      paper-submenu .menu-content {
+        background-color: var(--theme-color-background-tertiary);
+      }
     </style>
 
     <iron-media-query query="(max-width : 767px)"
@@ -47,6 +52,8 @@
       query-matches="{{ screenMediumUp }}"></iron-media-query>
 
     <app-drawer opened="{{ mobileMenuOpened }}" swipe-open tabindex="0">
+      <div class="menu-spacer-top">
+      </div>
       <template 
         is="dom-if" 
         if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">

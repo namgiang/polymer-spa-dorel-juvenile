@@ -1,9 +1,9 @@
 <dom-module id="dorel-user-tools">
   <template strip-whitespace>
-    <style is="custom-style">
+    <style is="custom-style" include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
       .icn-big {
-        --iron-icon-height: 32px; /* var(--theme-icon-size-big) */
-        --iron-icon-width: 32px; /* var(--theme-icon-size-big) */
+        --iron-icon-height: 2rem; /* var(--theme-icon-size-big) */
+        --iron-icon-width: 2rem; /* var(--theme-icon-size-big) */
       }
       .left-spacing {
         margin-left: .5rem; /* var(--theme-molecule-space-inner) */
@@ -14,13 +14,32 @@
       .icon-toggle-menu {
         z-index: 1001;
       }
+      .centered {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
       .active {
-        background-color: red;
+        color: white; /* var(--theme-white) */
+        background-color: var(--theme-brand-color);
+      }
+      .active:after {
+        content: '';
+        background-color: var(--theme-brand-color);
+        position: absolute;
+        margin-top: 23px;
+        height: 15px; 
+        width: 100%;
+      }
+      iron-icon[screenMediumUp].active:after {
+        margin-top: 38px;
+        height: 45px;
       }
     </style>
 
     <iron-media-query query="(max-width : 767px)"
       query-matches="{{ screenSmall }}"></iron-media-query>
+      <iron-media-query query="(min-width : 768px)"
+      query-matches="{{ screenMediumUp }}"></iron-media-query>
 
 
     <!-- only show hamburger menu on small screens -->
@@ -35,11 +54,12 @@
       </div>
     </template>
 
-    <div>
+    <div class="centered">
       <iron-icon 
         icon="dorel-icons:search" 
         class="icn-big icn-trigger icn-search-section-trigger"
-        on-click="_toggleSearch">
+        on-click="_toggleSearch"
+        screenMediumUp$="{{screenMediumUp}}">
       </iron-icon>
       <iron-icon 
         icon="dorel-icons:shopping-cart" 
