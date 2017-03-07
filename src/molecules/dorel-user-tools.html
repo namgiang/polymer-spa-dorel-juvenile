@@ -11,6 +11,9 @@
       .icn-trigger:hover {
         cursor: pointer;
       }
+      .icon-toggle-menu {
+        z-index: 1001;
+      }
       .active {
         background-color: red;
       }
@@ -24,8 +27,8 @@
     <template is="dom-if" if="{{ screenSmall }}">
       <div>
         <paper-icon-button
-          class="paper-icn-big"
-          icon="menu"
+          class="paper-icn-big icon-toggle-menu"
+          icon="dorel-icons:menu"
           on-click="_toggleMobileMenu"
           aria-label="menu">
         </paper-icon-button>
@@ -65,10 +68,14 @@
 
       },
 
-      _toggleMobileMenu: function() {
+      _toggleMobileMenu: function(e) {
         this.mobileMenuOpened = !this.mobileMenuOpened;
 
-        
+        var iconAttr = (this.mobileMenuOpened) ? 'dorel-icons:close' : 'dorel-icons:menu';
+
+        console.log(Polymer.dom(e).rootTarget);
+
+        Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
       },
 
       _toggleSearch: function(e) {

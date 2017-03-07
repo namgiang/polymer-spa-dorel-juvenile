@@ -4,6 +4,9 @@
       app-drawer {
         z-index: 1000;
       }
+      app-drawer paper-menu {
+        margin-top: 2.6rem;
+      }
       dorel-tab {
         padding-top: 1rem;
         padding-bottom: 1rem;
@@ -44,73 +47,58 @@
       query-matches="{{ screenMediumUp }}"></iron-media-query>
 
     <app-drawer opened="{{ mobileMenuOpened }}" swipe-open tabindex="0">
-      <div class="layout vertical">
-        <div class="layout horizontal justified center header-top">
-          <div>
-            <!--paper-icon-button
-              class="paper-icn-big"
-              icon="close"
-              on-click="_toggleDrawer"
-              aria-label="close-menu"
-              style="">
-            </paper-icon-button-->
-          </div>
-        </div>
-        <div>
-          <template 
-            is="dom-if" 
-            if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-            <iron-selector role="navigation" class="drawer-list" 
-              selected="[[ page ]]" 
-              attr-for-selected="name">
-              <paper-menu>
+      
+      <template 
+        is="dom-if" 
+        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        <iron-selector role="navigation" class="drawer-list" 
+          selected="[[ page ]]" 
+          attr-for-selected="name">
+          <paper-menu>
+            <template 
+              is="dom-repeat" 
+              items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+              as="menuItem" 
+              initial-count="4">
+              
+              <!-- if not children -->
+              <template
+                is="dom-if"
+                if="[[ !menuItem.children.length ]]">
+                <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                  <paper-item>[[ menuItem.title ]]</paper-item>
+                </a>
+              </template>
 
-                <template 
-                  is="dom-repeat" 
-                  items="{{ globals.Dorel.collect.menus.main_menu.items }}"
-                  as="menuItem" 
-                  initial-count="4">
-                  
-                  <!-- if not children -->
-                  <template
-                    is="dom-if"
-                    if="[[ !menuItem.children.length ]]">
-                    <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
-                      <paper-item>[[ menuItem.title ]]</paper-item>
-                    </a>
-                  </template>
+              <!-- if has children (submenu) -->
+              <template
+                is="dom-if"
+                if="[[ menuItem.children.length ]]">
 
-                  <!-- if has children (submenu) -->
-                  <template
-                    is="dom-if"
-                    if="[[ menuItem.children.length ]]">
+                <paper-submenu submenu-opened$="{{ subMenuOpened }}">
+                  <paper-item class="menu-trigger layout horizontal justified" on-click="_toggleSubmenuIcon">
+                    [[ menuItem.title ]] 
+                    <iron-icon icon="dorel-icons:expand-more" class="menu-trigger-icon"></iron-icon>
+                  </paper-item>
+                  <paper-menu class="menu-content">
+                    <template
+                      is="dom-repeat"
+                      items="[[ menuItem.children ]]"
+                      as="child">
+                      <a href="[[ child.url ]]" title="[[ child.title ]]">
+                        <paper-item>[[ child.title ]]</paper-item>
+                      </a>
+                    </template>
+                  </paper-menu>
+                </paper-submenu>
+              </template>
+            </template>
 
-                    <paper-submenu submenu-opened$="{{ subMenuOpened }}">
-                      <paper-item class="menu-trigger layout horizontal justified" on-click="_toggleSubmenuIcon">
-                        [[ menuItem.title ]] 
-                        <iron-icon icon="dorel-icons:expand-more" class="menu-trigger-icon"></iron-icon>
-                      </paper-item>
-                      <paper-menu class="menu-content">
-                        <template
-                          is="dom-repeat"
-                          items="[[ menuItem.children ]]"
-                          as="child">
-                          <a href="[[ child.url ]]" title="[[ child.title ]]">
-                            <paper-item>[[ child.title ]]</paper-item>
-                          </a>
-                        </template>
-                      </paper-menu>
-                    </paper-submenu>
-                  </template>
-                </template>
-
-                <paper-item>language selector</paper-item>
-                <paper-item>support</paper-item>
-              </paper-menu>
-            </iron-selector>
-          </template>
-        </div>
-      </div>
+            <paper-item>language selector</paper-item>
+            <paper-item>support</paper-item>
+          </paper-menu>
+        </iron-selector>
+      </template>
 
     </app-drawer>
 
