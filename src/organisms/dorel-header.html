@@ -1,6 +1,95 @@
 <dom-module id="dorel-header">
   <template>
     <style is="custom-style" include="polymer-bootstrap-min theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+
+      .header-item-logo {
+        padding: var(--theme-component-space-inner);
+      }
+
+      /* 
+       * screen small order:        
+       *
+      1. menu (in sidebar)
+      2. user tools (right justified)
+      3. logo (center aligned)
+      */
+      /*header[screenSmall] .header-logo-and-user-tools {
+        order: 1;
+      }*/
+      header[screenSmall] .header-item-logo {
+        order: 4;
+        /* center the logo */
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+      header[screenSmall] .header-item-menu {
+        order: 1;
+      }
+      header[screenSmall] .header-item-user-tools {
+        order: 2;
+      }
+      header[screenSmall] .header-item-search-drawer {
+        order: 3;
+      }
+      header[screenSmall] .header-items {
+        @apply(--layout-vertical);
+        @apply(--layout-end-justified);
+      }
+      header[screenSmall] dorel-user-tools {
+        background-color: var(--theme-color-background-tertiary);
+        padding: 5px;
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+
+      /* 
+       * screen medium order:        
+       *
+      1. logo (left aligned)
+      2. user tools(right justified)
+      3. menu (full width)
+      */
+      header[screenMedium] .header-items {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-wrap);
+        @apply(--layout-around-justified);
+      }
+      /*header[screenMedium] .header-item-logo {  }*/
+      header[screenMedium] .header-item-menu {
+        @apply(--layout-wrap);
+      }
+      header[screenMedium] .header-item-user-tools {
+        @apply(--layout-wrap);
+      }
+      /* 
+       * screen medium up:
+       */
+      header[screenMediumUp] .header-item-search-drawer {
+        width: 100%;
+        /*@apply(--layout-flex);*/
+      }
+
+      /* 
+       * screen large up order:
+       *
+      1. logo (left aligned)
+      2. menu (stacked left)
+      3. user tools (right justified)
+      */
+
+      header[screenLargeUp] .header-items {
+        /* layout horizontal header-main */
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        @apply(--layout-wrap);
+        @apply(--layout-center);
+      }
+      header[screenLargeUp] .header-contain-main-elements {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+
       /* 
        * header-top
        * @description: header-top is the grey top bar that holds the mobile
@@ -12,9 +101,6 @@
       }
       .container-logo[screenSmall] {
         height: 140px;
-      }
-      .header-main {
-        padding: var(--theme-component-space-inner);
       }
       .menu-spacing {
         margin-left: var(--theme-component-space-inner);
@@ -51,7 +137,11 @@
     <!--iron-media-query query="(min-width : 1200px)" 
       query-matches="{{ screenExtraLargeUp }}"></iron-media-query-->
 
-    <header>
+    <header 
+      screenSmall$="{{ screenSmall }}"
+      screenMedium$="{{ screenMedium }}"
+      screenMediumUp$="{{ screenMediumUp }}"
+      screenLargeUp$="{{ screenLargeUp }}">
 
       <template is="dom-if" if="{{ screenMediumUp }}">
         <div class="layout horizontal end-justified header-top">
@@ -59,156 +149,31 @@
         </div>
       </template>
 
-      <!-- only small screen header -->
-      <template is="dom-if" if="{{ screenSmall }}">
-        <div class="layout vertical">
-          <div class="layout horizontal justified center header-top">
-            <div>
-              <paper-icon-button
-                class="paper-icn-big"
-                icon="menu"
-                on-click="_toggleDrawer"
-                aria-label="menu"
-                style="">
-              </paper-icon-button>
-              <!--span class="mobile-menu-label">Menu</span-->
-            </div>
-            <div>
-              <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
-            </div>
-          </div>
-          <div class="layout horizontal center-center container-logo" screenSmall$="{{screenSmall}}">
-            <div>
-              <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
-                <dorel-logo></dorel-logo>
-              </a>
-            </div>
-          </div>
-        </div>
-      </template>
+      <div class="header-items">
 
-      <!-- only medium screen header -->
-      <template is="dom-if" if="{{ screenMedium }}">
-        <div class="layout vertical wrap">
-          <div>
-            <div class="layout horizontal justified header-main">
-              <div>
-                <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
-                  <dorel-logo></dorel-logo>
-                </a>
-              </div>
-              <div class="horizontal layout center">
-                <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
-              </div>
-            </div><!-- END horizontal wrap --> 
-          </div>
-          <div>
-            <dorel-navigation-main></dorel-navigation-main>
-          </div>
-        </div>
-      </template>
-
-      <!-- only large screen up header -->
-      <template is="dom-if" if="{{ screenLargeUp }}">
-        <div class="layout horizontal header-main">
+        <div class="header-item header-item-logo">
           <div>
             <a href="/" id="header-main-logo" aria-label="Maxi Cosi">
               <dorel-logo></dorel-logo>
             </a>
           </div>
-          <div class="flex layout horizontal center menu-spacing">
-            <div>
-              <dorel-navigation-main></dorel-navigation-main>
-            </div>
-          </div>
-          <div class="layout horizontal center">
-            <div>
-              <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
-            </div>
-          </div>
         </div>
-      </template>
+
+        <div class="header-item header-item-menu">
+          <dorel-navigation-main></dorel-navigation-main>
+        </div>
+
+        <div class="header-item header-item-user-tools">
+          <dorel-user-tools search-opened="{{ searchOpened }}"></dorel-user-tools>
+        </div>
+
+        <div class="header-item header-item-search-drawer">
+          <dorel-search-drawer search-opened="{{ searchOpened }}"></dorel-search-drawer>
+        </div>
+
+      </div>
 
     </header>
-
-    <!-- Lazy-create the drawer for small screen sizes. -->
-    <template 
-      is="dom-if" 
-      if="[[ _shouldRenderDrawer ]]">
-      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
-
-        <div class="layout vertical">
-          <div class="layout horizontal justified center header-top">
-            <div>
-              <paper-icon-button
-                class="paper-icn-big"
-                icon="close"
-                on-click="_toggleDrawer"
-                aria-label="close-menu"
-                style="">
-              </paper-icon-button>
-            </div>
-          </div>
-          <div>
-            <template 
-              is="dom-if" 
-              if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-              <iron-selector role="navigation" class="drawer-list" 
-                selected="[[ page ]]" 
-                attr-for-selected="name">
-                <paper-menu>
-
-                  <template 
-                    is="dom-repeat" 
-                    items="{{ globals.Dorel.collect.menus.main_menu.items }}"
-                    as="menuItem" 
-                    initial-count="4">
-                    
-                    <!-- if not children -->
-                    <template
-                      is="dom-if"
-                      if="[[ !menuItem.children.length ]]">
-                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
-                        <paper-item>[[ menuItem.title ]]</paper-item>
-                      </a>
-                    </template>
-
-                    <!-- if has children (submenu) -->
-                    <template
-                      is="dom-if"
-                      if="[[ menuItem.children.length ]]">
-
-                      <paper-submenu submenu-opened$="{{ subMenuOpened }}">
-                        <paper-item class="menu-trigger layout horizontal justified" on-click="_toggleSubmenuIcon">
-                          [[ menuItem.title ]] 
-                          <iron-icon icon="dorel-icons:expand-more" class="menu-trigger-icon"></iron-icon>
-                        </paper-item>
-                        <paper-menu class="menu-content">
-                          <template
-                            is="dom-repeat"
-                            items="[[ menuItem.children ]]"
-                            as="child">
-                            <a href="[[ child.url ]]" title="[[ child.title ]]">
-                              <paper-item>[[ child.title ]]</paper-item>
-                            </a>
-                          </template>
-                        </paper-menu>
-                      </paper-submenu>
-                    </template>
-                  </template>
-
-                  <paper-item>language selector</paper-item>
-                  <paper-item>support</paper-item>
-                </paper-menu>
-              </iron-selector>
-            </template>
-          </div>
-        </div>
-
-      </app-drawer>
-    </template>
-
-    <dorel-search-drawer search-opened="{{ searchOpened }}"></dorel-search-drawer>
 
   </template>
 

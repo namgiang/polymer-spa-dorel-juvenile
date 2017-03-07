@@ -6,6 +6,12 @@
        */
       .section-search-drawer {
         background-color: var(--theme-brand-color);
+        height: 0;
+        display: none;
+      }
+      .section-search-drawer[opened] {
+        height: auto;
+        display: block;
       }
       .search-container {
         padding-top: var(--theme-component-space-inner);
@@ -39,8 +45,12 @@
       }
     </style>
 
-    <section class="section-search-drawer" id="section-search-drawer" 
-      opened$="{{ searchOpened }}">
+    <section 
+      class="section-search-drawer" 
+      id="sectionSearchDrawer" 
+      opened$="{{ searchOpened }}"
+      animation="slide-down-animation">
+
       <div class="layout horizontal center-justified">
 
         <div class="search-container" 
@@ -75,6 +85,7 @@
 
   <script>
     Polymer({
+
       is: 'dorel-search-drawer',
 
       properties: {
@@ -82,9 +93,10 @@
         // Is exposed in host element
         searchOpened: {
           type: Boolean
-        }
-        
+        },
+
       }
+
     });
   </script>
 </dom-module>

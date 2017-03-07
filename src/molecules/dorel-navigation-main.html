@@ -8,7 +8,6 @@
 
       #header-main-menu[screenMedium]  {
         margin: 0 var(--theme-component-space-inner);
-        border-top: 2px solid var(--theme-color-background);
       }
 
       dorel-tab {
@@ -35,56 +34,151 @@
 
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
       query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px)"
+      query-matches="{{ screenMediumUp }}"></iron-media-query>
 
-    <nav id="header-main-menu" role="navigation" screenMedium$="{{ screenMedium }}">
+    <!-- 
+      Lazy-create the drawer for small screen sizes. 
 
-      <template 
-          is="dom-if" 
-          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+      TODO: integrate the drawer for mobile only
 
-          <dorel-tabs
-            selected="[[ page ]]"
-            attr-for-selected="name">
+    -->
+    <template 
+      is="dom-if" 
+      if="[[ _shouldRenderDrawer ]]">
+      <app-drawer opened="{{ drawerOpened }}" swipe-open tabindex="0">
+
+        <div class="layout vertical">
+          <div class="layout horizontal justified center header-top">
+            <div>
+              <paper-icon-button
+                class="paper-icn-big"
+                icon="close"
+                on-click="_toggleDrawer"
+                aria-label="close-menu"
+                style="">
+              </paper-icon-button>
+            </div>
+          </div>
+          <div>
             <template 
-              is="dom-repeat" 
-              items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
-              as="menuItem" 
-              initial-count="4">
+              is="dom-if" 
+              if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+              <iron-selector role="navigation" class="drawer-list" 
+                selected="[[ page ]]" 
+                attr-for-selected="name">
+                <paper-menu>
 
-              <dorel-tab name="[[ menuItem.title ]]">
+                  <template 
+                    is="dom-repeat" 
+                    items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+                    as="menuItem" 
+                    initial-count="4">
+                    
+                    <!-- if not children -->
+                    <template
+                      is="dom-if"
+                      if="[[ !menuItem.children.length ]]">
+                      <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                        <paper-item>[[ menuItem.title ]]</paper-item>
+                      </a>
+                    </template>
 
-                <template
-                  is="dom-if"
-                  if="[[ menuItem.children.length ]]">
-                  <paper-dropdown-menu label="[[ menuItem.title ]]">
-                    <paper-listbox class="dropdown-content">
+                    <!-- if has children (submenu) -->
+                    <template
+                      is="dom-if"
+                      if="[[ menuItem.children.length ]]">
 
-                      <template
-                        is="dom-repeat"
-                        items="[[ menuItem.children ]]"
-                        as="child">
-                        <paper-item>
-                          <a
-                            href="[[ child.url ]]"
-                            title="">
-                            <!-- [[ child ]] -->
-                            [[ child.title ]]
-                          </a>
+                      <paper-submenu submenu-opened$="{{ subMenuOpened }}">
+                        <paper-item class="menu-trigger layout horizontal justified" on-click="_toggleSubmenuIcon">
+                          [[ menuItem.title ]] 
+                          <iron-icon icon="dorel-icons:expand-more" class="menu-trigger-icon"></iron-icon>
                         </paper-item>
-                      </template>
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-                </template>
+                        <paper-menu class="menu-content">
+                          <template
+                            is="dom-repeat"
+                            items="[[ menuItem.children ]]"
+                            as="child">
+                            <a href="[[ child.url ]]" title="[[ child.title ]]">
+                              <paper-item>[[ child.title ]]</paper-item>
+                            </a>
+                          </template>
+                        </paper-menu>
+                      </paper-submenu>
+                    </template>
+                  </template>
 
-                <template
-                  is="dom-if"
-                  if="[[ !menuItem.children.length ]]">
-                  <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
-                </template>
-              </dorel-tab>
-
+                  <paper-item>language selector</paper-item>
+                  <paper-item>support</paper-item>
+                </paper-menu>
+              </iron-selector>
             </template>
-          </dorel-tabs>
+          </div>
+        </div>
+
+      </app-drawer>
+    </template>
+
+
+    <!--
+    Menu for medium and larger screens
+
+    TODO: revamp the menu structure so that it's not only
+    for medium up only, but also for smaller screens
+    -->
+
+    <template is="dom-if" if="{{ screenMediumUp }}">
+
+      <nav id="header-main-menu" role="navigation" screenMedium$="{{ screenMedium }}">
+
+        <template 
+            is="dom-if" 
+            if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+
+            <dorel-tabs
+              selected="[[ page ]]"
+              attr-for-selected="name">
+              <template 
+                is="dom-repeat" 
+                items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
+                as="menuItem" 
+                initial-count="4">
+
+                <dorel-tab name="[[ menuItem.title ]]">
+
+                  <template
+                    is="dom-if"
+                    if="[[ menuItem.children.length ]]">
+                    <paper-dropdown-menu label="[[ menuItem.title ]]">
+                      <paper-listbox class="dropdown-content">
+                        <template
+                          is="dom-repeat"
+                          items="[[ menuItem.children ]]"
+                          as="child">
+                          <paper-item>
+                            <a
+                              href="[[ child.url ]]"
+                              title="">
+                              <!-- [[ child ]] -->
+                              [[ child.title ]]
+                            </a>
+                          </paper-item>
+                        </template>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ !menuItem.children.length ]]">
+                    <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                  </template>
+                </dorel-tab>
+
+              </template>
+            </dorel-tabs>
+
+        </template>
 
       </template>
 

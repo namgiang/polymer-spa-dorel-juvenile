@@ -1,6 +1,6 @@
 <dom-module id="dorel-user-tools">
   <template strip-whitespace>
-    <style>
+    <style is="custom-style">
       .icn-big {
         --iron-icon-height: 32px; /* var(--theme-icon-size-big) */
         --iron-icon-width: 32px; /* var(--theme-icon-size-big) */
@@ -11,17 +11,39 @@
       .icn-trigger:hover {
         cursor: pointer;
       }
+      .active {
+        background-color: red;
+      }
     </style>
 
-    <iron-icon 
-      icon="dorel-icons:search" 
-      class="icn-big icn-trigger icn-search-section-trigger"
-      on-click="_toggleSearch">
+    <iron-media-query query="(max-width : 767px)"
+      query-matches="{{ screenSmall }}"></iron-media-query>
+
+
+    <!-- only show hamburger menu on small screens -->
+    <template is="dom-if" if="{{ screenSmall }}">
+      <div>
+        <paper-icon-button
+          class="paper-icn-big"
+          icon="menu"
+          on-click="_toggleDrawer"
+          aria-label="menu"
+          style="">
+        </paper-icon-button>
+      </div>
+    </template>
+
+    <div>
+      <iron-icon 
+        icon="dorel-icons:search" 
+        class="icn-big icn-trigger icn-search-section-trigger"
+        on-click="_toggleSearch">
       </iron-icon>
-    <iron-icon 
-      icon="dorel-icons:shopping-cart" 
-      class="icn-big left-spacing">
+      <iron-icon 
+        icon="dorel-icons:shopping-cart" 
+        class="icn-big left-spacing">
       </iron-icon>
+    </div>
 
   </template>
   <script>
@@ -45,6 +67,13 @@
 
         // set icon in attribute
         Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
+
+        if (this.searchOpened && !Polymer.dom(e).rootTarget.classList.contains('active') ) { 
+          Polymer.dom(e).rootTarget.classList.add('active'); 
+        } else { 
+          Polymer.dom(e).rootTarget.classList.remove('active');
+        };
+
       }
 
     });
