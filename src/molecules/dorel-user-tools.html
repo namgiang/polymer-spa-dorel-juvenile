@@ -45,22 +45,52 @@
     <!-- only show hamburger menu on small screens -->
     <template is="dom-if" if="{{ screenSmall }}">
       <div>
-        <paper-icon-button
-          class="paper-icn-big icon-toggle-menu"
-          icon="dorel-icons:menu"
-          on-click="_toggleMobileMenu"
-          aria-label="menu">
-        </paper-icon-button>
+        <template
+          is="dom-if"
+          if="{{ !mobileMenuOpened }}">
+          <paper-icon-button
+            class="paper-icn-big icon-toggle-menu"
+            icon="dorel-icons:menu"
+            on-click="_toggleMobileMenu"
+            aria-label="menu">
+          </paper-icon-button>
+        </template>
+
+        <template
+          is="dom-if"
+          if="{{ mobileMenuOpened }}">
+          <paper-icon-button
+            class="paper-icn-big icon-toggle-menu"
+            icon="dorel-icons:close"
+            on-click="_toggleMobileMenu"
+            aria-label="menu">
+          </paper-icon-button>
+        </template>
       </div>
     </template>
 
     <div class="centered">
-      <iron-icon 
-        icon="dorel-icons:search" 
-        class="icn-big icn-trigger icn-search-section-trigger"
-        on-click="_toggleSearch"
-        screenMediumUp$="{{screenMediumUp}}">
-      </iron-icon>
+      <template
+        is="dom-if"
+        if="{{ !searchOpened }}">
+        <iron-icon 
+          icon="dorel-icons:search" 
+          class="icn-big icn-trigger icn-search-section-trigger"
+          on-click="_toggleSearch"
+          screenMediumUp$="{{screenMediumUp}}">
+        </iron-icon>
+      </template>
+
+      <template
+        is="dom-if"
+        if="{{ searchOpened }}">
+        <iron-icon 
+          icon="dorel-icons:close" 
+          class="icn-big icn-trigger icn-search-section-trigger active"
+          on-click="_toggleSearch"
+          screenMediumUp$="{{screenMediumUp}}">
+        </iron-icon>
+      </template>
       <iron-icon 
         icon="dorel-icons:shopping-cart" 
         class="icn-big left-spacing">
@@ -84,36 +114,27 @@
           type: Boolean,
           value: false,
           notify: true
+        },
+
+        subMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
 
       },
 
       _toggleMobileMenu: function(e) {
+        this.searchOpened = false;
+        this.subMenuOpened = false;
         this.mobileMenuOpened = !this.mobileMenuOpened;
-
-        var iconAttr = (this.mobileMenuOpened) ? 'dorel-icons:close' : 'dorel-icons:menu';
-
-        console.log(Polymer.dom(e).rootTarget);
-
-        Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
       },
 
       _toggleSearch: function(e) {
         // toggle the var that needs to be exposed to the host
+        this.mobileMenuOpened = false;
+        this.subMenuOpened = false;
         this.searchOpened = !this.searchOpened;
-
-        // define icon variable needed for setting the attribute
-        var iconAttr = (this.searchOpened) ? 'dorel-icons:close' : 'dorel-icons:search';
-
-        // set icon in attribute
-        Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
-
-        if (this.searchOpened && !Polymer.dom(e).rootTarget.classList.contains('active') ) { 
-          Polymer.dom(e).rootTarget.classList.add('active'); 
-        } else { 
-          Polymer.dom(e).rootTarget.classList.remove('active');
-        };
-
       }
 
     });
