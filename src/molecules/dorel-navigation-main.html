@@ -50,7 +50,10 @@
       query-matches="{{ screenMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px)"
       query-matches="{{ screenMediumUp }}"></iron-media-query>
-
+    
+    <!--
+      Mobile menu
+    -->
     <app-drawer opened="{{ mobileMenuOpened }}" swipe-open tabindex="0">
       <div class="menu-spacer-top">
       </div>
@@ -71,7 +74,8 @@
               <template
                 is="dom-if"
                 if="[[ !menuItem.children.length ]]">
-                <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                  on-click="menuItemClicked">
                   <paper-item>[[ menuItem.title ]]</paper-item>
                 </a>
               </template>
@@ -82,16 +86,27 @@
                 if="[[ menuItem.children.length ]]">
 
                 <paper-submenu submenu-opened$="{{ subMenuOpened }}">
-                  <paper-item class="menu-trigger layout horizontal justified" on-click="_toggleSubmenuIcon">
-                    [[ menuItem.title ]] 
-                    <iron-icon icon="dorel-icons:expand-more" class="menu-trigger-icon"></iron-icon>
+                  <paper-item class="menu-trigger layout horizontal justified"
+                    on-click="dropdownToggle">
+                    [[ menuItem.title ]]
+                    <template
+                      is="dom-if"
+                      if="{{ subMenuOpened }}">
+                      <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+                    </template>
+                    <template
+                      is="dom-if"
+                      if="{{ !subMenuOpened }}">
+                      <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+                    </template>
                   </paper-item>
                   <paper-menu class="menu-content">
                     <template
                       is="dom-repeat"
                       items="[[ menuItem.children ]]"
                       as="child">
-                      <a href="[[ child.url ]]" title="[[ child.title ]]">
+                      <a href="[[ child.url ]]" title="[[ child.title ]]"
+                        on-click="menuItemClicked">
                         <paper-item>[[ child.title ]]</paper-item>
                       </a>
                     </template>
@@ -125,15 +140,26 @@
               items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
               as="menuItem" 
               initial-count="4">
+
               <dorel-tab name="[[ menuItem.title ]]"
-                opened$="[[ submenuOpened ]]">
+                opened$="{{ subMenuOpened }}">
+
                 <template
                   is="dom-if"
                   if="[[ menuItem.children.length ]]">
                   <a href="#" class="dropdown" 
                     on-click="dropdownToggle">
-                    [[ menuItem.title ]] 
-                    <iron-icon class="menu-trigger-icon" icon="dorel-icons:expand-more"></iron-icon>
+                    [[ menuItem.title ]]
+                    <template
+                      is="dom-if"
+                      if="{{ subMenuOpened }}">
+                      <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+                    </template>
+                    <template
+                      is="dom-if"
+                      if="{{ !subMenuOpened }}">
+                      <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+                    </template>
                   </a>
                   <div class="dropdown-menu">
                     <ul>
@@ -143,19 +169,24 @@
                         as="child">
                         
                         <li>
-                          <a href="[[ child.url ]]">[[ child.title ]]</a>
+                          <a href="[[ child.url ]]"
+                            on-click="menuItemClicked">[[ child.title ]]</a>
                         </li>
 
                       </template>
                     </ul>
                   </div>
                 </template>
+
                 <template
                   is="dom-if"
                   if="[[ !menuItem.children.length ]]">
-                  <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
+                  <a href="[[ menuItem.url ]]"
+                    on-click="menuItemClicked">[[ menuItem.title ]]</a>
                 </template>
+
               </dorel-tab>
+
             </template>
           </dorel-tabs>
         </template>
@@ -172,22 +203,22 @@
 
         // Is exposed in host element
         mobileMenuOpened: {
-          type: Boolean
-        },
-
-        submenuOpened: {
           type: Boolean,
-          value: false  
+          value: false,
+          notify: true
         },
 
-        convertUrl: function(url) {
-          return '/' + url.split('/')[3];
+        subMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
         },
 
-        menuClick: function() {
-          this.drawerOpened = false;
-          return;
-        },
+        searchOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
 
         // _shouldShowTabs: {
         //   computed: '_computeShouldShowTabs(page)'
@@ -215,37 +246,16 @@
       dropdownToggle: function(e) {
         e.preventDefault();
 
-        this.submenuOpened = !this.submenuOpened;
-
-        var iconAttr = (this.submenuOpened) ? 'dorel-icons:expand-less' : 'dorel-icons:expand-more';
-
-        // also change icon when icon itself is clicked
-        // then set attribute
-        if (Polymer.dom(e).rootTarget.classList.contains('menu-trigger-icon')) {
-          Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
-        } else {
-          Polymer.dom(e).rootTarget.querySelector('.menu-trigger-icon').setAttribute('icon', iconAttr);
-        }
-      },
-
-      _toggleSubmenuIcon: function(e) {
-
-        // toggle the var that needs to be exposed to the host
+        this.searchOpened = false;
         this.subMenuOpened = !this.subMenuOpened;
-
-        // define icon variable needed for setting the attribute
-        var iconAttr = (this.subMenuOpened) ? 'dorel-icons:expand-less' : 'dorel-icons:expand-more';
-
-        // also change icon when icon itself is clicked
-        // then set attribute
-        if (Polymer.dom(e).rootTarget.classList.contains('menu-trigger-icon')) {
-          Polymer.dom(e).rootTarget.setAttribute('icon', iconAttr);
-        } else {
-          Polymer.dom(e).rootTarget.querySelector('.menu-trigger-icon').setAttribute('icon', iconAttr);
-        }
-
       },
 
+      menuItemClicked: function(e) {
+        this.mobileMenuOpened = false;
+        this.subMenuOpened = false;
+        this.searchOpened = false;
+        return;
+      }
     });
   </script>
 </dom-module>
