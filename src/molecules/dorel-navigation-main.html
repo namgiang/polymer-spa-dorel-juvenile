@@ -234,7 +234,6 @@
 
       },
 
-
       // _computeShouldRenderDrawer: function(loadComplete) {
       //   return loadComplete && (this.screenExtraSmall || this.screenSmall );
       //   console.log('test!');
@@ -244,10 +243,16 @@
        * When a dropdown item is clicked
        */
       dropdownToggle: function(e) {
+        var self = this;
+
         e.preventDefault();
 
         this.searchOpened = false;
         this.subMenuOpened = !this.subMenuOpened;
+
+        window.onscroll = function (e) {
+          self.subMenuOpened = false;
+        } 
       },
 
       menuItemClicked: function(e) {
