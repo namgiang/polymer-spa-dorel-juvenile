@@ -31,14 +31,19 @@
 
       /* new styling */
       dorel-tab {
-        color: var(--theme-primary-text-color);
-        text-decoration: none;
-        text-transform: capitalize;
         padding: 5px 10px;
         margin: 0 10px;
+        text-transform: capitalize;
+      }
+      dorel-tab a {
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
       }
       dorel-tab:hover {
         color: var(--theme-color-hover);
+      }
+      dorel-tab.has-submenu:hover {
+        cursor: pointer;
       }
       .section-secondary-menu {
         background-color: #F5F5F5;
@@ -175,7 +180,9 @@
                     <dorel-tab 
                       name="[[ menuItem.title ]]"
                       opened$="{{ subMenuOpened }}">
-                        [[ menuItem.title ]]
+                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                          [[ menuItem.title ]]
+                        </a>
                     </dorel-tab>
                   </div>
                 </template>
@@ -187,7 +194,8 @@
                    - add the children in submenu
                    -->
                   <div class="menu-item-container" opened$="{{ subMenuOpened }}">
-                    <dorel-tab 
+                    <dorel-tab
+                      class="has-submenu" 
                       name="[[ menuItem.title ]]"
                       on-click="dropdownToggle">
                       [[ menuItem.title ]]
