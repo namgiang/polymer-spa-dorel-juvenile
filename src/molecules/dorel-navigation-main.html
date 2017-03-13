@@ -25,22 +25,39 @@
       dorel-tab:not(:first-child) {
         padding-left: 1rem;
       }
-      dorel-tab .dropdown-menu {
-        background-color: #F5F5F5;
-        display: none;
-        left: 0;
-        top: 140px;
-        position: fixed;
-        width: 100%;
-      }
-      dorel-tab[opened] a {
-        background-color: #F5F5F5;
-      }
-      dorel-tab[opened] .dropdown-menu {
-        display: block !important;
-      }
       paper-submenu .menu-content {
         background-color: var(--theme-color-background-tertiary);
+      }
+
+      .section-secondary-menu {
+        background-color: #F5F5F5;
+        width: 100%;
+        left: 0;
+        position: absolute;
+        margin-top: 3rem;
+      }
+      .hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+      #header-main-menu[opened] .section-secondary-menu.hidden {
+        visibility: visible;
+        opacity: 1;
+      }
+      .menu-link {
+        padding: 5px 10px;
+        margin: 0 10px;
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
+        text-transform: capitalize;
+      }
+      .submenu {
+        list-style-type: none;
+      }
+      .submenu a {
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
+        text-transform: capitalize;
       }
     </style>
 
@@ -127,9 +144,12 @@
     TODO: revamp the menu structure so that it's not only
     for medium up only, but also for smaller screens
     -->
+
     <template is="dom-if" if="{{ screenMediumUp }}">
       <nav id="header-main-menu" role="navigation" screenMedium$="{{ screenMedium }}">
-        <template 
+        
+
+        <!--template 
           is="dom-if" 
           if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
           <dorel-tabs
@@ -161,21 +181,27 @@
                       <iron-icon icon="dorel-icons:expand-more"></iron-icon>
                     </template>
                   </a>
-                  <div class="dropdown-menu">
-                    <ul>
-                      <template
-                        is="dom-repeat"
-                        items="[[ menuItem.children ]]"
-                        as="child">
-                        
-                        <li>
-                          <a href="[[ child.url ]]"
-                            on-click="menuItemClicked">[[ child.title ]]</a>
-                        </li>
 
-                      </template>
-                    </ul>
-                  </div>
+                  <section class="section-secondary-menu layout-horizontal">
+
+                    <div>
+                      <ul>
+                        <template
+                          is="dom-repeat"
+                          items="[[ menuItem.children ]]"
+                          as="child">
+                          
+                          <li>
+                            <a href="[[ child.url ]]"
+                              on-click="menuItemClicked">[[ child.title ]]</a>
+                          </li>
+
+                        </template>
+                      </ul>
+                    </div>
+
+                  </section>
+
                 </template>
 
                 <template
@@ -186,10 +212,46 @@
                 </template>
 
               </dorel-tab>
-
             </template>
           </dorel-tabs>
-        </template>
+        </template-->
+
+        <div class="layout horizontal center">
+          <div>
+            <a class="menu-link" href="#">Link 1</a>
+          </div>
+          <div>
+            <a class="menu-link" href="#">Link 2</a>
+          </div>
+          <div>
+            <a class="menu-link" href="#">Link 3 <iron-icon icon="dorel-icons:expand-more"></iron-icon></a>
+
+            <!-- add class .hidden to the .section-secondary-menu -->
+            <!-- then if a parent #header-main-menu get's attribute opened it will show -->
+            <section class="section-secondary-menu layout horizontal">
+              <div>
+                <ul class="submenu">
+                  <li><strong>List title:</strong></li>
+                  <li>Another list item 1</li>
+                  <li>Another list item 2</li>
+                  <li>Another list item 3</li>
+                </ul>
+              </div>
+              <div>
+                <ul class="submenu">
+                  <li><strong>List title:</strong></li>
+                  <li>Another list item 1</li>
+                  <li>Another list item 2</li>
+                  <li>Another list item 3</li>
+                </ul>
+              </div>
+            </section>
+          </div>
+          <div>
+            <a class="menu-link" href="#">Link 4</a>
+          </div>
+        </div>
+
       </nav>
     </template>
 
