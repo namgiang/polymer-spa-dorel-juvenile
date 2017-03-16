@@ -9,7 +9,7 @@
         width: 100%;
         display: flex;
       }
-      dorel-tab {
+      /*dorel-tab {
         padding-top: 1rem;
         padding-bottom: 1rem;
         padding-right: 1rem;
@@ -21,26 +21,52 @@
       }
       dorel-tab a:hover {
         color: var(--theme-color-hover);
-      }
+      }*/
       dorel-tab:not(:first-child) {
         padding-left: 1rem;
       }
-      dorel-tab .dropdown-menu {
-        background-color: #F5F5F5;
-        display: none;
-        left: 0;
-        top: 140px;
-        position: fixed;
-        width: 100%;
-      }
-      dorel-tab[opened] a {
-        background-color: #F5F5F5;
-      }
-      dorel-tab[opened] .dropdown-menu {
-        display: block !important;
-      }
       paper-submenu .menu-content {
         background-color: var(--theme-color-background-tertiary);
+      }
+
+      /* new styling */
+      dorel-tab {
+        padding: 5px 10px;
+        margin: 0 10px;
+        text-transform: capitalize;
+      }
+      dorel-tab a {
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
+      }
+      dorel-tab:hover {
+        color: var(--theme-color-hover);
+      }
+      dorel-tab.has-submenu:hover {
+        cursor: pointer;
+      }
+      .section-secondary-menu {
+        background-color: #F5F5F5;
+        width: 100%;
+        left: 0;
+        position: absolute;
+        margin-top: 3rem;
+      }
+      .hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+      .menu-item-container[opened] .section-secondary-menu.hidden {
+        visibility: visible;
+        opacity: 1;
+      }
+      .submenu {
+        list-style-type: none;
+      }
+      .submenu a {
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
+        text-transform: capitalize;
       }
     </style>
 
@@ -128,69 +154,104 @@
     for medium up only, but also for smaller screens
     -->
     <template is="dom-if" if="{{ screenMediumUp }}">
-      <nav id="header-main-menu" role="navigation" screenMedium$="{{ screenMedium }}">
-        <template 
-          is="dom-if" 
-          if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+ 
+      <!-- only show if menu contains items -->
+      <template 
+        is="dom-if" 
+        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        <nav 
+          role="navigation" 
+          screenMedium$="{{ screenMedium }}">
           <dorel-tabs
             selected="[[ page ]]"
             attr-for-selected="name">
-            <template 
+            <div class="layout horizontal center">
+              <!-- loop through the menu items -->
+              <template 
               is="dom-repeat" 
               items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
               as="menuItem" 
               initial-count="4">
-
-              <dorel-tab name="[[ menuItem.title ]]"
-                opened$="{{ subMenuOpened }}">
-
-                <template
-                  is="dom-if"
-                  if="[[ menuItem.children.length ]]">
-                  <a href="#" class="dropdown" 
-                    on-click="dropdownToggle">
-                    [[ menuItem.title ]]
-                    <template
-                      is="dom-if"
-                      if="{{ subMenuOpened }}">
-                      <iron-icon icon="dorel-icons:expand-less"></iron-icon>
-                    </template>
-                    <template
-                      is="dom-if"
-                      if="{{ !subMenuOpened }}">
-                      <iron-icon icon="dorel-icons:expand-more"></iron-icon>
-                    </template>
-                  </a>
-                  <div class="dropdown-menu">
-                    <ul>
-                      <template
-                        is="dom-repeat"
-                        items="[[ menuItem.children ]]"
-                        as="child">
-                        
-                        <li>
-                          <a href="[[ child.url ]]"
-                            on-click="menuItemClicked">[[ child.title ]]</a>
-                        </li>
-
-                      </template>
-                    </ul>
-                  </div>
-                </template>
-
-                <template
+                <template 
                   is="dom-if"
                   if="[[ !menuItem.children.length ]]">
-                  <a href="[[ menuItem.url ]]"
-                    on-click="menuItemClicked">[[ menuItem.title ]]</a>
+                  <!-- if menu doesn't have children just show the menu item -->
+                  <div>
+                    <dorel-tab 
+                      name="[[ menuItem.title ]]"
+                      opened$="{{ subMenuOpened }}">
+                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                          [[ menuItem.title ]]
+                        </a>
+                    </dorel-tab>
+                  </div>
                 </template>
-
-              </dorel-tab>
-
+                <template 
+                  is="dom-if"
+                  if="[[ menuItem.children.length ]]">
+                  <!-- if menu item has children: 
+                   - show visual indicator 
+                   - add the children in submenu
+                   -->
+                  <div class="menu-item-container" opened$="{{ subMenuOpened }}">
+                    <dorel-tab
+                      class="has-submenu" 
+                      name="[[ menuItem.title ]]"
+                      on-click="dropdownToggle">
+                      [[ menuItem.title ]]
+                      <template
+                        is="dom-if"
+                        if="{{ subMenuOpened }}">
+                        <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+                      </template>
+                      <template
+                        is="dom-if"
+                        if="{{ !subMenuOpened }}">
+                        <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+                      </template>
+                    </dorel-tab>
+                    <section class="section-secondary-menu layout horizontal hidden">
+                      <!--
+                        @Marnix:
+                        TODO: Iterate through submenu's
+                      -->
+                      <div>
+                        <ul class="submenu">
+                          <template
+                            is="dom-repeat"
+                            items="[[ menuItem.children ]]"
+                            as="child">
+                            <li>
+                              <a href="[[ child.url ]]">[[ child.title ]]</a>
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                      <div>
+                        <ul class="submenu">
+                          <li><strong>aList title:</strong></li>
+                          <li>Another list item 1</li>
+                          <li>Another list item 2</li>
+                          <li>Another list item 3</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <ul class="submenu">
+                          <li><strong>aList title:</strong></li>
+                          <li>Another list item 1</li>
+                          <li>Another list item 2</li>
+                          <li>Another list item 3</li>
+                        </ul>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </template>
             </template>
           </dorel-tabs>
-        </template>
-      </nav>
+        </nav>
+      </template>
+
     </template>
 
   </template>
@@ -243,6 +304,8 @@
        * When a dropdown item is clicked
        */
       dropdownToggle: function(e) {
+        console.log('works!');
+
         var self = this;
 
         e.preventDefault();
