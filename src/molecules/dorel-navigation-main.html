@@ -42,32 +42,6 @@
       dorel-tab:hover {
         color: var(--theme-color-hover);
       }
-      dorel-tab.has-submenu:hover {
-        cursor: pointer;
-      }
-      .section-secondary-menu {
-        background-color: #F5F5F5;
-        width: 100%;
-        left: 0;
-        position: absolute;
-        margin-top: 3rem;
-      }
-      .hidden {
-        visibility: hidden;
-        opacity: 0;
-      }
-      .menu-item-container[opened] .section-secondary-menu.hidden {
-        visibility: visible;
-        opacity: 1;
-      }
-      .submenu {
-        list-style-type: none;
-      }
-      .submenu a {
-        color: var(--theme-primary-text-color);
-        text-decoration: none;
-        text-transform: capitalize;
-      }
     </style>
 
     <iron-media-query query="(max-width : 767px)"
@@ -168,18 +142,16 @@
             <div class="layout horizontal center">
               <!-- loop through the menu items -->
               <template 
-              is="dom-repeat" 
-              items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
-              as="menuItem" 
-              initial-count="4">
+                is="dom-repeat" 
+                items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
+                as="menuItem">
                 <template 
                   is="dom-if"
                   if="[[ !menuItem.children.length ]]">
                   <!-- if menu doesn't have children just show the menu item -->
                   <div>
                     <dorel-tab 
-                      name="[[ menuItem.title ]]"
-                      opened$="{{ subMenuOpened }}">
+                      name="[[ menuItem.title ]]">
                         <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
                           [[ menuItem.title ]]
                         </a>
@@ -193,41 +165,11 @@
                    - show visual indicator 
                    - add the children in submenu
                    -->
-                  <div class="menu-item-container" opened$="{{ subMenuOpened }}">
-                    <dorel-tab
-                      class="has-submenu" 
-                      name="[[ menuItem.title ]]"
-                      on-click="dropdownToggle">
-                      [[ menuItem.title ]]
-                      <template
-                        is="dom-if"
-                        if="{{ subMenuOpened }}">
-                        <iron-icon icon="dorel-icons:expand-less"></iron-icon>
-                      </template>
-                      <template
-                        is="dom-if"
-                        if="{{ !subMenuOpened }}">
-                        <iron-icon icon="dorel-icons:expand-more"></iron-icon>
-                      </template>
-                    </dorel-tab>
-                    <section class="section-secondary-menu layout horizontal hidden">
-                      <!--
-                        @Marnix:
-                        TODO: Iterate through submenu's
-                      -->
-                      <div>
-                        <ul class="submenu">
-                          <template
-                            is="dom-repeat"
-                            items="[[ menuItem.children ]]"
-                            as="child">
-                            <li>
-                              <a href="[[ child.url ]]">[[ child.title ]]</a>
-                            </li>
-                          </template>
-                        </ul>
-                      </div>
-                      <div>
+                  <dorel-navigation-sub
+                    menu-item="{{ menuItem }}"
+                    sub-menu-opened="{{ subMenuOpened }}"></dorel-navigation-sub>
+
+                      <!-- <div>
                         <ul class="submenu">
                           <li><strong>aList title:</strong></li>
                           <li>Another list item 1</li>
@@ -242,7 +184,7 @@
                           <li>Another list item 2</li>
                           <li>Another list item 3</li>
                         </ul>
-                      </div>
+                      </div> -->
                     </section>
                   </div>
                 </div>
@@ -268,7 +210,7 @@
           value: false,
           notify: true
         },
-
+        
         subMenuOpened: {
           type: Boolean,
           value: false,
@@ -299,24 +241,6 @@
       //   return loadComplete && (this.screenExtraSmall || this.screenSmall );
       //   console.log('test!');
       // },
-
-      /**
-       * When a dropdown item is clicked
-       */
-      dropdownToggle: function(e) {
-        console.log('works!');
-
-        var self = this;
-
-        e.preventDefault();
-
-        this.searchOpened = false;
-        this.subMenuOpened = !this.subMenuOpened;
-
-        window.onscroll = function (e) {
-          self.subMenuOpened = false;
-        } 
-      },
 
       menuItemClicked: function(e) {
         this.mobileMenuOpened = false;
