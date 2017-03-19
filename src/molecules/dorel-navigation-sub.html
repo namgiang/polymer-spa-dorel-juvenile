@@ -70,7 +70,8 @@
               items="[[ menuItem.children ]]"
               as="child">
               <li>
-                <a href="[[ child.url ]]">[[ child.title ]]</a>
+                <a href="[[ child.url ]]"
+                  on-click="menuItemClicked">[[ child.title ]]</a>
               </li>
             </template>
           </ul>
@@ -110,6 +111,13 @@
         window.onscroll = function (e) {
           self.subMenuOpened = false;
         } 
+      },
+
+      menuItemClicked: function(e) {
+        this.mobileMenuOpened = false;
+        this.subMenuOpened = false;
+        this.searchOpened = false;
+        return;
       }
     });
   </script>

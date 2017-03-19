@@ -181,6 +181,11 @@
           type: String,
           observer: '_pageChanged' // when this var changes call this function
         },
+
+        route: {
+          type: String,
+          observer: '_routeChanged'
+        },
         
         menuData: {
           type: Array
@@ -243,6 +248,17 @@
         //   this.$.placeholder.remove();
         // }.bind(this));
          */
+      },
+
+      /**
+       * @name _routeChanged
+       * @description TODO
+       * @param route object
+       */
+      _routeChanged: function(route) {
+        var segmentArr = route.path.split('/');
+        var lastSegment = segmentArr[segmentArr.length - 2];
+        this.page = lastSegment;
       },
 
       /** 
