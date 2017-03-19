@@ -1,0 +1,116 @@
+<dom-module id="dorel-navigation-sub">
+  <template>
+    <style>
+      .section-secondary-menu {
+        background-color: #F5F5F5;
+        width: 100%;
+        left: 0;
+        position: absolute;
+        margin-top: 3rem;
+      }
+      .menu-item-container[opened] .section-secondary-menu.hidden {
+        visibility: visible;
+        opacity: 1;
+      }
+      .sub-menu {
+        list-style-type: none;
+      }
+      .sub-menu a {
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
+        text-transform: capitalize;
+      }
+      dorel-tab {
+        padding: 5px 10px;
+        margin: 0 10px;
+        text-transform: capitalize;
+      }
+      dorel-tab a {
+        color: var(--theme-primary-text-color);
+        text-decoration: none;
+      }
+      dorel-tab:hover {
+        color: var(--theme-color-hover);
+      }
+      dorel-tab.has-submenu:hover {
+        cursor: pointer;
+      }
+      .hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+    </style>
+
+    <div class="menu-item-container" opened$="{{ subMenuOpened }}">
+      <dorel-tab
+        class="has-submenu" 
+        name="[[ menuItem.title ]]"
+        on-click="dropdownToggle">
+        [[ menuItem.title ]]
+        <template
+          is="dom-if"
+          if="{{ subMenuOpened }}">
+          <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+        </template>
+        <template
+          is="dom-if"
+          if="{{ !subMenuOpened }}">
+          <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+        </template>
+      </dorel-tab>
+      <section class="section-secondary-menu layout horizontal hidden">
+        <!--
+          @Marnix:
+          TODO: Iterate through submenu's
+        -->
+        <div>
+          <ul class="sub-menu">
+            <template
+              is="dom-repeat"
+              items="[[ menuItem.children ]]"
+              as="child">
+              <li>
+                <a href="[[ child.url ]]">[[ child.title ]]</a>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'dorel-navigation-sub',
+
+      properties: {
+        subMenuOpened: {
+          type: Boolean,
+          value: false
+        },
+
+        menuItem: {
+          type: Object
+        }
+      },
+
+      /**
+       * When a dropdown item is clicked
+       */
+      dropdownToggle: function(e) {
+
+        var self = this;
+
+        e.preventDefault();
+
+        this.searchOpened = false;
+        this.subMenuOpened = !this.subMenuOpened;
+
+        window.onscroll = function (e) {
+          self.subMenuOpened = false;
+        } 
+      }
+    });
+  </script>
+</dom-module>
