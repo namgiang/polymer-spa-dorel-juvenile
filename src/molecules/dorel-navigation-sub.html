@@ -7,8 +7,13 @@
         left: 0;
         position: absolute;
         margin-top: 3rem;
+        z-index: 1050;
       }
-      .menu-item-container[opened] .section-secondary-menu.hidden {
+      .menu-item-container .section-secondary-menu {
+        visibility: hidden;
+        opacity: 0;
+      }
+      .menu-item-container[opened] .section-secondary-menu {
         visibility: visible;
         opacity: 1;
       }
@@ -35,13 +40,8 @@
       dorel-tab.has-submenu:hover {
         cursor: pointer;
       }
-      .hidden {
-        visibility: hidden;
-        opacity: 0;
-      }
     </style>
-
-    <div class="menu-item-container" opened$="{{ subMenuOpened }}">
+    <div class="menu-item-container" opened$="{{ thisOpened }}">
       <dorel-tab
         class="has-submenu" 
         name="[[ menuItem.title ]]"
@@ -49,16 +49,16 @@
         [[ menuItem.title ]]
         <template
           is="dom-if"
-          if="{{ subMenuOpened }}">
+          if="{{ thisOpened }}">
           <iron-icon icon="dorel-icons:expand-less"></iron-icon>
         </template>
         <template
           is="dom-if"
-          if="{{ !subMenuOpened }}">
+          if="{{ !thisOpened }}">
           <iron-icon icon="dorel-icons:expand-more"></iron-icon>
         </template>
       </dorel-tab>
-      <section class="section-secondary-menu layout horizontal hidden">
+      <section class="section-secondary-menu layout horizontal">
         <!--
           @Marnix:
           TODO: Iterate through submenu's
@@ -86,37 +86,137 @@
       is: 'dorel-navigation-sub',
 
       properties: {
+        /**
+         * @name subMenuOpened
+         * @description variable that indicates that one of the submenus
+         * is opened
+         */
         subMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        /**
+         * @name thisOpened
+         * @description this variable determines if the current scoped
+         * menuItem is opened
+         */
+        thisOpened: {
           type: Boolean,
           value: false
         },
 
+
+        /**
+         * @name menuItem
+         * @description the menuItem object coming from WordPress
+         */
         menuItem: {
           type: Object
+        },
+
+        /**
+         * @name activeId
+         * @description the active menuItem.ID, the one that should be currently
+         * activated
+         */
+        activeId: {
+          type: Number,
+          notify: true,
+          observer: '_setThisOpened'
+        }
+      },
+
+      /** 
+       * @name _setThisOpened
+       * @description observer for the activeId variable, it is used to set the
+       * thisOpened variable
+       */
+      _setThisOpened: function(activeId) {
+        if (typeof activeId === 'undefined' || typeof this.menuItem === 'undefined') return;
+
+        if (activeId === this.menuItem.ID) {
+          this.thisOpened = !this.thisOpened;
+        } else if (activeId !== this.menuItem.ID) {
+          this.thisOpened = false;
         }
       },
 
       /**
-       * When a dropdown item is clicked
+       * @name dropdownToggle
+       * @description When a dropdown item is clicked this will be triggered
        */
       dropdownToggle: function(e) {
 
+        // set self to use it in scroll function
         var self = this;
 
+        // disable href, if set
         e.preventDefault();
 
-        this.searchOpened = false;
-        this.subMenuOpened = !this.subMenuOpened;
+        /**
+         * set the searchOpened to false because it needs to be disabled
+         * otherwise it will conflict the submenu that will be opened
+         */
+        self.searchOpened = false;
 
+        /**
+         * if the activeId isn't currently set the subMenuOpened should be false
+         * this means we can use the toggle mode
+         */
+        if (typeof self.activeId === 'undefined') {
+          self.subMenuOpened = !self.subMenuOpened;
+
+        /**
+         * if the activeId is not the same as the menuItem.ID it means
+         * not this menu item is currently active but it should become active
+         * this is why the subMenuOpened should always be set to true (or stay true)
+         */
+        } else if (self.activeId !== self.menuItem.ID) {
+          self.subMenuOpened = true;
+
+        /**
+         * if the activeId is the same as the menuItem.ID we know for sure
+         * someone wants to 'close' the active open submenu and thats why we
+         * set the subMenuOpened to false in this case
+         */
+        } else if (self.activeId === self.menuItem.ID) {
+          self.subMenuOpened = false;
+        }
+
+        /**
+         * After the subMenuOpened variable is set we will define the
+         * activeId variable
+         */
+        self.setActiveId();
+
+        /**
+         * event listener to disable submenu on scroll 
+         */
         window.onscroll = function (e) {
           self.subMenuOpened = false;
         } 
       },
 
+      /**
+       * @name setActiveId
+       * @description function to set the activeId variable/attribute to the 
+       * one that is clicked
+       */
+      setActiveId: function() {
+        this.activeId = (this.subMenuOpened) ? this.menuItem.ID : null;
+      },
+
+      /**
+       * @name menuItemClicked
+       * @description this function will reset all states to the default (false)
+       */
       menuItemClicked: function(e) {
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
         this.searchOpened = false;
+        this.activeId = null;
         return;
       }
     });
