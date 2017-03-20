@@ -25,7 +25,7 @@
     </style>
     
     <!-- check if we have a titleType -->
-    <template
+    <!-- <template
       is="dom-if"
       if="{{ _hasValue(titleType) }}">
       <template
@@ -63,8 +63,9 @@
         if="{{ _isH6(titleType) }}">
         <h6 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h6>
       </template>
-    </template>
-
+    </template> -->
+    
+    <h2 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h2>
     <dorel-safe-html html="[[ contentHtml ]]"></dorel-safe-html>
 
   </template>
@@ -77,7 +78,7 @@
       properties: {},
 
       _hasValue: function(val) {
-        return (typeof val !== 'undefined' || val === null || val !== '');
+        return (typeof val !== 'undefined' && val !== '' && val !== null);
       },
 
       _isH1: function(type) {
