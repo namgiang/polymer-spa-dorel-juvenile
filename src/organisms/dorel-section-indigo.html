@@ -2,7 +2,8 @@
   <template>
     <style include="polymer-bootstrap-min">
       .section-indigo {
-        margin-bottom: 50px;
+        padding-top: 50px;
+        padding-bottom: 50px;
         position: relative;
       }
       .indigo-column {
@@ -81,54 +82,56 @@
     <iron-media-query query="(min-width : 1200px)" 
       query-matches="{{ desktopFull }}"></iron-media-query>
     
-    <section class="section-indigo container"
+    <section class="section-indigo"
+      style$="background-color: [[ indigoData.product_column_background_color ]];"
       mobile-small$="{{ mobileSmall }}"
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
       desktop-small$="{{ desktopSmall }}"
       desktop-full$="{{ desktopFull }}">
-      <div class="row">
-        
-        <!-- product column -->
-        <div class$="indigo-column col-xs-12 col-sm-12 col-md-7 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
-          style$="
-            background-image: url([[ _hasBackgroundImage(indigoData.product_column_background_image) ]]); 
-            background-color: [[ indigoData.product_column_background_color ]];">
-          <div class="indigo-column-overlay"></div>
- 
-          <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
-            image="[[ _hasPaperImage(indigoData.product_column_image) ]]"></paper-card>
+      <div class="container">
+        <div class="row">
+          
+          <!-- product column -->
+          <div class$="indigo-column col-xs-12 col-sm-12 col-md-7 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
+            style$="
+              background-image: url([[ _hasBackgroundImage(indigoData.product_column_background_image) ]]);">
+            <div class="indigo-column-overlay"></div>
+   
+            <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
+              image="[[ _hasPaperImage(indigoData.product_column_image) ]]"></paper-card>
 
-        </div>
-
-        <!-- content column -->
-        <div class="content-column col-xs-12 col-sm-12 col-md-4">
-          <div class="content-wrap">
-            <template
-              is="dom-if"
-              if="[[ indigoData.content_column_title ]]">
-              <h2 class="theme-headline">[[ indigoData.content_column_title ]]</h2>
-            </template>
-            
-            <template
-              is="dom-if"
-              if="[[ indigoData.content_column_text ]]">
-              <dorel-safe-html html="[[ indigoData.content_column_text ]]"></dorel-safe-html>
-            </template>
-            
-            <template
-              is="dom-if"
-              if="[[ indigoData.content_column_cta_toggle ]]">
-              <dorel-cta
-                type="[[ indigoData.content_column_cta_type ]]" 
-                link="[[ indigoData.content_column_cta_href ]]">
-                  [[ indigoData.content_column_cta_text ]]
-              </dorel-cta>
-            </template>
           </div>
-        </div>
 
-      </div>
+          <!-- content column -->
+          <div class="content-column col-xs-12 col-sm-12 col-md-4">
+            <div class="content-wrap">
+              <template
+                is="dom-if"
+                if="[[ indigoData.content_column_title ]]">
+                <h2 class="theme-headline">[[ indigoData.content_column_title ]]</h2>
+              </template>
+              
+              <template
+                is="dom-if"
+                if="[[ indigoData.content_column_text ]]">
+                <dorel-safe-html html="[[ indigoData.content_column_text ]]"></dorel-safe-html>
+              </template>
+              
+              <template
+                is="dom-if"
+                if="[[ indigoData.content_column_cta_toggle ]]">
+                <dorel-cta
+                  type="[[ indigoData.content_column_cta_type ]]" 
+                  link="[[ indigoData.content_column_cta_href ]]">
+                    [[ indigoData.content_column_cta_text ]]
+                </dorel-cta>
+              </template>
+            </div>
+          </div>
+
+        </div><!--// .row -->
+      </div><!--// .container -->
     </section>
   </template>
 
