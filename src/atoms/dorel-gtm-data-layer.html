@@ -5,27 +5,47 @@
 
       properties: {
         gtmData: {
-          type: Object,
-          notify: true
+          type: Object
         }
       },
 
+      /**
+       * define functions to run when the a specific Dorel object changes
+       */
       observers: [
-        '_dataChanged(globals.Dorel.*)'
+        '_eventChange(globals.Dorel.events)'
       ],
 
-      _dataChanged: function(data) {
-        
-        var eventData = {
-          event: 'polymer_component',
-          value: data
+      /**
+       * @name _eventChange
+       * @description This function will determine if the global dorel event
+       * object is defined/changed. If so it will push the data to GA (tagmanager)
+       * in the format defined by Analytics department
+       *
+       * more info: https://docs.google.com/presentation/d/1x5JfMGGglyHD8acEXpgSXfVGuXcUuSixbhZM6CTkSQo/edit#slide=id.p
+       */
+      _eventChange: function(dorelEvt) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasData = true;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dorelEvt) {
+          hasData = (dorelEvt.hasOwnProperty(prop)) ? false : true;
         }
-
-        console.info(eventData);
         
-        window.dataLayer = window.dataLayer || [];
+        // if the dorelEvt is not empty we will push data to gtm
+        if(!hasData) {
+          var eventData = {
+            event: 'polymer_event',
+            component: dorelEvt
+          }
 
-        window.dataLayer.push(eventData);
+          console.info(eventData);
+          
+          window.dataLayer = window.dataLayer || [];
+
+          window.dataLayer.push(eventData);
+        }
       }
     });
   </script>
