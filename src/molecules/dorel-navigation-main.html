@@ -145,26 +145,30 @@
                 is="dom-repeat" 
                 items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
                 as="menuItem">
+
+                <!-- if menu doesn't have children just show the menu item -->
                 <template 
                   is="dom-if"
                   if="[[ !menuItem.children.length ]]">
-                  <!-- if menu doesn't have children just show the menu item -->
                   <div>
                     <dorel-tab 
                       name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]">
+                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                          on-click="menuItemClicked">
                           [[ menuItem.title ]]
                         </a>
                     </dorel-tab>
                   </div>
                 </template>
+
+
+                <!-- if menu item has children: 
+                 - show visual indicator 
+                 - add the children in submenu
+                 -->
                 <template 
                   is="dom-if"
                   if="[[ menuItem.children.length ]]">
-                  <!-- if menu item has children: 
-                   - show visual indicator 
-                   - add the children in submenu
-                   -->
                   <dorel-navigation-sub
                     menu-item="{{ menuItem }}"
                     sub-menu-opened="{{ subMenuOpened }}"
@@ -248,6 +252,12 @@
       // },
 
       menuItemClicked: function(e) {
+        Polymer.globalsManager.set('Dorel.events', {
+          element: Polymer.dom(e).localTarget,
+          event: Polymer.dom(e).event,
+          action: 'nagigation switch'
+        });
+
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
         this.searchOpened = false;
