@@ -237,13 +237,9 @@
           event: 'polymer_event'
         };
 
+        // if dropdownToggle overwrite the state
         if (type === 'dropdownToggle') {
-          eventData.things = [
-            {
-              'currentState': (this.subMenuOpened) ? 'closed' : 'opened',
-              'targetState': (this.subMenuOpened) ? 'opened' : 'closed'
-            }
-          ]
+          eventData.action = (this.subMenuOpened) ? 'open' : 'close';
         }
 
         Polymer.globalsManager.set('Dorel.events', eventData);
