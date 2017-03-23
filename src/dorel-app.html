@@ -489,14 +489,20 @@
        * more info: https://docs.google.com/presentation/d/1x5JfMGGglyHD8acEXpgSXfVGuXcUuSixbhZM6CTkSQo/edit#slide=id.p
        */
       _eventTracking: function() {
+        var globals = Polymer.globalsManager.get('Dorel');
+
         /** 
          * Tracking on pageload
          */
         Polymer.globalsManager.set('Dorel.events', {
           action: 'loaded',
-          component: this.page,
+          component: 'page',
           element: this,
-          event: 'polymer_event'
+          event: 'polymer_event',
+          things: {
+            'currentPage': globals.current.page,
+            'globals': globals
+          }
         });
       }
     });
