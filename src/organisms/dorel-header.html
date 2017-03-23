@@ -144,7 +144,8 @@
 
         <div class="header-item header-item-logo">
           <div>
-            <a href="/" aria-label="Maxi Cosi">
+            <a href="/" aria-label="Maxi Cosi"
+              on-click="logoClicked">
               <dorel-logo></dorel-logo>
             </a>
           </div>
@@ -182,58 +183,64 @@
       is: 'dorel-header',
 
       properties: {
-
+        /**
+         * defined on attribute in dorel-app
+         */
         loadComplete: {
           type: Boolean
         },
 
+        /**
+         * defined on attribute in dorel-app
+         */
+        page: {
+          type: String
+        },
+
         /** 
-         * Variable gets exposed by the dorel-user-tools, 
-         * and is exposed in the dorel-header and piped through to the search-drawer
+         * Variable gets exposed by the dorel-user-tools,
          */
         searchOpened: {
           type: Boolean,
         },
 
-        page: {
-          type: String
-        },
-
+        /** 
+         * Variable gets exposed by the dorel-navigation-main
+         */
         submenuOpened: {
           type: Boolean
         },
 
         /** 
-         * Variable gets exposed by the dorel-user-tools, 
-         * and is exposed in the dorel-header and piped through to the dorel-navigation-main
-         * 
+         * Variable gets exposed by the dorel-user-tools
          */
         mobileMenuOpened: {
           type: Boolean
-        },
+        }
+      },
 
-        states: {
-          type: Array,
-          value: [
-            {"text": "Alabama", "value": "AL"},
-            {"text": "Alaska", "value": "AK"},
-            {"text": "American Samoa", "value": "AS"},
-            {"text": "Arizona", "value": "AZ"}
+      logoClicked: function(event) {
+        this._eventTracking(event);
+      },
+
+      /**
+       * @name _eventTracking
+       * @description sets the right properties for event tracking
+       */
+      _eventTracking: function(event) {
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'switch',
+          component: 'logo',
+          element: Polymer.dom(event).localTarget.parentNode, // needs to be parentNode!!!!!
+          event: 'polymer_event',
+          things: [
+            {
+              'currentPage': document.URL,
+              'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
+            }
           ]
-        },
-
-        _shouldShowTabs: {
-          computed: '_computeShouldShowTabs(page)'
-        },
-
-      },
-
-      _toggleDrawer: function() {
-
-        // toggle the var that needs to be exposed to the host
-        this.drawerOpened = !this.drawerOpened;
-      },
-
+        });
+      }
     });
   </script>
 </dom-module>
