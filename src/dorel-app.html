@@ -16,7 +16,7 @@
 <link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
 <link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
 
-<link rel="import" href="atoms/dorel-gtm-data-layer.html">
+<link rel="import" href="atoms/dorel-gtm-events.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
 <link rel="import" href="templates/dorel-template.html">
 
@@ -80,8 +80,8 @@
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
 
-    <dorel-gtm-data-layer
-      gtm-data="{{ globals.Dorel }}"></dorel-gtm-data-layer>
+    <dorel-gtm-events
+      gtm-data="{{ globals.Dorel }}"></dorel-gtm-events>
 
     <!-- media queries -->
     <iron-media-query query="(max-width : 479px)" 
@@ -172,27 +172,44 @@
        * @description all properties this component uses
        */
       properties: {
+
+        /**
+         * Variable to define the url of the WP REST API calls
+         * TODO: refactor so this gets retrieved from external file
+         */
         debug: {
           type: Boolean,
           value: false // Set to false for production reasons
         },
 
+        /**
+         * Define the current page
+         */
         page: {
           type: String,
           observer: '_pageChanged' // when this var changes call this function
         },
 
+        /**
+         * Defines the current route
+         */
         route: {
           type: String,
           observer: '_routeChanged'
         },
         
+        /**
+         * Defines the menuItems
+         */
         menuData: {
           type: Array
         },
 
+        /**
+         * Defines the currentPage
+         */
         currentPage: {
-          type: Number
+          type: Object
         }
       },
 
@@ -201,10 +218,8 @@
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(routeData.page)',
         '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
         '_setCurrentPage(page, globals.Dorel.collect.pages)',
-        '_dorelChanged(globals.Dorel.*)',
         '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
@@ -259,21 +274,9 @@
         var segmentArr = route.path.split('/');
         var lastSegment = segmentArr[segmentArr.length - 2];
         this.page = lastSegment || 'home';
-      },
 
-      /** 
-       * @name _routePageChanged
-       * @description when routeData.page has changed this function will
-       * set this.page variable and scroll to the top of the page. If the drawer
-       * is opened it will be closed
-       * @param page this will be the routeData.page variable that has been changed/set
-       */
-      _routePageChanged: function(page) {
-        this.page = page || 'home';
-
-        // Scroll to the top of the page on every *route* change. Use `Polymer.AppLayout.scroll`
-        // with `behavior: 'silent'` to disable header scroll effects during the scroll.
-        Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+        // tracking of the pageload
+        this._eventTracking();
       },
 
       /** 
@@ -282,55 +285,30 @@
        * or retrieve it all the way.
        * @param page the page we need to transition to
        * @param oldPage the previous page
+       *
+       * TODO: check correct prpl pattern implementation
        */
       _pageChanged: function(page, oldPage) {
-        if (page != null) {
-          this._pageLoaded(Boolean(oldPage));
-          
-          /**
-           * TODO: check the prpl pattern
-            // home route is eagerly loaded
-            if (page == 'home') {
-              this._pageLoaded(Boolean(oldPage));
+        if (page !== null) {
+          this._ensureLazyLoaded();
 
-            //other routes are lazy loaded
-            } else {
-              this._pageLoaded(Boolean(oldPage));
-              this.importHref(
-                this.resolveUrl('templates/dorel-template.html'),
-                function() {
-                  this._pageLoaded(Boolean(oldPage));
-                }, null, true);
-            }
-            */
+          // TODO prpl pattern
+          // this.importHref(
+          //   this.resolveUrl('templates/dorel-template.html'),
+          //   function() {
+          //     this._pageLoaded(Boolean(oldPage));
+          //   }, null, true);
+
+          // TODO if fixed menu
+          // var shouldResetLayout = Boolean(oldPage);
+          // if (shouldResetLayout) {
+          //   // The size of the header depends on the page (e.g. on some pages the tabs
+          //   // do not appear), so reset the header's layout only when switching pages.
+          //   this.async(function() {
+          //     this.$.header.resetLayout();
+          //   }, 1);
+          // }
         }
-
-        var eventData = {
-          event: 'polymer_component',
-          value: Polymer.globalsManager.get('Dorel')
-        }
-
-        console.info(eventData);
-        
-        window.dataLayer = window.dataLayer || [];
-
-        window.dataLayer.push(eventData);
-      },
-
-      /**
-       * @name: _pageLoaded
-       * @description: this will make sure the lazyload will start after the
-       * page is loaded.
-       */
-      _pageLoaded: function(shouldResetLayout) {
-        this._ensureLazyLoaded();
-        // if (shouldResetLayout) {
-        //   // The size of the header depends on the page (e.g. on some pages the tabs
-        //   // do not appear), so reset the header's layout only when switching pages.
-        //   this.async(function() {
-        //     this.$.header.resetLayout();
-        //   }, 1);
-        // }
       },
 
       /**
@@ -425,6 +403,7 @@
        * @name _setCurrentMenuItem
        * @description set the current menu item by matching the slug
        * to the menu items url
+       * TODO: refactor for better use
        */
       _setCurrentMenuItem: function(page, mainMenuItems) {
 
@@ -452,8 +431,10 @@
         if( !pages.length ) { return; }
 
         // map the page variable to the item in the menu array and set it 
-        this.currentPage = pages.find(function(item) {
+        self.currentPage = pages.find(function(item) {
           switch (page) {
+
+            // when we are dealing with multiple segments define them here
             case 'products':
               /**
                * self.route - toRoute
@@ -472,7 +453,7 @@
         });
         
         // set the global currentPage
-        Polymer.globalsManager.set('Dorel.current.page', this.currentPage);
+        Polymer.globalsManager.set('Dorel.current.page', self.currentPage);
       },
 
       /**
@@ -503,11 +484,20 @@
       },
 
       /**
-       * @name: _dorelChanged
-       * @description: this is for logging the global variable only
+       * @name: _eventTracking
+       * @description: this is for pageload tracking only
+       * more info: https://docs.google.com/presentation/d/1x5JfMGGglyHD8acEXpgSXfVGuXcUuSixbhZM6CTkSQo/edit#slide=id.p
        */
-      _dorelChanged: function(data) {
-        // console.info(data);
+      _eventTracking: function() {
+        /** 
+         * Tracking on pageload
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'loaded',
+          component: this.page,
+          element: this,
+          event: 'polymer_event'
+        });
       }
     });
 
