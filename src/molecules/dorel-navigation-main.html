@@ -232,36 +232,39 @@
           type: Number
         }
 
-        // _shouldShowTabs: {
-        //   computed: '_computeShouldShowTabs(page)'
-        // },
-
-        // _shouldRenderTabs: {
-        //   computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
-        // },
-
-        // _shouldRenderDrawer: {
-        //   computed: '_computeShouldRenderDrawer(loadComplete)'
-        // }
-
       },
 
-      // _computeShouldRenderDrawer: function(loadComplete) {
-      //   return loadComplete && (this.screenExtraSmall || this.screenSmall );
-      //   console.log('test!');
-      // },
+      /**
+       * @name menuItemClicked
+       * @description handles all menu item clicks
+       */
+      menuItemClicked: function(event) {
+        // send event data to tracking function
+        this._eventTracking(event);
 
-      menuItemClicked: function(e) {
-        Polymer.globalsManager.set('Dorel.events', {
-          element: Polymer.dom(e).localTarget,
-          event: Polymer.dom(e).event,
-          action: 'nagigation switch'
-        });
-
+        // reset all handlers
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
         this.searchOpened = false;
-        return;
+      },
+
+      /**
+       * @name _eventTracking
+       * @description sets the right properties for event tracking
+       */
+      _eventTracking: function(event) {
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'switch',
+          component: 'navigation',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+          things: [
+            {
+              'currentPage': document.URL,
+              'targetPage': Polymer.dom(event).localTarget.href
+            }
+          ]
+        });
       }
     });
   </script>
