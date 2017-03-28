@@ -139,7 +139,8 @@
         subMenuOpened: {
           type: Boolean,
           value: false,
-          notify: true
+          notify: true,
+          observer: '_closeThisOpened'
         },
 
         /**
@@ -147,6 +148,16 @@
          * @description variable indicator for the mobile menu to be opened/closed
          */
         mobileMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        /**
+         * @name searchOpened
+         * @description variable indicator for the search to be opened/closed
+         */
+        searchOpened: {
           type: Boolean,
           value: false,
           notify: true
@@ -161,7 +172,6 @@
           type: Boolean,
           value: false
         },
-
 
         /**
          * @name menuItem
@@ -181,6 +191,21 @@
           notify: true,
           observer: '_setThisOpened'
         }
+      },
+
+      /**
+       * @name _closeThisOpened
+       * @description observer of the subMenuOpened. When this is false it should
+       * set the thisOpened variable to false
+       *
+       * example: search is opened, it should then close the sub menu
+       */
+      _closeThisOpened: function(newVal, oldVal) {
+        // if undefined or true stop script
+        if (typeof newVal === 'undefined' || newVal) return;
+
+        // set thisOpened to false
+        this.thisOpened = newVal;
       },
 
       /** 

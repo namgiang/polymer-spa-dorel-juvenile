@@ -55,8 +55,8 @@
       Mobile menu
     -->
     <app-drawer opened="{{ mobileMenuOpened }}" swipe-open tabindex="0">
-      <div class="menu-spacer-top">
-      </div>
+
+      <div class="menu-spacer-top"></div>
       <template 
         is="dom-if" 
         if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
@@ -84,12 +84,18 @@
               <template
                 is="dom-if"
                 if="[[ menuItem.children.length ]]">
-
+                
+                <!-- Important! Make sure to expose the
+                 - mobileMenuOpened
+                 - searchOpened
+                 - subMenuOpened
+                -->
                 <dorel-navigation-sub
+                  active-id="{{ activeId }}"
                   menu-item="{{ menuItem }}"
                   mobile-menu-opened="{{ mobileMenuOpened }}"
-                  sub-menu-opened="{{ subMenuOpened }}"
-                  active-id="{{ activeId }}"></dorel-navigation-sub>
+                  search-opened="{{ searchOpened }}"
+                  sub-menu-opened="{{ subMenuOpened }}"></dorel-navigation-sub>
               </template>
             </template>
             <paper-item>language selector</paper-item>
@@ -97,6 +103,7 @@
           </paper-menu>
         </iron-selector>
       </template>
+
     </app-drawer>
 
     <!--
@@ -147,10 +154,18 @@
                 <template 
                   is="dom-if"
                   if="[[ menuItem.children.length ]]">
+
+                  <!-- Important! Make sure to expose the
+                   - mobileMenuOpened
+                   - searchOpened
+                   - subMenuOpened
+                  -->
                   <dorel-navigation-sub
+                    active-id="{{ activeId }}"
                     menu-item="{{ menuItem }}"
-                    sub-menu-opened="{{ subMenuOpened }}"
-                    active-id="{{ activeId }}"></dorel-navigation-sub>
+                    mobile-menu-opened="{{ mobileMenuOpened }}"
+                    search-opened="{{ searchOpened }}"
+                    sub-menu-opened="{{ subMenuOpened }}"></dorel-navigation-sub>
 
                       <!-- <div>
                         <ul class="submenu">
@@ -187,27 +202,35 @@
 
       properties: {
 
-        // Is exposed in host element
+        /**
+         * @name mobileMenuOpened
+         * @description variable indicator for the mobile menu to be opened/closed
+         */
         mobileMenuOpened: {
           type: Boolean,
           value: false,
           notify: true
         },
         
+        /**
+         * @name subMenuOpened
+         * @description variable that indicates that one of the submenus
+         * is opened
+         */
         subMenuOpened: {
           type: Boolean,
           value: false,
           notify: true
         },
 
+        /**
+         * @name searchOpened
+         * @description variable indicator for the search to be opened/closed
+         */
         searchOpened: {
           type: Boolean,
           value: false,
           notify: true
-        },
-
-        activeId: {
-          type: Number
         }
 
       },
@@ -217,13 +240,13 @@
        * @description handles all menu item clicks
        */
       menuItemClicked: function(event) {
-        // send event data to tracking function
-        this._eventTracking(event);
-
         // reset all handlers
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
         this.searchOpened = false;
+
+        // send event data to tracking function
+        this._eventTracking(event);
       },
 
       /**
