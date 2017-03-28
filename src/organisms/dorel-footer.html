@@ -158,7 +158,8 @@
                 items="[[ globals.Dorel.collect.options.footer_social_links ]]"
                 as="social_link">
 
-                <a class="footer-media-link" href="[[ social_link.social_media_href ]]">
+                <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
+                  on-click="socialClick">
                   <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]" style="fill:rgb(0, 150, 195)"></iron-icon>
                   <span>[[ social_link.social_media_text ]]</span>
                 </a>
@@ -200,38 +201,58 @@
     Polymer({
       is: 'dorel-footer',
 
-      properties: {
-        footerWidgets: {
-          type: Object,
-          notify: true
-        }
-      },
+      properties: {},
 
+      /**
+       * Check if one of theses globals are changed. These are needed to build
+       * up the footer widgets and copyright
+       */
       observers: [
         '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)',
         '_copyrightChanged(globals.Dorel.collect.options.footer_copyright)'
       ],
 
+      /**
+       * Listen to all clicks inside the component to define an 
+       * accordion click
+       */
       listeners: {
-        'click': 'handleHeaderClick',
+        'click': 'accordionClick',
       },
 
       /**
-       * @name: handleHeaderClick
+       * @name: socialClick
+       * @description: handle the click event on a social link
+       */
+      socialClick: function(event) {
+
+        // event tracking when a social link is clicked
+        this._eventTracking(event, 'social');
+      },
+
+      /**
+       * @name: accordionClick
        * @description: handle the click event on the header tag for the
        * accordions (mobile only)
+       *
+       * TODO add click event listeners like with the footer-links, use attributes
+       * to open/close
        */
-      handleHeaderClick: function(e) {
+      accordionClick: function(event) {
+
         // return when not clicked on the footer-heading
-        if (typeof Polymer.dom(e).rootTarget.parentNode === 'undefined' 
-          || !Polymer.dom(e).rootTarget.parentNode.classList.contains('footer-menu')) return;
+        if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined' 
+          || !Polymer.dom(event).rootTarget.parentNode.classList.contains('footer-menu')) return;
 
         // if a click on the footer-heading was done
-        if (Polymer.dom(e).rootTarget.parentNode.classList.contains('open')) {
-          Polymer.dom(e).rootTarget.parentNode.classList.remove('open');
+        if (Polymer.dom(event).rootTarget.parentNode.classList.contains('open')) {
+          Polymer.dom(event).rootTarget.parentNode.classList.remove('open');
         } else {
-          Polymer.dom(e).rootTarget.parentNode.classList.add('open');
+          Polymer.dom(event).rootTarget.parentNode.classList.add('open');
         }
+
+        // track open/closing of accordion
+        this._eventTracking(event, 'accordionToggle');
       },
 
       /**
@@ -239,8 +260,6 @@
        * @description: places the copyright text in the designated element
        */
       _copyrightChanged: function(copy) {
-        // set the element
-        var footerEl = this;
 
         // insert the html value
         if (typeof copy !== 'undefined' || copy !== '') {
@@ -254,13 +273,13 @@
        * in there designated element
        */
       _areasChanged: function(data) {
-        // set the element
-        var footerEl = this;
-
         // if no data is given jump out
-        if (typeof data === 'undefined' || typeof data.widgets === 'undefined') {
-          return;
-        } else if (data.widgets.length) {
+        if (typeof data === 'undefined' || typeof data.widgets === 'undefined') return;
+
+        // set the element
+        var self = this;
+        
+        if (data.widgets.length) {
 
           /**
            * iterate over every widget inside the footer-widget-area
@@ -271,11 +290,110 @@
             footerColumn.className = 'footer-menu';
             footerColumn.innerHTML = widget.rendered;
 
-            footerEl.$['footer-widget-area'].appendChild(footerColumn);
+            self.$['footer-widget-area'].appendChild(footerColumn);
           });
         }
 
-        this.footerWidgets = data;
+        // alternative ready after whole footer has been build up
+        this.__ready();
+      },
+
+      /**
+       * @name __ready
+       * @description because the footer widget areas are placed
+       * at runtime the normal ready function doesn't have access
+       * to all elements.
+       */
+      __ready: function() {
+        var self = this;
+
+        // define footer links for tracking
+        var footerMenuLink = this.$$('#footer-widget-area').querySelectorAll('.footer-menu a');
+
+        // hookup click handlers for every link
+        footerMenuLink.forEach(function(link) {
+
+          // add eventListener for link
+          link.addEventListener('click', function(event) {
+
+            // start tracking when clicked
+            self._eventTracking(event, 'switch');
+          });
+        });
+      },
+
+      /**
+       * @name _eventTracking
+       * @description sets the right properties for event tracking
+       */
+      _eventTracking: function(event, type) {
+
+        /**
+         * build up the tracking eventData
+         */
+        var eventData = {
+          action: type,
+          component: 'footer',
+          event: 'polymer_event'
+        };
+
+
+        /**
+         * Check the type and handle accordingly
+         */
+        switch (type) {
+
+          /**
+           * accordion was clicked (mobile)
+           */
+          case 'accordionToggle':
+
+            // define the rootTarget
+            var headingEl = Polymer.dom(event).rootTarget;
+
+            // use rootTarget to get the accordion
+            var accordionEl = headingEl.parentNode;
+
+            // check if the accordion is open
+            var accordionOpen = accordionEl.classList.contains('open');
+
+            // define the action of the eventData
+            eventData.action = (accordionOpen) ? 'open' : 'close';
+
+            // define the event data element for accordions
+            eventData.element = accordionEl;
+
+          break;
+
+          /**
+           * footer menu link was clicked
+           */
+          case 'switch':
+
+            // set event data element
+            eventData.element = Polymer.dom(event).localTarget;
+
+            // set event data things for switching page
+            eventData.things = {
+              'currentPage': document.URL,
+              'targetPage': Polymer.dom(event).localTarget.href
+            }
+
+          break;
+
+          /**
+           * social link was clicked
+           */
+          case 'social': 
+
+            // set event data element
+            eventData.element = Polymer.dom(event).localTarget.parentNode;
+
+          break;
+        }
+
+        // set the tracking data, this will trigger dorel-gtm-events
+        Polymer.globalsManager.set('Dorel.events', eventData);
       }
     });
   </script>
