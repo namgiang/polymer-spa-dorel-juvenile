@@ -85,33 +85,11 @@
                 is="dom-if"
                 if="[[ menuItem.children.length ]]">
 
-                <paper-submenu submenu-opened$="{{ subMenuOpened }}">
-                  <paper-item class="menu-trigger layout horizontal justified"
-                    on-click="dropdownToggle">
-                    [[ menuItem.title ]]
-                    <template
-                      is="dom-if"
-                      if="{{ subMenuOpened }}">
-                      <iron-icon icon="dorel-icons:expand-less"></iron-icon>
-                    </template>
-                    <template
-                      is="dom-if"
-                      if="{{ !subMenuOpened }}">
-                      <iron-icon icon="dorel-icons:expand-more"></iron-icon>
-                    </template>
-                  </paper-item>
-                  <paper-menu class="menu-content">
-                    <template
-                      is="dom-repeat"
-                      items="[[ menuItem.children ]]"
-                      as="child">
-                      <a href="[[ child.url ]]" title="[[ child.title ]]"
-                        on-click="menuItemClicked">
-                        <paper-item>[[ child.title ]]</paper-item>
-                      </a>
-                    </template>
-                  </paper-menu>
-                </paper-submenu>
+                <dorel-navigation-sub
+                  menu-item="{{ menuItem }}"
+                  mobile-menu-opened="{{ mobileMenuOpened }}"
+                  sub-menu-opened="{{ subMenuOpened }}"
+                  active-id="{{ activeId }}"></dorel-navigation-sub>
               </template>
             </template>
             <paper-item>language selector</paper-item>

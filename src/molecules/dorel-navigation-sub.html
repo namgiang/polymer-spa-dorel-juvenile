@@ -25,6 +25,9 @@
         text-decoration: none;
         text-transform: capitalize;
       }
+      paper-submenu .menu-content {
+        background-color: var(--theme-color-background-tertiary);
+      }
       dorel-tab {
         padding: 5px 10px;
         margin: 0 10px;
@@ -41,43 +44,85 @@
         cursor: pointer;
       }
     </style>
-    <div class="menu-item-container" opened$="{{ thisOpened }}">
-      <dorel-tab
-        class="has-submenu" 
-        name="[[ menuItem.title ]]"
-        on-click="dropdownToggle">
-        [[ menuItem.title ]]
-        <template
-          is="dom-if"
-          if="{{ thisOpened }}">
-          <iron-icon icon="dorel-icons:expand-less"></iron-icon>
-        </template>
-        <template
-          is="dom-if"
-          if="{{ !thisOpened }}">
-          <iron-icon icon="dorel-icons:expand-more"></iron-icon>
-        </template>
-      </dorel-tab>
-      <section class="section-secondary-menu layout horizontal">
-        <!--
-          @Marnix:
-          TODO: Iterate through submenu's
-        -->
-        <div>
-          <ul class="sub-menu">
-            <template
-              is="dom-repeat"
-              items="[[ menuItem.children ]]"
-              as="child">
-              <li>
-                <a href="[[ child.url ]]"
-                  on-click="menuItemClicked">[[ child.title ]]</a>
-              </li>
-            </template>
-          </ul>
-        </div>
-      </section>
-    </div>
+
+    <iron-media-query query="(max-width : 767px)"
+      query-matches="{{ screenSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px)"
+      query-matches="{{ screenMediumUp }}"></iron-media-query>
+
+    <!-- Desktop sub -->    
+    <template is="dom-if" if="{{ screenMediumUp }}">
+      <div class="menu-item-container" opened$="{{ thisOpened }}">
+        <dorel-tab
+          class="has-submenu" 
+          name="[[ menuItem.title ]]"
+          on-click="dropdownToggle">
+          [[ menuItem.title ]]
+          <template
+            is="dom-if"
+            if="{{ thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+          </template>
+          <template
+            is="dom-if"
+            if="{{ !thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+          </template>
+        </dorel-tab>
+        <section class="section-secondary-menu layout horizontal">
+          <!--
+            @Marnix:
+            TODO: Iterate through submenu's
+          -->
+          <div>
+            <ul class="sub-menu">
+              <template
+                is="dom-repeat"
+                items="[[ menuItem.children ]]"
+                as="child">
+                <li>
+                  <a href="[[ child.url ]]"
+                    on-click="menuItemClicked">[[ child.title ]]</a>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </template>
+    
+    <!-- Mobile Sub -->
+    <template is="dom-if" if="{{ !screenMediumUp }}">
+      <paper-submenu opened$="{{ thisOpened }}">
+        <paper-item class="menu-trigger layout horizontal justified"
+          on-click="dropdownToggle">
+          [[ menuItem.title ]]
+          <template
+            is="dom-if"
+            if="{{ thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+          </template>
+          <template
+            is="dom-if"
+            if="{{ !thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+          </template>
+        </paper-item>
+        <paper-menu class="menu-content">
+          <template
+            is="dom-repeat"
+            items="[[ menuItem.children ]]"
+            as="child">
+            <a href="[[ child.url ]]" title="[[ child.title ]]"
+              on-click="menuItemClicked">
+              <paper-item>[[ child.title ]]</paper-item>
+            </a>
+          </template>
+        </paper-menu>
+      </paper-submenu>
+    </template>
   </template>
 
   <script>
@@ -92,6 +137,16 @@
          * is opened
          */
         subMenuOpened: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        /**
+         * @name mobileMenuOpened
+         * @description variable indicator for the mobile menu to be opened/closed
+         */
+        mobileMenuOpened: {
           type: Boolean,
           value: false,
           notify: true
@@ -134,10 +189,14 @@
        * thisOpened variable
        */
       _setThisOpened: function(activeId) {
+        // activeId or menuItem not defined stop script
         if (typeof activeId === 'undefined' || typeof this.menuItem === 'undefined') return;
 
+        // if activeId and menuItem are the same use toggle to thisOpened
         if (activeId === this.menuItem.ID) {
           this.thisOpened = !this.thisOpened;
+
+        // if activeId and menuItem are not the same always set thisOpened to false
         } else if (activeId !== this.menuItem.ID) {
           this.thisOpened = false;
         }
@@ -230,11 +289,21 @@
        * @description sets the right properties for event tracking
        */
       _eventTracking: function(event, type) {
+        /**
+         * define element (mobile and desktop are different elements)
+         * for mobile this should be parentNode, for desktop localTarget
+         * is sufficient
+         */
+        var element = (Polymer.dom(event).localTarget.href) ? Polymer.dom(event).localTarget : Polymer.dom(event).localTarget.parentNode;
+
+        /**
+         * build up the tracking eventData
+         */
         var eventData = {
           action: type,
           component: 'navigation',
-          element: Polymer.dom(event).localTarget,
-          event: 'polymer_event'
+          element: element,
+          event: 'polymer_event',
         };
 
         // if dropdownToggle overwrite the state
@@ -242,6 +311,15 @@
           eventData.action = (this.subMenuOpened) ? 'open' : 'close';
         }
 
+        // if it is a switch type add the things object
+        if (type === 'switch') {
+          eventData.things = {
+            'currentPage': document.URL,
+            'targetPage': element.href
+          }
+        }
+
+        // set the tracking data, this will trigger dorel-gtm-events
         Polymer.globalsManager.set('Dorel.events', eventData);
       }
     });
