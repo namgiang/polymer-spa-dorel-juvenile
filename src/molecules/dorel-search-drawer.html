@@ -57,9 +57,12 @@
           screenMediumUp$="{{ screenMediumUp }}" 
           screenSmall$="{{ screenSmall }}">
           <form is="iron-form" method="get" action="/">
-            <paper-input id="search-website" class="input-light" label="Search the website"></paper-input>
-            <paper-autocomplete-suggestions for="search-website" source="[[ accounts ]]"></paper-autocomplete-suggestions>
-            <paper-button raised onclick="_nativeSubmit(event)">Submit</paper-button>
+            <paper-input id="search-query" class="input-light" label="Search the website"></paper-input>
+            <!-- <paper-autocomplete-suggestions for="search-query" source="[[ accounts ]]"></paper-autocomplete-suggestions> -->
+            <paper-button 
+              raised
+              class="indigo"
+              on-click="submitSearchQuery">Submit</paper-button>
           </form>
         </div>
 
@@ -95,8 +98,35 @@
           type: Boolean,
           value: false,
           notify: true
-        },
+        }
 
+      },
+
+      /**
+       * @name submitSearchQuery
+       * @description function to handle the submit of the search query
+       * 
+       * @TODO: currently completely not defined, missing AC or US
+       */
+      submitSearchQuery: function(event) {
+        // track search event
+        this._eventTracking(event);
+      },
+
+      /**
+       * @name _eventTracking
+       * @description sets the right properties for event tracking
+       */
+      _eventTracking: function(event) {
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'submit',
+          component: 'search',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+          things: {
+            'searchQuery': this.$['search-query'].value
+          }
+        });
       }
 
     });
