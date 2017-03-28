@@ -51,7 +51,7 @@
           <paper-icon-button
             class="paper-icn-big icon-toggle-menu"
             icon="dorel-icons:menu"
-            on-click="_toggleMobileMenu"
+            on-click="toggleMobileMenu"
             aria-label="menu">
           </paper-icon-button>
         </template>
@@ -62,7 +62,7 @@
           <paper-icon-button
             class="paper-icn-big icon-toggle-menu"
             icon="dorel-icons:close"
-            on-click="_toggleMobileMenu"
+            on-click="toggleMobileMenu"
             aria-label="menu">
           </paper-icon-button>
         </template>
@@ -76,8 +76,8 @@
         <iron-icon 
           icon="dorel-icons:search" 
           class="icn-big icn-trigger icn-search-section-trigger"
-          on-click="_toggleSearch"
-          screenMediumUp$="{{screenMediumUp}}">
+          on-click="toggleSearch"
+          screenMediumUp$="{{ screenMediumUp }}">
         </iron-icon>
       </template>
 
@@ -87,8 +87,8 @@
         <iron-icon 
           icon="dorel-icons:close" 
           class="icn-big icn-trigger icn-search-section-trigger active"
-          on-click="_toggleSearch"
-          screenMediumUp$="{{screenMediumUp}}">
+          on-click="toggleSearch"
+          screenMediumUp$="{{ screenMediumUp }}">
         </iron-icon>
       </template>
       <iron-icon 
@@ -104,18 +104,33 @@
 
       properties: {
 
+        /**
+         * @name searchOpened
+         * @description variable that indicates if the search component
+         * is opened
+         */
         searchOpened: {
           type: Boolean,
           value: false,
           notify: true
         },
 
+        /**
+         * @name mobileMenuOpened
+         * @description variable that indicates if the mobileMenu component
+         * is opened
+         */
         mobileMenuOpened: {
           type: Boolean,
           value: false,
           notify: true
         },
 
+        /**
+         * @name subMenuOpened
+         * @description variable that indicates if the subMenuOpened (desktop) 
+         * component is opened
+         */
         subMenuOpened: {
           type: Boolean,
           value: false,
@@ -124,19 +139,74 @@
 
       },
 
-      _toggleMobileMenu: function(e) {
+      /**
+       * @name toggleMobileMenu
+       * @description handler for toggling the mobile menu
+       */
+      toggleMobileMenu: function(event) {
+
+        // search component will always be false
         this.searchOpened = false;
+
+        // submenu (desktop) will always be false
         this.subMenuOpened = false;
+
+        // actual mobileMenu toggler
         this.mobileMenuOpened = !this.mobileMenuOpened;
+
+        // send event to tracking
+        this._eventTracking(event, this.mobileMenuOpened);
       },
 
-      _toggleSearch: function(e) {
-        // toggle the var that needs to be exposed to the host
-        this.mobileMenuOpened = false;
-        this.subMenuOpened = false;
-        this.searchOpened = !this.searchOpened;
-      }
+      /**
+       * @name toggleSearch
+       * @description handler for toggling the search or not
+       */
+      toggleSearch: function(event) {
 
+        // mobileMenu will always be false
+        this.mobileMenuOpened = false;
+
+        // subMenuOpened will always be false
+        this.subMenuOpened = false;
+
+        // actual search toggler
+        this.searchOpened = !this.searchOpened;
+
+        // send event to tracking
+        this._eventTracking(event, this.searchOpened);
+      },
+
+      /**
+       * @name _eventTracking
+       * @description sets the right properties for event tracking
+       */
+      _eventTracking: function(event, type) {
+        /**
+         * define component, for user-tools we have:
+         * - mobile trigger
+         * - search trigger
+         * - cart (TODO)
+         */
+        // assign local target
+        var localTarget = Polymer.dom(event).localTarget;
+
+        // define component in string
+        var component = (localTarget.classList.contains('icon-toggle-menu')) ? 'mobileMenu' : 'search';
+
+        /**
+         * build up the tracking eventData
+         */
+        var eventData = {
+          action: (type) ? 'open' : 'close',
+          component: component,
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+        };
+
+        // set the tracking data, this will trigger dorel-gtm-events
+        Polymer.globalsManager.set('Dorel.events', eventData);
+      }
     });
   </script>
 </dom-module>
