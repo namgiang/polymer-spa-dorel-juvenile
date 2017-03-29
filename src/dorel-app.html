@@ -53,18 +53,6 @@
         };
 
       }
-      
-      /*#main[mobile-small],
-      #main[mobile-medium] {
-        padding-top: 160px;
-      }
-      #main[tablets] {
-        padding-top: 227px;
-      }
-      #main[desktop-small],
-      #main[desktop-full] {
-        padding-top: 160px;
-      }*/
 
       iron-pages {
         margin: 0 auto;
@@ -136,7 +124,9 @@
 
       <iron-pages role="main"
         selected="{{ globals.Dorel.current.page.id }}"
-        attr-for-selected="page-id">
+        attr-for-selected="page-id"
+        fallback-selection="404">
+
         <template
           is="dom-repeat"
           items="{{ globals.Dorel.collect.pages }}"
@@ -146,8 +136,10 @@
             page-id="[[ page.id ]]"
             template-name="[[ page.template ]]"
             template-data="[[ page ]]"></dorel-template>
-
         </template>
+
+        <dorel-404 id="404-page"
+          page-id="404"></dorel-404>
 
       </iron-pages>
     </section>
@@ -160,7 +152,6 @@
   </template>
 
   <script>
-
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
@@ -247,7 +238,7 @@
       ready: function() {
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl',
-          
+
           // (this.debug) ? '../../assets/data' : '//polymer-wp.dev/wp-json');
           (this.debug) ? '../../assets/data' : '//wrps.api.dryrun.dorel-app.net/wp-json');
 
@@ -257,26 +248,59 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
-        /**
-         * TODO: DIO-322
+        // When a template has been loaded
         // window.addEventListener('dorel-template-loaded', function() {
-        //   this.$.placeholder.remove();
+        //   this.fallback = '404';
         // }.bind(this));
-         */
       },
 
       /**
        * @name _routeChanged
-       * @description TODO
+       * @description on url/route change get the first segment of the url
+       * then set it as the page. With those settings start the setCurrentPage
+       * which will change the iron-pages selected
+       *
        * @param route object
        */
       _routeChanged: function(route) {
-        var segmentArr = route.path.split('/');
-        var lastSegment = segmentArr[segmentArr.length - 2];
-        this.page = lastSegment || 'home';
+        var segment = this._getUrlSegment(route, 1);
+
+        // if last segment is undefined or empty string set too home, all others to segment
+        this.page = (typeof segment === 'undefined' || segment === '') ? 'home' : segment;
+        
+        // refer to the collect pages
+        var pages = Polymer.globalsManager.get('Dorel.collect.pages');
+
+        // if pages are collected
+        if (typeof pages !== 'undefined' && pages.length) {
+          // change the currentPage
+          this._setCurrentPage(this.page, Polymer.globalsManager.get('Dorel.collect.pages'));
+        }
 
         // tracking of the pageload
         this._eventTracking();
+      },
+
+      /**
+       * @name _getUrlSegment
+       * @description returns the segmentNumber of the current url
+       * if you need the last segment use 'last' for segmentNumber
+       *
+       * @returns String the segmentNumber requested
+       */
+      _getUrlSegment: function(route, segmentNumber) {
+        var segmentArr = route.path.split('/');
+
+        // remove all empty strings from the array
+        for (var i = 0; i < segmentArr.length; i++) {
+          if (segmentArr[i] == '') {         
+            segmentArr.splice(i, 1);
+            i--;
+          }
+        }
+
+        // select last segment of the url
+        return (segmentNumber === 'last') ? segmentArr[segmentArr.length - 1] : segmentArr[segmentNumber - 1];
       },
 
       /** 
@@ -391,14 +415,6 @@
         }, 100);
       },
 
-      /** 
-       * @name _showPage404
-       * @description sets the page variable to the 404 page
-       */
-      _showPage404: function() {
-        this.page = '404';
-      },
-
       /**
        * @name _setCurrentMenuItem
        * @description set the current menu item by matching the slug
@@ -424,11 +440,15 @@
        * @description set the current page in the globals
        */
       _setCurrentPage: function(page, pages) {
+
+        // make a reference to this
         var self = this;
+
+        // define collected pages
         var pages = Polymer.globalsManager.get('Dorel.collect.pages');
-        
-        // if menu array has no items
-        if( !pages.length ) { return; }
+
+        // if menu array has no items, jump out
+        if( !pages.length ) return;
 
         // map the page variable to the item in the menu array and set it 
         self.currentPage = pages.find(function(item) {
@@ -441,11 +461,10 @@
                * self.subroute - fromRoute
                * self.routeData - current first segment
                */
-              var segmentArr = self.route.path.split('/');
-              var lastSegment = segmentArr[segmentArr.length - 2];
+              var lastSegment = self._getUrlSegment(self.route, 'last');
 
               return (lastSegment === item.slug) ? item : null;
-              break;
+            break;
 
             default:
               return (page === item.slug) ? item : null;
@@ -506,7 +525,5 @@
         });
       }
     });
-
-
   </script>
 </dom-module>
