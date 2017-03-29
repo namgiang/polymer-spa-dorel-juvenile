@@ -183,44 +183,63 @@
       is: 'dorel-header',
 
       properties: {
+
         /**
-         * defined on attribute in dorel-app
+         * @attribute
+         * @name loadComplete
+         * @description is set within the dorel-app when all info is loaded
          */
         loadComplete: {
           type: Boolean
         },
-
+        
         /**
-         * defined on attribute in dorel-app
+         * @attribute
+         * @name page
+         * @description defines the current page in string format
          */
         page: {
           type: String
         },
 
-        /** 
-         * Variable gets exposed by the dorel-user-tools,
+        /**
+         * @exposed
+         * @name searchOpened
+         * @description defines if the search area should be opened or closed
          */
         searchOpened: {
           type: Boolean
         },
 
-        /** 
-         * Variable gets exposed by the dorel-navigation-main
+        /**
+         * @exposed
+         * @name submenuOpened
+         * @description defines if one of the submenu's should be opened or closed
          */
         submenuOpened: {
           type: Boolean
         },
 
-        /** 
-         * Variable gets exposed by the dorel-user-tools
+        
+        /**
+         * @exposed
+         * @name mobileMenuOpened
+         * @description defines if the mobile menu (drawer) should be opened or closed
          */
         mobileMenuOpened: {
           type: Boolean
         }
       },
 
+      /**
+       * @name logoClicked
+       * @description handle the clicks on the logo
+       */
       logoClicked: function(event) {
+
+        // track this event
         this._eventTracking(event);
+
       },
 
       /**
@@ -228,18 +247,18 @@
        * @description sets the right properties for event tracking
        */
       _eventTracking: function(event) {
+
         Polymer.globalsManager.set('Dorel.events', {
           action: 'switch',
           component: 'logo',
           element: Polymer.dom(event).localTarget.parentNode, // needs to be parentNode!!!!!
           event: 'polymer_event',
-          things: [
-            {
-              'currentPage': document.URL,
-              'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
-            }
-          ]
+          things: {
+            'currentPage': document.URL,
+            'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
+          }
         });
+        
       }
     });
   </script>

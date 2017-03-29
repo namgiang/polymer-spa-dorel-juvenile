@@ -99,10 +99,24 @@
     Polymer({
       is: 'dorel-section-cta',
 
-      properties: {},
+      properties: {
+
+        /**
+         * @attribute
+         * @name ctaData
+         * @description all data needed for this CTA defined in ACF/Wordpress
+         */
+        ctaData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+
+      },
 
       /**
-       * @name: hasBackgroundImage
+       * @name hasBackgroundImage
        * @description check if a background-image is defined or not. If no image is set we need to
        * show a placeholder image
        */
@@ -110,6 +124,10 @@
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/cta/placeholder.jpg' : img;
       },
 
+      /**
+       * @name clickCTA
+       * @description handle the click event of the CTA
+       */
       clickCTA: function(event) {
 
         // Track the click event
