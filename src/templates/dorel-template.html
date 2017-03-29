@@ -2,20 +2,20 @@
 
 <dom-module id="dorel-template">
   <template>
-    <template is="dom-if" if="{{ _hasTemplate(templateName) }}">
-      <template is="dom-if" if="{{ _isTemplate(templateName, 'home') }}">
+    <template is="dom-if" if="{{ hasTemplateName(templateName) }}">
+      <template is="dom-if" if="{{ isTemplate(templateName, 'home') }}">
         <dorel-template-home template-data="{{ templateData }}"></dorel-template-home>
       </template>
         
-      <template is="dom-if" if="{{ _isTemplate(templateName, 'info') }}">
+      <template is="dom-if" if="{{ isTemplate(templateName, 'info') }}">
         <dorel-template-info template-data="{{ templateData }}"></dorel-template-info>
       </template>
 
-      <template is="dom-if" if="{{ _isTemplate(templateName, 'marketing') }}">
+      <template is="dom-if" if="{{ isTemplate(templateName, 'marketing') }}">
         <dorel-template-marketing template-data="{{ templateData }}"></dorel-template-marketing>
       </template>
 
-      <template is="dom-if" if="{{ _isTemplate(templateName, 'product-detail') }}">
+      <template is="dom-if" if="{{ isTemplate(templateName, 'product-detail') }}">
         <dorel-template-product-detail template-data="{{ templateData }}"></dorel-template-product-detail>
       </template>
     </template>
@@ -26,23 +26,46 @@
       is: 'dorel-template',
 
       properties: {
+
+        /**
+         * @attribute
+         * @name templateName
+         * @description the name of the template as defined by Wordpress
+         */
         templateName: {
           type: String
         },
 
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data of the current page
+         */
         templateData: {
           type: String
         }
+
       },
 
-      ready: function() {
-      },
-
-      _hasTemplate: function(templateName) {
+      /**
+       * @name hasTemplateName
+       * @description check to see if a template name is set
+       *
+       * @returns Boolean if a template is set (true/false)
+       */
+      hasTemplateName: function(templateName) {
         return (templateName) ? true : false;
       },
 
-      _isTemplate: function(templateName, templateCase) {
+      /**
+       * @name isTemplate
+       * @description compairs the templateName to the case (switch/case template)
+       *
+       * @returns Boolean if the templateName matches the case (true/false)
+       */
+      isTemplate: function(templateName, templateCase) {
+
+        // if the template name is not the home
         if (templateName !== 'home') {
           this.importHref(this.resolveUrl('dorel-template-' + templateName + '.html'), null, null, true);
         }
@@ -53,7 +76,10 @@
          * and components
          */
         var event = new Event('dorel-template-loaded');
+
+        // dispatch the event to other parts of the application (dorel-app)
         window.dispatchEvent(event);
+
         return templateName === templateCase;
       }
     });
