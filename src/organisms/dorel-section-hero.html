@@ -50,7 +50,7 @@
         as="hero">
         <div class="section-hero">
           <div class="section-hero-wrap row"
-            style$="background-image: url([[ _hasBackgroundImage(hero.background_image) ]]); background-color: [[ hero.background_color ]];">
+            style$="background-image: url([[ hasBackgroundImage(hero.background_image) ]]); background-color: [[ hero.background_color ]];">
 
             <template
               is="dom-if"
@@ -85,7 +85,29 @@
     Polymer({
       is: 'dorel-section-hero',
 
-      _hasBackgroundImage: function(img) {
+      properties: {
+
+        /**
+         * @attribute
+         * @name heroData
+         * @description all info from the page-builder needed for the hero component
+         */
+        heroData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+
+      },
+
+      /** 
+       * @name hasBackgroundImage
+       * @description checks if a background image is defined in Wordpress if not a placholder is used
+       *
+       * @returns String returns a placeholder url if nothing is set or the img url if it is
+       */
+      hasBackgroundImage: function(img) {
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/hero/placeholder.jpg' : img;
       }
     });
