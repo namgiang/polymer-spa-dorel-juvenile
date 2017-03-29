@@ -1,9 +1,5 @@
 <dom-module id="dorel-gtm-events">
   <script>
-    /** 
-     * Polymer element to do the tracking of events
-     * more info: http://bit.ly/2nb6I7G
-     */
     Polymer({
       is: 'dorel-gtm-events',
 
@@ -31,14 +27,17 @@
        * in the format defined by Analytics department
        */
       _clickEvent: function(dorelEvt) {
+
         // if the dorelEvt is not empty we will push data to gtm
         if(this._hasProps(dorelEvt)) {
           console.info(dorelEvt);
           
           window.dataLayer = window.dataLayer || [];
 
+          // more info http://bit.ly/2nb6I7G
           window.dataLayer.push(dorelEvt);
         }
+
       },
 
       /**
