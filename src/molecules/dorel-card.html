@@ -20,7 +20,7 @@
     
     <template
       is="dom-if"
-      if="{{ _hasValue(skewed) }}">
+      if="{{ hasValue(skewed) }}">
 
       <div class="card skewed container-fluid">
         <div class="card-wrap">
@@ -28,7 +28,7 @@
         <!-- cardTitle -->
         <template
           is="dom-if"
-          if="{{ _hasValue(cardData.card_title) }}">
+          if="{{ hasValue(cardData.card_title) }}">
           <h2 class="theme-headline">[[ cardData.card_title ]]</h2>
         </template>
         <!--// cardTitle -->
@@ -36,7 +36,7 @@
         <!-- cardContent -->
         <template
           is="dom-if"
-          if="{{ _hasValue(cardData.card_text) }}">
+          if="{{ hasValue(cardData.card_text) }}">
           <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
         </template>
         <!--// cardContent -->
@@ -44,7 +44,7 @@
         <!-- ctaToggle -->
         <template
           is="dom-if"
-          if="{{ _hasValue(cardData.card_cta_toggle) }}">
+          if="{{ hasValue(cardData.card_cta_toggle) }}">
           <dorel-cta 
             class="pull-right"
             type="[[ cardData.card_cta_type ]]" 
@@ -60,14 +60,14 @@
 
     <template
       is="dom-if"
-      if="{{ !_hasValue(skewed) }}">
+      if="{{ !hasValue(skewed) }}">
 
       <div class="card">
       
         <!-- cardTitle -->
         <template
           is="dom-if"
-          if="{{ _hasValue(cardData.card_title) }}">
+          if="{{ hasValue(cardData.card_title) }}">
           <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
         </template>
         <!--// cardTitle -->
@@ -75,7 +75,7 @@
         <!-- cardContent -->
         <template
           is="dom-if"
-          if="{{ _hasValue(cardData.card_text) }}">
+          if="{{ hasValue(cardData.card_text) }}">
           <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
         </template>
         <!--// cardContent -->
@@ -83,7 +83,7 @@
         <!-- ctaToggle -->
         <template
           is="dom-if"
-          if="{{ _hasValue(cardData.card_cta_toggle) }}">
+          if="{{ hasValue(cardData.card_cta_toggle) }}">
           <dorel-cta 
             type="[[ cardData.card_cta_type ]]" 
             link="[[ cardData.card_cta_link ]]">[[ cardData.card_cta_text ]]</dorel-cta>
@@ -103,18 +103,32 @@
 
       properties: {
 
+        /**
+         * @attribute
+         * @name cardData
+         * @description data coming from ACF/Wordpress needed to build up this component
+         */
         cardData: {
           type: Object
         },
 
+        /**
+         * @attribute
+         * @name skewed
+         * @description attribute to determine styling skewed
+         */
         skewed: {
           type: Boolean
         }
 
       },
 
-      _hasValue: function(val) {
-        return (typeof val !== '' && val !== 'undefined' && val);
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      hasValue: function(val) {
+        return (typeof val !== '' && val !== 'undefined' && val !== null);
       }
     });
 
