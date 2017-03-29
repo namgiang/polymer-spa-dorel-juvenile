@@ -82,10 +82,11 @@
           <div class="cta-item col-sm-6">
             <div class="row">
               <div class="cta-item-link col-xs-7">
-                <a class="cta-item-anchor" href="[[ cta.cta_link ]]">[[ cta.cta_text ]] &raquo;</a>
+                <a class="cta-item-anchor" href="[[ cta.cta_link ]]"
+                  on-click="clickCTA">[[ cta.cta_text ]] &raquo;</a>
               </div>
               <div class="cta-item-img col-xs-5"
-                style$="background-image: url([[ _hasBackgroundImage(cta.cta_image) ]]);"></div>
+                style$="background-image: url([[ hasBackgroundImage(cta.cta_image) ]]);"></div>
             </div>
           </div>
         </template>
@@ -95,11 +96,17 @@
   </template>
 
   <script>
-
     Polymer({
       is: 'dorel-section-cta',
 
-      _hasBackgroundImage: function(img) {
+      properties: {},
+
+      /**
+       * @name: hasBackgroundImage
+       * @description check if a background-image is defined or not. If no image is set we need to
+       * show a placeholder image
+       */
+      hasBackgroundImage: function(img) {
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/cta/placeholder.jpg' : img;
       },
 
