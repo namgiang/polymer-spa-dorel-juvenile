@@ -82,10 +82,11 @@
           <div class="cta-item col-sm-6">
             <div class="row">
               <div class="cta-item-link col-xs-7">
-                <a class="cta-item-anchor" href="[[ cta.cta_link ]]">[[ cta.cta_text ]] &raquo;</a>
+                <a class="cta-item-anchor" href="[[ cta.cta_link ]]"
+                  on-click="clickCTA">[[ cta.cta_text ]] &raquo;</a>
               </div>
               <div class="cta-item-img col-xs-5"
-                style$="background-image: url([[ _hasBackgroundImage(cta.cta_image) ]]);"></div>
+                style$="background-image: url([[ hasBackgroundImage(cta.cta_image) ]]);"></div>
             </div>
           </div>
         </template>
@@ -95,12 +96,48 @@
   </template>
 
   <script>
-
     Polymer({
       is: 'dorel-section-cta',
 
-      _hasBackgroundImage: function(img) {
+      properties: {},
+
+      /**
+       * @name: hasBackgroundImage
+       * @description check if a background-image is defined or not. If no image is set we need to
+       * show a placeholder image
+       */
+      hasBackgroundImage: function(img) {
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/cta/placeholder.jpg' : img;
+      },
+
+      clickCTA: function(event) {
+
+        // Track the click event
+        this._eventTracking(event);
+      },
+
+      /**
+       * @name: _eventTracking
+       * @description: this is for cta tracking only
+       * more info: https://docs.google.com/presentation/d/1x5JfMGGglyHD8acEXpgSXfVGuXcUuSixbhZM6CTkSQo/edit#slide=id.p
+       */
+      _eventTracking: function(event) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /** 
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'switch',
+          component: 'call-to-action',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': Polymer.dom(event).localTarget.href
+          }
+        });
       }
     });
 

@@ -31,16 +31,19 @@
     <!-- if type is anchor we are dealing with an anchor -->
     <template
       is="dom-if"
-      if="{{ _isDefault(type) }}">
-      <a href$="{{ link }}" class$="hvr-pop theme-cta theme-cta-{{ type }}">
+      if="{{ isDefault(type) }}">
+      <a href$="{{ link }}" 
+        class$="hvr-pop theme-cta theme-cta-{{ type }}"
+        on-click="clickCTA">
         <content></content>
       </a>
     </template>
 
     <template
       is="dom-if"
-      if="{{ !_isDefault(type) }}">
-      <a href$="{{ link }}" class$="hvr-pop theme-cta theme-cta-{{ type }}">
+      if="{{ !isDefault(type) }}">
+      <a href$="{{ link }}" class$="hvr-pop theme-cta theme-cta-{{ type }}"
+        on-click="clickCTA">
         <content></content>
         <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
@@ -61,25 +64,40 @@
         }
       },
 
-      clickEvent: function(e) {
-        var event = e;
-
-        // GTM event
-        Polymer.globalsManager.set('Dorel.events', {
-          event_dom: event,
-          element: this,
-          action: 'tbd',
-          attributes: {
-            href: this.href,
-            handler: this['on-click']
-          }
-        });
-
-        return;
+      clickCTA: function(event) {
+        this._eventTracking(event);
       },
 
-      _isDefault: function(type) {
+      /**
+       * @name isDefault
+       * @description check to see what kind of CTA we are dealing with
+       */
+      isDefault: function(type) {
         return (type === 'primary' || type === 'secondary');
+      },
+
+      /**
+       * @name: _eventTracking
+       * @description: this is for cta tracking only
+       * more info: https://docs.google.com/presentation/d/1x5JfMGGglyHD8acEXpgSXfVGuXcUuSixbhZM6CTkSQo/edit#slide=id.p
+       */
+      _eventTracking: function(event) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /** 
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'switch',
+          component: 'call-to-action',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': Polymer.dom(event).localTarget.href
+          }
+        });
       }
     });
   </script>
