@@ -31,6 +31,7 @@
         top: 0;
         width: 100%;
         transition: background-color .3s ease-in-out;
+        z-index: 900;
       }
       ul.showcase-gallery-roll li .showcase-gallery-overlay.current {
         background-color: transparent;
@@ -128,6 +129,8 @@
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
         <div class="row">
+
+          <!-- Desktop - navigator and current view -->
           <div class="col-md-6">
             <div class="showcase-gallery">
               <template
@@ -138,12 +141,16 @@
                     is="dom-repeat"
                     items="[[ showcaseData.showcase_gallery ]]"
                     as="galleryItem">
+                    
                     <li>
-                      <div id$="img-[[ galleryItem.id ]]" 
-                        class$="showcase-gallery-overlay [[ _isCurrentImage(galleryItem, currentImage) ]]"
-                        on-tap="updateImage"></div>
-                      <img src="[[ _hasImage(galleryItem.sizes.medium) ]]" width="110" />
+
+                      <div id$="img-[[ galleryItem.id ]]"
+                        class$="showcase-gallery-overlay [[ isCurrentImage(galleryItem, currentImage) ]]" 
+                        on-click="clickThumbnail"></div>
+                      <img src="[[ hasImage(galleryItem.sizes.medium) ]]" width="110" />
+
                     </li>
+
                   </template>
                 </ul>
               </template>
@@ -154,24 +161,30 @@
             </div>
           </div>
           
-          <div class="showcase-gallery-list-wrap">
-            <ul class="showcase-gallery-list">
-              <template
-                is="dom-repeat"
-                items="[[ showcaseData.showcase_gallery ]]"
-                as="galleryItem">
-                <li>
-                  <iron-icon
-                    id$="img-[[ galleryItem.id ]]" 
-                    class$="showcase-gallery-list-dot [[ _isCurrentImage(galleryItem, currentImage) ]]"
-                    icon="editor:vertical-align-top"
-                    on-tap="updateImage">
-                  </iron-icon>
-                </li>
-              </template>
-            </ul>
-          </div>
-
+          <!-- Mobile - navigator -->
+          <template
+            is="dom-if"
+            if="[[ showcaseData.showcase_gallery.length ]]">
+            <div class="showcase-gallery-list-wrap">
+              <ul class="showcase-gallery-list">
+                <template
+                  is="dom-repeat"
+                  items="[[ showcaseData.showcase_gallery ]]"
+                  as="galleryItem">
+                  <li>
+                    <iron-icon
+                      id$="img-[[ galleryItem.id ]]" 
+                      class$="showcase-gallery-list-dot [[ isCurrentImage(galleryItem, currentImage) ]]"
+                      icon="editor:vertical-align-top"
+                      on-tap="clickThumbnail">
+                    </iron-icon>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </template>
+          
+          <!-- Right column - Title, usp's and extra info -->
           <div class="col-md-offset-1 col-md-5">
             <h1 style="display: inline-block">[[ showcaseData.showcase_title ]]</h1>
             <template
@@ -192,53 +205,116 @@
       is: 'dorel-section-showcase',
 
       properties: {
-        gallery: {
-          type: Array,
-          value: []
+
+        /**
+         * @name showcaseData
+         * @description the showcase data is defined as an attribute on this
+         * component
+         */
+        showcaseData: {
+          type: Object
         },
 
+        /**
+         * @name currentImage
+         * @description This is the current selected image, because it's an
+         * object we define the value with a function that returns an empty
+         * object by default. It is updated when we get the Wordpress data
+         */
         currentImage: {
           type: Object,
           value: function() {
             return {};
-          },
-          observer: '_updateView'
+          }
         }
       },
 
+      /**
+       * @name ready
+       * @description when the component is ready to use set the first
+       * image from the Wordpress data as the currentImage
+       */
       ready: function() {
+
         // reset current image to the first one in the array
         this.currentImage = this.showcaseData.showcase_gallery[0];
+
       },
 
-      updateImage: function(e, detail) {
-        // extract the id and create currentImage var
-        var imageId = e.target.id.split('-')[1];
-        var currentImage = {};
+      /** 
+       * @name clickThumbnail
+       * @description this will handle of a click on the thumbnail and
+       * will change the currentImage in the thumbnail clicked
+       */
+      clickThumbnail: function(event) {
 
+        // set self to get the right context in forEach
+        var self = this;
+        var previousImage = this.currentImage;
+
+        // extract the id and create currentImage var
+        var imageId = event.target.id.split('-')[1];
+        
         // find the right gallery image selected
-        this.showcaseData.showcase_gallery.forEach(function(item) {
-          if(item.id === Number(imageId)) {
-            currentImage = item;
-          }
+        this.currentImage = this.showcaseData.showcase_gallery.find(function(item) {
+
+          // set the current image if a match is found or null if not
+          return item.id === Number(imageId);
+
         });
 
-        // set the currentImage
-        this.currentImage = currentImage;
+        // track the clickThumbnail
+        this._eventTracking(event, previousImage);
       },
 
-      _updateView: function(newVal, oldVal) {
-        this.currentImage = newVal;
-      },
+      /**
+       * @name isCurrentImage
+       * @description check if the thumbnail is the current image shown
+       * @return String (current/empty)
+       */
+      isCurrentImage: function(item, currentItem) {
 
-      _isCurrentImage: function(item, currentItem) {
+        // if not defined, empty or null jump out
         if(typeof item === 'undefined' || item === null || item === '' ) return;
 
+        // returns current or empty 
         return (currentItem.ID === item.ID) ? 'current' : '';
+
       },
 
-      _hasImage: function(img) {
+      /** 
+       * @name hasImage
+       * @description check if the background image is defined
+       * @return String (placeholder/img) placeholder or img url
+       */
+      hasImage: function(img) {
+
+        // check if img is defined or not
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/showcase/placeholder.jpg' : img;
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for cta tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function(event, previousImage) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /** 
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'switchImage',
+          component: 'showcase',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+          things: {
+            'currentImage': previousImage,
+            'targetImage': this.currentImage
+          }
+        });
       }
     });
   </script>
