@@ -93,7 +93,7 @@
           
           <template
             is="dom-if"
-            if="{{ _hasValue(bigTitleData.big_title_type) }}">
+            if="{{ hasBigTitleType(bigTitleData.big_title_type) }}">
             <template
               is="dom-if"
               if="{{ _isH1(bigTitleData.big_title_type) }}">
@@ -148,30 +148,88 @@
     Polymer({
       is: 'dorel-section-big-title',
 
-      _hasValue: function(val) {
-        return (typeof val !== 'undefined' || val === null || val !== '');
+      properties: {
+
+        /**
+         * @attribute
+         * @name bigTitleData
+         * @description all data passed by ACF/Worpdress to build up the Big Title
+         */
+        bigTitleData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+
       },
 
+      /**
+       * @name hasBigTitleType
+       * @description check if the type of big title is set
+       *
+       * @returns Boolean if the type is not undefined, empty or null (true/false)
+       */
+      hasBigTitleType: function(titleType) {
+        return (typeof titleType !== 'undefined' || titleType === null || titleType !== '');
+      },
+
+      /**
+       * @name isH1
+       * @description checks to see if the type is an H1
+       *
+       * @returns Boolean if the type is H1 (true/false)
+       */
       _isH1: function(type) {
         return (type === 'h1');
       },
 
+      /**
+       * @name isH2
+       * @description checks to see if the type is an H2
+       *
+       * @returns Boolean if the type is H2 (true/false)
+       */
       _isH2: function(type) {
         return (type === 'h2');
       },
 
+      /**
+       * @name isH3
+       * @description checks to see if the type is an H3
+       *
+       * @returns Boolean if the type is H3 (true/false)
+       */
       _isH3: function(type) {
         return (type === 'h3');
       },
 
+      /**
+       * @name isH4
+       * @description checks to see if the type is an H4
+       *
+       * @returns Boolean if the type is H4 (true/false)
+       */
       _isH4: function(type) {
         return (type === 'h4');
       },
 
+      /**
+       * @name isH5
+       * @description checks to see if the type is an H5
+       *
+       * @returns Boolean if the type is H5 (true/false)
+       */
       _isH5: function(type) {
         return (type === 'h5');
       },
 
+      /**
+       * @name isH6
+       * @description checks to see if the type is an H6
+       *
+       * @returns Boolean if the type is H6 (true/false)
+       */
       _isH6: function(type) {
         return (type === 'h6');
       }
