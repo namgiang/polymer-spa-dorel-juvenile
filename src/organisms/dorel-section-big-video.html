@@ -46,11 +46,11 @@
           
           <template
             is="dom-if"
-            if="[[ hasValue(videoWrapData.video_id) ]]">
+            if="[[ hasVideoId(videoWrapData.video_id) ]]">
 
             <template
               is="dom-if"
-              if="[[ isYoutube(videoWrapData.video_type) ]]">
+              if="[[ isYoutubeVideo(videoWrapData.video_type) ]]">
               <div class="video-wrap">
                 <iframe src="https://www.youtube.com/embed/[[ videoWrapData.video_id ]]" 
                   frameborder="0" allowfullscreen
@@ -82,6 +82,11 @@
           value: function() {
             return {};
           }
+        },
+
+        playVideo: {
+          type: Boolean,
+          value: false
         }
 
       },
@@ -90,7 +95,7 @@
        * @name hasValue
        * @description check if a video id is defined in the videoWrapData
        */
-      hasValue: function(videoId) {
+      hasVideoId: function(videoId) {
         return (typeof videoId !== 'undefined' || videoId !== null || videoId !== '');
       },
 
@@ -98,8 +103,40 @@
        * @name isYoutube
        * @description checks if we are dealing with a video sourced by Youtube
        */
-      isYoutube: function(videoType) {
+      isYoutubeVideo: function(videoType) {
         return (typeof videoType !== 'undefined' && videoType === 'youtube');
+      },
+
+      /**
+       * @name iframeClick
+       * @description handles clicks on the iframe
+       */
+      iframeClick: function(event) {
+        this.playVideo = !this.playVideo;
+
+        this._eventTracking(event);
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for cta tracking only
+       * more info http://bit.ly/2nb6I7G
+       *
+       * @todo tracking isn't working currently, because an iframe is used for videos
+       */
+      _eventTracking: function(event) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /** 
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: (this.playVideo) ? 'play' : 'stop',
+          component: 'big-video',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event'
+        });
       }
     });
   </script>
