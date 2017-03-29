@@ -95,11 +95,11 @@
           <!-- product column -->
           <div class$="indigo-column col-xs-12 col-sm-12 col-md-7 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
             style$="
-              background-image: url([[ _hasBackgroundImage(indigoData.product_column_background_image) ]]);">
+              background-image: url([[ hasBackgroundImage(indigoData.product_column_background_image) ]]);">
             <div class="indigo-column-overlay"></div>
    
             <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
-              image="[[ _hasPaperImage(indigoData.product_column_image) ]]"></paper-card>
+              image="[[ hasProductImage(indigoData.product_column_image) ]]"></paper-card>
 
           </div>
 
@@ -140,20 +140,58 @@
       is: 'dorel-section-indigo',
 
       properties: {
+
+        /**
+         * @attribute
+         * @name indigoData
+         * @description all data defined by ACF/Wordpress to build this component
+         */
         indigoData: {
-          type: Object
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        /**
+         * @name bgColor
+         * @description the background color of the indigo section (outer wrapper)
+         */
+        bgColor: {
+          type: String,
+          value: ''
         }
+
       },
 
+      /**
+       * @name ready
+       * @description when the component is loaded and ready for manipulation
+       */
       ready: function() {
+
+        // set the bgColor of the indigo
         this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
+
       },
 
-      _hasBackgroundImage: function(img) {
+      /**
+       * @name hasBackgroundImage
+       * @description checks to see if a background image is set in Wordpress
+       *
+       * @returns Sting when no image is set it returns the placeholder string
+       */
+      hasBackgroundImage: function(img) {
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
       },
 
-      _hasPaperImage: function(img) {
+      /**
+       * @name hasPaperImage
+       * @description checks to see if a product image is set in Wordpress
+       *
+       * @returns Sting when no image is set it returns the placeholder string
+       */
+      hasProductImage: function(img) {
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
       }
     });
