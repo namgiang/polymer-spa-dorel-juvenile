@@ -52,7 +52,7 @@
       
         <template
           is="dom-if"
-          if="[[ _isFullWidth(multiData.multi_columns_container) ]]">
+          if="[[ isFullWidth(multiData.multi_columns_container) ]]">
           <div class="row">
             <template
               is="dom-repeat"
@@ -77,7 +77,7 @@
 
         <template
           is="dom-if"
-          if="[[ !_isFullWidth(multiData.multi_columns_container) ]]">
+          if="[[ !isFullWidth(multiData.multi_columns_container) ]]">
           <div class="row">
             <div class="container">
               <div class="row">
@@ -115,16 +115,30 @@
 
       properties: {
 
+        /** 
+         * @attribute
+         * @name multiData
+         * @description coming from the page-builder this data object is filled 
+         * with ACF/Wordpress data about the component
+         */
         multiData: {
           type: Object
         },
 
+        /** 
+         * @name columnAmount
+         * @description defines the total columns the component needs to work with
+         */
         columnAmount: {
           type: Number,
           value: 0,
           observer: '_defineColumnWidth'
         },
 
+        /**
+         * @name columnWidth
+         * @description defines the width of one single column
+         */
         columnWidth: {
           type: Number,
           value: 0
@@ -132,18 +146,34 @@
 
       },
 
+      /** 
+       * @name ready
+       * @description sets the column amount by the results in the array,
+       * when the component is ready to use
+       *
+       */
       ready: function() {
         this.columnAmount = this.multiData.multi_columns.length;
       },
 
-      _defineColumnWidth: function(newVal, oldVal) {
-        // var columnOffset = 12 - this.columnAmount;
-        this.columnWidth = 12 / this.columnAmount;
-      },
-
-      _isFullWidth: function(container) {
+      /**
+       * @name isFullWidth
+       * @description check what type of container it is
+       *
+       * @returns Boolean if it is a full width container or not (true/false)
+       */
+      isFullWidth: function(container) {
         return (typeof container !== 'undefined' && container === 'full-width');
       }
+
+      /**
+       * @name _defineColumnWidth
+       * @description calculate the column width of each column, depends
+       * on the frontend framework's grid
+       */
+      _defineColumnWidth: function(newVal, oldVal) {
+        this.columnWidth = 12 / this.columnAmount;
+      },
     });
 
   </script>

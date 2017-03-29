@@ -46,13 +46,15 @@
           
           <template
             is="dom-if"
-            if="[[ _hasValue(videoWrapData.video_id) ]]">
+            if="[[ hasValue(videoWrapData.video_id) ]]">
 
             <template
               is="dom-if"
-              if="[[ _isYoutube(videoWrapData.video_type) ]]">
+              if="[[ isYoutube(videoWrapData.video_type) ]]">
               <div class="video-wrap">
-                <iframe src="https://www.youtube.com/embed/[[ videoWrapData.video_id ]]" frameborder="0" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/[[ videoWrapData.video_id ]]" 
+                  frameborder="0" allowfullscreen
+                  on-click="iframeClick"></iframe>
               </div>
             </template>
 
@@ -68,16 +70,36 @@
     Polymer({
       is: 'dorel-section-big-video',
 
-      _hasValue: function(val) {
-        return (typeof val !== 'undefined' || val !== null);
+      properties: {
+
+        /** 
+         * @attribute
+         * @name videoWrapData
+         * @description this is defined as an attribute on component level
+         */
+        videoWrapData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+
       },
 
-      _isYoutube: function(type) {
-        return (typeof type !== 'undefined' && type === 'youtube');
+      /** 
+       * @name hasValue
+       * @description check if a video id is defined in the videoWrapData
+       */
+      hasValue: function(videoId) {
+        return (typeof videoId !== 'undefined' || videoId !== null || videoId !== '');
       },
 
-      _defineVideoUrl: function(newVal, oldVal) {
-        // https://www.youtube.com/embed/0zUUVyWAyRs
+      /**
+       * @name isYoutube
+       * @description checks if we are dealing with a video sourced by Youtube
+       */
+      isYoutube: function(videoType) {
+        return (typeof videoType !== 'undefined' && videoType === 'youtube');
       }
     });
   </script>
