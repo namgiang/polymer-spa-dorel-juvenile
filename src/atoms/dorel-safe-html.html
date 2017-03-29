@@ -14,13 +14,25 @@
       is: 'dorel-safe-html',
 
       properties: {
+
+        /**
+         * @attribute
+         * @name html
+         * @description holds the html markup in string format to place
+         */
         html: {
           type: String,
           value: '',
           observer: '_htmlChanged'
         }
+
       },
 
+      /**
+       * @name _htmlChanged
+       * @description checks to see if the html attribute changed, if so insert the
+       * new html inside the content div
+       */
       _htmlChanged: function() {
         this.$.content.innerHTML = (typeof this.html === 'undefined') ? '' : this.html;
       }
