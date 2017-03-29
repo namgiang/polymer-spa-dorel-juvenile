@@ -4,108 +4,52 @@
       .column-headline {
         @apply(--theme-heading);
       }
-      h1.column-headline {
-        font-size: 2rem;
-      }
       h2.column-headline {
         font-size: 1.5rem;
       }
-      h3.column-headline {
-        font-size: 1.2rem;
-      }
-      h4.column-headline {
-        font-size: 1.1rem;
-      }
-      h5.column-headline {
-        font-size: 1rem;
-      }
-      h6.column-headline {
-        font-size: 0.8rem;
-      }
     </style>
-    
-    <!-- check if we have a titleType -->
-    <!-- <template
-      is="dom-if"
-      if="{{ _hasValue(titleType) }}">
-      <template
-        is="dom-if"
-        if="{{ _isH1(titleType) }}">
-        <h1 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h1>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ _isH2(titleType) }}">
-        <h2 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h2>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ _isH3(titleType) }}">
-        <h3 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h3>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ _isH4(titleType) }}">
-        <h4 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h4>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ _isH5(titleType) }}">
-        <h5 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h5>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ _isH6(titleType) }}">
-        <h6 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h6>
-      </template>
-    </template> -->
     
     <h2 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h2>
     <dorel-safe-html html="[[ contentHtml ]]"></dorel-safe-html>
-
   </template>
 
   <script>
-
     Polymer({
       is: 'dorel-content-wrap',
 
-      properties: {},
+      properties: {
 
-      _hasValue: function(val) {
-        return (typeof val !== 'undefined' && val !== '' && val !== null);
-      },
+        /**
+         * @attribute
+         * @name titleAlign
+         * @description defines the alignment of the title (left/right/center)
+         */
+        titleAlign: {
+          type: String,
+          value: ''
+        },
 
-      _isH1: function(type) {
-        return (type === 'h1');
-      },
+        /**
+         * @attribute
+         * @name contentTitle
+         * @description defines the title of the content
+         */
+        contentTitle: {
+          type: String,
+          value: ''
+        },
 
-      _isH2: function(type) {
-        return (type === 'h2');
-      },
+        /**
+         * @attribute
+         * @name contentHtml
+         * @description defines the html markup of the content
+         */
+        contentHtml: {
+          type: String,
+          value: ''
+        }
 
-      _isH3: function(type) {
-        return (type === 'h3');
-      },
-
-      _isH4: function(type) {
-        return (type === 'h4');
-      },
-
-      _isH5: function(type) {
-        return (type === 'h5');
-      },
-
-      _isH6: function(type) {
-        return (type === 'h6');
-      },
+      }
     });
-
   </script>
-
 </dom-module>

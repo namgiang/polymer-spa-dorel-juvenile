@@ -131,7 +131,9 @@
       is: 'dorel-navigation-sub',
 
       properties: {
+
         /**
+         * @attribute
          * @name subMenuOpened
          * @description variable that indicates that one of the submenus
          * is opened
@@ -144,6 +146,7 @@
         },
 
         /**
+         * @attribute
          * @name mobileMenuOpened
          * @description variable indicator for the mobile menu to be opened/closed
          */
@@ -154,6 +157,7 @@
         },
 
         /**
+         * @attribute
          * @name searchOpened
          * @description variable indicator for the search to be opened/closed
          */
@@ -161,6 +165,18 @@
           type: Boolean,
           value: false,
           notify: true
+        },
+
+        /**
+         * @attribute
+         * @name activeId
+         * @description the active menuItem.ID, the one that should be currently
+         * activated
+         */
+        activeId: {
+          type: Number,
+          notify: true,
+          observer: '_setThisOpened'
         },
 
         /**
@@ -179,17 +195,6 @@
          */
         menuItem: {
           type: Object
-        },
-
-        /**
-         * @name activeId
-         * @description the active menuItem.ID, the one that should be currently
-         * activated
-         */
-        activeId: {
-          type: Number,
-          notify: true,
-          observer: '_setThisOpened'
         }
       },
 
