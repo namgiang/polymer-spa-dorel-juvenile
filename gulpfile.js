@@ -28,7 +28,7 @@ gulp.task('build-polymer', shell.task([
 /**
  * Task building service worker
  */
-gulp.task('generate-service-worker', ['build-polymer'],function(callback) {
+gulp.task('generate-service-worker', ['build-polymer'], function(callback) {
   var path = require('path');
   var swPrecache = require('sw-precache');
   var rootDir = './build/unbundled';
