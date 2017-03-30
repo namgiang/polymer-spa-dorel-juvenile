@@ -18,6 +18,9 @@
 
 <link rel="import" href="atoms/dorel-gtm-events.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
+
+<!-- Since 'home' is the default route, eagerly load it. -->
+<link rel="import" href="templates/dorel-template-home.html">
 <link rel="import" href="templates/dorel-template.html">
 
 <link rel="import" href="dorel-app-placeholder.html">
@@ -53,18 +56,6 @@
         };
 
       }
-      
-      /*#main[mobile-small],
-      #main[mobile-medium] {
-        padding-top: 160px;
-      }
-      #main[tablets] {
-        padding-top: 227px;
-      }
-      #main[desktop-small],
-      #main[desktop-full] {
-        padding-top: 160px;
-      }*/
 
       iron-pages {
         margin: 0 auto;
@@ -79,7 +70,6 @@
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-
     <dorel-gtm-events
       gtm-data="{{ globals.Dorel }}"></dorel-gtm-events>
 
@@ -110,13 +100,13 @@
     <dorel-wp-collect-menu-locations
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
-    <!-- collect the options pages -->
-    <dorel-wp-collect-options
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
-
     <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-pages>
+
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
     <dorel-wp-collect-widgets
@@ -135,19 +125,24 @@
       desktop-full$="{{ desktopFull }}">
 
       <iron-pages role="main"
-        selected="{{ globals.Dorel.current.page.id }}"
-        attr-for-selected="page-id">
+        selected="{{ page }}"
+        attr-for-selected="name">
+
+        <!-- for every page create a dorel-template -->
         <template
           is="dom-repeat"
           items="{{ globals.Dorel.collect.pages }}"
           as="page">
-          
+
           <dorel-template
-            page-id="[[ page.id ]]"
-            template-name="[[ page.template ]]"
+            name="[[ page.slug ]]"
+            route="{{ subroute }}"
+            template-name$="[[ page.template ]]"
             template-data="[[ page ]]"></dorel-template>
 
         </template>
+
+        <dorel-template-404 name="404"></dorel-404>
 
       </iron-pages>
     </section>
@@ -160,7 +155,6 @@
   </template>
 
   <script>
-
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
@@ -247,7 +241,7 @@
       ready: function() {
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl',
-          
+
           // (this.debug) ? '../../assets/data' : '//polymer-wp.dev/wp-json');
           (this.debug) ? '../../assets/data' : '//wrps.api.dryrun.dorel-app.net/wp-json');
 
@@ -257,66 +251,115 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
-        /**
-         * TODO: DIO-322
+        // When a template has been loaded
         // window.addEventListener('dorel-template-loaded', function() {
-        //   this.$.placeholder.remove();
+        //   this.fallback = '404';
         // }.bind(this));
-         */
       },
 
       /**
-       * @name _routeChanged
-       * @description TODO
-       * @param route object
-       */
-      _routeChanged: function(route) {
-        var segmentArr = route.path.split('/');
-        var lastSegment = segmentArr[segmentArr.length - 2];
-        this.page = lastSegment || 'home';
-
-        // tracking of the pageload
-        this._eventTracking();
-      },
-
-      /** 
+       * @observer
        * @name _pageChanged
        * @description when the page variable changes lazyload the page
        * or retrieve it all the way.
-       * @param page the page we need to transition to
-       * @param oldPage the previous page
+       * @param toPage the page we need to transition to
+       * @param fromPage the previous page
        *
        * TODO: check correct prpl pattern implementation
        */
-      _pageChanged: function(page, oldPage) {
-        if (page !== null) {
-          this._ensureLazyLoaded();
+      _pageChanged: function(toPage, fromPage) {
 
-          // TODO prpl pattern
-          // this.importHref(
-          //   this.resolveUrl('templates/dorel-template.html'),
-          //   function() {
-          //     this._pageLoaded(Boolean(oldPage));
-          //   }, null, true);
+        // lazyload the right template
+        switch (toPage) {
 
-          // TODO if fixed menu
-          // var shouldResetLayout = Boolean(oldPage);
-          // if (shouldResetLayout) {
-          //   // The size of the header depends on the page (e.g. on some pages the tabs
-          //   // do not appear), so reset the header's layout only when switching pages.
-          //   this.async(function() {
-          //     this.$.header.resetLayout();
-          //   }, 1);
-          // }
+          // home is eagerly loaded
+          case 'home':
+            this._ensureLazyLoaded();
+          break;
+
+          // named page templates
+          case '404':
+          case 'products':
+            // importHref(href, onload, onerror, optAsync)
+            this.importHref(
+              this.resolveUrl('templates/dorel-template-' + toPage + '.html'), function() {
+                this._ensureLazyLoaded();
+              }, null, false
+            );
+          break;
+
+          // default page templates
+          default:
+            this.importHref(
+              this.resolveUrl('templates/dorel-template.html'), function() {
+                this._ensureLazyLoaded();
+              }, null, false
+            );
+          break;
+        }
+
+      },
+
+      /**
+       * @observer
+       * @name _routeChanged
+       * @description on url/route change get the first segment of the url
+       * then set it as the page. With those settings start the setCurrentPage
+       * which will change the iron-pages selected
+       *
+       * @param route object
+       */
+      _routeChanged: function(route) {
+        // define the first segment
+        var firstSegment = this.routeData.page;
+
+        /** 
+         * if last segment is undefined or empty string set too home, 
+         * all others to segment
+         */
+        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
+          'home' : firstSegment;
+      },
+
+      /**
+       * @listener
+       * @name _setCurrentPage
+       * @description set the current page in the globals
+       */
+      _setCurrentPage: function(page, pages) {
+
+        // make a reference to this
+        var self = this;
+
+        // if menu array has no items, jump out
+        if( typeof pages === 'undefined' || !pages.length ) return;
+
+        // map the page variable to the item in the menu array and set it 
+        self.currentPage = pages.find(function(page) {
+          return page.slug === self.routeData.page;
+        });
+
+        // page couldn't be found go to 404
+        if ( typeof self.currentPage === 'undefined' && self.page !== 'home' ) {
+          this.page = '404';
+
+        } else {
+
+          // set the global currentPage
+          Polymer.globalsManager.set('Dorel.current.page', self.currentPage);
+
+          // tracking of the pageload
+          this._eventTracking();
         }
       },
 
       /**
-       * @name: _ensureLazyLoaded
-       * @description: if the load is completed we will add the resources
+       * @name _ensureLazyLoaded
+       * @description if the load is completed we will add the resources
        * the service worker will kick in after that.
        */
       _ensureLazyLoaded: function() {
+
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
@@ -332,11 +375,28 @@
             });
           });
         }
+
       },
 
       /**
-       * @name: _notifyNetworkStatus
-       * @description: checks to see if we have internet connection and
+       * @listener
+       * @name _currentPageChanged
+       * @description fire the change-section event, that will set the given
+       * title to its title tag
+       */
+      _currentPageChanged: function(newVal) {
+
+        if(typeof newVal === 'undefined') return;
+
+        this.fire('change-section', { 
+          title: newVal.title.rendered
+        });
+
+      },
+
+      /**
+       * @name _notifyNetworkStatus
+       * @description checks to see if we have internet connection and
        * sends notification to the user if offline
        */
       _notifyNetworkStatus: function() {
@@ -357,8 +417,8 @@
       },
 
       /**
-       * @name: _onChangeSection
-       * @description: Elements in the app can notify section changes. Response 
+       * @name _onChangeSection
+       * @description Elements in the app can notify section changes. Response 
        * by a11y announcing the section and syncronizing the category.
        */
       _onChangeSection: function(event) {
@@ -373,30 +433,22 @@
       },
 
       /**
-       * @name: _onAnnounce
-       * @description: starts announcing and setting the label
+       * @name _onAnnounce
+       * @description starts announcing and setting the label
        */
       _onAnnounce: function(e) {
         this._announce(e.detail);
       },
 
       /**
-       * @name: _announce
-       * @description: A11y announce the given message.
+       * @name _announce
+       * @description A11y announce the given message.
        */
       _announce: function(message) {
         this._a11yLabel = '';
         this.debounce('_a11yAnnouncer', function() {
           this._a11yLabel = message;
         }, 100);
-      },
-
-      /** 
-       * @name _showPage404
-       * @description sets the page variable to the 404 page
-       */
-      _showPage404: function() {
-        this.page = '404';
       },
 
       /**
@@ -420,58 +472,8 @@
       },
 
       /**
-       * @name _setCurrentPage
-       * @description set the current page in the globals
-       */
-      _setCurrentPage: function(page, pages) {
-        var self = this;
-        var pages = Polymer.globalsManager.get('Dorel.collect.pages');
-        
-        // if menu array has no items
-        if( !pages.length ) { return; }
-
-        // map the page variable to the item in the menu array and set it 
-        self.currentPage = pages.find(function(item) {
-          switch (page) {
-
-            // when we are dealing with multiple segments define them here
-            case 'products':
-              /**
-               * self.route - toRoute
-               * self.subroute - fromRoute
-               * self.routeData - current first segment
-               */
-              var segmentArr = self.route.path.split('/');
-              var lastSegment = segmentArr[segmentArr.length - 2];
-
-              return (lastSegment === item.slug) ? item : null;
-              break;
-
-            default:
-              return (page === item.slug) ? item : null;
-          }
-        });
-        
-        // set the global currentPage
-        Polymer.globalsManager.set('Dorel.current.page', self.currentPage);
-      },
-
-      /**
-       * @name: _currentPageChanged
-       * @description: fire the change-section event, that will set the given
-       * title to its title tag
-       */
-      _currentPageChanged: function(newVal) {
-        if(typeof newVal === 'undefined') return;
-
-        this.fire('change-section', { 
-          title: newVal.title.rendered
-        });
-      },
-
-      /**
-       * @name: _domChange
-       * @description: This is for performance logging only.
+       * @name _domChange
+       * @description This is for performance logging only.
        */
       _domChange: function(e) {
         if (window.performance && performance.mark && !this.__loggedDomChange) {
@@ -506,7 +508,5 @@
         });
       }
     });
-
-
   </script>
 </dom-module>
