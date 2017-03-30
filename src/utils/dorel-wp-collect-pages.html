@@ -25,6 +25,11 @@
           type: String
         },
 
+        /** 
+         * @name collect
+         * @description this array will hold all the pages collected from the
+         * async requests (pages, products, posts)
+         */
         collect: {
           type: Array,
           value: []
@@ -44,15 +49,19 @@
 
         // iterate over all pages items, alter its template
         pages.forEach(function(page) {
+
+          // alter the template, strip 'page-' prefix
           var template = page.template.slice(0, -4);
           var pageName = template.replace('page-','');
 
+          // set pageObjects template property
           page.template = pageName;
 
           // extend the collect pages object with the new page
           self.collect.push(page);
         });
 
+        // do the products call
         productsEl.generateRequest();
       },
 
@@ -62,16 +71,23 @@
        */
       _productsLoaded: function (data) {
         var self = this;
-        var products = data.detail.response;
+        var productsArray = data.detail.response;
         
         // if we have products we need to add them
-        if (products.length) {
+        if (productsArray.length) {
 
-          // retrieve collect.pages if no pages set empty array
-          var collect = self.collect;
+          // create upper level products
+          var productsObject = {
+            slug: 'products',
+            template: 'products',
+            title: {
+              rendered: 'products'
+            },
+            products: []
+          };
 
           // iterate over all products items, alter its title and set the right url
-          products.forEach(function(product) {
+          productsArray.forEach(function(product) {
             /**
              * Assign a template to this taxonomy this is used by
              * the template switcher (dorel-template.html)
@@ -86,7 +102,7 @@
             // run throught the normal response acf
             for (var acfKey in product.acf.product_detail_builder[0]) {
               /**
-               * TODO: refactor! 
+               * @todo: refactor! 
                * For duplicated components we need to suffix them by a number
                * when placing them in the page_builder we need to strip this number
                * because we delegate them to the page builder element
@@ -117,8 +133,10 @@
             product.acf = acfObj;
 
             // extend the collect pages with the new product page
-            self.collect.push(product);
+            productsObject.products.push(product);
           });
+
+          self.collect.push(productsObject);
         }
 
         // set the new collect obj
