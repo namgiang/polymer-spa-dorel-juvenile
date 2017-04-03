@@ -8,12 +8,11 @@
         background-color: var(--theme-brand-color-royal-blue);
         padding: var(--theme-component-space-inner);
       }
-      
+
       /**
        * copyright and footer-menu links
        */
-      footer a,
-      #footer-text {
+      footer a, .footer-copyright {
         color: white;
         text-decoration: none;
         @apply(--theme-ie-bodycopy);
@@ -36,7 +35,7 @@
         margin-top: 1rem;
         margin-bottom: 1rem;
       }
-      
+
       /** 
        * Social media(wrapper)
        */
@@ -53,7 +52,7 @@
         line-height: 24px;
         margin-left: 8px;
       }
-      
+
       /**
        * footer back to top
        */
@@ -74,7 +73,7 @@
         padding-left: 0;
         list-style-type: none;
       }
-      
+
       /**
        * MOBILE BREAKPOINT
        */
@@ -87,7 +86,7 @@
       footer[mobile] .footer-menu {
         padding: 0;
       }
-      
+
       /**
        * LAYOUTWIDE BREAKPOINT
        */
@@ -142,7 +141,7 @@
     <footer mobile$="{{ mobile }}" layoutwide$="{{ isAtLeast800px }}">
 
       <!-- check if we need to show the social links -->
-      <template 
+      <template
         is="dom-if"
         if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
 
@@ -152,7 +151,7 @@
             <template
               is="dom-if"
               if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
-              
+
               <template
                 is="dom-repeat"
                 items="[[ globals.Dorel.collect.options.footer_social_links ]]"
@@ -181,8 +180,10 @@
 
       <section id="footer-widget-area" class="footer-info">
         <div class="layout vertical footer-disclaimer">
-          <span id="footer-text">
-            <!-- copyright is inserted here -->
+          <span class="footer-copyright">
+            Copyright &#9400;
+            [[_getCopyrightYearRange(globals.Dorel.collect.options.footer_year)]]
+            [[globals.Dorel.collect.options.footer_copyright]]
           </span>
         </div>
 
@@ -209,11 +210,10 @@
        */
       observers: [
         '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)',
-        '_copyrightChanged(globals.Dorel.collect.options.footer_copyright)'
       ],
 
       /**
-       * Listen to all clicks inside the component to define an 
+       * Listen to all clicks inside the component to define an
        * accordion click
        */
       listeners: {
@@ -241,7 +241,7 @@
       accordionClick: function(event) {
 
         // return when not clicked on the footer-heading
-        if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined' 
+        if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined'
           || !Polymer.dom(event).rootTarget.parentNode.classList.contains('footer-menu')) return;
 
         // if a click on the footer-heading was done
@@ -256,14 +256,25 @@
       },
 
       /**
-       * @name _copyrightChanged
-       * @description places the copyright text in the designated element
+       * @name _getCopyrightYearRange
+       * @description returns the copyright range as a string based on a starting year and the current year
        */
-      _copyrightChanged: function(copy) {
+      _getCopyrightYearRange: function(startYear) {
+        var yearRange = [];
 
-        // insert the html value
-        this.$['footer-text'].innerHTML = (typeof copy !== 'undefined' && copy !== '' && copy !== null) ? 
-          copy : '';
+        // Convert the startYear to a number datatype
+        startYear = Number(startYear);
+        //Get the current year
+        var endYear = new Date().getFullYear();
+
+        // And add startyear to the range if it's an actual number, and smaller then the current year
+        if(!isNaN(startYear) && startYear < endYear) yearRange.push(startYear);
+
+        // Only show the end year if it's not the same as the start year
+        if(startYear !== endYear) yearRange.push(endYear);
+
+        // Return the range as a string
+        return yearRange.join(' - ');
       },
 
       /**
@@ -277,7 +288,7 @@
 
         // set the element
         var self = this;
-        
+
         if (data.widgets.length) {
 
           /**
@@ -384,7 +395,7 @@
           /**
            * social link was clicked
            */
-          case 'social': 
+          case 'social':
 
             // set event data element
             eventData.element = Polymer.dom(event).localTarget.parentNode;
