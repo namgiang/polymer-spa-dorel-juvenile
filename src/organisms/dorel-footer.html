@@ -182,7 +182,7 @@
         <div class="layout vertical footer-disclaimer">
           <span class="footer-copyright">
             Copyright &#9400;
-            [[ _getCopyrightYearRange(globals.Dorel.collect.options.footer_year) ]]
+            {{ _getCopyrightYearRange(globals.Dorel.collect.options.footer_year) }}
             [[ globals.Dorel.collect.options.footer_copyright ]]
           </span>
         </div>
@@ -260,18 +260,25 @@
        * @description returns the copyright range as a string based on a starting year and the current year
        */
       _getCopyrightYearRange: function(startYear) {
+
+        // if no startYear is defined jump out
+        if (typeof startYear === 'undefined' || startYear === '' || startYear === null) return; 
+
+        // set new array for yearRange
         var yearRange = [];
 
         // Convert the startYear to a number datatype
         startYear = Number(startYear);
-        //Get the current year
+
+        // Get the current year
         var endYear = new Date().getFullYear();
 
         // And add startyear to the range if it's an actual number, and smaller then the current year
-        if(!isNaN(startYear) && startYear < endYear) yearRange.push(startYear);
-
-        // Only show the end year if it's not the same as the start year
-        if(startYear !== endYear) yearRange.push(endYear);
+        if (startYear < endYear) {
+          yearRange.push(startYear, endYear);
+        } else if (startYear === endYear) {
+          yearRange.push(startYear);
+        }
 
         // Return the range as a string
         return yearRange.join(' - ');
