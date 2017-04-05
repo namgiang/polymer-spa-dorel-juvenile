@@ -1,7 +1,6 @@
 <dom-module id="dorel-section-indigo">
 	<template>
 		<style>
-
 			.section-indigo {
 				width: 100%;
 				display: flex;
@@ -60,7 +59,6 @@
 			.image {
 				width: 100%;
 				display: block;
-				background-image: url('/assets/images/placeholders/indigo/placeholder-hero.jpg');
 				background-position: 50% 50%;
 				background-repeat: no-repeat;
 				background-size: cover;
@@ -120,16 +118,24 @@
 		<iron-media-query query="(min-width : 480px) and (max-width : 767px)"
 		                  query-matches="{{ mobileMedium }}"></iron-media-query>
 
-		<section class="section-indigo" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}">
+		<section class="section-indigo" 
+      mobile-small$="{{ mobileSmall }}" 
+      mobile-medium$="{{ mobileMedium }}">
 			<div class="container">
 				<div class="image-wrapper skew">
-					<div class="image skew-reset" role="img" aria-label="Add image description for accessibility here"></div>
-					<div class="content-wrapper skew-reset">
-						<h1 class="title">
-							<span class="title-line">Your story</span>
-							<span class="title-line">Starts here</span>
-						</h1>
-					</div>
+					<div class="image skew-reset" role="img" aria-label="Add image description for accessibility here"
+            style$="
+              background-image: url([[ hasBackgroundImage(indigoData.background_image) ]]);"></div>
+          
+          <template
+            is="dom-if"
+            if="{{ hasValue(indigoData.title) }}">
+  					<div class="content-wrapper skew-reset">
+  						<h1 class="title">
+  							<span class="title-line">[[ indigoData.title ]]</span>
+  						</h1>
+  					</div>
+          </template>
 				</div>
 		</section>
 	</template>
@@ -150,27 +156,7 @@
 					value: function () {
 						return {};
 					}
-				},
-
-				/**
-				 * @name bgColor
-				 * @description the background color of the indigo section (outer wrapper)
-				 */
-				bgColor: {
-					type: String,
-					value: ''
 				}
-
-			},
-
-			/**
-			 * @name ready
-			 * @description when the component is loaded and ready for manipulation
-			 */
-			ready: function () {
-
-				// set the bgColor of the indigo
-				this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
 
 			},
 
@@ -184,15 +170,15 @@
 				return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
 			},
 
-			/**
-			 * @name hasPaperImage
-			 * @description checks to see if a product image is set in Wordpress
-			 *
-			 * @returns Sting when no image is set it returns the placeholder string
-			 */
-			hasProductImage: function (img) {
-				return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
-			}
+      /**
+       * @name hasBackgroundImage
+       * @description checks to see if a background image is set in Wordpress
+       *
+       * @returns Sting when no image is set it returns the placeholder string
+       */
+      hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
 		});
 	</script>
 </dom-module>
