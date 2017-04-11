@@ -7,7 +7,11 @@
 				position: relative;
 				z-index: 1;
 			}
-
+			/*
+			* Firefox rendering fix: The skewed container is now placed in a psuedo-selector behind actual content.
+			* The Skew/Unskew method can create ugly text-rendering in Firefox, and unpredictable behaviour or appearance
+			* of nested sub-elements.
+			*/
 			.card::before {
 				content: '';
 				background-color: rgba(255, 255, 255, .8);
@@ -19,6 +23,7 @@
 				left: 0;
 				top: 0;
 				display: block;
+				/* Safari rendering fix: The negative z-index places the background behind the content */
 				z-index: -1;
 			}
 
