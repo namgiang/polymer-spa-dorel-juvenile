@@ -1,6 +1,7 @@
 <dom-module id="dorel-navigation-main">
   <template strip-whitespace>
     <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
+
       app-drawer {
         z-index: 1000;
       }
@@ -8,6 +9,15 @@
         height: 2.6rem;
         width: 100%;
         display: flex;
+      }
+
+      .mobile-menu-item {
+		    text-decoration: none;
+	      color: var(--theme-primary-text-color);
+	      text-transform: capitalize;
+      }
+      .mobile-menu-item:hover {
+	      color: var(--theme-color-hover);
       }
       /*dorel-tab {
         padding-top: 1rem;
@@ -57,7 +67,7 @@
     <app-drawer opened="{{ mobileMenuOpened }}" swipe-open tabindex="0">
 
       <div class="menu-spacer-top"></div>
-      <template 
+      <template
         is="dom-if" 
         if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
         <iron-selector role="navigation" class="drawer-list" 
@@ -74,7 +84,7 @@
               <template
                 is="dom-if"
                 if="[[ !menuItem.children.length ]]">
-                <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
                   on-click="menuItemClicked">
                   <paper-item>[[ menuItem.title ]]</paper-item>
                 </a>
