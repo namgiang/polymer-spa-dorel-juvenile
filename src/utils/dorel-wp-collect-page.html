@@ -1,32 +1,25 @@
-<dom-module id="wp-collect-page">
+<dom-module id="dorel-wp-collect-page">
   <template>
     <iron-ajax
-      auto 
-      url="[[ wpUrl ]]/wp/v2/pages/[[ pageId ]]" 
+      id="page"
+      url="[[ wpUrl ]]/wp/v2/pages?slug=[[ pageSlug ]]" 
       handle-as="json"
       on-response="_pageLoaded"></iron-ajax>
   </template>
 
   <script>
     Polymer({
-      is: 'wp-collect-page',
+      is: 'dorel-wp-collect-page',
+      
       properties: {
-        /**
-         * `pageData` this variable is reflected
-         * by two way binding in order to use it in your
-         * template.
-         */
-        pageData: {
-          type: Object,
-          reflectToAttribute: true,
-          notify: true
-        },
 
         /**
-         * `pageId` of the Wordpress ID of the page
+         * `pageSlug` the slug of the page (last segment of the url), as
+         * defined by the dorel-app routing
          */
-        pageId: {
-          type: Number
+        pageSlug: {
+          type: String,
+          observer: '_retrievePage'
         },
 
         /**
@@ -35,13 +28,55 @@
         wpUrl: {
           type: String
         }
+
+      },
+
+      _retrievePage: function(newVal, oldVal) {
+        if (typeof newVal === 'undefined' || newVal === oldVal) return;
+
+        // switch(newVal) {
+        //   // home is eagerly loaded
+        //   case 'products':
+        //     newVal = this._getLastUrlSegment(document.URL);
+        //   break;
+
+        //   default:
+        //     newVal = newVal;
+        //   break;
+        // }
+
+        var pageEl = this.$.page;
+
+         // do the products call
+        pageEl.generateRequest();
       },
 
       _pageLoaded: function(data) {
-        var page = data.detail.response;
+
+        var response = data.detail.response;
+        var page = response[0];
+
+        // alter the template, strip 'page-' prefix
+        var template = page.template.slice(0, -4);
+        var pageName = template.replace('page-','');
+
+        // set pageObjects template property
+        page.template = pageName;
 
         // to retrieve the menu use Polymer.globalsManager.get('Dorel');
-        Polymer.globalsManager.set('Dorel.collect.page', page);
+        Polymer.globalsManager.set('Dorel.current.page', page);
+
+        // import the footer after the currentPage is loaded
+        this.importHref(this.resolveUrl('../organisms/dorel-footer.html'), null, null, true);
+      },
+
+      _getLastUrlSegment: function(url) {
+        var urlArr = document.URL.split('/');
+        var cleanedArr = urlArr.clean('');
+
+        newVal = urlArr[urlArr.length-1];
+
+        console.log(urlArr, cleanedArr);
       }
     });
   </script>
