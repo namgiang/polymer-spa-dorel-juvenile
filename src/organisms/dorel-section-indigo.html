@@ -42,7 +42,10 @@
 			}
 
 			.title-line {
+				max-width: var(--theme-indigo-title-width);
 				display: block;
+				display: block;
+				margin: auto;
 			}
 
 			.container {
@@ -118,24 +121,24 @@
 		<iron-media-query query="(min-width : 480px) and (max-width : 767px)"
 		                  query-matches="{{ mobileMedium }}"></iron-media-query>
 
-		<section class="section-indigo" 
-      mobile-small$="{{ mobileSmall }}" 
-      mobile-medium$="{{ mobileMedium }}">
+		<section class="section-indigo"
+		         mobile-small$="{{ mobileSmall }}"
+		         mobile-medium$="{{ mobileMedium }}">
 			<div class="container">
 				<div class="image-wrapper skew">
 					<div class="image skew-reset" role="img" aria-label="Add image description for accessibility here"
-            style$="
+					     style$="
               background-image: url([[ hasBackgroundImage(indigoData.background_image) ]]);"></div>
-          
-          <template
-            is="dom-if"
-            if="{{ hasValue(indigoData.title) }}">
-  					<div class="content-wrapper skew-reset">
-  						<h1 class="title">
-  							<span class="title-line">[[ indigoData.title ]]</span>
-  						</h1>
-  					</div>
-          </template>
+
+					<template
+									is="dom-if"
+									if="{{ hasValue(indigoData.title) }}">
+						<div class="content-wrapper skew-reset">
+							<h1 class="title">
+								<span class="title-line">[[ indigoData.title ]]</span>
+							</h1>
+						</div>
+					</template>
 				</div>
 		</section>
 	</template>
@@ -170,15 +173,15 @@
 				return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
 			},
 
-      /**
-       * @name hasBackgroundImage
-       * @description checks to see if a background image is set in Wordpress
-       *
-       * @returns Sting when no image is set it returns the placeholder string
-       */
-      hasValue: function (val) {
-        return (typeof val !== 'undefined' || val !== '');
-      }
+			/**
+			 * @name hasBackgroundImage
+			 * @description checks to see if a background image is set in Wordpress
+			 *
+			 * @returns Sting when no image is set it returns the placeholder string
+			 */
+			hasValue: function (val) {
+				return (typeof val !== 'undefined' || val !== '');
+			}
 		});
 	</script>
 </dom-module>
