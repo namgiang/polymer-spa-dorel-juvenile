@@ -1,11 +1,7 @@
 <dom-module id="dorel-navigation-main">
   <template strip-whitespace>
-<<<<<<< HEAD
-    <style include="theme-maxicosi-shared-styles iron-flex iron-flex-alignment">
-
-=======
     <style include="iron-flex iron-flex-alignment">
->>>>>>> develop
+
       app-drawer {
         z-index: 1000;
       }
@@ -13,6 +9,10 @@
         height: 2.6rem;
         width: 100%;
         display: flex;
+      }
+
+      paper-item {
+        font-family: var(--theme-font-sans-serif);
       }
 
       .mobile-menu-item {
@@ -23,19 +23,7 @@
       .mobile-menu-item:hover {
 	      color: var(--theme-color-hover);
       }
-      /*dorel-tab {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        padding-right: 1rem;
-      }
-      dorel-tab a {
-        color: var(--theme-primary-text-color);
-        text-decoration: none;
-        text-transform: capitalize;
-      }
-      dorel-tab a:hover {
-        color: var(--theme-color-hover);
-      }*/
+
       dorel-tab:not(:first-child) {
         padding-left: 1rem;
       }
@@ -45,16 +33,12 @@
 
       /* new styling */
       dorel-tab {
-        padding: 5px 10px;
-        margin: 0 10px;
+        padding: 0 var(--theme-component-space-inner);
         text-transform: capitalize;
       }
       dorel-tab a {
         color: var(--theme-primary-text-color);
         text-decoration: none;
-      }
-      dorel-tab:hover {
-        color: var(--theme-color-hover);
       }
     </style>
 
@@ -64,7 +48,7 @@
       query-matches="{{ screenMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px)"
       query-matches="{{ screenMediumUp }}"></iron-media-query>
-    
+
     <!--
       Mobile menu
     -->
@@ -72,18 +56,18 @@
 
       <div class="menu-spacer-top"></div>
       <template
-        is="dom-if" 
+        is="dom-if"
         if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-        <iron-selector role="navigation" class="drawer-list" 
-          selected="[[ page ]]" 
+        <iron-selector role="navigation" class="drawer-list"
+          selected="[[ page ]]"
           attr-for-selected="name">
           <paper-menu>
-            <template 
-              is="dom-repeat" 
+            <template
+              is="dom-repeat"
               items="{{ globals.Dorel.collect.menus.main_menu.items }}"
-              as="menuItem" 
+              as="menuItem"
               initial-count="4">
-              
+
               <!-- if not children -->
               <template
                 is="dom-if"
@@ -98,7 +82,7 @@
               <template
                 is="dom-if"
                 if="[[ menuItem.children.length ]]">
-                
+
                 <!-- Important! Make sure to expose the
                  - mobileMenuOpened
                  - searchOpened
@@ -115,7 +99,11 @@
             <!-- Removed in favor of DIO-588 
               <paper-item>language selector</paper-item>
             -->
-            <paper-item>support</paper-item>
+            <!-- TODO: add support link -->
+            <a class="mobile-menu-item" href="" title="Support"
+               on-click="menuItemClicked">
+              <paper-item>Support</paper-item>
+            </a>
           </paper-menu>
         </iron-selector>
       </template>
@@ -129,30 +117,30 @@
     for medium up only, but also for smaller screens
     -->
     <template is="dom-if" if="{{ screenMediumUp }}">
- 
+
       <!-- only show if menu contains items -->
-      <template 
-        is="dom-if" 
+      <template
+        is="dom-if"
         if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-        <nav 
-          role="navigation" 
+        <nav
+          role="navigation"
           screenMedium$="{{ screenMedium }}">
           <dorel-tabs
             selected="[[ page ]]"
             attr-for-selected="name">
             <div class="layout horizontal center">
               <!-- loop through the menu items -->
-              <template 
-                is="dom-repeat" 
-                items="{{ globals.Dorel.collect.menus.main_menu.items }}" 
+              <template
+                is="dom-repeat"
+                items="{{ globals.Dorel.collect.menus.main_menu.items }}"
                 as="menuItem">
 
                 <!-- if menu doesn't have children just show the menu item -->
-                <template 
+                <template
                   is="dom-if"
                   if="[[ !menuItem.children.length ]]">
                   <div>
-                    <dorel-tab 
+                    <dorel-tab
                       name="[[ menuItem.title ]]">
                         <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
                           on-click="menuItemClicked">
@@ -167,7 +155,7 @@
                  - show visual indicator 
                  - add the children in submenu
                  -->
-                <template 
+                <template
                   is="dom-if"
                   if="[[ menuItem.children.length ]]">
 
@@ -228,7 +216,7 @@
           value: false,
           notify: true
         },
-        
+
         /**
          * @attribute
          * @name subMenuOpened
