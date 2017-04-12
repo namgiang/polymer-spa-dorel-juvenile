@@ -13,8 +13,8 @@
 <!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
 <link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
 
-<link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
-<link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
+<link rel="import" href="themes/theme-dorel-shared-styles.html">
+<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 
 <link rel="import" href="atoms/dorel-gtm-events.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
@@ -30,17 +30,19 @@
 
 <dom-module id="dorel-app">
   <template>
-    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min iron-flex iron-flex-alignment">
+    <style include="polymer-bootstrap-min iron-flex iron-flex-alignment">
       /* 
        * Application wide styling
        * - Will define standard styling for components
        */
       :host {
+	      font-family: var(--theme-font-sans-serif);
         --primary-color: var(--theme-brand-color);
         color: var(--theme-primary-text-color);
         display: block;
         position: relative;
         min-height: 100vh;
+	      font-family: var(--theme-font-sans-serif);
       }
 
       :root {
@@ -95,6 +97,7 @@
 
     <!-- loading placeholder -->
     <!-- <dorel-app-placeholder id="placeholder"></dorel-app-placeholder> -->
+
 
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations
@@ -238,11 +241,26 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
+	      this._setSharedThemeStyle();
+
+
         // When a template has been loaded
         // window.addEventListener('dorel-template-loaded', function() {
         //   this.fallback = '404';
         // }.bind(this));
+
       },
+
+	    /**
+	     * @nae _setSharedThemeStyle
+	     * @description Checks the apps config, and sets the according brand theme
+	     **/
+	    _setSharedThemeStyle: function() {
+		    var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
+		    var myDomModule = document.createElement('style', 'custom-style');
+				myDomModule.setAttribute('include', brandTheme);
+				Polymer.dom(this.root).appendChild(myDomModule);
+	    },
 
       /**
        * @observer
