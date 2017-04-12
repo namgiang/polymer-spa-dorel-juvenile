@@ -2,13 +2,13 @@
   <template>
     <iron-ajax 
       auto 
-      url="[[ wpUrl ]]/wp/v2/pages" 
+      url="[[ endPoint ]]" 
       handle-as="json"
       on-response="_pagesLoaded"></iron-ajax>
 
     <iron-ajax 
       id="products"
-      url="[[ wpUrl ]]/wp/v2/products" 
+      url="" 
       handle-as="json"
       on-response="_productsLoaded"></iron-ajax>
   </template>
@@ -19,9 +19,10 @@
 
       properties: {
         /**
-         * `wpUrl` of the url of the Wordpress instance
+         * @name endPoint
+         * @description the endpoint or url of the api
          */
-        wpUrl: {
+        endPoint: {
           type: String
         },
 
@@ -36,11 +37,15 @@
         }
       },
 
+      ready: function() {
+        this.endPoint = this.globals.Dorel.wpUrl + '/wp/v2/pages';
+      },
+
       /** 
        * @name _pagesLoaded
        * @description process the retrieved pages
        */
-      _pagesLoaded: function (data) {
+      _pagesLoaded: function(data) {
         var self = this;
         var productsEl = self.$.products;
         var pages = data.detail.response;
@@ -61,6 +66,9 @@
           self.collect.push(page);
         });
 
+        // define url for retrieving products
+        productsEl.url = this.globals.Dorel.wpUrl + '/wp/v2/products';
+
         // do the products call
         productsEl.generateRequest();
       },
@@ -69,7 +77,7 @@
        * @name _productsLoaded
        * @description process the retrieved products
        */
-      _productsLoaded: function (data) {
+      _productsLoaded: function(data) {
         var self = this;
         var productsArray = data.detail.response;
         
@@ -141,6 +149,9 @@
 
         // set the new collect obj
         Polymer.globalsManager.set('Dorel.collect.pages', self.collect);
+
+        // import the footer after the pages are loaded
+        this.importHref(this.resolveUrl('../organisms/dorel-footer.html'), null, null, true);
       }
     });
   </script>

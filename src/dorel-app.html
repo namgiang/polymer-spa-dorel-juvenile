@@ -104,16 +104,14 @@
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-pages>
+    <dorel-wp-collect-pages></dorel-wp-collect-pages>
 
     <!-- collect the options pages -->
     <dorel-wp-collect-options
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
+    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
   
     <dorel-header
       load-complete="{{ loadComplete }}"
@@ -131,7 +129,7 @@
         selected="{{ page }}"
         attr-for-selected="name">
 
-        <!-- for every page create a dorel-template -->
+        <!-- for every page, create a dorel-template -->
         <template
           is="dom-repeat"
           items="{{ globals.Dorel.collect.pages }}"
@@ -266,6 +264,30 @@
 
       /**
        * @observer
+       * @name _routeChanged
+       * @description on url/route change get the first segment of the url
+       * then set it as the page. With those settings start the setCurrentPage
+       * which will change the iron-pages selected
+       *
+       * @param route object
+       */
+      _routeChanged: function(route) {
+
+        // if the route is undefined
+        if (typeof route === 'undefined') return;
+
+        // define the first segment
+        var firstSegment = this.routeData.page;
+        /** 
+         * if last segment is undefined or empty string set too home, 
+         * all others to segment
+         */
+        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
+          'home' : firstSegment;
+      },
+
+      /**
+       * @observer
        * @name _pageChanged
        * @description when the page variable changes lazyload the page
        * or retrieve it all the way.
@@ -305,27 +327,6 @@
           break;
         }
 
-      },
-
-      /**
-       * @observer
-       * @name _routeChanged
-       * @description on url/route change get the first segment of the url
-       * then set it as the page. With those settings start the setCurrentPage
-       * which will change the iron-pages selected
-       *
-       * @param route object
-       */
-      _routeChanged: function(route) {
-        // define the first segment
-        var firstSegment = this.routeData.page;
-
-        /** 
-         * if last segment is undefined or empty string set too home, 
-         * all others to segment
-         */
-        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
-          'home' : firstSegment;
       },
 
       /**
@@ -392,7 +393,6 @@
        * title to its title tag
        */
       _currentPageChanged: function(newVal) {
-
         if(typeof newVal === 'undefined') return;
 
         this.fire('change-section', { 
