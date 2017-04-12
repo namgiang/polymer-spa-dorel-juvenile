@@ -42,117 +42,28 @@
 
   <!-- fonts -->
   <link href="https://fonts.googleapis.com/css?family=Armata" rel="stylesheet">
-
-  <!-- all config/constants needed for the app -->
-  <script type="text/javascript" src="/app-config.js"></script>
   
   <!-- app import -->
   <link rel="import" href="/src/dorel-app.html" async>
-
-  <style>
-    .spinner {
-      width: 40px;
-      height: 40px;
-      position: relative;
-      margin: 100px auto;
-    }
-
-    .double-bounce1, .double-bounce2 {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: #333;
-      opacity: 0.6;
-      position: absolute;
-      top: 20vh;
-      left: 0;
-      
-      -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
-      animation: sk-bounce 2.0s infinite ease-in-out;
-    }
-
-    .double-bounce2 {
-      -webkit-animation-delay: -1.0s;
-      animation-delay: -1.0s;
-    }
-
-    @-webkit-keyframes sk-bounce {
-      0%, 100% { -webkit-transform: scale(0.0) }
-      50% { -webkit-transform: scale(1.0) }
-    }
-
-    @keyframes sk-bounce {
-      0%, 100% { 
-        transform: scale(0.0);
-        -webkit-transform: scale(0.0);
-      } 50% { 
-        transform: scale(1.0);
-        -webkit-transform: scale(1.0);
-      }
-    }
-  </style>
 
 </head>
 <body unresolved>
 
   <dorel-app>
-    <!-- First paint 
-         Any content here is removed on app load
-    -->
+    <!-- Any content here is removed when the app is loaded -->
     <div class="spinner">
       <div class="double-bounce1"></div>
       <div class="double-bounce2"></div>
     </div>
   </dorel-app>
+
+  <!-- all config/constants needed for the app -->
+  <script type="text/javascript" src="/app-config.js"></script>
+  <script type="text/javascript" src="/assets/js/polyfills.js"></script>
   
   <script>
     window.performance && performance.mark && performance.mark('index.html');
-
     Polymer = {lazyRegister: true, dom: 'shadow'};
-
-    (function() {
-      'use strict';
-
-      /**
-       *  Load webcomponents only for other browsers than Chrome
-       */
-      if ('registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')) {
-        // platform is good!
-      } else {
-        // polyfill the platform!
-        var e = document.createElement('script');
-        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
-        document.body.appendChild(e);
-      }
-
-      /**
-       * Find polyfill for IE
-       */
-      if ( !Array.prototype.find ) {
-        Array.prototype.find = function(predicate) {
-          if (this == null) {
-            throw new TypeError('Array.prototype.find called on null or undefined');
-          }
-          if (typeof predicate !== 'function') {
-            throw new TypeError('predicate must be a function');
-          }
-          var list = Object(this);
-          var length = list.length >>> 0;
-          var thisArg = arguments[1];
-          var value;
-
-          for (var i = 0; i < length; i++) {
-            value = list[i];
-            if (predicate.call(thisArg, value, i, list)) {
-              return value;
-            }
-          }
-          return undefined;
-        };
-      }
-    })();
   </script>
 </body>
 </html>
