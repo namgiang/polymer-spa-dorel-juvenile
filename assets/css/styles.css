@@ -1,8 +1,24 @@
 body {
   margin: 0;
-  min-height: 100vh;
-  background-color: #fff;
 }
+
+#load-placeholder {
+  opacity:0;  /* make things invisible upon start */
+  -webkit-animation:fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation:fadeIn ease 1;
+  animation:fadeIn ease 1;
+  -webkit-animation-duration: 1s;
+  -moz-animation-duration: .1s;
+  animation-duration: 1;
+
+  -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+}
+
+@-webkit-keyframes fadeIn { from { opacity:0; opacity: 1\9; /* IE9 only */ } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; opacity: 1\9; /* IE9 only */ } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; opacity: 1\9; /* IE9 only */ } to { opacity:1; } }
 
 .header-placeholder {
   position: fixed;
@@ -10,7 +26,7 @@ body {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 158px;
+  height: 160px;
 }
 
 .header-placeholder__user-tools {
@@ -19,7 +35,7 @@ body {
 }
 
 .header-placeholder__main-navigation {
-  height: 116px;
+  height: 118px;
   width: 100%;
 }
 
@@ -57,7 +73,7 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: #333;
+  background-color: #a2a2a2;
   opacity: 0.6;
   position: absolute;
   top: 0;
@@ -86,3 +102,6 @@ body {
     -webkit-transform: scale(1.0);
   }
 }
+
+
+
