@@ -170,7 +170,8 @@
           if="{{ isPageComponent(component.acf_fc_layout, 'section_multi') }}">
           
           <dorel-section-multi
-            multi-data="[[ component ]]"></dorel-section-multi>
+            multi-data="[[ component ]]"
+            template-data="[[ templateData ]]"></dorel-section-multi>
 
         </template>
         <!--// section-multi -->
@@ -349,6 +350,18 @@
           value: function() {
             return {};
           }
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the complete page/template data object
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
         }
 
       },
@@ -360,6 +373,17 @@
        * @returns Boolean if the two values match or not (true/false)
        */
       isPageComponent: function(response, cname) {
+        var lastChar = response.substr(response.length - 1);
+        var isNumber = !isNaN(Number(lastChar));
+        
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
         return response === cname;
       }
     });

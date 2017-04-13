@@ -115,26 +115,17 @@
                * when placing them in the page_builder we need to strip this number
                * because we delegate them to the page builder element
                */
-              var keyArr = acfKey.split('_');
-              var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
+              // var keyArr = acfKey.split('_');
+              // var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
 
               // grab all inner values of the acfType
               var acfLayout = product.acf.product_detail_builder[0][acfKey][0];
 
-              // if the acfKey has a number we need to strip it
-              if( hasNumber ) {
-                keyArr.pop();
-                acfLayout.acf_fc_layout = keyArr.join('_');
-
-                // place the new acf_fc_layout in the page_builder array
-                acfObj.page_builder.push(acfLayout);
-              } else {
-                // set the new acf_fc_layout variable to the key
-                acfLayout.acf_fc_layout = acfKey;
-                
-                // place the new acf_fc_layout in the page_builder array
-                acfObj.page_builder.push(acfLayout);
-              }
+              // set the new acf_fc_layout variable to the key
+              acfLayout.acf_fc_layout = acfKey;
+              
+              // place the new acf_fc_layout in the page_builder array
+              acfObj.page_builder.push(acfLayout);
             }
 
             // replace the old acf object with the new formed acf
