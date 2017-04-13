@@ -34,7 +34,8 @@
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
       desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
+      desktop-full$="{{ desktopFull }}"
+      style$="background-color: {{ needsBackground(multiData.acf_fc_layout) }}">
 
       <template
         is="dom-if"
@@ -167,6 +168,22 @@
        */
       isFullWidth: function(container) {
         return (typeof container !== 'undefined' && container === 'full-width');
+      },
+
+      /**
+       * @name needsBackground
+       * @description check what type of container it is
+       *
+       * @returns string empty or color empty when last char is number
+       */
+      needsBackground: function(layoutName) {
+        // get last char
+        var lastChar = layoutName.substr(layoutName.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        return (isNumber) ? '' : '#f5f5f5';
       },
 
       /**
