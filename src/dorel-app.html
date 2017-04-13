@@ -380,10 +380,20 @@
 
               this._notifyNetworkStatus();
               this.loadComplete = true;
+              this._removeLoadPlaceholder();
             });
           });
         }
 
+      },
+
+      /**
+       * @name _removeLoadPlaceholder
+       * @description removes loading spinner and placeholders before the page is loaded
+       */
+      _removeLoadPlaceholder: function() {
+        var placeholder = document.getElementById('load-placeholder');
+        placeholder.remove();
       },
 
       /**
