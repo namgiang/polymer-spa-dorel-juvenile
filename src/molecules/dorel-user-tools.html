@@ -1,6 +1,9 @@
 <dom-module id="dorel-user-tools">
   <template strip-whitespace>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        padding: 1px .5rem;
+      }
       .icn-big {
         --iron-icon-height: 2rem; /* var(--theme-icon-size-big) */
         --iron-icon-width: 2rem; /* var(--theme-icon-size-big) */
@@ -13,6 +16,7 @@
       }
       .icon-toggle-menu {
         z-index: 1001;
+        padding: 3px;
       }
       .centered {
         @apply(--layout-horizontal);
@@ -30,6 +34,15 @@
         height: 15px; 
         width: 100%;
       }
+
+      .icn-search-section-trigger {
+        padding: 0;
+      }
+
+      .icn-search-section-trigger[screenMediumUp] {
+        padding: 0;
+      }
+
       iron-icon[screenMediumUp].active:after {
         margin-top: 38px;
         height: 45px;
@@ -73,7 +86,7 @@
       <template
         is="dom-if"
         if="{{ !searchOpened }}">
-        <iron-icon 
+        <iron-icon
           icon="dorel-icons:search" 
           class="icn-big icn-trigger icn-search-section-trigger"
           on-click="toggleSearch"

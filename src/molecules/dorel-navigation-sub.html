@@ -1,13 +1,14 @@
 <dom-module id="dorel-navigation-sub">
   <template>
     <style>
+
       .section-secondary-menu {
-        background-color: #F5F5F5;
+        background-color: var(--theme-color-background-tertiary);
         width: 100%;
+	      position: absolute;
         left: 0;
-        position: absolute;
-        margin-top: 3rem;
-        z-index: 1050;
+	      bottom: -4.125rem;
+        z-index: 2;
       }
       .menu-item-container .section-secondary-menu {
         visibility: hidden;
@@ -19,31 +20,63 @@
       }
       .sub-menu {
         list-style-type: none;
+        margin: 0;
+        float: left;
+        padding: 0;
+        width: 100%;
 
       }
-      .sub-menu a {
+      .sub-menu a{
+        color: var(--theme-primary-text-color);
+        float: left;
+        width: auto;
+        padding: var(--theme-component-space-inner);
+      }
+
+      paper-submenu paper-item {
+        font-family: var(--theme-font-sans-serif);
+      }
+
+      paper-submenu paper-item.iron-selected {
+        font-weight: normal !important;
+      }
+
+      paper-submenu a, .sub-menu a {
+        text-transform: capitalize;
         color: var(--theme-primary-text-color);
         text-decoration: none;
-        text-transform: capitalize;
+      }
+
+      paper-submenu a:hover, .sub-menu a:hover {
+        color: var(--theme-color-hover);
+        cursor: pointer;
+      }
+
+      paper-submenu {
+	      text-transform: capitalize;
+	      color: var(--theme-primary-text-color);
+	      font-weight: 100 !important;
+      }
+      paper-submenu:hover {
+	      color: var(--theme-color-hover);
+        cursor: pointer;
       }
       paper-submenu .menu-content {
         background-color: var(--theme-color-background-tertiary);
+        padding: 0;
       }
+
       dorel-tab {
-        padding: 5px 10px;
-        margin: 0 10px;
+        padding: 0 var(--theme-component-space-inner);
         text-transform: capitalize;
       }
-      dorel-tab a {
-        color: var(--theme-primary-text-color);
-        text-decoration: none;
-      }
+
       dorel-tab:hover {
         color: var(--theme-color-hover);
-      }
-      dorel-tab.has-submenu:hover {
         cursor: pointer;
+
       }
+
     </style>
 
     <iron-media-query query="(max-width : 767px)"
@@ -53,11 +86,11 @@
     <iron-media-query query="(min-width : 768px)"
       query-matches="{{ screenMediumUp }}"></iron-media-query>
 
-    <!-- Desktop sub -->    
+    <!-- Desktop sub -->
     <template is="dom-if" if="{{ screenMediumUp }}">
       <div class="menu-item-container" opened$="{{ thisOpened }}">
         <dorel-tab
-          class="has-submenu" 
+          class="has-submenu"
           name="[[ menuItem.title ]]"
           on-click="dropdownToggle">
           [[ menuItem.title ]]
@@ -84,8 +117,7 @@
                 items="[[ menuItem.children ]]"
                 as="child">
                 <li>
-                  <a href="[[ child.url ]]"
-                    on-click="menuItemClicked">[[ child.title ]]</a>
+                    <a href="[[ child.url ]]" on-click="menuItemClicked">[[ child.title ]]</a>
                 </li>
               </template>
             </ul>
@@ -93,7 +125,7 @@
         </section>
       </div>
     </template>
-    
+
     <!-- Mobile Sub -->
     <template is="dom-if" if="{{ !screenMediumUp }}">
       <paper-submenu opened$="{{ thisOpened }}">
@@ -214,7 +246,7 @@
         this.thisOpened = newVal;
       },
 
-      /** 
+      /**
        * @name _setThisOpened
        * @description observer for the activeId variable, it is used to set the
        * thisOpened variable
@@ -284,7 +316,7 @@
         self._eventTracking(event, 'dropdownToggle');
 
         /**
-         * event listener to disable submenu on scroll 
+         * event listener to disable submenu on scroll
          */
         window.onscroll = function(events) {
           self.subMenuOpened = false;
@@ -293,7 +325,7 @@
 
       /**
        * @name setActiveId
-       * @description function to set the activeId variable/attribute to the 
+       * @description function to set the activeId variable/attribute to the
        * one that is clicked
        */
       setActiveId: function() {
