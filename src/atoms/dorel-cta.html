@@ -1,6 +1,6 @@
 <dom-module id="dorel-cta">
   <template>
-    <style include="dorel-animate-classes polymer-bootstrap-min">
+    <style include="dorel-animate-classes">
       .theme-cta {
 	      @apply(--theme-bodycopy);
         font-size: 1rem;
@@ -11,15 +11,22 @@
         border-width: 2px;
         border-style: solid;
 	      font-family: var(--theme-font-sans-serif);
+        transition: .3s ease border-color, .3s ease background-color;
       }
+
+      .theme-cta:hover, .theme-cta:focus {
+        border-color: var(--theme-color-hover);
+        background-color: var(--theme-color-hover);
+        text-decoration: none;
+        color: var(--theme-white);
+      }
+
       .theme-cta-primary {
-        color: white;
+        color: var(--theme-white);
         border-color: var(--theme-color-cta);
         background-color: var(--theme-color-cta);
       }
-      .theme-cta-primary:hover {
-        opacity: 0.9;
-      }
+
       .theme-cta-secondary {
         color: var(--theme-brand-color-accent-dark-grey);
         border-color: var(--theme-brand-color-accent-medium-grey);
@@ -47,7 +54,6 @@
       <a href$="{{ link }}" class$="hvr-pop theme-cta theme-cta-{{ type }}"
         on-click="clickCTA">
         <content></content>
-        <span class="glyphicon glyphicon-chevron-right"></span>
       </a>
     </template>
 
