@@ -27,7 +27,6 @@
 
 <!-- enable global variables -->
 <script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
-<script src="//js.hsforms.net/forms/v2.js"></script>
 
 <dom-module id="dorel-app">
   <template>
@@ -76,7 +75,9 @@
     <dorel-gtm-events
       gtm-data="{{ globals.Dorel }}"></dorel-gtm-events>
     
-    <dorel-hubspot></dorel-hubspot>
+    <dorel-third-party
+      hub-spot-toggle="{{ globals.Dorel.collect.options.hubspot_integration }}"
+      hub-spot-loaded="{{ hubSpotLoaded }}"></dorel-third-party>
 
 
     <!-- media queries -->
@@ -116,6 +117,11 @@
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
     <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
+
+    <dorel-hubspot
+      portal-id="2755398"
+      form-id="f640c7df-18d2-4984-8371-c472c0d0c332"
+      hub-spot-loaded="{{ hubSpotLoaded }}"></dorel-hubspot>
   
     <dorel-header
       load-complete="{{ loadComplete }}"
@@ -210,7 +216,6 @@
       observers: [
         '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
         '_setCurrentPage(page, globals.Dorel.collect.pages)',
-        '_initHubspot(globals.Dorel.collect.options.hubspot_integration)',
         '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
@@ -253,23 +258,6 @@
         // window.addEventListener('dorel-template-loaded', function() {
         //   this.fallback = '404';
         // }.bind(this));
-
-      },
-
-      _initHubspot: function(hubspotToggle) {
-        if (typeof hubspotToggle === 'undefined') return;
-
-        // if hubspot integration is defined
-        var optionHubspot = Polymer.globalsManager.get('Dorel.collect.options.hubspot_integration');
-
-        if(typeof optionHubspot !== 'undefined' || optionHubspot !== '') {
-          this.importHref(
-            this.resolveUrl('atoms/dorel-hubspot.html'),
-              null, 
-              null, 
-              false
-          );
-        }
       },
 
 	    /**
