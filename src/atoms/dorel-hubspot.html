@@ -1,13 +1,35 @@
 <dom-module id="dorel-hubspot">
-  <!--[ if  lte IE  8 ]>
+  <template>
+    <!--[ if  lte IE  8 ]>
   <script charset= "utf-8"  type= "text/javascript" src= "//js.hsforms.net/forms/v2-legacy.js" ></script>
   <![ endif ]-->
 
-  <script charset= "utf-8"  type= "text/javascript"  src= "//js.hsforms.net/forms/v2.js" ></script>
-  
+    <script>
+      hbspt.forms.create({
+        css:  '' ,
+        portalId:  '2755398' ,
+        formId:  'f640c7df-18d2-4984-8371-c472c0d0c332'
+      });
+    </script>
+  </template>
+
   <script>
     Polymer({
-      is: 'dorel-hubspot'
+      is: 'dorel-hubspot',
+
+      ready: function() {
+        console.log('ready');
+      },
+
+      attached: function() {
+        console.log('bla');
+        var script = document.createElement('script');
+        script.onload = function() {
+          alert("Script loaded and ready");
+        };
+        script.src = "//js.hsforms.net/forms/v2.js";
+        document.getElementsByTagName('head')[0].appendChild(script);
+      }
     });
   </script>
 </dom-module>
