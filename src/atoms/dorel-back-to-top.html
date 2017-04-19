@@ -9,12 +9,15 @@
         background-color: var(--theme-brand-color-accent-dark-grey);
         border-radius: var(--theme-border-radius-large);
       }
+
       .back-to-top:hover {
         cursor: pointer;
       }
+
       .back-to-top iron-icon {
         color: white;
       }
+
       .flex-center-justified {
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
@@ -23,8 +26,8 @@
     </style>
 
     <div class="layout horizontal center center-justified">
-	    <div class="back-to-top flex-center-justified" on-click="_backToTop"
-	         role="button" aria-label="Back to top" tabindex="0">
+      <div class="back-to-top flex-center-justified" on-click="_backToTop"
+           role="button" aria-label="Back to top" tabindex="0">
         <iron-icon icon="dorel-icons:vertical-align-top"></iron-icon>
       </div>
     </div>
@@ -37,31 +40,34 @@
      */
     Polymer({
       is: 'dorel-back-to-top',
-			/**
-			 * @name _backToTop
-			 * @description Scroll to top animation function
-			 * @private
-			 * Based on: http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
-			 */
-			_backToTop: function () {
-				var scrollDuration = 1000;
-				var cosParameter = window.scrollY / 2,
-								scrollCount = 0,
-								oldTimestamp = performance.now();
+      /**
+       * @name _backToTop
+       * @description Scroll to top animation function
+       * @private
+       * Based on: http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
+       */
+      _backToTop: function () {
+        var scrollDuration = 1000;
+        var cosParameter = window.scrollY / 2,
+          scrollCount = 0,
+          oldTimestamp = performance.now();
 
-				// Step function for scrolling to top
-				function step(newTimestamp) {
-					scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));
-					if (scrollCount >= Math.PI) window.scrollTo(0, 0);
-					if (window.scrollY === 0) return;
-					window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(scrollCount)));
-					oldTimestamp = newTimestamp;
-					window.requestAnimationFrame(step);
-				}
+        // Step function for scrolling to top
+        function step(newTimestamp) {
+          scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));
+          if (scrollCount >= Math.PI) window.scrollTo(0, 0);
+          if (window.scrollY === 0) return;
+          window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(scrollCount)));
+          oldTimestamp = newTimestamp;
+          window.requestAnimationFrame(step);
+        }
 
-				// Initialises the animation loop
-				window.requestAnimationFrame(step);
+        // Initialises the animation loop
+        window.requestAnimationFrame(step);
+      },
     });
   </script>
 
 </dom-module>
+
+
