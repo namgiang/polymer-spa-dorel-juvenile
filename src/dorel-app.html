@@ -206,6 +206,7 @@
       observers: [
         '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
         '_setCurrentPage(page, globals.Dorel.collect.pages)',
+        '_initHubspot(globals.Dorel.collect.options.hubspot_integration)',
         '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
@@ -249,6 +250,22 @@
         //   this.fallback = '404';
         // }.bind(this));
 
+      },
+
+      _initHubspot: function(hubspotToggle) {
+        if (typeof hubspotToggle === 'undefined') return;
+
+        // if hubspot integration is defined
+        var optionHubspot = Polymer.globalsManager.get('Dorel.collect.options.hubspot_integration');
+
+        if(typeof optionHubspot !== 'undefined' || optionHubspot !== '') {
+          this.importHref(
+            this.resolveUrl('atoms/dorel-hubspot.html'),
+              null, 
+              null, 
+              false
+          );
+        }
       },
 
 	    /**
