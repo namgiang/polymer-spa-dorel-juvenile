@@ -1,0 +1,48 @@
+<dom-module id="dorel-third-party">
+  <template>
+  ----- {{ includeHubspot }} ------
+      <dorel-hubspot
+        src="//js.hsforms.net/forms/v2.js"
+        hub-spot-loaded="{{ hubSpotLoaded }}"></dorel-hubspot>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-third-party',
+
+      properties: {
+        hubSpotToggle: {
+          type: Boolean,
+          value: false,
+          observer: '_hubSpotChanged'
+        },
+
+        includeHubspot: {
+          type: Boolean,
+          value: false
+        },
+
+        hubSpotLoaded: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
+
+      _hubSpotChanged: function(newVal, oldVal) {
+        console.log(newVal);
+        if (typeof newVal === 'undefined' || !newVal) return;
+
+        var self = this;
+
+        this.importHref(
+          this.resolveUrl('../atoms/dorel-hubspot.html'), function() {
+            console.log('yep');
+            self.includeHubspot = true;
+          }, null, false
+        );
+      }
+    });
+  </script>
+</dom-module>

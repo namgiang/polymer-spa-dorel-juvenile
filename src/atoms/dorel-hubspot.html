@@ -1,35 +1,82 @@
 <dom-module id="dorel-hubspot">
-  <template>
-    <!--[ if  lte IE  8 ]>
-  <script charset= "utf-8"  type= "text/javascript" src= "//js.hsforms.net/forms/v2-legacy.js" ></script>
-  <![ endif ]-->
-
-    <script>
-      hbspt.forms.create({
-        css:  '' ,
-        portalId:  '2755398' ,
-        formId:  'f640c7df-18d2-4984-8371-c472c0d0c332'
-      });
-    </script>
-  </template>
-
   <script>
     Polymer({
       is: 'dorel-hubspot',
 
-      ready: function() {
-        console.log('ready');
+      properties: {
+        src: {
+          type: String
+        },
+
+        portalId: {
+          type: String
+        },
+
+        formId: {
+          type: String
+        },
+
+        hubSpotLoaded: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
       },
 
-      // attached: function() {
-      //   console.log('bla');
-      //   var script = document.createElement('script');
-      //   script.onload = function() {
-      //     alert("Script loaded and ready");
-      //   };
-      //   script.src = "//js.hsforms.net/forms/v2.js";
-      //   document.getElementsByTagName('head')[0].appendChild(script);
-      // }
+      observers: [
+        '_embedForm(hubSpotLoaded)'
+      ],
+
+      // element lifecycle call
+      attached: function() {
+        console.log('attached');
+        // check if the script is included
+        if( typeof this.src === 'undefined' || this.src === '' || this._scriptExists(this.src) ) return;
+
+        // create script tag
+        var script = document.createElement('script');
+
+        // add source of script
+        script.src = this.src;
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        // when the script has been loaded
+        script.onload = function() {
+          console.log('yes', this);
+          this.hubSpotLoaded = true;
+        };
+      },
+
+      /** 
+       * @name _scriptExists
+       * @description check if the script tag with the defined url exists already
+       * in the application
+       *
+       * @parameter String - url string
+       */
+      _scriptExists: function(url) {
+        // select all scripts
+        var scripts = document.getElementsByTagName('script');
+
+        // check if we have a match
+        for (var i = scripts.length; i--;) {
+          return (scripts[i].src === url);
+        }
+
+        // return false if no match is found
+        return false;
+      },
+
+      _embedForm: function(hubSpotLoaded) {
+        console.log('embedIt!!!!!!', this.portalId, this.formId, hubSpotLoaded);
+
+        
+          window.hbspt.forms.create({
+            css:  '' ,
+            portalId: portalId,
+            formId: formId
+          });
+      }
     });
   </script>
 </dom-module>
