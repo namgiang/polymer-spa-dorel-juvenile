@@ -1,9 +1,12 @@
 <dom-module id="dorel-third-party">
   <template>
-  ----- {{ includeHubspot }} ------
+    <!-- <template
+      is="dom-if"
+      if="{{ includeHubspot }}">
       <dorel-hubspot
         src="//js.hsforms.net/forms/v2.js"
         hub-spot-loaded="{{ hubSpotLoaded }}"></dorel-hubspot>
+    </template> -->
 
   </template>
 
@@ -13,14 +16,16 @@
 
       properties: {
         hubSpotToggle: {
-          type: Boolean,
-          value: false,
-          observer: '_hubSpotChanged'
+          type: Boolean
         },
 
-        includeHubspot: {
-          type: Boolean,
-          value: false
+        hubSpotPortalId: {
+          type: String
+        },
+
+        hubSpotSrc: {
+          type: String,
+          value: '//js.hsforms.net/forms/v2.js'
         },
 
         hubSpotLoaded: {
@@ -30,18 +35,62 @@
         }
       },
 
-      _hubSpotChanged: function(newVal, oldVal) {
-        console.log(newVal);
+      observers: [
+        '_initHubSpot(hubSpotToggle)'
+      ],
+
+      // element lifecycle call
+      attached: function() {
+        console.log(this.hubSpotToggle, this.hubSpotPortalId, this.hubSpotSrc);
+        // check if the script is included
+        if( typeof this.src === 'undefined' || this.src === '' || this._scriptExists(this.src) ) return;
+
+        // create script tag
+        var script = document.createElement('script');
+
+        // add source of script
+        script.src = this.src;
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        // when the script has been loaded
+        script.onload = function() {
+          console.log('yes', this);
+          this.hubSpotLoaded = true;
+        };
+      },
+
+      _initHubspot: function(hubSpotToggle, hubSpotPortalId, hubSpotSrc) {
+        console.log(this.hubSpotToggle, this.hubSpotPortalId, this.hubSpotSrc);
+
         if (typeof newVal === 'undefined' || !newVal) return;
 
         var self = this;
 
         this.importHref(
           this.resolveUrl('../atoms/dorel-hubspot.html'), function() {
-            console.log('yep');
-            self.includeHubspot = true;
+            self.hubSpotLoaded = true;
           }, null, false
         );
+      },
+
+      /** 
+       * @name _scriptExists
+       * @description check if the script tag with the defined url exists already
+       * in the application
+       *
+       * @parameter String - url string
+       */
+      _scriptExists: function(url) {
+        // select all scripts
+        var scripts = document.getElementsByTagName('script');
+
+        // check if we have a match
+        for (var i = scripts.length; i--;) {
+          return (scripts[i].src === url);
+        }
+
+        // return false if no match is found
+        return false;
       }
     });
   </script>
