@@ -26,7 +26,7 @@
     </style>
 
     <div class="layout horizontal center center-justified">
-      <div class="back-to-top flex-center-justified" on-click="_backToTop"
+      <div class="back-to-top flex-center-justified" on-click="backToTopClick"
            role="button" aria-label="Back to top" tabindex="0">
         <iron-icon icon="dorel-icons:vertical-align-top"></iron-icon>
       </div>
@@ -40,30 +40,56 @@
      */
     Polymer({
       is: 'dorel-back-to-top',
+      properties: {
+        scrollDuration: {
+          type: Number,
+          value: 1000
+        },
+        _cosParameter: {
+          type: Number,
+        },
+        _scrollCount: {
+          type: Number,
+        },
+        _oldTimestamp: {
+          type: Number,
+        },
+      },
       /**
-       * @name _backToTop
-       * @description Scroll to top animation function
+       * @name _scrollAnimationHandler
+       * @description Animation callback function which loops until the top of the window is reached
        * @private
+       */
+      _scrollAnimationHandler: function(newTimestamp) {
+        // Calculate the scrollcount
+        this._scrollCount += Math.PI / ( this.scrollDuration / (newTimestamp - this._oldTimestamp));
+
+        // Break out the of animation loop if the end is reached
+        if (this._scrollCount >= Math.PI) {
+          window.scrollTo(0, 0);
+          return;
+        }
+        // Incrementally scrolls to top. The Cosine is used for easing
+        window.scrollTo(0, Math.round(this._cosParameter + this._cosParameter * Math.cos(this._scrollCount)));
+        this._oldTimestamp = newTimestamp;
+
+        // Call this animation handler again
+        window.requestAnimationFrame(this._scrollAnimationHandler.bind(this));
+      },
+
+      /**
+       * @name backToTopClick
+       * @description Scroll to top animation function
        * Based on: http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
        */
-      _backToTop: function () {
-        var scrollDuration = 1000;
-        var cosParameter = window.scrollY / 2,
-          scrollCount = 0,
-          oldTimestamp = performance.now();
+      backToTopClick: function () {
+        // Initialise the parameters for the scroll animation
+        this._cosParameter = window.scrollY / 2;
+        this._scrollCount = 0;
+        this._oldTimestamp = performance.now();
 
-        // Step function for scrolling to top
-        function step(newTimestamp) {
-          scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));
-          if (scrollCount >= Math.PI) window.scrollTo(0, 0);
-          if (window.scrollY === 0) return;
-          window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(scrollCount)));
-          oldTimestamp = newTimestamp;
-          window.requestAnimationFrame(step);
-        }
-
-        // Initialises the animation loop
-        window.requestAnimationFrame(step);
+        // Initialises the animation loop. Bind 'this' to the function, so that the properties are still accessible
+        window.requestAnimationFrame(this._scrollAnimationHandler.bind(this));
       },
     });
   </script>
