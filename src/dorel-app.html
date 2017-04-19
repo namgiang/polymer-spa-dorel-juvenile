@@ -13,8 +13,8 @@
 <!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
 <link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
 
-<link rel="import" href="../assets/cdn/theme-dorel-shared-styles.html">
-<link rel="import" href="../assets/cdn/theme-maxicosi-shared-styles.html">
+<link rel="import" href="themes/theme-dorel-shared-styles.html">
+<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 
 <link rel="import" href="atoms/dorel-gtm-events.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
@@ -30,17 +30,19 @@
 
 <dom-module id="dorel-app">
   <template>
-    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min iron-flex iron-flex-alignment">
+    <style include="polymer-bootstrap-min iron-flex iron-flex-alignment">
       /* 
        * Application wide styling
        * - Will define standard styling for components
        */
       :host {
+	      font-family: var(--theme-font-sans-serif);
         --primary-color: var(--theme-brand-color);
         color: var(--theme-primary-text-color);
         display: block;
         position: relative;
         min-height: 100vh;
+	      font-family: var(--theme-font-sans-serif);
       }
 
       :root {
@@ -96,21 +98,20 @@
     <!-- loading placeholder -->
     <!-- <dorel-app-placeholder id="placeholder"></dorel-app-placeholder> -->
 
+
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-pages>
+    <dorel-wp-collect-pages></dorel-wp-collect-pages>
 
     <!-- collect the options pages -->
     <dorel-wp-collect-options
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-widgets>
+    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
   
     <dorel-header
       load-complete="{{ loadComplete }}"
@@ -128,7 +129,7 @@
         selected="{{ page }}"
         attr-for-selected="name">
 
-        <!-- for every page create a dorel-template -->
+        <!-- for every page, create a dorel-template -->
         <template
           is="dom-repeat"
           items="{{ globals.Dorel.collect.pages }}"
@@ -240,10 +241,49 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
+	      this._setSharedThemeStyle();
+
+
         // When a template has been loaded
         // window.addEventListener('dorel-template-loaded', function() {
         //   this.fallback = '404';
         // }.bind(this));
+
+      },
+
+	    /**
+	     * @nae _setSharedThemeStyle
+	     * @description Checks the apps config, and sets the according brand theme
+	     **/
+	    _setSharedThemeStyle: function() {
+		    var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
+		    var myDomModule = document.createElement('style', 'custom-style');
+				myDomModule.setAttribute('include', brandTheme);
+				Polymer.dom(this.root).appendChild(myDomModule);
+	    },
+
+      /**
+       * @observer
+       * @name _routeChanged
+       * @description on url/route change get the first segment of the url
+       * then set it as the page. With those settings start the setCurrentPage
+       * which will change the iron-pages selected
+       *
+       * @param route object
+       */
+      _routeChanged: function(route) {
+
+        // if the route is undefined
+        if (typeof route === 'undefined') return;
+
+        // define the first segment
+        var firstSegment = this.routeData.page;
+        /** 
+         * if last segment is undefined or empty string set too home, 
+         * all others to segment
+         */
+        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
+          'home' : firstSegment;
       },
 
       /**
@@ -287,27 +327,6 @@
           break;
         }
 
-      },
-
-      /**
-       * @observer
-       * @name _routeChanged
-       * @description on url/route change get the first segment of the url
-       * then set it as the page. With those settings start the setCurrentPage
-       * which will change the iron-pages selected
-       *
-       * @param route object
-       */
-      _routeChanged: function(route) {
-        // define the first segment
-        var firstSegment = this.routeData.page;
-
-        /** 
-         * if last segment is undefined or empty string set too home, 
-         * all others to segment
-         */
-        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
-          'home' : firstSegment;
       },
 
       /**
@@ -361,10 +380,20 @@
 
               this._notifyNetworkStatus();
               this.loadComplete = true;
+              this._removeLoadPlaceholder();
             });
           });
         }
 
+      },
+
+      /**
+       * @name _removeLoadPlaceholder
+       * @description removes loading spinner and placeholders before the page is loaded
+       */
+      _removeLoadPlaceholder: function() {
+        var placeholder = document.getElementById('load-placeholder');
+        placeholder.remove();
       },
 
       /**
@@ -374,7 +403,6 @@
        * title to its title tag
        */
       _currentPageChanged: function(newVal) {
-
         if(typeof newVal === 'undefined') return;
 
         this.fire('change-section', { 
@@ -480,7 +508,8 @@
        * more info http://bit.ly/2nb6I7G
        */
       _eventTracking: function() {
-        var globals = Polymer.globalsManager.get('Dorel');
+        var globalsObj = Polymer.globalsManager.get('Dorel');
+        var globalsCopy = this._cloneObj(globalsObj);
 
         /** 
          * Tracking on pageload
@@ -491,11 +520,34 @@
           element: this,
           event: 'polymer_event',
           things: {
-            'currentPage': globals.current.page,
-            'globals': globals
+            'currentPage': (typeof globalsCopy.current.page === 'undefined') ?
+              document.URL : globalsCopy.current.page,
+            'globals': globalsCopy
           }
         });
+      },
+
+      /**
+       * @name _cloneObj
+       * @description creates a clone of an object
+       */
+      _cloneObj: function (obj) {
+
+        // if object is not defined or not an object, jump out
+        if (null == obj || "object" != typeof obj) return obj;
+
+        // make a reference to the object's constructor
+        var copy = obj.constructor();
+
+        // iterate over every attribute in the object and make a copy
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+
+        // return the copied object
+        return copy;
       }
+
     });
   </script>
 </dom-module>

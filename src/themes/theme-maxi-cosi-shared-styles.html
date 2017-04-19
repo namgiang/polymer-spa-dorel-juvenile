@@ -1,0 +1,209 @@
+<!--  Shared style brand naming conventions:
+      Name strings can only contain lower-case, alphabetic values and dashes to separate words:
+      maxi-cosi, odel, quinny, safety-first -->
+<dom-module id="theme-maxi-cosi-shared-styles">
+  <template>
+    <style is="custom-style">
+
+      :root {
+
+        /* ------------------------------------------------
+         * Color
+         */
+
+        /* Brand colors */
+        --theme-brand-color: rgb(0, 150, 195);
+        --theme-brand-color-royal-blue: rgb(0, 65, 120);
+        --theme-brand-color-deep-blue: rgb(0, 32, 91);
+
+        --theme-brand-color-accent-green: rgb(107, 165, 57);
+        --theme-brand-color-accent-orange: rgb(255, 103, 31);
+        --theme-brand-color-accent-pink: rgb(205, 0, 88);
+
+        --theme-brand-color-accent-medium-grey: rgb(134, 136, 138);
+        --theme-brand-color-accent-dark-grey: rgb(49, 51, 53);
+
+        /* Interactive element colors */
+        /* if the theme's brand color is quite similar to the browsers' native link color use 
+           it for the primary link color. Adding a new link-blue color close to that color will 
+           not  match since the colors will then be too close to eachother in the color spectrum */
+        --theme-color-link-primary: var(--theme-brand-color);
+        --theme-color-hover: var(--theme-brand-color-royal-blue);
+        --theme-color-active: var(--theme-brand-color-royal-blue);
+        --theme-color-cta: var(--theme-brand-color-accent-orange);
+
+        /* Brand proximity colors
+         * the lighter the background, the more important 
+         * the foreground information will be */
+        --theme-color-background: rgb(220, 220, 220);
+        --theme-color-background-secondary: rgb(230, 230, 230);
+        --theme-color-background-tertiary: rgb(245, 245, 245);
+
+        --theme-color-foreground: var(--theme-black);
+        --theme-color-foreground-secondary: rgb(80, 80, 80);
+        --theme-color-foreground-tertiary: rgb(177, 179, 179);
+
+        /* Utility colors */
+        --theme-primary-text-color: var(--theme-color-foreground-secondary);
+        --theme-white: rgb(255, 254, 255);
+
+        /* ------------------------------------------------
+         * Modular scale
+         */
+        
+        --theme-component-space-micro: .5rem;
+        --theme-component-space-inner: 1.5rem; /* for instance wordmark exclusion space  */
+        --theme-component-space-inner-medium: calc(1.5rem * 1.2);
+        --theme-component-space-inner-large: calc(1.5rem * 1.5);
+        --theme-component-space-inner-xlarge: calc(1.5rem * 2);
+
+        --theme-border-width: 6px;
+        --theme-border-radius-large: 64px;
+
+        /* ------------------------------------------------
+         * Typography
+         */
+
+         --theme-size-base: 20px; /* used as bodycopy */
+
+        /* Use 'em' since font sizes are based on the
+           theme's size base, which is applied to the
+           css body tag */
+        --theme-size-headline: 2.815em;
+        --theme-size-subhead: 1.62em;
+
+        --theme-size-display1: 1.62em; /* used for example h1 */
+        --theme-size-display2: 1.12em; /* used for example h2 */
+        --theme-size-display3: 1em; /* used for example h3 */
+        --theme-size-display4: 1em; /* used for example h4, h5, h6 */
+        --theme-size-ui: .75em;
+        --theme-size-small: .9em;
+
+        /* use em over rem, since line-height should be relative to it's parent */
+        --theme-text-line-height: 1.5em;
+        --theme-text-line-height-small: 1.6em;
+
+        --theme-bodycopy-width: {
+          max-width: 46rem; /* set max width for legibility */
+        };
+
+	      --theme-indigo-title-width: 26rem; /* Width used for the indigo hero title */
+
+        /* Font declarations. 
+         * Make sure to include the actual font in the header of the web application 
+         */
+        --theme-font-sans-serif: 'Neo Sans', Helvetica Neue, Helvetica, Arial, sans-serif;
+
+        --theme-bodycopy: {
+          font-family: var(--theme-font-sans-serif);
+          font-size: var(--theme-size-base);
+          line-height: var(--theme-text-line-height);
+          -webkit-font-smoothing: antialiased;
+          color: rgba(0,0,0,.8); /* make slightly translucent so the color adapts to the background */
+          @apply(--theme-bodycopy-width);
+        };
+
+        --theme-heading: {
+          font-family: var(--theme-font-sans-serif);
+          font-style: normal;
+          font-weight: normal; /* Maxi Cosi has a friendly heading theme */
+          line-height: var(--theme-text-line-height);
+          -webkit-font-smoothing: antialiased;
+          color: rgba(0,0,0,.8); /* make slightly translucent so the color adapts to the background */
+        };
+
+        --theme-ui: {
+          font-family: var(--theme-font-sans-serif);
+          letter-spacing: .5px;
+          text-transform: uppercase;
+        };
+
+        /* interactive elements */
+        --theme-ie-bodycopy: {
+          font-family: var(--theme-font-sans-serif);
+          font-size: var(--theme-size-small);
+          line-height: var(--theme-text-line-height-small);
+          @apply(--theme-bodycopy-width);
+        }
+
+        /*----------------------------------------
+         * Animations
+         */
+        @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+        @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      }
+    </style>
+  </template>
+</dom-module>
+
+<style>
+	/* ------------------------------------------------
+  * Font Faces
+	* Placing the @font-faceo definitions outside your dom-module.
+	* There seem to be issue with scoping these in a shadow root.
+	* For more information/progress on this issue visit: https://github.com/Polymer/polymer/issues/2386
+	*/
+
+	/* Vendor Licensing information
+		This CSS resource incorporates links to font software which is the valuable copyrighted
+		property of Monotype Imaging and/or its suppliers. You may not attempt to copy, install,
+		redistribute, convert, modify or reverse engineer this font software. Please contact Monotype
+		Imaging with any questions regarding Web Fonts:  http://www.fonts.com
+	*/
+
+	/* Light */
+	@font-face {
+		font-family: "Neo Sans";
+		src: url("/assets/fonts/maxicosi/6ce46d72-38d7-4e71-aad4-77ea074def44.eot?#iefix");
+		src: url("/assets/fonts/maxicosi/6ce46d72-38d7-4e71-aad4-77ea074def44.eot?#iefix") format("eot"), url("/assets/fonts/maxicosi/2c12a0c7-40cf-4765-840b-db68d359ddee.woff2") format("woff2"), url("/assets/fonts/maxicosi/e8869c52-5d75-4830-b70f-216b701a3953.woff") format("woff"), url("/assets/fonts/maxicosi/b920a103-1d04-45cb-ba06-68ad285b1d6b.ttf") format("truetype"), url("/assets/fonts/maxicosi/997684f7-b4d9-4d1e-ad63-875309908209.svg#997684f7-b4d9-4d1e-ad63-875309908209") format("svg");
+		font-weight: 300;
+		font-style: normal;
+
+	}
+
+	/* Light Italic */
+	@font-face {
+		font-family: "Neo Sans";
+		src: url("/assets/fonts/maxicosi/2dbdfa91-1504-4ab4-9072-465cb956eecb.eot?#iefix");
+		src: url("/assets/fonts/maxicosi/2dbdfa91-1504-4ab4-9072-465cb956eecb.eot?#iefix") format("eot"), url("/assets/fonts/maxicosi/7c7cce56-39b3-4471-85a9-6ca2318ed1f8.woff2") format("woff2"), url("/assets/fonts/maxicosi/40ccbf52-e521-420a-a0ee-88a0d21e0562.woff") format("woff"), url("/assets/fonts/maxicosi/866c34d8-22cd-48e2-ac53-15772f1e7be9.ttf") format("truetype"), url("/assets/fonts/maxicosi/12fde5f3-8ba8-48f8-8463-4a5675b8fcbb.svg#12fde5f3-8ba8-48f8-8463-4a5675b8fcbb") format("svg");
+		font-weight: 300;
+		font-style: italic;
+	}
+
+	/* Regular */
+	@font-face {
+		font-family: "Neo Sans";
+		src: url("/assets/fonts/maxicosi/ca73a641-3f48-4adf-97cd-df8e72317714.eot?#iefix");
+		src: url("/assets/fonts/maxicosi/ca73a641-3f48-4adf-97cd-df8e72317714.eot?#iefix") format("eot"), url("/assets/fonts/maxicosi/f6a251da-16ff-4a51-860e-e346a0a9cb75.woff2") format("woff2"), url("/assets/fonts/maxicosi/5e5f3fc7-82ed-4789-b456-6545eac2431c.woff") format("woff"), url("/assets/fonts/maxicosi/d285ea7b-98b7-41d3-965f-fcaa780ee1c8.ttf") format("truetype"), url("/assets/fonts/maxicosi/327a16d0-37d7-4efe-89cc-5f66f6be6cad.svg#327a16d0-37d7-4efe-89cc-5f66f6be6cad") format("svg");
+		font-weight: 400;
+		font-style: normal;
+	}
+
+	/* Regular Italic */
+	@font-face {
+		font-family: "Neo Sans";
+		src: url("/assets/fonts/maxicosi/d749a250-9511-4c3f-b328-b3e8dcb0c101.eot?#iefix");
+		src: url("/assets/fonts/maxicosi/d749a250-9511-4c3f-b328-b3e8dcb0c101.eot?#iefix") format("eot"), url("/assets/fonts/maxicosi/ae3c08a4-fb57-4df1-84fa-3af197f4c104.woff2") format("woff2"), url("/assets/fonts/maxicosi/1f9dc61c-c806-497b-8550-eaaf95c967d5.woff") format("woff"), url("/assets/fonts/maxicosi/3aa77b29-0d11-48fa-a1e3-2577d0255c15.ttf") format("truetype"), url("/assets/fonts/maxicosi/160da3b6-713f-4df7-8737-6aface936d75.svg#160da3b6-713f-4df7-8737-6aface936d75") format("svg");
+		font-weight: 400;
+		font-style: italic;
+	}
+
+	/* Bold */
+	@font-face {
+		font-family: "Neo Sans";
+		src: url("/assets/fonts/maxicosi/f059657c-b355-48e1-a08f-ead7f6c8e423.eot?#iefix");
+		src: url("/assets/fonts/maxicosi/f059657c-b355-48e1-a08f-ead7f6c8e423.eot?#iefix") format("eot"), url("/assets/fonts/maxicosi/347b5b07-d14f-4c05-8ba4-db1ecb62e993.woff2") format("woff2"), url("/assets/fonts/maxicosi/a982b06c-39e5-4ff5-b598-f28892654d48.woff") format("woff"), url("/assets/fonts/maxicosi/fe772678-ca98-4472-82e6-108012fd9375.ttf") format("truetype"), url("/assets/fonts/maxicosi/2a249aea-019a-4d72-b78e-2f218623feb4.svg#2a249aea-019a-4d72-b78e-2f218623feb4") format("svg");
+		font-weight: 500;
+		font-style: normal;
+	}
+
+	/* Bold Italic */
+	@font-face {
+		font-family: "Neo Sans";
+		src: url("/assets/fonts/maxicosi/9e56dad8-dc3d-435d-8dae-55e3e6a0d373.eot?#iefix");
+		src: url("/assets/fonts/maxicosi/9e56dad8-dc3d-435d-8dae-55e3e6a0d373.eot?#iefix") format("eot"), url("/assets/fonts/maxicosi/0b5b1acd-f92a-4e31-9a86-87866c242f36.woff2") format("woff2"), url("/assets/fonts/maxicosi/6bdf4c02-6ecc-4c32-947a-40a54a4afee9.woff") format("woff"), url("/assets/fonts/maxicosi/da1396a8-496c-4ef0-ad98-6a8a56946fd0.ttf") format("truetype"), url("/assets/fonts/maxicosi/b4904756-335e-47ac-a4be-9c117bb4a051.svg#b4904756-335e-47ac-a4be-9c117bb4a051") format("svg");
+		font-weight: 500;
+		font-style: italic;
+	}
+</style>

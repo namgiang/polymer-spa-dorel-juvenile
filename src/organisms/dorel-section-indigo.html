@@ -1,199 +1,203 @@
 <dom-module id="dorel-section-indigo">
-  <template>
-    <style include="polymer-bootstrap-min">
-      .section-indigo {
-        padding-top: 50px;
-        padding-bottom: 50px;
-        position: relative;
-      }
-      .indigo-column {
-        border-radius: 20px;
-        min-height: 393px;
-        max-height: 393px;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
-      }
-      .indigo-column-overlay {
-        background: #fff; /* For browsers that do not support gradients */
-        background: -webkit-linear-gradient(#fff, transparent); /* For Safari 5.1 to 6.0 */
-        background: -o-linear-gradient(#fff, transparent); /* For Opera 11.1 to 12.0 */
-        background: -moz-linear-gradient(#fff, transparent); /* For Firefox 3.6 to 15 */
-        background: linear-gradient(#fff, transparent); /* Standard syntax (must be last) */
-        height: 50px;
-        left: 0;
-        top: 0;
-        position: absolute;
-        width: 100%;
-      }
-      .content-column {
-        padding-top: 50px;
-        text-align: center;
-      }
-      .content-wrap {
-        max-width: 360px;
-        text-align: left;
-      }
-      paper-card {
-        @apply(--shadow-elevation-8dp);
-        border-radius: 20px;
-        display: block;
-        max-height: 393px;
-        max-width: 285px;
+	<template>
+		<style>
+			.section-indigo {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				position: relative;
+        opacity: 0;  /* make things invisible upon start */
+        -webkit-animation: fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+        -moz-animation: fadeIn ease 1;
+        animation: fadeIn ease 1;
+        -webkit-animation-duration: 1s;
+        -moz-animation-duration: .1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+        -moz-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+			}
+
+      @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+
+      .container {
+        padding: 0 var(--theme-component-space-micro);
       }
 
-      .section-indigo[mobile-small] .indigo-column,
-      .section-indigo[mobile-medium] .indigo-column {
-        border-radius: 0;
+			.section-indigo[mobile-small], .section-indigo[mobile-medium] {
+				margin-bottom: -110px;
+			}
+
+			.title {
+				padding: var(--theme-component-space-inner);
+				color: white;
+				font-family: var(--theme-font-sans-serif);
+				font-style: normal;
+				font-weight: normal;
+				/* TODO: get the proper font sizes from Sketch */
+				font-size: 3.5em;
+				line-height: 1.625;
+				text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.75);
+				margin: 0 0 2.5% 0;
+			}
+
+			.title-line {
+				max-width: var(--theme-indigo-title-width);
+				display: block;
+				display: block;
+				margin: auto;
+			}
+
+			.container {
+				max-width: 1480px;
+				width: 100%;
+				overflow: hidden;
+			}
+
+			.image-wrapper {
+				overflow: hidden;
+				border-radius: 0px 0px 30px 30px;
+			}
+
+			.image {
+				width: 100%;
+				display: block;
+				background-position: 50% 50%;
+				background-repeat: no-repeat;
+				background-size: cover;
+				min-height: 500px;
+				max-height: 700px;
+				height: 75vh;
+			}
+
+			.image:before {
+				position: absolute;
+				top: 0;
+				right: 0;
+				height: 100%;
+				width: 33.33%;
+				transform: none;
+				content: "";
+				height: 100%;
+				background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 1%, rgba(255, 255, 255, 0.02) 4%, rgba(255, 255, 255, 0.75) 100%); /* FF3.6-15 */
+				background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 1%, rgba(255, 255, 255, 0.02) 4%, rgba(255, 255, 255, 0.75) 100%); /* Chrome10-25,Safari5.1-6 */
+				background: linear-gradient(to right, rgba(255, 255, 255, 0) 1%, rgba(255, 255, 255, 0.02) 4%, rgba(255, 255, 255, 0.75) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			}
+
+			.section-indigo[mobile-small] .image:before, .section-indigo[mobile-medium] .image:before {
+				width: 100%;
+				background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0) 48%, rgba(118, 219, 247, 0.85) 100%); /* FF3.6-15 */
+				background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0) 48%, rgba(118, 219, 247, 0.85) 100%); /* Chrome10-25,Safari5.1-6 */
+				background: linear-gradient(135deg, rgba(255, 255, 255, 0) 48%, rgba(118, 219, 247, 0.85) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#d976dbf7', GradientType=1); /* IE6-9 fallback on horizontal gradient */
+
+			}
+
+			.content-wrapper {
+				position: absolute;
+				right: 0;
+        bottom: 135px;
+				width: 50%;
+				text-align: center;
+			}
+
+      .content-wrapper[mobile-small], .content-wrapper[mobile-medium]  {
+        bottom: 90px;
       }
-      .section-indigo[tablets] .indigo-column {
-        text-align: center;
-      }
-      .section-indigo[mobile-small] .indigo-column paper-card,
-      .section-indigo[mobile-medium] .indigo-column paper-card {
-        margin: 50px auto 0 auto;
-      }
 
-      .section-indigo[tablets] .indigo-column paper-card {
-        margin: 50px auto 0 80px;
-      }
+			.section-indigo[mobile-small] .content-wrapper, .section-indigo[mobile-medium] .content-wrapper {
+				width: 100%;
+			}
 
-      .section-indigo[desktop-small] .indigo-column paper-card,
-      .section-indigo[desktop-full] .indigo-column paper-card {
-        margin: 50px auto 0 50px;
-      }
-      
-      .section-indigo[mobile-small] .content-wrap,
-      .section-indigo[mobile-medium] .content-wrap,
-      .section-indigo[tablets] .content-wrap {
-        margin: 0 auto;
-      }
-    </style>
+			.skew {
+				transform: skewY(-8deg) translateY(-110px);
+			}
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-    
-    <section class="section-indigo"
-      style$="background-color: [[ indigoData.product_column_background_color ]];"
-      mobile-small$="{{ mobileSmall }}"
-      mobile-medium$="{{ mobileMedium }}"
-      tablets$="{{ tablets }}"
-      desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
-      <div class="container">
-        <div class="row">
-          
-          <!-- product column -->
-          <div class$="indigo-column col-xs-12 col-sm-12 col-md-7 col-md-offset-1 pull-[[ indigoData.product_column_alignment ]]"
-            style$="
-              background-image: url([[ hasBackgroundImage(indigoData.product_column_background_image) ]]);">
-            <div class="indigo-column-overlay"></div>
-   
-            <paper-card class="flex" alt="[[ indigoData.product_column_image_title ]]"
-              image="[[ hasProductImage(indigoData.product_column_image) ]]"></paper-card>
+			.skew-reset {
+				transform: skewY(8deg) translateY(110px);
+			}
 
-          </div>
+		</style>
 
-          <!-- content column -->
-          <div class="content-column col-xs-12 col-sm-12 col-md-4">
-            <div class="content-wrap">
-              <template
-                is="dom-if"
-                if="[[ indigoData.content_column_title ]]">
-                <h2 class="theme-headline">[[ indigoData.content_column_title ]]</h2>
-              </template>
-              
-              <template
-                is="dom-if"
-                if="[[ indigoData.content_column_text ]]">
-                <dorel-safe-html html="[[ indigoData.content_column_text ]]"></dorel-safe-html>
-              </template>
-              
-              <template
-                is="dom-if"
-                if="[[ indigoData.content_column_cta_toggle ]]">
-                <dorel-cta
-                  type="[[ indigoData.content_column_cta_type ]]" 
-                  link="[[ indigoData.content_column_cta_href ]]">
-                    [[ indigoData.content_column_cta_text ]]
-                </dorel-cta>
-              </template>
-            </div>
-          </div>
+		<!-- media queries -->
+		<iron-media-query query="(max-width : 479px)"
+		                  query-matches="{{ mobileSmall }}"></iron-media-query>
+		<iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+		                  query-matches="{{ mobileMedium }}"></iron-media-query>
 
-        </div><!--// .row -->
-      </div><!--// .container -->
-    </section>
-  </template>
+		<section class="section-indigo"
+		         mobile-small$="{{ mobileSmall }}"
+		         mobile-medium$="{{ mobileMedium }}">
+			<div class="container">
+				<div class="image-wrapper skew">
+					<div class="image skew-reset" role="img" aria-label="Add image description for accessibility here"
+					     style$="background-image: url([[ hasBackgroundImage(indigoData.background_image) ]]);"></div>
+				</div>
+        <div class="content-wrapper"
+             mobile-small$="{{ mobileSmall }}"
+		         mobile-medium$="{{ mobileMedium }}">
+					<template is="dom-if" if="{{ hasValue(indigoData.title) }}">
+            <h1 class="title">
+              <span class="title-line">[[ indigoData.title ]]</span>
+            </h1>
+					</template>
+          <template
+            is="dom-if"
+            if="[[ indigoData.content_column_cta_toggle ]]">
+            <div class="">
+            <dorel-cta
+              type="[[ indigoData.content_column_cta_type ]]"
+              link="[[ indigoData.content_column_cta_href ]]">
+                [[ indigoData.content_column_cta_text ]]
+            </dorel-cta>
+              </div>
+          </template>
+        </div>
+		</section>
+	</template>
 
-  <script>
-    Polymer({
-      is: 'dorel-section-indigo',
 
-      properties: {
+	<script>
+		Polymer({
+			is: 'dorel-section-indigo',
 
-        /**
-         * @attribute
-         * @name indigoData
-         * @description all data defined by ACF/Wordpress to build this component
-         */
-        indigoData: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
+			properties: {
 
-        /**
-         * @name bgColor
-         * @description the background color of the indigo section (outer wrapper)
-         */
-        bgColor: {
-          type: String,
-          value: ''
-        }
+				/**
+				 * @attribute
+				 * @name indigoData
+				 * @description all data defined by ACF/Wordpress to build this component
+				 */
+				indigoData: {
+					type: Object,
+					value: function () {
+						return {};
+					}
+				}
 
-      },
+			},
 
-      /**
-       * @name ready
-       * @description when the component is loaded and ready for manipulation
-       */
-      ready: function() {
+			/**
+			 * @name hasBackgroundImage
+			 * @description checks to see if a background image is set in Wordpress
+			 *
+			 * @returns Sting when no image is set it returns the placeholder string
+			 */
+			hasBackgroundImage: function (img) {
+				return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
+			},
 
-        // set the bgColor of the indigo
-        this.bgColor = (typeof this.bgColor === 'undefined') ? '#dcdcdc' : this.bgColor;
-
-      },
-
-      /**
-       * @name hasBackgroundImage
-       * @description checks to see if a background image is set in Wordpress
-       *
-       * @returns Sting when no image is set it returns the placeholder string
-       */
-      hasBackgroundImage: function(img) {
-        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
-      },
-
-      /**
-       * @name hasPaperImage
-       * @description checks to see if a product image is set in Wordpress
-       *
-       * @returns Sting when no image is set it returns the placeholder string
-       */
-      hasProductImage: function(img) {
-        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
-      }
-    });
-  </script>
+			/**
+			 * @name hasBackgroundImage
+			 * @description checks to see if a background image is set in Wordpress
+			 *
+			 * @returns Sting when no image is set it returns the placeholder string
+			 */
+			hasValue: function (val) {
+				return (typeof val !== 'undefined' || val !== '');
+			}
+		});
+	</script>
 </dom-module>

@@ -1,33 +1,40 @@
-<dom-module id="theme-maxicosi-shared-styles">
+<!--  Shared style brand naming conventions:
+      Name strings can only contain lower-case, alphabetic values and dashes to separate words:
+      maxi-cosi, odel, quinny, safety-first -->
+<dom-module id="theme-dorel-shared-styles">
   <template>
     <style is="custom-style">
-
       :root {
-
         /* ------------------------------------------------
          * Color
          */
 
         /* Brand colors */
-        --theme-brand-color: rgb(0, 150, 195);
-        --theme-brand-color-royal-blue: rgb(0, 65, 120);
-        --theme-brand-color-deep-blue: rgb(0, 32, 91);
-
-        --theme-brand-color-accent-green: rgb(107, 165, 57);
-        --theme-brand-color-accent-orange: rgb(255, 103, 31);
-        --theme-brand-color-accent-pink: rgb(205, 0, 88);
-
-        --theme-brand-color-accent-medium-grey: rgb(134, 136, 138);
-        --theme-brand-color-accent-dark-grey: rgb(49, 51, 53);
+        --theme-brand-color: rgb(0, 114, 206);
+        --theme-brand-color-complementary: rgb(237, 139, 0);
 
         /* Interactive element colors */
         /* if the theme's brand color is quite similar to the browsers' native link color use 
            it for the primary link color. Adding a new link-blue color close to that color will 
            not  match since the colors will then be too close to eachother in the color spectrum */
         --theme-color-link-primary: var(--theme-brand-color);
-        --theme-color-hover: var(--theme-brand-color-royal-blue);
-        --theme-color-active: var(--theme-brand-color-royal-blue);
-        --theme-color-cta: var(--theme-brand-color-accent-orange);
+        --theme-color-hover: var(--theme-color-foreground-secondary);
+        --theme-color-cta: var(--theme-brand-color-complementary);
+
+        /* Utility colors */
+        --theme-primary-text-color: var(--theme-color-foreground-secondary);
+        --theme-white: rgb(255, 254, 255);
+        --theme-black: rgb(50, 50, 50);
+        --theme-color-highlight: rgba(255, 247, 0, 0.3);
+        --theme-color-disabled: var(--theme-color-foreground-tertiary);
+        --theme-color-information-foreground: rgb(0, 157, 210);
+        --theme-color-information-background: rgb(235, 247, 253);
+        --theme-color-confirmation-foreground: rgb(44, 165, 29);
+        --theme-color-confirmation-background: rgb(231, 249, 194);
+        --theme-color-warning-foreground: rgb(255, 204, 5);
+        --theme-color-warning-background: rgb(255, 244, 212);
+        --theme-color-danger-foreground: rgb(237, 21, 72);
+        --theme-color-danger-background: rgb(255, 217, 231);
 
         /* Brand proximity colors
          * the lighter the background, the more important 
@@ -40,28 +47,42 @@
         --theme-color-foreground-secondary: rgb(80, 80, 80);
         --theme-color-foreground-tertiary: rgb(177, 179, 179);
 
-        /* Utility colors */
-        --theme-primary-text-color: var(--theme-color-foreground-secondary);
+        --theme-color-active: red;
 
         /* ------------------------------------------------
          * Modular scale
          */
 
-        --theme-component-space-inner: 1.5rem; /* for instance wordmark exclusion space  */
+        --theme-component-space-micro: .5rem;
+        --theme-component-space-inner: 1.5rem;
+        --theme-component-space-inner-medium: calc(1.5rem * 1.2);
+        --theme-component-space-inner-large: calc(1.5rem * 1.5);
+        --theme-component-space-inner-xlarge: calc(1.5rem * 2);
 
-        --theme-border-width: 6px;
-        --theme-border-radius-large: 64px;
+        --theme-modular-size-large: 5rem; /* used for exmaple for standout sections */
+
+        --theme-animation-speed: 0.3s;
+
+        --theme-roundness: .32rem;
+
+        --theme-margin-bodycopy: 1.2em;
+        --theme-margin-headings: .5em;
+
+        --theme-section-vertical-padding: {
+          padding-top: var(--theme-component-space-inner);
+          padding-bottom: var(--theme-component-space-inner);
+        };
 
         /* ------------------------------------------------
          * Typography
          */
 
-         --theme-size-base: 20px; /* used as bodycopy */
+        --theme-size-base: 20px; /* used as bodycopy */
 
         /* Use 'em' since font sizes are based on the
            theme's size base, which is applied to the
            css body tag */
-        --theme-size-headline: 2.815em;
+        --theme-size-headline: 2em;
         --theme-size-subhead: 1.62em;
 
         --theme-size-display1: 1.62em; /* used for example h1 */
@@ -79,33 +100,35 @@
           max-width: 46rem; /* set max width for legibility */
         };
 
-        /* Font declarations. 
-         * Make sure to include the actual font in the header of the web application 
-         */
-        --theme-font-sans-serif: 'Armata', Helvetica Neue, Helvetica, Arial, sans-serif; /* temporary, will need to be Neo Sans eventually */
-        /*--theme-font-sans-serif: 'Neo Sans', Helvetica Neue, Helvetica, Arial, sans-serif;*/
-        /*--theme-font-serif: 'Lora', Georgia, Cambria, "Times New Roman", Times, serif;*/
+        --theme-logo-width: {
+		      max-width: 25rem; /* Sets max width for the header logo */
+          height: auto;
+          display: block;
+	      };
+        
+	      --theme-indigo-title-width: 26rem; /* Width used for the indigo hero title */
+
+        --theme-font-sans-serif: 'Open Sans', Helvetica Neue, Helvetica, Arial, sans-serif;
+        --theme-font-serif: 'Lora', Georgia, Cambria, "Times New Roman", Times, serif;
 
         --theme-bodycopy: {
-          font-family: var(--theme-font-sans-serif);
+          font-family: var(--theme-font-serif);
           font-size: var(--theme-size-base);
           line-height: var(--theme-text-line-height);
-          -webkit-font-smoothing: antialiased;
           color: rgba(0,0,0,.8); /* make slightly translucent so the color adapts to the background */
+          @apply(--theme-bodycopy-width);
         };
 
         --theme-heading: {
           font-family: var(--theme-font-sans-serif);
           font-style: normal;
-          font-weight: normal; /* Maxi Cosi has a friendly heading theme */
           line-height: var(--theme-text-line-height);
-          -webkit-font-smoothing: antialiased;
           color: rgba(0,0,0,.8); /* make slightly translucent so the color adapts to the background */
         };
 
         --theme-ui: {
           font-family: var(--theme-font-sans-serif);
-          letter-spacing: .5px;
+          font-weight: 600;
           text-transform: uppercase;
         };
 
@@ -116,6 +139,7 @@
           line-height: var(--theme-text-line-height-small);
           @apply(--theme-bodycopy-width);
         }
+
       }
     </style>
   </template>

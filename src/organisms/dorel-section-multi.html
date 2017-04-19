@@ -1,6 +1,6 @@
 <dom-module id="dorel-section-multi">
   <template>
-    <style include="theme-maxicosi-shared-styles polymer-bootstrap-min">
+    <style include="polymer-bootstrap-min">
       .section-multi {
         margin: 50px auto;
         padding-top: 50px;
@@ -34,7 +34,8 @@
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
       desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
+      desktop-full$="{{ desktopFull }}"
+      style$="background-color: {{ needsBackground(multiData.acf_fc_layout) }}">
 
       <template
         is="dom-if"
@@ -124,6 +125,10 @@
           type: Object
         },
 
+        templateData: {
+          type: Object
+        },
+
         /** 
          * @name columnAmount
          * @description defines the total columns the component needs to work with
@@ -166,13 +171,29 @@
       },
 
       /**
+       * @name needsBackground
+       * @description check what type of container it is
+       *
+       * @returns string empty or color empty when last char is number
+       */
+      needsBackground: function(layoutName) {
+        // get last char
+        var lastChar = layoutName.substr(layoutName.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        return (isNumber) ? '' : '#f5f5f5';
+      },
+
+      /**
        * @name _defineColumnWidth
        * @description calculate the column width of each column, depends
        * on the frontend framework's grid
        */
       _defineColumnWidth: function(newVal, oldVal) {
         this.columnWidth = 12 / this.columnAmount;
-      },
+      }
     });
 
   </script>
