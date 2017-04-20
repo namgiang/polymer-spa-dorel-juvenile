@@ -1,7 +1,5 @@
- <script
-  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
-  crossorigin="anonymous"></script>
+<!-- hubspot needs this for the onFormReady handler -->
+<script src="/bower_components/jquery/dist/jquery.slim.min.js"></script>
   
 <dom-module id="dorel-hubspot">
   <template>
@@ -12,36 +10,68 @@
       is: 'dorel-hubspot',
 
       properties: {
+
+        /**
+         * @name portalId
+         * @description defines portal ID defined in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
         portalId: {
           type: String
         },
 
+        /**
+         * @name formid
+         * @description defines form ID defined in the WP page builder component
+         */
         formId: {
           type: String
         },
 
+        /**
+         * @name hubSpotLoaded
+         * @description this variable defines if the hubspot script is loaded
+         */
         hubSpotLoaded: {
           type: Boolean,
-          value: false,
-          observer: '_embedForm'
+          value: false
         }
       },
 
-      _embedForm: function(newVal, oldVal) {
+      observers: [
+        '_embedForm(portalId, formId, hubSpotLoaded)'
+      ],
 
-        if (typeof newVal === 'undefined' || !newVal ||
-          typeof this.portalId === 'undefined' || this.portalId === '' || 
-          typeof this.formId === 'undefined' || this.formId === '') return;
+      /**
+       * @name _embedForm
+       * @description this script observes all variables needed to inject
+       * the form in the Polymer application
+       */
+      _embedForm: function(portalId, formId, hubSpotLoaded) {
 
-        this.activateForm = true;
+        // check if all variables needed are set, otherwise jump out
+        if (typeof hubSpotLoaded === 'undefined' || !hubSpotLoaded ||
+          typeof portalId === 'undefined' || portalId === '' || 
+          typeof formId === 'undefined' || formId === '') return;
 
+        // reference this for use in the hbspt object
         var self = this;
         
+        // call to the forms create method of the hubspot script
         window.hbspt.forms.create({
           css:  '' ,
-          portalId: this.portalId,
-          formId: this.formId,
+          portalId: portalId,
+          formId: formId,
+
+          /**
+           * TODO: only works if jQuery is included
+           */
           onFormReady: function() {
+            /**
+             * create a document fragment to grab the div added by the script
+             * and inject it in the form div of this component
+             */
             var fragment = document.createDocumentFragment();
             fragment.appendChild(document.querySelector('.hbspt-form'));
             Polymer.dom(self.$.form).appendChild(fragment);
