@@ -5,6 +5,82 @@
   <template>
     <div id="form"></div>
   </template>
+  <style include="iron-flex iron-flex-alignment">
+    .hbspt-form {
+      padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
+    }
+
+    fieldset, .hs_recaptcha, .hs_submit {
+      @apply(--theme-bodycopy-width);
+      display: block;
+      float: none;
+      margin: 0 auto;
+      border: 0;
+      padding: 0 0 var(--theme-component-space-inner) 0;
+    }
+
+    .hs-input {
+      @apply(--theme-ie-bodycopy);
+      color: var(--theme-color-foreground-secondary);
+      padding: var(--theme-component-space-micro);
+      margin: var(--theme-component-space-micro) 0;
+      border: 1px solid var(--theme-color-background);
+      border-radius: var(--theme-input-border-radius);
+      width: calc(100% - 1rem);
+      transition: border-color .3s ease;
+    }
+
+    .hs-input:hover {
+      border-color: var(--theme-color-hover);
+    }
+
+    input[type="file" i].hs-input {
+      padding: var(--theme-component-space-inner);
+      width: calc(100% - 3rem);
+    }
+
+    input[type="file" i].hs-input:hover {
+      cursor: pointer;
+    }
+
+    textarea.hs-input {
+      min-height: 8rem;
+    }
+
+    .hs-input.invalid,  .hs-input.error {
+      border-color: var(--theme-brand-color-accent-pink);
+    }
+
+    .hs-button {
+
+    }
+
+    .form-columns-2 .hs-form-field {
+      width: calc(50% - var(--theme-component-space-micro));
+      float: left;
+      display: inline-block;
+      padding-right: var(--theme-component-space-micro);
+    }
+
+    .form-columns-2 .hs-form-field:last-child {
+      padding-left: var(--theme-component-space-micro);
+      padding-right: 0;
+    }
+
+    .hs_recaptcha > .hs-error-msgs {
+      margin-top: var(--theme-component-space-micro);
+    }
+
+    .hs-error-msgs {
+      color: var(--theme-brand-color-accent-pink);
+      font-size: var(--theme-size-small);
+      display: block;
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
+
+  </style>
   <script>
     Polymer({
       is: 'dorel-hubspot',
@@ -60,6 +136,10 @@
         
         // call to the forms create method of the hubspot script
         window.hbspt.forms.create({
+          /*
+          * On customizing Hubspot embeds:
+          * http://bit.ly/2ouvaj6
+          */
           css:  '' ,
           portalId: portalId,
           formId: formId,
