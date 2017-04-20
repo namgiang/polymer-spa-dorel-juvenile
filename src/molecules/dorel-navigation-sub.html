@@ -103,9 +103,9 @@
       <div class="menu-item-container" opened$="{{ thisOpened }}" screen-medium$="{{ screenMedium }}">
         <dorel-tab
           class="has-submenu"
-          name="[[ menuItem.title ]]"
+          name="[[ decodeMenuTitle(menuItem.title) ]]"
           on-click="dropdownToggle">
-          [[ menuItem.title ]]
+          [[ decodeMenuTitle(menuItem.title) ]]
           <template
             is="dom-if"
             if="{{ thisOpened }}">
@@ -132,7 +132,7 @@
                 items="[[ menuItem.children ]]"
                 as="child">
                 <li>
-                    <a href="[[ child.url ]]" on-click="menuItemClicked">[[ child.title ]]</a>
+                    <a href="[[ child.url ]]" on-click="menuItemClicked">[[ decodeMenuTitle(child.title) ]]</a>
                 </li>
               </template>
             </ul>
@@ -146,7 +146,7 @@
       <paper-submenu opened$="{{ thisOpened }}">
         <paper-item class="menu-trigger layout horizontal justified"
           on-click="dropdownToggle">
-          [[ menuItem.title ]]
+          [[ decodeMenuTitle(menuItem.title) ]]
           <template
             is="dom-if"
             if="{{ thisOpened }}">
@@ -166,9 +166,9 @@
             is="dom-repeat"
             items="[[ menuItem.children ]]"
             as="child">
-            <a href="[[ child.url ]]" title="[[ child.title ]]"
+            <a href="[[ child.url ]]" title="[[ decodeMenuTitle(child.title) ]]"
               on-click="menuItemClicked">
-              <paper-item>[[ child.title ]]</paper-item>
+              <paper-item>[[ decodeMenuTitle(child.title) ]]</paper-item>
             </a>
           </template>
         </paper-menu>
@@ -247,6 +247,15 @@
         menuItem: {
           type: Object
         }
+      },
+
+      /**
+       * @name decodeMenuTitle
+       * @description Replaces the ampersands encoded by Wordpress to normal ampersands
+       */
+
+      decodeMenuTitle: function(menuTitle) {
+        return menuTitle.replace("&#038;", '&');
       },
 
       /**

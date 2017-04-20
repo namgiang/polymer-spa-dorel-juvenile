@@ -76,9 +76,9 @@
               <template
                 is="dom-if"
                 if="[[ !menuItem.children.length ]]">
-                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ decodeMenuTitle(menuItem.title) ]]"
                   on-click="menuItemClicked">
-                  <paper-item>[[ menuItem.title ]]</paper-item>
+                  <paper-item>[[ decodeMenuTitle(menuItem.title) ]]</paper-item>
                 </a>
               </template>
 
@@ -100,7 +100,7 @@
                   sub-menu-opened="{{ subMenuOpened }}"></dorel-navigation-sub>
               </template>
             </template>
-            <!-- Removed in favor of DIO-588 
+            <!-- Removed in favor of DIO-588
               <paper-item>language selector</paper-item>
             -->
             <!-- TODO: add support link -->
@@ -145,18 +145,18 @@
                   if="[[ !menuItem.children.length ]]">
                   <div>
                     <dorel-tab
-                      name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
+                      name="[[ decodeMenuTitle(menuItem.title) ]]">
+                        <a href="[[ menuItem.url ]]" title="[[ decodeMenuTitle(menuItem.title) ]]"
                           on-click="menuItemClicked">
-                          [[ menuItem.title ]]
+                          [[ decodeMenuTitle(menuItem.title) ]]
                         </a>
                     </dorel-tab>
                   </div>
                 </template>
 
 
-                <!-- if menu item has children: 
-                 - show visual indicator 
+                <!-- if menu item has children:
+                 - show visual indicator
                  - add the children in submenu
                  -->
                 <template
@@ -247,6 +247,15 @@
       },
 
       /**
+       * @name decodeMenuTitle
+       * @description Replaces the ampersands encoded by Wordpress to normal ampersands
+       */
+
+      decodeMenuTitle: function(menuTitle) {
+        return menuTitle.replace("&#038;", '&');
+      },
+
+      /**
        * @name menuItemClicked
        * @description handles all menu item clicks
        */
@@ -279,5 +288,3 @@
     });
   </script>
 </dom-module>
-
-
