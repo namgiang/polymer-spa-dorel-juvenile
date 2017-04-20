@@ -40,8 +40,14 @@
         text-decoration: none;
       }
 
-      dorel-tab a:hover,  dorel-tab a:focus {
+      dorel-tab a:hover dorel-safe-html,  dorel-tab a:focus dorel-safe-html{
         color: var(--theme-color-hover);
+        cursor: pointer;
+      }
+
+      dorel-tab, dorel-safe-html {
+        float: left;
+        display: inline-block;
       }
 
     </style>
@@ -76,9 +82,9 @@
               <template
                 is="dom-if"
                 if="[[ !menuItem.children.length ]]">
-                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ decodeMenuTitle(menuItem.title) ]]"
+                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
                   on-click="menuItemClicked">
-                  <paper-item>[[ decodeMenuTitle(menuItem.title) ]]</paper-item>
+                  <paper-item><dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html></paper-item>
                 </a>
               </template>
 
@@ -145,10 +151,10 @@
                   if="[[ !menuItem.children.length ]]">
                   <div>
                     <dorel-tab
-                      name="[[ decodeMenuTitle(menuItem.title) ]]">
-                        <a href="[[ menuItem.url ]]" title="[[ decodeMenuTitle(menuItem.title) ]]"
+                      name="[[ menuItem.title ]]">
+                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
                           on-click="menuItemClicked">
-                          [[ decodeMenuTitle(menuItem.title) ]]
+                          <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
                         </a>
                     </dorel-tab>
                   </div>
@@ -244,15 +250,6 @@
           notify: true
         }
 
-      },
-
-      /**
-       * @name decodeMenuTitle
-       * @description Replaces the ampersands encoded by Wordpress to normal ampersands
-       */
-
-      decodeMenuTitle: function(menuTitle) {
-        return menuTitle.replace("&#038;", '&');
       },
 
       /**

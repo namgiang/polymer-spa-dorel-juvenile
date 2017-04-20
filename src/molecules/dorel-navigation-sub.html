@@ -56,20 +56,12 @@
         text-decoration: none;
       }
 
-      paper-submenu a:hover, .sub-menu a:hover {
-        color: var(--theme-color-hover);
-        cursor: pointer;
-      }
-
       paper-submenu {
 	      text-transform: capitalize;
 	      color: var(--theme-primary-text-color);
 	      font-weight: 100 !important;
       }
-      paper-submenu:hover {
-	      color: var(--theme-color-hover);
-        cursor: pointer;
-      }
+
       paper-submenu .menu-content {
         background-color: var(--theme-color-background-tertiary);
         padding: 0;
@@ -80,13 +72,22 @@
         text-transform: capitalize;
       }
 
-      dorel-tab:hover {
+      .has-submenu:hover dorel-safe-html,
+      .has-submenu:focus dorel-safe-html,
+      paper-submenu a:hover,
+      .sub-menu a:hover,
+      paper-submenu:hover {
         color: var(--theme-color-hover);
         cursor: pointer;
       }
 
       [screen-medium] .section-secondary-menu {
         top: 3.2rem;
+      }
+
+      dorel-tab, dorel-safe-html {
+        float: left;
+        display: inline-block;
       }
 
     </style>
@@ -103,9 +104,9 @@
       <div class="menu-item-container" opened$="{{ thisOpened }}" screen-medium$="{{ screenMedium }}">
         <dorel-tab
           class="has-submenu"
-          name="[[ decodeMenuTitle(menuItem.title) ]]"
+          name="[[ menuItem.title ]]"
           on-click="dropdownToggle">
-          [[ decodeMenuTitle(menuItem.title) ]]
+          <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
           <template
             is="dom-if"
             if="{{ thisOpened }}">
@@ -132,7 +133,9 @@
                 items="[[ menuItem.children ]]"
                 as="child">
                 <li>
-                    <a href="[[ child.url ]]" on-click="menuItemClicked">[[ decodeMenuTitle(child.title) ]]</a>
+                    <a href="[[ child.url ]]" on-click="menuItemClicked">
+                      <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
+                    </a>
                 </li>
               </template>
             </ul>
@@ -146,7 +149,7 @@
       <paper-submenu opened$="{{ thisOpened }}">
         <paper-item class="menu-trigger layout horizontal justified"
           on-click="dropdownToggle">
-          [[ decodeMenuTitle(menuItem.title) ]]
+          <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
           <template
             is="dom-if"
             if="{{ thisOpened }}">
@@ -166,9 +169,11 @@
             is="dom-repeat"
             items="[[ menuItem.children ]]"
             as="child">
-            <a href="[[ child.url ]]" title="[[ decodeMenuTitle(child.title) ]]"
+            <a href="[[ child.url ]]" title="[[ child.title ]]"
               on-click="menuItemClicked">
-              <paper-item>[[ decodeMenuTitle(child.title) ]]</paper-item>
+              <paper-item>
+                <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
+              </paper-item>
             </a>
           </template>
         </paper-menu>
@@ -247,15 +252,6 @@
         menuItem: {
           type: Object
         }
-      },
-
-      /**
-       * @name decodeMenuTitle
-       * @description Replaces the ampersands encoded by Wordpress to normal ampersands
-       */
-
-      decodeMenuTitle: function(menuTitle) {
-        return menuTitle.replace("&#038;", '&');
       },
 
       /**
