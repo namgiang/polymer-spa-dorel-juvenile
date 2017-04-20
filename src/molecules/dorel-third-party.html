@@ -1,37 +1,37 @@
 <dom-module id="dorel-third-party">
-  <template>
-    <!-- <template
-      is="dom-if"
-      if="{{ includeHubspot }}">
-      <dorel-hubspot
-        src="//js.hsforms.net/forms/v2.js"
-        hub-spot-loaded="{{ hubSpotLoaded }}"></dorel-hubspot>
-    </template> -->
-
-  </template>
-
   <script>
     Polymer({
       is: 'dorel-third-party',
 
       properties: {
+
+        /**
+         * @name hubSpotToggle
+         * @description defines the toggle defined in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
         hubSpotToggle: {
           type: Boolean
         },
 
+        /**
+         * @name hubSpotPortalId
+         * @description defines portal ID defined in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
         hubSpotPortalId: {
           type: String
         },
 
+        /**
+         * @name hubSpotSrc
+         * @description the third-party source of the JavaScript
+         */
         hubSpotSrc: {
           type: String,
           value: '//js.hsforms.net/forms/v2.js'
-        },
-
-        hubSpotLoaded: {
-          type: Boolean,
-          value: false,
-          notify: true
         }
       },
 
@@ -49,12 +49,11 @@
        * @parameter hubSpotSrc String - the source of the hubspot javascript
        */
       _initHubSpot: function(hubSpotToggle, hubSpotPortalId, hubSpotSrc) {
-
-        // make sure the toggle, portalId, src and if the script isn't included yet
-        if ( typeof this.hubSpotToggle === 'undefined' ||
-          typeof this.hubSpotPortalId === 'undefined' ||
-          typeof this.hubSpotSrc === 'undefined' ||
-          this._scriptExists(this.hubSpotSrc) ) return;
+        // make sure the toggle, portalId, src are set/true and if the script isn't included yet
+        if ( typeof hubSpotToggle === 'undefined' || !hubSpotToggle ||
+          typeof hubSpotPortalId === 'undefined' ||
+          typeof hubSpotSrc === 'undefined' ||
+          this._scriptExists(hubSpotSrc) ) return;
         
         var self = this;
 
@@ -62,7 +61,7 @@
         var script = document.createElement('script');
 
         // add source of script
-        script.src = this.hubSpotSrc;
+        script.src = hubSpotSrc;
         document.getElementsByTagName('head')[0].appendChild(script);
 
         // when the script has been loaded
@@ -70,7 +69,7 @@
           // import the dorel-hubspot component
           self.importHref(
             self.resolveUrl('../atoms/dorel-hubspot.html'), function() {
-              self.hubSpotLoaded = true;
+              Polymer.globalsManager.set('Dorel.collect.options.hubspot_loaded', true);
             }, null, false
           );
         };
@@ -78,8 +77,8 @@
 
       /** 
        * @name _scriptExists
-       * @description check if the script tag with the defined url exists already
-       * in the application
+       * @description check if the script tag with the defined url is included 
+       * already in the application
        *
        * @parameter String - url string
        */
