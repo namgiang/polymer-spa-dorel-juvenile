@@ -40,8 +40,14 @@
         text-decoration: none;
       }
 
-      dorel-tab a:hover,  dorel-tab a:focus {
+      dorel-tab a:hover dorel-safe-html,  dorel-tab a:focus dorel-safe-html{
         color: var(--theme-color-hover);
+        cursor: pointer;
+      }
+
+      dorel-tab, dorel-safe-html {
+        float: left;
+        display: inline-block;
       }
 
     </style>
@@ -78,7 +84,7 @@
                 if="[[ !menuItem.children.length ]]">
                 <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
                   on-click="menuItemClicked">
-                  <paper-item>[[ menuItem.title ]]</paper-item>
+                  <paper-item><dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html></paper-item>
                 </a>
               </template>
 
@@ -100,7 +106,7 @@
                   sub-menu-opened="{{ subMenuOpened }}"></dorel-navigation-sub>
               </template>
             </template>
-            <!-- Removed in favor of DIO-588 
+            <!-- Removed in favor of DIO-588
               <paper-item>language selector</paper-item>
             -->
             <!-- TODO: add support link -->
@@ -148,15 +154,15 @@
                       name="[[ menuItem.title ]]">
                         <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
                           on-click="menuItemClicked">
-                          [[ menuItem.title ]]
+                          <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
                         </a>
                     </dorel-tab>
                   </div>
                 </template>
 
 
-                <!-- if menu item has children: 
-                 - show visual indicator 
+                <!-- if menu item has children:
+                 - show visual indicator
                  - add the children in submenu
                  -->
                 <template
@@ -279,5 +285,3 @@
     });
   </script>
 </dom-module>
-
-
