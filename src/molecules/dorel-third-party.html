@@ -36,41 +36,44 @@
       },
 
       observers: [
-        '_initHubSpot(hubSpotToggle)'
+        '_initHubSpot(hubSpotToggle, hubSpotPortalId, hubSpotSrc)'
       ],
 
-      // element lifecycle call
-      attached: function() {
-        console.log(this.hubSpotToggle, this.hubSpotPortalId, this.hubSpotSrc);
-        // check if the script is included
-        if( typeof this.src === 'undefined' || this.src === '' || this._scriptExists(this.src) ) return;
+      /** 
+       * @name _initHubSpot
+       * @description adds the hubspot javascript to the head and imports the
+       * dorel-hubspot component
+       *
+       * @parameter hubSpotToggle Boolean - indicates wheter the toggle is set in WP
+       * @parameter hubSpotPortalId String - the portal id of hubspot
+       * @parameter hubSpotSrc String - the source of the hubspot javascript
+       */
+      _initHubSpot: function(hubSpotToggle, hubSpotPortalId, hubSpotSrc) {
+
+        // make sure the toggle, portalId, src and if the script isn't included yet
+        if ( typeof this.hubSpotToggle === 'undefined' ||
+          typeof this.hubSpotPortalId === 'undefined' ||
+          typeof this.hubSpotSrc === 'undefined' ||
+          this._scriptExists(this.hubSpotSrc) ) return;
+        
+        var self = this;
 
         // create script tag
         var script = document.createElement('script');
 
         // add source of script
-        script.src = this.src;
+        script.src = this.hubSpotSrc;
         document.getElementsByTagName('head')[0].appendChild(script);
 
         // when the script has been loaded
         script.onload = function() {
-          console.log('yes', this);
-          this.hubSpotLoaded = true;
+          // import the dorel-hubspot component
+          self.importHref(
+            self.resolveUrl('../atoms/dorel-hubspot.html'), function() {
+              self.hubSpotLoaded = true;
+            }, null, false
+          );
         };
-      },
-
-      _initHubspot: function(hubSpotToggle, hubSpotPortalId, hubSpotSrc) {
-        console.log(this.hubSpotToggle, this.hubSpotPortalId, this.hubSpotSrc);
-
-        if (typeof newVal === 'undefined' || !newVal) return;
-
-        var self = this;
-
-        this.importHref(
-          this.resolveUrl('../atoms/dorel-hubspot.html'), function() {
-            self.hubSpotLoaded = true;
-          }, null, false
-        );
       },
 
       /** 
