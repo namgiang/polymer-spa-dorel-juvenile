@@ -1,13 +1,17 @@
+ <script
+  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+  crossorigin="anonymous"></script>
+  
 <dom-module id="dorel-hubspot">
+  <template>
+    <div id="form"></div>
+  </template>
   <script>
     Polymer({
       is: 'dorel-hubspot',
 
       properties: {
-        src: {
-          type: String
-        },
-
         portalId: {
           type: String
         },
@@ -19,63 +23,30 @@
         hubSpotLoaded: {
           type: Boolean,
           value: false,
-          notify: true
+          observer: '_embedForm'
         }
       },
 
-      observers: [
-        '_embedForm(hubSpotLoaded)'
-      ],
+      _embedForm: function(newVal, oldVal) {
 
-      // element lifecycle call
-      attached: function() {
-        console.log('attached');
-        // check if the script is included
-        if( typeof this.src === 'undefined' || this.src === '' || this._scriptExists(this.src) ) return;
+        if (typeof newVal === 'undefined' || !newVal ||
+          typeof this.portalId === 'undefined' || this.portalId === '' || 
+          typeof this.formId === 'undefined' || this.formId === '') return;
 
-        // create script tag
-        var script = document.createElement('script');
+        this.activateForm = true;
 
-        // add source of script
-        script.src = this.src;
-        document.getElementsByTagName('head')[0].appendChild(script);
-
-        // when the script has been loaded
-        script.onload = function() {
-          console.log('yes', this);
-          this.hubSpotLoaded = true;
-        };
-      },
-
-      /** 
-       * @name _scriptExists
-       * @description check if the script tag with the defined url exists already
-       * in the application
-       *
-       * @parameter String - url string
-       */
-      _scriptExists: function(url) {
-        // select all scripts
-        var scripts = document.getElementsByTagName('script');
-
-        // check if we have a match
-        for (var i = scripts.length; i--;) {
-          return (scripts[i].src === url);
-        }
-
-        // return false if no match is found
-        return false;
-      },
-
-      _embedForm: function(hubSpotLoaded) {
-        console.log('embedIt!!!!!!', this.portalId, this.formId, hubSpotLoaded);
-
+        var self = this;
         
-          window.hbspt.forms.create({
-            css:  '' ,
-            portalId: portalId,
-            formId: formId
-          });
+        window.hbspt.forms.create({
+          css:  '' ,
+          portalId: this.portalId,
+          formId: this.formId,
+          onFormReady: function() {
+            var fragment = document.createDocumentFragment();
+            fragment.appendChild(document.querySelector('.hbspt-form'));
+            Polymer.dom(self.$.form).appendChild(fragment);
+          }
+        });
       }
     });
   </script>
