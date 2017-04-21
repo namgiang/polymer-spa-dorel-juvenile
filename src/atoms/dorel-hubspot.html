@@ -162,8 +162,25 @@
              * and inject it in the form div of this component
              */
             var fragment = document.createDocumentFragment();
-            fragment.appendChild(document.querySelector('.hbspt-form'));
-            Polymer.dom(self.$.form).appendChild(fragment);
+            var thisForm = document.querySelector('.hbspt-form > form#hsForm_' + formId);
+
+            // check if form exists
+            var intervalID = setInterval(function() {
+
+              // wait for the right form to exist
+              if ( thisForm !== null ) {
+
+                // create a clone of the right form
+                var clone = thisForm.cloneNode(true);
+
+                // append the clone to the fragment and this webcomponents div
+                fragment.appendChild(clone);
+                Polymer.dom(self.$.form).appendChild(fragment);
+
+                // stop intervalling
+                clearInterval(intervalID);
+              }
+            }, 100);
           }
         });
       }
