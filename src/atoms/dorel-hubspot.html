@@ -1,0 +1,198 @@
+<!-- hubspot needs this for the onFormReady handler -->
+<script src="/bower_components/jquery/dist/jquery.slim.min.js"></script>
+  
+<dom-module id="dorel-hubspot">
+  <template>
+    <div id="form" class="hbspt-form"></div>
+  </template>
+  <!-- The HTML for the Hubspot forms should be created consistently, or the layouts for these might not work -->
+  <!-- TODO: Make sure to test all new forms! -->
+  <style>
+
+    .hbspt-form {
+      padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
+    }
+
+    fieldset, .hs_recaptcha, .hs_submit, .hs-form-field {
+      @apply(--theme-bodycopy-width);
+      display: block;
+      float: none;
+      margin: 0 auto;
+      border: 0;
+      padding: 0;
+
+    }
+
+    .hs-form-field {
+      padding: 0 0 var(--theme-component-space-inner-medium) 0;
+    }
+
+    .hs-input {
+      @apply(--theme-ie-bodycopy);
+      color: var(--theme-color-foreground-secondary);
+      padding: var(--theme-component-space-micro);
+      margin: var(--theme-component-space-micro) 0;
+      border: 1px solid var(--theme-color-background);
+      border-radius: var(--theme-input-border-radius);
+      width: calc(100% - 1rem);
+      transition: border-color .3s ease;
+    }
+
+    .hs-input:last-child {
+      margin-bottom: 0;
+    }
+
+    .hs-input:hover, .hs-input.invalid:hover,  .hs-input.error:hover {
+      border-color: var(--theme-color-hover);
+    }
+
+    input[type="file" i].hs-input {
+      padding: var(--theme-component-space-inner);
+      width: calc(100% - 3rem);
+    }
+
+    input[type="file" i].hs-input:hover {
+      cursor: pointer;
+    }
+
+    textarea.hs-input {
+      min-height: 8rem;
+    }
+
+    .hs-input.invalid,  .hs-input.error {
+      border-color: var(--theme-brand-color-accent-pink);
+      margin-bottom: var(--theme-component-space-micro);
+    }
+
+    .hs-button {
+      @apply(--theme-cta);
+      @apply(--theme-cta--primary);
+    }
+
+    .hs-button:hover, .hs-button:focus {
+      @apply(--theme-cta--hover);
+    }
+
+    .form-columns-2 .hs-form-field {
+      width: calc(50% - var(--theme-component-space-micro));
+      float: left;
+      display: inline-block;
+      padding-right: var(--theme-component-space-micro);
+    }
+
+    .form-columns-2 .hs-form-field:last-child {
+      padding-left: var(--theme-component-space-micro);
+      padding-right: 0;
+    }
+
+    .hs_recaptcha > .hs-error-msgs {
+      margin-top: var(--theme-component-space-micro);
+    }
+
+    .hs-error-msgs {
+      color: var(--theme-brand-color-accent-pink);
+      font-size: var(--theme-size-small);
+      display: block;
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
+
+  </style>
+  <script>
+    Polymer({
+      is: 'dorel-hubspot',
+
+      properties: {
+
+        /**
+         * @name portalId
+         * @description defines portal ID defined in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
+        portalId: {
+          type: String
+        },
+
+        /**
+         * @name formid
+         * @description defines form ID defined in the WP page builder component
+         */
+        formId: {
+          type: String
+        },
+
+        /**
+         * @name hubSpotLoaded
+         * @description this variable defines if the hubspot script is loaded
+         */
+        hubSpotLoaded: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_embedForm(portalId, formId, hubSpotLoaded)'
+      ],
+
+      /**
+       * @name _embedForm
+       * @description this script observes all variables needed to inject
+       * the form in the Polymer application
+       */
+      _embedForm: function(portalId, formId, hubSpotLoaded) {
+
+        // check if all variables needed are set, otherwise jump out
+        if (typeof hubSpotLoaded === 'undefined' || !hubSpotLoaded ||
+          typeof portalId === 'undefined' || portalId === '' || 
+          typeof formId === 'undefined' || formId === '') return;
+
+        // reference this for use in the hbspt object
+        var self = this;
+        
+        // call to the forms create method of the hubspot script
+        window.hbspt.forms.create({
+          /*
+          * On customizing Hubspot embeds:
+          * http://bit.ly/2ouvaj6
+          */
+          css:  '' ,
+          portalId: portalId,
+          formId: formId,
+
+          /**
+           * TODO: only works if jQuery is included
+           */
+          onFormReady: function() {
+            /**
+             * create a document fragment to grab the div added by the script
+             * and inject it in the form div of this component
+             */
+            var fragment = document.createDocumentFragment();
+            var thisForm = document.querySelector('.hbspt-form > form#hsForm_' + formId);
+
+            // check if form exists
+            var intervalID = setInterval(function() {
+
+              // wait for the right form to exist
+              if ( thisForm !== null ) {
+
+                // create a clone of the right form
+                var clone = thisForm.cloneNode(true);
+
+                // append the clone to the fragment and this webcomponents div
+                fragment.appendChild(clone);
+                Polymer.dom(self.$.form).appendChild(fragment);
+
+                // stop intervalling
+                clearInterval(intervalID);
+              }
+            }, 100);
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>
