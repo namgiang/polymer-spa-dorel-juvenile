@@ -1,9 +1,10 @@
 <dom-module id="dorel-card">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style include="iron-flex">
 			.card {
-				margin: var(--theme-component-space-inner); /* outer spacing so image of section is visible */
-				padding: 1rem 1.5rem 2rem 1.5rem;
+        width: 65%;
+        margin: auto;
+				padding: 2.25rem;
 				position: relative;
 				z-index: 1;
 			}
@@ -13,10 +14,10 @@
 			* of nested sub-elements.
 			*/
 			.card::before {
-				content: '';
 				background-color: rgba(255, 255, 255, .8);
 				border-radius: 45px;
 				transform: skewY(-4deg) translateZ(-1px);
+        content: '';
 				width: 100%;
 				height: 100%;
 				position: absolute;
@@ -27,16 +28,52 @@
 				z-index: -1;
 			}
 
+      dorel-cta {
+        text-align: right;
+        display: block;
+      }
+
       .card-wrap .theme-headline {
         @apply(--theme-heading);
+        font-size: 2rem;
+        margin: 0;
+      }
+
+      #dorel-card p {
+        margin-bottom: 2.5rem;
+      }
+
+      /**
+      * Responsive definitions
+      */
+      .card[mobile-small], .card[mobile-medium]{
+        width: 100%;
+        margin: 0;
       }
     </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+      query-matches="{{ desktopFull }}"></iron-media-query>
 
     <template
       is="dom-if"
       if="{{ hasValue(skewed) }}">
 
-      <div class="card container-fluid">
+      <div class="card"
+           mobile-small$="{{ mobileSmall }}"
+           mobile-medium$="{{ mobileMedium }}"
+           tablets$="{{ tablets }}"
+           desktop-small$="{{ desktopSmall }}"
+           desktop-full$="{{ desktopFull }}">
         <div class="card-wrap">
 
         <!-- cardTitle -->
@@ -59,10 +96,9 @@
         <template
           is="dom-if"
           if="{{ hasValue(cardData.card_cta_toggle) }}">
-          <dorel-cta
-            class="pull-right"
-            type="[[ cardData.card_cta_type ]]"
-            link="[[ cardData.card_cta_link ]]">[[ cardData.card_cta_text ]]</dorel-cta>
+          <dorel-cta type="[[ cardData.card_cta_type ]]" link="[[ cardData.card_cta_link ]]">
+            [[ cardData.card_cta_text ]]
+          </dorel-cta>
           </div>
         </template>
         <!--// ctaToggle -->
