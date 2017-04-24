@@ -8,21 +8,21 @@
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
 <link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 
+<link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
+<link rel="import" href="utils/dorel-wp-collect-options.html">
+<link rel="import" href="utils/dorel-wp-collect-page.html">
+<!-- <link rel="import" href="utils/dorel-wp-collect-pages.html"> -->
+<link rel="import" href="utils/dorel-wp-collect-widgets.html">
+
 <link rel="import" href="atoms/dorel-gtm-events.html">
 <link rel="import" href="organisms/dorel-page-builder.html">
-
-<!-- Since 'home' is the default route, eagerly load it. -->
-<link rel="import" href="templates/dorel-template-home.html">
-<link rel="import" href="templates/dorel-template.html">
-
 <link rel="import" href="dorel-app-placeholder.html">
 
 <!-- enable global variables -->
@@ -99,16 +99,14 @@
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
 
-    <!-- loading placeholder -->
-    <!-- <dorel-app-placeholder id="placeholder"></dorel-app-placeholder> -->
-
-
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <!-- <dorel-wp-collect-pages></dorel-wp-collect-pages> -->
+    <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page>
+
 
     <!-- collect the options pages -->
     <dorel-wp-collect-options
@@ -129,11 +127,16 @@
       desktop-small$="{{ desktopSmall }}"
       desktop-full$="{{ desktopFull }}">
 
-      <iron-pages role="main"
+
+      <dorel-template
+        name="[[ currentPage.slug ]]"
+        template-name$="[[ currentPage.template ]]"
+        template-data="[[ currentPage ]]"></dorel-template>
+
+      <!-- <iron-pages role="main"
         selected="{{ page }}"
         attr-for-selected="name">
 
-        <!-- for every page, create a dorel-template -->
         <template
           is="dom-repeat"
           items="{{ globals.Dorel.collect.pages }}"
@@ -146,8 +149,8 @@
             template-data="[[ page ]]"></dorel-template>
 
         </template>
-
-        <dorel-template-404 name="404"></dorel-404>
+ -->
+        <!-- <dorel-template-404 name="404"></dorel-404> -->
 
       </iron-pages>
     </section>
@@ -171,6 +174,20 @@
        * @description all properties this component uses
        */
       properties: {
+
+        /**
+         * First url segment
+         */
+        firstSegment: {
+          type: String
+        },
+
+        /**
+         * Last url segment
+         */
+        lastSegment: {
+          type: String
+        },
 
         /**
          * Define the current page
@@ -208,8 +225,8 @@
        * @description observe if a function is called
        */
       observers: [
-        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
-        '_setCurrentPage(page, globals.Dorel.collect.pages)',
+        // '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
+        // '_setCurrentPage(page, globals.Dorel.collect.pages)',
         '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
@@ -255,7 +272,7 @@
       },
 
 	    /**
-	     * @nae _setSharedThemeStyle
+	     * @name _setSharedThemeStyle
 	     * @description Checks the apps config, and sets the according brand theme
 	     **/
 	    _setSharedThemeStyle: function() {
@@ -280,13 +297,21 @@
         if (typeof route === 'undefined') return;
 
         // define the first segment
-        var firstSegment = this.routeData.page;
+        this.firstSegment = this.routeData.page;
+        this.lastSegment = (this.firstSegment !== '' ) ? this._getLastSegment(document.URL) : null;
+
+
         /** 
          * if last segment is undefined or empty string set too home, 
          * all others to segment
          */
-        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
-          'home' : firstSegment;
+        if (!this.firstSegment.length) {
+          this.page = 'home';
+        } else if (this.firstSegment === this.lastSegment) {
+          this.page = this.firstSegment;
+        } else if (this.firstSegment !== this.lastSegment) {
+          this.page = this.lastSegment;
+        }
       },
 
       /**
@@ -305,9 +330,9 @@
         switch (toPage) {
 
           // home is eagerly loaded
-          case 'home':
-            this._ensureLazyLoaded();
-          break;
+          // case 'home':
+          //   this._ensureLazyLoaded();
+          // break;
 
           // named page templates
           case '404':
@@ -407,6 +432,10 @@
        */
       _currentPageChanged: function(newVal) {
         if(typeof newVal === 'undefined') return;
+
+        this.currentPage = newVal;
+
+        console.log(newVal);
 
         this.fire('change-section', { 
           title: newVal.title.rendered
@@ -533,8 +562,10 @@
       /**
        * @name _cloneObj
        * @description creates a clone of an object
+       *
+       * @parameter Object - object to clone
        */
-      _cloneObj: function (obj) {
+      _cloneObj: function(obj) {
 
         // if object is not defined or not an object, jump out
         if (null == obj || "object" != typeof obj) return obj;
@@ -549,6 +580,22 @@
 
         // return the copied object
         return copy;
+      },
+
+      /**
+       * @name _getLastSegment
+       * @description strips the last segment from the url
+       *
+       * @parameter String - current document url
+       */
+      _getLastSegment: function(url) {
+        url = url.replace(/(^\w+:|^)\/\//, '');
+
+        if ( url.lastIndexOf('/') === (url.length -1) ) {
+          url = url.substr(0,url.lastIndexOf('/'));
+        }
+        
+        return url.substr(url.lastIndexOf('/') +1, url.length);
       }
 
     });

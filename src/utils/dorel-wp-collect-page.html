@@ -2,7 +2,7 @@
   <template>
     <iron-ajax
       id="page"
-      url="[[ wpUrl ]]/wp/v2/pages?slug=[[ pageSlug ]]" 
+      url="" 
       handle-as="json"
       on-response="_pageLoaded"></iron-ajax>
   </template>
@@ -12,27 +12,31 @@
       is: 'dorel-wp-collect-page',
       
       properties: {
+        /**
+         * @name endPoint
+         * @description the endpoint or url of the api
+         */
+        endPoint: {
+          type: String
+        },
 
         /**
          * `pageSlug` the slug of the page (last segment of the url), as
          * defined by the dorel-app routing
          */
         pageSlug: {
-          type: String,
-          observer: '_retrievePage'
-        },
-
-        /**
-         * `wpUrl` of the url of the Wordpress instance
-         */
-        wpUrl: {
           type: String
-        }
+        },
 
       },
 
-      _retrievePage: function(newVal, oldVal) {
-        if (typeof newVal === 'undefined' || newVal === oldVal) return;
+      observers: [
+        '_retrievePage(pageSlug, globals.Dorel.wpUrl)'
+      ],
+
+      _retrievePage: function(pageSlug, wpUrl) {
+        if (typeof pageSlug === 'undefined' || pageSlug === ''
+          || typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
 
         // switch(newVal) {
         //   // home is eagerly loaded
@@ -45,7 +49,9 @@
         //   break;
         // }
 
+
         var pageEl = this.$.page;
+        pageEl.url = this.globals.Dorel.wpUrl + '/wp/v2/pages?slug=' + pageSlug;
 
          // do the products call
         pageEl.generateRequest();
@@ -70,6 +76,10 @@
         // this.importHref(this.resolveUrl('../organisms/dorel-footer.html'), null, null, true);
       },
 
+      /**
+       * @name _getLastUrlSegment
+       * @description get the last segment of the url (deprecated)
+       */
       _getLastUrlSegment: function(url) {
         var urlArr = document.URL.split('/');
         var cleanedArr = urlArr.clean('');
@@ -77,6 +87,22 @@
         newVal = urlArr[urlArr.length-1];
 
         console.log(urlArr, cleanedArr);
+      },
+
+      /**
+       * @name _hasProps
+       * @description check if the observed data model has properties
+       */
+      _hasProps: function(dataObj) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasProps = false;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dataObj) {
+          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+        }
+
+        return hasProps;
       }
     });
   </script>

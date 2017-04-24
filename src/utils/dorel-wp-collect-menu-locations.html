@@ -46,12 +46,14 @@
 
       // iterate over the keys of the response
       for (var key in response) {
+        if (key !== 'utilities_menu') {
 
-        // for every key retrieve its menuItems
-        this.$.menuItems.url = this.wpUrl + '/wp-api-menus/v2/menu-locations/' + key;
+          // for every key retrieve its menuItems
+          this.$.menuItems.url = this.wpUrl + '/wp-api-menus/v2/menu-locations/' + key;
 
-        // kicks off the request, when response is given _menuItemsLoaded is fired
-        this.$.menuItems.generateRequest();
+          // kicks off the request, when response is given _menuItemsLoaded is fired
+          this.$.menuItems.generateRequest();
+        }
       }
 
       // place all the menu locations in the collect menus object
