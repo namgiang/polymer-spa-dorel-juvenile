@@ -4,8 +4,6 @@
       is="dom-if"
       if="{{ globals.Dorel.collect.options.zendesk_loaded }}">
       <dorel-zendesk
-        zendesk-toggle="{{ globals.Dorel.collect.options.zendesk_toggle }}"
-        zendesk-host="{{ globals.Dorel.collect.options.zendesk_host }}"
         zendesk-loaded="{{ globals.Dorel.collect.options.zendesk_loaded }}"></dorel-zendesk>
     </template>
   </template>
@@ -64,22 +62,12 @@
          */
         zendeskHost: {
           type: String
-        },
-
-        /**
-         * @name zendeskScriptSrc
-         * @description the third-party source of the JavaScript
-         * see http://bit.ly/2ps5eto for more info on embedding Zendesk
-         */
-        zendeskScriptSrc: {
-          type: String,
-          value: '//assets.zendesk.com/embeddable_framework/main.js'
         }
       },
 
       observers: [
         '_initHubspot(hubspotToggle, hubspotPortalId, hubspotScriptSrc)',
-        '_initZendesk(zendeskToggle, zendeskHost, zendeskScriptSrc)'
+        '_initZendesk(zendeskToggle, zendeskHost)'
       ],
 
       /** 
@@ -127,8 +115,6 @@
        * @parameter zendeskHost String - the portal id of Zendesk
        */
       _initZendesk: function(zendeskToggle, zendeskHost) {
-        console.log(zendeskToggle, zendeskHost);
-
         if ( typeof zendeskToggle === 'undefined' || !zendeskToggle ||
           typeof zendeskHost === 'undefined' || zendeskHost === '') return;
 
