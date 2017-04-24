@@ -44,11 +44,26 @@
 
   <!-- all config/constants needed for the app -->
   <script type="text/javascript" src="/app-config.js"></script>
-  <script type="text/javascript" src="/assets/js/polyfills.js"></script>
   
   <script>
     window.performance && performance.mark && performance.mark('index.html');
     Polymer = {lazyRegister: true, dom: 'shadow'};
+
+    /*
+     *  Load webcomponents only for other browsers than Chrome
+     */
+    (function() {
+      if ('registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')) {
+        // platform is good!
+      } else {
+        // polyfill the platform!
+        var e = document.createElement('script');
+        e.src = '/assets/js/polyfills.js';
+        document.body.appendChild(e);
+      }
+    })();
   </script>
 </body>
 </html>
