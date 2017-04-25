@@ -1,36 +1,26 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
-<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/app-layout/helpers/helpers.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<!-- <link rel="import" href="../bower_components/iron-selector/iron-selector.html"> -->
-<link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
 
+<!-- TODO: These should only be included conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 
-<link rel="import" href="atoms/dorel-gtm-events.html">
-<link rel="import" href="organisms/dorel-page-builder.html">
-
-<!-- Since 'home' is the default route, eagerly load it. -->
-<link rel="import" href="templates/dorel-template-home.html">
 <link rel="import" href="templates/dorel-template.html">
-
-<link rel="import" href="dorel-app-placeholder.html">
+<link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
+<link rel="import" href="utils/dorel-wp-collect-pages.html">
+<link rel="import" href="utils/dorel-wp-collect-options.html">
+<link rel="import" href="utils/dorel-wp-collect-widgets.html">
 
 <!-- enable global variables -->
 <script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
 
+
 <dom-module id="dorel-app">
   <template>
-    <style include="polymer-bootstrap-min iron-flex iron-flex-alignment">
+    <style>
       /* 
        * Application wide styling
        * - Will define standard styling for components
@@ -69,6 +59,22 @@
         overflow: hidden;
       }
     </style>
+    
+    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
+    <dorel-wp-collect-menu-locations
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
+
+    <!-- collect all pages from wordpress -->
+    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
+
+
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+
+    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
+    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
@@ -81,18 +87,6 @@
       zendesk-toggle="{{ globals.Dorel.collect.options.zendesk_toggle }}"
       zendesk-host="{{ globals.Dorel.collect.options.zendesk_host }}"></dorel-third-party>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-  
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
     <app-route
@@ -100,38 +94,23 @@
         pattern="/:page"
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
-
-    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
-
-    <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages></dorel-wp-collect-pages>
-
-    <!-- collect the options pages -->
-    <dorel-wp-collect-options
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
-
-    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
   
     <dorel-header
       load-complete="{{ loadComplete }}"
       page="{{ page }}"></dorel-header>
 
     <!-- content pages -->
-    <main id="main" role="main"
-      mobile-small$="{{ mobileSmall }}"
-      mobile-medium$="{{ mobileMedium }}"
-      tablets$="{{ tablets }}"
-      desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
+    <main id="main" role="main">
+
+      <!-- <dorel-template
+        name="[[ currentPage.slug ]]"
+        template-name$="[[ currentPage.template ]]"
+        template-data="[[ currentPage ]]"></dorel-template> -->
 
       <iron-pages role="main"
         selected="{{ page }}"
         attr-for-selected="name">
 
-        <!-- for every page, create a dorel-template -->
         <template
           is="dom-repeat"
           items="{{ globals.Dorel.collect.pages }}"
@@ -144,17 +123,14 @@
             template-data="[[ page ]]"></dorel-template>
 
         </template>
-
-        <dorel-template-404 name="404"></dorel-404>
-
+        <dorel-template-404 name="404"></dorel-template-404>
       </iron-pages>
-    </section>
+    </main>
 
     <dorel-footer></dorel-footer>
-
+    
     <!-- a11y announcer -->
     <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
-
   </template>
 
   <script>
@@ -169,6 +145,20 @@
        * @description all properties this component uses
        */
       properties: {
+
+        /**
+         * First url segment
+         */
+        firstSegment: {
+          type: String
+        },
+
+        /**
+         * Last url segment
+         */
+        lastSegment: {
+          type: String
+        },
 
         /**
          * Define the current page
@@ -253,7 +243,7 @@
       },
 
 	    /**
-	     * @nae _setSharedThemeStyle
+	     * @name _setSharedThemeStyle
 	     * @description Checks the apps config, and sets the according brand theme
 	     **/
 	    _setSharedThemeStyle: function() {
@@ -278,13 +268,28 @@
         if (typeof route === 'undefined') return;
 
         // define the first segment
-        var firstSegment = this.routeData.page;
+        this.firstSegment = this.routeData.page;
+        this.lastSegment = (this.firstSegment !== '' ) ? this._getLastSegment(document.URL) : null;
+
+
         /** 
          * if last segment is undefined or empty string set too home, 
          * all others to segment
          */
-        this.page = (typeof firstSegment === 'undefined' || firstSegment === '') ?
-          'home' : firstSegment;
+        this.page = (typeof this.firstSegment === 'undefined' || this.firstSegment === '') ?
+          'home' : this.firstSegment;
+
+
+        /**
+         * when using pageSlug (collect-page)
+        if (!this.firstSegment.length) {
+          this.page = 'home';
+        } else if (this.firstSegment === this.lastSegment) {
+          this.page = this.firstSegment;
+        } else if (this.firstSegment !== this.lastSegment) {
+          this.page = this.lastSegment;
+        }
+         */
       },
 
       /**
@@ -309,7 +314,6 @@
 
           // named page templates
           case '404':
-          case 'products':
             // importHref(href, onload, onerror, optAsync)
             this.importHref(
               this.resolveUrl('templates/dorel-template-' + toPage + '.html'), function() {
@@ -322,9 +326,16 @@
           default:
             this.importHref(
               this.resolveUrl('templates/dorel-template.html'), function() {
-                this._ensureLazyLoaded();
+
+                this.importHref(
+                  this.resolveUrl('templates/dorel-template-products.html'), function() {
+                    this._ensureLazyLoaded();
+                  }, null, false
+                );
+
               }, null, false
             );
+
           break;
         }
 
@@ -405,6 +416,8 @@
        */
       _currentPageChanged: function(newVal) {
         if(typeof newVal === 'undefined') return;
+
+        this.currentPage = newVal;
 
         this.fire('change-section', { 
           title: newVal.title.rendered
@@ -531,8 +544,10 @@
       /**
        * @name _cloneObj
        * @description creates a clone of an object
+       *
+       * @parameter Object - object to clone
        */
-      _cloneObj: function (obj) {
+      _cloneObj: function(obj) {
 
         // if object is not defined or not an object, jump out
         if (null == obj || "object" != typeof obj) return obj;
@@ -547,6 +562,22 @@
 
         // return the copied object
         return copy;
+      },
+
+      /**
+       * @name _getLastSegment
+       * @description strips the last segment from the url
+       *
+       * @parameter String - current document url
+       */
+      _getLastSegment: function(url) {
+        url = url.replace(/(^\w+:|^)\/\//, '');
+
+        if ( url.lastIndexOf('/') === (url.length -1) ) {
+          url = url.substr(0,url.lastIndexOf('/'));
+        }
+        
+        return url.substr(url.lastIndexOf('/') +1, url.length);
       }
 
     });
