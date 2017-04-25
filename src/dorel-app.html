@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/beautify-json/beautify-json.html">
 
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
@@ -68,7 +69,6 @@
     <dorel-wp-collect-pages></dorel-wp-collect-pages>
     <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
 
-
     <!-- collect the options pages -->
     <dorel-wp-collect-options
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
@@ -102,18 +102,13 @@
     <!-- content pages -->
     <main id="main" role="main">
 
-      <!-- <dorel-template
-        name="[[ currentPage.slug ]]"
-        template-name$="[[ currentPage.template ]]"
-        template-data="[[ currentPage ]]"></dorel-template> -->
-
       <iron-pages role="main"
-        selected="{{ page }}"
+        selected="{{ currentPage.slug }}"
         attr-for-selected="name">
-
+        
         <template
           is="dom-repeat"
-          items="{{ globals.Dorel.collect.pages }}"
+          items="{{ pagesArr }}"
           as="page">
 
           <dorel-template
@@ -164,16 +159,14 @@
          * Define the current page
          */
         page: {
-          type: String,
-          observer: '_pageChanged' // when this var changes call this function
+          type: String
         },
 
         /**
          * Defines the current route
          */
         route: {
-          type: String,
-          observer: '_routeChanged'
+          type: String
         },
         
         /**
@@ -188,7 +181,22 @@
          */
         currentPage: {
           type: Object
+        },
+
+        pagesArr: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        otherPages: {
+          type: Array,
+          value: function() {
+            return [];
+          }
         }
+
       },
 
       /**
@@ -196,8 +204,7 @@
        * @description observe if a function is called
        */
       observers: [
-        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
-        '_setCurrentPage(page, globals.Dorel.collect.pages)',
+        '_routeChanged(route, globals.Dorel.collect.pages)',
         '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
@@ -262,10 +269,10 @@
        *
        * @param route object
        */
-      _routeChanged: function(route) {
+      _routeChanged: function(route, pages) {
 
         // if the route is undefined
-        if (typeof route === 'undefined') return;
+        if (typeof route === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
         // define the first segment
         this.firstSegment = this.routeData.page;
@@ -276,9 +283,28 @@
          * if last segment is undefined or empty string set too home, 
          * all others to segment
          */
-        this.page = (typeof this.firstSegment === 'undefined' || this.firstSegment === '') ?
+        var page = (typeof this.firstSegment === 'undefined' || this.firstSegment === '') ?
           'home' : this.firstSegment;
 
+        var pageArr = [];
+
+        // map the page variable to the item in the menu array and set it
+        this.currentPage = pages.find(function(item) {
+          return item.slug === page;
+        });
+
+        if (this.pagesArr.indexOf(this.currentPage) < 0) {
+          this.push('pagesArr', this.currentPage);
+        }
+
+        // define other pages
+        if (!this.otherPages.length) {
+          var index = pages.indexOf(this.currentPage);
+          pages.splice(index, 1);
+          this.otherPages = pages;
+        }
+        
+        this._ensureLazyLoaded();
 
         /**
          * when using pageSlug (collect-page)
@@ -316,7 +342,7 @@
           case '404':
             // importHref(href, onload, onerror, optAsync)
             this.importHref(
-              this.resolveUrl('templates/dorel-template-' + toPage + '.html'), function() {
+              this.resolveUrl('templates/dorel-template-404.html'), function() {
                 this._ensureLazyLoaded();
               }, null, false
             );
@@ -379,7 +405,7 @@
        * the service worker will kick in after that.
        */
       _ensureLazyLoaded: function() {
-
+        var self = this;
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
@@ -393,6 +419,11 @@
               this._notifyNetworkStatus();
               this.loadComplete = true;
               this._removeLoadPlaceholder();
+              console.log(this.otherPages);
+              this.otherPages.forEach(function(item) {
+                self.push('pagesArr', item);  
+              });
+              
             });
           });
         }
