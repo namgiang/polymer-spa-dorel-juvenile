@@ -1,8 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
@@ -21,7 +19,7 @@
 
 <dom-module id="dorel-app">
   <template>
-    <style include="iron-flex iron-flex-alignment">
+    <style>
       /* 
        * Application wide styling
        * - Will define standard styling for components
@@ -70,18 +68,6 @@
       hub-spot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
       hub-spot-portal-id="{{ globals.Dorel.collect.options.hubspot_portal_id }}"></dorel-third-party>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-  
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
     <app-route
@@ -111,24 +97,17 @@
       page="{{ page }}"></dorel-header>
 
     <!-- content pages -->
-    <main id="main" role="main"
-      mobile-small$="{{ mobileSmall }}"
-      mobile-medium$="{{ mobileMedium }}"
-      tablets$="{{ tablets }}"
-      desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
-
+    <main id="main" role="main">
 
       <dorel-template
         name="[[ currentPage.slug ]]"
         template-name$="[[ currentPage.template ]]"
         template-data="[[ currentPage ]]"></dorel-template>
-    </section>
+      <dorel-footer></dorel-footer>
 
-    <dorel-footer></dorel-footer>
-
-    <!-- a11y announcer -->
-    <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
+      <!-- a11y announcer -->
+      <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
+    </main>
 
   </template>
 
@@ -404,8 +383,6 @@
         if(typeof newVal === 'undefined') return;
 
         this.currentPage = newVal;
-
-        console.log(newVal);
 
         this.fire('change-section', { 
           title: newVal.title.rendered
