@@ -4,30 +4,13 @@
     <!-- define routing for products -->
     <app-route
         route="{{ route }}"
-        pattern="/:productId"
+        pattern="/:productName"
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
 
-    <iron-pages role="main"
-      selected="{{ routeData.productId }}"
-      attr-for-selected="name">
-
-      <!-- for every page create a dorel-template -->
-      <template
-        is="dom-repeat"
-        items="{{ templateData.products }}"
-        as="page">
-
-        <dorel-template-product-detail
-          name="[[ page.slug ]]"
-          template-data="{{ page }}"></dorel-template-product-detail>
-
-      </template>
-
-    </iron-pages>
-
-    <!-- <dorel-page-builder
-      builder-data="[[ templateData.acf.page_builder ]]"></dorel-page-builder> -->
+    <dorel-page-builder 
+      builder-data="[[ builderData.acf.page_builder ]]"
+      template-data="[[ builderData ]]"></dorel-page-builder>
 
   </template>
 
@@ -44,12 +27,34 @@
          */
         templateData: {
           type: String
+        },
+
+        /**
+         * @name routeData
+         * @description the route data contains the last segment under productName
+         */
+        routeData: {
+          type: Object
         }
         
       },
 
-      ready: function() {
-        this.importHref(this.resolveUrl('dorel-template-product-detail.html'), null, null, false);
+      observers: [
+        '_routeDataChanged(routeData.productName)'
+      ],
+
+      _routeDataChanged: function(productName) {
+        if (typeof productName === 'undefined' || typeof this.templateData.products === 'undefined' ||
+          !this.templateData.products.length) return;
+
+        
+        this.builderData = this.templateData.products.find(function(product) {
+          return product.slug === productName;
+        });
+
+        if (typeof this.builderData === 'undefined') {
+          console.log('404');
+        }
       }
 
     });
