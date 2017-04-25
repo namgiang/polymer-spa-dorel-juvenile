@@ -1,0 +1,80 @@
+<dom-module id="dorel-zendesk">
+  <script>
+    Polymer({
+      is: 'dorel-zendesk',
+
+      properties: {
+        /**
+         * @name zendeskScriptSrc
+         * @description the third-party source of the JavaScript
+         * see http://bit.ly/2ps5eto for more info on embedding Zendesk
+         */
+        zendeskScriptSrc: {
+          type: String,
+          value: '//assets.zendesk.com/embeddable_framework/main.js'
+        },
+
+        /**
+         * @name zendeskLoaded
+         * @description this variable defines if the zendeskLoaded script is loaded
+         */
+        zendeskLoaded: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_embedForm(zendeskScriptSrc, zendeskLoaded)'
+      ],
+
+      /**
+       * @name _embedForm
+       * @description this script observes all variables needed to inject
+       * the form in the Polymer application
+       */
+      _embedForm: function(zendeskScriptSrc, zendeskLoaded) {
+        // check if all variables needed are set, otherwise jump out
+        if (typeof zendeskScriptSrc === 'undefined' || zendeskScriptSrc === '' ||
+          typeof zendeskLoaded === 'undefined' || !zendeskLoaded ||
+          this._scriptExists(zendeskScriptSrc)) return;
+
+        // reference this for use in the hbspt object
+        var self = this;
+
+        // create script tag
+        var script = document.createElement('script');
+
+        // add source of script
+        script.src = zendeskScriptSrc;
+
+        // add attributes
+        var cspAtt = script.setAttribute('data-ze-csp', 'true');
+        var asyncAtt = script.setAttribute('async', '');
+        var deferAtt = script.setAttribute('defer', '');
+
+        document.getElementsByTagName('head')[0].appendChild(script);
+      },
+
+      /** 
+       * @name _scriptExists
+       * @description check if the script tag with the defined url is included 
+       * already in the application
+       *
+       * @parameter String - url string
+       */
+      _scriptExists: function(url) {
+        // select all scripts
+        var scripts = document.getElementsByTagName('script');
+
+        // check if we have a match
+        for (var i = scripts.length; i--;) {
+          return (scripts[i].src === url);
+        }
+
+        // return false if no match is found
+        return false;
+      }
+    });
+  </script>
+</dom-module>
