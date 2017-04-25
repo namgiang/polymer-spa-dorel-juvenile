@@ -85,7 +85,7 @@
           typeof hubspotPortalId === 'undefined' || hubspotPortalId === '' ||
           typeof hubspotScriptSrc === 'undefined' ||
           this._scriptExists(hubspotScriptSrc) ) return;
-        
+          
         var self = this;
 
         // create script tag
@@ -95,9 +95,8 @@
         script.src = hubspotScriptSrc;
         document.getElementsByTagName('head')[0].appendChild(script);
 
-        // when the script has been loaded
         script.onload = function() {
-          // import the dorel-hubspot component
+          // import the dorel-hubspot component, needs to be async FALSE!!!!!
           self.importHref(
             self.resolveUrl('../atoms/dorel-hubspot.html'), function() {
               Polymer.globalsManager.set('Dorel.collect.options.hubspot_loaded', true);
