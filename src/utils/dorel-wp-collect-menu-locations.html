@@ -32,10 +32,9 @@
         type: String
       }
     },
-
-    ready: function() {
-      this.endPoint = this.wpUrl + '/wp-api-menus/v2/menu-locations';
-    },
+    observers: [
+      '_initMenuLocations(globals.Dorel.wpUrl)'
+    ],
 
     /** 
      * @name _menuLoaded
@@ -83,6 +82,35 @@
 
       // set the menuData (two way data binding for the app)
       this.menuData = this.globals.Dorel.collect.menus;
+    },
+    
+    /**
+     * @name _initMenuLocations
+     * @description Observer function which defines the endpoint when it's available as a global variable
+     */
+    _initMenuLocations: function(wpUrl) {
+      if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+
+      this.endPoint = this.wpUrl + '/wp-api-menus/v2/menu-locations';
+    },
+
+
+
+    /**
+     * @name _hasProps
+     * @description check if the observed data model has properties
+     */
+    _hasProps: function(dataObj) {
+      // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+      var hasProps = false;
+
+      // check for properties in the dorelEvt object
+      for (var prop in dataObj) {
+        hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+      }
+
+      return hasProps;
     }
+
   });
 </script>
