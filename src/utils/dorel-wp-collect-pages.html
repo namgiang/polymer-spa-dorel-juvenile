@@ -37,7 +37,13 @@
         }
       },
 
-      ready: function() {
+      observers: [
+        '_initPages(globals.Dorel.wpUrl)'
+      ],
+
+      _initPages: function(wpUrl) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+
         this.endPoint = this.globals.Dorel.wpUrl + '/wp/v2/pages';
       },
 
@@ -143,6 +149,22 @@
 
         // import the footer after the pages are loaded
         this.importHref(this.resolveUrl('../organisms/dorel-footer.html'), null, null, true);
+      },
+
+      /**
+       * @name _hasProps
+       * @description check if the observed data model has properties
+       */
+      _hasProps: function(dataObj) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasProps = false;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dataObj) {
+          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+        }
+
+        return hasProps;
       }
     });
   </script>

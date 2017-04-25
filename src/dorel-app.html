@@ -2,11 +2,13 @@
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
 <!-- TODO: These should only be icnluded conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 
+<link rel="import" href="templates/dorel-template.html">
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-page.html">
@@ -81,8 +83,8 @@
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <!-- <dorel-wp-collect-pages></dorel-wp-collect-pages> -->
-    <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page>
+    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
 
 
     <!-- collect the options pages -->
@@ -99,10 +101,30 @@
     <!-- content pages -->
     <main id="main" role="main">
 
-      <dorel-template
+      <!-- <dorel-template
         name="[[ currentPage.slug ]]"
         template-name$="[[ currentPage.template ]]"
-        template-data="[[ currentPage ]]"></dorel-template>
+        template-data="[[ currentPage ]]"></dorel-template> -->
+
+      <iron-pages role="main"
+        selected="{{ page }}"
+        attr-for-selected="name">
+
+        <template
+          is="dom-repeat"
+          items="{{ globals.Dorel.collect.pages }}"
+          as="page">
+
+          <dorel-template
+            name="[[ page.slug ]]"
+            route="{{ subroute }}"
+            template-name$="[[ page.template ]]"
+            template-data="[[ page ]]"></dorel-template>
+
+        </template>
+        <dorel-template-404 name="404"></dorel-template-404>
+      </iron-pages>
+
       <dorel-footer></dorel-footer>
 
       <!-- a11y announcer -->
@@ -174,8 +196,8 @@
        * @description observe if a function is called
        */
       observers: [
-        // '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
-        // '_setCurrentPage(page, globals.Dorel.collect.pages)',
+        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
+        '_setCurrentPage(page, globals.Dorel.collect.pages)',
         '_currentPageChanged(globals.Dorel.current.page)'
       ],
 
@@ -254,6 +276,12 @@
          * if last segment is undefined or empty string set too home, 
          * all others to segment
          */
+        this.page = (typeof this.firstSegment === 'undefined' || this.firstSegment === '') ?
+          'home' : this.firstSegment;
+
+
+        /**
+         * when using pageSlug (collect-page)
         if (!this.firstSegment.length) {
           this.page = 'home';
         } else if (this.firstSegment === this.lastSegment) {
@@ -261,6 +289,7 @@
         } else if (this.firstSegment !== this.lastSegment) {
           this.page = this.lastSegment;
         }
+         */
       },
 
       /**
@@ -279,13 +308,12 @@
         switch (toPage) {
 
           // home is eagerly loaded
-          // case 'home':
-          //   this._ensureLazyLoaded();
-          // break;
+          case 'home':
+            this._ensureLazyLoaded();
+          break;
 
           // named page templates
           case '404':
-          case 'products':
             // importHref(href, onload, onerror, optAsync)
             this.importHref(
               this.resolveUrl('templates/dorel-template-' + toPage + '.html'), function() {
@@ -298,9 +326,16 @@
           default:
             this.importHref(
               this.resolveUrl('templates/dorel-template.html'), function() {
-                this._ensureLazyLoaded();
+
+                this.importHref(
+                  this.resolveUrl('templates/dorel-template-products.html'), function() {
+                    this._ensureLazyLoaded();
+                  }, null, false
+                );
+
               }, null, false
             );
+
           break;
         }
 
