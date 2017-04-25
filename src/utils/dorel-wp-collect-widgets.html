@@ -31,6 +31,16 @@
         '_initWidgets(globals.Dorel.wpUrl)'
       ],
 
+      /**
+       * @name _initWidgets
+       * @description Observer function which defines the endpoint when it's available as a global variable
+       */
+      _initWidgets: function(wpUrl) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+
+        this.endPoint = this.globals.Dorel.wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
+      },
+
       /** 
        * @name _widgetAreasLoaded
        * @description retrieve all the widget areas and then trigger
@@ -81,18 +91,6 @@
         // update the reflected attribute
         this.widgetsData = this.globals.Dorel.collect.widgetAreas;
       },
-
-      /**
-       * @name _initWidgets
-       * @description Observer function which defines the endpoint when it's available as a global variable
-       */
-      _initWidgets: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
-
-        this.endPoint = this.globals.Dorel.wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
-      },
-
-
 
       /**
        * @name _hasProps
