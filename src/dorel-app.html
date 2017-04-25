@@ -59,6 +59,22 @@
         overflow: hidden;
       }
     </style>
+    
+    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
+    <dorel-wp-collect-menu-locations
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
+
+    <!-- collect all pages from wordpress -->
+    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
+
+
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+
+    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
+    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
@@ -78,22 +94,6 @@
         pattern="/:page"
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
-
-    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-menu-locations>
-
-    <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages></dorel-wp-collect-pages>
-    <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
-
-
-    <!-- collect the options pages -->
-    <dorel-wp-collect-options
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
-
-    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
   
     <dorel-header
       load-complete="{{ loadComplete }}"
@@ -125,13 +125,12 @@
         </template>
         <dorel-template-404 name="404"></dorel-template-404>
       </iron-pages>
-
-      <dorel-footer></dorel-footer>
-
-      <!-- a11y announcer -->
-      <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
     </main>
 
+    <dorel-footer></dorel-footer>
+    
+    <!-- a11y announcer -->
+    <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
   </template>
 
   <script>
