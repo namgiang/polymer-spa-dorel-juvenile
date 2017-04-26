@@ -290,11 +290,12 @@
         // other routes are lazy loaded
         } else {
           // don't include the home template twice (its loaded eagerly)
-          // if (currentPage.template === 'home') return;
+          if (currentPage.template === 'home' || 
+            typeof currentPage.template === 'undefined') return;
 
           // import the template on demand
           this.importHref(
-            this.resolveUrl('templates/dorel-template-' + page + '.html'),
+            this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
             function() {
               this._ensureLazyLoaded();
             }, null, false);
