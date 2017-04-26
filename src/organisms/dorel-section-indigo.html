@@ -8,21 +8,7 @@
 				display: flex;
 				justify-content: center;
 				position: relative;
-        opacity: 0;  /* make things invisible upon start */
-        -webkit-animation: fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
-        -moz-animation: fadeIn ease 1;
-        animation: fadeIn ease 1;
-        -webkit-animation-duration: 1s;
-        -moz-animation-duration: .1s;
-        animation-duration: 1s;
-        -webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
-        -moz-animation-fill-mode: forwards;
-        animation-fill-mode: forwards;
 			}
-
-      @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
-      @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
-      @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
 
       .container {
         padding: 0 var(--theme-component-space-micro);
@@ -135,8 +121,13 @@
 		         mobile-medium$="{{ mobileMedium }}">
 			<div class="container">
 				<div class="image-wrapper skew">
-					<div class="image skew-reset" role="img" aria-label="Add image description for accessibility here"
-					     style$="background-image: url([[ hasBackgroundImage(indigoData.background_image) ]]);"></div>
+          <iron-image class="image skew-reset"
+                      sizing="cover"
+                      fade="true"
+                      preload
+                      placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                      src$="[[ indigoData.background_image ]]">
+          </iron-image>
 				</div>
         <div class="content-wrapper"
              mobile-small$="{{ mobileSmall }}"
@@ -180,16 +171,6 @@
 					}
 				}
 
-			},
-
-			/**
-			 * @name hasBackgroundImage
-			 * @description checks to see if a background image is set in Wordpress
-			 *
-			 * @returns Sting when no image is set it returns the placeholder string
-			 */
-			hasBackgroundImage: function (img) {
-				return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
 			},
 
 			/**

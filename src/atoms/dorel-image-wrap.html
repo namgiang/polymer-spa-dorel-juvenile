@@ -1,18 +1,23 @@
 <dom-module id="dorel-image-wrap">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style>
       .image-wrap {
         text-align: center;
       }
-      .image-wrap img {
+      .image-wrap iron-image {
         margin: 0 auto;
         width: 100%;
         max-width: 340px;
+        min-height: 400px;
       }
     </style>
     
     <div class="image-wrap">
-      <img class="img-responsive" src="[[ hasBackgroundImage(imageUrl) ]]" alt="" />
+      <iron-image fade="true"
+                  sizing="contain"
+                  preload
+                  src$="[[ imageUrl ]]">
+      </iron-image>
     </div>
 
   </template>
@@ -34,16 +39,6 @@
         }
 
       },
-
-      /**
-       * @name hasBackgroundImage
-       * @description checks to see if a background image has been define
-       *
-       * @returns Boolean if a background image is defined or not (true/false)
-       */
-      hasBackgroundImage: function(img) {
-        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/image-wrap/placeholder.jpg' : img;
-      }
 
     });
   </script>
