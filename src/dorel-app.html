@@ -2,12 +2,20 @@
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+<!-- TODO: This will be removed later -->
+<link rel="import" href="../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
+
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
+
 <!-- Header has priority for percieved initial load -->
 <link rel="import" href="organisms/dorel-header.html">
+
 <!-- Since 'home' is the default route, eagerly load it. -->
 <link rel="import" href="templates/dorel-template-home.html">
 
@@ -280,10 +288,12 @@
 
         // other routes are lazy loaded
         } else {
+          // don't include the home template twice (its loaded eagerly)
+          // if (currentPage.template === 'home') return;
 
           // import the template on demand
           this.importHref(
-            this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
+            this.resolveUrl('templates/dorel-template-' + page + '.html'),
             function() {
               this._ensureLazyLoaded();
             }, null, false);
