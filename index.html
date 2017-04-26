@@ -16,8 +16,60 @@
   <link rel="mask-icon" href="/assets/images/favicons/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="theme-color" content="#ffffff">
   
+  <!-- all config/constants needed for the app -->
+  <script type="text/javascript" src="/app-config.js"></script>
+
+  <script>
+    window.performance && performance.mark && performance.mark('index.html');
+    Polymer = {lazyRegister: true, dom: 'shadow'};
+
+    /*
+     *  Load webcomponents only for other browsers than Chrome
+     */
+    (function() {
+      if ('registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')) {
+        // platform is good!
+      } else {
+        // polyfill the platform!
+        var e = document.createElement('script');
+        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+        document.body.appendChild(e);
+      }
+
+      /**
+       * Find polyfill for IE
+       */
+      if ( !Array.prototype.find ) {
+        Array.prototype.find = function(predicate) {
+          if (this == null) {
+            throw new TypeError('Array.prototype.find called on null or undefined');
+          }
+          if (typeof predicate !== 'function') {
+            throw new TypeError('predicate must be a function');
+          }
+          var list = Object(this);
+          var length = list.length >>> 0;
+          var thisArg = arguments[1];
+          var value;
+
+          for (var i = 0; i < length; i++) {
+            value = list[i];
+            if (predicate.call(thisArg, value, i, list)) {
+              return value;
+            }
+          }
+          return undefined;
+        };
+      }
+    })();
+  </script>
+
   <!-- app import -->
-  <link rel="import" href="/src/dorel-app.html" async>
+  <link rel="import" href="/src/dorel-app.html">
+
+  <script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.min.js" charset="utf-8"></script>
 
   <!-- Main style -->
   <style>
@@ -149,55 +201,5 @@
   <dorel-app>
     <!-- Any content here is removed when the app is loaded -->
   </dorel-app>
-
-  <!-- all config/constants needed for the app -->
-  <script type="text/javascript" src="/app-config.js"></script>
-  
-  <script>
-    window.performance && performance.mark && performance.mark('index.html');
-    Polymer = {lazyRegister: true, dom: 'shadow'};
-
-    /*
-     *  Load webcomponents only for other browsers than Chrome
-     */
-    (function() {
-      if ('registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')) {
-        // platform is good!
-      } else {
-        // polyfill the platform!
-        var e = document.createElement('script');
-        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
-        document.body.appendChild(e);
-      }
-
-      /**
-       * Find polyfill for IE
-       */
-      if ( !Array.prototype.find ) {
-        Array.prototype.find = function(predicate) {
-          if (this == null) {
-            throw new TypeError('Array.prototype.find called on null or undefined');
-          }
-          if (typeof predicate !== 'function') {
-            throw new TypeError('predicate must be a function');
-          }
-          var list = Object(this);
-          var length = list.length >>> 0;
-          var thisArg = arguments[1];
-          var value;
-
-          for (var i = 0; i < length; i++) {
-            value = list[i];
-            if (predicate.call(thisArg, value, i, list)) {
-              return value;
-            }
-          }
-          return undefined;
-        };
-      }
-    })();
-  </script>
 </body>
 </html>
