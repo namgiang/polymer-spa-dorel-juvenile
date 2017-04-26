@@ -1,3 +1,8 @@
+<link rel="import" href="../../bower_components/polymer-bootstrap/polymer-bootstrap-min.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../atoms/dorel-inline-usps.html">
+
 <dom-module id="dorel-section-showcase">
   <template>
     <style include="polymer-bootstrap-min">
@@ -231,7 +236,8 @@
          * component
          */
         showcaseData: {
-          type: Object
+          type: Object,
+          observer: '_showcaseDataChanged'
         },
 
         /**
@@ -259,6 +265,18 @@
         this.currentImage = this.showcaseData.showcase_gallery[0];
 
       },
+
+      /**
+       * @name ready
+       * @description when the component is ready to use set the first
+       * image from the Wordpress data as the currentImage
+       */
+      _showcaseDataChanged: function(newVal, oldVal) {
+        if (typeof newVal === 'undefined') return;
+        // reset current image to the first one in the array
+        this.currentImage = this.showcaseData.showcase_gallery[0];
+      },
+
 
       /** 
        * @name clickThumbnail

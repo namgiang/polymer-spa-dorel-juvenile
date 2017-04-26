@@ -3,20 +3,18 @@
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
+<!-- Header has priority for percieved initial load -->
+<link rel="import" href="organisms/dorel-header.html">
+<!-- Since 'home' is the default route, eagerly load it. -->
+<link rel="import" href="templates/dorel-template-home.html">
 
-<link rel="import" href="templates/dorel-template.html">
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
-
-<!-- enable global variables -->
-<script src="/bower_components/polymer-global-variables/dist/polymer-global-variables.js"></script>
-
 
 <dom-module id="dorel-app">
   <template>
@@ -68,7 +66,6 @@
     <dorel-wp-collect-pages></dorel-wp-collect-pages>
     <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
 
-
     <!-- collect the options pages -->
     <dorel-wp-collect-options
       wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
@@ -79,13 +76,13 @@
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
     <dorel-gtm-events
-      gtm-data="{{ globals.Dorel }}"></dorel-gtm-events>
+      gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
 
     <dorel-third-party
       hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
       hubspot-portal-id="{{ globals.Dorel.collect.options.hubspot_portal_id }}"
-      zendesk-toggle="{{ globals.Dorel.collect.options.zendesk_toggle }}"
-      zendesk-host="{{ globals.Dorel.collect.options.zendesk_host }}"></dorel-third-party>
+      zendesk-toggle="[[ globals.Dorel.collect.options.zendesk_toggle ]]"
+      zendesk-host="[[ globals.Dorel.collect.options.zendesk_host ]]"></dorel-third-party>
 
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -96,33 +93,29 @@
         tail="{{ subroute }}"></app-route>
   
     <dorel-header
-      load-complete="{{ loadComplete }}"
-      page="{{ page }}"></dorel-header>
+      load-complete="[[ loadComplete ]]"
+      page="[[ page ]]"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
 
-      <!-- <dorel-template
-        name="[[ currentPage.slug ]]"
-        template-name$="[[ currentPage.template ]]"
-        template-data="[[ currentPage ]]"></dorel-template> -->
-
       <iron-pages role="main"
-        selected="{{ page }}"
+        selected="[[ currentPage.template ]]"
         attr-for-selected="name">
+        
+        <dorel-template-home 
+          name="home" 
+          template-data="[[ currentPage ]]"></dorel-template-home>
 
-        <template
-          is="dom-repeat"
-          items="{{ globals.Dorel.collect.pages }}"
-          as="page">
+        <dorel-template-info 
+          name="info" 
+          template-data="[[ currentPage ]]"></dorel-template-info>
 
-          <dorel-template
-            name="[[ page.slug ]]"
-            route="{{ subroute }}"
-            template-name$="[[ page.template ]]"
-            template-data="[[ page ]]"></dorel-template>
+        <dorel-template-products
+          name="products"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-products>
 
-        </template>
         <dorel-template-404 name="404"></dorel-template-404>
       </iron-pages>
     </main>
@@ -147,48 +140,29 @@
       properties: {
 
         /**
-         * First url segment
-         */
-        firstSegment: {
-          type: String
-        },
-
-        /**
-         * Last url segment
-         */
-        lastSegment: {
-          type: String
-        },
-
-        /**
-         * Define the current page
-         */
-        page: {
-          type: String,
-          observer: '_pageChanged' // when this var changes call this function
-        },
-
-        /**
-         * Defines the current route
+         * @name route
+         * @description defines the current route
          */
         route: {
-          type: String,
-          observer: '_routeChanged'
-        },
-        
-        /**
-         * Defines the menuItems
-         */
-        menuData: {
-          type: Array
+          type: String
         },
 
         /**
-         * Defines the currentPage
+         * @name page
+         * @description define the current page
+         */
+        page: {
+          type: String
+        },
+
+        /**
+         * @name currentPage
+         * @description defines the currentPage
          */
         currentPage: {
           type: Object
         }
+
       },
 
       /**
@@ -196,11 +170,15 @@
        * @description observe if a function is called
        */
       observers: [
-        '_setCurrentMenuItem(page, globals.Dorel.collect.menus.main_menu.items)',
-        '_setCurrentPage(page, globals.Dorel.collect.pages)',
-        '_currentPageChanged(globals.Dorel.current.page)'
+        '_routePageChanged(routeData.page, globals.Dorel.collect.pages)',
+        '_pageChanged(page, currentPage)',
+        '_setCurrentPage(currentPage)'
       ],
 
+      /**
+       * @name listeners
+       * @description listens to all different fires
+       */
       listeners: {
         'change-section': '_onChangeSection',
         'announce': '_onAnnounce',
@@ -233,63 +211,53 @@
           this.listen(window, 'offline', '_notifyNetworkStatus');
         });
 
-	      this._setSharedThemeStyle();
-
-
-        // When a template has been loaded
-        // window.addEventListener('dorel-template-loaded', function() {
-        //   this.fallback = '404';
-        // }.bind(this));
+        // Checks the apps config, and sets the according brand theme   
+        var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
+        var myDomModule = document.createElement('style', 'custom-style');
+        myDomModule.setAttribute('include', brandTheme);
+        Polymer.dom(this.root).appendChild(myDomModule);
       },
-
-	    /**
-	     * @name _setSharedThemeStyle
-	     * @description Checks the apps config, and sets the according brand theme
-	     **/
-	    _setSharedThemeStyle: function() {
-		    var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
-		    var myDomModule = document.createElement('style', 'custom-style');
-				myDomModule.setAttribute('include', brandTheme);
-				Polymer.dom(this.root).appendChild(myDomModule);
-	    },
 
       /**
        * @observer
-       * @name _routeChanged
+       * @name _routePageChanged
        * @description on url/route change get the first segment of the url
        * then set it as the page. With those settings start the setCurrentPage
        * which will change the iron-pages selected
        *
-       * @param route object
+       * @param page - String - the route page string
+       * @param pages - Array - all the retrieved pages from WP
        */
-      _routeChanged: function(route) {
+      _routePageChanged: function(page, pages) {
 
         // if the route is undefined
-        if (typeof route === 'undefined') return;
+        if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
-        // define the first segment
-        this.firstSegment = this.routeData.page;
-        this.lastSegment = (this.firstSegment !== '' ) ? this._getLastSegment(document.URL) : null;
-
+        // refer to this for find function
+        var self = this;
 
         /** 
          * if last segment is undefined or empty string set too home, 
          * all others to segment
          */
-        this.page = (typeof this.firstSegment === 'undefined' || this.firstSegment === '') ?
-          'home' : this.firstSegment;
+        this.page = page || 'home';
 
+        // map the page variable to the item in the menu array and set it
+        this.currentPage = pages.find(function(item) {
+          return item.slug === self.page;
+        });
 
-        /**
-         * when using pageSlug (collect-page)
-        if (!this.firstSegment.length) {
-          this.page = 'home';
-        } else if (this.firstSegment === this.lastSegment) {
-          this.page = this.firstSegment;
-        } else if (this.firstSegment !== this.lastSegment) {
-          this.page = this.lastSegment;
+        // when the page cannot be matched, it is always the 404
+        if (typeof this.currentPage === 'undefined') {
+
+          // set the page to 404
+          this.page = '404';
+
+          // set the currentPage to 404
+          this.currentPage = {
+            template: '404'
+          };
         }
-         */
       },
 
       /**
@@ -297,46 +265,29 @@
        * @name _pageChanged
        * @description when the page variable changes lazyload the page
        * or retrieve it all the way.
-       * @param toPage the page we need to transition to
-       * @param fromPage the previous page
-       *
-       * TODO: check correct prpl pattern implementation
+       * @param page - string - the page we need to transition to
+       * @param currentPage - Object - the previous page
        */
-      _pageChanged: function(toPage, fromPage) {
+      _pageChanged: function(page, currentPage) {
 
-        // lazyload the right template
-        switch (toPage) {
+        if (typeof page === 'undefined' || page === '' ||
+          typeof currentPage === 'undefined' || currentPage === '') return;
+          
+        // home route is eagerly loaded
+        if (page === 'home') {
 
-          // home is eagerly loaded
-          case 'home':
-            this._ensureLazyLoaded();
-          break;
+          this._ensureLazyLoaded();
 
-          // named page templates
-          case '404':
-            // importHref(href, onload, onerror, optAsync)
-            this.importHref(
-              this.resolveUrl('templates/dorel-template-' + toPage + '.html'), function() {
-                this._ensureLazyLoaded();
-              }, null, false
-            );
-          break;
+        // other routes are lazy loaded
+        } else {
 
-          // default page templates
-          default:
-            this.importHref(
-              this.resolveUrl('templates/dorel-template.html'), function() {
+          // import the template on demand
+          this.importHref(
+            this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
+            function() {
+              this._ensureLazyLoaded();
+            }, null, false);
 
-                this.importHref(
-                  this.resolveUrl('templates/dorel-template-products.html'), function() {
-                    this._ensureLazyLoaded();
-                  }, null, false
-                );
-
-              }, null, false
-            );
-
-          break;
         }
 
       },
@@ -346,31 +297,12 @@
        * @name _setCurrentPage
        * @description set the current page in the globals
        */
-      _setCurrentPage: function(page, pages) {
+      _setCurrentPage: function(currentPage) {
+        // set the global currentPage
+        Polymer.globalsManager.set('Dorel.current.page', currentPage);
 
-        // make a reference to this
-        var self = this;
-
-        // if menu array has no items, jump out
-        if( typeof pages === 'undefined' || !pages.length ) return;
-
-        // map the page variable to the item in the menu array and set it 
-        self.currentPage = pages.find(function(page) {
-          return page.slug === self.routeData.page;
-        });
-
-        // page couldn't be found go to 404
-        if ( typeof self.currentPage === 'undefined' && self.page !== 'home' ) {
-          this.page = '404';
-
-        } else {
-
-          // set the global currentPage
-          Polymer.globalsManager.set('Dorel.current.page', self.currentPage);
-
-          // tracking of the pageload
-          this._eventTracking();
-        }
+        // tracking of the pageload
+        this._eventTracking();
       },
 
       /**
@@ -379,7 +311,7 @@
        * the service worker will kick in after that.
        */
       _ensureLazyLoaded: function() {
-
+        var self = this;
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
@@ -393,6 +325,9 @@
               this._notifyNetworkStatus();
               this.loadComplete = true;
               this._removeLoadPlaceholder();
+
+              // import the footer after the pages are loaded
+              this.importHref(this.resolveUrl('organisms/dorel-footer.html'), null, null, false);
             });
           });
         }
