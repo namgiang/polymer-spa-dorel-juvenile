@@ -121,8 +121,13 @@
 		         mobile-medium$="{{ mobileMedium }}">
 			<div class="container">
 				<div class="image-wrapper skew">
-					<div class="image skew-reset" role="img" aria-label="Add image description for accessibility here"
-					     style$="background-image: url([[ hasBackgroundImage(indigoData.background_image) ]]);"></div>
+          <iron-image class="image skew-reset"
+                      sizing="cover"
+                      fade="true"
+                      preload
+                      placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                      src$="[[ indigoData.background_image ]]">
+          </iron-image>
 				</div>
         <div class="content-wrapper"
              mobile-small$="{{ mobileSmall }}"
@@ -166,16 +171,6 @@
 					}
 				}
 
-			},
-
-			/**
-			 * @name hasBackgroundImage
-			 * @description checks to see if a background image is set in Wordpress
-			 *
-			 * @returns Sting when no image is set it returns the placeholder string
-			 */
-			hasBackgroundImage: function (img) {
-				return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/indigo/placeholder.jpg' : img;
 			},
 
 			/**

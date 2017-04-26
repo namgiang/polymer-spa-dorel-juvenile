@@ -116,9 +116,13 @@
         as="hero">
         <div class="section-hero">
           <div class="section-hero-image-wrapper">
-            <div class="section-hero-image"
-                 style$="background-image: url([[ hasBackgroundImage(hero.background_image) ]]);">
-            </div>
+            <iron-image class="section-hero-image"
+                        sizing="cover"
+                        fade="true"
+                        preload
+                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                        src$="[[ hero.background_image ]]">
+            </iron-image>
           </div>
           <div class="section-hero-wrap">
 
@@ -161,16 +165,6 @@
         }
 
       },
-
-      /** 
-       * @name hasBackgroundImage
-       * @description checks if a background image is defined in Wordpress if not a placholder is used
-       *
-       * @returns String returns a placeholder url if nothing is set or the img url if it is
-       */
-      hasBackgroundImage: function(img) {
-        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/hero/placeholder.jpg' : img;
-      }
     });
 
   </script>
