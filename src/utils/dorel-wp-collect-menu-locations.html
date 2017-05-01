@@ -72,10 +72,10 @@
       var menuLocation = urlArr[urlArr.length - 1];
 
       // iterate over all menu items, alter its title and set the right url
-      response.forEach(function(item) {
-        item.title = item.title.toLowerCase();
-      });
-
+      for (var i = 0, len = response.length; i < len; i++) {
+        response[i].title = response[i].title.toLowerCase();
+      }
+      
       // place the menu items in the right key inside the collect
       Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation, {});
       Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation + '.items', response);

@@ -55,16 +55,15 @@
         Polymer.globalsManager.set('Dorel.collect.widgetAreas', {});
 
         // iterate over the keys of the response
-        response.forEach(function(widgetArea) {
-
+        for (var i = 0, len = response.length; i < len; i++) {
           // first put the response in the globals to use it later
-          Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + widgetArea.id,
-            widgetArea);
+          Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + response[i].id,
+            response[i]);
 
           // for every key retrieve its menuItems
-          widgetEl.url = endPoint + '/' + widgetArea.id;
+          widgetEl.url = endPoint + '/' + response[i].id;
           widgetEl.generateRequest();
-        });
+        }
       },
 
       /** 
