@@ -1,0 +1,97 @@
+<dom-module id="dorel-section-instruction-manuals">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .container {
+        padding: var(--theme-component-space-inner);
+      }
+
+      .title {
+        @apply(--theme-heading);
+        font-size: var(--theme-size-headline);
+        margin: 0 0 var(--theme-component-space-micro) 0;
+        text-align: center;
+        width: 100%;
+      }
+
+      .instructions {
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+      }
+
+      .instructions__item {
+        padding: var(--theme-component-space-inner);
+        text-align: center;
+      }
+
+      .instructions__item a {
+        text-decoration: none;
+        color: var(--theme-color-link-primary);
+        transition: color .3s ease;
+      }
+
+      .instructions__item a:hover, .instructions__item a:focus {
+        color: var(--theme-color-hover);
+      }
+
+      .image {
+        width: 210px;
+        height: 149px;
+        background-color: grey;
+        opacity: .75;
+        margin: 0 auto 1rem auto;
+      }
+
+      .container[mobile-medium] .instructions, .container[mobile-small] .instructions{
+        @apply(--layout-vertical);
+      }
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+      query-matches="{{ desktopFull }}"></iron-media-query>
+
+    <section class="container"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}"
+             desktop-small$="{{ desktopSmall }}"
+             desktop-full$="{{ desktopFull }}">
+
+      <h1 class="title">Instruction Manuals</h1>
+      <div class="instructions">
+        <div class="instructions__item">
+          <div class="image"></div>
+          <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
+          <a href="">Instruction videos</a>
+        </div>
+        <div class="instructions__item">
+          <div class="image"></div>
+          <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
+          <a href="">Specifications</a>
+        </div>
+        <div class="instructions__item">
+          <div class="image"></div>
+          <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
+          <a href="">Manuals</a>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-instruction-manuals',
+      properties: {
+      }
+    });
+  </script>
+</dom-module>
