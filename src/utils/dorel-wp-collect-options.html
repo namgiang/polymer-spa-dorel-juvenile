@@ -16,7 +16,13 @@
         '_initOptions(globals.Dorel.wpUrl)'
       ],
 
-      ready: function() {
+      /**
+       * @name _initOptions
+       * @description Observer function which defines the endpoint when it's available as a global variable
+       */
+      _initOptions: function(wpUrl) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+
         this.endPoint = this.globals.Dorel.wpUrl + '/acf/v2/options';
       },
 
@@ -37,16 +43,6 @@
           Polymer.globalsManager.set('Dorel.collect.options.' + key,
             options.acf[key]);
         };
-      },
-
-      /**
-       * @name _initOptions
-       * @description Observer function which defines the endpoint when it's available as a global variable
-       */
-      _initOptions: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
-
-        this.endPoint = this.globals.Dorel.wpUrl + '/acf/v2/options';
       },
 
       /**
