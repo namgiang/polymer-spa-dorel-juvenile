@@ -284,7 +284,7 @@
 
         if (typeof page === 'undefined' || page === '' ||
           typeof currentPage === 'undefined' || currentPage === '') return;
-          
+        
         // home route is eagerly loaded
         if (page === 'home') {
 
@@ -327,6 +327,10 @@
        */
       _ensureLazyLoaded: function() {
         var self = this;
+
+        // scroll up when a page is changed
+        window.scrollTo(0, 0);
+
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, function() {
@@ -340,7 +344,6 @@
               this._notifyNetworkStatus();
               this.loadComplete = true;
               this._removeLoadPlaceholder();
-
               // import the footer after the pages are loaded
               this.importHref(this.resolveUrl('organisms/dorel-footer.html'), null, null, false);
             });
