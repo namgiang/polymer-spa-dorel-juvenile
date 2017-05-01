@@ -1,18 +1,16 @@
 <dom-module id="dorel-section-multi">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style include="">
       .section-multi {
-        margin: 50px auto;
-        padding-top: 50px;
-        padding-bottom: 50px;
+        margin: 0 auto;
+        padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
       }
 
       .section-multi .multi-title {
         @apply(--theme-heading);
-        font-size: 2.3rem;
-        font-weight: bolder;
+        font-size: var(--theme-size-headline);
         text-align: center;
-        margin-bottom: 6rem;
+        margin: 0 0 var(--theme-component-space-inner-xlarge) 0;
         width: 100%;
       }
     </style>
@@ -29,7 +27,7 @@
     <iron-media-query query="(min-width : 1200px)" 
       query-matches="{{ desktopFull }}"></iron-media-query>
     
-    <section class="section-multi container-fluid"
+    <section class="section-multi"
       mobile-small$="{{ mobileSmall }}"
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
@@ -40,20 +38,16 @@
       <template
         is="dom-if"
         if="[[ multiData.multi_title ]]">
-        <div class="row">
-          <h2 class="col-xs-12 multi-title">[[ multiData.multi_title ]]</h2>
-        </div>
+        <h2 class="multi-title">[[ multiData.multi_title ]]</h2>
       </template>
 
       <template
         is="dom-if"
         if="[[ multiData.multi_columns.length ]]">
 
-      
         <template
           is="dom-if"
           if="[[ isFullWidth(multiData.multi_columns_container) ]]">
-          <div class="row">
             <template
               is="dom-repeat"
               items="[[ multiData.multi_columns ]]"
@@ -61,48 +55,28 @@
               <template
                 is="dom-if"
                 if="[[ col.column_components.length ]]">
-
-                <div class$="col-sm-{{ columnWidth }}">
-                
                   <dorel-page-builder
                     builder-data="[[ col.column_components ]]"></dorel-page-builder>
-
-                </div>
-
               </template>
             </template>
           </div>
         </template>
 
-
         <template
           is="dom-if"
           if="[[ !isFullWidth(multiData.multi_columns_container) ]]">
-          <div class="row">
-            <div class="container">
-              <div class="row">
-                <template
-                  is="dom-repeat"
-                  items="[[ multiData.multi_columns ]]"
-                  as="col">
-                  <template
-                    is="dom-if"
-                    if="[[ col.column_components.length ]]">
-
-                    <div class$="col-sm-{{ columnWidth }}">
-                    
-                      <dorel-page-builder
-                        builder-data="[[ col.column_components ]]"></dorel-page-builder>
-
-                    </div>
-
-                  </template>
-                </template>
-              </div>
-            </div>
-          </div>
+            <template
+              is="dom-repeat"
+              items="[[ multiData.multi_columns ]]"
+              as="col">
+              <template
+                is="dom-if"
+                if="[[ col.column_components.length ]]">
+                  <dorel-page-builder
+                    builder-data="[[ col.column_components ]]"></dorel-page-builder>
+              </template>
+            </template>
         </template>
-
       </template>
 
     </section>
@@ -136,18 +110,7 @@
         columnAmount: {
           type: Number,
           value: 0,
-          observer: '_defineColumnWidth'
         },
-
-        /**
-         * @name columnWidth
-         * @description defines the width of one single column
-         */
-        columnWidth: {
-          type: Number,
-          value: 0
-        }
-
       },
 
       /** 
@@ -185,15 +148,6 @@
 
         return (isNumber) ? '' : '#f5f5f5';
       },
-
-      /**
-       * @name _defineColumnWidth
-       * @description calculate the column width of each column, depends
-       * on the frontend framework's grid
-       */
-      _defineColumnWidth: function(newVal, oldVal) {
-        this.columnWidth = 12 / this.columnAmount;
-      }
     });
 
   </script>
