@@ -1,9 +1,9 @@
 <dom-module id="dorel-section-multi">
   <template>
-    <style include="">
+    <style include="iron-flex iron-flex-alignment">
       .section-multi {
         margin: 0 auto;
-        padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
+        padding: var(--theme-component-space-inner-large) 0;
       }
 
       .section-multi .multi-title {
@@ -13,6 +13,25 @@
         margin: 0 0 var(--theme-component-space-inner-xlarge) 0;
         width: 100%;
       }
+
+      .section-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+      }
+
+      .section-container > .section-container-content {
+        padding: 0 var(--theme-component-space-inner);
+        margin: 0 auto;
+        flex: 1 0 25%;
+        min-width: 250px;
+      }
+
+      .section-multi[desktop-full] .section-container {
+        width: 1170px;
+        margin: auto;
+      }
+
     </style>
     
     <!-- media queries -->
@@ -35,49 +54,31 @@
       desktop-full$="{{ desktopFull }}"
       style$="background-color: {{ needsBackground(multiData.acf_fc_layout) }}">
 
-      <template
-        is="dom-if"
-        if="[[ multiData.multi_title ]]">
-        <h2 class="multi-title">[[ multiData.multi_title ]]</h2>
-      </template>
-
-      <template
-        is="dom-if"
-        if="[[ multiData.multi_columns.length ]]">
-
+      <div class="section-container">
         <template
           is="dom-if"
-          if="[[ isFullWidth(multiData.multi_columns_container) ]]">
+          if="[[ multiData.multi_title ]]">
+          <div class="section-container-content">
+            <h2 class="multi-title">[[ multiData.multi_title ]]</h2>
+          </div>
+        </template>
+      </div>
+
+      <div class="section-container">
+        <template
+          is="dom-repeat"
+          items="[[ multiData.multi_columns ]]"
+          as="col">
+          <div class="section-container-content">
             <template
-              is="dom-repeat"
-              items="[[ multiData.multi_columns ]]"
-              as="col">
-              <template
-                is="dom-if"
-                if="[[ col.column_components.length ]]">
-                  <dorel-page-builder
-                    builder-data="[[ col.column_components ]]"></dorel-page-builder>
-              </template>
+              is="dom-if"
+              if="[[ col.column_components.length ]]">
+                <dorel-page-builder
+                  builder-data="[[ col.column_components ]]"></dorel-page-builder>
             </template>
           </div>
         </template>
-
-        <template
-          is="dom-if"
-          if="[[ !isFullWidth(multiData.multi_columns_container) ]]">
-            <template
-              is="dom-repeat"
-              items="[[ multiData.multi_columns ]]"
-              as="col">
-              <template
-                is="dom-if"
-                if="[[ col.column_components.length ]]">
-                  <dorel-page-builder
-                    builder-data="[[ col.column_components ]]"></dorel-page-builder>
-              </template>
-            </template>
-        </template>
-      </template>
+      </div>
 
     </section>
   </template>
