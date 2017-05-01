@@ -34,6 +34,16 @@
         collect: {
           type: Array,
           value: []
+        },
+
+        /** 
+         * @name perPage
+         * @description this variable indicates how many pages are retrieved
+         * per request
+         */
+        perPage: {
+          type: Number,
+          value: 100
         }
       },
 
@@ -47,7 +57,7 @@
        */
       _initPages: function(wpUrl) {
         if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
-        this.endPoint = this.globals.Dorel.wpUrl + '/wp/v2/pages';
+        this.endPoint = this.globals.Dorel.wpUrl + '/wp/v2/pages?per_page=' + this.perPage;
       },
 
       /** 
