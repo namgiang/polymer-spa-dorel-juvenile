@@ -72,18 +72,18 @@
         if (!pages.length) return;
 
         // iterate over all pages items, alter its template
-        pages.forEach(function(page) {
+        for (var i = 0, len = pages.length; i < len; i++) {
 
           // alter the template, strip 'page-' prefix
-          var template = page.template.slice(0, -4);
+          var template = pages[i].template.slice(0, -4);
           var pageName = template.replace('page-','');
 
           // set pageObjects template property
-          page.template = pageName;
+          pages[i].template = pageName;
 
           // extend the collect pages object with the new page
-          self.collect.push(page);
-        });
+          self.collect.push(pages[i]);
+        }
 
         // define url for retrieving products
         productsEl.url = this.globals.Dorel.wpUrl + '/wp/v2/products';
@@ -98,10 +98,10 @@
        */
       _productsLoaded: function(data) {
         var self = this;
-        var productsArray = data.detail.response;
+        var productsArr = data.detail.response;
         
         // if we have products we need to add them
-        if (productsArray.length) {
+        if (productsArr.length) {
 
           // create upper level products
           var productsObject = {
@@ -114,12 +114,12 @@
           };
 
           // iterate over all products items, alter its title and set the right url
-          productsArray.forEach(function(product) {
+          for (var i = 0, len = productsArr.length; i < len; i++) {
             /**
              * Assign a template to this taxonomy this is used by
              * the template switcher (dorel-template.html)
              */
-            product.template = 'product-detail';
+            productsArr[i].template = 'product-detail';
 
             /**
              * We will alter the acf object to comply to page-builder
@@ -127,7 +127,7 @@
             var acfObj = { page_builder: [] };
             
             // run throught the normal response acf
-            for (var acfKey in product.acf.product_detail_builder[0]) {
+            for (var acfKey in productsArr[i].acf.product_detail_builder[0]) {
               /**
                * @todo: refactor! 
                * For duplicated components we need to suffix them by a number
@@ -138,7 +138,8 @@
               // var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
 
               // grab all inner values of the acfType
-              var acfLayout = product.acf.product_detail_builder[0][acfKey][0];
+              var acfLayout = (productsArr[i].acf.product_detail_builder[0][acfKey]) ? 
+                productsArr[i].acf.product_detail_builder[0][acfKey][0] : '';
 
               // set the new acf_fc_layout variable to the key
               acfLayout.acf_fc_layout = acfKey;
@@ -148,11 +149,11 @@
             }
 
             // replace the old acf object with the new formed acf
-            product.acf = acfObj;
+            productsArr[i].acf = acfObj;
 
             // extend the collect pages with the new product page
-            productsObject.products.push(product);
-          });
+            productsObject.products.push(productsArr[i]);
+          }
 
           self.collect.push(productsObject);
         }
