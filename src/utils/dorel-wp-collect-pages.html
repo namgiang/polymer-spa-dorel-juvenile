@@ -80,10 +80,10 @@
 
           // set pageObjects template property
           pages[i].template = pageName;
-
-          // extend the collect pages object with the new page
-          self.collect.push(pages[i]);
         }
+
+        // extend the collect pages object with the new page
+        self.collect = self.collect.concat(pages);
 
         // define url for retrieving products
         productsEl.url = this.globals.Dorel.wpUrl + '/wp/v2/products';
@@ -145,18 +145,17 @@
               acfLayout.acf_fc_layout = acfKey;
               
               // place the new acf_fc_layout in the page_builder array
-              acfObj.page_builder.push(acfLayout);
+              acfObj.page_builder = acfObj.page_builder.concat(acfLayout);
             }
 
             // replace the old acf object with the new formed acf
             productsArr[i].acf = acfObj;
-
-            // extend the collect pages with the new product page
-            productsObject.products.push(productsArr[i]);
           }
-
-          self.collect.push(productsObject);
         }
+
+        // extend the collect pages with the new product page
+        productsObject.products = productsObject.products.concat(productsArr);
+        self.collect = self.collect.concat(productsObject);
 
         // set the new collect obj
         Polymer.globalsManager.set('Dorel.collect.pages', self.collect);
