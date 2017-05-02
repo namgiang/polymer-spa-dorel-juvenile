@@ -17,59 +17,50 @@
         @apply(--layout-flex);
         @apply(--layout-horizontal);
         @apply(--layout-center-justified);
+        @apply(--layout-wrap);
       }
 
       .instructions__item {
         padding: var(--theme-component-space-inner);
         text-align: center;
+
       }
 
-      .instructions__item a {
+      .instructions__item__label {
         text-decoration: none;
         color: var(--theme-color-link-primary);
+        cursor: pointer;
         transition: color .3s ease;
       }
 
-      .instructions__item a:hover, .instructions__item a:focus {
-        color: var(--theme-color-hover);
-      }
-
-      .image {
+      .instructions__item__image {
         width: 12rem;
         height: 8rem;
         opacity: .75;
         margin: 0 auto 1rem auto;
         display: block;
+        transition: opacity .3s ease;
       }
 
-      .container[mobile-medium] .instructions, .container[mobile-small] .instructions{
-        @apply(--layout-vertical);
+      .instructions__item:hover, .instructions__item:focus {
+        cursor: pointer;
       }
+
+      .instructions__item:hover .instructions__item__image, .instructions__item:focus .instructions__item__image{
+        opacity: .5;
+      }
+
+      .instructions__item:hover .instructions__item__label, .instructions__item:focus .instructions__item__label {
+        color: var(--theme-color-hover);
+      }
+
     </style>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)"
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)"
-      query-matches="{{ desktopFull }}"></iron-media-query>
-
-    <section class="container"
-             mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}"
-             tablets$="{{ tablets }}"
-             desktop-small$="{{ desktopSmall }}"
-             desktop-full$="{{ desktopFull }}">
-
+    <section class="container">
       <h1 class="title">Instruction Manuals</h1>
       <div class="instructions">
-        <div class="instructions__item">
-          <iron-image class="image"
+        <div class="instructions__item" onclick="" role="button" tabindex="0">
+          <iron-image class="instructions__item__image"
                       sizing="cover"
                       fade="true"
                       preload
@@ -77,10 +68,10 @@
                       src$="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC">
           </iron-image>
           <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
-          <a href="">Instruction videos</a>
+          <span class="instructions__item__label">Instruction videos</span>
         </div>
-        <div class="instructions__item">
-          <iron-image class="image"
+        <div class="instructions__item" onclick="" role="button" tabindex="0">
+          <iron-image class="instructions__item__image"
                       sizing="cover"
                       fade="true"
                       preload
@@ -88,10 +79,10 @@
                       src$="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC">
           </iron-image>
           <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
-          <a href="">Specifications</a>
+          <span class="instructions__item__label">Specifications</span>
         </div>
-        <div class="instructions__item">
-          <iron-image class="image"
+        <div class="instructions__item" onclick="" role="button" tabindex="0">
+          <iron-image class="instructions__item__image"
                       sizing="cover"
                       fade="true"
                       preload
@@ -99,7 +90,18 @@
                       src$="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC">
           </iron-image>
           <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
-          <a href="">Manuals</a>
+          <span class="instructions__item__label">Manuals</span>
+        </div>
+        <div class="instructions__item" onclick="" role="button" tabindex="0">
+          <iron-image class="instructions__item__image"
+                      sizing="cover"
+                      fade="true"
+                      preload
+                      placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                      src$="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC">
+          </iron-image>
+          <iron-icon icon="dorel-icons:headset-mic"></iron-icon>
+          <span class="instructions__item__label">Manuals</span>
         </div>
       </div>
     </section>
