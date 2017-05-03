@@ -152,6 +152,12 @@
           typeof portalId === 'undefined' || portalId === '' || 
           typeof formId === 'undefined' || formId === '') return;
 
+        // remove previously added forms ---- HACK ---- mandatory otherwise it will show all forms in the app
+        if (this.$.form.hasChildNodes()) {
+          while (this.$.form.firstChild) {
+            this.$.form.removeChild(this.$.form.firstChild);
+          }
+        }
 
         // Check if a form with the ID already exists in this component
         var formIdTarget = '#hsForm_' + formId;
