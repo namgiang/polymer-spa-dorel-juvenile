@@ -98,7 +98,7 @@
 
     </style>
 
-    <div id="form" class="hbspt-form"></div>
+    <div id="form"></div>
   
   </template>
 
@@ -151,58 +151,50 @@
         if (typeof hubspotLoaded === 'undefined' || !hubspotLoaded ||
           typeof portalId === 'undefined' || portalId === '' || 
           typeof formId === 'undefined' || formId === '') return;
-        
-        // remove previously added forms ---- HACK
-        if (this.$.form.hasChildNodes()) {
-          while (this.$.form.firstChild) {
-            this.$.form.removeChild(this.$.form.firstChild);
-          }
-        }
 
 
-        // reference this for use in the hbspt object
-        var self = this;
+        // Check if a form with the ID already exists in this component
+        var formIdTarget = '#hsForm_' + formId;
+        var formInComponent = Polymer.dom(this.root).querySelector(formIdTarget);
 
-        // call to the forms create method of the hubspot script
-        window.hbspt.forms.create({
-          /*
-          * On customizing Hubspot embeds:
-          * http://bit.ly/2ouvaj6
-          */
-          css:  '' ,
-          portalId: portalId,
-          formId: formId,
+        // Create the form if it's not in the component
+        if(formInComponent === null)
+        {
+          // reference this for use in the hbspt object
+          var self = this;
 
-          /**
-           * TODO: only works if jQuery is included
-           */
-          onFormReady: function() {
+          // call to the forms create method of the hubspot script
+          window.hbspt.forms.create({
+            /*
+            * On customizing Hubspot embeds:
+            * http://bit.ly/2ouvaj6
+            */
+            css:  '' ,
+            portalId: portalId,
+            formId: formId,
             /**
-             * create a document fragment to grab the div added by the script
-             * and inject it in the form div of this component
+             * TODO: only works if jQuery is included
              */
-            var fragment = document.createDocumentFragment();
-            var thisForm = document.querySelector('.hbspt-form > form#hsForm_' + formId);
+            onFormReady: function($form, ctx) {
+              /**
+               * create a document fragment to grab the div added by the script
+               * and inject it in the form div of this component
+               */
+              var fragment = document.createDocumentFragment();
 
-            // check if form exists
-            var intervalID = setInterval(function() {
+              // CloneNode doesn't transfer any event bindings, even if set to true
+              //fragment.appendChild($form[0].parentNode.cloneNode(true));
 
-              // wait for the right form to exist
-              if (typeof self.$ !== 'undefined' && thisForm !== null ) {
+              // Jquery's clone (hubspot dependency) doesn't transfer any event bindings, even if set to true
+              //fragment.appendChild($($form[0].parentNode).clone(true, true)[0]);
 
-                // create a clone of the right form
-                var clone = thisForm.cloneNode(true);
-
-                // append the clone to the fragment and this webcomponents div
-                fragment.appendChild(clone);
-                Polymer.dom(self.$.form).appendChild(fragment);
-
-                // stop intervalling
-                clearInterval(intervalID);
-              }
-            }, 100);
-          }
-        });
+              // Back to using appendChild without cloning, this works in all browsers.
+              // However, Firefox and Safari will fall back on old styling if form errors appear.
+              fragment.appendChild($form[0].parentNode);
+              Polymer.dom(self.$.form).appendChild(fragment);
+            }
+          });
+        }
       }
     });
   </script>
