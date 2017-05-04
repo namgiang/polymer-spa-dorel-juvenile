@@ -76,7 +76,15 @@
             <a class="cta-item-link"  href="[[ cta.cta_link ]]" on-click="clickCTA">
               [[ cta.cta_text ]] <iron-icon class="chevron" icon="dorel-icons:chevron-right"></iron-icon>
             </a>
-            <div class="cta-item-img" style$="background-image: url([[ hasBackgroundImage(cta.cta_image) ]]);"></div>
+
+            <iron-image class="cta-item-img"
+                        sizing="cover"
+                        fade="true"
+                        preload
+                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                        src$="[[ cta.cta_image ]]">
+            </iron-image>
+
           </div>
         </template>
 
@@ -101,15 +109,6 @@
           }
         }
 
-      },
-
-      /**
-       * @name hasBackgroundImage
-       * @description check if a background-image is defined or not. If no image is set we need to
-       * show a placeholder image
-       */
-      hasBackgroundImage: function(img) {
-        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/cta/placeholder.jpg' : img;
       },
 
       /**
