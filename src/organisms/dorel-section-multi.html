@@ -5,7 +5,7 @@
 
       .section-multi {
         margin: 0 auto;
-        padding: var(--theme-component-space-inner-xlarge) 0;
+        padding: var(--theme-component-space-inner-xlarge) 0 0 0;
       }
 
       .section-multi .multi-title {
@@ -23,11 +23,19 @@
       }
 
       .section-container > .section-container-content {
+        @apply(--layout-flex);
         padding: 0 var(--theme-component-space-inner);
-        margin: 0 auto;
-        flex: 1 0 25%;
+        box-sizing: border-box;
         min-width: 320px;
         max-width: 740px;
+
+      }
+
+      /* IE 11 fix for single columns */
+      .section-container[columns="1"] > .section-container-content {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
       }
 
       .section-multi[desktop-full] .section-container {
@@ -36,11 +44,12 @@
       }
 
       [background='background'] {
-        background-color: var(--theme-multi-background-color)
+        background-color: var(--theme-multi-background-color);
+        padding-bottom: var(--theme-multi-bottom-padding)
       }
 
       [background='no-background'] {
-        background-color: var(--theme-multi-no-background-color)
+        background-color: var(--theme-multi-no-background-color);
       }
 
     </style>
@@ -65,7 +74,7 @@
       desktop-full$="{{ desktopFull }}"
       background$="{{ needsBackground(multiData.acf_fc_layout) }}">
 
-      <div class="section-container">
+      <div class="section-container" columns="1">
         <template
           is="dom-if"
           if="[[ multiData.multi_title ]]">
@@ -75,7 +84,7 @@
         </template>
       </div>
 
-      <div class="section-container">
+      <div class="section-container" columns$="[[ multiData.multi_columns.length ]]">
         <template
           is="dom-repeat"
           items="[[ multiData.multi_columns ]]"

@@ -43,6 +43,16 @@
         background-color: transparent;
       }
 
+      ul.showcase-gallery-roll li .showcase-gallery-overlay {
+        cursor: pointer;
+      }
+
+      ul.showcase-gallery-roll li .showcase-gallery-overlay:focus,
+      ul.showcase-gallery-roll li .showcase-gallery-overlay:hover {
+        outline: none;
+        background-color: rgba(255, 255, 255, 0);
+      }
+
       /**
        * @name: gallery-view
        * @description: the view container where the selected image is shown
@@ -163,10 +173,12 @@
                     as="galleryItem">
                     
                     <li>
-
                       <div id$="img-[[ galleryItem.id ]]"
-                        class$="showcase-gallery-overlay [[ isCurrentImage(galleryItem, currentImage) ]]" 
-                        on-click="clickThumbnail"></div>
+                           class$="showcase-gallery-overlay [[ isCurrentImage(galleryItem, currentImage) ]]"
+                           on-click="clickThumbnail"
+                           role="button"
+                           tabindex="0">
+                      </div>
                       <img src="[[ hasImage(galleryItem.sizes.medium) ]]" width="110" />
 
                     </li>
