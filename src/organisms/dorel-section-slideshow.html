@@ -2,7 +2,7 @@
 
 <dom-module id="dorel-section-slideshow">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style>
       .section-slideshow {}
       .section-slideshow {
         position: relative;
@@ -67,46 +67,42 @@
         tablets$="{{ tablets }}"
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
-        <div class="row">
-          <div class="col-xs-12">
 
-            <!-- previous button -->
-            <span href="#" class="slide-button-container prev-button"
-              on-click="prevSlide">
-              <iron-icon icon="hardware:keyboard-arrow-left" class="slide-button"></iron-icon>
-            </span>
-            <!--// previous button -->
+          <!-- previous button -->
+          <span href="#" class="slide-button-container prev-button"
+            on-click="prevSlide">
+            <iron-icon icon="hardware:keyboard-arrow-left" class="slide-button"></iron-icon>
+          </span>
+          <!--// previous button -->
 
-            <!-- simple-slider -->
-            <simple-slider class="simple-slider" 
-              transition-property="opacity" 
-              start-value="0" 
-              visible-value="1" 
-              end-value="0"
-              auto-reload>
+          <!-- simple-slider -->
+          <simple-slider class="simple-slider"
+            transition-property="opacity"
+            start-value="0"
+            visible-value="1"
+            end-value="0"
+            auto-reload>
 
-              <template
-                is="dom-repeat"
-                items="[[ slideshowData.slideshow_slides ]]"
-                as="slide">
-                
-                <div class="simple-slider-slide"
-                  style$="
-                    background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></div>
+            <template
+              is="dom-repeat"
+              items="[[ slideshowData.slideshow_slides ]]"
+              as="slide">
 
-              </template>
-            </simple-slider>
-            <!--// simple slider -->
-            
-            <!-- next button -->
-            <span href="#" class="slide-button-container next-button"
-              on-click="nextSlide">
-              <iron-icon icon="hardware:keyboard-arrow-right" class="slide-button"></iron-icon>
-            </span>
-            <!--// next button -->
+              <div class="simple-slider-slide"
+                style$="
+                  background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></div>
 
-          </div>
-        </div>
+            </template>
+          </simple-slider>
+          <!--// simple slider -->
+
+          <!-- next button -->
+          <span href="#" class="slide-button-container next-button"
+            on-click="nextSlide">
+            <iron-icon icon="hardware:keyboard-arrow-right" class="slide-button"></iron-icon>
+          </span>
+          <!--// next button -->
+
       </section>
 
     </template>
