@@ -2,136 +2,64 @@
 
 <dom-module id="dorel-section-showcase">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style include="iron-flex iron-flex-alignment">
       .section-showcase {
-        /* TODO: Remove the !important when we phase out the bootstrap dependencies */
-        padding: 6rem 0 3rem 0 !important;
+        padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
       }
-      
-      .section-showcase .showcase-gallery {
-        display: table;
-      }
-      .section-showcase .showcase-gallery > * {
-        display: table-cell;
+
+      .showcase-title {
+        @apply(--theme-heading);
+        font-size: var(--theme-size-headline);
+        margin: 0 0 var(--theme-component-space-inner) 0;
+        width: 100%;
       }
 
       /**
        * @name: gallery-roll
        * @description: small images on the left side (navigator)
        */
-      .section-showcase ul.showcase-gallery-roll {
+      .showcase-gallery-roll ul{
         list-style-type: none;
         padding: 0;
         vertical-align: top;
-        width: 110px;
+        margin: 0;
       }
-      .section-showcase ul.showcase-gallery-roll li {
+      .showcase-gallery-roll li {
         position: relative;
-        padding: 1rem;
-      }
-      ul.showcase-gallery-roll li .showcase-gallery-overlay {
-        background-color: rgba(255, 255, 255, .7);
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        transition: background-color .3s ease-in-out;
-        z-index: 1;
-      }
-      ul.showcase-gallery-roll li .showcase-gallery-overlay.current {
-        background-color: transparent;
-      }
-
-      ul.showcase-gallery-roll li .showcase-gallery-overlay {
+        padding: 0 0 1rem 0;
+        float: none;
+        opacity: .5;
+        transition: opacity .3s ease;
         cursor: pointer;
       }
 
-      ul.showcase-gallery-roll li .showcase-gallery-overlay:focus,
-      ul.showcase-gallery-roll li .showcase-gallery-overlay:hover {
-        outline: none;
-        background-color: rgba(255, 255, 255, 0);
+      .showcase-gallery-roll li:hover, .showcase-gallery-roll li:focus {
+        opacity: .9;
       }
+
+      .showcase-gallery-roll li.current {
+        opacity: 1;
+      }
+
+      .showcase-gallery-roll, .showcase-gallery-view, .showcase-description {
+        @apply(--layout-flex);
+        @apply(--layout-self-stretch);
+        float: left;
+        padding: 0 var(--theme-component-space-inner);
+      }
+
 
       /**
        * @name: gallery-view
        * @description: the view container where the selected image is shown
        */
-      .section-showcase .showcase-gallery-view {
-        overflow: hidden;
-        padding: 1.5rem 0 0 3rem;
-      }
       .section-showcase .showcase-gallery-view img {
-        width: 100%;
-      }
-
-      /**
-       * @name: gallery-dots
-       * @description: on mobile we don't show preview images but dots only
-       */
-      .section-showcase .showcase-gallery-list-wrap {
-        background-color: #f5f5f5;
-        text-align: center;
-        padding: 20px 0;
-        position: relative;
-      }
-      ul.showcase-gallery-list {
-        display: inline-block;
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        position: relative;
-      }
-      ul.showcase-gallery-list li {
-        float: left;
-        position: relative;
-      }
-      ul.showcase-gallery-list li .showcase-gallery-list-dot {
-        color: #D8D8D8;
-        border-radius: 50%;
-        display: block;
-        height: 40px;
-        margin-left: 20px;
-        transition: color .3s ease-in-out;
-        width: 40px;
-      }
-      ul.showcase-gallery-list li:first-child .showcase-gallery-list-dot {
-        margin: 0;
-      }
-      ul.showcase-gallery-list li .showcase-gallery-list-dot.current {
-        color: #0096C3;
-      }
-
-      /**
-       * Responsive definitions
-       */
-      .section-showcase[mobile-small], .section-showcase[mobile-medium] {
-        /* TODO: Remove the !important when we phase out the bootstrap dependencies */
-        padding: 0 !important;
-      }
-      .section-showcase[mobile-small] .showcase-gallery-view, .section-showcase[mobile-medium] .showcase-gallery-view {
-        padding: var(--theme-component-space-inner);
-      }
-
-      .section-showcase[tablets] {
-        /* TODO: Remove the !important when we phase out the bootstrap dependencies */
-        padding: 3rem 0 1.5rem 0 !important;
-      }
-
-      .section-showcase[mobile-small] .showcase-gallery,
-      .section-showcase[mobile-medium] .showcase-gallery {
-        width: 100%;
-      }
-
-      .section-showcase[mobile-small] ul.showcase-gallery-roll,
-      .section-showcase[mobile-medium] ul.showcase-gallery-roll {
-        display: none;
-      }
-
-      .section-showcase[tablets] .showcase-gallery-list-wrap,
-      .section-showcase[desktop-small] .showcase-gallery-list-wrap,
-      .section-showcase[desktop-full] .showcase-gallery-list-wrap {
-        display: none;
+        width: 500px;
+        max-height: 500px;
       }
     </style>
 
@@ -152,76 +80,48 @@
       is="dom-if"
       if="[[ showcaseData ]]">
 
-      <section class="section-showcase container"
+      <section class="section-showcase"
         mobile-small$="{{ mobileSmall }}"
         mobile-medium$="{{ mobileMedium }}"
         tablets$="{{ tablets }}"
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
-        <div class="row">
 
-          <!-- Desktop - navigator and current view -->
-          <div class="col-md-6">
-            <div class="showcase-gallery">
-              <template
-                is="dom-if"
-                if="[[ showcaseData.showcase_gallery.length ]]">
-                <ul class="showcase-gallery-roll">
-                  <template
-                    is="dom-repeat"
-                    items="[[ showcaseData.showcase_gallery ]]"
-                    as="galleryItem">
-                    
-                    <li>
-                      <div id$="img-[[ galleryItem.id ]]"
-                           class$="showcase-gallery-overlay [[ isCurrentImage(galleryItem, currentImage) ]]"
-                           on-click="clickThumbnail"
-                           role="button"
-                           tabindex="0">
-                      </div>
-                      <img src="[[ hasImage(galleryItem.sizes.medium) ]]" width="110" />
-
-                    </li>
-
-                  </template>
-                </ul>
-              </template>
-
-              <div class="showcase-gallery-view">
-                <img src="{{ currentImage.url }}" alt="" />
-              </div>
-            </div>
-          </div>
-          
-          <!-- Mobile - navigator -->
+        <!-- Desktop - navigator and current view -->
+        <div class="showcase-gallery">
           <template
             is="dom-if"
             if="[[ showcaseData.showcase_gallery.length ]]">
-            <div class="showcase-gallery-list-wrap">
-              <ul class="showcase-gallery-list">
+            <div class="showcase-gallery-roll">
+              <ul>
                 <template
                   is="dom-repeat"
                   items="[[ showcaseData.showcase_gallery ]]"
                   as="galleryItem">
-                  <li>
-                    <iron-icon
-                      id$="img-[[ galleryItem.id ]]" 
-                      class$="showcase-gallery-list-dot [[ isCurrentImage(galleryItem, currentImage) ]]"
-                      icon="editor:vertical-align-top"
-                      on-click="clickThumbnail">
-                    </iron-icon>
+
+                  <li id$="img-[[ galleryItem.id ]]"
+                      class$="[[ isCurrentImage(galleryItem, currentImage) ]]"
+                      on-click="clickThumbnail"
+                      role="button"
+                      tabindex="0">
+                    <img id$="img-[[ galleryItem.id ]]" src="[[ hasImage(galleryItem.sizes.medium) ]]" width="110" />
                   </li>
+
                 </template>
               </ul>
             </div>
           </template>
-          
-          <!-- Right column - Title, usp's and extra info -->
-          <div class="col-md-offset-1 col-md-5">
-            <h1 style="display: inline-block">[[ showcaseData.showcase_title ]]</h1>
+
+          <div class="showcase-gallery-view">
+            <img src="{{ currentImage.url }}" alt="" />
+          </div>
+
+          <!-- Title, usp's and extra info -->
+          <div class="showcase-description">
+            <h1 class="showcase-title">[[ showcaseData.showcase_title ]]</h1>
             <template
               is="dom-if"
-              if="[[ showcaseData.showcase_usps.length ]]">  
+              if="[[ showcaseData.showcase_usps.length ]]">
               <dorel-inline-usps
                 usps-data="[[ showcaseData.showcase_usps ]]"></dorel-inline-usps>
             </template>
