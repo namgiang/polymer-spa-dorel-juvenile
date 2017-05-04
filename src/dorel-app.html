@@ -317,6 +317,20 @@
         // set the global currentPage
         Polymer.globalsManager.set('Dorel.current.page', currentPage);
 
+        // Announce the page's title
+        if (typeof currentPage.acf.meta_title !== 'undefined') {
+          document.title = currentPage.acf.meta_title;
+          this._announce(currentPage.acf.meta_title + ', loaded');
+        }
+
+        if (typeof currentPage.acf.meta_description !== 'undefined') {
+          var meta = document.createElement('meta');
+          meta.name = 'description';
+          meta.content = currentPage.acf.meta_description;
+          document.getElementsByTagName('head')[0].appendChild(meta);
+          this._announce(currentPage.acf.meta_description + ', loaded');
+        }
+
         // tracking of the pageload
         this._eventTracking();
       },
@@ -363,23 +377,6 @@
       },
 
       /**
-       * @listener
-       * @name _currentPageChanged
-       * @description fire the change-section event, that will set the given
-       * title to its title tag
-       */
-      _currentPageChanged: function(newVal) {
-        if(typeof newVal === 'undefined') return;
-
-        this.currentPage = newVal;
-
-        this.fire('change-section', { 
-          title: newVal.title.rendered
-        });
-
-      },
-
-      /**
        * @name _notifyNetworkStatus
        * @description checks to see if we have internet connection and
        * sends notification to the user if offline
@@ -412,7 +409,7 @@
 
         // Announce the page's title
         if (detail.title) {
-          document.title = detail.title + ' - Maxi Cosi';
+          document.title = detail.title;
           this._announce(detail.title + ', loaded');
         }
       },
