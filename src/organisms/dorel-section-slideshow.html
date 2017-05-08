@@ -1,4 +1,5 @@
-<link rel="import" href="../../bower_components/polymer-simple-slider/simple-slider.html">
+<link rel="import" href="../../bower_components/l2t-paper-slider/l2t-paper-slider.html">
+
 
 <dom-module id="dorel-section-slideshow">
   <template>
@@ -20,27 +21,6 @@
         height: 603px;
       }
 
-      .slide-button-container {
-        position: absolute;
-        top: 0px;
-        z-index: 12;
-        width: 30px;
-        height: 100%;
-        background-color: rgba(0,0,0,0.4);
-        /*box-sizing: border-box;*/
-      }
-      .slide-button-container:hover {
-        cursor: pointer;
-      }
-      .slide-button {
-        color: #FFF;
-      }
-      .prev-button {
-        left: 0px;
-      }
-      .next-button {
-        right: 0px;
-      }
     </style>
 
 
@@ -70,40 +50,22 @@
         <div class="row">
           <div class="col-xs-12">
 
-            <!-- previous button -->
-            <span href="#" class="slide-button-container prev-button"
-              on-click="prevSlide">
-              <iron-icon icon="hardware:keyboard-arrow-left" class="slide-button"></iron-icon>
-            </span>
-            <!--// previous button -->
-
             <!-- simple-slider -->
-            <simple-slider class="simple-slider" 
-              transition-property="opacity" 
-              start-value="0" 
-              visible-value="1" 
-              end-value="0"
-              auto-reload>
-
+            <l2t-paper-slider class="simple-slider"
+                              auto-progress
+                              slide-duration="4"
+                              total-slides="[[ slideshowData.slideshow_slides.length ]]">
               <template
                 is="dom-repeat"
                 items="[[ slideshowData.slideshow_slides ]]"
                 as="slide">
-                
-                <div class="simple-slider-slide"
+
+                <paper-slide class="simple-slider-slide"
                   style$="
-                    background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></div>
+                    background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></paper-slide>
 
               </template>
-            </simple-slider>
-            <!--// simple slider -->
-            
-            <!-- next button -->
-            <span href="#" class="slide-button-container next-button"
-              on-click="nextSlide">
-              <iron-icon icon="hardware:keyboard-arrow-right" class="slide-button"></iron-icon>
-            </span>
-            <!--// next button -->
+            </l2t-paper-slider>
 
           </div>
         </div>
