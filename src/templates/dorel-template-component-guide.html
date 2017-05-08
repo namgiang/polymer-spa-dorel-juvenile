@@ -1,0 +1,63 @@
+<link rel="import" href="../../../paper-tabs/paper-tabs.html">
+
+<dom-module id="dorel-template-component-guide">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-item {
+        cursor: pointer;
+      }
+
+      paper-menu {
+        background-color: var(--theme-color-background-tertiary);
+      }
+
+      .sidebar {
+        width: 12.5%;
+        float: left;
+        display: inline-block;
+
+      }
+
+      .content {
+        float: left;
+        width: 87.5%;
+        display: inline-block;
+        padding: var(--theme-component-space-inner);
+        box-sizing: border-box;
+      }
+
+    </style>
+    <div class="sidebar">
+      <paper-menu  selected="{{ componentPage }}" attr-for-selected='name'>
+        <paper-item name="introduction">Introduction</paper-item>
+        <paper-item name="typography">Typography</paper-item>
+        <paper-item name="colors">Colors</paper-item>
+        <paper-item name="layout-sizes">Layout & Sizes</paper-item>
+        <paper-item name="buttons">Buttons</paper-item>
+      </paper-menu>
+    </div>
+    <iron-pages class="content" selected="{{ componentPage }}" attr-for-selected="name">
+      <div name="introduction">Introduction</div>
+      <div name="typography">Typography</div>
+      <div name="colors">Colors</div>
+      <div name="layout-sizes">Layout & Sizes</div>
+      <div name="buttons">Buttons</div>
+    </iron-pages>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-component-guide',
+      properties: {
+        componentPage: {
+          type: String,
+          value: 'introduction',
+        },
+      }
+    });
+  </script>
+</dom-module>
