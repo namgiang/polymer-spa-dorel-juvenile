@@ -1,22 +1,30 @@
 <dom-module id="dorel-section-usps">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style>
       :host {
         z-index: 999;
         position: relative;
       }
       .section-usps {
-        background-color: #F5F5F5;
-        padding-bottom: 80px;
-        padding-top: 80px;
+        background-color: var(--theme-color-background-tertiary);
+        padding: var(--theme-component-space-inner-xlarge);
+        float: left;
+        width: 100%;
+        position: relative;
       }
       .section-usps .list-group {
-        position: relative;
-        margin: 0 auto;
+        list-style: none;
+        float: left;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        width: 1170px;
+        margin: auto;
+        float: none;
       }
       .section-usps .list-group .list-group-item {
-        border: 0;
-        background-color: transparent;
+        width: 50%;
+        float: left;
       }
       
       .section-usps[mobile-small] {
@@ -49,29 +57,25 @@
     <template
       is="dom-if"
       if="[[ uspsData.usps.length ]]">
-      <section class="section-usps container-fluid"
+      <section class="section-usps"
         mobile-small$="{{ mobileSmall }}"
         mobile-medium$="{{ mobileMedium }}"
         tablets$="{{ tablets }}"
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
-        <div class="row">
-          <div class="container">
-            <ul class="list-group">
+          <ul class="list-group">
 
-              <template
-                is="dom-repeat"
-                items="[[ uspsData.usps ]]"
-                as="usp">
-                <li class="list-group-item col-sm-6 col-md-6">
-                  <iron-icon icon="dorel-icons:check"></iron-icon>
-                  [[ usp.usp_text ]]
-                </li>  
-              </template>
+            <template
+              is="dom-repeat"
+              items="[[ uspsData.usps ]]"
+              as="usp">
+              <li class="list-group-item col-sm-6 col-md-6">
+                <iron-icon icon="dorel-icons:check"></iron-icon>
+                [[ usp.usp_text ]]
+              </li>
+            </template>
 
-            </ul>
-          </div>
-        </div>
+      </ul>
       </section>
     </template>
 

@@ -3,7 +3,7 @@
 
 <dom-module id="dorel-section-slideshow">
   <template>
-    <style include="polymer-bootstrap-min">
+    <style>
       .section-slideshow {}
       .section-slideshow {
         position: relative;
@@ -47,28 +47,23 @@
         tablets$="{{ tablets }}"
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
-        <div class="row">
-          <div class="col-xs-12">
 
-            <!-- simple-slider -->
-            <l2t-paper-slider class="simple-slider"
-                              auto-progress
-                              slide-duration="4"
-                              total-slides="[[ slideshowData.slideshow_slides.length ]]">
-              <template
-                is="dom-repeat"
-                items="[[ slideshowData.slideshow_slides ]]"
-                as="slide">
+          <!-- simple-slider -->
+          <l2t-paper-slider class="simple-slider"
+                            auto-progress
+                            slide-duration="4"
+                            total-slides="[[ slideshowData.slideshow_slides.length ]]">
+            <template
+              is="dom-repeat"
+              items="[[ slideshowData.slideshow_slides ]]"
+              as="slide">
 
-                <paper-slide class="simple-slider-slide"
-                  style$="
-                    background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></paper-slide>
+              <paper-slide class="simple-slider-slide"
+                style$="
+                  background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></paper-slide>
 
-              </template>
-            </l2t-paper-slider>
-
-          </div>
-        </div>
+            </template>
+          </l2t-paper-slider>
       </section>
 
     </template>
