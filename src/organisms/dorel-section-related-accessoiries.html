@@ -1,163 +1,98 @@
 <dom-module id="dorel-section-related-accessoiries">
   <template>
-    <style include="polymer-bootstrap-min">
-      .section-related-accessoiries {
-        margin: 50px auto;
-        padding-top: 50px;
-        padding-bottom: 50px;
+    <style include="iron-flex iron-flex-alignment">
+      .section-related-accessories {
+        padding: var(--theme-component-space-inner);
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
       }
 
       .column-headline {
         @apply(--theme-heading);
+        font-size: var(--theme-size-display1);
+        margin: 0;
         text-align: center;
-      }
-      
-      /**
-       * included wrap
-       */
-      .included-wrap .accessoiry-wrap {
-        text-align: center;
-      }
-      .included-wrap .accessoiry-wrap img {
-        margin: 0 auto;
-      }
-      .included-wrap .accessoiry-wrap h4 {
-        text-align: center;
-        width: 100%;
       }
 
-      .included-wrap h2.column-headline,
-      .optional-wrap h2.column-headline {
-        font-size: 1.5rem;
-        margin-bottom: 2.5rem;
-      }
-
-      .included-wrap h4.column-headline {
-        font-size: 1rem;
-      }
-      
-      /**
-       * optional wrap
-       */
-
-      .optional-wrap .optional-img-wrap {
-        text-align: center;
-      }
-      .optional-wrap .optional-img-wrap img {
-        margin: 0 auto;
-      }
-      .optional-wrap .optional-cta-wrap h3 {
+      .accessory-title {
         @apply(--theme-heading);
-        font-size: 1.2rem;
-        text-align: left;
-        width: 100%;
+        text-align: center;
+        margin: var(--theme-component-space-micro) 0 0 0;
       }
-      .optional-wrap .optional-cta-wrap .list-group {
-        border: 0;
-        border-radius: 0;
-      }
-      .optional-wrap .optional-cta-wrap .list-group-item {
-        border: 0;
-        border-radius: 0;
-        padding: 0;
-      }
-      .optional-wrap .optional-cta-wrap .list-group-item a {
-        color: #000;
-        display: block;
-        font-size: .9rem;
-        padding: 10px 15px 10px 30px;
-        position: relative;
-        width: 100%;
-      }
-      .optional-wrap .optional-cta-wrap .list-group-item a iron-icon {
-        left: 0;
-        top: 8px;
-        position: absolute;
-      }
-    </style>
-    
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-    
-    <section class="section-related-accessoiries container-fluid"
-      mobile-small$="{{ mobileSmall }}"
-      mobile-medium$="{{ mobileMedium }}"
-      tablets$="{{ tablets }}"
-      desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
-      
 
-      <div class="row">
-        <template
-          is="dom-if"
-          if="[[ relAccData.included_accessoiries.length ]]">
-          <div class="col-xs-12 col-md-4">
-            <div class="row included-wrap">
-              <h2 class="column-headline">Included Accessoiries</h2>
+      .accessory-wrap {
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+
+      }
+
+      .accessory {
+        padding: var(--theme-component-space-inner);
+        text-align: center;
+      }
+
+      .accessory a {
+        text-decoration: none;
+        color: var(--theme-color-link-primary);
+        transition: .3s ease color;
+      }
+
+      .accessory a:hover, .accessory a:focus {
+        color: var(--theme-color-hover);
+      }
+
+      .accessories {
+        padding: var(--theme-component-space-inner);
+      }
+
+    </style>
+
+    <section class="section-related-accessories">
+      <template
+        is="dom-if"
+        if="[[ relAccData.included_accessoiries.length ]]">
+          <div class="accessories">
+            <h2 class="column-headline">Included Accessories</h2>
+            <div class="accessory-wrap">
               <template
                 is="dom-repeat"
                 items="[[ relAccData.included_accessoiries ]]"
-                as="accessoiry">
-
-                <div class="col-xs-6 accessoiry-wrap">
-                  <img class="img-responsive" src="[[ hasAccessoiryImage(accessoiry.accessoiry_image) ]]" alt="" width="185" height="185" />
-                  <h4 class="column-headline">[[ accessoiry.accessoiry_title ]]</h4>
+                as="accessory">
+                <div class="accessory">
+                  <img class="img-responsive" src="[[ hasAccessoiryImage(accessory.accessoiry_image) ]]" alt="" width="185" height="185" />
+                  <h4 class="accessory-title">[[ accessory.accessoiry_title ]]</h4>
                 </div>
-
               </template>
             </div>
           </div>
-        </template>
+      </template>
 
-        <template
-          is="dom-if"
-          if="[[ relAccData.optional_accessoiries.length ]]">
-          <div class="col-xs-12 col-md-8">
-            <div class="row optional-wrap">
-              <h2 class="column-headline">Optional Accessoiries</h2>
+      <template
+        is="dom-if"
+        if="[[ relAccData.optional_accessoiries.length ]]">
+          <div class="accessories">
+            <h2 class="column-headline">Optional Accessories</h2>
+            <div class="accessory-wrap">
               <template
                 is="dom-repeat"
                 items="[[ relAccData.optional_accessoiries ]]"
-                as="accessoiry">
-
-                  <div class="col-sm-12 col-md-6">
-                    <div class="row">
-                      <div class="col-xs-6 optional-img-wrap">
-                        <img class="img-responsive" src="[[ hasAccessoiryImage(accessoiry.accessoiry_image) ]]" alt="" width="185" height="185" />
-                      </div>
-
-                      <div class="col-xs-6 optional-cta-wrap">
-                        <h3>[[ accessoiry.accessoiry_title ]]</h3>
-                        <ul class="list-group">
-                          <!-- <li class="list-group-item">
-                            <a href="">Add to basket</a>
-                          </li> -->
-                          <li class="list-group-item">
-                            <a href="#"
-                              on-click="clickDetails">
-                              <iron-icon icon="editor:vertical-align-top"></iron-icon> See details
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
+                as="accessory">
+                <div class="accessory">
+                  <img class="img-responsive" src="[[ hasAccessoiryImage(accessory.accessoiry_image) ]]" alt="" width="185" height="185" />
+                  <h4 class="accessory-title">[[ accessory.accessoiry_title ]]</h4>
+                  <a href="#"
+                    on-click="clickDetails">
+                    See details <iron-icon class="chevron" icon="dorel-icons:chevron-right"></iron-icon>
+                  </a>
+                </div>
               </template>
             </div>
           </div>
-        </template>
-      </div>
-
+      </template>
     </section>
   </template>
 
