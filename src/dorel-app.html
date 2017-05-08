@@ -60,12 +60,6 @@
       iron-pages {
         margin: 0 auto;
       }
-
-      .announcer {
-        position: fixed;
-        height: 0;
-        overflow: hidden;
-      }
     </style>
 
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
@@ -131,9 +125,6 @@
     </main>
 
     <dorel-footer></dorel-footer>
-    
-    <!-- a11y announcer -->
-    <div class="announcer" aria-live="assertive">[[ _a11yLabel ]]</div>
   </template>
 
   <script>
@@ -190,9 +181,7 @@
        * @description listens to all different fires
        */
       listeners: {
-        'change-section': '_onChangeSection',
-        'announce': '_onAnnounce',
-        'dom-change': '_domChange'
+        'addMetaData': '_addMetaData'
       },
 
       created: function() {
@@ -214,12 +203,6 @@
 
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
-
-        // listen for online/offline
-        Polymer.RenderStatus.afterNextRender(this, function() {
-          this.listen(window, 'online', '_notifyNetworkStatus');
-          this.listen(window, 'offline', '_notifyNetworkStatus');
-        });
 
         // Checks the apps config, and sets the according brand theme   
         var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
@@ -306,30 +289,82 @@
       },
 
       /**
-       * @listener
+       * @observer
        * @name _setCurrentPage
        * @description set the current page in the globals
        */
       _setCurrentPage: function(currentPage) {
+
+        /**
+         * if we are dealing with products we need to match 
+         * which product it is
+         */
+        if (currentPage.slug === 'products') {
+
+          // get last segment slug
+          var lastSegment = this._getLastSegment(document.URL);
+
+          // match it with the products
+          currentPage = currentPage.products.find(function(item) {
+            return item.slug === lastSegment;
+          });
+        }
+
         // set the global currentPage
         Polymer.globalsManager.set('Dorel.current.page', currentPage);
 
-        // Announce the page's title
-        if (typeof currentPage.acf.meta_title !== 'undefined') {
-          document.title = currentPage.acf.meta_title;
-          this._announce(currentPage.acf.meta_title + ', loaded');
-        }
-
-        if (typeof currentPage.acf.meta_description !== 'undefined') {
-          var meta = document.createElement('meta');
-          meta.name = 'description';
-          meta.content = currentPage.acf.meta_description;
-          document.getElementsByTagName('head')[0].appendChild(meta);
-          this._announce(currentPage.acf.meta_description + ', loaded');
-        }
+        this.fire('addMetaData', {
+          metaTitle: currentPage.acf.meta_title || null,
+          metaDescription: currentPage.acf.meta_description || null
+        });
 
         // tracking of the pageload
         this._eventTracking();
+      },
+
+      /**
+       * @listener
+       * @name _addMetaData
+       * @description adds the right seo meta data
+       */
+      _addMetaData: function(metaData) {
+        if (typeof metaData === 'undefined') return;
+        
+        // add the page's title
+        if (typeof metaData.detail.metaTitle !== 'undefined') {
+          document.title = this._defineMetaTitle(metaData.detail.metaTitle);
+        }
+
+        // add the page's description
+        if (typeof metaData.detail.metaDescription !== 'undefined') {
+          var meta = document.createElement('meta');
+          meta.name = 'description';
+          meta.content = metaData.detail.metaDescription;
+          document.getElementsByTagName('head')[0].appendChild(meta);
+        }
+      },
+
+      /**
+       * @helper
+       * @name _defineMetaTitle
+       * @description defines the meta tile prefix and suffix
+       * @param String | null
+       */
+      _defineMetaTitle: function(titleSuffix) {
+        var configBrand = CONFIG.BRAND_NAME;
+
+        // replace every dash with a space
+        var titlePrefix = configBrand.replace(/-/g, ' ');
+
+        // capitalize every new word
+        titlePrefix = titlePrefix.replace(/\b\w/g, function(l){ return l.toUpperCase() })
+
+        // check if the suffix is an 
+        titleSuffix = (titleSuffix === null) ?  
+          '' : ' - ' + titleSuffix; 
+
+        // merge the title prefix and suffix and separate by dash
+        return titlePrefix.concat(titleSuffix);
       },
 
       /**
@@ -354,7 +389,6 @@
               }
               
               this.loadComplete = true;
-              this._notifyNetworkStatus();
               this._removeLoadPlaceholder();
               // import the footer after the pages are loaded
               this.importHref(this.resolveUrl('organisms/dorel-footer.html'), null, null, false);
@@ -371,97 +405,6 @@
       _removeLoadPlaceholder: function() {
         var placeholder = document.getElementById('load-placeholder');
         placeholder.remove();
-      },
-
-      /**
-       * @name _notifyNetworkStatus
-       * @description checks to see if we have internet connection and
-       * sends notification to the user if offline
-       */
-      _notifyNetworkStatus: function() {
-        var oldOffline = this.offline;
-        this.offline =  !navigator.onLine;
-
-        // Show the snackbar if the user is offline when starting a new session
-        // or if the network status changed.
-        if (this.offline || (!this.offline && oldOffline === true)) {
-          if (!this._networkSnackbar) {
-            this._networkSnackbar = document.createElement('dorel-snackbar');
-            Polymer.dom(this.root).appendChild(this._networkSnackbar);
-          }
-          Polymer.dom(this._networkSnackbar).innerHTML = this.offline ?
-              'You are offline' : 'You are online';
-          this._networkSnackbar.open();
-        }
-      },
-
-      /**
-       * @name _onChangeSection
-       * @description Elements in the app can notify section changes. Response 
-       * by a11y announcing the section and syncronizing the category.
-       */
-      _onChangeSection: function(event) {
-        var detail = event.detail;
-        this.categoryName = detail.category || '';
-
-        // Announce the page's title
-        if (detail.title) {
-          document.title = detail.title;
-          this._announce(detail.title + ', loaded');
-        }
-      },
-
-      /**
-       * @name _onAnnounce
-       * @description starts announcing and setting the label
-       */
-      _onAnnounce: function(e) {
-        this._announce(e.detail);
-      },
-
-      /**
-       * @name _announce
-       * @description A11y announce the given message.
-       */
-      _announce: function(message) {
-        this._a11yLabel = '';
-        this.debounce('_a11yAnnouncer', function() {
-          this._a11yLabel = message;
-        }, 100);
-      },
-
-      /**
-       * @name _setCurrentMenuItem
-       * @description set the current menu item by matching the slug
-       * to the menu items url
-       * TODO: refactor for better use
-       */
-      _setCurrentMenuItem: function(page, mainMenuItems) {
-
-        // if menu array has no items
-        if( !mainMenuItems.length ) { return; }
-
-        // map the page variable to the item in the mainMenuItems array and set it 
-        this.currentMenuItem = mainMenuItems.find(function(item) {
-          return (page === item.url.substring(1)) ? item.object_id : false;
-        });
-
-        // set the global currentMenuItem
-        Polymer.globalsManager.set('Dorel.current.menuItem', this.currentMenuItem);
-      },
-
-      /**
-       * @name _domChange
-       * @description This is for performance logging only.
-       */
-      _domChange: function(e) {
-        if (window.performance && performance.mark && !this.__loggedDomChange) {
-          var target = Polymer.dom(e).rootTarget;
-          if (target.domHost.is.match(this.page)) {
-            this.__loggedDomChange = true;
-            performance.mark(target.domHost.is + '.domChange');
-          }
-        }
       },
 
       /**
