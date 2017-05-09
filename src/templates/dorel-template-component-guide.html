@@ -1,0 +1,93 @@
+<dom-module id="dorel-template-component-guide">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+
+      paper-item {
+
+        cursor: pointer;
+        @apply(--theme-ie-bodycopy);
+        border-left: 4px solid transparent;
+
+        --paper-item-focused: {
+          background: transparent;
+          font-weight: normal;
+        };
+
+        --paper-item-focused-before: {
+           opacity: 0;
+        };
+
+        --paper-item-selected: {
+          background: transparent;
+          font-weight: normal;
+          border-left: 4px solid var(--theme-brand-color);
+          font-weight: normal !important;
+        };
+        
+      }
+
+      paper-menu {
+        background-color: var(--theme-color-background-tertiary);
+        padding: 0;
+      }
+
+      .component-guide--sidebar, .component-guide--content {
+        display: inline-block;
+        float: left;
+        box-sizing: border-box;
+      }
+
+      .component-guide--sidebar {
+        width: 200px;
+        height: calc(100vh - 112px);
+        min-height: 256px;
+        background-color: var(--theme-color-background-tertiary);
+
+      }
+
+      .component-guide--content {
+        padding: var(--theme-component-space-inner);
+
+      }
+    </style>
+
+    <!-- define routing for products -->
+
+    <app-route
+        route="{{ route }}"
+        pattern="/:componentName"
+        data="{{ routeData }}"
+        tail="{{ subroute }}"></app-route>
+
+    <div class="component-guide">
+      <div class="component-guide--sidebar">
+        <paper-menu selected="{{ routeData.componentName }}"
+                    attr-for-selected='name'>
+          <paper-item name="introduction">Introduction</paper-item>
+          <paper-item name="typography">Typography</paper-item>
+          <paper-item name="colors">Colors</paper-item>
+          <paper-item name="layout-sizes">Layout & Sizes</paper-item>
+          <paper-item name="buttons">Buttons</paper-item>
+        </paper-menu>
+      </div>
+      <iron-pages class="component-guide--content"
+                  selected="{{ routeData.componentName }}"
+                  fallback-selection="introduction"
+                  attr-for-selected="name">
+        <div name="introduction">Introduction</div>
+        <div name="typography">Typography</div>
+        <div name="colors">Colors</div>
+        <div name="layout-sizes">Layout & Sizes</div>
+        <div name="buttons">Buttons</div>
+      </iron-pages>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-component-guide',
+    });
+  </script>
+</dom-module>
