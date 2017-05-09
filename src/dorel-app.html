@@ -120,6 +120,10 @@
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-products>
 
+        <dorel-template-component-guide
+          name="component-guide"
+          route="{{ subroute }}"></dorel-template-component-guide>
+
         <dorel-template-404 name="404"></dorel-template-404>
       </iron-pages>
     </main>
@@ -230,10 +234,20 @@
         var self = this;
 
         /** 
-         * if last segment is undefined or empty string set too home, 
+         * if last segment is undefined or empty string set to home,
          * all others to segment
          */
         this.page = page || 'home';
+
+
+        // Matches the page to the component guide template
+        if(this.page === 'component-guide') {
+          this.currentPage = {
+            template: 'component-guide'
+          };
+          // break
+          return;
+        }
 
         // map the page variable to the item in the menu array and set it
         this.currentPage = pages.find(function(item) {
