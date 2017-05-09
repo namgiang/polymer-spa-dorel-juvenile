@@ -1,14 +1,24 @@
+<link rel="import" href="component-guide/dorel-component-guide-buttons.html">
+<link rel="import" href="component-guide/dorel-component-guide-colors.html">
+<link rel="import" href="component-guide/dorel-component-guide-introduction.html">
+<link rel="import" href="component-guide/dorel-component-guide-layout.html">
+<link rel="import" href="component-guide/dorel-component-guide-typography.html">
+
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+
+<!-- <link rel="import" href="../themes/theme-maxi-cosi-new.html"> -->
+
 <dom-module id="dorel-template-component-guide">
   <template>
-    <style include="iron-flex iron-flex-alignment">
-      :host {
-      }
-
+    <style include="">
+      :host { display: block; }
       paper-item {
 
         cursor: pointer;
         @apply(--theme-ie-bodycopy);
         border-left: 4px solid transparent;
+        padding: 0 1rem;
 
         --paper-item-focused: {
           background: transparent;
@@ -25,7 +35,6 @@
           border-left: 4px solid var(--theme-brand-color);
           font-weight: normal !important;
         };
-        
       }
 
       paper-menu {
@@ -33,13 +42,23 @@
         padding: 0;
       }
 
-      .component-guide--sidebar, .component-guide--content {
+      paper-toggle-button {
+        @apply(--theme-ie-bodycopy);
+        padding: 1rem;
+        cursor: pointer;
+      }
+
+      .component-guide {
+        position: relative;
+      }
+
+      .component-guide__sidebar, .component-guide__content {
         display: inline-block;
         float: left;
         box-sizing: border-box;
       }
 
-      .component-guide--sidebar {
+      .component-guide__sidebar {
         width: 200px;
         height: calc(100vh - 112px);
         min-height: 256px;
@@ -47,10 +66,28 @@
 
       }
 
-      .component-guide--content {
+      .component-guide__content {
         padding: var(--theme-component-space-inner);
-
+        width: calc(100% - 200px);
+        height: calc(100vh - 112px);
       }
+
+      .component-guide__vertical-rhythm {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        opacity: 0;
+        z-index: -1;
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAVCAYAAABsZT8HAAAAF0lEQVQYV2NkgALGIcQoLy//39nZyQgAHGwEFqm6i4MAAAAASUVORK5CYII=);
+        transition: opacity .5s ease;
+      }
+
+      .component-guide__vertical-rhythm[shown] {
+        opacity: 1;
+      }
+
     </style>
 
     <!-- define routing for products -->
@@ -62,7 +99,16 @@
         tail="{{ subroute }}"></app-route>
 
     <div class="component-guide">
-      <div class="component-guide--sidebar">
+      <div class="component-guide__toolbar">
+        <paper-toggle-button is="iron-input"
+                             noink
+                             checked="{{ verticalRhythm }}">
+          Vertical Rhythm
+        </paper-toggle-button>
+      </div>
+
+      <div class="component-guide__vertical-rhythm" shown$="[[ verticalRhythm ]]"></div>
+      <div class="component-guide__sidebar">
         <paper-menu selected="{{ routeData.componentName }}"
                     attr-for-selected='name'>
           <paper-item name="introduction">Introduction</paper-item>
@@ -71,16 +117,17 @@
           <paper-item name="layout-sizes">Layout & Sizes</paper-item>
           <paper-item name="buttons">Buttons</paper-item>
         </paper-menu>
+
       </div>
-      <iron-pages class="component-guide--content"
+      <iron-pages class="component-guide__content"
                   selected="{{ routeData.componentName }}"
                   fallback-selection="introduction"
                   attr-for-selected="name">
-        <div name="introduction">Introduction</div>
-        <div name="typography">Typography</div>
-        <div name="colors">Colors</div>
-        <div name="layout-sizes">Layout & Sizes</div>
-        <div name="buttons">Buttons</div>
+        <dorel-component-guide-typography name="introduction"></dorel-component-guide-typography>
+        <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
+        <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
+        <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
+        <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
       </iron-pages>
     </div>
   </template>
@@ -88,6 +135,12 @@
   <script>
     Polymer({
       is: 'dorel-template-component-guide',
+      properties: {
+        verticalRhythm: {
+          type: Boolean,
+          value: false,
+        }
+      }
     });
   </script>
 </dom-module>
