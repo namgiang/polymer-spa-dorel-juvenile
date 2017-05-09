@@ -340,11 +340,61 @@
 
         // add the page's description
         if (typeof metaData.detail.metaDescription !== 'undefined') {
-          var meta = document.createElement('meta');
-          meta.name = 'description';
-          meta.content = metaData.detail.metaDescription;
-          document.getElementsByTagName('head')[0].appendChild(meta);
+          var metaDesc = document.createElement('meta');
+          metaDesc.name = 'description';
+          metaDesc.content = metaData.detail.metaDescription;
+          document.getElementsByTagName('head')[0].appendChild(metaDesc);
         }
+
+        // add the meta locale tags
+        if (typeof CONFIG.LOCALE !== 'undefined') {
+
+          // add the meta http-equiv language
+          if (typeof CONFIG.LOCALE.LANGUAGE !== 'undefined') {
+            this._addMetaEquiv('language', CONFIG.LOCALE.LANGUAGE);
+          }
+
+          // add the meta http-equiv country
+          if (typeof CONFIG.LOCALE.COUNTRY !== 'undefined') {
+            this._addMetaEquiv('country', CONFIG.LOCALE.COUNTRY);
+          }
+
+          // add the meta http-equiv content-language
+          if (typeof CONFIG.LOCALE.LANG_CONTENT !== 'undefined') {
+            this._addMetaEquiv('content-language', CONFIG.LOCALE.LANG_CONTENT);
+
+            // add the meta alternate link
+            if (typeof CONFIG.LOCALE.LINK_ALT !== 'undefined') {
+              var metaAlt = document.createElement('link');
+              metaAlt.rel = 'alternate';
+              metaAlt.hreflang = CONFIG.LOCALE.LANG_CONTENT;
+              metaAlt.href = CONFIG.LOCALE.LINK_ALT;
+              document.getElementsByTagName('head')[0].appendChild(metaAlt);
+            }
+          }
+        }
+      },
+
+      /**
+       * @helper
+       * @name _addMetaEquiv
+       * @description adds the meta http-equiv tag
+       * @param String equiv, string is used to fill the http-equiv attribute
+       * @param String content, string is used to fill the content attribute
+       */
+      _addMetaEquiv: function(equiv, content) {
+
+        // create the meta tag
+        var meta = document.createElement('meta');
+
+        // add and set the value of the http-equiv attribute
+        meta.setAttribute('http-equiv', equiv);
+
+        // add and set the value of the content attribute
+        meta.setAttribute('content', content);
+
+        // add the meta tag to the head
+        document.getElementsByTagName('head')[0].appendChild(meta);
       },
 
       /**
