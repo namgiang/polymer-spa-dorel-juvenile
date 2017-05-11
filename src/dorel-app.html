@@ -328,10 +328,12 @@
         Polymer.globalsManager.set('Dorel.current.page', currentPage);
 
         // TODO: Maybe create a separate component for meta changes?
-        this.fire('addMetaData', {
-          metaTitle: currentPage.acf.meta_title || null,
-          metaDescription: currentPage.acf.meta_description || null
-        });
+        if (typeof currentPage.acf !== 'undefined') {
+          this.fire('addMetaData', {
+            metaTitle: currentPage.acf.meta_title,
+            metaDescription: currentPage.acf.meta_description
+          });
+        }
 
         // tracking of the pageload
         this._eventTracking();
