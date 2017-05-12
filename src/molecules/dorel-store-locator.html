@@ -68,21 +68,42 @@
       is: 'dorel-store-locator',
 
       properties: {
+
+        /**
+         * @name apiKey
+         * @description the api key for google maps
+         */
         apiKey: {
           type: String,
           value: 'AIzaSyBYMyWp_Ex0Vti2UUDNOs979yVJ5sts1iA'
         },
 
+        /**
+         * @name disableZoom
+         * @description attribute to define if the user is able
+         * to zoom by scroll-wheel or not
+         */
         disableZoom: {
           type: Boolean,
           value: true
         },
 
+        /**
+         * @name mapLoaded
+         * @description defines if the map is loaded
+         */
         mapLoaded: {
           type: Boolean,
           value: false
         },
 
+        /**
+         * @name storesArr
+         * @description dummy data for all the stores, will be changed
+         * for a rest api
+         *
+         * TODO: retrieve from api
+         */
         storesArr: {
           type: Array,
           value: function() {
@@ -146,16 +167,39 @@
           }
         },
 
+        /**
+         * @name countriesArr
+         * @description the array is used for the countries select dropdown.
+         * currently the countries array is build up by the stores array. 
+         * This is done in the _retrieveCountries.
+         *
+         * TODO: retrieve from api
+         */
         countriesArr: {
           type: Array,
           value: []
         },
 
+        /**
+         * @name countryStoresArr
+         * @description Defines the array that holds the information for the
+         * selected country and address combination within a certain radius.
+         * It is used in a dom-repeat to place the markers.
+         *
+         * TODO: retrieve from api
+         */
         countryStoresArr: {
           type: Array,
           value: []
         },
 
+        /**
+         * @name selectedCountry
+         * @description The country that is selected through the dropdown. A
+         * default value is also specified here
+         *
+         * TODO: retrieve from api config and match with api
+         */
         selectedCountry: {
           type: String,
           value: 'australia',
@@ -168,21 +212,33 @@
        * @description listens to all different fires
        */
       listeners: {
+        // google-map-ready is fired from the google-map element
         'google-map-ready': '_mapLoaded'
       },
 
+      /**
+       * @name observers
+       * @description observe if the requested parameters are changed
+       */
       observers: [
         '_setMapZoom(mapLoaded, geometry)'
       ],
-
-      _mapLoaded: function() {
-        this.mapLoaded = true;
-      },
-
+      
+      /**
+       * @name _mapApiLoaded
+       * @description this is fired when the google-map-api on-api-load attribute
+       * is fired. It indicates that the google map api is ready to use
+       */
       _mapApiLoaded: function() {
         this._initStoreLocator();
       },
 
+      /**
+       * @name _initStoreLocator
+       * @description when the maps api is ready we initialize the stuff needed
+       * to show the countries in the dropdown and setup the maps focus. Setting the
+       * maps focus will only work if a country is preselected (this.selectedCountry)
+       */
       _initStoreLocator: function() {
         // create the geocoder object
         this.geocoder = new google.maps.Geocoder();
@@ -190,42 +246,113 @@
         // build up the countries arr for the countries dropdown
         this.countriesArr = this._retrieveCountries(this.storesArr);
         
-        // set the maps focus for the preselected country
+        // set the maps focus for the (pre)selected country
         this._setMapFocus(this.selectedCountry);
       },
 
+      /**
+       * @listener
+       * @name _mapLoaded
+       * @description the google-map webcomponent fires the google-map-ready
+       * event which in turn will set the mapLoaded to true. This means the 
+       * map variable is set and accessable. The mapLoaded is used to define
+       * the zooming in _setMapZoom.
+       */
+      _mapLoaded: function() {
+
+        // set the variable which we use in the _setMapZoom
+        this.mapLoaded = true;
+      },
+
+      /**
+       * @name _setMapFocus
+       * @description With the selectedCountry set and the lat/lng of that location coming
+       * from the geocoder, we can set the focus of the map too that location.
+       *
+       * @param selectedCountry - String - contains the country's name
+       */
       _setMapFocus: function(selectedCountry) {
+
+        // check if there is a value for the geocoder and selectedCountry
         if (typeof this.geocoder === 'undefined' || typeof selectedCountry === 'undefined') return;
 
+        // reference this
         var self = this;
         
+        // retrieve and set the maps variables
         this._retrieveGeocode(this.selectedCountry).then(function(geometry) {
+          // used in the google-map attribute latitude
           self.mapLat = geometry.location.lat();
+
+          // used in the google-map attribute longitude
           self.mapLng = geometry.location.lng();
+
+          // saved too use it for the _setMapZoom observer
           self.geometry = geometry;
         });
       },
 
+      /**
+       * @observer
+       * @name _setMapZoom
+       * @description if the mapLoaded and the geometry are set try to fit the
+       * the bounds and adjust zooming for the map's country
+       *
+       * @param loaded - Boolean - if the map is loaded or not (_mapLoaded)
+       * @param geometry - Object - the geometry object of google maps (_retrieveGeocode)
+       */
       _setMapZoom: function(loaded, geometry) {
+
+        // check if both are set and defined
         if (!loaded || typeof geometry === 'undefined') return;
 
+        // use the maps object to fit the bounds with the geometry
         this.map.fitBounds(geometry.viewport);
       },
 
+      /**
+       * @name _retrieveGeocode
+       * @description retrieve the geocode information (lat, lng, bounds etc.). It
+       * is used to focus and zooming of the map. The function is called in the
+       * _setMapFocus and _submitLocator.
+       *
+       * @param address - String - the address or country to find the geocode for
+       */
       _retrieveGeocode: function(address) {
+
+        // reference this
         var self = this;
 
+        // create a promise because the resolve might take a while
         return new Promise(function(resolve, reject){
+
+          // actual geocoder call by address
           self.geocoder.geocode({'address': address}, function(results, status) {
+
+            // check if the response is ok
             if (status === 'OK') {
+
+              // resolve promise with the geometry object
               resolve(results[0].geometry);
             } else {
+
+              // reject the promise
               reject();
             }
           });
-       })
+        })
       },
 
+      /**
+       * @name _retrieveCountries
+       * @description create a countries array by checking the stores array and
+       * extracting the countries without making duplicate countries. This array
+       * is used by the countries dropdown and will be coming from an api in the 
+       * future.
+       *
+       * @param stores - Array - the complete stores list (coming from the backend)
+       * TODO: retrieve stores from api
+       */
       _retrieveCountries: function(stores) {
         if (typeof stores === 'undefined') return;
 
@@ -242,21 +369,40 @@
         return countries;
       },
 
+      /**
+       * @name _submitLocator
+       * @description the form submit handler. 
+       *
+       * @param e - EventObject - contains the click event
+       * TODO: make enter work
+       */
       _submitLocator: function(e) {
-        console.log(this.address, this.selectedCountry);
-
+        // merge the address with the country
         var query = this.address + ' ' + this.selectedCountry;
 
+        // create the autocomplete service for use of predictions
         var service = new google.maps.places.AutocompleteService();
+
+        // do a prediction call and start the retrieval of the suggestions
         service.getQueryPredictions({ input: query }, this._retrieveSuggestions);
       },
 
+      /**
+       * @name _retrieveSuggestions
+       * @description handle off and retrieve the predictions
+       *
+       * @param predictions - Array - all predictions by the google maps api
+       * @param status - Object - status of the google maps api call
+       */
       _retrieveSuggestions: function(predictions, status) {
+
+        // check the status of the call
         if (status != google.maps.places.PlacesServiceStatus.OK) {
           alert(status);
           return;
         }
 
+        // set the prediction
         this.prediction = predictions[0];
       }
     });
