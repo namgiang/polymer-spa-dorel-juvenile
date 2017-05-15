@@ -24,24 +24,40 @@
       }
 
       .theme-cta--small {
-       @apply(--theme-button-small);
+        @apply(--theme-button-small);
       }
 
       .theme-cta--medium {
-       @apply(--theme-button-medium);
+        @apply(--theme-button-medium);
       }
 
-      iron-icon {
+      .theme-cta__content {
+        padding: 0 var(--theme-scale-2);
+      }
+
+      .theme-cta__icon {
         @apply(--theme-button-icon);
 
+      }
+
+      .theme-cta__icon--left {
+        width: 5.125em;
+        height: 5.125em;
       }
 
     </style>
 
     <a href$="{{ link }}" class$="theme-cta theme-cta--{{ type }} theme-cta--{{ size }}"
        on-click="clickCTA">
-      <content></content>
-      <iron-icon icon="[[ icon ]]"></iron-icon>
+      <template is="dom-if" if="[[ extraIcon ]]">
+        <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
+      </template>
+
+      <span class="theme-cta__content"><content></content></span>
+
+      <template is="dom-if" if="[[ icon ]]">
+        <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
+      </template>
     </a>
   </template>
 
@@ -72,8 +88,10 @@
         size: {
           type: String
         },
-
         icon: {
+          type: String
+        },
+        extraIcon: {
           type: String
         }
       },
