@@ -1,13 +1,30 @@
 <link rel="import" href="../../bower_components/google-map/google-map.html">
-<link rel="import" href="../../bower_components/paper-autocomplete.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
 
 <dom-module id="dorel-store-locator">
   <template>
     <style>
       google-map {
+        width: 100%;
         height: 600px;
+        position: relative;
+        float: left;
+      }
+      
+      .store-overlay {
+        background-color: #fff;
+        position: absolute;
+        top: 20px;
+        right: 25px;
+        padding: 20px;
+        width: 300px;
+        z-index: 1000;
+      }
+      
+      paper-input-container[error] {
+        --paper-input-container-color: red;
       }
     </style>
 
@@ -15,15 +32,19 @@
       api-key="[[apiKey]]"
       language="[[language]]"
       on-api-load="_mapApiLoaded"></google-maps-api>
+  
+    <!-- handles enter submit -->
+    <iron-a11y-keys id="a11y" target="[[_form]]" keys="enter"
+      on-keys-pressed="_submitLocator"></iron-a11y-keys>
 
     <section class="section-store-locator">
       <div class="store-overlay">
         <h3>Find a store</h3>
-  
 
-        <form is="iron-form" method="get" action="/" id="basic">
-
-          <paper-dropdown-menu label="Select a country" required>
+        <form is="iron-form" method="get" action="/" id="store-locator-form">
+          <paper-dropdown-menu label="Select a country" 
+            disabled$="[[ !countriesArr.length ]]"
+            required>
             <paper-menu attr-for-selected="name" selected="{{ selectedCountry }}" class="dropdown-content">
               <template
                 is="dom-repeat"
@@ -34,9 +55,18 @@
             </paper-listbox>
           </paper-dropdown-menu>
 
-          <paper-input label="Type in address" value="{{ address }}" required></paper-input>
-        
-          <paper-button type="submit" raised on-click="_submitLocator">Submit</paper-button>
+          <paper-input 
+            id="address-input"
+            label="Type in address"
+            value="{{ address }}"
+            error-message="{{ addressError }}"
+            disabled$="[[ !selectedCountry ]]"
+            required></paper-input>
+
+          <paper-button
+            id="submit-button"
+            on-click="_submitLocator"
+            disabled$="{{ _isDisabled(address) }}">Submit</paper-button>
         </form>
 
       </div>
@@ -48,15 +78,13 @@
         latitude="{{ mapLat }}"
         longitude="{{ mapLng }}"
         zoom="{{ mapZoom }}">
-          
-        <!-- 
-        <template
+        
+        <!-- <template
           is="dom-repeat"
           items="[[ countries ]]"
           as="country">
            <google-map-marker latitude="37.777" longitude="-122.38911"></google-map-marker>
-        </template>
-        -->
+        </template> -->
 
       </google-map>
 
@@ -68,6 +96,17 @@
       is: 'dorel-store-locator',
 
       properties: {
+
+        /**
+         * @name _form
+         * @description the form used for the a11y-keys submit
+         */
+        _form: {
+          type: Object,
+          value: function() {
+            return this.$['store-locator-form'];
+          }
+        },
 
         /**
          * @name apiKey
@@ -223,14 +262,16 @@
       observers: [
         '_setMapZoom(mapLoaded, geometry)'
       ],
-      
+
       /**
        * @name _mapApiLoaded
        * @description this is fired when the google-map-api on-api-load attribute
        * is fired. It indicates that the google map api is ready to use
        */
       _mapApiLoaded: function() {
+        
         this._initStoreLocator();
+
       },
 
       /**
@@ -240,14 +281,17 @@
        * maps focus will only work if a country is preselected (this.selectedCountry)
        */
       _initStoreLocator: function() {
+
         // create the geocoder object
         this.geocoder = new google.maps.Geocoder();
+        this.autocomplete = new google.maps.places.AutocompleteService();
 
         // build up the countries arr for the countries dropdown
         this.countriesArr = this._retrieveCountries(this.storesArr);
         
         // set the maps focus for the (pre)selected country
         this._setMapFocus(this.selectedCountry);
+
       },
 
       /**
@@ -262,6 +306,7 @@
 
         // set the variable which we use in the _setMapZoom
         this.mapLoaded = true;
+
       },
 
       /**
@@ -290,6 +335,7 @@
           // saved too use it for the _setMapZoom observer
           self.geometry = geometry;
         });
+
       },
 
       /**
@@ -308,6 +354,97 @@
 
         // use the maps object to fit the bounds with the geometry
         this.map.fitBounds(geometry.viewport);
+
+      },
+
+      /**
+       * @name _retrieveCountries
+       * @description create a countries array by checking the stores array and
+       * extracting the countries without making duplicate countries. This array
+       * is used by the countries dropdown and will be coming from an api in the 
+       * future.
+       *
+       * @param stores - Array - the complete stores list (coming from the backend)
+       * TODO: retrieve stores from api
+       */
+      _retrieveCountries: function(stores) {
+
+        // check if the stores are defineds
+        if (typeof stores === 'undefined') return;
+
+        // create an empty placeholder array
+        var countries = [];
+        
+        // loop through and add the country is it doesn't exist yet
+        for (var i = 0; i < stores.length; i++) {
+
+          // set the country to lowerCase
+          var country = stores[i].country.toLowerCase();
+
+          // check if the country already exists in the placeholder array
+          if (countries.indexOf(country) < 0) {
+            countries = countries.concat(country);
+          }
+        }
+
+        // return the placeholder array
+        return countries;
+
+      },
+
+      /**
+       * @name _submitLocator
+       * @description the form submit handler. 
+       *
+       * @param e - EventObject - contains the click event
+       * TODO: make enter work
+       */
+      _submitLocator: function(event) {
+
+        // handle the validation of the input and errors when the input is empty
+        if (this.$['submit-button'].hasAttribute('disabled')) {
+          this._handleErrors('ADDRESS_EMPTY');
+          return;
+        }
+
+        // reset the validity of the input
+        this.$['address-input'].invalid = false;
+
+        // reference this
+        var self = this;
+
+        // merge the address with the country
+        var query = this.address + ' ' + this.selectedCountry;
+
+        // retrieve the suggestions by query
+        this.predictions = this._retrieveSuggestions(query).then(function(response) {
+          
+          // retrieve the geocode to update the map
+          self._retrieveGeocode(response.description).then(function(geometry) {
+
+            // used in the google-map attribute latitude
+            self.mapLat = geometry.location.lat();
+
+            // used in the google-map attribute longitude
+            self.mapLng = geometry.location.lng();
+
+            // saved too use it for the _setMapZoom observer
+            self.geometry = geometry;
+
+          }, function(error) {
+
+            // handle off the errors
+            self._handleErrors(error);
+
+          });
+
+        }, function(error) {
+
+          // handle off the errors
+          self._handleErrors(error);
+          
+        });
+
       },
 
       /**
@@ -324,7 +461,7 @@
         var self = this;
 
         // create a promise because the resolve might take a while
-        return new Promise(function(resolve, reject){
+        return new Promise(function(resolve, reject) {
 
           // actual geocoder call by address
           self.geocoder.geocode({'address': address}, function(results, status) {
@@ -337,73 +474,82 @@
             } else {
 
               // reject the promise
-              reject();
+              reject(status);
             }
+
           });
-        })
-      },
 
-      /**
-       * @name _retrieveCountries
-       * @description create a countries array by checking the stores array and
-       * extracting the countries without making duplicate countries. This array
-       * is used by the countries dropdown and will be coming from an api in the 
-       * future.
-       *
-       * @param stores - Array - the complete stores list (coming from the backend)
-       * TODO: retrieve stores from api
-       */
-      _retrieveCountries: function(stores) {
-        if (typeof stores === 'undefined') return;
-
-        var countries = [];
-        
-        for (var i = 0; i < stores.length; i++) {
-          var country = stores[i].country.toLowerCase();
-
-          if (countries.indexOf(country) < 0) {
-            countries = countries.concat(country);
-          }
-        }
-
-        return countries;
-      },
-
-      /**
-       * @name _submitLocator
-       * @description the form submit handler. 
-       *
-       * @param e - EventObject - contains the click event
-       * TODO: make enter work
-       */
-      _submitLocator: function(e) {
-        // merge the address with the country
-        var query = this.address + ' ' + this.selectedCountry;
-
-        // create the autocomplete service for use of predictions
-        var service = new google.maps.places.AutocompleteService();
-
-        // do a prediction call and start the retrieval of the suggestions
-        service.getQueryPredictions({ input: query }, this._retrieveSuggestions);
+        });
       },
 
       /**
        * @name _retrieveSuggestions
        * @description handle off and retrieve the predictions
        *
-       * @param predictions - Array - all predictions by the google maps api
-       * @param status - Object - status of the google maps api call
+       * @param query - String - the address to get predictions for
        */
-      _retrieveSuggestions: function(predictions, status) {
+      _retrieveSuggestions: function(query) {
 
-        // check the status of the call
-        if (status != google.maps.places.PlacesServiceStatus.OK) {
-          alert(status);
-          return;
+        // reference this
+        var self = this;
+
+        // create a promise because the resolve might take a while
+        return new Promise(function(resolve, reject) {
+
+          // do a prediction call and start the retrieval of the suggestions
+          self.autocomplete.getQueryPredictions({ input: query }, function(predictions, status) {
+
+            // check the status of the call
+            if (status != google.maps.places.PlacesServiceStatus.OK) {
+
+              // reject the promise
+              reject(status);
+
+            } else {
+
+              // resolve promise with the first prediction
+              resolve(predictions[0]);
+
+            }
+          });
+
+        });
+
+      },
+
+      /**
+       * @name _isDisabled
+       * @description check if input or button should be disabled when a value
+       * is not set or undefined
+       *
+       * @param val - String - the value we need to evaluate to set or not
+       */
+      _isDisabled: function(val) {
+        return typeof val === 'undefined' || val === '';
+      },
+
+      /**
+       * @name _handleErrors
+       * @description this function takes the error and defines a human readable
+       * message to show to the user.
+       *
+       * @param error - String - the error code to process and translate
+       */
+      _handleErrors: function(error) {
+
+        // zero results error
+        switch (error) {
+          case 'ZERO_RESULTS':
+            this.addressError = 'No results found for this address!';
+          break;
+
+          case 'ADDRESS_EMPTY':
+            this.addressError = 'This field cannot be empty';
+          break;
         }
 
-        // set the prediction
-        this.prediction = predictions[0];
+        // set the invalid attribute to show error styling
+        this.$['address-input'].invalid = true;
       }
     });
   </script>
