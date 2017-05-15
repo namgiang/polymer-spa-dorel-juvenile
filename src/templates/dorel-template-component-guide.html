@@ -109,12 +109,14 @@
 
     <div class="component-guide">
       <div class="component-guide__toolbar">
-        <paper-toggle-button noink checked="{{ verticalRhythm }}">
+        <paper-toggle-button noink 
+          checked$="[[ globals.Dorel.grid.vertical ]]"
+          on-click="_setVerticalRhythm">
           Vertical Rhythm
         </paper-toggle-button>
       </div>
 
-      <div class="component-guide__vertical-rhythm" shown$="[[ verticalRhythm ]]"></div>
+      <div class="component-guide__vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
       <div class="component-guide__sidebar">
         <paper-menu selected="{{ routeData.componentName }}"
                     attr-for-selected='name'>
@@ -148,6 +150,12 @@
           type: Boolean,
           value: false,
         }
+      },
+
+      _setVerticalRhythm: function() {
+        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
+
+        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
       }
     });
   </script>
