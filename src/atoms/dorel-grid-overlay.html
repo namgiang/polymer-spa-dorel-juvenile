@@ -1,0 +1,45 @@
+<dom-module id="dorel-grid-overlay">
+  <template>
+    <style>
+      .vertical-rhythm {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        opacity: 0;
+        z-index: -1;
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAYAAADQ+yzZAAAAF0lEQVQYV2NkgALG4cEoLy//39nZyQgAHvQEGSEIElQAAAAASUVORK5CYII=);
+        transition: opacity .5s ease;
+      }
+
+      .horizontal-grid[shown] {
+        opacity: 1;
+      }
+
+      .horizontal-grid {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        opacity: 0;
+        z-index: -1;
+        background-color: rgba(255, 0, 0, .5);
+        transition: opacity .5s ease;
+      }
+
+      .vertical-rhythm[shown] {
+        opacity: 1;
+      }
+    </style>
+    <div class="vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
+    <div class="horizontal-grid" shown$="[[ globals.Dorel.grid.horizontal ]]"></div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-grid-overlay',
+    });
+  </script>
+
+</dom-module>

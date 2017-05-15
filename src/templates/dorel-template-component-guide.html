@@ -50,6 +50,7 @@
         @apply(--theme-ie-bodycopy);
         padding: calc(var(--theme-scale-1) * 7);
         cursor: pointer;
+        float: left;
       }
 
       .component-guide {
@@ -77,22 +78,6 @@
         min-height: calc(100vh - 112px);
       }
 
-      .component-guide__vertical-rhythm {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-        opacity: 0;
-        z-index: -1;
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAYAAADQ+yzZAAAAF0lEQVQYV2NkgALG4cEoLy//39nZyQgAHvQEGSEIElQAAAAASUVORK5CYII=);
-        transition: opacity .5s ease;
-      }
-
-      .component-guide__vertical-rhythm[shown] {
-        opacity: 1;
-      }
-
       .component-guide__toolbar {
         position: absolute;
         right: 0;
@@ -100,7 +85,6 @@
     </style>
 
     <!-- define routing for products -->
-
     <app-route
       route="{{ route }}"
       pattern="/:componentName"
@@ -109,14 +93,17 @@
 
     <div class="component-guide">
       <div class="component-guide__toolbar">
-        <paper-toggle-button noink 
-          checked$="[[ globals.Dorel.grid.vertical ]]"
-          on-click="_setVerticalRhythm">
+        <paper-toggle-button noink
+                             checked$="[[ globals.Dorel.grid.vertical ]]"
+                             on-click="_setVerticalRhythm">
           Vertical Rhythm
         </paper-toggle-button>
+        <paper-toggle-button noink
+                             checked$="[[ globals.Dorel.grid.horizontal ]]"
+                             on-click="_setHorizontalGrid">
+          Horizontal Grid
+        </paper-toggle-button>
       </div>
-
-      <div class="component-guide__vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
       <div class="component-guide__sidebar">
         <paper-menu selected="{{ routeData.componentName }}"
                     attr-for-selected='name'>
@@ -151,12 +138,14 @@
           value: false,
         }
       },
-
-      _setVerticalRhythm: function() {
+      _setVerticalRhythm: function () {
         var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
-
         Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
-      }
+      },
+      _setHorizontalGrid: function () {
+        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
+        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+      },
     });
   </script>
 </dom-module>
