@@ -63,9 +63,15 @@
         --theme-columns: 12;
         --theme-column-width: calc(100% / var(--theme-columns));
 
+        /* Spacing between columns */
         --theme-gutter: var(--theme-scale-3);
         --theme-gutter-mobile: .625em;
 
+        /* A cointainer in the grid should have some inner spacing */
+        --theme-column-container-size: var(theme-gutter);
+        --theme-column-container-size-mobile: var(--theme-gutter-mobile);
+
+        /* A single row */
         --theme-grid-row: {
           box-sizing: border-box;
           display: -ms-flexbox;
@@ -92,8 +98,7 @@
           margin-left: calc(var(--theme-gutter-mobile) * -0.5);
         };
 
-
-        /* sizing */
+        /* Sizing */
         --theme-grid-column: {
           box-sizing: border-box;
           -ms-flex: 0 0 auto;
@@ -103,6 +108,7 @@
           padding-left: var(--theme-scale-2);
           margin-top: var(--theme-scale-3);
         };
+
         /* Modifier for mobile screens */
         --theme-grid-column-mobile: {
           padding-right: .375em;
@@ -117,6 +123,9 @@
           max-width:  calc( var(--theme-column-width) * 2 );
 
           Replace the 2 with the number of columns you need
+
+          Containers made up of columns should always have an inner size
+          (--theme-column-container-size or --theme-column-container-size-mobile)
         */
 
         /* Ofsetting columns
