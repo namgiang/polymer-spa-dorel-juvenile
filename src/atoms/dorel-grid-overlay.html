@@ -43,7 +43,6 @@
 
       .row {
         @apply(--theme-grid-row);
-        padding: 0 1.5em;
       }
 
       .column {
@@ -54,51 +53,77 @@
         margin-top: 0;
       }
 
+      [mobile-small] .column, [mobile-medium] .column {
+        @apply(--theme-grid-column-mobile);
+      }
+
+      [mobile-small] .row, [mobile-medium] .row {
+        @apply(--theme-grid-row-mobile);
+      }
+
       .column-content {
         background-color: var(--theme-brand-color);
         height: 100vh;
         opacity: .25;
       }
-
     </style>
-    <div class="vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
-    <div class="horizontal-grid" shown$="[[ globals.Dorel.grid.horizontal ]]">
-      <div class="row">
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
-        </div>
-        <div class="column">
-          <div class="column-content"></div>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+                      query-matches="{{ desktopFull }}"></iron-media-query>
+
+    <div mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}"
+         tablets$="{{ tablets }}"
+         desktop-small$="{{ desktopSmall }}"
+         desktop-full$="{{ desktopFull }}">
+      <div class="vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
+      <div class="horizontal-grid" shown$="[[ globals.Dorel.grid.horizontal ]]">
+        <div class="row">
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
         </div>
       </div>
     </div>
