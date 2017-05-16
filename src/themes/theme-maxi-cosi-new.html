@@ -22,11 +22,6 @@
         --theme-brand-complementary-color-2: #F6BE00;
         --theme-brand-complementary-color-3: #8A1538;
 
-        /* Interactive element colors */
-        /* if the theme's brand color is quite similar to the browsers' native link color use
-           it for the primary link color. Adding a new link-blue color close to that color will
-           not  match since the colors will then be too close to eachother in the color spectrum */
-
         /* Brand proximity colors
          * the lighter the background, the more important
          * the foreground information will be */
@@ -226,9 +221,86 @@
         --theme-paragraph-text: {
           @apply(--theme-typography-2);
           max-width: var(--theme-base-paragraph-width);
-        }
-      }
+        };
 
+        /*
+          * Typography colors
+          */
+        --theme-color-text-link: var(--theme-brand-color-1);
+        --theme-color-text-link-active: var(--theme-brand-complementary-color-1);
+
+        --theme-text-link: {
+          color: var(--theme-color-text-link);
+          text-decoration: none;
+          transition: color .3s ease, border-bottom .3s ease;
+          border-bottom: 1px solid var(--theme-color-monochrome-2);
+        };
+
+        --theme-text-link-active: {
+          color: var(--theme-color-text-link-active);
+          border-bottom: 1px solid var(--theme-color-text-link-active);
+        };
+
+        /* Buttons & CTA's */
+        --theme-primary-button-color: var(--theme-brand-complementary-color-2);
+        --theme-secondary-button-color: var(--theme-color-white);
+        --theme-tertiary-button-color: var(--theme-brand-color-1);
+
+        --theme-button: {
+          line-height: var(--theme-scale-3);
+          margin: var(--theme-scale-3) var(--theme-scale-3) 0 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: .625em 0;
+          border-radius: .5em;
+          border: .125em solid transparent;
+          transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease;
+          text-decoration: none;
+          box-sizing: border-box;
+          float: left;
+        };
+
+        --theme-button-small: {
+          @apply(--theme-typography-2);
+        };
+
+        --theme-button-medium: {
+          @apply(--theme-typography-3);
+          padding: .325em 0;
+        };
+
+        --theme-button-primary: {
+          color: var(--theme-brand-color-2);
+          fill: var(--theme-brand-color-2);
+          background-color: var(--theme-brand-complementary-color-2)
+        };
+
+        --theme-button-secondary: {
+          color: var(--theme-brand-color-2);
+          fill: var(--theme-brand-color-2);
+          border: .125em solid var(--theme-color-monochrome-2);
+          background-color: var(--theme-color-white);
+        };
+
+        --theme-button-tertiary: {
+          background-color: var(--theme-tertiary-button-color);
+          color: var(--theme-color-white);
+          fill: var(--theme-color-white);
+        };
+
+        --theme-button-active: {
+          background-color: var(--theme-brand-complementary-color-1);
+          border-color: var(--theme-brand-complementary-color-1);
+          color: var(--theme-color-white);
+        };
+
+        --theme-button-icon: {
+          height: var(--theme-scale-3);
+          width: var(--theme-scale-3);
+          padding: 0 .5em;
+        };
+      }
     </style>
   </template>
 </dom-module>
