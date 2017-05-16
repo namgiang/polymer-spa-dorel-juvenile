@@ -23,6 +23,8 @@
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
 
+<link rel="import" href="atoms/dorel-grid-overlay.html">
+
 <dom-module id="dorel-app">
   <template>
     <style>
@@ -35,7 +37,6 @@
         --primary-color: var(--theme-brand-color);
         color: var(--theme-primary-text-color);
         display: block;
-        position: relative;
         min-height: 100vh;
 	      font-family: var(--theme-font-sans-serif);
       }
@@ -129,6 +130,8 @@
     </main>
 
     <dorel-footer></dorel-footer>
+
+    <dorel-grid-overlay></dorel-grid-overlay>
   </template>
 
   <script>
@@ -196,7 +199,11 @@
           wpUrl: {}, // will be a string later (bug inside globalsManager)
           collect: {},
           current: {},
-          events: {}
+          events: {},
+          grid: {
+            horizontal: false,
+            vertical: false
+          }
         });
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.

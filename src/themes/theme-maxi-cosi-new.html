@@ -58,6 +58,15 @@
         --theme-columns: 12;
         --theme-column-width: calc(100% / var(--theme-columns));
 
+        /* Spacing between columns */
+        --theme-gutter: var(--theme-scale-3);
+        --theme-gutter-mobile: .625em;
+
+        /* A cointainer in the grid should have some inner spacing */
+        --theme-column-container-size: var(theme-gutter);
+        --theme-column-container-size-mobile: var(--theme-gutter-mobile);
+
+        /* A single row */
         --theme-grid-row: {
           box-sizing: border-box;
           display: -ms-flexbox;
@@ -72,11 +81,19 @@
           flex-direction: row;
           -ms-flex-wrap: wrap;
           flex-wrap: wrap;
-          margin-right: calc(var(--theme-scale-2) * -1);
-          margin-left: calc(var(--theme-scale-2) * -1);
+          padding: 0 var(--theme-gutter);
+          margin-right: calc(var(--theme-gutter) * -0.5);
+          margin-left: calc(var(--theme-gutter) * -0.5);
         };
 
-        /* sizing */
+        /* Modifier for mobile screens */
+        --theme-grid-row-mobile: {
+          padding: 0 var(--theme-gutter-mobile);
+          margin-right: calc(var(--theme-gutter-mobile) * -0.5);
+          margin-left: calc(var(--theme-gutter-mobile) * -0.5);
+        };
+
+        /* Sizing */
         --theme-grid-column: {
           box-sizing: border-box;
           -ms-flex: 0 0 auto;
@@ -87,6 +104,12 @@
           margin-top: var(--theme-scale-3);
         };
 
+        /* Modifier for mobile screens */
+        --theme-grid-column-mobile: {
+          padding-right: .375em;
+          padding-left: .375em;
+        };
+
         /* Creating columns
           When specifying a column, you can specify the width as such:
 
@@ -95,6 +118,9 @@
           max-width:  calc( var(--theme-column-width) * 2 );
 
           Replace the 2 with the number of columns you need
+
+          Containers made up of columns should always have an inner size
+          (--theme-column-container-size or --theme-column-container-size-mobile)
         */
 
         /* Ofsetting columns
