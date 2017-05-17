@@ -7,15 +7,15 @@
     <style>
 
       .section-secondary-menu {
-        background-color: var(--theme-color-background-tertiary);
+        background-color: var(--theme-color-monochrome-2);
         width: 100%;
-	      position: absolute;
+        position: absolute;
         left: 0;
-        top: 4.5rem;
+        top: var(--theme-scale-7);
         z-index: 2;
-        -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.13);
-        -moz-box-shadow:    0px 8px 20px 0px rgba(0, 0, 0, 0.13);
-        box-shadow:         0px 8px 20px 0px rgba(0, 0, 0, 0.13);
+        -webkit-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.13);
+        -moz-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.13);
+        box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.13);
       }
 
       .menu-item-container {
@@ -26,6 +26,7 @@
         visibility: hidden;
         opacity: 0;
       }
+
       .menu-item-container[opened] .section-secondary-menu {
         visibility: visible;
         opacity: 1;
@@ -39,15 +40,17 @@
         width: 100%;
 
       }
-      .sub-menu a{
+
+      .sub-menu a {
         color: var(--theme-primary-text-color);
         float: left;
         width: 100%;
-        padding: 1rem 1.5rem;
+        padding: var(--theme-scale-2) var(--theme-scale-3);
       }
 
       paper-submenu paper-item {
-        font-family: var(--theme-font-sans-serif);
+        @apply(--theme-typography-2);
+        margin-top: 0;
       }
 
       paper-submenu paper-item.iron-selected {
@@ -56,23 +59,22 @@
 
       paper-submenu a, .sub-menu a {
         text-transform: capitalize;
-        color: var(--theme-primary-text-color);
+        color: var(--theme-color-black);
         text-decoration: none;
       }
 
       paper-submenu {
-	      text-transform: capitalize;
-	      color: var(--theme-primary-text-color);
-	      font-weight: 100 !important;
+        text-transform: capitalize;
+        font-weight: 100 !important;
       }
 
       paper-submenu .menu-content {
-        background-color: var(--theme-color-background-tertiary);
+        background-color: var(--theme-color-monochrome-2);
         padding: 0;
       }
 
       dorel-tab {
-        padding: 0 var(--theme-component-space-inner);
+        padding: 0 var(--theme-scale-3);
         text-transform: capitalize;
         height: 1.5rem;
       }
@@ -82,7 +84,7 @@
       paper-submenu a:hover,
       .sub-menu a:hover,
       paper-submenu:hover {
-        color: var(--theme-color-hover);
+        color: var(--theme-color-text-link-active);
         cursor: pointer;
       }
 
@@ -95,14 +97,19 @@
         display: inline-block;
       }
 
+      iron-icon {
+        padding-left: var(--theme-scale-1);
+        margin-top: -2px;
+      }
+
     </style>
 
     <iron-media-query query="(max-width : 767px)"
-      query-matches="{{ screenSmall }}"></iron-media-query>
+                      query-matches="{{ screenSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ screenMedium }}"></iron-media-query>
+                      query-matches="{{ screenMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px)"
-      query-matches="{{ screenMediumUp }}"></iron-media-query>
+                      query-matches="{{ screenMediumUp }}"></iron-media-query>
 
     <!-- Desktop sub -->
     <template is="dom-if" if="{{ screenMediumUp }}">
@@ -138,9 +145,9 @@
                 items="[[ menuItem.children ]]"
                 as="child">
                 <li>
-                    <a href="[[ child.url ]]" on-click="menuItemClicked">
-                      <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
-                    </a>
+                  <a href="[[ child.url ]]" on-click="menuItemClicked">
+                    <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
+                  </a>
                 </li>
               </template>
             </ul>
@@ -153,7 +160,7 @@
     <template is="dom-if" if="{{ !screenMediumUp }}">
       <paper-submenu opened$="{{ thisOpened }}">
         <paper-item class="menu-trigger layout horizontal justified"
-          on-click="dropdownToggle">
+                    on-click="dropdownToggle">
           <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
           <template
             is="dom-if"
@@ -175,7 +182,7 @@
             items="[[ menuItem.children ]]"
             as="child">
             <a href="[[ child.url ]]" title="[[ child.title ]]"
-              on-click="menuItemClicked">
+               on-click="menuItemClicked">
               <paper-item>
                 <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
               </paper-item>
@@ -266,7 +273,7 @@
        *
        * example: search is opened, it should then close the sub menu
        */
-      _closeThisOpened: function(newVal, oldVal) {
+      _closeThisOpened: function (newVal, oldVal) {
         // if undefined or true stop script
         if (typeof newVal === 'undefined' || newVal) return;
 
@@ -279,7 +286,7 @@
        * @description observer for the activeId variable, it is used to set the
        * thisOpened variable
        */
-      _setThisOpened: function(activeId) {
+      _setThisOpened: function (activeId) {
         // activeId or menuItem not defined stop script
         if (typeof activeId === 'undefined' || typeof this.menuItem === 'undefined') return;
 
@@ -287,7 +294,7 @@
         if (activeId === this.menuItem.ID) {
           this.thisOpened = !this.thisOpened;
 
-        // if activeId and menuItem are not the same always set thisOpened to false
+          // if activeId and menuItem are not the same always set thisOpened to false
         } else if (activeId !== this.menuItem.ID) {
           this.thisOpened = false;
         }
@@ -297,7 +304,7 @@
        * @name dropdownToggle
        * @description When a dropdown item is clicked this will be triggered
        */
-      dropdownToggle: function(event) {
+      dropdownToggle: function (event) {
         // disable href, if set
         event.preventDefault();
 
@@ -317,19 +324,19 @@
         if (typeof self.activeId === 'undefined') {
           self.subMenuOpened = !self.subMenuOpened;
 
-        /**
-         * if the activeId is not the same as the menuItem.ID it means
-         * not this menu item is currently active but it should become active
-         * this is why the subMenuOpened should always be set to true (or stay true)
-         */
+          /**
+           * if the activeId is not the same as the menuItem.ID it means
+           * not this menu item is currently active but it should become active
+           * this is why the subMenuOpened should always be set to true (or stay true)
+           */
         } else if (self.activeId !== self.menuItem.ID) {
           self.subMenuOpened = true;
 
-        /**
-         * if the activeId is the same as the menuItem.ID we know for sure
-         * someone wants to 'close' the active open submenu and thats why we
-         * set the subMenuOpened to false in this case
-         */
+          /**
+           * if the activeId is the same as the menuItem.ID we know for sure
+           * someone wants to 'close' the active open submenu and thats why we
+           * set the subMenuOpened to false in this case
+           */
         } else if (self.activeId === self.menuItem.ID) {
           self.subMenuOpened = false;
         }
@@ -346,7 +353,7 @@
         /**
          * event listener to disable submenu on scroll
          */
-        window.onscroll = function(events) {
+        window.onscroll = function (events) {
           self.subMenuOpened = false;
         }
       },
@@ -356,7 +363,7 @@
        * @description function to set the activeId variable/attribute to the
        * one that is clicked
        */
-      setActiveId: function() {
+      setActiveId: function () {
         this.activeId = (this.subMenuOpened) ? this.menuItem.ID : null;
       },
 
@@ -364,7 +371,7 @@
        * @name menuItemClicked
        * @description this function will reset all states to the default (false)
        */
-      menuItemClicked: function(event) {
+      menuItemClicked: function (event) {
         // reset all handlers
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
@@ -379,7 +386,7 @@
        * @name _eventTracking
        * @description sets the right properties for event tracking
        */
-      _eventTracking: function(event, type) {
+      _eventTracking: function (event, type) {
         /**
          * define element (mobile and desktop are different elements)
          * for mobile this should be parentNode, for desktop localTarget

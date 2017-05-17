@@ -10,52 +10,33 @@
 <dom-module id="dorel-header">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      /* 
-       * header-top
-       * @description: header-top is the grey top bar that holds the mobile
-       * menu button and support and cart buttons on desktop
-       */
-      .header-top {
-        background-color: var(--theme-color-background-tertiary);
-        padding: 5px var(--theme-component-space-inner);
-      }
-
-      .header-items {
-	      position: relative;
-        background-color: var(--theme-white);
-        min-height: 117px;
-      }
-
-      .header-item-logo {
-				padding-right: var(--theme-component-space-inner);
-      }
-
-      .header-item-menu {
-        margin: 0 auto;
-      }
-
       .header-items {
         position: relative;
+        background-color: var(--theme-color-white);
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
 
       .header-items::before {
-				content: "";
-				position: absolute;
-				bottom: -.6rem;
-				left: 0;
-				height: 10px;
-				z-index: 2;
-				width: 100%;
+        content: "";
+        position: absolute;
+        bottom: calc(-1 * var(--theme-scale-2));
+        left: 0;
+        height: var(--theme-scale-2);
+        z-index: 2;
+        width: 100%;
 
-				/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.13+0,0+100 */
-				background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6-15 */
-				background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* Chrome10-25,Safari5.1-6 */
-				background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
-			}
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.13+0,0+100 */
+        background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
+      }
+
+      .header-item-menu {
+        margin: 0 auto;
+      }
 
       /* 
        * screen small order:        
@@ -68,31 +49,34 @@
         order: 1;
       }*/
 
-
       header[screenSmall] .header-item-logo {
         order: 4;
         /* center the logo */
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
-	      padding: var(--theme-component-space-inner);
       }
+
       header[screenSmall] .header-item-menu {
         order: 1;
       }
+
       header[screenSmall] .header-item-user-tools {
         order: 2;
       }
+
       header[screenSmall] .header-item-search-drawer {
         order: 3;
       }
+
       header[screenSmall] .header-items {
         @apply(--layout-vertical);
         @apply(--layout-end-justified);
       }
+
       header[screenSmall] dorel-user-tools {
-        background-color: var(--theme-color-background-tertiary);
         @apply(--layout-horizontal);
         @apply(--layout-justified);
+        background-color: var(--theme-color-monochrome-2);
       }
 
       /* 
@@ -107,19 +91,23 @@
         @apply(--layout-center);
         @apply(--layout-wrap);
         @apply(--layout-around-justified);
-	      padding: var(--theme-component-space-inner);
       }
+
       header[screenMedium] .header-item-logo {
         order: 1;
       }
+
       header[screenMedium] .header-item-menu {
         @apply(--layout-wrap);
         order: 4;
+        padding: 0 0 var(--theme-scale-3) 0;
       }
+
       header[screenMedium] .header-item-user-tools {
         @apply(--layout-wrap);
         order: 2;
       }
+
       header[screenMedium] .header-item-search-drawer {
         order: 3;
       }
@@ -142,37 +130,35 @@
       header[screenLargeUp] .header-items {
         /* layout horizontal header-main */
         @apply(--layout-horizontal);
-        /* @apply(--layout-justified); */
         @apply(--layout-wrap);
         @apply(--layout-center);
-	      padding: var(--theme-component-space-inner);
-
       }
+
       header[screenLargeUp] .header-contain-main-elements {
         @apply(--layout-horizontal);
         @apply(--layout-justified);
       }
 
-	    header[screenMedium] .header-item-user-tools {
-		    margin-left: auto;
-	    }
+      header[screenMedium] .header-item-user-tools {
+        margin-left: auto;
+      }
     </style>
 
     <!-- static beginning AND end media queries -->
     <!--iron-media-query query="(max-width : 479px)" 
       query-matches="{{ screenExtraSmall }}"></iron-media-query-->
     <iron-media-query query="(max-width : 767px)"
-      query-matches="{{ screenSmall }}"></iron-media-query>
+                      query-matches="{{ screenSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ screenMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopLarge }}"></iron-media-query>
+                      query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopLarge }}"></iron-media-query>
 
     <!-- screen up media query's  -->
     <iron-media-query query="(min-width : 768px)"
-      query-matches="{{ screenMediumUp }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px)" 
-      query-matches="{{ screenLargeUp }}"></iron-media-query>
+                      query-matches="{{ screenMediumUp }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px)"
+                      query-matches="{{ screenLargeUp }}"></iron-media-query>
     <!--iron-media-query query="(min-width : 1200px)" 
       query-matches="{{ screenExtraLargeUp }}"></iron-media-query-->
 
@@ -196,7 +182,7 @@
         <div class="header-item header-item-logo">
           <div>
             <a href="/" aria-label="Maxi Cosi"
-              on-click="logoClicked">
+               on-click="logoClicked">
               <dorel-logo></dorel-logo>
             </a>
           </div>
@@ -210,14 +196,14 @@
         </div>
 
         <div class="header-item header-item-user-tools">
-          <dorel-user-tools 
-            search-opened="{{ searchOpened }}" 
+          <dorel-user-tools
+            search-opened="{{ searchOpened }}"
             sub-menu-opened="{{ subMenuOpened }}"
             mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-user-tools>
         </div>
-        
+
         <div class="header-item header-item-search-drawer">
-          <dorel-search-drawer 
+          <dorel-search-drawer
             search-opened="{{ searchOpened }}"
             sub-menu-opened="{{ subMenuOpened }}"
             mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-search-drawer>
@@ -243,7 +229,7 @@
         loadComplete: {
           type: Boolean
         },
-        
+
         /**
          * @attribute
          * @name page
@@ -271,7 +257,7 @@
           type: Boolean
         },
 
-        
+
         /**
          * @exposed
          * @name mobileMenuOpened
@@ -286,7 +272,7 @@
        * @name logoClicked
        * @description handle the clicks on the logo
        */
-      logoClicked: function(event) {
+      logoClicked: function (event) {
 
         // track this event
         this._eventTracking(event);
@@ -297,7 +283,7 @@
        * @name _eventTracking
        * @description sets the right properties for event tracking
        */
-      _eventTracking: function(event) {
+      _eventTracking: function (event) {
 
         Polymer.globalsManager.set('Dorel.events', {
           action: 'switch',
@@ -309,7 +295,7 @@
             'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
           }
         });
-        
+
       }
     });
   </script>
