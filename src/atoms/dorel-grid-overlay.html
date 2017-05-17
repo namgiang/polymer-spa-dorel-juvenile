@@ -1,9 +1,9 @@
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../templates/component-guide/dorel-component-guide-shared-styles.html">
 <link rel="import" href="../themes/theme-maxi-cosi-shared-styles.html">
 
 <dom-module id="dorel-grid-overlay">
   <template>
-    <style include="theme-maxi-cosi-new"></style>
     <style include="dorel-component-guide-shared-styles"></style>
     <style>
       .vertical-rhythm {
@@ -13,7 +13,7 @@
         bottom: 0;
         width: 100%;
         opacity: 0;
-        z-index: 1;
+        z-index: 10000;
         height: 100%;
         background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAYAAADQ+yzZAAAAF0lEQVQYV2NkgALG4cEoLy//39nZyQgAHvQEGSEIElQAAAAASUVORK5CYII=);
         transition: opacity .5s ease;
@@ -32,7 +32,7 @@
         width: 100%;
         height: 100%;
         opacity: 0;
-        z-index: 1;
+        z-index: 10000;
         transition: opacity .5s ease;
         pointer-events: none;
       }
@@ -131,6 +131,37 @@
   <script>
     Polymer({
       is: 'dorel-grid-overlay',
+      behaviors: [
+        Polymer.IronA11yKeysBehavior
+      ],
+      properties: {
+        keyEventTarget: {
+          type: Object,
+          value: function () {
+            return document.body;
+          }
+        }
+      },
+      keyBindings: {
+        'shift+backspace': '_setVerticalRhythm',
+        'shift+enter': '_setHorizontalGrid',
+      },
+      /**
+       * @name _setVerticalRhythm
+       * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
+       */
+      _setVerticalRhythm: function () {
+        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
+        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
+      },
+      /**
+       * @name _setHorizontalGrid
+       * @description Toggles the horizontal grid global variable (and it's connected overlay component)
+       */
+      _setHorizontalGrid: function () {
+        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
+        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+      },
     });
   </script>
 
