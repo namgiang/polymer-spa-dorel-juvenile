@@ -1,9 +1,9 @@
 <link rel="import" href="../atoms/dorel-cta.html">
 
-<dom-module id="dorel-section-indigo">
+<dom-module id="dorel-section-hero-header">
 	<template>
 		<style>
-			.section-indigo {
+			.section-hero-header {
 				width: 100%;
 				display: flex;
 				justify-content: center;
@@ -28,7 +28,7 @@
 			}
 
 			.title-line {
-				max-width: var(--theme-indigo-title-width);
+				max-width: var(--theme-hero-header-title-width);
 				display: block;
 				display: block;
 				margin: auto;
@@ -70,7 +70,7 @@
 				background: linear-gradient(to right, rgba(255, 255, 255, 0) 1%, rgba(255, 255, 255, 0.02) 4%, rgba(255, 255, 255, 0.75) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 			}
 
-			.section-indigo[mobile-small] .image:before, .section-indigo[mobile-medium] .image:before {
+			.section-hero-header[mobile-small] .image:before, .section-hero-header[mobile-medium] .image:before {
 				width: 100%;
 				background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0) 48%, rgba(118, 219, 247, 0.85) 100%); /* FF3.6-15 */
 				background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0) 48%, rgba(118, 219, 247, 0.85) 100%); /* Chrome10-25,Safari5.1-6 */
@@ -91,7 +91,7 @@
         bottom: 90px;
       }
 
-			.section-indigo[mobile-small] .content-wrapper, .section-indigo[mobile-medium] .content-wrapper {
+			.section-hero-header[mobile-small] .content-wrapper, .section-hero-header[mobile-medium] .content-wrapper {
 				width: 100%;
 			}
 
@@ -116,35 +116,43 @@
 		<iron-media-query query="(min-width : 480px) and (max-width : 767px)"
 		                  query-matches="{{ mobileMedium }}"></iron-media-query>
 
-		<section class="section-indigo"
+		<section class="section-hero-header"
 		         mobile-small$="{{ mobileSmall }}"
 		         mobile-medium$="{{ mobileMedium }}">
 			<div class="container">
 				<div class="image-wrapper skew">
           <iron-image class="image skew-reset"
-                      sizing="cover"
-                      fade="true"
-                      preload
-                      placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                      src$="[[ indigoData.background_image ]]">
+            sizing="cover"
+            fade="true"
+            preload
+            placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+            src$="[[ heroHeaderData.background_image ]]">
           </iron-image>
 				</div>
         <div class="content-wrapper"
              mobile-small$="{{ mobileSmall }}"
 		         mobile-medium$="{{ mobileMedium }}">
-					<template is="dom-if" if="{{ hasValue(indigoData.title) }}">
+					<template is="dom-if" if="{{ hasValue(heroHeaderData.title) }}">
             <h1 class="title">
-              <span class="title-line">[[ indigoData.title ]]</span>
+              <span class="title-line">[[ heroHeaderData.title ]]</span>
             </h1>
 					</template>
+
+
+          <template is="dom-if" if="{{ hasValue(heroHeaderData.sub_title) }}">
+            <h2 class="title">
+              <span class="title-line">[[ heroHeaderData.sub_title ]]</span>
+            </h2>
+          </template>
+
           <template
             is="dom-if"
-            if="[[ indigoData.content_column_cta_toggle ]]">
+            if="[[ heroHeaderData.cta_toggle ]]">
             <div class="">
             <dorel-cta
-              type="[[ indigoData.content_column_cta_type ]]"
-              link="[[ indigoData.content_column_cta_href ]]">
-                [[ indigoData.content_column_cta_text ]]
+              type="primary"
+              link="[[ heroHeaderData.cta_href ]]">
+                [[ heroHeaderData.cta_text ]]
             </dorel-cta>
               </div>
           </template>
@@ -155,16 +163,16 @@
 
 	<script>
 		Polymer({
-			is: 'dorel-section-indigo',
+			is: 'dorel-section-hero-header',
 
 			properties: {
 
 				/**
 				 * @attribute
-				 * @name indigoData
+				 * @name heroHeaderData
 				 * @description all data defined by ACF/Wordpress to build this component
 				 */
-				indigoData: {
+				heroHeaderData: {
 					type: Object,
 					value: function () {
 						return {};

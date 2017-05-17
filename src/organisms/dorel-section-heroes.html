@@ -1,10 +1,10 @@
 <link rel="import" href="../molecules/dorel-card.html">
 
-<dom-module id="dorel-section-hero">
+<dom-module id="dorel-section-heroes">
   <template>
     <style include="iron-flex iron-flex-alignment">
 
-      .section-hero {
+      .section-heroes {
         position: relative;
         height: 750px;
       }
@@ -30,7 +30,7 @@
         margin-top: -10%;
       }
 
-      .section-hero-wrap dorel-card {
+      .section-heroes-wrap dorel-card {
         @apply(--layout-horizontal);
         @apply(--layout-center);
       }
@@ -38,7 +38,7 @@
       /**
       * Hero image styling
       */
-      .section-hero-wrap {
+      .section-heroes-wrap {
         padding: var(--theme-component-space-inner);
         width: calc(100% - 3rem);
         height: 100%;
@@ -49,7 +49,7 @@
         display: flex;
       }
 
-      .section-hero-image-wrapper {
+      .section-heroes-image-wrapper {
         transform: skewY(5deg);
         float: left;
         display: block;
@@ -59,7 +59,7 @@
 
       }
 
-      .section-hero-image {
+      .section-heroes-image {
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -68,15 +68,15 @@
         z-index: -1;
       }
 
-      .section-hero:first-of-type {
+      .section-heroes:first-of-type {
         margin-top: 10%;
       }
 
-      .section-hero:last-of-type {
+      .section-heroes:last-of-type {
         margin-bottom: -10%;
       }
 
-      .section-hero:last-of-type .pull-left,  .section-hero:last-of-type .pull-right {
+      .section-heroes:last-of-type .pull-left,  .section-heroes:last-of-type .pull-right {
         padding-bottom: 10%;
       }
 
@@ -103,7 +103,7 @@
     <iron-media-query query="(min-width : 1200px)" 
       query-matches="{{ desktopFull }}"></iron-media-query>
     
-    <section class="section-heroes"
+    <section class="section-heroeses"
       mobile-small$="{{ mobileSmall }}"
       mobile-medium$="{{ mobileMedium }}"
       tablets$="{{ tablets }}"
@@ -112,33 +112,47 @@
 
       <template
         is="dom-repeat"
-        items="[[ heroData.hero ]]"
+        items="[[ heroesData.heroes ]]"
         as="hero">
-        <div class="section-hero">
-          <div class="section-hero-image-wrapper">
-            <iron-image class="section-hero-image"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="[[ hero.background_image ]]">
+
+        <div class="section-heroes">
+          <div class="section-heroes-image-wrapper">
+
+            <!-- background-image -->
+            <iron-image class="section-heroes-image"
+              sizing="cover"
+              fade="true"
+              preload
+              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+              src$="[[ hero.background_image ]]">
+            </iron-image>
+
+            <!-- overlay image -->
+            <iron-image class="section-heroes-image"
+              sizing="cover"
+              fade="true"
+              preload
+              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+              src$="[[ hero.overlay_image ]]">
             </iron-image>
           </div>
-          <div class="section-hero-wrap">
+          <div class="section-heroes-wrap">
+            <h2>[[ hero.title ]]</h2>
+            <p>[[ hero.sub_title ]]</p>
 
             <template
               is="dom-if"
-              if="[[ hero.card.length ]]">
-                <div class$="pull-[[ hero.card_alignment ]]">
-                  <template
-                    is="dom-repeat"
-                    items="[[ hero.card ]]"
-                    as="card">
-                    <dorel-card card-data="[[ card ]]" skewed></dorel-card>
-                  </template>
-                </div>
+              if="[[ hero.cta_toggle ]]">
+              <div class="">
+                <dorel-cta
+                  type="primary"
+                  link="[[ hero.cta_href ]]">
+                    [[ hero.cta_text ]]
+                </dorel-cta>
+              </div>
             </template>
 
+          </template>
           </div>
         </div>
 
@@ -148,16 +162,16 @@
   <script>
 
     Polymer({
-      is: 'dorel-section-hero',
+      is: 'dorel-section-heroes',
 
       properties: {
 
         /**
          * @attribute
-         * @name heroData
+         * @name heroesData
          * @description all info from the page-builder needed for the hero component
          */
-        heroData: {
+        heroesData: {
           type: Object,
           value: function() {
             return {};
