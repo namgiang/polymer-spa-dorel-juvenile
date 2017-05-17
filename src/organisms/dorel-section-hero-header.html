@@ -44,15 +44,13 @@
       }
 
       .content {
+        @apply(--theme-grid-column);
         position: absolute;
         bottom: 4.5em;
         right: var(--theme-column-width);
         text-align: right;
         padding: 0 3em;
-      }
-
-      .content-wrapper[mobile-small], .content-wrapper[mobile-medium] {
-        padding: var(--theme-gutter-mobile);
+        margin-top: 0;
       }
 
       dorel-cta {
@@ -60,14 +58,64 @@
         margin-top: 1.5em;
       }
 
-      /*.section-indigo[mobile-small] .content-wrapper, .section-indigo[mobile-medium] .content-wrapper {
-        width: 100%;
-      } */
+      /* Responsive behaviour */
+      [mobile-medium] .content {
+        bottom: 3em;
+      }
 
-      /*dorel-cta {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
-      } */
+      [mobile-medium] dorel-cta {
+        margin-top: 0;
+      }
+
+      [mobile-medium] .image {
+        height: 25.5em;
+      }
+
+      [mobile-medium] .title, [mobile-small] .title {
+        @apply(--theme-typography-6);
+        margin-top: 0;
+      }
+
+      [mobile-medium] .subtitle, [mobile-small] .subtitle {
+        @apply(--theme-typography-3);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+      }
+
+      [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
+        padding: var(--theme-gutter-mobile);
+      }
+
+      [mobile-small] {
+        @apply(--layout-vertical);
+      }
+
+      [mobile-small] .content, [mobile-small] .content-wrapper {
+        position: initial;
+      }
+
+      [mobile-small] .content {
+        text-align: center;
+        padding: 0;
+        margin: .875em 0;
+      }
+
+      [mobile-small] .image {
+        height: 13.5em;
+      }
+
+      [mobile-small] .title, [mobile-small] .subtitle {
+        color: var(--theme-brand-color-2);
+        text-shadow: none;
+      }
+
+      [mobile-small] dorel-cta {
+        position: absolute;
+        top: 7.5em;
+        right: 0.75em;
+        margin-top: 0;
+      }
+
 
     </style>
 
@@ -76,40 +124,6 @@
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
-
-    <!-- <section class="section-hero-header"
-             mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}">
-
-      <iron-image class="image"
-                  sizing="cover"
-                  fade="true"
-                  preload
-                  placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                  src$="[[ indigoData.background_image ]]">
-      </iron-image>
-      <div class="content-wrapper"
-           mobile-small$="{{ mobileSmall }}"
-           mobile-medium$="{{ mobileMedium }}">
-        <div class="content">
-          <template is="dom-if" if="{{ hasValue(indigoData.title) }}">
-            <h1 class="title">[[ indigoData.title ]]</h1>
-          </template>
-          <h2 class="subtitle">Mobility solutions by Maxi-Cosi</h2>
-          <dorel-cta icon="dorel-icons:play-circle-outline">Watch video</dorel-cta>
-          <template
-            is="dom-if"
-            if="[[ indigoData.content_column_cta_toggle ]]">
-            <div class="">
-              <dorel-cta
-                type="[[ indigoData.content_column_cta_type ]]"
-                link="[[ indigoData.content_column_cta_href ]]">
-                [[ heroHeaderData.content_column_cta_text ]]
-              </dorel-cta>
-            </div>
-          </template>
-        </div>
-    </section> -->
 
     <section class="section-hero-header"
              mobile-small$="{{ mobileSmall }}"
@@ -122,9 +136,7 @@
                   placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
                   src$="[[ heroHeaderData.background_image ]]"></iron-image>
 
-      <div class="content-wrapper"
-           mobile-small$="{{ mobileSmall }}"
-           mobile-medium$="{{ mobileMedium }}">
+      <div class="content-wrapper">
         <div class="content">
           <template is="dom-if" if="{{ hasValue(heroHeaderData.title) }}">
             <h1 class="title">[[ heroHeaderData.title ]]</h1>
