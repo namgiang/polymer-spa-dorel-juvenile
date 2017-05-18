@@ -4,11 +4,17 @@
 <dom-module id="dorel-footer">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      /**
-       * footer wrapper
-       */
       footer {
         background-color: var(--theme-brand-color-2);
+        padding: var(--theme-gutter);
+        float: left;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      footer[screen-small] {
+        padding: var(--theme-gutter) var(--theme-gutter-mobile);
       }
 
       /**
@@ -18,6 +24,7 @@
         @apply(--theme-typography-2);
         color: var(--theme-color-white);
         text-decoration: none;
+        margin-top: 0;
       }
 
       .footer-disclaimer {
@@ -31,7 +38,7 @@
         color: var(--theme-brand-color-1);
       }
 
-      /** 
+      /**
        * Social media(wrapper)
        */
       .footer-media-links {
@@ -63,12 +70,17 @@
         padding: 0;
       }
 
-
       .footer-menu {
         @apply(--theme-grid-column);
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
         flex-basis: calc(var(--theme-column-width) * 2);
         max-width: calc(var(--theme-column-width) * 2);
+      }
+
+      [screen-medium] .footer-menu {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
       }
 
       /* lists not enumerated */
@@ -81,65 +93,35 @@
         color: var(--theme-color-white);
       }
 
-      /**
-       * MOBILE BREAKPOINT
-       */
-      footer[mobile] {
-        @apply(--theme-grid-row-mobile);
-        padding-top: 1.5em;
-        padding-bottom: 1.5em;
-      }
-
-      footer[mobile] .footer-media-link {
-      }
-
-      footer[mobile] .footer-media-link span {
-        display: none;
-      }
-
-      footer[mobile] .footer-menu {
-        padding: 0;
-      }
-
-      footer[mobile] .footer-menu li {
-        padding: .75em 0;
-      }
-
-      /**
-       * LAYOUTWIDE BREAKPOINT
-       */
-      footer[layout-wide] {
+      /* Layout */
+      .footer-info {
         @apply(--theme-grid-row);
-
       }
 
-      footer[layout-wide] .footer-info {
-        @apply(--layout-horizontal);
-        width: 100%;
-      }
-
-      footer[layout-wide] .footer-menu {
-        @apply(--layout-flex);
-      }
-
-      footer[layout-wide] .footer-disclaimer {
-        @apply(--layout-flex-3);
-      }
-
-      footer[mobile] .footer-menu {
+      /* Mobile layout */
+      [screen-small] .footer-menu {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
         max-height: 3em;
         overflow: hidden;
         border-bottom: 1px solid var(--theme-color-white);
         box-sizing: border-box;
         transition: max-height .3s ease-in-out;
         max-width: 100%;
+        margin-top: 0;
+        padding: 0;
       }
 
-      footer[mobile] .footer-menu.open {
+      [screen-small] .footer-info {
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      [screen-small] .footer-menu.open {
         max-height: 1000px !important;
       }
 
-      footer[mobile] .footer-menu .footer-heading {
+      [screen-small] .footer-menu .footer-heading {
         color: var(--theme-color-white);
         height: 3em;
         line-height: 3em;
@@ -148,11 +130,15 @@
         cursor: pointer;
       }
 
-      footer[mobile] ul {
+      [screen-small] ul {
         margin: 0 0 1.5em 0;
       }
 
-      footer[mobile] .footer-menu .footer-heading::before {
+      [screen-small] li {
+        padding: .75em 0;
+      }
+
+      [screen-small] .footer-menu .footer-heading::before {
         content: '';
         position: absolute;
         bottom: 1rem;
@@ -166,58 +152,27 @@
         transition: transform .3s ease;
       }
 
-      footer[mobile] .footer-menu.open .footer-heading::before {
+      [screen-small] .footer-menu.open .footer-heading::before {
         transform: rotate(135deg) translate(0.375rem, -0.375rem);
       }
+
     </style>
 
-    <iron-media-query query="(min-width:768px)" query-matches="{{ layoutWide }}"></iron-media-query>
-    <iron-media-query query="(max-width:767px)" query-matches="{{ mobile }}"></iron-media-query>
+    <iron-media-query query="(max-width : 767px)"
+                      query-matches="{{ screenSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                      query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopLarge }}"></iron-media-query>
 
-    <footer mobile$="{{ mobile }}" layout-wide$="{{ layoutWide }}">
-
-      <!-- check if we need to show the social links -->
-      <template
-        is="dom-if"
-        if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
-
-        <section class="footer-media-links">
-          <div class="layout horizontal center center-justified">
-
-            <template
-              is="dom-if"
-              if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
-
-              <template
-                is="dom-repeat"
-                items="[[ globals.Dorel.collect.options.footer_social_links ]]"
-                as="social_link">
-
-                <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
-                   on-click="socialClick">
-                  <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"
-                             style="fill:rgb(0, 150, 195)"></iron-icon>
-                  <span>[[ social_link.social_media_text ]]</span>
-                </a>
-
-              </template>
-
-            </template>
-
-            <template
-              is="dom-if"
-              if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
-              <span class="footer-text">Please define your footer social links in the admin area</span>
-            </template>
-
-          </div>
-        </section>
-
-      </template>
+    <footer screen-small$="{{ screenSmall }}"
+            screen-medium$="{{ screenMedium }}"
+            desktop-large$="{{ screenLargeUp }}">
 
       <section id="footer-widget-area" class="footer-info">
         <!-- widget areas are inserted here -->
       </section>
+
 
       <div class="footer-disclaimer">
           <span class="footer-copyright">
