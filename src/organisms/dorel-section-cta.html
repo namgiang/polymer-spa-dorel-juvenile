@@ -3,6 +3,7 @@
     <style include="iron-flex iron-flex-alignment">
       .section-cta {
         padding: 0 var(--theme-gutter) var(--theme-gutter) var(--theme-gutter);
+        margin-top: 1.5em;
         float: left;
         width: 100%;
         box-sizing: border-box;
@@ -12,13 +13,34 @@
         padding: 0 var(--theme-gutter-mobile);
       }
 
-      dorel-cta {
-        padding: 0 .75em;
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
       }
 
-      [mobile-small]  dorel-cta {
-        width: 100%;
+      dorel-cta {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+        margin-top: 0;
+      }
+
+      [mobile-small] dorel-cta, [mobile-medium] dorel-cta {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
         padding: 0;
+      }
+
+      /*[mobile-small] .row, [mobile-medium] .row {
+        margin: 0;
+      }*/
+
+      [mobile-small] .row {
+        margin-right: -0.125em;
+        margin-left: -0.125em;
       }
 
     </style>
@@ -31,32 +53,33 @@
 
     <section class="section-cta layout horizontal center center-justified wrap" mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}">
-      <dorel-cta
-        type="tertiary"
-        link=""
-        size="large"
-        extra-icon="dorel-cta-icons:stroller"
-        icon="dorel-icons:chevron-right">
-        Strollers
-      </dorel-cta>
-      <dorel-cta
-        type="tertiary"
-        link=""
-        size="large"
-        extra-icon="dorel-cta-icons:car-seat"
-        icon="dorel-icons:chevron-right">
-        Car Seats
-      </dorel-cta>
-      <dorel-cta
-        type="tertiary"
-        link=""
-        size="large"
-        extra-icon="dorel-cta-icons:feeding-care"
-        icon="dorel-icons:chevron-right">
-        Feeding & Care
-      </dorel-cta>
+      <div class="row">
+        <dorel-cta
+          type="tertiary"
+          link=""
+          size="large"
+          extra-icon="dorel-cta-icons:stroller"
+          icon="dorel-icons:chevron-right">
+          Strollers
+        </dorel-cta>
+        <dorel-cta
+          type="tertiary"
+          link=""
+          size="large"
+          extra-icon="dorel-cta-icons:car-seat"
+          icon="dorel-icons:chevron-right">
+          Car Seats
+        </dorel-cta>
+        <dorel-cta
+          type="tertiary"
+          link=""
+          size="large"
+          extra-icon="dorel-cta-icons:feeding-care"
+          icon="dorel-icons:chevron-right">
+          Feeding & Care
+        </dorel-cta>
+      </div>
     </section>
-
   </template>
 
   <script>
