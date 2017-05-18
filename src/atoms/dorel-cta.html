@@ -1,10 +1,17 @@
 <dom-module id="dorel-cta">
   <template>
-    <style>
+    <style include="iron-flex">
+
+      :host {
+        width: auto;
+      }
+
       .theme-cta {
         @apply(--theme-button);
         @apply(--theme-button-primary);
         @apply(--theme-button-small);
+        width: 100%;
+
       }
 
       .theme-cta:hover, .theme-cta:focus {
@@ -31,8 +38,13 @@
         @apply(--theme-button-medium);
       }
 
+      .theme-cta--large {
+        @apply(--theme-button-large);
+      }
+
       .theme-cta__content {
-        padding: 0 var(--theme-scale-2);
+        @apply(--layout-flex);
+        padding: 0 0 0 0.5em;
       }
 
       .theme-cta__icon {
@@ -42,13 +54,28 @@
 
       .theme-cta__icon--left {
         width: 5.125em;
-        height: 5.125em;
+        height: 4.125em;
+        margin: .475em 0;
+      }
+
+      [mobile-small] .theme-cta__icon--left {
+        width: 3em;
+        height: 3.0625em;
+        margin: 0;
       }
 
     </style>
 
-    <a href$="{{ link }}" class$="theme-cta theme-cta--{{ type }} theme-cta--{{ size }}"
-       on-click="clickCTA">
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <a href$="{{ link }}"
+       class$="theme-cta theme-cta--{{ type }} theme-cta--{{ size }}"
+       on-click="clickCTA"
+       mobile-small$="{{ mobileSmall }}"
+       mobile-medium$="{{ mobileMedium }}">
       <template is="dom-if" if="[[ extraIcon ]]">
         <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
       </template>
@@ -88,7 +115,7 @@
         /**
          * @attribute
          * @name size
-         * @description defines the size of the CTA. Currently 'small' and 'medium' are supported
+         * @description defines the size of the CTA. Currently 'small', 'medium' and 'large' are supported
          */
         size: {
           type: String,
