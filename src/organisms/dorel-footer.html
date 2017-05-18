@@ -27,6 +27,10 @@
         margin-top: 0;
       }
 
+      iron-icon {
+        fill: var(--theme-brand-color-1);
+      }
+
       .footer-disclaimer {
         margin-top: 1.5em;
       }
@@ -42,19 +46,17 @@
        * Social media(wrapper)
        */
       .footer-media-links {
-        padding: 1.5em;
+        margin: 0 0 1.5em 0;
       }
 
       .footer-media-link {
+        @apply(--theme-typography-1);
+        padding: 0 1em;
         text-align: center;
-        padding: 3px 20px;
-        font-size: 13px;
-        white-space: nowrap;
       }
 
-      .footer-media-link a span {
-        line-height: 24px;
-        margin-left: 8px;
+      .footer-media-link span {
+        margin: 0 .5em;
       }
 
       /**
@@ -97,7 +99,6 @@
       .footer-info {
         @apply(--theme-grid-row);
       }
-
 
       /* Mobile layout */
       [screen-small] .footer-menu {
@@ -175,10 +176,40 @@
             screen-medium$="{{ screenMedium }}"
             desktop-large$="{{ screenLargeUp }}">
 
+      <!-- check if we need to show the social links -->
+      <template
+        is="dom-if"
+        if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
+
+        <section class="footer-media-links layout horizontal center center-justified">
+          <template
+            is="dom-if"
+            if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
+
+            <template
+              is="dom-repeat"
+              items="[[ globals.Dorel.collect.options.footer_social_links ]]"
+              as="social_link">
+              <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
+                 on-click="socialClick">
+                <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"></iron-icon>
+                <span>[[ social_link.social_media_text ]]</span>
+              </a>
+            </template>
+
+          </template>
+          <template
+            is="dom-if"
+            if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
+            <span class="footer-text">Please define your footer social links in the admin area</span>
+          </template>
+        </section>
+
+      </template>
+
       <section id="footer-widget-area" class="footer-info">
         <!-- widget areas are inserted here -->
       </section>
-
 
       <div class="footer-disclaimer">
           <span class="footer-copyright">
