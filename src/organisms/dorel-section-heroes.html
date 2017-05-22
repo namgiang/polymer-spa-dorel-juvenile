@@ -5,157 +5,192 @@
     <style include="iron-flex iron-flex-alignment">
 
       .section-heroes {
-        position: relative;
-        height: 750px;
+        padding: 0 var(--theme-gutter) var(--theme-gutter) var(--theme-gutter);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
       }
 
-      /**
-      * Card layout
-      */
-      .pull-right, .pull-left {
-        width: 50%;
-        min-width: 500px;
-        margin: auto;
+      .section-heroes[mobile-small], .section-heroes[mobile-medium] {
+        padding: 0 var(--theme-gutter-mobile);
       }
 
-      .pull-right {
-        margin-right: 0;
-      }
-
-      .pull-left {
-        margin-left: 0;
-      }
-
-      .pull-left dorel-card {
-        margin-top: -10%;
-      }
-
-      .section-heroes-wrap dorel-card {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-      }
-
-      /**
-      * Hero image styling
-      */
       .section-heroes-wrap {
-        padding: var(--theme-component-space-inner);
-        width: calc(100% - 3rem);
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        display: block;
-        display: flex;
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        position: relative;
       }
 
       .section-heroes-image-wrapper {
-        transform: skewY(5deg);
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 10);
+        flex-basis: calc(var(--theme-column-width) * 10);
+        max-width: calc(var(--theme-column-width) * 10);
         float: left;
-        display: block;
         width: 100%;
-        height: 750px;
-        z-index: -1;
-
+        margin-right: calc(var(--theme-column-width) * 2);
+        margin-top: 3em;
       }
 
       .section-heroes-image {
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
+        float: left;
         width: 100%;
-        height: 110%;
-        z-index: -1;
+        height: 28.5em;
+        border-radius: 2em;
       }
 
-      .section-heroes:first-of-type {
-        margin-top: 10%;
+      .section-heroes-image-overlay {
+        position: absolute;
+        right: 0;
+        width: 10em;
+        height: 28.5em;
+        width: calc(var(--theme-column-width) * 4);
+        top: 10em;
+
+        filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=12, OffY=12, Color='#444') ";
+        filter: url(#drop-shadow);
+        -webkit-filter: drop-shadow(-7px 12px 7px rgba(0, 0, 0, .15));
+        filter: drop-shadow(-7px 12px 7px rgba(0, 0, 0, .15));
       }
 
-      .section-heroes:last-of-type {
-        margin-bottom: -10%;
+      .title {
+        @apply(--theme-typography-7);
+        color: var(--theme-brand-color-1);
       }
 
-      .section-heroes:last-of-type .pull-left,  .section-heroes:last-of-type .pull-right {
-        padding-bottom: 10%;
+      dorel-cta {
+        float: left;
       }
 
-      /**
-      * Responsive definitions
-      */
-      [mobile-small] .pull-right, [mobile-small] .pull-left,
-      [mobile-medium] .pull-right, [mobile-medium] .pull-left {
-        width: 100%;
-        min-width: auto;
+      .description {
+        @apply(--theme-typography-2);
+        max-width: 28em;
+      }
+
+      .description-column {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+        margin-top: 0;
+      }
+
+      [tablets] .description-column {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      [mobile-small] .description-column, [mobile-medium] .description-column {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      .section-heroes-wrap:nth-child(even) .section-heroes-image-wrapper {
+        margin-right: 0;
+        margin-left: calc(var(--theme-column-width) * 2);
+      }
+
+      .section-heroes-wrap:nth-child(even) .section-heroes-image-overlay {
+        right: initial;
+        left: 0;
+      }
+
+      .section-heroes-wrap {
+        margin-bottom: 1.5em;
+      }
+
+      .section-heroes-wrap:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Responsive Behaviour */
+      [mobile-small] .section-heroes-image-overlay,
+      [mobile-medium] .section-heroes-image-overlay,
+      [tablets] .section-heroes-image-overlay {
+        display: none;
+      }
+
+      [mobile-small] .section-heroes-image-wrapper,
+      [mobile-medium] .section-heroes-image-wrapper,
+      [tablets] .section-heroes-image-wrapper {
+        margin-left: 0 !important;
+        margin-right: 0;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        padding: 0 .75em;
+      }
+
+      [mobile-small] .section-heroes-image,
+      [mobile-medium] .section-heroes-image {
+        height: 18em;
+      }
+
+      [tablets] .section-heroes-image {
+        height: 21em;
       }
 
     </style>
-    
+
     <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-    
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+                      query-matches="{{ desktopFull }}"></iron-media-query>
+
     <section class="section-heroes"
-      mobile-small$="{{ mobileSmall }}"
-      mobile-medium$="{{ mobileMedium }}"
-      tablets$="{{ tablets }}"
-      desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}">
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}"
+             desktop-small$="{{ desktopSmall }}"
+             desktop-full$="{{ desktopFull }}">
 
       <template
         is="dom-repeat"
         items="[[ heroesData.heroes ]]"
         as="hero">
-
-        <div class="section-heroes">
+        <div class="section-heroes-wrap layout horizontal center center-justified wrap">
           <div class="section-heroes-image-wrapper">
-
             <!-- background-image -->
             <iron-image class="section-heroes-image"
-              sizing="cover"
-              fade="true"
-              preload
-              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-              src$="[[ hero.background_image ]]">
-            </iron-image>
-
-            <!-- overlay image -->
-            <iron-image class="section-heroes-image"
-              sizing="cover"
-              fade="true"
-              preload
-              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-              src$="[[ hero.overlay_image ]]">
+                        sizing="cover"
+                        fade="true"
+                        preload
+                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                        src$="[[ hero.background_image ]]">
             </iron-image>
           </div>
-          <div class="section-heroes-wrap">
-            <h2>[[ hero.title ]]</h2>
-            <p>[[ hero.sub_title ]]</p>
-
+          <!-- overlay image -->
+          <iron-image class="section-heroes-image-overlay"
+                      sizing="contain"
+                      fade="true"
+                      preload
+                      placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                      src$="[[ hero.overlay_image ]]">
+          </iron-image>
+          <div class="description-column">
+            <h2 class="title">[[ hero.title ]]</h2>
+            <p class="description">[[ hero.sub_title ]]</p>
             <template
               is="dom-if"
               if="[[ hero.cta_toggle ]]">
-              <div class="">
-                <dorel-cta
-                  type="primary"
-                  link="[[ hero.cta_href ]]">
-                    [[ hero.cta_text ]]
-                </dorel-cta>
-              </div>
+              <dorel-cta
+                type="primary"
+                link="[[ hero.cta_href ]]">
+                [[ hero.cta_text ]]
+              </dorel-cta>
             </template>
-
-          </template>
           </div>
         </div>
-
       </template>
     </section>
   </template>
@@ -173,7 +208,7 @@
          */
         heroesData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           }
         }
