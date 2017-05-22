@@ -1,9 +1,9 @@
 <link rel="import" href="../atoms/dorel-content-wrap.html">
 <link rel="import" href="../atoms/dorel-image-wrap.html">
 <link rel="import" href="../atoms/dorel-video-wrap.html">
-<link rel="import" href="../molecules/dorel-card.html">
 <link rel="import" href="../organisms/dorel-section-big-title.html">
 <link rel="import" href="../organisms/dorel-section-big-video.html">
+<link rel="import" href="../organisms/dorel-section-cards.html">
 <link rel="import" href="../organisms/dorel-section-cta.html">
 <link rel="import" href="../organisms/dorel-section-downloads.html">
 <link rel="import" href="../organisms/dorel-section-heroes.html">
@@ -62,19 +62,6 @@
         items="[[ builderData ]]" 
         as="component"
         targetFramerate="1000">
-    
-        
-    
-
-        <!-- dorel card -->
-        <template 
-          is="dom-if" 
-          if="{{ isPageComponent(component.acf_fc_layout, 'card') }}">
-          
-          <dorel-card card-data="[[ component ]]"></dorel-card>
-
-        </template>
-        <!--// dorel card -->
 
 
 
@@ -160,8 +147,22 @@
         <!-- section-cta -->
         <template 
           is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_cards') }}">
+
+          <dorel-section-cards
+            cards-data="[[ component ]]"></dorel-section-cards>
+
+        </template>
+        <!--// section-cta -->
+
+
+
+
+        <!-- section-cta -->
+        <template 
+          is="dom-if" 
           if="{{ isPageComponent(component.acf_fc_layout, 'section_cta') }}">
-          
+
           <dorel-section-cta
             cta-data="[[ component ]]"></dorel-section-cta>
 

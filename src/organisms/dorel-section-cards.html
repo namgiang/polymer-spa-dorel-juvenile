@@ -1,0 +1,60 @@
+<link rel="import" href="../molecules/dorel-card.html">
+
+<dom-module id="dorel-section-cards">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .section-cards {
+        width: 100%;
+      }
+    </style>
+
+    <template
+      is="dom-if"
+      if="[[ cardsData.cards.length ]]">
+
+      <section class="section-cards layout horizontal center center-justified wrap">
+
+        <div class="row">
+          
+          <template
+            is="dom-repeat"
+            items="[[ cardsData.cards ]]"
+            as="card">
+            
+            <dorel-card
+              card-data="[[ card ]]"></dorel-card>  
+
+          </template>
+
+        </div>
+
+      </section>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-cards',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name cardsData
+         * @description all data needed for the cards defined in ACF/Wordpress
+         */
+        cardsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      }
+    });
+
+  </script>
+
+</dom-module>
