@@ -2,93 +2,88 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .section-cta {
-        display: flex;
+        padding: 0 var(--theme-gutter) var(--theme-gutter) var(--theme-gutter);
+        margin-top: 1.5em;
+        float: left;
         width: 100%;
-        position: relative;
-        z-index: 1;
+        box-sizing: border-box;
       }
 
-      .cta-item {
-        display: flex;
-        flex: 1;
+      .section-cta[mobile-small] {
+        padding: 0 var(--theme-gutter-mobile);
       }
 
-      .cta-item-link {
-        @apply(--theme-heading);
-        @apply(--layout-horizontal);
-        @apply(--layout-center-center);
-        font-size: var(--theme-size-subhead);
-        flex: 1;
-        background-color: var(--theme-brand-color);
-        color: var(--theme-white);
-        text-decoration: none;
-        transition: .3s ease background-color;
-        min-height: 164px;
-        padding: var(--theme-component-space-inner);
-        text-align: center;
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
       }
 
-      .cta-item-link:hover, .cta-item-link:focus {
-        background-color: var(--theme-color-text-link-active);
+      dorel-cta {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+        margin-top: 0;
       }
 
-      .cta-item-img {
-        flex: 1;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        min-height: 164px;
+      [mobile-small] dorel-cta, [mobile-medium] dorel-cta {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        padding: 0;
       }
 
-      .chevron {
-        margin-top: 4px;
-        --iron-icon-height: var(--theme-component-space-inner-medium);
-        --iron-icon-width: var(--theme-component-space-inner-medium);
+      /*[mobile-small] .row, [mobile-medium] .row {
+        margin: 0;
+      }*/
+
+      [mobile-small] .row {
+        margin-right: -0.125em;
+        margin-left: -0.125em;
       }
 
-      /* Responsive behaviour */
-      .section-cta[mobile-small] , .section-cta[mobile-medium] {
-        display: block;
-      }
-
-      [mobile-small] .cta-item, [mobile-medium]  .cta-item{
-        display: flex;
-        width: 100%;
-      }
-
-      [mobile-small] .cta-item:nth-child(odd) .cta-item-link, [mobile-medium]  .cta-item:nth-child(odd) .cta-item-link {
-        order: 1;
-      }
     </style>
-    
+
     <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    
-    <section class="section-cta" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}">
-        <template
-          is="dom-repeat"
-          items="[[ ctaData.cta ]]"
-          as="cta">
-          <div class="cta-item">
-            <a class="cta-item-link"  href="[[ cta.cta_link ]]" on-click="clickCTA">
-              [[ cta.cta_text ]] <iron-icon class="chevron" icon="dorel-icons:chevron-right"></iron-icon>
-            </a>
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
 
-            <iron-image class="cta-item-img"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="[[ cta.cta_image ]]">
-            </iron-image>
+    <template
+      is="dom-if"
+      if="[[ ctaData.ctas.length ]]">
 
-          </div>
-        </template>
+      <section class="section-cta layout horizontal center center-justified wrap"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}">
 
-    </section>
+        <div class="row">
+          
+          <template
+            is="dom-repeat"
+            items="[[ ctaData.ctas ]]"
+            as="cta">
+            
+            <dorel-cta
+              type="tertiary"
+              link="[[ cta.cta_link ]]"
+              link-target="[[ cta.cta_link_target ]]"
+              size="large"
+              extra-icon="dorel-cta-icons:[[ cta.cta_icon ]]"
+              icon="dorel-icons:chevron-right">
+              [[ cta.cta_text ]]
+            </dorel-cta>  
+
+          </template>
+
+        </div>
+
+      </section>
+
+    </template>
+
   </template>
 
   <script>
@@ -104,7 +99,7 @@
          */
         ctaData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           }
         }
@@ -115,7 +110,7 @@
        * @name clickCTA
        * @description handle the click event of the CTA
        */
-      clickCTA: function(event) {
+      clickCTA: function (event) {
 
         // Track the click event
         this._eventTracking(event);
@@ -123,14 +118,14 @@
 
       /**
        * @name _eventTracking
-       * @description this is for cta tracking only 
+       * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function(event) {
+      _eventTracking: function (event) {
 
         var globals = Polymer.globalsManager.get('Dorel');
 
-        /** 
+        /**
          * Tracking on click for cta
          */
         Polymer.globalsManager.set('Dorel.events', {
