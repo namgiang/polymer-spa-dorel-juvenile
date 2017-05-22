@@ -53,97 +53,49 @@
       }
     </style>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)"
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)"
-      query-matches="{{ desktopFull }}"></iron-media-query>
 
-    <template
-      is="dom-if"
-      if="{{ hasValue(skewed) }}">
+    <div class="card">
+      <!-- cardTitle -->
+      <template
+        is="dom-if"
+        if="{{ hasValue(cardData.card_image) }}">
+        <img src="[[ cardData.card_image ]]" alt="" title="" width="150" />
+      </template>
+      <!--// cardTitle -->
 
-      <div class="card"
-           mobile-small$="{{ mobileSmall }}"
-           mobile-medium$="{{ mobileMedium }}"
-           tablets$="{{ tablets }}"
-           desktop-small$="{{ desktopSmall }}"
-           desktop-full$="{{ desktopFull }}">
-        <div class="card-wrap">
+      <!-- cardTitle -->
+      <template
+        is="dom-if"
+        if="{{ hasValue(cardData.card_title) }}">
+        <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
+      </template>
+      <!--// cardTitle -->
 
-        <!-- cardTitle -->
-        <template
-          is="dom-if"
-          if="{{ hasValue(cardData.card_title) }}">
-          <h2 class="theme-headline">[[ cardData.card_title ]]</h2>
-        </template>
-        <!--// cardTitle -->
+      <!-- cardContent -->
+      <template
+        is="dom-if"
+        if="{{ hasValue(cardData.card_text) }}">
+        <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+      </template>
+      <!--// cardContent -->
 
-        <!-- cardContent -->
-        <template
-          is="dom-if"
-          if="{{ hasValue(cardData.card_text) }}">
-          <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
-        </template>
-        <!--// cardContent -->
+      <!-- ctaToggle -->
+      <template
+        is="dom-if"
+        if="{{ hasValue(cardData.cta_toggle) }}">
+        <dorel-cta
+          type="tertiary"
+          link="[[ cardData.cta_link ]]"
+          link-target="[[ cardData.cta_link_target ]]"
+          size="small"
+          icon="dorel-icons:chevron-right">
+            [[ cardData.cta_text ]]
+          </dorel-cta>  
+      </template>
+      <!--// ctaToggle -->
 
-        <!-- ctaToggle -->
-        <template
-          is="dom-if"
-          if="{{ hasValue(cardData.card_cta_toggle) }}">
-          <dorel-cta type="[[ cardData.card_cta_type ]]" link="[[ cardData.card_cta_link ]]">
-            [[ cardData.card_cta_text ]]
-          </dorel-cta>
-          </div>
-        </template>
-        <!--// ctaToggle -->
+    </div>
 
-        </div>
-      </div>
-
-    </template>
-
-    <template
-      is="dom-if"
-      if="{{ !hasValue(skewed) }}">
-
-      <div class="card">
-
-        <!-- cardTitle -->
-        <template
-          is="dom-if"
-          if="{{ hasValue(cardData.card_title) }}">
-          <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
-        </template>
-        <!--// cardTitle -->
-
-        <!-- cardContent -->
-        <template
-          is="dom-if"
-          if="{{ hasValue(cardData.card_text) }}">
-          <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
-        </template>
-        <!--// cardContent -->
-
-        <!-- ctaToggle -->
-        <template
-          is="dom-if"
-          if="{{ hasValue(cardData.card_cta_toggle) }}">
-          <dorel-cta
-            type="[[ cardData.card_cta_type ]]"
-            link="[[ cardData.card_cta_link ]]">[[ cardData.card_cta_text ]]</dorel-cta>
-        </template>
-        <!--// ctaToggle -->
-
-      </div>
-
-    </template>
   </template>
 
   <script>
@@ -160,19 +112,10 @@
          */
         cardData: {
           type: Object
-        },
-
-        /**
-         * @attribute
-         * @name skewed
-         * @description attribute to determine styling skewed
-         */
-        skewed: {
-          type: Boolean
         }
 
       },
-
+      
       /**
        * @name hasValue
        * @description checks to see if a value is not empty, undefined or null
