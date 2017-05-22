@@ -3,97 +3,99 @@
 <dom-module id="dorel-card">
   <template>
     <style include="iron-flex">
-			.card {
-        width: 65%;
-        margin: auto;
-				padding: 2.25rem;
-				position: relative;
-				z-index: 1;
-			}
-			/*
-			* Firefox rendering fix: The skewed container is now placed in a psuedo-selector behind actual content.
-			* The Skew/Unskew method can create ugly text-rendering in Firefox, and unpredictable behaviour or appearance
-			* of nested sub-elements.
-			*/
-			.card::before {
-				background-color: rgba(255, 255, 255, .8);
-				border-radius: 45px;
-				transform: skewY(-4deg) translateZ(-1px);
-        content: '';
-				width: 100%;
-				height: 100%;
-				position: absolute;
-				left: 0;
-				top: 0;
-				display: block;
-				/* Safari rendering fix: The negative z-index places the background behind the content */
-				z-index: -1;
-			}
+      .card {
+        background-color: var(--theme-color-white);
+        border-radius: .5em;
+        float: left;
+        margin-top: 1.5em;
+        overflow: hidden;
+
+        -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+      }
+
+      .title {
+        @apply(--theme-typography-6);
+        color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
+      }
+
+      .description {
+        @apply(--theme-typography-2);
+        float: left;
+        width: 100%;
+      }
+
+      .card-content {
+        padding: 0 1.5em 1.5em 1.5em;
+        float: left;
+        width: 100%;
+      }
 
       dorel-cta {
-        @apply(--layout-horizontal-reverse);
+        float: left;
       }
 
-      .card-wrap .theme-headline {
-        @apply(--theme-heading);
-        font-size: 2rem;
-        margin: 0;
-      }
-
-      #dorel-card p {
-        margin-bottom: 2.5rem;
-      }
-
-      /**
-      * Responsive definitions
-      */
-      .card[mobile-small], .card[mobile-medium]{
+      .card-image {
         width: 100%;
-        margin: 0;
+        float: left;
+        height: 12em;
       }
+
     </style>
 
 
     <div class="card">
-      <!-- cardTitle -->
+      <!-- cardImage -->
       <template
         is="dom-if"
         if="{{ hasValue(cardData.card_image) }}">
-        <img src="[[ cardData.card_image ]]" alt="" title="" width="150" />
+        <iron-image class="card-image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                    src$="[[ cardData.card_image ]]">
+        </iron-image>
       </template>
-      <!--// cardTitle -->
+      <!--// cardImage -->
 
-      <!-- cardTitle -->
-      <template
-        is="dom-if"
-        if="{{ hasValue(cardData.card_title) }}">
-        <h1 class="theme-headline">[[ cardData.card_title ]]</h1>
-      </template>
-      <!--// cardTitle -->
+      <div class="card-content">
+        <!-- cardTitle -->
+        <template
+          is="dom-if"
+          if="{{ hasValue(cardData.card_title) }}">
+          <h3 class="title">[[ cardData.card_title ]]</h3>
+        </template>
+        <!--// cardTitle -->
 
-      <!-- cardContent -->
-      <template
-        is="dom-if"
-        if="{{ hasValue(cardData.card_text) }}">
-        <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
-      </template>
-      <!--// cardContent -->
+        <!-- cardContent -->
+        <template
+          is="dom-if"
+          if="{{ hasValue(cardData.card_text) }}">
+          <p class="description">
+            <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+          </p>
+        </template>
+        <!--// cardContent -->
 
-      <!-- ctaToggle -->
-      <template
-        is="dom-if"
-        if="{{ hasValue(cardData.cta_toggle) }}">
-        <dorel-cta
-          type="tertiary"
-          link="[[ cardData.cta_link ]]"
-          link-target="[[ cardData.cta_link_target ]]"
-          size="small"
-          icon="dorel-icons:chevron-right">
+        <!-- ctaToggle -->
+        <template
+          is="dom-if"
+          if="{{ hasValue(cardData.cta_toggle) }}">
+          <dorel-cta
+            type="primary"
+            link="[[ cardData.cta_link ]]"
+            link-target="[[ cardData.cta_link_target ]]"
+            size="small"
+            icon="dorel-icons:chevron-right">
             [[ cardData.cta_text ]]
-          </dorel-cta>  
-      </template>
-      <!--// ctaToggle -->
-
+          </dorel-cta>
+        </template>
+        <!--// ctaToggle -->
+      </div>
     </div>
 
   </template>
@@ -115,12 +117,12 @@
         }
 
       },
-      
+
       /**
        * @name hasValue
        * @description checks to see if a value is not empty, undefined or null
        */
-      hasValue: function(val) {
+      hasValue: function (val) {
         return (typeof val !== '' && val !== 'undefined' && val !== null);
       }
     });
