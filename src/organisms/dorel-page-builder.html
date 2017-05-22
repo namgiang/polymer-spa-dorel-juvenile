@@ -9,6 +9,7 @@
 <link rel="import" href="../organisms/dorel-section-heroes.html">
 <link rel="import" href="../organisms/dorel-section-hero-header.html">
 <link rel="import" href="../organisms/dorel-section-multi.html">
+<link rel="import" href="../organisms/dorel-section-product-header.html">
 <link rel="import" href="../organisms/dorel-section-related-accessoiries.html">
 <link rel="import" href="../organisms/dorel-section-showcase.html">
 <link rel="import" href="../organisms/dorel-section-slideshow.html">
@@ -246,6 +247,21 @@
 
 
 
+
+        <!-- section-product-header -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_product_header') }}">
+          
+          <dorel-section-product-header
+            product-header-data="[[ component ]]"></dorel-section-product-header>
+
+        </template>
+        <!--// section-product-header -->
+
+
+
+
         <!-- section-related-accessoiries -->
         <template 
           is="dom-if" 
@@ -458,6 +474,7 @@
 
           return strippedResponse === cname;
         }
+        console.log(response, cname);
 
         // all other cases just compare them
         return response === cname;
