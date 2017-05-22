@@ -51,35 +51,39 @@
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
 
-    <section class="section-cta layout horizontal center center-justified wrap" mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}">
-      <div class="row">
-        <dorel-cta
-          type="tertiary"
-          link=""
-          size="large"
-          extra-icon="dorel-cta-icons:stroller"
-          icon="dorel-icons:chevron-right">
-          Strollers
-        </dorel-cta>
-        <dorel-cta
-          type="tertiary"
-          link=""
-          size="large"
-          extra-icon="dorel-cta-icons:car-seat"
-          icon="dorel-icons:chevron-right">
-          Car Seats
-        </dorel-cta>
-        <dorel-cta
-          type="tertiary"
-          link=""
-          size="large"
-          extra-icon="dorel-cta-icons:feeding-care"
-          icon="dorel-icons:chevron-right">
-          Feeding & Care
-        </dorel-cta>
-      </div>
-    </section>
+    <template
+      is="dom-if"
+      if="[[ ctaData.ctas.length ]]">
+
+      <section class="section-cta layout horizontal center center-justified wrap"
+        mobile-small$="{{ mobileSmall }}"
+        mobile-medium$="{{ mobileMedium }}">
+
+        <div class="row">
+          
+          <template
+            is="dom-repeat"
+            items="[[ ctaData.ctas ]]"
+            as="cta">
+            
+            <dorel-cta
+              type="tertiary"
+              link="[[ cta.cta_link ]]"
+              link-target="[[ cta.cta_link_target ]]"
+              size="large"
+              extra-icon="dorel-cta-icons:[[ cta.cta_icon ]]"
+              icon="dorel-icons:chevron-right">
+              [[ cta.cta_text ]]
+            </dorel-cta>  
+
+          </template>
+
+        </div>
+
+      </section>
+
+    </template>
+
   </template>
 
   <script>
@@ -100,6 +104,10 @@
           }
         }
 
+      },
+
+      ready: function() {
+        console.log(this.ctaData);
       },
 
       /**

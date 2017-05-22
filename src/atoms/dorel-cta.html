@@ -74,21 +74,28 @@
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
-
+  
     <a href$="{{ link }}"
        class$="theme-cta theme-cta--{{ type }} theme-cta--{{ size }}"
-       on-click="clickCTA"
        mobile-small$="{{ mobileSmall }}"
-       mobile-medium$="{{ mobileMedium }}">
-      <template is="dom-if" if="[[ extraIcon ]]">
+       mobile-medium$="{{ mobileMedium }}"
+       target$="[[ _isExternal(linkTarget) ]]"
+       on-click="clickCTA">
+
+      <template 
+        is="dom-if" 
+        if="[[ extraIcon ]]">
         <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
       </template>
 
       <span class="theme-cta__content"><content></content></span>
 
-      <template is="dom-if" if="[[ icon ]]">
+      <template 
+        is="dom-if" 
+        if="[[ icon ]]">
         <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
       </template>
+
     </a>
   </template>
 
@@ -106,6 +113,16 @@
         link: {
           type: String
         },
+        
+        /**
+         * @attribute
+         * @name linkTarget
+         * @description defines the links target (e.g. _blank for opening in new tab)
+         */
+        linkTarget: {
+          type: String,
+          value: ''
+        },
 
         /**
          * @attribute
@@ -116,6 +133,7 @@
           type: String,
           value: 'primary',
         },
+
         /**
          * @attribute
          * @name size
@@ -125,6 +143,7 @@
           type: String,
           value: 'small'
         },
+
         /**
          * @attribute
          * @name icon
@@ -134,6 +153,7 @@
           type: String,
           value: 'dorel-icons:chevron-right',
         },
+
         /**
          * @attribute
          * @name extraIcon
@@ -155,6 +175,16 @@
         this._eventTracking(event);
 
       },
+
+      /**
+       * @name _isExternal
+       * @description define if the target opens in a new tab or not
+       */
+      _isExternal: function (linkTarget) {
+        return (typeof linkTarget === 'undefined' || !linkTarget) ?
+          '_self' : '_blank';
+      },
+
       /**
        * @name _eventTracking
        * @description this is for cta tracking only
