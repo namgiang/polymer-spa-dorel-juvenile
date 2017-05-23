@@ -3,6 +3,10 @@
 <dom-module id="dorel-card">
   <template>
     <style include="iron-flex">
+      :host {
+        @apply(--layout-horizontal);
+      }
+
       .card {
         background-color: var(--theme-color-white);
         border-radius: .5em;
@@ -32,6 +36,7 @@
         padding: 0 1.5em 1.5em 1.5em;
         float: left;
         width: 100%;
+        box-sizing: border-box;
       }
 
       dorel-cta {
@@ -44,10 +49,22 @@
         height: 12em;
       }
 
+      [mobile-small] .title, [mobile-medium] .title {
+        @apply(--theme-typography-5);
+      }
+
     </style>
 
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
 
-    <div class="card">
+
+    <div class="card"
+         mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}">
       <!-- cardImage -->
       <template
         is="dom-if"
