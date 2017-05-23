@@ -18,7 +18,7 @@
         @apply(--layout-flex);
       }
 
-      dorel-cta {
+      h2 {
         @apply(--theme-grid-column);
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
         flex-basis: calc(var(--theme-column-width) * 4);
@@ -27,7 +27,7 @@
         margin-top: 0;
       }
 
-      [mobile-small] dorel-cta, [mobile-medium] dorel-cta {
+      [mobile-small] h2, [mobile-medium] h2 {
         -ms-flex-preferred-size: 100%;
         flex-basis: 100%;
         max-width: 100%;
@@ -43,6 +43,12 @@
         margin-left: -0.125em;
       }
 
+      h2 {
+        margin: 0;
+        display: initial;
+        font-size: 1em;
+      }
+
     </style>
 
     <!-- media queries -->
@@ -56,28 +62,26 @@
       if="[[ ctaData.ctas.length ]]">
 
       <section class="section-cta layout horizontal center center-justified wrap"
-        mobile-small$="{{ mobileSmall }}"
-        mobile-medium$="{{ mobileMedium }}">
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}">
 
         <div class="row">
-          
           <template
             is="dom-repeat"
             items="[[ ctaData.ctas ]]"
             as="cta">
-            
-            <dorel-cta
-              type="tertiary"
-              link="[[ cta.cta_link ]]"
-              link-target="[[ cta.cta_link_target ]]"
-              size="large"
-              extra-icon="dorel-cta-icons:[[ cta.cta_icon ]]"
-              icon="dorel-icons:chevron-right">
-              [[ cta.cta_text ]]
-            </dorel-cta>  
-
+            <h2>
+              <dorel-cta
+                type="tertiary"
+                link="[[ cta.cta_link ]]"
+                link-target="[[ cta.cta_link_target ]]"
+                size="large"
+                extra-icon="dorel-cta-icons:[[ cta.cta_icon ]]"
+                icon="dorel-icons:chevron-right">
+                [[ cta.cta_text ]]
+              </dorel-cta>
+            </h2>
           </template>
-
         </div>
 
       </section>
