@@ -1,0 +1,96 @@
+<link rel="import" href="../molecules/dorel-card.html">
+
+<dom-module id="dorel-section-cards">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .section-cards {
+        width: 100%;
+        float: left;
+        background-color: var(--theme-color-monochrome-2);
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+        /* Note: The negative margin is a correction so that there is no whitespace between the cards and the footer */
+        margin: 1.5em 0 -1.5em 0;
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      dorel-card {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        padding: 0 .75em;
+        margin-top: 0;
+      }
+
+      [mobile-small] dorel-card, [mobile-medium] dorel-card {
+
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <template
+      is="dom-if"
+      if="[[ cardsData.cards.length ]]">
+
+      <section class="section-cards layout horizontal center center-justified wrap"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}">
+        <div class="row">
+
+          <template
+            is="dom-repeat"
+            items="[[ cardsData.cards ]]"
+            as="card">
+
+            <dorel-card
+              card-data="[[ card ]]"></dorel-card>
+
+          </template>
+
+        </div>
+
+      </section>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-cards',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name cardsData
+         * @description all data needed for the cards defined in ACF/Wordpress
+         */
+        cardsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      }
+    });
+
+  </script>
+
+</dom-module>
