@@ -1,7 +1,7 @@
-<dom-module id="dorel-section-hero-header">
+<dom-module id="dorel-section-product-header">
   <template>
     <style>
-      .hero-header {
+      .product-header {
         width: 100%;
         display: flex;
         justify-content: center;
@@ -30,7 +30,7 @@
         background-position: 50% 50%;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 40.5em;
+        height: 25.5em;
       }
 
       .content-wrapper {
@@ -39,28 +39,24 @@
         height: 100%;
         box-sizing: border-box;
         position: absolute;
-        right: 0;
+        left: 0;
         top: 0;
       }
 
       .content {
         @apply(--theme-grid-column);
+        padding: 0 var(--theme-gutter);
+        margin-left: var(--theme-column-width);
         position: absolute;
         bottom: 4.5em;
-        right: 0;
-        text-align: right;
-        padding: 0 3em;
+        left: 0;
+        text-align: left;
         margin-top: 0;
-      }
-
-      dorel-cta {
-        float: right;
-        margin-top: 1.5em;
       }
 
       /* Responsive behaviour */
       [screen-extra-large] .image {
-        height: 60em;
+        height: 40.5em;
       }
 
       [screen-large] .image {
@@ -68,19 +64,12 @@
       }
 
       [mobile-medium] .content {
-        bottom: 3em;
+        bottom: 3.25em;
       }
 
-      [mobile-medium] dorel-cta {
-        margin-top: 0;
-      }
-
-      [mobile-medium] .image {
-        height: 25.5em;
-      }
 
       [mobile-medium] .title, [mobile-small] .title {
-        @apply(--theme-typography-6);
+        @apply(--theme-typography-7);
         margin-top: 0;
       }
 
@@ -94,35 +83,19 @@
         padding: var(--theme-gutter) var(--theme-gutter-mobile) 0 var(--theme-gutter-mobile);
       }
 
-      [mobile-small] {
-        @apply(--layout-vertical);
-      }
-
-      [mobile-small] .content, [mobile-small] .content-wrapper {
-        position: initial;
-      }
-
-      [mobile-small] .content {
-        text-align: center;
-        padding: 0;
-        margin: .75em 0;
+      [mobile-medium] .image {
+        height: 18em;
       }
 
       [mobile-small] .image {
-        height: 13.5em;
+        height: 16.5em;
       }
 
-      [mobile-small] .title, [mobile-small] .subtitle {
-        color: var(--theme-brand-color-2);
-        text-shadow: none;
+      [mobile-small] .content {
+        bottom: 3em;
+        padding: 0 var(--theme-gutter-mobile);
       }
 
-      [mobile-small] dorel-cta {
-        position: absolute;
-        top: 7.5em;
-        right: 0.75em;
-        margin-top: 0;
-      }
 
 
     </style>
@@ -137,7 +110,7 @@
     <iron-media-query query="(min-width : 1600px)"
                       query-matches="{{ screenExtraLargeUp }}"></iron-media-query>
 
-    <section class="hero-header"
+    <section class="product-header"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}"
@@ -147,31 +120,18 @@
                   fade="true"
                   preload
                   placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                  src$="[[ heroHeaderData.background_image ]]"></iron-image>
+                  src$="[[ productHeaderData.background_image ]]"></iron-image>
 
       <div class="content-wrapper">
         <div class="content">
-          <header>
-            <template is="dom-if" if="{{ hasValue(heroHeaderData.title) }}">
-              <h3 class="title">[[ heroHeaderData.title ]]</h3>
-            </template>
+          <template is="dom-if" if="{{ hasValue(productHeaderData.title) }}">
+            <h1 class="title">[[ productHeaderData.title ]]</h1>
+          </template>
 
-            <template is="dom-if" if="{{ hasValue(heroHeaderData.sub_title) }}">
-              <p class="subtitle">
-                [[ heroHeaderData.sub_title ]]
-              </p>
-            </template>
-          </header>
-
-          <template
-            is="dom-if"
-            if="[[ heroHeaderData.cta_toggle ]]">
-            <dorel-cta
-              icon="dorel-icons:play-circle-outline"
-              type="primary"
-              link="[[ heroHeaderData.cta_href ]]">
-              [[ heroHeaderData.cta_text ]]
-            </dorel-cta>
+          <template is="dom-if" if="{{ hasValue(productHeaderData.sub_title) }}">
+            <h2 class="subtitle">
+              [[ productHeaderData.sub_title ]]
+            </h2>
           </template>
         </div>
       </div>
@@ -179,16 +139,16 @@
   </template>
   <script>
     Polymer({
-      is: 'dorel-section-hero-header',
+      is: 'dorel-section-product-header',
 
       properties: {
 
         /**
          * @attribute
-         * @name heroHeaderData
+         * @name productHeaderData
          * @description all data defined by ACF/Wordpress to build this component
          */
-        heroHeaderData: {
+        productHeaderData: {
           type: Object,
           value: function () {
             return {};
