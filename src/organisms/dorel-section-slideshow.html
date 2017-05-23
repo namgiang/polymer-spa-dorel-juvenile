@@ -3,14 +3,14 @@
 
 <dom-module id="dorel-section-slideshow">
   <template>
-    <style>
-      .section-slideshow {}
+    <style is="custom-style">
+
       .section-slideshow {
         position: relative;
       }
+
       .section-slideshow .simple-slider {
         width: 100%;
-        height: 612px;
       }
 
       .section-slideshow .simple-slider-slide {
@@ -18,24 +18,44 @@
         background-repeat: no-repeat;
         background-size: cover;
         width: 100%;
-        height: 603px;
       }
 
+      l2t-paper-slider {
+        --paper-slider-dot-container-styles: {
+          background-color: rgba(154, 154, 154, .5);
+          border-radius: 1em;
+          bottom: 1.375em;
+        };
+
+        --paper-slide-dot-styles: {
+          background-color: var(--theme-color-white);
+          width: .75em;
+          height: .75em;
+          margin: .5em;
+          border-style: none;
+          border: 1px solid var(--theme-color-white);
+        };
+
+        --paper-slide-dot-selected: var(--theme-brand-color-1);
+
+        --paper-slide-height: 33em;
+      }
+      
     </style>
 
 
     <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-    
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+                      query-matches="{{ desktopFull }}"></iron-media-query>
+
     <template
       is="dom-if"
       if="[[ slideshowData ]]">
@@ -48,22 +68,22 @@
         desktop-small$="{{ desktopSmall }}"
         desktop-full$="{{ desktopFull }}">
 
-          <!-- simple-slider -->
-          <l2t-paper-slider class="simple-slider"
-                            auto-progress
-                            slide-duration="4"
-                            total-slides="[[ slideshowData.slideshow_slides.length ]]">
-            <template
-              is="dom-repeat"
-              items="[[ slideshowData.slideshow_slides ]]"
-              as="slide">
+        <!-- simple-slider -->
+        <l2t-paper-slider class="simple-slider"
+                          auto-progress
+                          slide-duration="4"
+                          total-slides="[[ slideshowData.slideshow_slides.length ]]">
+          <template
+            is="dom-repeat"
+            items="[[ slideshowData.slideshow_slides ]]"
+            as="slide">
 
-              <paper-slide class="simple-slider-slide"
-                style$="
+            <paper-slide class="simple-slider-slide"
+                         style$="
                   background-image: url([[ hasBackgroundImage(slide.slide_image) ]]);"></paper-slide>
 
-            </template>
-          </l2t-paper-slider>
+          </template>
+        </l2t-paper-slider>
       </section>
 
     </template>
@@ -82,7 +102,7 @@
          */
         slideshowData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           }
         }
@@ -96,7 +116,7 @@
        * @returns String if it is full width 'container-fluid' will be returned
        * otherwise it will be 'container'
        */
-      isFullWidth: function(container) {
+      isFullWidth: function (container) {
         return (typeof container === '' || container === 'undefined' || container === 'full-width') ? 'container-fluid' : 'container';
       },
 
@@ -107,7 +127,7 @@
        * @returns String if it a background image is defined otherwise it returns
        * a placeholder url
        */
-      hasBackgroundImage: function(bgImage) {
+      hasBackgroundImage: function (bgImage) {
         return (typeof bgImage === 'undefined' || bgImage === '' || !bgImage) ? '/assets/images/placeholders/slideshow/placeholder.jpg' : bgImage;
       },
 
@@ -115,7 +135,7 @@
        * @name prevSlide
        * @description handles what should happen when the previous button is clicked
        */
-      prevSlide: function(event) {
+      prevSlide: function (event) {
 
         // call the prev() function of simple-slider
         this.$$('simple-slider').prev();
@@ -129,8 +149,8 @@
        * @name nextSlide
        * @description handles what should happen when the next button is clicked
        */
-      nextSlide: function(event) {
-        
+      nextSlide: function (event) {
+
         // call the next() function of simple-slider
         this.$$('simple-slider').next();
 
@@ -143,11 +163,11 @@
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function(event, type) {
+      _eventTracking: function (event, type) {
 
         var globals = Polymer.globalsManager.get('Dorel');
 
-        /** 
+        /**
          * Tracking on click for cta
          */
         Polymer.globalsManager.set('Dorel.events', {
