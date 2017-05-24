@@ -1,4 +1,5 @@
 <link rel="import" href="../atoms/dorel-inline-usps.html">
+<link rel="import" href="../atoms/dorel-color-switcher.html">
 
 <dom-module id="dorel-section-showcase">
   <template>
@@ -129,14 +130,15 @@
 
         <!-- Desktop - navigator and current view -->
         <div class="showcase-gallery">
+          <!-- comment out the image gallery
           <template
             is="dom-if"
-            if="[[ showcaseData.showcase_gallery.length ]]">
+            if="[[ showcaseData.gallery.length ]]">
             <div class="showcase-gallery-roll">
               <ul>
                 <template
                   is="dom-repeat"
-                  items="[[ showcaseData.showcase_gallery ]]"
+                  items="[[ showcaseData.gallery ]]"
                   as="galleryItem">
 
                   <li id$="img-[[ galleryItem.id ]]"
@@ -144,13 +146,14 @@
                       on-click="clickThumbnail"
                       role="button"
                       tabindex="0">
-                    <img id$="img-[[ galleryItem.id ]]" src="[[ hasImage(galleryItem.sizes.medium) ]]" width="110" />
+                    <img id$="img-[[ galleryItem.id ]]" src="[[ _hasImage(galleryItem.sizes.medium) ]]" width="110" />
                   </li>
 
                 </template>
               </ul>
             </div>
-          </template>
+          </template> 
+          -->
 
           <div class="showcase-gallery-view">
             <img src="{{ currentImage.url }}" alt="" />
@@ -158,12 +161,66 @@
 
           <!-- Title, usp's and extra info -->
           <div class="showcase-description">
-            <h1 class="showcase-title">[[ showcaseData.showcase_title ]]</h1>
             <template
               is="dom-if"
-              if="[[ showcaseData.showcase_usps.length ]]">
-              <dorel-inline-usps
-                usps-data="[[ showcaseData.showcase_usps ]]"></dorel-inline-usps>
+              if="[[ _hasValue(showcaseData.title) ]]">
+              <h1 class="showcase-title">[[ showcaseData.title ]]</h1>
+            </template>
+            
+            <div class="showcase-product-specs">
+              <table>
+                <tr>
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(showcaseData.age_category) ]]">
+                    <td>Age: </td>
+                    <td>[[ showcaseData.age_category ]]</td>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(showcaseData.max_weight) ]]">
+                    <td>Weight: </td>
+                    <td>max. [[ showcaseData.max_weight ]] kg.</td>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(showcaseData.size) ]]">
+                    <td>Size: </td>
+                    <td>[[ showcaseData.size ]] cm</td>
+                  </template>
+                </tr>
+              </table>
+            </div>
+            
+            <template
+              is="dom-if"
+              if="[[ _hasValue(showcaseData.description) ]]">
+              <div class="showcase-description">
+                <dorel-safe-html html="[[ showcaseData.description ]]"></dorel-safe-html>
+              </div>
+            </template>
+            
+            <!-- color switcher -->
+            <template
+              is="dom-if"
+              if="[[ showcaseData.colors.length ]]">
+              <dorel-color-switcher
+                colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+            </template>
+            <!--// color switcher -->
+
+            <template
+              is="dom-if"
+              if="[[ _hasValue(showcaseData.accesoires_button) ]]">
+              <button>View Accesoires</button>
+            </template>
+
+            <template
+              is="dom-if"
+              if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+              <button>Find a Store</button>
             </template>
           </div>
         </div>
@@ -211,7 +268,7 @@
       ready: function() {
 
         // reset current image to the first one in the array
-        this.currentImage = this.showcaseData.showcase_gallery[0];
+        this.currentImage = this.showcaseData.gallery[0];
 
       },
 
@@ -223,7 +280,7 @@
       _showcaseDataChanged: function(newVal, oldVal) {
         if (typeof newVal === 'undefined') return;
         // reset current image to the first one in the array
-        this.currentImage = this.showcaseData.showcase_gallery[0];
+        this.currentImage = this.showcaseData.gallery[0];
       },
 
 
@@ -242,7 +299,7 @@
         var imageId = event.target.id.split('-')[1];
         
         // find the right gallery image selected
-        this.currentImage = this.showcaseData.showcase_gallery.find(function(item) {
+        this.currentImage = this.showcaseData.gallery.find(function(item) {
 
           // set the current image if a match is found or null if not
           return item.id === Number(imageId);
@@ -273,10 +330,18 @@
        * @description check if the background image is defined
        * @return String (placeholder/img) placeholder or img url
        */
-      hasImage: function(img) {
+      _hasImage: function(img) {
 
         // check if img is defined or not
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/showcase/placeholder.jpg' : img;
+      },
+
+      /**
+       * @name hasValue
+       * @description check if a value is set
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' && val !== '');
       },
 
       /**
