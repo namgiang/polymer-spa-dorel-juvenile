@@ -1,18 +1,120 @@
 <dom-module id="dorel-section-product-features">
   <template>
-    <style></style>
+    <style>
+      .section-product-features {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+        box-sizing: border-box;
+      }
+
+      .title {
+        @apply(--theme-typography-7);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+
+      .feature-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+      }
+
+      .feature-description {
+        float: left;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+      }
+
+      .feature {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
+        padding: 0 .75em;
+        margin-top: 3em;
+      }
+
+      .feature-wrapper {
+        padding: 0 1em;
+      }
+
+      .feature-image {
+        width: 15em;
+        height: 15em;
+        margin: auto;
+        float: none;
+        display: block;
+      }
+
+      /* Responsive Behaviour */
+
+      [mobile-small], [mobile-medium] {
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+      }
+
+      [tablets] .feature {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      [mobile-small] .feature, [mobile-medium] .feature {
+        @apply(--theme-grid-column-mobile);
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile-small] .row {
+        margin-right: -0.25em;
+        margin-left: -0.25em;
+      }
+
+      [mobile-medium] .row {
+        margin-right: -0.5em;
+        margin-left: -0.5em;
+      }
+
+      [mobile-small] .feature-image, [mobile-medium] .feature-image {
+        width: 6em;
+        height: 6em;
+        float: left;
+      }
+
+      [mobile-small] .feature-content, [mobile-medium] .feature-content {
+        width: calc(100% - 6em);
+        padding: 0 0 0 1.5em;
+        box-sizing: border-box;
+        float: left;
+      }
+
+      [mobile-small] .feature-title, [mobile-medium] .feature-title {
+        margin-top: 0;
+      }
+
+
+    </style>
 
     <!-- media queries -->
     <iron-media-query query="(max-width : 479px)"
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
     <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
                       query-matches="{{ screenLarge }}"></iron-media-query>
 
     <section class="section-product-features layout horizontal center center-justified wrap"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}"
              screen-large$="{{ screenLarge }}">
 
       <template
@@ -20,7 +122,7 @@
         if="[[ _hasValue(featuresData.title) ]]">
         <h1 class="title">[[ featuresData.title ]]</h1>
       </template>
-      
+
       <template
         is="dom-if"
         if="[[ featuresData.features.length ]]">
@@ -37,7 +139,7 @@
                 <template
                   is="dom-if"
                   if="[[ _hasValue(feature.image) ]]">
-                  <iron-image class="usp-image"
+                  <iron-image class="feature-image"
                               sizing="cover"
                               fade="true"
                               preload
@@ -51,7 +153,7 @@
                   <template
                     is="dom-if"
                     if="[[ _hasValue(feature.title) ]]">
-                      <h3 class="feature-title">[[ feature.title ]]</h3>
+                    <h3 class="feature-title">[[ feature.title ]]</h3>
                   </template>
 
                   <template
@@ -65,7 +167,7 @@
                 </div>
               </div>
             </div>
-          
+
           </template>
 
         </div>
@@ -78,10 +180,10 @@
       is: 'dorel-section-product-features',
       properties: {
 
-        /** 
+        /**
          * @attribute
          * @name featuresData
-         * @description coming from the page-builder this data object is filled 
+         * @description coming from the page-builder this data object is filled
          * with ACF/Wordpress data about the component
          */
         featuresData: {
