@@ -1,0 +1,194 @@
+<dom-module id="dorel-section-product-usps">
+  <template>
+    <style>
+
+      .section-product-usps {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+        box-sizing: border-box;
+      }
+
+      .title {
+        @apply(--theme-typography-7);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+
+      .usp-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+      }
+
+      .usp-description {
+        @apply(--theme-paragraph-text);
+        float: left;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+      }
+
+      .usp {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+        margin-top: 3em;
+      }
+
+      .usp-wrapper {
+        padding: 0 1em;
+      }
+
+      .usp-image {
+        width: 100%;
+        float: left;
+        height: 12em;
+      }
+
+      /* Responsive behaviour */
+      .section-product-usps[mobile-small], .section-product-usps[mobile-medium] {
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+      }
+
+      [mobile-small] .usp, [mobile-medium] .usp {
+        @apply(--theme-grid-column-mobile);
+      }
+
+      [mobile-medium] .usp {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      [mobile-small] .usp {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+
+      [mobile-small] .row {
+        margin-right: -0.25em;
+        margin-left: -0.25em;
+      }
+
+      [mobile-medium] .row {
+        margin-right: -0.5em;
+        margin-left: -0.5em;
+      }
+
+      [mobile-small] .title {
+        @apply(--theme-typography-6);
+      }
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
+                      query-matches="{{ screenLarge }}"></iron-media-query>
+
+    <section class="section-product-usps layout horizontal center center-justified wrap"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             screen-large$="{{ screenLarge }}">
+
+      <template
+        is="dom-if"
+        if="[[ _hasValue(uspsData.title) ]]">
+        <h1 class="title">[[ uspsData.title ]]</h1>
+      </template>
+      
+      <template
+        is="dom-if"
+        if="[[ uspsData.usps.length ]]">
+        <div class="row">
+
+          <template
+            is="dom-repeat"
+            items="[[ uspsData.usps ]]"
+            as="usp">
+
+            <div class="usp">
+              <div class="usp-wrapper">
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(usp.image) ]]">
+                  <iron-image class="usp-image"
+                              sizing="cover"
+                              fade="true"
+                              preload
+                              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                              src$="[[ usp.image ]]">
+                  </iron-image>
+                </template>
+
+                <div class="usp-content">
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.title) ]]">
+                      <h3 class="usp-title">[[ usp.title ]]</h3>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.description) ]]">
+                    <div class="usp-description">
+                      <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
+                    </div>
+                  </template>
+
+                </div>
+              </div>
+            </div>
+          
+          </template>
+
+        </div>
+      </template>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-product-usps',
+      properties: {
+
+        /** 
+         * @attribute
+         * @name uspsData
+         * @description coming from the page-builder this data object is filled 
+         * with ACF/Wordpress data about the component
+         */
+        uspsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
+    });
+  </script>
+</dom-module>

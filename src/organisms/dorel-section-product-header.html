@@ -94,6 +94,7 @@
       [mobile-small] .content {
         bottom: 3em;
         padding: 0 var(--theme-gutter-mobile);
+        margin-left: 0;
       }
 
 
@@ -124,11 +125,11 @@
 
       <div class="content-wrapper">
         <div class="content">
-          <template is="dom-if" if="{{ hasValue(productHeaderData.title) }}">
+          <template is="dom-if" if="{{ _hasValue(productHeaderData.title) }}">
             <h1 class="title">[[ productHeaderData.title ]]</h1>
           </template>
 
-          <template is="dom-if" if="{{ hasValue(productHeaderData.sub_title) }}">
+          <template is="dom-if" if="{{ _hasValue(productHeaderData.sub_title) }}">
             <h2 class="subtitle">
               [[ productHeaderData.sub_title ]]
             </h2>
@@ -158,12 +159,12 @@
       },
 
       /**
-       * @name hasBackgroundImage
-       * @description checks to see if a background image is set in Wordpress
+       * @name _hasValue
+       * @description checks to see if a value is set
        *
-       * @returns Sting when no image is set it returns the placeholder string
+       * @returns Boolean
        */
-      hasValue: function (val) {
+      _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');
       }
     });
