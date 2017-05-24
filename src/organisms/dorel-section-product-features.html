@@ -1,0 +1,106 @@
+<dom-module id="dorel-section-product-features">
+  <template>
+    <style></style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
+                      query-matches="{{ screenLarge }}"></iron-media-query>
+
+    <section class="section-product-features layout horizontal center center-justified wrap"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             screen-large$="{{ screenLarge }}">
+
+      <template
+        is="dom-if"
+        if="[[ _hasValue(featuresData.title) ]]">
+        <h1 class="title">[[ featuresData.title ]]</h1>
+      </template>
+      
+      <template
+        is="dom-if"
+        if="[[ featuresData.features.length ]]">
+        <div class="row">
+
+          <template
+            is="dom-repeat"
+            items="[[ featuresData.features ]]"
+            as="feature">
+
+            <div class="feature">
+              <div class="feature-wrapper">
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(feature.image) ]]">
+                  <iron-image class="usp-image"
+                              sizing="cover"
+                              fade="true"
+                              preload
+                              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                              src$="[[ feature.image ]]">
+                  </iron-image>
+                </template>
+
+                <div class="feature-content">
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(feature.title) ]]">
+                      <h3 class="feature-title">[[ feature.title ]]</h3>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(feature.description) ]]">
+                    <div class="feature-description">
+                      <dorel-safe-html html="[[ feature.description ]]"></dorel-safe-html>
+                    </div>
+                  </template>
+
+                </div>
+              </div>
+            </div>
+          
+          </template>
+
+        </div>
+      </template>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-product-features',
+      properties: {
+
+        /** 
+         * @attribute
+         * @name featuresData
+         * @description coming from the page-builder this data object is filled 
+         * with ACF/Wordpress data about the component
+         */
+        featuresData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
+    });
+  </script>
+</dom-module>
