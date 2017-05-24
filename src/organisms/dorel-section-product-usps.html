@@ -102,66 +102,93 @@
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}">
-      <h1 class="title">Love me because</h1>
-      <div class="row">
-        <div class="usp">
-          <div class="usp-wrapper">
-            <iron-image class="usp-image"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="">
-            </iron-image>
-            <div class="usp-content">
-              <h3 class="usp-title">First benefit of the stroller</h3>
-              <p class="usp-description">Foldable with or without seat unit for a more compact fold lorem ipsum dolor
-                sit
-                amet. Lorem Ipsum dolor sit amet neques dolor.</p>
+
+      <template
+        is="dom-if"
+        if="[[ _hasValue(uspsData.title) ]]">
+        <h1 class="title">[[ uspsData.title ]]</h1>
+      </template>
+      
+      <template
+        is="dom-if"
+        if="[[ uspsData.usps.length ]]">
+        <div class="row">
+
+          <template
+            is="dom-repeat"
+            items="[[ uspsData.usps ]]"
+            as="usp">
+
+            <div class="usp">
+              <div class="usp-wrapper">
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(usp.image) ]]">
+                  <iron-image class="usp-image"
+                              sizing="cover"
+                              fade="true"
+                              preload
+                              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                              src$="[[ usp.image ]]">
+                  </iron-image>
+                </template>
+
+                <div class="usp-content">
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.title) ]]">
+                      <h3 class="usp-title">[[ usp.title ]]</h3>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.description) ]]">
+                    <div class="usp-description">
+                      <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
+                    </div>
+                  </template>
+
+                </div>
+              </div>
             </div>
-          </div>
+          
+          </template>
+
         </div>
-        <div class="usp">
-          <div class="usp-wrapper">
-            <iron-image class="usp-image"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="">
-            </iron-image>
-            <div class="usp-content">
-              <h3 class="usp-title">First benefit of the stroller</h3>
-              <p class="usp-description">Foldable with or without seat unit for a more compact fold lorem ipsum dolor
-                sit
-                amet. Lorem Ipsum dolor sit amet neques dolor.</p>
-            </div>
-          </div>
-        </div>
-        <div class="usp">
-          <div class="usp-wrapper">
-            <iron-image class="usp-image"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="">
-            </iron-image>
-            <div class="usp-content">
-              <h3 class="usp-title">First benefit of the stroller</h3>
-              <p class="usp-description">Foldable with or without seat unit for a more compact fold lorem ipsum dolor
-                sit
-                amet. Lorem Ipsum dolor sit amet neques dolor.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      </template>
+
     </section>
   </template>
   <script>
     Polymer({
       is: 'dorel-section-product-usps',
-      properties: {},
+      properties: {
+
+        /** 
+         * @attribute
+         * @name uspsData
+         * @description coming from the page-builder this data object is filled 
+         * with ACF/Wordpress data about the component
+         */
+        uspsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
     });
   </script>
 </dom-module>
