@@ -1,0 +1,141 @@
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
+<dom-module id="dorel-section-product-accordions">
+  <template>
+    <style>
+      .section-product-accordions {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+        box-sizing: border-box;
+      }
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
+                      query-matches="{{ screenLarge }}"></iron-media-query>
+
+    <section class="section-product-accordions layout horizontal center center-justified wrap"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}"
+             screen-large$="{{ screenLarge }}">
+
+      <template
+        is="dom-if"
+        if="[[ accordionsData.accordions.length ]]">
+        <div class="row">
+
+          <template
+            is="dom-repeat"
+            items="[[ accordionsData.accordions ]]"
+            as="accordion">
+
+            <div class="accordion">
+              <div class="accordion-wrapper">
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(accordion.heading) ]]">
+                  <h3 class="accordion-heading"
+                    on-click="_toggleCollapse"
+                    data-selector$="#collapse{{index}}">[[ accordion.heading ]]</h3>
+                </template>
+                <iron-collapse id$="collapse{{index}}">
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(accordion.content) ]]">
+                    <div class="accordion-description">
+                      <dorel-safe-html html="[[ accordion.content ]]"></dorel-safe-html>
+                    </div>
+                  </template>
+                </iron-collapse>
+              </div>
+            </div>
+
+          </template>
+
+        </div>
+      </template>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-product-accordions',
+      properties: {
+
+        /**
+         * @attribute
+         * @name accordionsData
+         * @description coming from the page-builder this data object is filled
+         * with ACF/Wordpress data about the component
+         */
+        accordionsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _toggleCollapse
+       * @description collapses the right accordion
+       *
+       */
+      _toggleCollapse: function (e) {
+        var selector = e.target.dataset.selector;
+
+        // check state
+        var state = (this.$$(selector).classList.contains('iron-collapse-opened'));
+
+        // toggle collapse
+        this.$$(selector).toggle();
+        
+        // event tracking
+        this._eventTracking(e, e.target, state);
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for cta tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event, selector, accordionState) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /**
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'toggleAccordion',
+          component: 'product-accordions',
+          element: selector.innerHTML,
+          event: 'polymer_event',
+          things: {
+            'currentState': (accordionState) ? 'open' : 'closed',
+            'targetState': (accordionState) ? 'closed' : 'open'
+          }
+        });
+      }
+    });
+  </script>
+</dom-module>
