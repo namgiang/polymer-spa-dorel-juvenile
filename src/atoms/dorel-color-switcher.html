@@ -1,18 +1,44 @@
 <dom-module id="dorel-color-switcher">
   <template>
-    <style></style>
+    <style>
+      .color-name {
+        @apply(--theme-typography-2);
+      }
 
-    <div class="color-name">Available colors:</div>
-    
-    <ul class="list-group">
-      <template
-        is="dom-repeat"
-        items="[[ colorsData ]]"
-        as="color">
-        <li class="list-group-item"
-          style$="background-color: [[ color.color_code ]];"></li>
-      </template>
-    </ul>
+      .list-group {
+        list-style: none;
+        float: left;
+        padding: 0;
+        margin: .625em 0 .625em 0;
+      }
+
+      .list-group-item {
+        width: 1.75em;
+        height: 1.75em;
+        border-radius: .875em;
+        margin-right: 1em;
+        float: left;
+      }
+
+      .color-switcher {
+        float: left;
+        width: 100%;
+      }
+
+    </style>
+
+    <div class="color-switcher">
+      <div class="color-name">Available colors:</div>
+      <ul class="list-group">
+        <template
+          is="dom-repeat"
+          items="[[ colorsData ]]"
+          as="color">
+          <li class="list-group-item"
+              style$="background-color: [[ color.color_code ]];"></li>
+        </template>
+      </ul>
+    </div>
   </template>
 
   <script>
@@ -30,7 +56,7 @@
           type: Array,
           value: []
         }
-        
+
       }
     });
   </script>
