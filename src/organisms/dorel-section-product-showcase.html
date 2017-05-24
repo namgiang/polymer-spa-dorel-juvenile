@@ -5,231 +5,285 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .section-product-showcase {
-        padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
-      }
-      .section-product-showcase .showcase-gallery {
-        @apply(--layout-flex);
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
-        @apply(--layout-wrap);
-      }
-
-      [mobile-medium], [mobile-small] {
-        padding: var(--theme-component-space-inner) 0;
-      }
-
-      [tablets] .showcase-gallery,
-      [mobile-medium] .showcase-gallery,
-      [mobile-small] .showcase-gallery {
-        @apply(--layout-wrap-reverse);
-      }
-
-      [tablets] .showcase-description,
-      [mobile-medium] .showcase-description,
-      [mobile-small] .showcase-description {
         width: 100%;
-        flex: initial;
-      }
-
-      [mobile-small] .showcase-gallery-roll {
-        width: 100%;
-        flex: initial;
-      }
-
-      [mobile-medium] .showcase-gallery-roll li,
-      [mobile-small] .showcase-gallery-roll li {
         float: left;
-        padding: 1rem;
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+      }
+
+      .showcase-gallery-view {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      .showcase-description {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
+        margin-top: 3em;
+      }
+
+      .showcase-description {
+        float: left;
       }
 
       .showcase-title {
-        @apply(--theme-heading);
-        font-size: var(--theme-size-headline);
-        margin: 0 0 var(--theme-component-space-inner) 0;
+        @apply(--theme-typography-8);
+        color: var(--theme-brand-color-1);
+        float: left;
         width: 100%;
       }
 
-      /**
-       * @name: gallery-roll
-       * @description: small images on the left side (navigator)
-       */
-      .showcase-gallery-roll ul{
-        list-style-type: none;
-        padding: 0;
-        vertical-align: top;
-        margin: 0;
-      }
-      .showcase-gallery-roll li {
-        position: relative;
-        padding: 0 0 1rem 0;
-        float: none;
-        opacity: .5;
-        transition: opacity .3s ease;
-        cursor: pointer;
-      }
-
-      .showcase-gallery-roll li:hover, .showcase-gallery-roll li:focus {
-        opacity: .9;
-      }
-
-      .showcase-gallery-roll li.current {
-        opacity: 1;
-      }
-
-      .showcase-gallery-roll, .showcase-gallery-view, .showcase-description {
-        @apply(--layout-flex);
-        @apply(--layout-self-stretch);
+      .showcase-product-specs {
+        list-style: none;
+        @apply(--theme-typography-2);
         float: left;
-        padding: 0 var(--theme-component-space-inner);
+        width: 100%;
+        padding: 0;
       }
 
-      .showcase-gallery-roll {
-        flex: 1;
+      .showcase-product-specs li {
+        float: left;
+        margin-right: 1.5em;
       }
 
-      .showcase-gallery-view, .showcase-description {
-        flex: 3;
+      .actions dorel-cta {
+        margin-right: 2em;
+        float: left;
       }
 
+      .product-description-text {
+        float: left;
+      }
 
-      /**
-       * @name: gallery-view
-       * @description: the view container where the selected image is shown
-       */
       .section-product-showcase .showcase-gallery-view img {
         width: 500px;
         max-height: 500px;
         margin: auto;
         display: block;
       }
+
+      /* Responsive Behaviour */
+      [mobile] .showcase-gallery-view {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        margin: auto;
+      }
+
+      [mobile] .showcase-product-specs {
+        margin: auto;
+        width: initial;
+      }
+
+      [mobile] .actions, [mobile] .color-mobile-container {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile] .showcase-gallery-view img {
+        width: 300px;
+      }
+
+      [tablets] .showcase-gallery-view img {
+        width: 400px;
+        max-height: 500px;
+      }
+
+      [tablets] .showcase-description {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
     </style>
 
 
     <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(max-width : 767px)"
+                      query-matches="{{ mobile }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-    
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <!--
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+                      query-matches="{{ desktopFull }}"></iron-media-query> -->
+
     <template
       is="dom-if"
       if="[[ showcaseData ]]">
+      <section class="section-product-showcase layout horizontal center center-justified wrap"
+               mobile$="{{ mobile }}" tablets$="{{ tablets }}">
 
-      <section class="section-product-showcase"
-        mobile-small$="{{ mobileSmall }}"
-        mobile-medium$="{{ mobileMedium }}"
-        tablets$="{{ tablets }}"
-        desktop-small$="{{ desktopSmall }}"
-        desktop-full$="{{ desktopFull }}">
-
-        <!-- Desktop - navigator and current view -->
-        <div class="showcase-gallery">
-          <!-- comment out the image gallery
-          <template
-            is="dom-if"
-            if="[[ showcaseData.gallery.length ]]">
-            <div class="showcase-gallery-roll">
-              <ul>
-                <template
-                  is="dom-repeat"
-                  items="[[ showcaseData.gallery ]]"
-                  as="galleryItem">
-
-                  <li id$="img-[[ galleryItem.id ]]"
-                      class$="[[ isCurrentImage(galleryItem, currentImage) ]]"
-                      on-click="clickThumbnail"
-                      role="button"
-                      tabindex="0">
-                    <img id$="img-[[ galleryItem.id ]]" src="[[ _hasImage(galleryItem.sizes.medium) ]]" width="110" />
-                  </li>
-
-                </template>
-              </ul>
+        <div class="row">
+          <!-- Mobile Showcase -->
+          <template is="dom-if" if="{{ mobile }}">
+            <!-- Product Specs -->
+            <ul class="showcase-product-specs">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.age_category) ]]">
+                <li>
+                  Age: [[ showcaseData.age_category ]]
+                </li>
+              </template>
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.max_weight) ]]">
+                <li>
+                  Weight: max. [[ showcaseData.max_weight ]] kg.
+                </li>
+              </template>
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.size) ]]">
+                <li>
+                  Size: [[ showcaseData.size ]] cm
+                </li>
+              </template>
+            </ul>
+            <div class="showcase-gallery-view">
+              <img src="{{ currentImage.url }}" alt=""/>
             </div>
-          </template> 
-          -->
+            <!--// Product Specs -->
 
-          <div class="showcase-gallery-view">
-            <iron-image
-              sizing="cover"
-              fade="true"
-              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-              src$="{{ currentImage.url }}"></iron-image>
-          </div>
-
-          <!-- Title, usp's and extra info -->
-          <div class="showcase-description">
-            <template
-              is="dom-if"
-              if="[[ _hasValue(showcaseData.title) ]]">
-              <h1 class="showcase-title">[[ showcaseData.title ]]</h1>
-            </template>
-            
-            <div class="showcase-product-specs">
-              <table>
-                <tr>
-                  <template
-                    is="dom-if"
-                    if="[[ _hasValue(showcaseData.age_category) ]]">
-                    <td>Age: </td>
-                    <td>[[ showcaseData.age_category ]]</td>
-                  </template>
-
-                  <template
-                    is="dom-if"
-                    if="[[ _hasValue(showcaseData.max_weight) ]]">
-                    <td>Weight: </td>
-                    <td>max. [[ showcaseData.max_weight ]] kg.</td>
-                  </template>
-
-                  <template
-                    is="dom-if"
-                    if="[[ _hasValue(showcaseData.size) ]]">
-                    <td>Size: </td>
-                    <td>[[ showcaseData.size ]] cm</td>
-                  </template>
-                </tr>
-              </table>
-            </div>
-            
-            <template
-              is="dom-if"
-              if="[[ _hasValue(showcaseData.description) ]]">
-              <div class="showcase-description">
-                <dorel-safe-html html="[[ showcaseData.description ]]"></dorel-safe-html>
-              </div>
-            </template>
-            
             <!-- color switcher -->
             <template
               is="dom-if"
               if="[[ showcaseData.colors.length ]]">
-              <dorel-color-switcher
-                colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+              <div class="color-mobile-container  layout horizontal center center-justified wrap">
+                <dorel-color-switcher
+                  colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+              </div>
             </template>
             <!--// color switcher -->
 
-            <template
-              is="dom-if"
-              if="[[ _hasValue(showcaseData.accesoires_button) ]]">
-              <button>View Accesoires</button>
-            </template>
+            <!-- Actions -->
+            <div class="actions layout horizontal center center-justified wrap">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.accesoires_button) ]]">
+                <dorel-cta
+                  type="link"
+                  link=""
+                  size="small"
+                  icon="dorel-icons:expand-more">
+                  View Accessories
+                </dorel-cta>
+              </template>
 
-            <template
-              is="dom-if"
-              if="[[ _hasValue(showcaseData.store_locator_button) ]]">
-              <button>Find a Store</button>
-            </template>
-          </div>
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+                <dorel-cta
+                  type="primary"
+                  link=""
+                  size="small"
+                  icon="dorel-icons:chevron-right">
+                  Find a Store
+                </dorel-cta>
+              </template>
+            </div>
+            <!--// Actions -->
+          </template>
+          <!--// Mobile Showcase -->
+
+          <!-- Desktop Showcase -->
+          <template is="dom-if" if="{{ !mobile }}">
+            <div class="showcase-gallery-view">
+              <img src="{{ currentImage.url }}" alt=""/>
+            </div>
+
+            <!-- Title, usp's and extra info -->
+            <div class="showcase-description">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.title) ]]">
+                <h1 class="showcase-title">[[ showcaseData.title ]]</h1>
+              </template>
+
+              <ul class="showcase-product-specs">
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.age_category) ]]">
+                  <li>
+                    Age: [[ showcaseData.age_category ]]
+                  </li>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.max_weight) ]]">
+                  <li>
+                    Weight: max. [[ showcaseData.max_weight ]] kg.
+                  </li>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.size) ]]">
+                  <li>
+                    Size: [[ showcaseData.size ]] cm
+                  </li>
+                </template>
+              </ul>
+
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.description) ]]">
+                <div class="product-description-text">
+                  <dorel-safe-html html="[[ showcaseData.description ]]"></dorel-safe-html>
+                </div>
+              </template>
+
+              <!-- color switcher -->
+              <template
+                is="dom-if"
+                if="[[ showcaseData.colors.length ]]">
+                <dorel-color-switcher
+                  colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+              </template>
+              <!--// color switcher -->
+
+              <div class="actions">
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.accesoires_button) ]]">
+                  <dorel-cta
+                    type="link"
+                    link=""
+                    size="small"
+                    icon="dorel-icons:expand-more">
+                    View Accessories
+                  </dorel-cta>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+                  <dorel-cta
+                    type="primary"
+                    link=""
+                    size="small"
+                    icon="dorel-icons:chevron-right">
+                    Find a Store
+                  </dorel-cta>
+                </template>
+              </div>
+            </div>
+          </template>
+          <!--// Desktop Showcase -->
         </div>
       </section>
-
     </template>
   </template>
 
@@ -258,7 +312,7 @@
          */
         currentImage: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           }
         }
@@ -269,7 +323,7 @@
        * @description when the component is ready to use set the first
        * image from the Wordpress data as the currentImage
        */
-      ready: function() {
+      ready: function () {
 
         // reset current image to the first one in the array
         this.currentImage = this.showcaseData.gallery[0];
@@ -281,20 +335,19 @@
        * @description when the component is ready to use set the first
        * image from the Wordpress data as the currentImage
        */
-      _showcaseDataChanged: function(newVal, oldVal) {
+      _showcaseDataChanged: function (newVal, oldVal) {
         if (typeof newVal === 'undefined') return;
         // reset current image to the first one in the array
-        this.currentImage = (this.showcaseData.gallery.length) ? 
-          this.showcaseData.gallery[0] : null;
+        this.currentImage = this.showcaseData.gallery[0];
       },
 
 
-      /** 
+      /**
        * @name clickThumbnail
        * @description this will handle of a click on the thumbnail and
        * will change the currentImage in the thumbnail clicked
        */
-      clickThumbnail: function(event) {
+      clickThumbnail: function (event) {
 
         // set self to get the right context in forEach
         var self = this;
@@ -302,9 +355,9 @@
 
         // extract the id and create currentImage var
         var imageId = event.target.id.split('-')[1];
-        
+
         // find the right gallery image selected
-        this.currentImage = this.showcaseData.gallery.find(function(item) {
+        this.currentImage = this.showcaseData.gallery.find(function (item) {
 
           // set the current image if a match is found or null if not
           return item.id === Number(imageId);
@@ -320,22 +373,22 @@
        * @description check if the thumbnail is the current image shown
        * @return String (current/empty)
        */
-      isCurrentImage: function(item, currentItem) {
+      isCurrentImage: function (item, currentItem) {
 
         // if not defined, empty or null jump out
-        if(typeof item === 'undefined' || item === null || item === '' ) return;
+        if (typeof item === 'undefined' || item === null || item === '') return;
 
         // returns current or empty 
         return (currentItem.ID === item.ID) ? 'current' : '';
 
       },
 
-      /** 
+      /**
        * @name hasImage
        * @description check if the background image is defined
        * @return String (placeholder/img) placeholder or img url
        */
-      _hasImage: function(img) {
+      _hasImage: function (img) {
 
         // check if img is defined or not
         return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/showcase/placeholder.jpg' : img;
@@ -354,11 +407,11 @@
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function(event, previousImage) {
+      _eventTracking: function (event, previousImage) {
 
         var globals = Polymer.globalsManager.get('Dorel');
 
-        /** 
+        /**
          * Tracking on click for cta
          */
         Polymer.globalsManager.set('Dorel.events', {
