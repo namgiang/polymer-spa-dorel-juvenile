@@ -6,6 +6,8 @@
       .section-multi {
         margin: 0 auto;
         padding: var(--theme-component-space-inner-xlarge) 0 0 0;
+        float: left;
+        width: 100%;
       }
 
       .section-multi .multi-title {
@@ -53,26 +55,26 @@
       }
 
     </style>
-    
+
     <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" 
-      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" 
-      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ desktopFull }}"></iron-media-query>
-    
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+                      query-matches="{{ desktopFull }}"></iron-media-query>
+
     <section class="section-multi"
-      mobile-small$="{{ mobileSmall }}"
-      mobile-medium$="{{ mobileMedium }}"
-      tablets$="{{ tablets }}"
-      desktop-small$="{{ desktopSmall }}"
-      desktop-full$="{{ desktopFull }}"
-      background$="{{ needsBackground(multiData.acf_fc_layout) }}">
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}"
+             desktop-small$="{{ desktopSmall }}"
+             desktop-full$="{{ desktopFull }}"
+             background$="{{ needsBackground(multiData.acf_fc_layout) }}">
 
       <div class="section-container" columns="1">
         <template
@@ -93,8 +95,8 @@
             <template
               is="dom-if"
               if="[[ col.column_components.length ]]">
-                <dorel-page-builder
-                  builder-data="[[ col.column_components ]]"></dorel-page-builder>
+              <dorel-page-builder
+                builder-data="[[ col.column_components ]]"></dorel-page-builder>
             </template>
           </div>
         </template>
@@ -110,10 +112,10 @@
 
       properties: {
 
-        /** 
+        /**
          * @attribute
          * @name multiData
-         * @description coming from the page-builder this data object is filled 
+         * @description coming from the page-builder this data object is filled
          * with ACF/Wordpress data about the component
          */
         multiData: {
@@ -124,7 +126,7 @@
           type: Object
         },
 
-        /** 
+        /**
          * @name columnAmount
          * @description defines the total columns the component needs to work with
          */
@@ -134,13 +136,13 @@
         },
       },
 
-      /** 
+      /**
        * @name ready
        * @description sets the column amount by the results in the array,
        * when the component is ready to use
        *
        */
-      ready: function() {
+      ready: function () {
         this.columnAmount = this.multiData.multi_columns.length;
       },
 
@@ -150,7 +152,7 @@
        *
        * @returns Boolean if it is a full width container or not (true/false)
        */
-      isFullWidth: function(container) {
+      isFullWidth: function (container) {
         return (typeof container !== 'undefined' && container === 'full-width');
       },
 
@@ -160,7 +162,7 @@
        *
        * @returns string empty or color empty when last char is number
        */
-      needsBackground: function(layoutName) {
+      needsBackground: function (layoutName) {
         // get last char
         var lastChar = layoutName.substr(layoutName.length - 1);
 

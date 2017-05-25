@@ -1,0 +1,172 @@
+<dom-module id="dorel-section-product-header">
+  <template>
+    <style>
+      .product-header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+
+      .title {
+        @apply(--theme-typography-8);
+        color: var(--theme-color-white);
+        font-size: var(--theme-scale-6);
+        margin: 0;
+        text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .subtitle {
+        @apply(--theme-typography-6);
+        margin-top: .375em;
+        color: var(--theme-color-white);
+        font-weight: var(--theme-font-weight-light);
+        text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .image {
+        width: 100%;
+        display: block;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 25.5em;
+      }
+
+      .content-wrapper {
+        padding: var(--theme-gutter);
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      .content {
+        @apply(--theme-grid-column);
+        padding: 0 var(--theme-gutter);
+        margin-left: var(--theme-column-width);
+        position: absolute;
+        bottom: 4.5em;
+        left: 0;
+        text-align: left;
+        margin-top: 0;
+      }
+
+      /* Responsive behaviour */
+      [screen-extra-large] .image {
+        height: 40.5em;
+      }
+
+      [screen-large] .image {
+        height: 40.5em;
+      }
+
+      [mobile-medium] .content {
+        bottom: 3.25em;
+      }
+
+
+      [mobile-medium] .title, [mobile-small] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
+      }
+
+      [mobile-medium] .subtitle, [mobile-small] .subtitle {
+        @apply(--theme-typography-3);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+      }
+
+      [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
+        padding: var(--theme-gutter) var(--theme-gutter-mobile) 0 var(--theme-gutter-mobile);
+      }
+
+      [mobile-medium] .image {
+        height: 18em;
+      }
+
+      [mobile-small] .image {
+        height: 16.5em;
+      }
+
+      [mobile-small] .content {
+        bottom: 3em;
+        padding: 0 var(--theme-gutter-mobile);
+        margin-left: 0;
+      }
+
+
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
+                      query-matches="{{ screenLarge }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1600px)"
+                      query-matches="{{ screenExtraLargeUp }}"></iron-media-query>
+
+    <section class="product-header"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             screen-large$="{{ screenLarge }}"
+             screen-extra-large$="{{ screenExtraLargeUp }}">
+      <iron-image class="image"
+                  sizing="cover"
+                  fade="true"
+                  preload
+                  placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                  src$="[[ productHeaderData.background_image ]]"></iron-image>
+
+      <div class="content-wrapper">
+        <div class="content">
+          <template is="dom-if" if="{{ _hasValue(productHeaderData.title) }}">
+            <h1 class="title">[[ productHeaderData.title ]]</h1>
+          </template>
+
+          <template is="dom-if" if="{{ _hasValue(productHeaderData.sub_title) }}">
+            <h2 class="subtitle">
+              [[ productHeaderData.sub_title ]]
+            </h2>
+          </template>
+        </div>
+      </div>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-product-header',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name productHeaderData
+         * @description all data defined by ACF/Wordpress to build this component
+         */
+        productHeaderData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
+    });
+  </script>
+</dom-module>

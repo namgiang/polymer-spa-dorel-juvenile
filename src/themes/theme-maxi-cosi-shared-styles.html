@@ -1,6 +1,7 @@
+<!-- NOTE: This is new, for the design refactor and the component guide -->
 <!--  Shared style brand naming conventions:
       Name strings can only contain lower-case, alphabetic values and dashes to separate words:
-      maxi-cosi, odel, quinny, safety-first -->
+      maxi-cosi, dorel, quinny, safety-first -->
 <dom-module id="theme-maxi-cosi-shared-styles">
   <template>
     <style is="custom-style">
@@ -12,167 +13,329 @@
          */
 
         /* Brand colors */
-        --theme-brand-color: rgb(0, 150, 195);
-        --theme-brand-color-royal-blue: rgb(0, 65, 120);
-        --theme-brand-color-deep-blue: rgb(0, 32, 91);
+        /* http://www.colourco.de/monochrome/5/%230381a7 */
+        --theme-brand-color-1: #0096C3;
+        --theme-brand-color-2: #004178;
+        --theme-brand-color-3: #00205B;
 
-        --theme-brand-color-accent-green: rgb(107, 165, 57);
-        --theme-brand-color-accent-orange: rgb(255, 103, 31);
-        --theme-brand-color-accent-pink: rgb(205, 0, 88);
-
-        --theme-brand-color-accent-medium-grey: rgb(134, 136, 138);
-        --theme-brand-color-accent-dark-grey: rgb(49, 51, 53);
-
-        /* Interactive element colors */
-        /* if the theme's brand color is quite similar to the browsers' native link color use 
-           it for the primary link color. Adding a new link-blue color close to that color will 
-           not  match since the colors will then be too close to eachother in the color spectrum */
-        --theme-color-link-primary: var(--theme-brand-color);
-        --theme-color-hover: var(--theme-brand-color-royal-blue);
-        --theme-color-active: var(--theme-brand-color-royal-blue);
-        --theme-color-cta: var(--theme-brand-color-accent-orange);
+        --theme-brand-complementary-color-1: #165C7D;
+        --theme-brand-complementary-color-2: #F6BE00;
+        --theme-brand-complementary-color-3: #8A1538;
 
         /* Brand proximity colors
-         * the lighter the background, the more important 
+         * the lighter the background, the more important
          * the foreground information will be */
-        --theme-color-background: rgb(220, 220, 220);
-        --theme-color-background-secondary: rgb(230, 230, 230);
-        --theme-color-background-tertiary: rgb(245, 245, 245);
-
-        --theme-color-foreground: var(--theme-black);
-        --theme-color-foreground-secondary: rgb(80, 80, 80);
-        --theme-color-foreground-tertiary: rgb(177, 179, 179);
 
         /* Utility colors */
-        --theme-primary-text-color: var(--theme-color-foreground-secondary);
-        --theme-white: rgb(255, 254, 255);
+        --theme-color-monochrome-1: #FFFFFF;
+        --theme-color-monochrome-2: #EEEEEE;
+        --theme-color-monochrome-3: #BDBDBD;
+        --theme-color-monochrome-4: #9E9E9E;
+        --theme-color-monochrome-5: #757575;
+        --theme-color-monochrome-6: #616161;
+        --theme-color-monochrome-7: #424242;
 
-
-        /* Templating colors */
-        --theme-multi-background-color: transparent;
-        --theme-multi-no-background-color: transparent;
-        --theme-multi-bottom-padding: 0;
-
+        --theme-color-white: var(--theme-color-monochrome-1);
+        --theme-color-black: var(--theme-color-monochrome-7);
 
         /* ------------------------------------------------
          * Modular scale
          */
-        
-        --theme-component-space-micro: .5rem;
-        --theme-component-space-inner: 1.5rem; /* for instance wordmark exclusion space  */
-        --theme-component-space-inner-medium: calc(1.5rem * 1.2);
-        --theme-component-space-inner-large: calc(1.5rem * 1.5);
-        --theme-component-space-inner-xlarge: calc(1.5rem * 2);
+        /* TODO: change this to .25, because we will need it */
+        --theme-scale-1: 0.25000em;
+        --theme-scale-2: calc(var(--theme-scale-1) * 3);
+        --theme-scale-3: calc(var(--theme-scale-1) * 6);
+        --theme-scale-4: calc(var(--theme-scale-1) * 9);
+        --theme-scale-5: calc(var(--theme-scale-1) * 12);
+        --theme-scale-6: calc(var(--theme-scale-1) * 15);
+        --theme-scale-7: calc(var(--theme-scale-1) * 18);
+        --theme-scale-8: calc(var(--theme-scale-1) * 21);
+        --theme-scale-9: calc(var(--theme-scale-1) * 24);
 
-        --theme-border-width: 6px;
-        --theme-border-radius-large: 64px;
+        /* ------------------------------------------------
+         * Grid
+         */
+        --theme-columns: 12;
+        --theme-column-width: calc(100% / var(--theme-columns));
+
+        /* Spacing between columns */
+        --theme-gutter: var(--theme-scale-3);
+        --theme-gutter-mobile: 1em;
+
+        /* A cointainer in the grid should have some inner spacing */
+        --theme-column-container-size: var(theme-gutter);
+        --theme-column-container-size-mobile: var(--theme-gutter-mobile);
+
+        /* A single row */
+        --theme-grid-row: {
+          box-sizing: border-box;
+          display: -ms-flexbox;
+          display: -webkit-box;
+          display: flex;
+          -ms-flex: 0 1 auto;
+          -webkit-box-flex: 0;
+          flex: 0 1 auto;
+          -ms-flex-direction: row;
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+          flex-direction: row;
+          -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+          margin-right: calc(var(--theme-gutter) * -0.5);
+          margin-left: calc(var(--theme-gutter) * -0.5);
+        };
+
+        /* Modifier for mobile screens */
+        --theme-grid-row-mobile: {
+          margin-right: calc(var(--theme-gutter-mobile) * -0.5);
+          margin-left: calc(var(--theme-gutter-mobile) * -0.5);
+        };
+
+        /* Sizing */
+        --theme-grid-column: {
+          box-sizing: border-box;
+          -ms-flex: 0 0 auto;
+          -webkit-box-flex: 0;
+          flex: 0 0 auto;
+          padding-right: var(--theme-scale-2);
+          padding-left: var(--theme-scale-2);
+          margin-top: var(--theme-scale-3);
+        };
+
+        /* Modifier for mobile screens */
+        --theme-grid-column-mobile: {
+          padding-right: .375em;
+          padding-left: .375em;
+        };
+
+        /* Creating columns
+          When specifying a column, you can specify the width as such:
+
+          -ms-flex-preferred-size: calc( var(--theme-column-width) * 2 );
+          flex-basis: calc( var(--theme-column-width) * 2 );
+          max-width:  calc( var(--theme-column-width) * 2 );
+
+          Replace the 2 with the number of columns you need
+
+          Containers made up of columns should always have an inner size
+          (--theme-column-container-size or --theme-column-container-size-mobile)
+        */
+
+        /* Ofsetting columns
+          When offseint a column, you can specify the offset width as such:
+          margin-left: calc( var(--theme-column-width) * 2 );
+
+          Replace the 2 with the number of columns you need
+        */
 
         /* ------------------------------------------------
          * Typography
          */
+        --theme-base-font-size: 16px;
+        --theme-base-paragraph-width: 560px;
+        --theme-font-weight: 400;
+        --theme-font-weight-light: 300;
 
-         --theme-size-base: 20px; /* used as bodycopy */
+        --theme-font: 'Neo Sans', Helvetica Neue, Helvetica, Arial, sans-serif;
 
-        /* Use 'em' since font sizes are based on the
-           theme's size base, which is applied to the
-           css body tag */
-        --theme-size-headline: 2.815em;
-        --theme-size-subhead: 1.62em;
-
-        --theme-size-display1: 1.62em; /* used for example h1 */
-        --theme-size-display2: 1.12em; /* used for example h2 */
-        --theme-size-display3: 1em; /* used for example h3 */
-        --theme-size-display4: 1em; /* used for example h4, h5, h6 */
-        --theme-size-ui: .75em;
-        --theme-size-small: .9em;
-
-        /* use em over rem, since line-height should be relative to it's parent */
-        --theme-text-line-height: 1.5em;
-        --theme-text-line-height-small: 1.6em;
-
-        --theme-bodycopy-width: {
-          max-width: 46rem; /* set max width for legibility */
+        --theme-typography-normal: {
+          font-weight: var(--theme-font-weight);
         };
 
-	      --theme-indigo-title-width: 26rem; /* Width used for the indigo hero title */
-
-        /* Font declarations. 
-         * Make sure to include the actual font in the header of the web application 
-         */
-        --theme-font-sans-serif: 'Neo Sans', Helvetica Neue, Helvetica, Arial, sans-serif;
-
-        --theme-bodycopy: {
-          font-family: var(--theme-font-sans-serif);
-          font-size: var(--theme-size-base);
-          line-height: var(--theme-text-line-height);
-          -webkit-font-smoothing: antialiased;
-          color: rgba(0,0,0,.8); /* make slightly translucent so the color adapts to the background */
-          @apply(--theme-bodycopy-width);
+        --theme-typography-light: {
+          font-weight: var(--theme-font-weight-light);
         };
-
-        --theme-heading: {
-          font-family: var(--theme-font-sans-serif);
-          font-style: normal;
-          font-weight: normal; /* Maxi Cosi has a friendly heading theme */
-          line-height: var(--theme-text-line-height);
-          -webkit-font-smoothing: antialiased;
-          color: rgba(0,0,0,.8); /* make slightly translucent so the color adapts to the background */
-        };
-
-        --theme-ui: {
-          font-family: var(--theme-font-sans-serif);
-          letter-spacing: .5px;
-          text-transform: uppercase;
-        };
-
-        /* interactive elements */
-        --theme-ie-bodycopy: {
-          font-family: var(--theme-font-sans-serif);
-          font-size: var(--theme-size-small);
-          line-height: var(--theme-text-line-height-small);
-          @apply(--theme-bodycopy-width);
-        };
-
-        --theme-input-border-radius: .375rem;
 
         /*
-         * Call to action buttons
-         */
-        --theme-cta: {
-          @apply(--theme-bodycopy);
-          font-family: var(--theme-font-sans-serif);
-          font-size: 1rem;
-          line-height: 1rem;
-          padding: 1.125rem 1.75rem 1.25rem 1.75rem;
+          Base font: 16px
+          Line height 23px
+          Sizes: 48, 40, 32, 28, 24, 20, 16, 14;
+
+          https://drewish.com/tools/vertical-rhythm/
+        */
+
+        --theme-typography-8: {
+          font-size: 3.0000em; /* 48px */
+          line-height: 1.0000em; /* 48px */
+          margin-top: 0.5000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-7: {
+          font-size: 2.5000em; /* 40px */
+          line-height: 1.2000em; /* 48px */
+          margin-top: 0.6000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-6: {
+          font-size: 2.0000em; /* 32px */
+          line-height: 1.5000em; /* 48px */
+          margin-top: 0.7500em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-5: {
+          font-size: 1.7500em; /* 28px */
+          line-height: 1.7143em; /* 48px */
+          margin-top: 0.8571em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-4: {
+          font-size: 1.5000em; /* 24px */
+          line-height: 1.0000em; /* 24px */
+          margin-top: 1.0000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-3: {
+          font-size: 1.2500em; /* 20px */
+          line-height: 1.2000em; /* 24px */
+          margin-top: 1.2000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-2: {
+          font-size: 1.0000em; /* 16px */
+          line-height: 1.5000em; /* 24px */
+          margin-top: 1.5000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-1: {
+          font-size: 0.8750em; /* 14px */
+          line-height: 1.7143em; /* 24px */
+          margin-top: 1.7143em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-paragraph-text: {
+          @apply(--theme-typography-2);
+          max-width: var(--theme-base-paragraph-width);
+        };
+
+        /*
+          * Typography colors
+          */
+        --theme-color-text-link: var(--theme-brand-color-2);
+        --theme-color-text-link-active: var(--theme-brand-color-1);
+
+        --theme-text-link: {
+          color: var(--theme-color-text-link);
           text-decoration: none;
-          border-radius: var(--theme-border-radius-large);
-          border-width: 2px;
-          border-style: solid;
-          transition: .3s ease border-color, .3s ease background-color;
+          transition: color .3s ease, border-bottom .3s ease;
+          border-bottom: 1px solid var(--theme-color-monochrome-2);
         };
 
-        --theme-cta--primary: {
-          color: var(--theme-white);
-          border-color: var(--theme-color-cta);
-          background-color: var(--theme-color-cta);
+        --theme-text-link-active: {
+          color: var(--theme-color-text-link-active);
+          border-bottom: 1px solid var(--theme-color-text-link-active);
         };
 
-        --theme-cta--secondary: {
-          color: var(--theme-brand-color-accent-dark-grey);
-          border-color: var(--theme-brand-color-accent-medium-grey);
-        };
+        /* Buttons & CTA's */
+        --theme-primary-button-color: var(--theme-brand-complementary-color-2);
+        --theme-secondary-button-color: var(--theme-color-white);
+        --theme-tertiary-button-color: var(--theme-brand-color-1);
 
-        --theme-cta--hover: {
-          border-color: var(--theme-color-hover);
-          background-color: var(--theme-color-hover);
+        --theme-button: {
+          line-height: var(--theme-scale-3);
+          margin: var(--theme-scale-3) 0 0 0;
+          display: flex;
+          align-items: center;
+          padding: .625em 0;
+          border-radius: .5em;
+          border: .125em solid transparent;
+          transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease;
           text-decoration: none;
-          color: var(--theme-white);
-          cursor: pointer;
-        }
+          box-sizing: border-box;
+          float: left;
+        };
+
+        --theme-button-small: {
+          @apply(--theme-typography-2);
+        };
+
+        --theme-button-medium: {
+          @apply(--theme-typography-3);
+          padding: .325em 0;
+        };
+
+        --theme-button-large: {
+          @apply(--theme-typography-4);
+          padding: .325em 0;
+        };
+
+        --theme-button-primary: {
+          color: var(--theme-brand-color-2);
+          fill: var(--theme-brand-color-2);
+          background-color: var(--theme-brand-complementary-color-2)
+        };
+
+        --theme-button-secondary: {
+          color: var(--theme-brand-color-2);
+          fill: var(--theme-brand-color-2);
+          border: .125em solid var(--theme-color-monochrome-2);
+          background-color: var(--theme-color-white);
+        };
+
+        --theme-button-tertiary: {
+          background-color: var(--theme-tertiary-button-color);
+          color: var(--theme-color-white);
+          fill: var(--theme-color-white);
+        };
+
+        --theme-button-link: {
+          background-color: transparent;
+          color: var(--theme-color-text-link);
+          fill: var(--theme-color-text-link);
+        };
+
+        --theme-button-link-active: {
+          background-color: transparent;
+          border-color: transparent;
+          color: var(--theme-color-text-link-active);
+          fill: var(--theme-color-text-link-active);
+        };
+
+        --theme-button-active: {
+          background-color: var(--theme-brand-complementary-color-1);
+          border-color: var(--theme-brand-complementary-color-1);
+          color: var(--theme-color-white);
+        };
+
+        --theme-button-icon: {
+          height: var(--theme-scale-3);
+          width: var(--theme-scale-3);
+          padding: 0 .5em;
+        };
+
+        /*
+        * Other variables
+        */
+        /* We need to define the logo width, for older browsers */
+        --theme-logo-width: 18.5em;
       }
     </style>
   </template>
 </dom-module>
+
 
 <style>
 	/* ------------------------------------------------

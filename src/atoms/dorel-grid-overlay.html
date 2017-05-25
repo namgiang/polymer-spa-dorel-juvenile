@@ -1,0 +1,170 @@
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../templates/component-guide/dorel-component-guide-shared-styles.html">
+<link rel="import" href="../themes/theme-maxi-cosi-shared-styles.html">
+
+<dom-module id="dorel-grid-overlay">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      .vertical-rhythm {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        opacity: 0;
+        z-index: 10000;
+        height: 100%;
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAYAAADQ+yzZAAAAF0lEQVQYV2NkgALG4cEoLy//39nZyQgAHvQEGSEIElQAAAAASUVORK5CYII=);
+        transition: opacity .5s ease;
+        pointer-events: none;
+      }
+
+      .vertical-rhythm[shown] {
+        opacity: 1;
+      }
+
+      .horizontal-grid {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        z-index: 10000;
+        transition: opacity .5s ease;
+        pointer-events: none;
+      }
+
+      .horizontal-grid[shown] {
+        opacity: 1;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        padding: 0 var(--theme-gutter);
+      }
+
+      .column {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: var(--theme-column-width);
+        flex-basis: var(--theme-column-width);
+        max-width: var(--theme-column-width);
+        margin-top: 0;
+      }
+
+      [mobile-small] .column, [mobile-medium] .column {
+        @apply(--theme-grid-column-mobile);
+      }
+
+      [mobile-small] .row, [mobile-medium] .row {
+        @apply(--theme-grid-row-mobile);
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      .column-content {
+        background-color: var(--theme-brand-color-1);
+        height: 100vh;
+        opacity: .25;
+      }
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)"
+                      query-matches="{{ desktopFull }}"></iron-media-query>
+
+    <div mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}"
+         tablets$="{{ tablets }}"
+         desktop-small$="{{ desktopSmall }}"
+         desktop-full$="{{ desktopFull }}">
+      <div class="vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
+      <div class="horizontal-grid" shown$="[[ globals.Dorel.grid.horizontal ]]">
+        <div class="row">
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-grid-overlay',
+      behaviors: [
+        Polymer.IronA11yKeysBehavior
+      ],
+      properties: {
+        keyEventTarget: {
+          type: Object,
+          value: function () {
+            return document.body;
+          }
+        }
+      },
+      keyBindings: {
+        'shift+backspace': '_setVerticalRhythm',
+        'shift+enter': '_setHorizontalGrid',
+      },
+      /**
+       * @name _setVerticalRhythm
+       * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
+       */
+      _setVerticalRhythm: function () {
+        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
+        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
+      },
+      /**
+       * @name _setHorizontalGrid
+       * @description Toggles the horizontal grid global variable (and it's connected overlay component)
+       */
+      _setHorizontalGrid: function () {
+        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
+        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+      },
+    });
+  </script>
+
+</dom-module>

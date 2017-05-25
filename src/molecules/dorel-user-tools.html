@@ -3,37 +3,50 @@
 <dom-module id="dorel-user-tools">
   <template strip-whitespace>
     <style include="iron-flex iron-flex-alignment">
-      :host {
-        padding: 1px .5rem;
+      .container {
+        padding: 0 var(--theme-gutter);
+        height: var(--theme-scale-5);
+        width: 100%;
+        @apply(--layout-flex-auto);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        color: var(--theme-color-black);
       }
+
+      .container[screenSmall] {
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
       .icn-big {
-        --iron-icon-height: 2rem; /* var(--theme-icon-size-big) */
-        --iron-icon-width: 2rem; /* var(--theme-icon-size-big) */
+        --iron-icon-height: var(--theme-scale-2);
+        --iron-icon-width: var(--theme-scale-2);
       }
-      .left-spacing {
-        margin-left: .5rem; /* var(--theme-molecule-space-inner) */
-      }
+
       .icn-trigger:hover {
         cursor: pointer;
       }
+
       .icon-toggle-menu {
         z-index: 1001;
-        padding: 3px;
+        padding: 0;
       }
+
       .centered {
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
       }
+
       .active {
         color: white; /* var(--theme-white) */
         background-color: var(--theme-brand-color);
       }
+
       .active:after {
         content: '';
         background-color: var(--theme-brand-color);
         position: absolute;
         margin-top: 23px;
-        height: 15px; 
+        height: 15px;
         width: 100%;
       }
 
@@ -45,68 +58,69 @@
         padding: 0;
       }
 
-      iron-icon[screenMediumUp].active:after {
-        margin-top: 38px;
-        height: 45px;
+      iron-icon {
+        width: var(--theme-scale-3);
+        height: var(--theme-scale-3);
       }
+
     </style>
 
     <iron-media-query query="(max-width : 767px)"
-      query-matches="{{ screenSmall }}"></iron-media-query>
-      <iron-media-query query="(min-width : 768px)"
-      query-matches="{{ screenMediumUp }}"></iron-media-query>
+                      query-matches="{{ screenSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px)"
+                      query-matches="{{ screenMediumUp }}"></iron-media-query>
 
+    <div class="container" screenSmall$="{{ screenSmall }}" screenMediumUp$="{{ screenMediumUp }}">
+      <!-- only show hamburger menu on small screens -->
+      <template is="dom-if" if="{{ screenSmall }}">
+        <div>
+          <template
+            is="dom-if"
+            if="{{ !mobileMenuOpened }}">
+            <paper-icon-button
+              class="paper-icn-big icon-toggle-menu"
+              icon="dorel-icons:menu"
+              on-click="toggleMobileMenu"
+              aria-label="menu">
+            </paper-icon-button>
+          </template>
 
-    <!-- only show hamburger menu on small screens -->
-    <template is="dom-if" if="{{ screenSmall }}">
-      <div>
+          <template
+            is="dom-if"
+            if="{{ mobileMenuOpened }}">
+            <paper-icon-button
+              class="paper-icn-big icon-toggle-menu"
+              icon="dorel-icons:close"
+              on-click="toggleMobileMenu"
+              aria-label="menu">
+            </paper-icon-button>
+          </template>
+        </div>
+      </template>
+      <!-- Currently disabled for MVP launch (DIO-680). TODO: Uncomment when search functionality is implemented
+      <div class="centered">
         <template
           is="dom-if"
-          if="{{ !mobileMenuOpened }}">
-          <paper-icon-button
-            class="paper-icn-big icon-toggle-menu"
-            icon="dorel-icons:menu"
-            on-click="toggleMobileMenu"
-            aria-label="menu">
-          </paper-icon-button>
+          if="{{ !searchOpened }}">
+          <iron-icon
+            icon="dorel-icons:search"
+            class="icn-big icn-trigger icn-search-section-trigger"
+            on-click="toggleSearch"
+            screenMediumUp$="{{ screenMediumUp }}">
+          </iron-icon>
         </template>
 
         <template
           is="dom-if"
-          if="{{ mobileMenuOpened }}">
-          <paper-icon-button
-            class="paper-icn-big icon-toggle-menu"
+          if="{{ searchOpened }}">
+          <iron-icon
             icon="dorel-icons:close"
-            on-click="toggleMobileMenu"
-            aria-label="menu">
-          </paper-icon-button>
+            class="icn-big icn-trigger icn-search-section-trigger active"
+            on-click="toggleSearch"
+            screenMediumUp$="{{ screenMediumUp }}">
+          </iron-icon>
         </template>
-      </div>
-    </template>
-    <!-- Currently disabled for MVP launch (DIO-680). TODO: Uncomment when search functionality is implemented
-    <div class="centered">
-      <template
-        is="dom-if"
-        if="{{ !searchOpened }}">
-        <iron-icon
-          icon="dorel-icons:search"
-          class="icn-big icn-trigger icn-search-section-trigger"
-          on-click="toggleSearch"
-          screenMediumUp$="{{ screenMediumUp }}">
-        </iron-icon>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ searchOpened }}">
-        <iron-icon
-          icon="dorel-icons:close"
-          class="icn-big icn-trigger icn-search-section-trigger active"
-          on-click="toggleSearch"
-          screenMediumUp$="{{ screenMediumUp }}">
-        </iron-icon>
-      </template>
-      -->
+        -->
       <!-- Removed in favor of DIO-588
         <iron-icon
           icon="dorel-icons:shopping-cart"
@@ -114,6 +128,8 @@
         </iron-icon>
     </div>
     -->
+    </div>
+
 
   </template>
   <script>
@@ -161,7 +177,7 @@
        * @name toggleMobileMenu
        * @description handler for toggling the mobile menu
        */
-      toggleMobileMenu: function(event) {
+      toggleMobileMenu: function (event) {
 
         // search component will always be false
         this.searchOpened = false;
@@ -180,7 +196,7 @@
        * @name toggleSearch
        * @description handler for toggling the search or not
        */
-      toggleSearch: function(event) {
+      toggleSearch: function (event) {
 
         // mobileMenu will always be false
         this.mobileMenuOpened = false;
@@ -199,7 +215,7 @@
        * @name _eventTracking
        * @description sets the right properties for event tracking
        */
-      _eventTracking: function(event, type) {
+      _eventTracking: function (event, type) {
         /**
          * define component, for user-tools we have:
          * - mobile trigger

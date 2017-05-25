@@ -1,52 +1,118 @@
 <dom-module id="dorel-cta">
   <template>
-    <style>
+    <style include="iron-flex">
+
       :host {
-        display: flex;
+        width: auto;
       }
 
       .theme-cta {
-        @apply(--theme-cta);
+        @apply(--theme-button);
+        @apply(--theme-button-primary);
+        @apply(--theme-button-small);
+        width: 100%;
+
       }
 
       .theme-cta:hover, .theme-cta:focus {
-        @apply(--theme-cta--hover);
+        @apply(--theme-button-active);
       }
 
-      .theme-cta-primary {
-        @apply(--theme-cta--primary);
+      .theme-cta--primary {
+        @apply(--theme-button-primary);
       }
 
-      .theme-cta-secondary {
-        @apply(--theme-cta--secondary);
+      .theme-cta--secondary {
+        @apply(--theme-button-secondary);
       }
 
-      .light {
-        color: white;
-        border-color: rgba(255, 255, 255, 0.3);
+      .theme-cta--tertiary {
+        @apply(--theme-button-tertiary);
       }
+
+      .theme-cta--link {
+        @apply(--theme-button-link);
+      }
+
+      .theme-cta--link .theme-cta__content {
+        padding: 0;
+      }
+
+      .theme-cta--link .theme-cta__icon {
+        padding-right: 0;
+      }
+
+      .theme-cta--link:hover, .theme-cta--link:focus {
+        @apply(--theme-button-link-active);
+      }
+
+      .theme-cta--small {
+        @apply(--theme-button-small);
+      }
+
+      .theme-cta--medium {
+        @apply(--theme-button-medium);
+      }
+
+      .theme-cta--large {
+        @apply(--theme-button-large);
+      }
+
+      .theme-cta__content {
+        @apply(--layout-flex);
+        padding: 0 0 0 0.75em;
+      }
+
+      .theme-cta__icon {
+        @apply(--theme-button-icon);
+
+      }
+
+      .theme-cta__icon--left {
+        width: 5.125em;
+        height: 3.125em;
+        margin: .475em 0;
+      }
+
+      [mobile-small] .theme-cta__icon--left {
+        width: 3em;
+        height: 3.0625em;
+        margin: 0;
+      }
+
+      .theme-cta--large[mobile-small] {
+        height: 4em;
+      }
+
     </style>
-    
-    <!-- if type is anchor we are dealing with an anchor -->
-    <template
-      is="dom-if"
-      if="{{ isDefault(type) }}">
-      <a href$="{{ link }}" 
-        class$="theme-cta theme-cta-{{ type }}"
-        on-click="clickCTA">
-        <content></content>
-      </a>
-    </template>
 
-    <template
-      is="dom-if"
-      if="{{ !isDefault(type) }}">
-      <a href$="{{ link }}" class$="theme-cta theme-cta-{{ type }}"
-        on-click="clickCTA">
-        <content></content>
-      </a>
-    </template>
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+  
+    <a href$="{{ link }}"
+       class$="theme-cta theme-cta--{{ type }} theme-cta--{{ size }}"
+       mobile-small$="{{ mobileSmall }}"
+       mobile-medium$="{{ mobileMedium }}"
+       target$="[[ _isExternal(linkTarget) ]]"
+       on-click="clickCTA">
 
+      <template 
+        is="dom-if" 
+        if="[[ extraIcon ]]">
+        <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
+      </template>
+
+      <span class="theme-cta__content"><content></content></span>
+
+      <template 
+        is="dom-if" 
+        if="[[ icon ]]">
+        <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
+      </template>
+
+    </a>
   </template>
 
   <script>
@@ -55,7 +121,7 @@
 
       properties: {
 
-        /** 
+        /**
          * @attribute
          * @name link
          * @description defines the href of the CTA
@@ -63,23 +129,63 @@
         link: {
           type: String
         },
+        
+        /**
+         * @attribute
+         * @name linkTarget
+         * @description defines the links target (e.g. _blank for opening in new tab)
+         */
+        linkTarget: {
+          type: String,
+          value: ''
+        },
 
-        /** 
+        /**
          * @attribute
          * @name type
-         * @description defines what type of CTA we are dealing with
+         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary' and 'tertiary' are supported.
          */
         type: {
-          type: String
-        }
+          type: String,
+          value: 'primary',
+        },
 
+        /**
+         * @attribute
+         * @name size
+         * @description defines the size of the CTA. Currently 'small', 'medium' and 'large' are supported
+         */
+        size: {
+          type: String,
+          value: 'small'
+        },
+
+        /**
+         * @attribute
+         * @name icon
+         * @description The icon for the CTA. Use the dorel-iconset icons here.For example: dorel-icons:chevron-right
+         */
+        icon: {
+          type: String,
+          value: 'dorel-icons:chevron-right',
+        },
+
+        /**
+         * @attribute
+         * @name extraIcon
+         * @description A large extra icon for emphasizing the CTA. Is placed left of the text.
+         * Use the dorel-iconset icons here. For example: dorel-icons:chevron-right
+         */
+        extraIcon: {
+          type: String,
+        }
       },
 
-      /** 
+      /**
        * @name clickCTA
        * @description handle the click on a cta link
        */
-      clickCTA: function(event) {
+      clickCTA: function (event) {
 
         // track the click
         this._eventTracking(event);
@@ -87,11 +193,12 @@
       },
 
       /**
-       * @name isDefault
-       * @description check to see what kind of CTA we are dealing with
+       * @name _isExternal
+       * @description define if the target opens in a new tab or not
        */
-      isDefault: function(type) {
-        return (type === 'primary' || type === 'secondary');
+      _isExternal: function (linkTarget) {
+        return (typeof linkTarget === 'undefined' || !linkTarget) ?
+          '_self' : '_blank';
       },
 
       /**
@@ -99,11 +206,11 @@
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function(event) {
+      _eventTracking: function (event) {
 
         var globals = Polymer.globalsManager.get('Dorel');
 
-        /** 
+        /**
          * Tracking on click for cta
          */
         Polymer.globalsManager.set('Dorel.events', {
