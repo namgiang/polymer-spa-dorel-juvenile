@@ -229,7 +229,11 @@
       is: 'dorel-section-product-accessories',
 
       properties: {
-
+        accessoryScrollHandler: {
+          type: Boolean,
+          notify: true,
+          observer: '_scrollHandler'
+        },
         /**
          * @attribute
          * @name accessoriesData
@@ -264,6 +268,16 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');
+      },
+
+      /**
+       * @name _resizeHandler
+       * @description sets the scroll offset position of this section
+       *
+       */
+      _scrollHandler: function (event) {
+        console.log('Should be triggered');
+        this.scrollIntoView({block: "end", behavior: "smooth"})
       },
 
       /**

@@ -295,6 +295,7 @@
                     type="link"
                     link=""
                     size="small"
+                    on-click="_viewAccessories"
                     icon="dorel-icons:expand-more">
                     View Accessories
                   </dorel-cta>
@@ -326,6 +327,10 @@
 
       properties: {
 
+        accessoryScrollHandler: {
+          type: Boolean,
+          notify: true
+        },
         /**
          * @attribute
          * @name showcaseData
@@ -336,6 +341,7 @@
           type: Object,
           observer: '_showcaseDataChanged'
         },
+
 
         /**
          * @name currentImage
@@ -433,6 +439,15 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '');
+      },
+
+      /**
+       * @name _viewAccessories
+       * @description scroll to the accesory section
+       * */
+      _viewAccessories: function (event) {
+        console.log('scroll here');
+        this.accessoryScrollHandler = !this.accessoryScrollHandler;
       },
 
       /**

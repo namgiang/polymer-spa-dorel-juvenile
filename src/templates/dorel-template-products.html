@@ -19,21 +19,47 @@
       }
 
       .wrapper {
-        opacity: 0;  /* make things invisible upon start */
-        -webkit-animation: fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+        opacity: 0; /* make things invisible upon start */
+        -webkit-animation: fadeIn ease 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
         -moz-animation: fadeIn ease 1;
         animation: fadeIn ease 1;
         -webkit-animation-duration: 1s;
         -moz-animation-duration: .1s;
         animation-duration: 1s;
-        -webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+        -webkit-animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
         -moz-animation-fill-mode: forwards;
         animation-fill-mode: forwards;
       }
 
-      @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
-      @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
-      @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @-webkit-keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @-moz-keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
 
       dorel-layout-section dorel-page-builder {
         width: 100%;
@@ -43,30 +69,30 @@
 
     <!-- define routing for products -->
     <app-route
-        route="{{ route }}"
-        pattern="/:productName"
-        data="{{ routeData }}"
-        tail="{{ subroute }}"></app-route>
+      route="{{ route }}"
+      pattern="/:productName"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
 
     <div class="wrapper">
 
       <!-- show when acf.page_builder has components -->
-      <template 
-        is="dom-if" 
+      <template
+        is="dom-if"
         if="{{ builderData.acf.page_builder.length }}">
 
         <!-- iterate over page_builder components -->
         <template
-          is="dom-repeat" 
-          items="[[ builderData.acf.page_builder ]]" 
+          is="dom-repeat"
+          items="[[ builderData.acf.page_builder ]]"
           as="component"
           targetFramerate="1000">
 
           <!-- section-product-header -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_header') }}">
-            
+
             <dorel-section-product-header
               product-header-data="[[ component ]]"></dorel-section-product-header>
 
@@ -74,21 +100,22 @@
           <!--// section-product-header -->
 
           <!-- section-product-showcase -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_showcase') }}">
-            
+
             <dorel-section-product-showcase
+              accessory-scroll-handler="{{ accessoryScrollHandler }}"
               showcase-data="[[ component ]]"></dorel-section-product-showcase>
 
           </template>
           <!--// section-product-showcase -->
 
           <!-- section-product-usps -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_usps') }}">
-            
+
             <dorel-section-product-usps
               usps-data="[[ component ]]"></dorel-section-product-usps>
 
@@ -96,10 +123,10 @@
           <!--// section-product-usps -->
 
           <!-- section-product-features -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_features') }}">
-            
+
             <dorel-section-product-features
               features-data="[[ component ]]"></dorel-section-product-features>
 
@@ -107,32 +134,32 @@
           <!--// section-product-features -->
 
           <!-- section-product-accessories -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_accessories') }}">
-            
             <dorel-section-product-accessories
+              accessory-scroll-handler="{{ accessoryScrollHandler }}"
               accessories-data="[[ component ]]"></dorel-section-product-accessories>
 
           </template>
           <!--// section-product-accessories -->
 
           <!-- section-product-accordions -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_accordions') }}">
-            
+
             <dorel-section-product-accordions
               accordions-data="[[ component ]]"></dorel-section-product-accordions>
 
           </template>
           <!--// section-product-accordions -->
-          
+
           <!-- section-product-video -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_video') }}">
-            
+
             <dorel-section-product-video
               video-data="[[ component ]]"></dorel-section-product-video>
 
@@ -140,10 +167,10 @@
           <!--// section-product-video -->
 
           <!-- section-slideshow -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_slideshow') }}">
-            
+
             <dorel-section-slideshow
               slideshow-data="[[ component ]]"></dorel-section-slideshow>
 
@@ -179,20 +206,28 @@
          */
         routeData: {
           type: Object
-        }
-        
+        },
+
+        /**
+         * @name accessoryScrollHandler
+         * @description the offset to the accessory section
+         **/
+        accessoryScrollHandler: {
+          type: Boolean,
+          notify: true,
+          value: false,
+        },
       },
 
       observers: [
         '_routeDataChanged(routeData.productName)'
       ],
 
-      _routeDataChanged: function(productName) {
-        if (typeof productName === 'undefined' || typeof this.templateData.products === 'undefined' ||
-          !this.templateData.products.length) return;
+      _routeDataChanged: function (productName) {
+        if (typeof productName === 'undefined' || typeof this.templateData.products === 'undefined' || !this.templateData.products.length) return;
 
-        
-        this.builderData = this.templateData.products.find(function(product) {
+
+        this.builderData = this.templateData.products.find(function (product) {
           return product.slug === productName;
         });
 
@@ -201,7 +236,7 @@
         }
       },
 
-      /** 
+      /**
        * @name isPageComponent
        * @description compares to values to see if they match, for some
        * components they can be doubled. They will always be suffixed with
@@ -210,14 +245,14 @@
        *
        * @returns Boolean if the two values match or not (true/false)
        */
-      isPageComponent: function(response, cname) {
+      isPageComponent: function (response, cname) {
 
         // get last char
         var lastChar = response.substr(response.length - 1);
 
         // find out if it is a number
         var isNumber = !isNaN(Number(lastChar));
-        
+
         // if it is a number treat it accordingly
         if (isNumber) {
           var keyArr = response.split('_');
