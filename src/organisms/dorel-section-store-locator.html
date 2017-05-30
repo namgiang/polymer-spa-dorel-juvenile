@@ -1,0 +1,644 @@
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../molecules/dorel-icons.html">
+
+<dom-module id="dorel-section-store-locator">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+
+      .section-store-locator {
+        position: relative;
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-4);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        margin-top: 0;
+      }
+
+      google-map {
+        width: 100%;
+        height: 37.5em;
+        position: relative;
+        float: left;
+      }
+
+      paper-dropdown-menu {
+        --paper-dropdown-menu: {
+          @apply(--theme-typography-2);
+          padding: 0;
+        };
+
+        width: 100%;
+      }
+
+      .store-overlay {
+        background-color: var(--theme-color-white);
+        position: absolute;
+        top: 1.5em;
+        right: 1.5em;
+        padding: 1.5em;
+        width: 300px;
+        z-index: 1000;
+        border-radius: 1em;
+      }
+
+      paper-input {
+        margin-top: 1.5em;
+        padding: 0;
+      }
+
+      paper-input-container[error] {
+        --paper-input-container-color: red;
+      }
+
+      paper-ripple {
+        height: 3em;
+      }
+
+      [mobile-small] .store-overlay, [mobile-medium] .store-overlay {
+        position: initial;
+        top: 0;
+        right: 0;
+        padding: 1.5em;
+        border-radius: 0;
+        box-sizing: border-box;
+        width: 100%;
+        float: left;
+      }
+
+      [mobile-small] google-map , [mobile-medium] google-map {
+        height: 90vh;
+      }
+
+    </style>
+
+    <iron-ajax
+      auto
+      url="[[ countriesEndPoint ]]"
+      handle-as="json"
+      on-response="_countriesLoaded"></iron-ajax>
+
+
+    <iron-ajax
+      auto
+      url="[[ storesEndPoint ]]"
+      handle-as="json"
+      on-response="_storesLoaded"></iron-ajax>
+
+    <google-maps-api id="api"
+                     api-key="[[ apiKey ]]"
+                     language="[[ language ]]"
+                     on-api-load="_mapApiLoaded"></google-maps-api>
+
+    <!-- handles enter submit -->
+    <iron-a11y-keys id="a11y" target="[[_form]]" keys="enter"
+                    on-keys-pressed="_submitLocator"></iron-a11y-keys>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <section class="section-store-locator"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}">
+      <div class="store-overlay">
+        <h3 class="title">Find a store</h3>
+        <form is="iron-form" method="get" action="/" id="store-locator-form">
+          <paper-dropdown-menu label="Select a country"
+                               disabled$="[[ !countriesResponse.results.length ]]"
+                               required noink>
+            <paper-menu noink attr-for-selected="name" selected="{{ selectedCountry }}" class="dropdown-content">
+              <template
+                is="dom-repeat"
+                items="[[ countriesResponse.results ]]"
+                as="country">
+                <paper-item value="[[ country.value ]]" name="[[ country.label ]]">[[ country.label ]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+
+          <paper-input
+            id="address-input"
+            label="Type in address"
+            value="{{ address }}"
+            error-message="{{ addressError }}"
+            disabled$="[[ !selectedCountry ]]"
+            required></paper-input>
+
+          <dorel-cta
+            id="submit-button"
+            on-click="_submitLocator"
+            disabled$="{{ _isDisabled(address) }}"
+            type="primary"
+            link=""
+            size="small"
+            icon="dorel-icons:chevron-right">
+            Submit
+          </dorel-cta>
+        </form>
+
+      </div>
+
+      <google-map
+        id="googleMap"
+        language="[[ language ]]"
+        map="{{ map }}"
+        disable-zoom="[[ disableZoom ]]"
+        api-key="[[ apiKey ]]"
+        latitude="{{ mapLat }}"
+        longitude="{{ mapLng }}"
+        zoom="{{ mapZoom }}"
+        fit-to-markers>
+        
+        <template
+          is="dom-repeat"
+          items="{{ storesResponse.results }}"
+          as="store">
+          <google-map-marker 
+            latitude="[[ storesResponse.originalLat ]]" 
+            longitude="[[ storesResponse.originalLng ]]"
+            icon="/assets/images/markers/home-marker.png"></google-map-marker>
+
+          <google-map-marker 
+            latitude="{{ store.lat }}"
+            longitude="{{ store.lng }}"
+            icon="/assets/images/markers/shop-marker.png">
+            <template
+                is="dom-if"
+                if="{{ store.address }}">
+              <table>
+
+                <template
+                  is="dom-if"
+                  if="{{ store.address }}">
+                  <tr>
+                    <td>{{ store.address }}</td>
+                  </tr>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="{{ store.postal_code }}">
+                  <tr>
+                    <td>{{ store.postal_code }}</td>
+                  </tr>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="{{ store.city }}">
+                  <tr>
+                    <td>{{ store.city }}</td>
+                  </tr>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="{{ store.phone_number }}">
+                  <tr>
+                    <td>{{ store.phone_number }}</td>
+                  </tr>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="{{ store.online_shop.url }}">
+                  <tr>
+                    <td>
+                      <a href="{{ store.online_shop.url }}" target="_blank">Visit website</a>
+                    </td>
+                  </tr>
+                </template>
+
+              </table>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ !store.address }}">
+              <p>No information available</p>
+            </template>
+          </google-map-marker>
+        </template>
+
+      </google-map>
+
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-store-locator',
+
+      properties: {
+
+        /**
+         * @name _form
+         * @description the form used for the a11y-keys submit
+         */
+        _form: {
+          type: Object,
+          value: function () {
+            return this.$['store-locator-form'];
+          }
+        },
+
+        language: {
+          type: String,
+          value: CONFIG.LOCALE.LANGUAGE
+        },
+
+        /**
+         * @name apiKey
+         * @description the api key for google maps
+         */
+        apiKey: {
+          type: String,
+          value: 'AIzaSyBYMyWp_Ex0Vti2UUDNOs979yVJ5sts1iA'
+        },
+
+        /**
+         * @name disableZoom
+         * @description attribute to define if the user is able
+         * to zoom by scroll-wheel or not
+         */
+        disableZoom: {
+          type: Boolean,
+          value: true
+        },
+
+        /**
+         * @name mapLoaded
+         * @description defines if the map is loaded
+         */
+        mapLoaded: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * @name countriesArr
+         * @description the array is used for the countries select dropdown.
+         * currently the countries array is build up by the stores array.
+         * This is done in the _retrieveCountries.
+         *
+         * TODO: retrieve from api
+         */
+        countriesResponse: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+
+        /**
+         * @name countryStoresArr
+         * @description Defines the array that holds the information for the
+         * selected country and address combination within a certain radius.
+         * It is used in a dom-repeat to place the markers.
+         *
+         * TODO: retrieve from api
+         */
+        countryStoresArr: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * @name selectedCountry
+         * @description The country that is selected through the dropdown. A
+         * default value is also specified here
+         *
+         */
+        selectedCountry: {
+          type: String,
+          value: '' // CONFIG.LOCALE.COUNTRY
+        }
+      },
+
+      /**
+       * @name listeners
+       * @description listens to all different fires
+       */
+      listeners: {
+        // google-map-ready is fired from the google-map element
+        'google-map-ready': '_mapLoaded'
+      },
+
+      /**
+       * @name observers
+       * @description observe if the requested parameters are changed
+       */
+      observers: [
+        '_setMapZoom(mapLoaded, geometry)',
+        '_setMapFocus(mapLoaded, selectedCountry)'
+      ],
+
+      /**
+       * @name _mapApiLoaded
+       * @description this is fired when the google-map-api on-api-load attribute
+       * is fired. It indicates that the google map api is ready to use
+       */
+      _mapApiLoaded: function () {
+        this.apiLoaded = true;
+
+        this._initStoreLocator();
+
+      },
+
+      /**
+       * @name _initStoreLocator
+       * @description when the maps api is ready we initialize the stuff needed
+       * to show the countries in the dropdown and setup the maps focus. Setting the
+       * maps focus will only work if a country is preselected (this.selectedCountry)
+       */
+      _initStoreLocator: function () {
+
+        // create the geocoder object
+        this.geocoder = new google.maps.Geocoder();
+        this.autocomplete = new google.maps.places.AutocompleteService();
+
+        // build up the countries arr for the countries dropdown
+        this.countriesEndPoint = this.globals.Dorel.dioApiUrl + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.language;
+      },
+
+      /**
+       * @listener
+       * @name _mapLoaded
+       * @description the google-map webcomponent fires the google-map-ready
+       * event which in turn will set the mapLoaded to true. This means the
+       * map variable is set and accessable. The mapLoaded is used to define
+       * the zooming in _setMapZoom.
+       */
+      _mapLoaded: function() {
+
+        // set the variable which we use in the _setMapZoom
+        this.mapLoaded = true;
+
+      },
+
+      /**
+       * @name _setMapFocus
+       * @description With the selectedCountry set and the lat/lng of that location coming
+       * from the geocoder, we can set the focus of the map too that location.
+       *
+       * @param selectedCountry - String - contains the country's name
+       */
+      _setMapFocus: function (mapLoaded, selectedCountry) {
+
+        // check if there is a value for the geocoder and selectedCountry
+        if (!mapLoaded ||
+          typeof selectedCountry === 'undefined' ||
+          typeof this.geocoder === 'undefined') return;
+
+        // reference this
+        var self = this;
+
+        // retrieve and set the maps variables
+        this._retrieveGeocode(selectedCountry).then(function (geometry) {
+
+          // used in the google-map attribute latitude
+          self.mapLat = geometry.location.lat();
+
+          // used in the google-map attribute longitude
+          self.mapLng = geometry.location.lng();
+
+          // saved too use it for the _setMapZoom observer
+          self.geometry = geometry;
+        });
+
+      },
+
+      /**
+       * @observer
+       * @name _setMapZoom
+       * @description if the mapLoaded and the geometry are set try to fit the
+       * the bounds and adjust zooming for the map's country
+       *
+       * @param loaded - Boolean - if the map is loaded or not (_mapLoaded)
+       * @param geometry - Object - the geometry object of google maps (_retrieveGeocode)
+       */
+      _setMapZoom: function(loaded, geometry) {
+
+        // check if both are set and defined
+        if (!loaded || typeof geometry === 'undefined') return;
+
+        // use the maps object to fit the bounds with the geometry
+        this.map.fitBounds(geometry.viewport);
+      },
+
+      /**
+       * @name _countriesLoaded
+       * @description this function is executed when the ajax call is succesfull
+       *
+       * @param data - Object - the complete stores list (coming from the backend)
+       */
+      _countriesLoaded: function (data) {
+        this.countriesResponse = data.detail.response;
+      },
+
+      /**
+       * @name _storesLoaded
+       * @description this function is executed when the ajax call is succesfull
+       *
+       * @param data - Object - the complete stores list (coming from the backend)
+       */
+      _storesLoaded: function(data) {
+        this.storesResponse = data.detail.response;
+
+        // setup geometry fro the fitbounds
+        var geometry = {
+          org: {
+            lat: this.storesResponse.originalLat,
+            lng: this.storesResponse.originalLng
+          },
+          res: {
+            lat: this.storesResponse.results[this.storesResponse.totalResults - 1].lat,
+            lng: this.storesResponse.results[this.storesResponse.totalResults - 1].lng
+          }
+        };
+
+        // use the geometry object to define the latLng for gmaps
+        var userLatLng = new google.maps.LatLng(geometry.org.lat, geometry.org.lng);
+        var resLatLng = new google.maps.LatLng(geometry.res.lat, geometry.res.lng);
+
+        // set and extend the bounds
+        var bounds = new google.maps.LatLngBounds();
+        bounds.extend(userLatLng);
+        bounds.extend(resLatLng);
+
+        // fit the map to our bounds
+        this.map.fitBounds(bounds);
+      },
+
+      /**
+       * @name _submitLocator
+       * @description the form submit handler.
+       *
+       * @param e - EventObject - contains the click event
+       */
+      _submitLocator: function (event) {
+
+        // handle the validation of the input and errors when the input is empty
+        if (this.$['submit-button'].hasAttribute('disabled')) {
+          this._handleErrors('ADDRESS_EMPTY');
+          return;
+        }
+
+        // reset the validity of the input
+        this.$['address-input'].invalid = false;
+
+        // reset the map, remove markers
+        this.storesResponse = {
+          results: []
+        };
+
+        // reference this
+        var self = this;
+
+        // merge the address with the country
+        var query = this.address + ' ' + this.selectedCountry;
+
+        // retrieve the suggestions by query
+        this.predictions = this._retrieveSuggestions(query).then(function (response) {
+
+          // retrieve the geocode to update the map
+          self._retrieveGeocode(response.description).then(function(geometry) {
+            // define our api call
+            var storeParams = '&lat=' + geometry.location.lat();
+            storeParams += '&lng=' + geometry.location.lng();
+            storeParams += '&radius=' + 5;
+
+            // set the endpoint, when set the api call will automatically commence
+            self.storesEndPoint = self.globals.Dorel.dioApiUrl + '/retailers?brandName=maxi_cosi' + storeParams;
+
+          }, function(error) {
+
+            // handle off the errors
+            self._handleErrors(error);
+
+          });
+
+        }, function (error) {
+
+          // handle off the errors
+          self._handleErrors(error);
+
+        });
+
+      },
+
+      /**
+       * @name _retrieveGeocode
+       * @description retrieve the geocode information (lat, lng, bounds etc.). It
+       * is used to focus and zooming of the map. The function is called in the
+       * _setMapFocus and _submitLocator.
+       *
+       * @param address - String - the address or country to find the geocode for
+       */
+      _retrieveGeocode: function (address) {
+
+        // reference this
+        var self = this;
+
+        // create a promise because the resolve might take a while
+        return new Promise(function (resolve, reject) {
+
+          // actual geocoder call by address
+          self.geocoder.geocode({'address': address}, function(results, status) {
+
+            // check if the response is ok
+            if (status === 'OK') {
+
+              // resolve promise with the geometry object
+              resolve(results[0].geometry);
+            } else {
+
+              // reject the promise
+              reject(status);
+            }
+
+          });
+
+        });
+      },
+
+      /**
+       * @name _retrieveSuggestions
+       * @description handle off and retrieve the predictions
+       *
+       * @param query - String - the address to get predictions for
+       */
+      _retrieveSuggestions: function (query) {
+
+        // reference this
+        var self = this;
+
+        // create a promise because the resolve might take a while
+        return new Promise(function (resolve, reject) {
+
+          // do a prediction call and start the retrieval of the suggestions
+          self.autocomplete.getQueryPredictions({input: query}, function (predictions, status) {
+
+            // check the status of the call
+            if (status != google.maps.places.PlacesServiceStatus.OK) {
+
+              // reject the promise
+              reject(status);
+
+            } else {
+
+              // resolve promise with the first prediction
+              resolve(predictions[0]);
+
+            }
+          });
+
+        });
+
+      },
+
+      /**
+       * @name _isDisabled
+       * @description check if input or button should be disabled when a value
+       * is not set or undefined
+       *
+       * @param val - String - the value we need to evaluate to set or not
+       */
+      _isDisabled: function (val) {
+        return typeof val === 'undefined' || val === '';
+      },
+
+      /**
+       * @name _handleErrors
+       * @description this function takes the error and defines a human readable
+       * message to show to the user.
+       *
+       * @param error - String - the error code to process and translate
+       */
+      _handleErrors: function (error) {
+
+        // zero results error
+        switch (error) {
+          case 'ZERO_RESULTS':
+            this.addressError = 'No results found for this address!';
+            break;
+
+          case 'ADDRESS_EMPTY':
+            this.addressError = 'This field cannot be empty';
+            break;
+        }
+
+        // set the invalid attribute to show error styling
+        this.$['address-input'].invalid = true;
+      }
+    });
+  </script>
+</dom-module>
