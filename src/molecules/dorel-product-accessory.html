@@ -1,3 +1,5 @@
+<link rel="import" href="../molecules/dorel-product-accessory-lightbox.html">
+
 <dom-module id="dorel-product-accessory">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -155,7 +157,7 @@
               if="{{ _hasValue(accessoryData.permalink) }}">
               <dorel-cta
                 type="link"
-                on-click="clickDetails"
+                on-click="_openLightbox"
                 link="[[ accessoryData.permalink ]]"
                 size="small"
                 icon="dorel-icons:play-circle-outline">
@@ -166,6 +168,7 @@
         </div>
       </div>
     </section>
+    <dorel-product-accessory-lightbox accessory-lightbox-data="[[ accessoryData ]]"></dorel-product-accessory-lightbox>
   </template>
 
   <script>
@@ -188,10 +191,12 @@
       },
 
       /**
-       * @name clickDetails
+       * @name _openLightbox
        * @description handle of the click on the details links
        */
-      clickDetails: function (event) {
+      _openLightbox: function (event) {
+        var lightbox = this.$$('dorel-product-accessory-lightbox');
+        lightbox.open();
         // track the event
         this._eventTracking(event);
       },
