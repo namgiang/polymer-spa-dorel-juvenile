@@ -1,0 +1,104 @@
+<link rel="import" href="../molecules/dorel-category-listing-item.html">
+
+<dom-module id="dorel-category-listing">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .category-listing {
+        padding: 3em var(--theme-gutter) 0 var(--theme-gutter);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      dorel-category-listing-item {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        width: auto;
+        margin: auto;
+      }
+
+      .load-more {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+      }
+
+      .narrow-row {
+        padding-left: 25.5%;
+        box-sizing: border-box;
+      }
+
+      /* Responsive behaviour */
+
+      [tablets] dorel-category-listing-item, [desktop-small] dorel-category-listing-item {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+
+      }
+
+      [mobile-small] dorel-category-listing-item, [mobile-medium] dorel-category-listing-item {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile-small] .narrow-row, [mobile-medium] .narrow-row, [tablets] .narrow-row {
+        padding-left: 0;
+      }
+
+    </style>
+
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <div mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}"
+         tablets$="{{ tablets }}"
+         desktop-small$="{{ desktopSmall }}">
+      <section class="category-listing layout horizontal center center-justified wrap">
+        <div class="row narrow-row">
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+          <dorel-category-listing-item></dorel-category-listing-item>
+        </div>
+      </section>
+      <div class="load-more layout horizontal center center-justified wrap">
+        <div class="row narrow-row">
+          <dorel-cta
+            type="primary"
+            link=""
+            size="small"
+            icon="dorel-icons:expand-more">
+            Load next items
+          </dorel-cta>
+        </div>
+      </div>
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-listing',
+    });
+  </script>
+
+</dom-module>
