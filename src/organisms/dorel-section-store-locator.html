@@ -7,10 +7,14 @@
 <dom-module id="dorel-section-store-locator">
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment">
-
-      .section-store-locator {
+      .section-store-locator,
+      .store-locator-wrapper {
         position: relative;
         width: 100%;
+      }
+      
+      .content-wrapper {
+
       }
 
       .title {
@@ -19,21 +23,9 @@
         width: 100%;
         margin-top: 0;
       }
-
-      google-map {
-        width: 100%;
-        height: 37.5em;
-        position: relative;
+      
+      .store-locator-wrapper {
         float: left;
-      }
-
-      paper-dropdown-menu {
-        --paper-dropdown-menu: {
-          @apply(--theme-typography-2);
-          padding: 0;
-        };
-
-        width: 100%;
       }
 
       .store-overlay {
@@ -47,6 +39,15 @@
         border-radius: 1em;
       }
 
+      paper-dropdown-menu {
+        --paper-dropdown-menu: {
+          @apply(--theme-typography-2);
+          padding: 0;
+        };
+
+        width: 100%;
+      }
+
       paper-input {
         margin-top: 1.5em;
         padding: 0;
@@ -58,6 +59,13 @@
 
       paper-ripple {
         height: 3em;
+      }
+
+      google-map {
+        width: 100%;
+        height: 37.5em;
+        position: relative;
+        float: left;
       }
 
       [mobile-small] .store-overlay, [mobile-medium] .store-overlay {
@@ -108,128 +116,135 @@
     <section class="section-store-locator"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}">
-      <div class="store-overlay">
-        <h3 class="title">Find a store</h3>
-        <form is="iron-form" method="get" action="/" id="store-locator-form">
-          <paper-dropdown-menu label="Select a country"
-                               disabled$="[[ !countriesResponse.results.length ]]"
-                               required noink>
-            <paper-menu noink attr-for-selected="name" selected="{{ selectedCountry }}" class="dropdown-content">
-              <template
-                is="dom-repeat"
-                items="[[ countriesResponse.results ]]"
-                as="country">
-                <paper-item value="[[ country.value ]]" name="[[ country.label ]]">[[ country.label ]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-dropdown-menu>
 
-          <paper-input
-            id="address-input"
-            label="Type in address"
-            value="{{ address }}"
-            error-message="{{ addressError }}"
-            disabled$="[[ !selectedCountry ]]"
-            required></paper-input>
-
-          <dorel-cta
-            id="submit-button"
-            on-click="_submitLocator"
-            disabled$="{{ _isDisabled(address) }}"
-            type="primary"
-            link=""
-            size="small"
-            icon="dorel-icons:chevron-right">
-            Submit
-          </dorel-cta>
-        </form>
-
+      <div class="content-wrapper">
+        <h1 class="title">[[ templateData.acf.title ]]</h1>
+        <dorel-safe-html html="[[ templateData.acf.text ]]"></dorel-safe-html>
       </div>
 
-      <google-map
-        id="googleMap"
-        language="[[ language ]]"
-        map="{{ map }}"
-        disable-zoom="[[ disableZoom ]]"
-        api-key="[[ apiKey ]]"
-        latitude="{{ mapLat }}"
-        longitude="{{ mapLng }}"
-        zoom="{{ mapZoom }}"
-        fit-to-markers>
-        
-        <template
-          is="dom-repeat"
-          items="{{ storesResponse.results }}"
-          as="store">
-          <google-map-marker 
-            latitude="[[ storesResponse.originalLat ]]" 
-            longitude="[[ storesResponse.originalLng ]]"
-            icon="/assets/images/markers/home-marker.png"></google-map-marker>
-
-          <google-map-marker 
-            latitude="{{ store.lat }}"
-            longitude="{{ store.lng }}"
-            icon="/assets/images/markers/shop-marker.png">
-            <template
-                is="dom-if"
-                if="{{ store.address }}">
-              <table>
-
+      <div class="store-locator-wrapper">
+        <div class="store-overlay">
+          <h3 class="title">Find a store</h3>
+          <form is="iron-form" method="get" action="/" id="store-locator-form">
+            <paper-dropdown-menu label="Select a country"
+                                 disabled$="[[ !countriesResponse.results.length ]]"
+                                 required noink>
+              <paper-menu noink attr-for-selected="name" selected="{{ selectedCountry }}" class="dropdown-content">
                 <template
+                  is="dom-repeat"
+                  items="[[ countriesResponse.results ]]"
+                  as="country">
+                  <paper-item value="[[ country.value ]]" name="[[ country.label ]]">[[ country.label ]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+
+            <paper-input
+              id="address-input"
+              label="Type in address"
+              value="{{ address }}"
+              error-message="{{ addressError }}"
+              disabled$="[[ !selectedCountry ]]"
+              required></paper-input>
+
+            <dorel-cta
+              id="submit-button"
+              on-click="_submitLocator"
+              disabled$="{{ _isDisabled(address) }}"
+              type="primary"
+              link=""
+              size="small"
+              icon="dorel-icons:chevron-right">
+              Submit
+            </dorel-cta>
+          </form>
+
+        </div>
+
+        <google-map
+          id="googleMap"
+          language="[[ language ]]"
+          map="{{ map }}"
+          disable-zoom="[[ disableZoom ]]"
+          api-key="[[ apiKey ]]"
+          latitude="{{ mapLat }}"
+          longitude="{{ mapLng }}"
+          zoom="{{ mapZoom }}"
+          fit-to-markers>
+          
+          <template
+            is="dom-repeat"
+            items="{{ storesResponse.results }}"
+            as="store">
+            <google-map-marker 
+              latitude="[[ storesResponse.originalLat ]]" 
+              longitude="[[ storesResponse.originalLng ]]"
+              icon="/assets/images/markers/home-marker.png"></google-map-marker>
+
+            <google-map-marker 
+              latitude="{{ store.lat }}"
+              longitude="{{ store.lng }}"
+              icon="/assets/images/markers/shop-marker.png">
+              <template
                   is="dom-if"
                   if="{{ store.address }}">
-                  <tr>
-                    <td>{{ store.address }}</td>
-                  </tr>
-                </template>
+                <table>
 
-                <template
-                  is="dom-if"
-                  if="{{ store.postal_code }}">
-                  <tr>
-                    <td>{{ store.postal_code }}</td>
-                  </tr>
-                </template>
+                  <template
+                    is="dom-if"
+                    if="{{ store.address }}">
+                    <tr>
+                      <td>{{ store.address }}</td>
+                    </tr>
+                  </template>
 
-                <template
-                  is="dom-if"
-                  if="{{ store.city }}">
-                  <tr>
-                    <td>{{ store.city }}</td>
-                  </tr>
-                </template>
+                  <template
+                    is="dom-if"
+                    if="{{ store.postal_code }}">
+                    <tr>
+                      <td>{{ store.postal_code }}</td>
+                    </tr>
+                  </template>
 
-                <template
-                  is="dom-if"
-                  if="{{ store.phone_number }}">
-                  <tr>
-                    <td>{{ store.phone_number }}</td>
-                  </tr>
-                </template>
+                  <template
+                    is="dom-if"
+                    if="{{ store.city }}">
+                    <tr>
+                      <td>{{ store.city }}</td>
+                    </tr>
+                  </template>
 
-                <template
-                  is="dom-if"
-                  if="{{ store.online_shop.url }}">
-                  <tr>
-                    <td>
-                      <a href="{{ store.online_shop.url }}" target="_blank">Visit website</a>
-                    </td>
-                  </tr>
-                </template>
+                  <template
+                    is="dom-if"
+                    if="{{ store.phone_number }}">
+                    <tr>
+                      <td>{{ store.phone_number }}</td>
+                    </tr>
+                  </template>
 
-              </table>
-            </template>
+                  <template
+                    is="dom-if"
+                    if="{{ store.online_shop.url }}">
+                    <tr>
+                      <td>
+                        <a href="{{ store.online_shop.url }}" target="_blank">Visit website</a>
+                      </td>
+                    </tr>
+                  </template>
 
-            <template
-              is="dom-if"
-              if="{{ !store.address }}">
-              <p>No information available</p>
-            </template>
-          </google-map-marker>
-        </template>
+                </table>
+              </template>
 
-      </google-map>
+              <template
+                is="dom-if"
+                if="{{ !store.address }}">
+                <p>No information available</p>
+              </template>
+            </google-map-marker>
+          </template>
 
+        </google-map>
+      </div>
     </section>
   </template>
 
@@ -238,6 +253,17 @@
       is: 'dorel-section-store-locator',
 
       properties: {
+         /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
 
         /**
          * @name _form
