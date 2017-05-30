@@ -1,0 +1,236 @@
+<dom-module id="dorel-product-accessory">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      .accessory-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .accessory-description {
+        float: left;
+      }
+
+      dorel-cta {
+        float: left;
+        clear: both;
+      }
+
+      dorel-cta a {
+        margin-top: 0;
+      }
+
+      .accessory {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+        margin-top: 3em;
+        float: left;
+      }
+
+      .accessory-wrapper {
+        padding: 0 1em;
+        float: left;
+        width: 100%;
+        position: relative;
+      }
+
+      .accessory-included-badge {
+        @apply(--theme-typography-1);
+        background-color: var(--theme-brand-complementary-color-3);
+        color: var(--theme-color-white);
+        margin-top: 0;
+        position: absolute;
+        top: .5em;
+        left: 1.5em;
+        z-index: 1;
+        border-radius: 0.875em;
+        padding: 0 .75em;
+
+      }
+
+      .accessory-image {
+        float: left;
+        width: 10.5em;
+        height: 10.5em;
+        border-radius: .5em;
+      }
+
+      .accessory-content {
+        width: calc(100% - 10.5em);
+        padding: 0 0 0 1.5em;
+        box-sizing: border-box;
+        float: left;
+      }
+
+      [mobile-small] .accessory, [mobile-medium] .accessory {
+        @apply(--theme-grid-column-mobile);
+      }
+
+      [tablets] .accessory, [desktop-small] .accessory {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      [mobile-small] .accessory, [mobile-medium] .accessory {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile-small] .accessory-image, [mobile-medium] .accessory-image {
+        width: 6em;
+        height: 6em;
+      }
+
+      [mobile-small] .accessory-content, [mobile-medium] .accessory-content {
+        width: calc(100% - 6em);
+        padding: 0 0 0 1.5em;
+        box-sizing: border-box;
+        float: left;
+        margin-top: -1.5em;
+      }
+
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <section class="section-product-accessory"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}">
+      <div class="accessory">
+        <div class="accessory-wrapper">
+
+          <template
+            is="dom-if"
+            if="{{ accessoryData.included }}">
+                  <span class="accessory-included-badge">
+                    Included
+                  </span>
+          </template>
+
+          <template
+            is="dom-if"
+            if="{{ _hasValue(accessoryData.image) }}">
+            <iron-image class="accessory-image"
+                        sizing="cover"
+                        fade="true"
+                        preload
+                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                        src$="[[ accessoryData.image ]]"></iron-image>
+          </template>
+
+          <div class="accessory-content">
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryData.title) }}">
+              <h4 class="accessory-title">[[ accessoryData.title ]]</h4>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryData.description) }}">
+              <div class="accessory-description">
+                <dorel-safe-html html="[[ accessoryData.description ]]"></dorel-safe-html>
+              </div>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryData.permalink) }}">
+              <dorel-cta
+                type="link"
+                on-click="clickDetails"
+                link="[[ accessoryData.permalink ]]"
+                size="small"
+                icon="dorel-icons:play-circle-outline">
+                View Accessories
+              </dorel-cta>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-product-accessory',
+
+      properties: {
+        /**
+         * @attribute
+         * @name accessoryData
+         * @description data retrieved from ACF/Wordpress to build up this page
+         */
+        accessoryData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name clickDetails
+       * @description handle of the click on the details links
+       */
+      clickDetails: function (event) {
+        // track the event
+        this._eventTracking(event);
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for cta tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /**
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'click',
+          component: 'product-accessories',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': Polymer.dom(event).localTarget.href
+          }
+        });
+      }
+    });
+
+  </script>
+
+</dom-module>
