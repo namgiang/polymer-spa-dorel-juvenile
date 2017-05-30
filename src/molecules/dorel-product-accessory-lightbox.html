@@ -1,0 +1,192 @@
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="dorel-product-accessory-lightbox">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+
+      .lightbox-backdrop {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background-color: rgba(0, 0, 0, .4);
+        opacity: 0;
+        display: none;
+        z-index: 100;
+        transition: opacity .3s ease;
+      }
+
+      .lightbox-backdrop[opened] {
+        opacity: 1;
+        display: block;
+      }
+
+      .accessory-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+        margin-top: 0;
+        padding: 0 !important;
+      }
+
+      paper-dialog {
+        margin: 0;
+        padding: 1.5em;
+        font-size: 1rem;
+        border-radius: 1em;
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        width: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      paper-dialog .lightbox-wrapper {
+        position: relative;
+        float: left;
+        width: 100%;
+        padding: 0;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .close-dialog-cta {
+        position: absolute;
+        right: 0;
+        top: -2.5em;
+        padding: 0;
+        margin: 0;
+      }
+
+      .lightbox-description {
+        width: 50%;
+        padding-top: 1.5em;
+        box-sizing: border-box;
+        float: left;
+        display: inline-block;
+      }
+
+      .lightbox-image {
+        width: 50%;
+        box-sizing: border-box;
+        background-color: gainsboro;
+        display: inline-block;
+        float: left;
+        height: 12em;
+        padding-right: 1em;
+      }
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <section class="section-product-accessory-lightbox"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             tablets$="{{ tablets }}">
+      <div class="lightbox-backdrop" opened$="{{ opened }}"></div>
+      <paper-dialog id="lightbox">
+        <div class="lightbox-wrapper">
+          <div class="lightbox-image">
+
+          </div>
+          <div class="lightbox-description">
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryLightboxData.title) }}">
+              <h1 class="accessory-title">Umbrella[[ accessoryLightboxData.title ]]</h1>
+            </template>
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryLightboxData.description) }}">
+              <dorel-safe-html html="[[ accessoryLightboxData.description ]]"></dorel-safe-html>
+            </template>
+          </div>
+          <dorel-cta
+            class="close-dialog-cta"
+            type="link"
+            link=""
+            size="small"
+            icon="dorel-icons:close"
+            dialog-confirm autofocus>
+            Close
+          </dorel-cta>
+        </div>
+      </paper-dialog>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-product-accessory-lightbox',
+      listeners: {
+        'iron-overlay-opened': '_onOverlayOpened',
+        'iron-overlay-closed': '_onOverlayClosed'
+      },
+      properties: {
+        /**
+         * @attribute
+         * @name accessoryLightboxData
+         * @description data retrieved from ACF/Wordpress to build up this page
+         */
+        accessoryLightboxData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+        /**
+         * @attribute
+         * @name opened
+         * @description attribute that for opened/closed dialogs
+         */
+        opened: {
+          type: Boolean,
+          value: false,
+        }
+      },
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      },
+
+      /**
+       * @name _onOverlayOpened
+       * @description event handler for when the dialog is opened
+       */
+      _onOverlayOpened: function (event) {
+        this.opened = true;
+      },
+      /**
+       * @name _onOverlayClosed
+       * @description event handler for when the dialog is closed
+       */
+      _onOverlayClosed: function (event) {
+        this.opened = false;
+      },
+      /**
+       * @name open
+       * @description public function that opens the lightbox dialog
+       */
+      open: function (event) {
+        this.$$('#lightbox').open();
+      },
+    });
+  </script>
+
+</dom-module>

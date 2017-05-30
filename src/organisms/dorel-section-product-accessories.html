@@ -1,6 +1,14 @@
+<link rel="import" href="../molecules/dorel-product-accessory.html">
+
 <dom-module id="dorel-section-product-accessories">
   <template>
     <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        float: left;
+        width: 100%;
+      }
+
       .section-product-accessories {
         width: 100%;
         float: left;
@@ -16,69 +24,18 @@
         text-align: center;
       }
 
-      .accessory-title {
-        @apply(--theme-typography-4);
-        float: left;
-        width: 100%;
-        margin-top: 0;
-      }
-
-      .accessory-description {
-        float: left;
-      }
-
-      dorel-cta {
-        float: left;
-        clear: both;
-      }
-
-      dorel-cta a {
-        margin-top: 0;
-      }
 
       .row {
         float: left;
         width: 100%;
       }
 
-      .accessory {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
-        flex-basis: calc(var(--theme-column-width) * 4);
-        max-width: calc(var(--theme-column-width) * 4);
-        padding: 0 .75em;
-        margin-top: 3em;
-        float: left;
-      }
-
-      .accessory-wrapper {
-        padding: 0 1em;
-      }
-
-      .accessory-image {
-        float: left;
-        width: 10.5em;
-        height: 10.5em;
-        border-radius: .5em;
-      }
-
-      .accessory-content {
-        width: calc(100% - 10.5em);
-        padding: 0 0 0 1.5em;
-        box-sizing: border-box;
-        float: left;
-      }
 
       /* Responsive Behaviour */
       .section-product-accessories[mobile-small], .section-product-accessories[mobile-medium] {
         padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
       }
-
-      [mobile-small] .accessory, [mobile-medium] .accessory {
-        @apply(--theme-grid-column-mobile);
-      }
-
-      [mobile-small] .row {
+     [mobile-small] .row {
         margin-right: -0.25em;
         margin-left: -0.25em;
       }
@@ -87,33 +44,6 @@
         margin-right: -0.5em;
         margin-left: -0.5em;
       }
-
-      [tablets] .accessory, [desktop-small] .accessory {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        max-width: calc(var(--theme-column-width) * 6);
-      }
-
-      [mobile-small] .accessory, [mobile-medium] .accessory {
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-      }
-
-      [mobile-small] .accessory-image, [mobile-medium] .accessory-image {
-        width: 6em;
-        height: 6em;
-      }
-
-      [mobile-small] .accessory-content, [mobile-medium] .accessory-content {
-        width: calc(100% - 6em);
-        padding: 0 0 0 1.5em;
-        box-sizing: border-box;
-        float: left;
-        margin-top: -1.5em;
-      }
-
-
     </style>
 
     <!-- media queries -->
@@ -141,63 +71,12 @@
         is="dom-if"
         if="[[ accessoriesData.accessories.length ]]">
         <div class="row">
-
           <template
             is="dom-repeat"
             items="[[ accessoriesData.accessories ]]"
             as="accessory">
-
-            <div class="accessory">
-              <div class="accessory-wrapper">
-
-                <template
-                  is="dom-if"
-                  if="{{ accessory.included }}">
-                  <span class="accessory-included-batch"></span>
-                </template>
-
-                <template
-                  is="dom-if"
-                  if="{{ _hasValue(accessory.image) }}">
-                  <iron-image class="accessory-image"
-                              sizing="cover"
-                              fade="true"
-                              preload
-                              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                              src$="[[ accessory.image ]]"></iron-image>
-                </template>
-
-                <div class="accessory-content">
-                  <template
-                    is="dom-if"
-                    if="{{ _hasValue(accessory.title) }}">
-                    <h4 class="accessory-title">[[ accessory.title ]]</h4>
-                  </template>
-
-                  <template
-                    is="dom-if"
-                    if="{{ _hasValue(accessory.description) }}">
-                    <div class="accessory-description">
-                      <dorel-safe-html html="[[ accessory.description ]]"></dorel-safe-html>
-                    </div>
-                  </template>
-
-                  <template
-                    is="dom-if"
-                    if="{{ _hasValue(accessory.permalink) }}">
-                    <dorel-cta
-                      type="link"
-                      link="[[ accessory.permalink ]]"
-                      size="small"
-                      icon="dorel-icons:play-circle-outline">
-                      View Accessories
-                    </dorel-cta>
-                  </template>
-                </div>
-              </div>
-            </div>
+            <dorel-product-accessory accessory-data="[[ accessory ]]"></dorel-product-accessory>
           </template>
-
         </div>
       </template>
 
@@ -210,7 +89,11 @@
       is: 'dorel-section-product-accessories',
 
       properties: {
-
+        accessoryScrollHandler: {
+          type: Boolean,
+          notify: true,
+          observer: '_scrollHandler'
+        },
         /**
          * @attribute
          * @name accessoriesData
@@ -245,6 +128,15 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');
+      },
+
+      /**
+       * @name _resizeHandler
+       * @description sets the scroll offset position of this section
+       *
+       */
+      _scrollHandler: function (event) {
+        this.scrollIntoView({block: "end", behavior: "smooth"})
       },
 
       /**
