@@ -12,18 +12,29 @@
         position: relative;
         width: 100%;
       }
-      
-      .content-wrapper {
 
+      .content-wrapper {
+        padding: 6em var(--theme-gutter) 6em var(--theme-gutter);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: var(--theme-color-white);
       }
 
       .title {
+        @apply(--theme-typography-8);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .store-title {
         @apply(--theme-typography-4);
         color: var(--theme-brand-color-1);
         width: 100%;
         margin-top: 0;
       }
-      
+
       .store-locator-wrapper {
         float: left;
       }
@@ -77,10 +88,20 @@
         box-sizing: border-box;
         width: 100%;
         float: left;
+        background-color: var(--theme-color-monochrome-2);
       }
 
-      [mobile-small] google-map , [mobile-medium] google-map {
+      [mobile-small] google-map, [mobile-medium] google-map {
         height: 90vh;
+      }
+
+      [mobile-small] .title, [mobile-medium] .title {
+        @apply(--theme-typography-6);
+        margin-top: 0;
+      }
+
+      [mobile-small] .content-wrapper, [mobile-medium] .content-wrapper {
+        padding: 3em var(--theme-gutter-mobile);
       }
 
     </style>
@@ -124,7 +145,7 @@
 
       <div class="store-locator-wrapper">
         <div class="store-overlay">
-          <h3 class="title">Find a store</h3>
+          <h3 class="store-title">Enter a Location</h3>
           <form is="iron-form" method="get" action="/" id="store-locator-form">
             <paper-dropdown-menu label="Select a country"
                                  disabled$="[[ !countriesResponse.results.length ]]"
@@ -155,7 +176,7 @@
               link=""
               size="small"
               icon="dorel-icons:chevron-right">
-              Submit
+              Find Stores
             </dorel-cta>
           </form>
 
@@ -171,23 +192,23 @@
           longitude="{{ mapLng }}"
           zoom="{{ mapZoom }}"
           fit-to-markers>
-          
+
           <template
             is="dom-repeat"
             items="{{ storesResponse.results }}"
             as="store">
-            <google-map-marker 
-              latitude="[[ storesResponse.originalLat ]]" 
+            <google-map-marker
+              latitude="[[ storesResponse.originalLat ]]"
               longitude="[[ storesResponse.originalLng ]]"
               icon="/assets/images/markers/home-marker.png"></google-map-marker>
 
-            <google-map-marker 
+            <google-map-marker
               latitude="{{ store.lat }}"
               longitude="{{ store.lng }}"
               icon="/assets/images/markers/shop-marker.png">
               <template
-                  is="dom-if"
-                  if="{{ store.address }}">
+                is="dom-if"
+                if="{{ store.address }}">
                 <table>
 
                   <template
@@ -253,14 +274,14 @@
       is: 'dorel-section-store-locator',
 
       properties: {
-         /**
+        /**
          * @attribute
          * @name templateData
          * @description all data needed to build up a certain component
          */
         templateData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           }
         },
@@ -403,7 +424,7 @@
        * map variable is set and accessable. The mapLoaded is used to define
        * the zooming in _setMapZoom.
        */
-      _mapLoaded: function() {
+      _mapLoaded: function () {
 
         // set the variable which we use in the _setMapZoom
         this.mapLoaded = true;
@@ -451,7 +472,7 @@
        * @param loaded - Boolean - if the map is loaded or not (_mapLoaded)
        * @param geometry - Object - the geometry object of google maps (_retrieveGeocode)
        */
-      _setMapZoom: function(loaded, geometry) {
+      _setMapZoom: function (loaded, geometry) {
 
         // check if both are set and defined
         if (!loaded || typeof geometry === 'undefined') return;
@@ -476,7 +497,7 @@
        *
        * @param data - Object - the complete stores list (coming from the backend)
        */
-      _storesLoaded: function(data) {
+      _storesLoaded: function (data) {
         this.storesResponse = data.detail.response;
 
         // setup geometry fro the fitbounds
@@ -536,7 +557,7 @@
         this.predictions = this._retrieveSuggestions(query).then(function (response) {
 
           // retrieve the geocode to update the map
-          self._retrieveGeocode(response.description).then(function(geometry) {
+          self._retrieveGeocode(response.description).then(function (geometry) {
             // define our api call
             var storeParams = '&lat=' + geometry.location.lat();
             storeParams += '&lng=' + geometry.location.lng();
@@ -545,7 +566,7 @@
             // set the endpoint, when set the api call will automatically commence
             self.storesEndPoint = self.globals.Dorel.dioApiUrl + '/retailers?brandName=maxi_cosi' + storeParams;
 
-          }, function(error) {
+          }, function (error) {
 
             // handle off the errors
             self._handleErrors(error);
@@ -578,7 +599,7 @@
         return new Promise(function (resolve, reject) {
 
           // actual geocoder call by address
-          self.geocoder.geocode({'address': address}, function(results, status) {
+          self.geocoder.geocode({'address': address}, function (results, status) {
 
             // check if the response is ok
             if (status === 'OK') {
