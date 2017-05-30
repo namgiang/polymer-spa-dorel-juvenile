@@ -3,9 +3,15 @@
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 
-<dom-module id="dorel-store-locator">
+<dom-module id="dorel-section-store-locator">
   <template>
     <style>
+      .section-store-locator {
+        position: relative;
+        width: 100%;
+        height: 600px;
+      }
+
       google-map {
         width: 100%;
         height: 600px;
@@ -28,9 +34,22 @@
       }
     </style>
 
+    <iron-ajax
+      auto
+      url="[[ countriesEndPoint ]]" 
+      handle-as="json" 
+      on-response="_countriesLoaded"></iron-ajax>
+
+
+    <iron-ajax
+      auto
+      url="[[ storesEndPoint ]]" 
+      handle-as="json" 
+      on-response="_storesLoaded"></iron-ajax>
+
     <google-maps-api id="api"
-      api-key="[[apiKey]]"
-      language="[[language]]"
+      api-key="[[ apiKey ]]"
+      language="[[ language ]]"
       on-api-load="_mapApiLoaded"></google-maps-api>
   
     <!-- handles enter submit -->
@@ -43,14 +62,14 @@
 
         <form is="iron-form" method="get" action="/" id="store-locator-form">
           <paper-dropdown-menu label="Select a country" 
-            disabled$="[[ !countriesArr.length ]]"
+            disabled$="[[ !countriesResponse.results.length ]]"
             required>
             <paper-menu attr-for-selected="name" selected="{{ selectedCountry }}" class="dropdown-content">
               <template
                 is="dom-repeat"
-                items="[[ countriesArr ]]"
+                items="[[ countriesResponse.results ]]"
                 as="country">
-                <paper-item name="{{ country }}">[[ country ]]</paper-item>
+                <paper-item value="[[ country.value ]]" name="[[ country.label ]]">[[ country.label ]]</paper-item>
               </template>
             </paper-listbox>
           </paper-dropdown-menu>
@@ -72,6 +91,8 @@
       </div>
 
       <google-map
+        id="googleMap"
+        language="[[ language ]]"
         map="{{ map }}"
         disable-zoom="[[ disableZoom ]]"
         api-key="[[ apiKey ]]"
@@ -79,12 +100,19 @@
         longitude="{{ mapLng }}"
         zoom="{{ mapZoom }}">
         
-        <!-- <template
+        <template
           is="dom-repeat"
-          items="[[ countries ]]"
-          as="country">
-           <google-map-marker latitude="37.777" longitude="-122.38911"></google-map-marker>
-        </template> -->
+          items="[[ storesResponse.results ]]"
+          as="store">
+           <google-map-marker latitude="[[ store.lat ]]" longitude="[[ store.lng ]]">
+             <table>
+              <tr>
+                <td>address: </td>
+                <td>[[ store.address ]]</td>
+              </tr>
+             </table>
+           </google-map-marker>
+        </template>
 
       </google-map>
 
@@ -93,7 +121,7 @@
 
   <script>
     Polymer({
-      is: 'dorel-store-locator',
+      is: 'dorel-section-store-locator',
 
       properties: {
 
@@ -106,6 +134,11 @@
           value: function() {
             return this.$['store-locator-form'];
           }
+        },
+
+        language: {
+          type: String,
+          value: CONFIG.LOCALE.LANGUAGE
         },
 
         /**
@@ -137,76 +170,6 @@
         },
 
         /**
-         * @name storesArr
-         * @description dummy data for all the stores, will be changed
-         * for a rest api
-         *
-         * TODO: retrieve from api
-         */
-        storesArr: {
-          type: Array,
-          value: function() {
-            return [
-              {
-                name: 'Outlet Store 1',
-                address: 'loremstreet 12',
-                zipcode: '1234 ZS',
-                city: 'Melbourne',
-                country: 'Australia'
-              },
-
-              {
-                name: 'VIP Store',
-                address: 'Ipsumstreet 12',
-                zipcode: '1778 ZS',
-                city: 'Melbourne',
-                country: 'Australia'
-              },
-
-              {
-                name: 'VIP Store Sydney',
-                address: 'Chachastreet 12',
-                zipcode: '1778 ZS',
-                city: 'Sydney',
-                country: 'Australia'
-              },
-
-              {
-                name: 'Dolly Shop',
-                address: 'Dollystreet 16',
-                zipcode: '1404 ES',
-                city: 'Bussum',
-                country: 'Netherlands'
-              },
-
-              {
-                name: 'Dolly Shop',
-                address: 'Dollystreet 16',
-                zipcode: '1404 ES',
-                city: 'Bussum',
-                country: 'Germany'
-              },
-
-              {
-                name: 'Dolly Shop',
-                address: 'Dollystreet 16',
-                zipcode: '1404 ES',
-                city: 'Bussum',
-                country: 'England'
-              },
-
-              {
-                name: 'Dolly Shop',
-                address: 'Dollystreet 16',
-                zipcode: '1404 ES',
-                city: 'Bussum',
-                country: 'France'
-              }
-            ];
-          }
-        },
-
-        /**
          * @name countriesArr
          * @description the array is used for the countries select dropdown.
          * currently the countries array is build up by the stores array. 
@@ -214,9 +177,11 @@
          *
          * TODO: retrieve from api
          */
-        countriesArr: {
-          type: Array,
-          value: []
+        countriesResponse: {
+          type: Object,
+          value: function() {
+            return {};
+          }
         },
 
         /**
@@ -239,11 +204,10 @@
          *
          * TODO: retrieve from api config and match with api
          */
-        selectedCountry: {
-          type: String,
-          value: 'australia',
-          observer: '_setMapFocus'
-        }
+        // selectedCountry: {
+        //   type: String,
+        //   value: ''
+        // }
       },
 
       /**
@@ -260,7 +224,8 @@
        * @description observe if the requested parameters are changed
        */
       observers: [
-        '_setMapZoom(mapLoaded, geometry)'
+        '_setMapZoom(mapLoaded, geometry)',
+        '_setMapFocus(mapLoaded, selectedCountry)'
       ],
 
       /**
@@ -269,6 +234,7 @@
        * is fired. It indicates that the google map api is ready to use
        */
       _mapApiLoaded: function() {
+        this.apiLoaded = true;
         
         this._initStoreLocator();
 
@@ -287,11 +253,7 @@
         this.autocomplete = new google.maps.places.AutocompleteService();
 
         // build up the countries arr for the countries dropdown
-        this.countriesArr = this._retrieveCountries(this.storesArr);
-        
-        // set the maps focus for the (pre)selected country
-        this._setMapFocus(this.selectedCountry);
-
+        this.countriesEndPoint = this.globals.Dorel.dioApiUrl + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.language;
       },
 
       /**
@@ -303,9 +265,15 @@
        * the zooming in _setMapZoom.
        */
       _mapLoaded: function() {
+        var self = this;
 
         // set the variable which we use in the _setMapZoom
         this.mapLoaded = true;
+        window.setTimeout(function() {
+
+          self.selectedCountry = CONFIG.LOCALE.COUNTRY;
+          console.log('yes!!!');
+        }, 1000);
 
       },
 
@@ -316,16 +284,19 @@
        *
        * @param selectedCountry - String - contains the country's name
        */
-      _setMapFocus: function(selectedCountry) {
+      _setMapFocus: function(mapLoaded, selectedCountry) {
 
         // check if there is a value for the geocoder and selectedCountry
-        if (typeof this.geocoder === 'undefined' || typeof selectedCountry === 'undefined') return;
+        if (!mapLoaded ||
+          typeof selectedCountry === 'undefined' ||
+          typeof this.geocoder === 'undefined') return;
 
         // reference this
         var self = this;
         
         // retrieve and set the maps variables
-        this._retrieveGeocode(this.selectedCountry).then(function(geometry) {
+        this._retrieveGeocode(selectedCountry).then(function(geometry) {
+
           // used in the google-map attribute latitude
           self.mapLat = geometry.location.lat();
 
@@ -348,48 +319,27 @@
        * @param geometry - Object - the geometry object of google maps (_retrieveGeocode)
        */
       _setMapZoom: function(loaded, geometry) {
+        console.log(loaded, geometry);
 
         // check if both are set and defined
         if (!loaded || typeof geometry === 'undefined') return;
 
         // use the maps object to fit the bounds with the geometry
         this.map.fitBounds(geometry.viewport);
-
       },
 
       /**
-       * @name _retrieveCountries
-       * @description create a countries array by checking the stores array and
-       * extracting the countries without making duplicate countries. This array
-       * is used by the countries dropdown and will be coming from an api in the 
-       * future.
+       * @name _countriesLoaded
+       * @description this function is executed when the ajax call is succesfull
        *
-       * @param stores - Array - the complete stores list (coming from the backend)
-       * TODO: retrieve stores from api
+       * @param data - Object - the complete stores list (coming from the backend)
        */
-      _retrieveCountries: function(stores) {
+      _countriesLoaded: function(data) {
+        this.countriesResponse = data.detail.response;
+      },
 
-        // check if the stores are defineds
-        if (typeof stores === 'undefined') return;
-
-        // create an empty placeholder array
-        var countries = [];
-        
-        // loop through and add the country is it doesn't exist yet
-        for (var i = 0; i < stores.length; i++) {
-
-          // set the country to lowerCase
-          var country = stores[i].country.toLowerCase();
-
-          // check if the country already exists in the placeholder array
-          if (countries.indexOf(country) < 0) {
-            countries = countries.concat(country);
-          }
-        }
-
-        // return the placeholder array
-        return countries;
-
+      _storesLoaded: function(data) {
+        this.storesResponse = data.detail.response;
       },
 
       /**
@@ -421,15 +371,20 @@
           
           // retrieve the geocode to update the map
           self._retrieveGeocode(response.description).then(function(geometry) {
+            var storeParams = '&lat=' + geometry.location.lat();
+            storeParams += '&lng=' +  geometry.location.lng();
+            storeParams += '&radius=' + 5;
+
+            self.storesEndPoint = self.globals.Dorel.dioApiUrl + '/retailers?brandName=maxi_cosi' + storeParams;
 
             // used in the google-map attribute latitude
-            self.mapLat = geometry.location.lat();
+            // self.mapLat = geometry.location.lat();
 
             // used in the google-map attribute longitude
-            self.mapLng = geometry.location.lng();
+            // self.mapLng = geometry.location.lng();
 
             // saved too use it for the _setMapZoom observer
-            self.geometry = geometry;
+            // self.geometry = geometry;
 
           }, function(error) {
 
@@ -462,9 +417,10 @@
 
         // create a promise because the resolve might take a while
         return new Promise(function(resolve, reject) {
-
+          
           // actual geocoder call by address
           self.geocoder.geocode({'address': address}, function(results, status) {
+            console.log(address, results[0]);
 
             // check if the response is ok
             if (status === 'OK') {
