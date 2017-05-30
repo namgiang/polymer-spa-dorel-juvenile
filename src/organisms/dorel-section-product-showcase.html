@@ -290,7 +290,7 @@
               <div class="actions">
                 <template
                   is="dom-if"
-                  if="[[ _hasValue(showcaseData.accesoires_button) ]]">
+                  if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
                   <dorel-cta
                     type="link"
                     link=""
@@ -303,10 +303,10 @@
 
                 <template
                   is="dom-if"
-                  if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, showcaseData.store_locator_page) ]]">
                   <dorel-cta
                     type="primary"
-                    link=""
+                    link="[[ showcaseData.store_locator_page ]]"
                     size="small"
                     icon="dorel-icons:chevron-right">
                     Find a Store
@@ -327,10 +327,16 @@
 
       properties: {
 
+        /**
+         * @attribute
+         * @name accessoryScrollHandler
+         * @description exposes the accessoryScrollHandler to other components
+         */
         accessoryScrollHandler: {
           type: Boolean,
           notify: true
         },
+
         /**
          * @attribute
          * @name showcaseData
@@ -349,12 +355,12 @@
          * object we define the value with a function that returns an empty
          * object by default. It is updated when we get the Wordpress data
          */
-        currentImage: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        }
+        // currentImage: {
+        //   type: Object,
+        //   value: function () {
+        //     return {};
+        //   }
+        // }
       },
 
       /**
@@ -408,37 +414,69 @@
       },
 
       /**
-       * @name isCurrentImage
+       * @name _isCurrentImage
        * @description check if the thumbnail is the current image shown
        * @return String (current/empty)
        */
-      isCurrentImage: function (item, currentItem) {
+      // _isCurrentImage: function (item, currentItem) {
 
-        // if not defined, empty or null jump out
-        if (typeof item === 'undefined' || item === null || item === '') return;
+      //   // if not defined, empty or null jump out
+      //   if (typeof item === 'undefined' || item === null || item === '') return;
 
-        // returns current or empty 
-        return (currentItem.ID === item.ID) ? 'current' : '';
+      //   // returns current or empty 
+      //   return (currentItem.ID === item.ID) ? 'current' : '';
 
-      },
+      // },
 
       /**
-       * @name hasImage
+       * @name _hasImage
        * @description check if the background image is defined
        * @return String (placeholder/img) placeholder or img url
        */
-      _hasImage: function (img) {
+      // _hasImage: function (img) {
 
-        // check if img is defined or not
-        return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/showcase/placeholder.jpg' : img;
+      //   // check if img is defined or not
+      //   return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/showcase/placeholder.jpg' : img;
+      // },
+
+      /**
+       * @name _hasAccessories
+       * @description check if a the accessories are defined
+       * and if the toggle is enabled in WP
+       *
+       * @return Boolean
+       */
+      _hasAccessories: function (val) {
+        var toggle = (typeof val !== 'undefined' && val !== '' && val);
+        var currentPage = Polymer.globalsManager.get('Dorel.current.page');
+
+        var layout = currentPage.acf.page_builder.find(function(layout) {
+          return layout.acf_fc_layout === 'section_product_accessories';
+        });
+
+        return (toggle && layout.accessories.length);
       },
 
       /**
-       * @name hasValue
+       * @name _hasStoreLocator
+       * @description check if a store-locator page is defined and
+       * if the toggle is enabled in WP
+       *
+       * @return Boolean
+       */
+      _hasStoreLocator: function (toggle, page) {
+        toggle = (typeof toggle !== 'undefined' && toggle !== '' && toggle);
+        page = (typeof page !== 'undefined' && page !== '');
+
+        return (toggle && page);
+      },
+
+      /**
+       * @name _hasValue
        * @description check if a value is set
        */
       _hasValue: function (val) {
-        return (typeof val !== 'undefined' && val !== '');
+        return (typeof val !== 'undefined' && val !== '' && val);
       },
 
       /**
