@@ -3,22 +3,80 @@
 <dom-module id="dorel-product-accessory-lightbox">
   <template>
     <style include="iron-flex iron-flex-alignment">
+
+
       .lightbox-backdrop {
         position: fixed;
         width: 100%;
         height: 100%;
         left: 0;
         top: 0;
-        background-color: rgba(0, 0, 0, .2);
+        background-color: rgba(0, 0, 0, .4);
         opacity: 0;
         display: none;
         z-index: 100;
+        transition: opacity .3s ease;
       }
 
       .lightbox-backdrop[opened] {
         opacity: 1;
         display: block;
       }
+
+      .accessory-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+        margin-top: 0;
+        padding: 0 !important;
+      }
+
+      paper-dialog {
+        margin: 0;
+        padding: 1.5em;
+        font-size: 1rem;
+        border-radius: 1em;
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        width: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      paper-dialog .lightbox-wrapper {
+        position: relative;
+        float: left;
+        width: 100%;
+        padding: 0;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .close-dialog-cta {
+        position: absolute;
+        right: 0;
+        top: -2.5em;
+        padding: 0;
+        margin: 0;
+      }
+
+      .lightbox-description {
+        width: 50%;
+        padding-top: 1.5em;
+        box-sizing: border-box;
+        float: left;
+        display: inline-block;
+      }
+
+      .lightbox-image {
+        width: 50%;
+        box-sizing: border-box;
+        background-color: gainsboro;
+        display: inline-block;
+        float: left;
+        height: 12em;
+        padding-right: 1em;
+      }
+
     </style>
 
     <!-- media queries -->
@@ -37,11 +95,31 @@
              tablets$="{{ tablets }}">
       <div class="lightbox-backdrop" opened$="{{ opened }}"></div>
       <paper-dialog id="lightbox">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-          nisi ut aliquip ex ea commodo consequat.</p>
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus>Tap me to close</paper-button>
+        <div class="lightbox-wrapper">
+          <div class="lightbox-image">
+
+          </div>
+          <div class="lightbox-description">
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryLightboxData.title) }}">
+              <h1 class="accessory-title">Umbrella[[ accessoryLightboxData.title ]]</h1>
+            </template>
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryLightboxData.description) }}">
+              <dorel-safe-html html="[[ accessoryLightboxData.description ]]"></dorel-safe-html>
+            </template>
+          </div>
+          <dorel-cta
+            class="close-dialog-cta"
+            type="link"
+            link=""
+            size="small"
+            icon="dorel-icons:close"
+            dialog-confirm autofocus>
+            Close
+          </dorel-cta>
         </div>
       </paper-dialog>
     </section>
@@ -77,6 +155,16 @@
           value: false,
         }
       },
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      },
+
       /**
        * @name _onOverlayOpened
        * @description event handler for when the dialog is opened
