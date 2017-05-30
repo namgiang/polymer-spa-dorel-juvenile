@@ -1,3 +1,4 @@
+<link rel="import" href="../atoms/dorel-color-switcher.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="dorel-product-accessory-lightbox">
@@ -31,6 +32,14 @@
         padding: 0 !important;
       }
 
+      .accessory-description {
+        @apply(--theme-typography-2);
+      }
+
+      .accessory-excerpt {
+        margin-top: 0;
+      }
+
       paper-dialog {
         margin: 0;
         padding: 1.5em;
@@ -60,21 +69,58 @@
       }
 
       .lightbox-description {
-        width: 50%;
         padding-top: 1.5em;
         box-sizing: border-box;
-        float: left;
-        display: inline-block;
       }
 
       .lightbox-image {
-        width: 50%;
         box-sizing: border-box;
-        background-color: gainsboro;
-        display: inline-block;
         float: left;
-        height: 12em;
-        padding-right: 1em;
+        padding-right: 1.5em;
+      }
+
+      .accessory-included-badge {
+        @apply(--theme-typography-1);
+        background-color: var(--theme-brand-complementary-color-3);
+        color: var(--theme-color-white);
+        margin-top: 0;
+        position: absolute;
+        top: .5em;
+        left: 0.5em;
+        z-index: 1;
+        border-radius: 0.875em;
+        padding: 0 .75em;
+      }
+
+      .accessory-image {
+        float: left;
+        width: 16.5em;
+        height: 16.5em;
+        border-radius: .5em;
+      }
+
+      /*
+      * Responsive behaviour
+      */
+      [tablets] paper-dialog,  [desktop-small] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
+        flex-basis: calc(var(--theme-column-width) * 9);
+        width: calc(var(--theme-column-width) * 9);
+        max-width: calc(var(--theme-column-width) * 9);
+      }
+
+      [mobile-small] paper-dialog, [mobile-medium] paper-dialog {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        width: 100%;
+        max-width: 100%;
+
+        /*top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        border-radius: 0; */
       }
 
     </style>
@@ -92,24 +138,31 @@
     <section class="section-product-accessory-lightbox"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
-             tablets$="{{ tablets }}">
+             tablets$="{{ tablets }}"
+             desktop-small$="{{ desktopSmall }}">
       <div class="lightbox-backdrop" opened$="{{ opened }}"></div>
       <paper-dialog id="lightbox">
-        <div class="lightbox-wrapper">
+        <div class="lightbox-wrapper layout horizontal">
           <div class="lightbox-image">
-
+            <span class="accessory-included-badge">
+              Included
+            </span>
+            <iron-image class="accessory-image"
+                        sizing="cover"
+                        fade="true"
+                        preload
+                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                        src$=""></iron-image>
           </div>
-          <div class="lightbox-description">
-            <template
-              is="dom-if"
-              if="{{ _hasValue(accessoryLightboxData.title) }}">
-              <h1 class="accessory-title">Umbrella[[ accessoryLightboxData.title ]]</h1>
-            </template>
-            <template
-              is="dom-if"
-              if="{{ _hasValue(accessoryLightboxData.description) }}">
-              <dorel-safe-html html="[[ accessoryLightboxData.description ]]"></dorel-safe-html>
-            </template>
+          <div class="lightbox-description flex">
+            <h1 class="accessory-title">Umbrella</h1>
+            <p class="accessory-description accessory-excerpt">A little excerpt here</p>
+            <p class="accessory-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitiosum est enim
+              in dividendo
+              partem in genere numerare. Est, ut dicis, inquit; Quae enim adhuc protulisti, popularia
+            </p>
+            <dorel-color-switcher
+              colors-data="[[ colorsData ]]"></dorel-color-switcher>
           </div>
           <dorel-cta
             class="close-dialog-cta"
@@ -133,7 +186,15 @@
         'iron-overlay-opened': '_onOverlayOpened',
         'iron-overlay-closed': '_onOverlayClosed'
       },
+      /*
+       * TODO: Remove this. These are just some dummy content colors for the color switcher component
+       * */
       properties: {
+        colorsData: {
+          type: Array,
+          value: [{'color_code': '#004178'}, {'color_code': '#8A1538'},
+            {'color_code': '#E6E6E6'}, {'color_code': '#29BCBA'}]
+        },
         /**
          * @attribute
          * @name accessoryLightboxData
