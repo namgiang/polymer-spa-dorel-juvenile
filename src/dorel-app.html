@@ -11,7 +11,6 @@
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <!-- <link rel="import" href="themes/theme-dorel-shared-styles.html">-->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
-<link rel="import" href="molecules/dorel-store-locator.html">
 
 <!-- <link rel="import" href="themes/theme-maxi-cosi-new.html"> -->
 
@@ -20,6 +19,7 @@
 
 <!-- Since 'home' is the default route, eagerly load it. -->
 <link rel="import" href="templates/dorel-template-home.html">
+<link rel="import" href="templates/dorel-template-store-locator.html">
 
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
@@ -101,9 +101,6 @@
         pattern="/:page"
         data="{{ routeData }}"
         tail="{{ subroute }}"></app-route>
-
-    
-    <dorel-store-locator></dorel-store-locator>
   
     <dorel-header
       load-complete="[[ loadComplete ]]"
@@ -111,18 +108,22 @@
 
     <!-- content pages -->
     <main id="main" role="main">
-
+      
       <iron-pages role="main"
         selected="[[ currentPage.template ]]"
         attr-for-selected="name">
         
         <dorel-template-home 
-          name="home" 
+          name="home"
           template-data="[[ currentPage ]]"></dorel-template-home>
 
         <dorel-template-info 
           name="info" 
           template-data="[[ currentPage ]]"></dorel-template-info>
+
+
+        <dorel-template-store-locator 
+          name="store-locator"></dorel-template-store-locator>
 
         <dorel-template-products
           name="products"
@@ -205,6 +206,8 @@
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
         Polymer.globalsManager.set('Dorel', {
           wpUrl: {}, // will be a string later (bug inside globalsManager)
+          dioApiUrl: {},
+          locale: {},
           collect: {},
           current: {},
           events: {},
@@ -222,6 +225,10 @@
 
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
+
+        // Define the custom api in the globals (obj becomes string)
+        Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
+        Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
         // Checks the apps config, and sets the according brand theme   
         var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
@@ -259,6 +266,12 @@
         if(this.page === 'component-guide') {
           this.currentPage = {
             template: 'component-guide'
+          };
+          // break
+          return;
+        } else if (this.page === 'store-locator') {
+          this.currentPage = {
+            template: 'store-locator'
           };
           // break
           return;
@@ -304,6 +317,7 @@
         } else {
           // don't include the home template twice (its loaded eagerly)
           if (currentPage.template === 'home' || 
+            currentPage.template === 'store-locator' ||
             typeof currentPage.template === 'undefined') return;
 
           // import the template on demand
