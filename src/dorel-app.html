@@ -8,6 +8,9 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
+<!-- used by store locator -->
+<link rel="import" href="atoms/dorel-safe-html.html">
+
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <!-- <link rel="import" href="themes/theme-dorel-shared-styles.html">-->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
@@ -19,13 +22,13 @@
 
 <!-- Since 'home' is the default route, eagerly load it. -->
 <link rel="import" href="templates/dorel-template-home.html">
-<link rel="import" href="templates/dorel-template-store-locator.html">
 
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
 
+<link rel="import" href="templates/dorel-template-store-locator.html">
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
@@ -121,9 +124,9 @@
           name="info" 
           template-data="[[ currentPage ]]"></dorel-template-info>
 
-
         <dorel-template-store-locator 
-          name="store-locator"></dorel-template-store-locator>
+          name="store-locator"
+          template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
         <dorel-template-products
           name="products"
@@ -270,9 +273,9 @@
           // break
           return;
         } else if (this.page === 'store-locator') {
-          this.currentPage = {
-            template: 'store-locator'
-          };
+          this.currentPage = pages.find(function(item) {
+            return item.slug === self.page;
+          });
           // break
           return;
         }
