@@ -18,14 +18,18 @@
         float: left;
         width: 100%;
         box-sizing: border-box;
-        background-color: var(--theme-color-white);
+        background-color: var(--theme-brand-color-1);
+        color: var(--theme-color-white);
+
+        padding-left: calc( var(--theme-gutter) + var(--theme-column-width) );
       }
 
       .title {
         @apply(--theme-typography-8);
-        color: var(--theme-brand-color-1);
-        width: 100%;
-        margin-top: 0;
+        color: var(--theme-color-white);
+        font-size: var(--theme-scale-6);
+        margin: 0;
+        text-shadow: var(--theme-text-shadow);
       }
 
       .store-title {
@@ -50,6 +54,10 @@
         border-radius: 1em;
       }
 
+      .submit-button-wrapper {
+        font-size: 1em;
+      }
+
       paper-dropdown-menu {
         --paper-dropdown-menu: {
           @apply(--theme-typography-2);
@@ -65,7 +73,7 @@
       }
 
       paper-input-container[error] {
-        --paper-input-container-color: red;
+        --paper-input-container-color: var(--theme-color-error);
       }
 
       paper-ripple {
@@ -88,7 +96,6 @@
         box-sizing: border-box;
         width: 100%;
         float: left;
-        background-color: var(--theme-color-monochrome-2);
       }
 
       [mobile-small] google-map, [mobile-medium] google-map {
@@ -145,7 +152,7 @@
 
       <div class="store-locator-wrapper">
         <div class="store-overlay">
-          <h3 class="store-title">Enter a Location</h3>
+          <h2 class="store-title">Enter a Location</h2>
           <form is="iron-form" method="get" action="/" id="store-locator-form">
             <paper-dropdown-menu label="Select a country"
                                  disabled$="[[ !countriesResponse.results.length ]]"
@@ -167,18 +174,19 @@
               error-message="{{ addressError }}"
               disabled$="[[ !selectedCountry ]]"
               required></paper-input>
-
-            <dorel-cta
-              title="Find Stores"
-              id="submit-button"
-              on-click="_submitLocator"
-              disabled$="{{ _isDisabled(address) }}"
-              type="primary"
-              link=""
-              size="small"
-              icon="dorel-icons:chevron-right">
-              Find Stores
-            </dorel-cta>
+              
+            <h2 class="submit-button-wrapper">
+              <dorel-cta
+                id="submit-button"
+                on-click="_submitLocator"
+                disabled$="{{ _isDisabled(address) }}"
+                type="primary"
+                link=""
+                size="small"
+                icon="dorel-icons:chevron-right">
+                Find Stores
+              </dorel-cta>
+            </h2>
           </form>
 
         </div>
