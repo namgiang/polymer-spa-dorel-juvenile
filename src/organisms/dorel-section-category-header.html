@@ -1,17 +1,9 @@
 <dom-module id="dorel-section-category-header">
   <template>
     <style>
-      .category-header {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        position: relative;
-      }
-
       .title {
         @apply(--theme-typography-8);
         color: var(--theme-color-white);
-        font-size: var(--theme-scale-6);
         margin: 0;
         text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.5);
       }
@@ -23,6 +15,37 @@
         font-weight: var(--theme-font-weight-light);
         text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.5);
       }
+
+      .image {
+        width: 100%;
+        display: block;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 25.5em;
+      }
+
+      .header-wrapper {
+        border-radius: 1em;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .content-wrapper {
+        position: absolute;
+        left: 2em;
+        bottom: 2em;
+      }
+
+    </style>
+    <!-- <style>
+      .category-header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+
 
       .image {
         width: 100%;
@@ -97,9 +120,7 @@
         margin-left: 0;
       }
 
-
-
-    </style>
+    </style> -->
 
     <!-- media queries -->
     <iron-media-query query="(max-width : 479px)"
@@ -116,22 +137,23 @@
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}"
              screen-extra-large$="{{ screenExtraLargeUp }}">
-      <iron-image class="image"
-                  sizing="cover"
-                  fade="true"
-                  preload
-                  placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                  src$="[[ categoryHeaderData.background_image ]]"></iron-image>
+      <div class="header-wrapper">
+        <iron-image class="image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                    src$="[[ categoryHeaderData.background_image ]]"></iron-image>
+        <div class="content-wrapper">
+          <div class="content">
+            <template is="dom-if" if="{{ _hasValue(categoryHeaderData.title) }}">
+              <h3 class="title">[[ categoryHeaderData.title ]]</h3>
+            </template>
 
-      <div class="content-wrapper">
-        <div class="content">
-          <template is="dom-if" if="{{ _hasValue(categoryHeaderData.title) }}">
-            <h3 class="title">[[ categoryHeaderData.title ]]</h3>
-          </template>
-
-          <template is="dom-if" if="{{ _hasValue(categoryHeaderData.sub_title) }}">
-            <h4 class="subtitle">[[ categoryHeaderData.sub_title ]]</h4>
-          </template>
+            <template is="dom-if" if="{{ _hasValue(categoryHeaderData.sub_title) }}">
+              <h4 class="subtitle">[[ categoryHeaderData.sub_title ]]</h4>
+            </template>
+          </div>
         </div>
       </div>
     </section>
