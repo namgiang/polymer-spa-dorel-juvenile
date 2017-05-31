@@ -58,15 +58,15 @@
                     fade="true"
                     preload
                     placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                    src$=""></iron-image>
+                    src$="[[ imageUrl ]]"></iron-image>
       </div>
       <div class="content-wrapper">
         <dorel-color-switcher
           colors-data="[[ colorsData ]]"></dorel-color-switcher>
-        <h1 class="title">Product Title</h1>
+        <h1 class="title">[[ productName ]]</h1>
         <dorel-cta
           type="link"
-          link=""
+          link="[[ linkUrl ]]"
           size="small"
           icon="dorel-icons:play-circle-outline">
           See details
@@ -79,15 +79,47 @@
   <script>
     Polymer({
       is: 'dorel-category-listing-item',
-      /*
-       * TODO: Remove this. These are just some dummy content colors for the color switcher component
-       * */
+
       properties: {
+        /**
+         * @attribute
+         * @name colorsData
+         * @description array defined on the attribute
+         */
         colorsData: {
           type: Array,
-          value: [{'color_code': '#004178'}, {'color_code': '#8A1538'},
-            {'color_code': '#E6E6E6'}, {'color_code': '#29BCBA'}]
+          value: []
         },
+
+        /**
+         * @attribute
+         * @name imageUrl
+         * @description product name on the attribute
+         */
+        imageUrl: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * @attribute
+         * @name linkUrl
+         * @description product name on the attribute
+         */
+        linkUrl: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * @attribute
+         * @name productName
+         * @description product name on the attribute
+         */
+        productName: {
+          type: String,
+          value: ''
+        }
       }
     });
   </script>
