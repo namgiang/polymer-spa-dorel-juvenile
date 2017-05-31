@@ -1,3 +1,5 @@
+<link rel="import" href="../organisms/dorel-category-listing.html">
+
 <dom-module id="dorel-template-product-category">
   <template>
     <style>
@@ -59,8 +61,14 @@
       }
     </style>
 
-    <div class="wrapper">
+    <iron-ajax
+      auto
+      url="[[ categoriesEndPoint ]]"
+      handle-as="json"
+      on-response="_categoriesLoaded"></iron-ajax>
 
+    <div class="wrapper">
+      ---category----
       <!-- show when acf.page_builder has components -->
       <template
         is="dom-if"
@@ -73,7 +81,7 @@
           as="component"
           targetFramerate="1000">
 
-          
+          <dorel-category-listing></dorel-category-listing>
 
         </template>
 
@@ -85,7 +93,7 @@
 
   <script>
     Polymer({
-      is: 'dorel-template-products',
+      is: 'dorel-template-product-category',
 
       properties: {
 
@@ -100,7 +108,14 @@
       },
 
       ready: function() {
-        
+        var globals = Polymer.globalsManager.get('Dorel');
+        var self = this;
+
+        var category = globals.collect.categories.find(function(category) {
+          return category.id === self.templateData.acf.product_category[0];
+        });
+
+        console.log(category);
       }
 
     });
