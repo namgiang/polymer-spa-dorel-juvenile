@@ -8,6 +8,9 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
+<!-- used by store locator -->
+<link rel="import" href="atoms/dorel-safe-html.html">
+
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <!-- <link rel="import" href="themes/theme-dorel-shared-styles.html">-->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
@@ -25,6 +28,7 @@
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
 
+<link rel="import" href="templates/dorel-template-store-locator.html">
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
@@ -107,18 +111,22 @@
 
     <!-- content pages -->
     <main id="main" role="main">
-
+      
       <iron-pages role="main"
         selected="[[ currentPage.template ]]"
         attr-for-selected="name">
         
         <dorel-template-home 
-          name="home" 
+          name="home"
           template-data="[[ currentPage ]]"></dorel-template-home>
 
         <dorel-template-info 
           name="info" 
           template-data="[[ currentPage ]]"></dorel-template-info>
+
+        <dorel-template-store-locator 
+          name="store-locator"
+          template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
         <dorel-template-products
           name="products"
@@ -201,6 +209,8 @@
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
         Polymer.globalsManager.set('Dorel', {
           wpUrl: {}, // will be a string later (bug inside globalsManager)
+          dioApiUrl: {},
+          locale: {},
           collect: {},
           current: {},
           events: {},
@@ -218,6 +228,10 @@
 
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
+
+        // Define the custom api in the globals (obj becomes string)
+        Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
+        Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
         // Checks the apps config, and sets the according brand theme   
         var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
@@ -256,6 +270,12 @@
           this.currentPage = {
             template: 'component-guide'
           };
+          // break
+          return;
+        } else if (this.page === 'store-locator') {
+          this.currentPage = pages.find(function(item) {
+            return item.slug === self.page;
+          });
           // break
           return;
         }
@@ -300,6 +320,7 @@
         } else {
           // don't include the home template twice (its loaded eagerly)
           if (currentPage.template === 'home' || 
+            currentPage.template === 'store-locator' ||
             typeof currentPage.template === 'undefined') return;
 
           // import the template on demand
@@ -463,7 +484,7 @@
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js');
+                // navigator.serviceWorker.register('/service-worker.js');
               }
               
               this.loadComplete = true;
