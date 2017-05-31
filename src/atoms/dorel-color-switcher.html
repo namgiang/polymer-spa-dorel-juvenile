@@ -9,15 +9,15 @@
         list-style: none;
         float: left;
         padding: 0;
-        margin: .625em 0 .625em 0;
+        margin: 0;
       }
 
       .list-group-item {
         width: 1.75em;
         height: 1.75em;
         border-radius: .875em;
-        margin-right: 1em;
         float: left;
+        margin: .625em 1em .625em 0;
       }
 
       .color-switcher {
@@ -26,19 +26,25 @@
       }
 
     </style>
+    
+    <template
+      is="dom-if"
+      if="[[ colorsData.length ]]">
+      <div class="color-switcher">
+        <div class="color-name">Available colors:</div>
 
-    <div class="color-switcher">
-      <div class="color-name">Available colors:</div>
-      <ul class="list-group">
-        <template
-          is="dom-repeat"
-          items="[[ colorsData ]]"
-          as="color">
-          <li class="list-group-item"
-              style$="background-color: [[ color.color_code ]];"></li>
-        </template>
-      </ul>
-    </div>
+        <ul class="list-group">
+          <template
+            is="dom-repeat"
+            items="[[ colorsData ]]"
+            as="color">
+            <li class="list-group-item"
+                style$="background-color: [[ color.color_code ]];"></li>
+          </template>
+        </ul>
+
+      </div>
+    </template>
   </template>
 
   <script>

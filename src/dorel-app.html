@@ -27,6 +27,7 @@
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-wp-collect-categories.html">
 
 <link rel="import" href="templates/dorel-template-store-locator.html">
 <link rel="import" href="atoms/dorel-grid-overlay.html">
@@ -77,7 +78,6 @@
 
     <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages></dorel-wp-collect-pages>
-    <!-- <dorel-wp-collect-page page-slug="{{ page }}"></dorel-wp-collect-page> -->
 
     <!-- collect the options pages -->
     <dorel-wp-collect-options
@@ -85,6 +85,8 @@
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
     <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
+
+    <dorel-wp-collect-categories></dorel-wp-collect-categories>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
@@ -132,6 +134,10 @@
           name="products"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-products>
+
+        <dorel-template-product-category
+          name="product-category"
+          template-data="[[ currentPage ]]"></dorel-template-product-category>
 
         <dorel-template-component-guide
           name="component-guide"
@@ -322,7 +328,7 @@
           if (currentPage.template === 'home' || 
             currentPage.template === 'store-locator' ||
             typeof currentPage.template === 'undefined') return;
-
+            
           // import the template on demand
           this.importHref(
             this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
