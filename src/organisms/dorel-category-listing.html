@@ -1,0 +1,193 @@
+<link rel="import" href="../molecules/dorel-category-listing-item.html">
+
+<dom-module id="dorel-category-listing">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .category-listing {
+        padding: 0 var(--theme-gutter) 1.5em var(--theme-gutter);
+        box-sizing: border-box;
+        margin-left: calc(calc(calc(100% / 12) * 3) - .5em);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      dorel-category-listing-item {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        width: auto;
+        margin: auto;
+      }
+
+      .load-more {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+      }
+
+      /* Responsive behaviour */
+
+      [tablets] dorel-category-listing-item, [desktop-small] dorel-category-listing-item {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+
+      }
+
+      [mobile-small] dorel-category-listing-item, [mobile-medium] dorel-category-listing-item {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile-small] .category-listing, [mobile-medium] .category-listing, [tablets] .category-listing {
+        margin-left: 0;
+      }
+
+      [mobile-small] .category-listing, [mobile-medium] .category-listing {
+        padding: 0 var(--theme-gutter-mobile) 1.5em var(--theme-gutter-mobile);
+      }
+    </style>
+
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <div mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}"
+         tablets$="{{ tablets }}"
+         desktop-small$="{{ desktopSmall }}">
+
+      <section class="category-listing layout horizontal center center-justified wrap">
+        <div class="row narrow-row">
+          <template
+            is="dom-repeat"
+            items="[[ productsData ]]"
+            as="product">
+            <dorel-category-listing-item
+              image-url="[[ _retrieveImageUrl(product) ]]"
+              colors-data="[[ _retrieveColors(product) ]]"
+              link-url="[[ _retrieveLinkUrl(product) ]]"
+              product-name="[[ _retrieveProductName(product) ]]"></dorel-category-listing-item>
+          </template>
+        </div>
+      </section>
+
+      <!-- TODO: This is pagination, to be implemented later -->
+      <!-- <div class="load-more layout horizontal center center-justified wrap">
+        <div class="row narrow-row">
+          <dorel-cta
+            type="primary"
+            link=""
+            size="small"
+            icon="dorel-icons:expand-more">
+            Load next items
+          </dorel-cta>
+        </div> -->
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-listing',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name productsData
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
+         */
+        productsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name matchSection
+       * @description this function matches an acf layout to a given layout name (matchLayout)
+       *
+       * @param acfLayouts - Array - array of page_builder layouts
+       * @param matchLayout - String - the layout name to match to
+       * @return Object - matched layout
+       */
+      matchSection: function (acfLayouts, matchLayout) {
+        return acfLayouts.find(function (layout) {
+          return layout.acf_fc_layout === matchLayout;
+        });
+      },
+
+      /**
+       * @name _retrieveImageUrl
+       * @description retrieve the imageUrl for the product
+       *
+       * @param product - Object - the current product
+       * @return String - image url
+       */
+      _retrieveImageUrl: function (product) {
+        if (!product.acf.page_builder.length) return;
+
+        var acfSection = this.matchSection(product.acf.page_builder, 'section_product_showcase');
+
+        return acfSection.gallery[0].url;
+      },
+
+      /**
+       * @name _retrieveColors
+       * @description retrieves the colors array for the product
+       *
+       * @param product - Object - the current product
+       * @return Array - colors
+       */
+      _retrieveColors: function (product) {
+        if (!product.acf.page_builder.length) return;
+
+        var acfSection = this.matchSection(product.acf.page_builder, 'section_product_showcase');
+
+        return acfSection.colors;
+      },
+
+      /**
+       * @name _retrieveProductName
+       * @description retrieves the product name
+       *
+       * @param product - Object - the current product
+       * @return String - product name
+       */
+      _retrieveProductName: function (product) {
+        if (!product.acf.page_builder.length) return;
+
+        var acfSection = this.matchSection(product.acf.page_builder, 'section_product_showcase');
+
+        return acfSection.title;
+      },
+
+      /**
+       * @name _retrieveLinkUrl
+       * @description retrieves the product link url
+       *
+       * @param product - Object - the current product
+       * @return String - product link url
+       */
+      _retrieveLinkUrl: function (product) {
+        return product.link;
+      }
+    });
+  </script>
+
+</dom-module>
