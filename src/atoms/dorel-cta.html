@@ -16,6 +16,7 @@
 
       .theme-cta:hover, .theme-cta:focus {
         @apply(--theme-button-active);
+        cursor: pointer;
       }
 
       .theme-cta--primary {
@@ -90,24 +91,25 @@
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
-  
+
     <a href$="{{ link }}"
+       title$="{{ title }}"
        class$="theme-cta theme-cta--{{ type }} theme-cta--{{ size }}"
        mobile-small$="{{ mobileSmall }}"
        mobile-medium$="{{ mobileMedium }}"
        target$="[[ _isExternal(linkTarget) ]]"
        on-click="clickCTA">
 
-      <template 
-        is="dom-if" 
+      <template
+        is="dom-if"
         if="[[ extraIcon ]]">
         <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
       </template>
 
       <span class="theme-cta__content"><content></content></span>
 
-      <template 
-        is="dom-if" 
+      <template
+        is="dom-if"
         if="[[ icon ]]">
         <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
       </template>
@@ -129,7 +131,14 @@
         link: {
           type: String
         },
-        
+        /**
+         * @attribute
+         * @name title
+         * @description defines the title attribut of the CTA, can be the same as it's content
+         */
+        title: {
+          type: String
+        },
         /**
          * @attribute
          * @name linkTarget
