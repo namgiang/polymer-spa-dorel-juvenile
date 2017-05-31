@@ -183,28 +183,39 @@
         <template is="dom-if" if="{{ !mobileSmall }}">
           <div class="lightbox-wrapper layout horizontal">
             <div class="lightbox-image">
-            <span class="accessory-included-badge">
-              Included
-            </span>
+
+              <template is="dom-if" if="[[ accessoryLightboxData.included ]]">
+                <span class="accessory-included-badge">
+                  Included
+                </span>
+              </template>
+
               <iron-image class="accessory-image"
                           sizing="cover"
                           fade="true"
                           preload
                           placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                          src$=""></iron-image>
+                          src$="[[ accessoryLightboxData.image ]]"></iron-image>
             </div>
             <div class="lightbox-description flex">
-              <h1 class="accessory-title">Umbrella</h1>
-              <p class="accessory-description accessory-excerpt">A little excerpt here</p>
-              <p class="accessory-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vitiosum est
-                enim
-                in dividendo
-                partem in genere numerare. Est, ut dicis, inquit; Quae enim adhuc protulisti, popularia
-              </p>
-              <dorel-color-switcher
-                colors-data="[[ colorsData ]]"></dorel-color-switcher>
+              <template is="dom-if" if="[[ accessoryLightboxData.title ]]">
+                <h1 class="accessory-title">[[ accessoryLightboxData.title ]]</h1>
+              </template>
+
+              <template is="dom-if" if="[[ accessoryLightboxData.description ]]">
+                <!-- <p class="accessory-description accessory-excerpt"></p> -->
+                <div class="accessory-description">
+                  <dorel-safe-html html="[[ accessoryLightboxData.description ]]"></dorel-safe-html>
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[ accessoryLightboxData.colors.length ]]">
+                <dorel-color-switcher
+                  colors-data="[[ colors ]]"></dorel-color-switcher>
+              </template>
             </div>
         </template>
+
         <dorel-cta
           class="close-dialog-cta"
           type="link"
@@ -227,15 +238,7 @@
         'iron-overlay-opened': '_onOverlayOpened',
         'iron-overlay-closed': '_onOverlayClosed'
       },
-      /*
-       * TODO: Remove this. These are just some dummy content colors for the color switcher component
-       * */
       properties: {
-        colorsData: {
-          type: Array,
-          value: [{'color_code': '#004178'}, {'color_code': '#8A1538'},
-            {'color_code': '#E6E6E6'}, {'color_code': '#29BCBA'}]
-        },
         /**
          * @attribute
          * @name accessoryLightboxData
@@ -247,6 +250,7 @@
             return {};
           }
         },
+
         /**
          * @attribute
          * @name opened
@@ -257,7 +261,9 @@
           value: false,
         }
       },
-
+      ready: function() {
+        console.log(this.accessoryLightboxData);
+      },
       _showLargeDialog: function (mobileSmall, mobileMedium) {
         console.log(mobileMedium)
         return !mobileSmall || !mobileMedium;
