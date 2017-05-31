@@ -128,12 +128,18 @@
           <div class="content-wrapper">
             <div class="content">
               <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
-                <h1 class="title">[[ contentWrap.title ]]</h1>
+                <template is="dom-if" if="{{ index < 1 }}">
+                  <h1 class="title">[[ contentWrap.title ]]</h1>
+                </template>
+
+                <template is="dom-if" if="{{ index > 1}}">
+                  <h2 class="title">[[ contentWrap.title ]]</h2>
+                </template>
               </template>
 
               <template is="dom-if" if="{{ _hasValue(contentWrap.text) }}">
                 <div class="text">
-                  [[ contentWrap.text ]]
+                  <dorel-safe-html html="[[ contentWrap.text ]]"></dorel-safe-html>
                 </div>
               </template>
             </div>
