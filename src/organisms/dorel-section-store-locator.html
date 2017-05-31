@@ -8,7 +8,7 @@
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment">
       .section-store-locator,
-      .store-locator-wrapper {
+      .store-locator-map {
         position: relative;
         width: 100%;
       }
@@ -39,7 +39,7 @@
         margin-top: 0;
       }
 
-      .store-locator-wrapper {
+      .store-locator-map {
         float: left;
       }
 
@@ -126,10 +126,12 @@
       handle-as="json"
       on-response="_storesLoaded"></iron-ajax>
 
-    <google-maps-api id="api"
-                     api-key="[[ apiKey ]]"
-                     language="[[ language ]]"
-                     on-api-load="_mapApiLoaded"></google-maps-api>
+    <template is="dom-if" if="[[ _hasProps(templateData) ]]">
+      <google-maps-api id="api"
+                       api-key="[[ apiKey ]]"
+                       language="[[ language ]]"
+                       on-api-load="_mapApiLoaded"></google-maps-api>
+    </template>
 
     <!-- handles enter submit -->
     <iron-a11y-keys id="a11y" target="[[_form]]" keys="enter"
@@ -150,7 +152,7 @@
         <dorel-safe-html html="[[ templateData.acf.text ]]"></dorel-safe-html>
       </div>
 
-      <div class="store-locator-wrapper">
+      <div class="store-locator-map">
         <div class="store-overlay">
           <h2 class="store-title">Enter a Location</h2>
           <form is="iron-form" method="get" action="/" id="store-locator-form">
@@ -170,7 +172,7 @@
             <paper-input
               id="address-input"
               label="Type in address"
-              value="{{ address }}"
+              value="{{ addressInput }}"
               error-message="{{ addressError }}"
               disabled$="[[ !selectedCountry ]]"
               required></paper-input>
@@ -190,91 +192,156 @@
           </form>
 
         </div>
+        
+        <template is="dom-if" if="[[ _hasProps(templateData) ]]">
+          <google-map
+            id="googleMap"
+            language="[[ language ]]"
+            map="{{ map }}"
+            disable-zoom="[[ disableZoom ]]"
+            api-key="[[ apiKey ]]"
+            latitude="{{ mapLat }}"
+            longitude="{{ mapLng }}"
+            zoom="{{ mapZoom }}"
+            fit-to-markers>
 
-        <google-map
-          id="googleMap"
-          language="[[ language ]]"
-          map="{{ map }}"
-          disable-zoom="[[ disableZoom ]]"
-          api-key="[[ apiKey ]]"
-          latitude="{{ mapLat }}"
-          longitude="{{ mapLng }}"
-          zoom="{{ mapZoom }}"
-          fit-to-markers>
+            <template
+              is="dom-repeat"
+              items="{{ storesResponse.results }}"
+              as="store">
+              <google-map-marker
+                latitude="[[ storesResponse.originalLat ]]"
+                longitude="[[ storesResponse.originalLng ]]"
+                icon="/assets/images/markers/home-marker.png"></google-map-marker>
 
-          <template
-            is="dom-repeat"
-            items="{{ storesResponse.results }}"
-            as="store">
-            <google-map-marker
-              latitude="[[ storesResponse.originalLat ]]"
-              longitude="[[ storesResponse.originalLng ]]"
-              icon="/assets/images/markers/home-marker.png"></google-map-marker>
+              <google-map-marker
+                latitude="[[ store.lat ]]"
+                longitude="[[ store.lng ]]"
+                icon="/assets/images/markers/shop-marker.png">
+                <template
+                  is="dom-if"
+                  if="[[ store.address ]]">
+                  <table>
 
-            <google-map-marker
-              latitude="{{ store.lat }}"
-              longitude="{{ store.lng }}"
-              icon="/assets/images/markers/shop-marker.png">
-              <template
-                is="dom-if"
-                if="{{ store.address }}">
-                <table>
+                    <template
+                      is="dom-if"
+                      if="[[ store.address ]]">
+                      <tr>
+                        <td>[[ store.address ]]</td>
+                      </tr>
+                    </template>
 
-                  <template
-                    is="dom-if"
-                    if="{{ store.address }}">
-                    <tr>
-                      <td>{{ store.address }}</td>
-                    </tr>
-                  </template>
+                    <template
+                      is="dom-if"
+                      if="[[ store.postal_code ]]">
+                      <tr>
+                        <td>[[ store.postal_code ]]</td>
+                      </tr>
+                    </template>
 
-                  <template
-                    is="dom-if"
-                    if="{{ store.postal_code }}">
-                    <tr>
-                      <td>{{ store.postal_code }}</td>
-                    </tr>
-                  </template>
+                    <template
+                      is="dom-if"
+                      if="[[ store.city ]]">
+                      <tr>
+                        <td>[[ store.city ]]</td>
+                      </tr>
+                    </template>
 
-                  <template
-                    is="dom-if"
-                    if="{{ store.city }}">
-                    <tr>
-                      <td>{{ store.city }}</td>
-                    </tr>
-                  </template>
+                    <template
+                      is="dom-if"
+                      if="[[ store.phone_number ]]">
+                      <tr>
+                        <td>[[ store.phone_number ]]</td>
+                      </tr>
+                    </template>
 
-                  <template
-                    is="dom-if"
-                    if="{{ store.phone_number }}">
-                    <tr>
-                      <td>{{ store.phone_number }}</td>
-                    </tr>
-                  </template>
+                    <template
+                      is="dom-if"
+                      if="[[ store.online_shop.url ]]">
+                      <tr>
+                        <td>
+                          <a href="[[ store.online_shop.url ]]" target="_blank">Visit website</a>
+                        </td>
+                      </tr>
+                    </template>
 
-                  <template
-                    is="dom-if"
-                    if="{{ store.online_shop.url }}">
-                    <tr>
-                      <td>
-                        <a href="{{ store.online_shop.url }}" target="_blank">Visit website</a>
-                      </td>
-                    </tr>
-                  </template>
+                  </table>
+                </template>
 
-                </table>
-              </template>
+                <template
+                  is="dom-if"
+                  if="[[ !store.address ]]">
+                  <p>No information available</p>
+                </template>
+              </google-map-marker>
+            </template>
 
-              <template
-                is="dom-if"
-                if="{{ !store.address }}">
-                <p>No information available</p>
-              </template>
-            </google-map-marker>
-          </template>
-
-        </google-map>
+          </google-map>
+        </template>
       </div>
+
+      <template 
+        is="dom-if" 
+        if="[[ bla ]]">
+        <div class="store-locator-results">
+          <h2>Results</h2>
+          <table>
+            <thead>
+              <tr>
+                <td>
+                  <h3>Location</h3>
+                </td>
+                <td>
+                  <h3>Store</h3>
+                </td>
+                <td>
+                  <h3>Address</h3>
+                </td>
+                <td>
+                  <h3>Contact Information</h3>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <template
+                is="dom-repeat"
+                items="[[ storesResponse.results ]]"
+                as="store">
+                <tr>
+                  <td>[[ store.city ]]</td>
+                  <td>name</td>
+                  <td>
+                    <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+                    <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+
+                    <template is="dom-if" if="[[ store.address ]]">
+                      <a href$="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]" title="plan route">plan route</a>
+                    </template>
+                  </td>
+                  <td>
+                    <template
+                      is="dom-if"
+                      if="[[ store.phone_number ]]">
+                      <a href$="tel:[[ store.phone_number ]]" title="call">[[ store.phone_number ]]</a>
+                    </template>
+
+                    <template
+                      is="dom-if"
+                      if="[[ store.online_shop.url ]]">
+                      <tr>
+                        <td>
+                          <a href="[[ store.online_shop.url ]]" target="_blank">Visit website</a>
+                        </td>
+                      </tr>
+                    </template>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </template>
+
     </section>
   </template>
 
@@ -375,7 +442,7 @@
          */
         selectedCountry: {
           type: String,
-          value: '' // CONFIG.LOCALE.COUNTRY
+          value: CONFIG.LOCALE.COUNTRY
         }
       },
 
@@ -541,6 +608,7 @@
        * @param e - EventObject - contains the click event
        */
       _submitLocator: function (event) {
+        if (typeof this.addressInput === 'undefined' || this.address === this.addressInput) return;
 
         // handle the validation of the input and errors when the input is empty
         if (this.$['submit-button'].hasAttribute('disabled')) {
@@ -560,7 +628,8 @@
         var self = this;
 
         // merge the address with the country
-        var query = this.address + ' ' + this.selectedCountry;
+        var query = this.addressInput + ' ' + this.selectedCountry;
+        this.address = this.addressInput;
 
         // retrieve the suggestions by query
         this.predictions = this._retrieveSuggestions(query).then(function (response) {
@@ -694,6 +763,22 @@
 
         // set the invalid attribute to show error styling
         this.$['address-input'].invalid = true;
+      },
+
+      /**
+       * @name _hasProps
+       * @description check if the observed data model has properties
+       */
+      _hasProps: function(dataObj) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasProps = false;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dataObj) {
+          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+        }
+
+        return hasProps;
       }
     });
   </script>
