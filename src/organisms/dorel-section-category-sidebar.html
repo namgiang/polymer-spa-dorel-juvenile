@@ -17,16 +17,17 @@
           is="dom-repeat"
           items="[[ contentWrappers ]]"
           as="contentWrap">
-
+          
           <div class="content-wrapper">
             <div class="content">
               <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
-                <h1 class="title">[[ contentWrap.title ]]</h1>
+                <template is="dom-if" if="{{ _isMainHeader(index) }}">
+                  <h1 class="title">[[ contentWrap.title ]]</h1>
+                </template>
 
-                <!-- TODO: Set the Heading tag programmatically later -->
-                <!-- <template is="dom-if" if="{{ index > 1 }}">
+                <template is="dom-if" if="{{ !_isMainHeader(index) }}">
                   <h2 class="title">[[ contentWrap.title ]]</h2>
-                </template> -->
+                </template>
               </template>
 
               <template is="dom-if" if="{{ _hasValue(contentWrap.text) }}">
@@ -83,6 +84,17 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '');
+      },
+
+
+      /**
+       * @name _isMainHeader
+       * @description check if this is the first content wrapper which should be an h1
+       *
+       * @returns Boolean
+       */
+      _isMainHeader: function (index) {
+        return (typeof index !== 'undefined' && index < 1);
       }
     });
   </script>
