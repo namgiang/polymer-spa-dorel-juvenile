@@ -8,7 +8,7 @@ var CONFIG = {
    * build script will change this
    */
   CMS_URL: "//dorel-wp.dev/wp-json",
-  DIO_API_URL: "http://api.dorel.io/v1",
+  DIO_API_URL: "//api.dorel.io/v1",
 
   /**
    * Determines the shared brand theme used for the application.
