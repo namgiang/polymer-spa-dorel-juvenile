@@ -1,0 +1,145 @@
+<dom-module id="dorel-section-store-locator-results">
+  <template>
+    <style include="iron-flex iron-flex-alignment" is="custom-style">
+
+      :root {
+        --button-margin-spacing: 0;
+      }
+
+      .dorel-section-store-locator-results {
+        padding: 1.5em var(--theme-gutter);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: var(--theme-color-white);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      .title {
+        @apply(--theme-typography-7);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: left;
+      }
+
+      .results {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 12);
+        flex-basis: calc(var(--theme-column-width) * 12);
+        max-width: calc(var(--theme-column-width) * 12);
+        padding: 0 .75em;
+        margin-top: 0;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        float: left;
+        width: 100%;
+        margin-top: 3em;
+      }
+
+      dorel-cta {
+        width: auto;
+        float: left;
+        margin-right: 1.5em;
+      }
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <div class="dorel-section-store-locator-results layout horizontal center center-justified wrap">
+      <div class="row">
+        <div class="results">
+          <h1 class="title">Results</h1>
+          <ul>
+            <template
+              is="dom-repeat"
+              items="[[ results ]]"
+              as="store">
+              <li>
+                [[ store.city ]]
+                <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+                <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+                <template is="dom-if" if="[[ store.address ]]">
+
+                  <dorel-cta title="Plan route"
+                             type="link"
+                             target="_blank"
+                             link="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
+                             size="small"
+                             icon="dorel-icons:location">
+                    Plan route
+                  </dorel-cta>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[ store.phone_number ]]">
+                  <dorel-cta title="Call"
+                             type="link"
+                             link="tel:[[ store.phone_number ]]"
+                             size="small"
+                             icon="dorel-icons:call">
+                    [[ store.phone_number ]]
+                  </dorel-cta>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[ store.online_shop.url ]]">
+
+                  <dorel-cta title="Visit website"
+                             type="link"
+                             target="_blank"
+                             link="[[ store.online_shop.url ]]"
+                             size="small"
+                             icon="dorel-icons:external-link">
+                    Visit website
+                  </dorel-cta>
+                </template>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-store-locator-results',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name results
+         * @description All search results
+         */
+        results: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      },
+
+
+    });
+
+  </script>
+
+</dom-module>

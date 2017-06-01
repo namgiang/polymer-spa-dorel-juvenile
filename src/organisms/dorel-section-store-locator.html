@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../molecules/dorel-icons.html">
+<link rel="import" href="../organisms/dorel-section-store-locator-results.html">
 
 <dom-module id="dorel-section-store-locator">
   <template>
@@ -21,14 +22,14 @@
         background-color: var(--theme-brand-color-1);
         color: var(--theme-color-white);
 
-        padding-left: calc( var(--theme-gutter) + var(--theme-column-width) );
+        padding-left: calc(var(--theme-gutter) + var(--theme-column-width));
       }
 
       .title {
         @apply(--theme-typography-8);
         color: var(--theme-color-white);
         font-size: var(--theme-scale-6);
-        margin: 0;
+        margin: 0 0 0.1875em 0;
         text-shadow: var(--theme-text-shadow);
       }
 
@@ -176,7 +177,7 @@
               error-message="{{ addressError }}"
               disabled$="[[ !selectedCountry ]]"
               required></paper-input>
-              
+
             <h2 class="submit-button-wrapper">
               <dorel-cta
                 id="submit-button"
@@ -192,7 +193,7 @@
           </form>
 
         </div>
-        
+
         <template is="dom-if" if="[[ _hasProps(templateData) ]]">
           <google-map
             id="googleMap"
@@ -275,73 +276,13 @@
                 </template>
               </google-map-marker>
             </template>
-
           </google-map>
         </template>
       </div>
-
-      <template 
-        is="dom-if" 
-        if="[[ bla ]]">
-        <div class="store-locator-results">
-          <h2>Results</h2>
-          <table>
-            <thead>
-              <tr>
-                <td>
-                  <h3>Location</h3>
-                </td>
-                <td>
-                  <h3>Store</h3>
-                </td>
-                <td>
-                  <h3>Address</h3>
-                </td>
-                <td>
-                  <h3>Contact Information</h3>
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <template
-                is="dom-repeat"
-                items="[[ storesResponse.results ]]"
-                as="store">
-                <tr>
-                  <td>[[ store.city ]]</td>
-                  <td>name</td>
-                  <td>
-                    <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
-                    <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
-
-                    <template is="dom-if" if="[[ store.address ]]">
-                      <a href$="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]" title="plan route">plan route</a>
-                    </template>
-                  </td>
-                  <td>
-                    <template
-                      is="dom-if"
-                      if="[[ store.phone_number ]]">
-                      <a href$="tel:[[ store.phone_number ]]" title="call">[[ store.phone_number ]]</a>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.online_shop.url ]]">
-                      <tr>
-                        <td>
-                          <a href="[[ store.online_shop.url ]]" target="_blank">Visit website</a>
-                        </td>
-                      </tr>
-                    </template>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
+      <template is="dom-if" if="[[  storesResponse.results ]]">
+        <dorel-section-store-locator-results
+          results="[[ storesResponse.results ]]"></dorel-section-store-locator-results>
       </template>
-
     </section>
   </template>
 
@@ -769,7 +710,7 @@
        * @name _hasProps
        * @description check if the observed data model has properties
        */
-      _hasProps: function(dataObj) {
+      _hasProps: function (dataObj) {
         // define dataEmpty variable to check wheter the dorelEvt object is empty or not
         var hasProps = false;
 
