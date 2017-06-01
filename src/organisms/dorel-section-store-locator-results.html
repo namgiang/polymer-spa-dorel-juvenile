@@ -1,3 +1,5 @@
+<link rel="import" href="../organisms/dorel-section-store-locator-result.html">
+
 <dom-module id="dorel-section-store-locator-results">
   <template>
     <style include="iron-flex iron-flex-alignment" is="custom-style">
@@ -67,6 +69,23 @@
         margin-right: 1.5em;
       }
 
+      /* Responsive Behaviour */
+      [mobile-small] ul, [mobile-medium] ul, [mobile-small] .title, [mobile-medium] .title {
+        padding-left: 0;
+        margin-top: 0;
+      }
+
+      [mobile-small] li, [mobile-medium] li {
+        margin-top: 1.5em;
+        padding-bottom: 1.5em;
+        border-bottom: 1px solid var(--theme-color-monochrome-2);
+      }
+
+      [mobile-small] .dorel-section-store-locator-results,
+      [mobile-medium] .dorel-section-store-locator-results {
+        padding: 1.5em var(--theme-gutter-mobile);
+      }
+
     </style>
 
     <!-- media queries -->
@@ -75,7 +94,9 @@
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
 
-    <div class="dorel-section-store-locator-results layout horizontal center center-justified wrap">
+    <div class="dorel-section-store-locator-results layout horizontal center center-justified wrap"
+         mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}">
       <div class="row">
         <div class="results">
           <h2 class="title">Results</h2>
@@ -85,46 +106,7 @@
               items="[[ results ]]"
               as="store">
               <li>
-                <h3 class="location-title">Shop lorem</h3>
-                <p class="location-content">
-                  <template is="dom-if" if="[[ store.address ]]">[[ store.city ]]<br></template>
-                  <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
-                  <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
-                </p>
-                <template is="dom-if" if="[[ store.address ]]">
-                  <dorel-cta title="Plan route"
-                             type="link"
-                             target="_blank"
-                             link="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
-                             size="small"
-                             icon="dorel-icons:location">
-                    Plan route
-                  </dorel-cta>
-                </template>
-                <template
-                  is="dom-if"
-                  if="[[ store.phone_number ]]">
-                  <dorel-cta title="Call"
-                             type="link"
-                             link="tel:[[ store.phone_number ]]"
-                             size="small"
-                             icon="dorel-icons:call">
-                    [[ store.phone_number ]]
-                  </dorel-cta>
-                </template>
-                <template
-                  is="dom-if"
-                  if="[[ store.online_shop.url ]]">
-
-                  <dorel-cta title="Visit website"
-                             type="link"
-                             target="_blank"
-                             link="[[ store.online_shop.url ]]"
-                             size="small"
-                             icon="dorel-icons:external-link">
-                    Visit website
-                  </dorel-cta>
-                </template>
+                <dorel-section-store-locator-result store="[[ store ]]"></dorel-section-store-locator-result>
               </li>
             </template>
           </ul>
@@ -152,7 +134,9 @@
         }
 
       },
-
+      ready: function () {
+        console.log('test');
+      }
 
     });
 

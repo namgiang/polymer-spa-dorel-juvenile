@@ -4,6 +4,7 @@
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../molecules/dorel-icons.html">
 <link rel="import" href="../organisms/dorel-section-store-locator-results.html">
+<link rel="import" href="../organisms/dorel-section-store-locator-result.html">
 
 <dom-module id="dorel-section-store-locator">
   <template>
@@ -46,6 +47,7 @@
 
       .store-overlay {
         background-color: var(--theme-color-white);
+        box-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.125);
         position: absolute;
         top: 1.5em;
         right: 1.5em;
@@ -111,7 +113,6 @@
       [mobile-small] .content-wrapper, [mobile-medium] .content-wrapper {
         padding: 3em var(--theme-gutter-mobile);
       }
-
     </style>
 
     <iron-ajax
@@ -143,8 +144,11 @@
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="max-width : 767px"
+                      query-matches="{{ mobile }}"></iron-media-query>
 
     <section class="section-store-locator"
+             mobile$="{{ mobile }}"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}">
 
@@ -193,92 +197,87 @@
           </form>
 
         </div>
+        <template is="dom-if" if="{{ !mobile }}">
+          <template is="dom-if" if="[[ _hasProps(templateData) ]]">
+            <google-map
+              id="googleMap"
+              language="[[ language ]]"
+              map="{{ map }}"
+              disable-zoom="[[ disableZoom ]]"
+              api-key="[[ apiKey ]]"
+              latitude="{{ mapLat }}"
+              longitude="{{ mapLng }}"
+              zoom="{{ mapZoom }}"
+              fit-to-markers>
 
-        <template is="dom-if" if="[[ _hasProps(templateData) ]]">
-          <google-map
-            id="googleMap"
-            language="[[ language ]]"
-            map="{{ map }}"
-            disable-zoom="[[ disableZoom ]]"
-            api-key="[[ apiKey ]]"
-            latitude="{{ mapLat }}"
-            longitude="{{ mapLng }}"
-            zoom="{{ mapZoom }}"
-            fit-to-markers>
+              <template
+                is="dom-repeat"
+                items="{{ storesResponse.results }}"
+                as="store">
+                <google-map-marker
+                  latitude="[[ storesResponse.originalLat ]]"
+                  longitude="[[ storesResponse.originalLng ]]"
+                  icon="/assets/images/markers/home-marker.png"></google-map-marker>
 
-            <template
-              is="dom-repeat"
-              items="{{ storesResponse.results }}"
-              as="store">
-              <google-map-marker
-                latitude="[[ storesResponse.originalLat ]]"
-                longitude="[[ storesResponse.originalLng ]]"
-                icon="/assets/images/markers/home-marker.png"></google-map-marker>
+                <google-map-marker
+                  latitude="[[ store.lat ]]"
+                  longitude="[[ store.lng ]]"
+                  store="[[ store ]]"
+                  click-events="true"
+                  icon="/assets/images/markers/shop-marker.png">
+                  <h3 class="location-title"
+                      style="font-size: 1.7500em;line-height: 1.7143em;margin:0;font-weight: 400;">
+                    Shop lorem
+                  </h3>
+                  <p class="location-content" style="margin:0;">
+                    <template is="dom-if" if="[[ store.city ]]">[[ store.city ]]<br></template>
+                    <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+                    <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+                  </p>
+                  <template is="dom-if" if="[[ store.address ]]">
+                    <dorel-cta style="float:left;width:auto;margin-right:1.5em;display:block"
+                               title="Plan route"
+                               type="link"
+                               target="_blank"
+                               link="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
+                               size="small"
+                               icon="dorel-icons:location">
+                      Plan route
+                    </dorel-cta>
+                  </template>
+                  <template
+                    is="dom-if"
+                    if="[[ store.phone_number ]]">
+                    <dorel-cta style="float:left;width:auto;margin-right:1.5em;display:block"
+                               title="Call"
+                               type="link"
+                               link="tel:[[ store.phone_number ]]"
+                               size="small"
+                               icon="dorel-icons:call">
+                      [[ store.phone_number ]]
+                    </dorel-cta>
+                  </template>
+                  <template
+                    is="dom-if"
+                    if="[[ store.online_shop.url ]]">
 
-              <google-map-marker
-                latitude="[[ store.lat ]]"
-                longitude="[[ store.lng ]]"
-                icon="/assets/images/markers/shop-marker.png">
-                <template
-                  is="dom-if"
-                  if="[[ store.address ]]">
-                  <table>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.address ]]">
-                      <tr>
-                        <td>[[ store.address ]]</td>
-                      </tr>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.postal_code ]]">
-                      <tr>
-                        <td>[[ store.postal_code ]]</td>
-                      </tr>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.city ]]">
-                      <tr>
-                        <td>[[ store.city ]]</td>
-                      </tr>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.phone_number ]]">
-                      <tr>
-                        <td>[[ store.phone_number ]]</td>
-                      </tr>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.online_shop.url ]]">
-                      <tr>
-                        <td>
-                          <a href="[[ store.online_shop.url ]]" target="_blank">Visit website</a>
-                        </td>
-                      </tr>
-                    </template>
-
-                  </table>
-                </template>
-
-                <template
-                  is="dom-if"
-                  if="[[ !store.address ]]">
-                  <p>No information available</p>
-                </template>
-              </google-map-marker>
-            </template>
-          </google-map>
+                    <dorel-cta style="float:left;width:auto;margin-right:1.5em;display:block"
+                               title="Visit website"
+                               type="link"
+                               target="_blank"
+                               link="[[ store.online_shop.url ]]"
+                               size="small"
+                               icon="dorel-icons:external-link">
+                      Visit website
+                    </dorel-cta>
+                  </template>
+                </google-map-marker>
+              </template>
+            </google-map>
+          </template>
         </template>
       </div>
+
       <template is="dom-if" if="[[  storesResponse.results ]]">
         <dorel-section-store-locator-results
           results="[[ storesResponse.results ]]"></dorel-section-store-locator-results>
