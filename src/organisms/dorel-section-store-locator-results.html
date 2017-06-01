@@ -24,6 +24,19 @@
         color: var(--theme-brand-color-1);
         width: 100%;
         text-align: left;
+        padding-left: calc(100% / 12);
+      }
+
+      .location-title {
+        @apply(--theme-typography-5);
+        width: 100%;
+        text-align: left;
+        margin-top: 0;
+      }
+
+      .location-content {
+        @apply(--theme-paragraph-text);
+        margin-top: 0;
       }
 
       .results {
@@ -39,6 +52,7 @@
         list-style: none;
         margin: 0;
         padding: 0;
+        padding-left: calc(100% / 12);
       }
 
       li {
@@ -64,18 +78,20 @@
     <div class="dorel-section-store-locator-results layout horizontal center center-justified wrap">
       <div class="row">
         <div class="results">
-          <h1 class="title">Results</h1>
+          <h2 class="title">Results</h2>
           <ul>
             <template
               is="dom-repeat"
               items="[[ results ]]"
               as="store">
               <li>
-                [[ store.city ]]
-                <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
-                <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+                <h3 class="location-title">Shop lorem</h3>
+                <p class="location-content">
+                  <template is="dom-if" if="[[ store.address ]]">[[ store.city ]]<br></template>
+                  <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+                  <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+                </p>
                 <template is="dom-if" if="[[ store.address ]]">
-
                   <dorel-cta title="Plan route"
                              type="link"
                              target="_blank"
