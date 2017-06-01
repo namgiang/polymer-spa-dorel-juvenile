@@ -13,7 +13,7 @@
         color: var(--theme-color-black);
       }
 
-      .container[screenSmall] {
+      [screenSmall] .container {
         padding: 0 var(--theme-gutter-mobile);
       }
 
@@ -70,10 +70,10 @@
     <iron-media-query query="(min-width : 768px)"
                       query-matches="{{ screenMediumUp }}"></iron-media-query>
 
-    <div class="container" screenSmall$="{{ screenSmall }}" screenMediumUp$="{{ screenMediumUp }}">
+    <div screenSmall$="{{ screenSmall }}" screenMediumUp$="{{ screenMediumUp }}">
       <!-- only show hamburger menu on small screens -->
       <template is="dom-if" if="{{ screenSmall }}">
-        <div>
+        <div class="container">
           <template
             is="dom-if"
             if="{{ !mobileMenuOpened }}">
