@@ -70,6 +70,7 @@
       iron-pages {
         margin: 0 auto;
       }
+
     </style>
 
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
@@ -102,31 +103,31 @@
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
     <app-route
-        route="{{ route }}"
-        pattern="/:page"
-        data="{{ routeData }}"
-        tail="{{ subroute }}"></app-route>
-  
+      route="{{ route }}"
+      pattern="/:page"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
+
     <dorel-header
       load-complete="[[ loadComplete ]]"
       page="[[ page ]]"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
-      
+
       <iron-pages role="main"
-        selected="[[ currentPage.template ]]"
-        attr-for-selected="name">
-        
-        <dorel-template-home 
+                  selected="[[ currentPage.template ]]"
+                  attr-for-selected="name">
+
+        <dorel-template-home
           name="home"
           template-data="[[ currentPage ]]"></dorel-template-home>
 
-        <dorel-template-info 
-          name="info" 
+        <dorel-template-info
+          name="info"
           template-data="[[ currentPage ]]"></dorel-template-info>
 
-        <dorel-template-store-locator 
+        <dorel-template-store-locator
           name="store-locator"
           template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
@@ -159,7 +160,7 @@
     Polymer({
       is: 'dorel-app',
 
-      /** 
+      /**
        * @name properties
        * @description all properties this component uses
        */
@@ -209,7 +210,7 @@
         'addMetaData': '_addMetaData'
       },
 
-      created: function() {
+      created: function () {
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
@@ -230,7 +231,7 @@
         this.removeAttribute('unresolved');
       },
 
-      ready: function() {
+      ready: function () {
 
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
@@ -256,7 +257,7 @@
        * @param page - String - the route page string
        * @param pages - Array - all the retrieved pages from WP
        */
-      _routePageChanged: function(page, pages) {
+      _routePageChanged: function (page, pages) {
 
         // if the route is undefined
         if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
@@ -264,7 +265,7 @@
         // refer to this for find function
         var self = this;
 
-        /** 
+        /**
          * if last segment is undefined or empty string set to home,
          * all others to segment
          */
@@ -272,14 +273,14 @@
 
 
         // Matches the page to the component guide template
-        if(this.page === 'component-guide') {
+        if (this.page === 'component-guide') {
           this.currentPage = {
             template: 'component-guide'
           };
           // break
           return;
         } else if (this.page === 'store-locator') {
-          this.currentPage = pages.find(function(item) {
+          this.currentPage = pages.find(function (item) {
             return item.slug === self.page;
           });
           // break
@@ -287,7 +288,7 @@
         }
 
         // map the page variable to the item in the menu array and set it
-        this.currentPage = pages.find(function(item) {
+        this.currentPage = pages.find(function (item) {
           return item.slug === self.page;
         });
 
@@ -312,27 +313,27 @@
        * @param page - string - the page we need to transition to
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function(page, currentPage) {
+      _pageChanged: function (page, currentPage) {
 
         if (typeof page === 'undefined' || page === '' ||
           typeof currentPage === 'undefined' || currentPage === '') return;
-        
+
         // home route is eagerly loaded
         if (page === 'home') {
 
           this._ensureLazyLoaded();
 
-        // other routes are lazy loaded
+          // other routes are lazy loaded
         } else {
           // don't include the home template twice (its loaded eagerly)
-          if (currentPage.template === 'home' || 
+          if (currentPage.template === 'home' ||
             currentPage.template === 'store-locator' ||
             typeof currentPage.template === 'undefined') return;
-            
+
           // import the template on demand
           this.importHref(
             this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
-            function() {
+            function () {
               this._ensureLazyLoaded();
             }, null, false);
 
@@ -345,10 +346,10 @@
        * @name _setCurrentPage
        * @description set the current page in the globals
        */
-      _setCurrentPage: function(currentPage) {
+      _setCurrentPage: function (currentPage) {
 
         /**
-         * if we are dealing with products we need to match 
+         * if we are dealing with products we need to match
          * which product it is
          */
         if (currentPage.slug === 'products') {
@@ -357,7 +358,7 @@
           var lastSegment = this._getLastSegment(document.URL);
 
           // match it with the products
-          currentPage = currentPage.products.find(function(item) {
+          currentPage = currentPage.products.find(function (item) {
             return item.slug === lastSegment;
           });
         }
@@ -382,9 +383,9 @@
        * @name _addMetaData
        * @description adds the right seo meta data
        */
-      _addMetaData: function(metaData) {
+      _addMetaData: function (metaData) {
         if (typeof metaData === 'undefined') return;
-        
+
         // add the page's title
         if (typeof metaData.detail.metaTitle !== 'undefined') {
           document.title = this._defineMetaTitle(metaData.detail.metaTitle);
@@ -434,7 +435,7 @@
        * @param String equiv, string is used to fill the http-equiv attribute
        * @param String content, string is used to fill the content attribute
        */
-      _addMetaEquiv: function(equiv, content) {
+      _addMetaEquiv: function (equiv, content) {
 
         // create the meta tag
         var meta = document.createElement('meta');
@@ -455,18 +456,20 @@
        * @description defines the meta tile prefix and suffix
        * @param String | null
        */
-      _defineMetaTitle: function(titleSuffix) {
+      _defineMetaTitle: function (titleSuffix) {
         var configBrand = CONFIG.BRAND_NAME;
 
         // replace every dash with a space
         var titlePrefix = configBrand.replace(/-/g, ' ');
 
         // capitalize every new word
-        titlePrefix = titlePrefix.replace(/\b\w/g, function(l){ return l.toUpperCase() })
+        titlePrefix = titlePrefix.replace(/\b\w/g, function (l) {
+          return l.toUpperCase()
+        })
 
         // check if the suffix is an 
-        titleSuffix = (titleSuffix === null) ?  
-          '' : ' - ' + titleSuffix; 
+        titleSuffix = (titleSuffix === null) ?
+          '' : ' - ' + titleSuffix;
 
         // merge the title prefix and suffix and separate by dash
         return titlePrefix.concat(titleSuffix);
@@ -477,7 +480,7 @@
        * @description if the load is completed we will add the resources
        * the service worker will kick in after that.
        */
-      _ensureLazyLoaded: function() {
+      _ensureLazyLoaded: function () {
         var self = this;
 
         // scroll up when a page is changed
@@ -485,14 +488,14 @@
 
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
-          Polymer.RenderStatus.afterNextRender(this, function() {
-            this.importHref(this.resolveUrl('dorel-app-resources.html'), function() {
+          Polymer.RenderStatus.afterNextRender(this, function () {
+            this.importHref(this.resolveUrl('dorel-app-resources.html'), function () {
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
                 // navigator.serviceWorker.register('/service-worker.js');
               }
-              
+
               this.loadComplete = true;
               this._removeLoadPlaceholder();
               // import the footer after the pages are loaded
@@ -507,7 +510,7 @@
        * @name _removeLoadPlaceholder
        * @description removes loading spinner and placeholders before the page is loaded
        */
-      _removeLoadPlaceholder: function() {
+      _removeLoadPlaceholder: function () {
         var placeholder = document.getElementById('load-placeholder');
         placeholder.remove();
       },
@@ -517,11 +520,11 @@
        * @description this is for pageload tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function() {
+      _eventTracking: function () {
         var globalsObj = Polymer.globalsManager.get('Dorel');
         var globalsCopy = this._cloneObj(globalsObj);
 
-        /** 
+        /**
          * Tracking on pageload
          */
         Polymer.globalsManager.set('Dorel.events', {
@@ -543,7 +546,7 @@
        *
        * @parameter Object - object to clone
        */
-      _cloneObj: function(obj) {
+      _cloneObj: function (obj) {
 
         // if object is not defined or not an object, jump out
         if (null == obj || "object" != typeof obj) return obj;
@@ -553,7 +556,7 @@
 
         // iterate over every attribute in the object and make a copy
         for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+          if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
         }
 
         // return the copied object
@@ -566,14 +569,14 @@
        *
        * @parameter String - current document url
        */
-      _getLastSegment: function(url) {
+      _getLastSegment: function (url) {
         url = url.replace(/(^\w+:|^)\/\//, '');
 
-        if ( url.lastIndexOf('/') === (url.length -1) ) {
-          url = url.substr(0,url.lastIndexOf('/'));
+        if (url.lastIndexOf('/') === (url.length - 1)) {
+          url = url.substr(0, url.lastIndexOf('/'));
         }
-        
-        return url.substr(url.lastIndexOf('/') +1, url.length);
+
+        return url.substr(url.lastIndexOf('/') + 1, url.length);
       }
 
     });

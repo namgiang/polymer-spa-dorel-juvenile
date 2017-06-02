@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../molecules/dorel-icons.html">
+<link rel="import" href="../organisms/dorel-section-store-locator-results.html">
+<link rel="import" href="../organisms/dorel-section-store-locator-result.html">
 
 <dom-module id="dorel-section-store-locator">
   <template>
@@ -21,14 +23,14 @@
         background-color: var(--theme-brand-color-1);
         color: var(--theme-color-white);
 
-        padding-left: calc( var(--theme-gutter) + var(--theme-column-width) );
+        padding-left: calc(var(--theme-gutter) + var(--theme-column-width));
       }
 
       .title {
         @apply(--theme-typography-8);
         color: var(--theme-color-white);
         font-size: var(--theme-scale-6);
-        margin: 0;
+        margin: 0 0 0.1875em 0;
         text-shadow: var(--theme-text-shadow);
       }
 
@@ -45,6 +47,7 @@
 
       .store-overlay {
         background-color: var(--theme-color-white);
+        box-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.125);
         position: absolute;
         top: 1.5em;
         right: 1.5em;
@@ -56,6 +59,9 @@
 
       .submit-button-wrapper {
         font-size: 1em;
+        float: left;
+        width: 100%;
+        margin: 0;
       }
 
       paper-dropdown-menu {
@@ -110,7 +116,6 @@
       [mobile-small] .content-wrapper, [mobile-medium] .content-wrapper {
         padding: 3em var(--theme-gutter-mobile);
       }
-
     </style>
 
     <iron-ajax
@@ -118,7 +123,6 @@
       url="[[ countriesEndPoint ]]"
       handle-as="json"
       on-response="_countriesLoaded"></iron-ajax>
-
 
     <iron-ajax
       auto
@@ -142,8 +146,11 @@
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="max-width : 767px"
+                      query-matches="{{ mobile }}"></iron-media-query>
 
     <section class="section-store-locator"
+             mobile$="{{ mobile }}"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}">
 
@@ -176,7 +183,7 @@
               error-message="{{ addressError }}"
               disabled$="[[ !selectedCountry ]]"
               required></paper-input>
-              
+
             <h2 class="submit-button-wrapper">
               <dorel-cta
                 id="submit-button"
@@ -192,156 +199,89 @@
           </form>
 
         </div>
-        
-        <template is="dom-if" if="[[ _hasProps(templateData) ]]">
-          <google-map
-            id="googleMap"
-            language="[[ language ]]"
-            map="{{ map }}"
-            disable-zoom="[[ disableZoom ]]"
-            api-key="[[ apiKey ]]"
-            latitude="{{ mapLat }}"
-            longitude="{{ mapLng }}"
-            zoom="{{ mapZoom }}"
-            fit-to-markers>
+        <template is="dom-if" if="{{ !mobile }}">
+          <template is="dom-if" if="[[ apiLoaded ]]">
+            <google-map
+              id="googleMap"
+              language="[[ language ]]"
+              map="{{ map }}"
+              disable-zoom="[[ disableZoom ]]"
+              api-key="[[ apiKey ]]"
+              latitude="{{ mapLat }}"
+              longitude="{{ mapLng }}"
+              zoom="{{ mapZoom }}"
+              fit-to-markers>
 
-            <template
-              is="dom-repeat"
-              items="{{ storesResponse.results }}"
-              as="store">
-              <google-map-marker
-                latitude="[[ storesResponse.originalLat ]]"
-                longitude="[[ storesResponse.originalLng ]]"
-                icon="/assets/images/markers/home-marker.png"></google-map-marker>
+              <template
+                is="dom-repeat"
+                items="{{ storesResponse.results }}"
+                as="store">
+                <google-map-marker
+                  latitude="[[ storesResponse.originalLat ]]"
+                  longitude="[[ storesResponse.originalLng ]]"
+                  icon="/assets/images/markers/home-marker.png"></google-map-marker>
 
-              <google-map-marker
-                latitude="[[ store.lat ]]"
-                longitude="[[ store.lng ]]"
-                icon="/assets/images/markers/shop-marker.png">
-                <template
-                  is="dom-if"
-                  if="[[ store.address ]]">
-                  <table>
+                <google-map-marker
+                  latitude="[[ store.lat ]]"
+                  longitude="[[ store.lng ]]"
+                  store="[[ store ]]"
+                  click-events="true"
+                  icon="/assets/images/markers/shop-marker.png">
 
-                    <template
-                      is="dom-if"
-                      if="[[ store.address ]]">
-                      <tr>
-                        <td>[[ store.address ]]</td>
-                      </tr>
-                    </template>
+                  <!-- IMPORTANT! inline styling is required -->
+                  <template is="dom-if" if="[[ store.name ]]">
+                    <h3 class="location-title"
+                        style="font-size: 1.7500em;line-height: 1.7143em;margin:0;font-weight: 400;">[[ store.name
+                      ]]</h3>
+                  </template>
 
-                    <template
-                      is="dom-if"
-                      if="[[ store.postal_code ]]">
-                      <tr>
-                        <td>[[ store.postal_code ]]</td>
-                      </tr>
-                    </template>
+                  <p class="location-content" style="margin:0;">
+                    <template is="dom-if" if="[[ store.city ]]">[[ store.city ]]<br></template>
+                    <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+                    <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+                  </p>
 
-                    <template
-                      is="dom-if"
-                      if="[[ store.city ]]">
-                      <tr>
-                        <td>[[ store.city ]]</td>
-                      </tr>
-                    </template>
+                  <template is="dom-if" if="[[ store.address ]]">
+                    <a
+                      style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
+                      class="marker-anchor"
+                      href="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
+                      title="Plan route"
+                      target="_blank">Plan route
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:location"></iron-icon>
+                    </a>
+                  </template>
 
-                    <template
-                      is="dom-if"
-                      if="[[ store.phone_number ]]">
-                      <tr>
-                        <td>[[ store.phone_number ]]</td>
-                      </tr>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.online_shop.url ]]">
-                      <tr>
-                        <td>
-                          <a href="[[ store.online_shop.url ]]" target="_blank">Visit website</a>
-                        </td>
-                      </tr>
-                    </template>
-
-                  </table>
-                </template>
-
-                <template
-                  is="dom-if"
-                  if="[[ !store.address ]]">
-                  <p>No information available</p>
-                </template>
-              </google-map-marker>
-            </template>
-
-          </google-map>
+                  <template
+                    is="dom-if"
+                    if="[[ store.phone_number ]]">
+                    <a
+                      style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
+                      href="tel:{{ store.phone_number }}" title="Call" target="_blank">
+                      [[ store.phone_number ]]
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:call"></iron-icon>
+                    </a>
+                  </template>
+                  <template
+                    is="dom-if"
+                    if="[[ store.online_shop.url ]]">
+                    <a style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
+                       href="[[ store.online_shop.url ]]" title="Visit website" target="_blank">
+                      Visit website
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:external-link"></iron-icon>
+                    </a>
+                  </template>
+                </google-map-marker>
+              </template>
+            </google-map>
+          </template>
         </template>
       </div>
 
-      <template 
-        is="dom-if" 
-        if="[[ bla ]]">
-        <div class="store-locator-results">
-          <h2>Results</h2>
-          <table>
-            <thead>
-              <tr>
-                <td>
-                  <h3>Location</h3>
-                </td>
-                <td>
-                  <h3>Store</h3>
-                </td>
-                <td>
-                  <h3>Address</h3>
-                </td>
-                <td>
-                  <h3>Contact Information</h3>
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              <template
-                is="dom-repeat"
-                items="[[ storesResponse.results ]]"
-                as="store">
-                <tr>
-                  <td>[[ store.city ]]</td>
-                  <td>name</td>
-                  <td>
-                    <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
-                    <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
-
-                    <template is="dom-if" if="[[ store.address ]]">
-                      <a href$="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]" title="plan route">plan route</a>
-                    </template>
-                  </td>
-                  <td>
-                    <template
-                      is="dom-if"
-                      if="[[ store.phone_number ]]">
-                      <a href$="tel:[[ store.phone_number ]]" title="call">[[ store.phone_number ]]</a>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ store.online_shop.url ]]">
-                      <tr>
-                        <td>
-                          <a href="[[ store.online_shop.url ]]" target="_blank">Visit website</a>
-                        </td>
-                      </tr>
-                    </template>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
+      <template is="dom-if" if="[[  storesResponse.results ]]">
+        <dorel-section-store-locator-results
+          results="[[ storesResponse.results ]]"></dorel-section-store-locator-results>
       </template>
-
     </section>
   </template>
 
@@ -360,6 +300,12 @@
           value: function () {
             return {};
           }
+        },
+
+        apiLoaded: {
+          type: Boolean,
+          value: false,
+          observer: '_initStoreLocator'
         },
 
         /**
@@ -471,9 +417,6 @@
        */
       _mapApiLoaded: function () {
         this.apiLoaded = true;
-
-        this._initStoreLocator();
-
       },
 
       /**
@@ -482,7 +425,8 @@
        * to show the countries in the dropdown and setup the maps focus. Setting the
        * maps focus will only work if a country is preselected (this.selectedCountry)
        */
-      _initStoreLocator: function () {
+      _initStoreLocator: function (apiLoaded) {
+        if (typeof apiLoaded === 'undefined' || !apiLoaded) return;
 
         // create the geocoder object
         this.geocoder = new google.maps.Geocoder();
@@ -504,7 +448,6 @@
 
         // set the variable which we use in the _setMapZoom
         this.mapLoaded = true;
-
       },
 
       /**
@@ -769,7 +712,7 @@
        * @name _hasProps
        * @description check if the observed data model has properties
        */
-      _hasProps: function(dataObj) {
+      _hasProps: function (dataObj) {
         // define dataEmpty variable to check wheter the dorelEvt object is empty or not
         var hasProps = false;
 
