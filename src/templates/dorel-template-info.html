@@ -1,12 +1,73 @@
+<link rel="import" href="../organisms/dorel-section-info-header.html">
+<link rel="import" href="../organisms/dorel-section-content-wrap.html">
+
 <dom-module id="dorel-template-info">
   <template>
   
     <!-- TODO: Replace dummy content with ACF Stuff-->
-    <dorel-page-builder
+    <!-- <dorel-page-builder
       builder-data="[[ templateData.acf.page_builder ]]"
-      template-data="[[ templateData ]]"></dorel-page-builder>
+      template-data="[[ templateData ]]"></dorel-page-builder> -->
+
+    <div class="wrapper">
 
 
+      <div class="container layout horizontal center center-justified wrap">
+        <div class="row">
+
+          <!-- show when acf.page_builder has components -->
+          <template 
+            is="dom-if" 
+            if="{{ templateData.acf.page_builder.length }}">
+
+            <!-- iterate over page_builder components -->
+            <template
+              is="dom-repeat" 
+              items="[[ templateData.acf.page_builder ]]" 
+              as="component"
+              targetFramerate="1000">
+
+                  <!-- section-info-header -->
+                  <template
+                    is="dom-if"
+                    if="{{ isPageComponent(component.acf_fc_layout, 'section_info_header') }}">
+                    
+                    <dorel-section-info-header 
+                      info-header-data="[[ component ]]"></dorel-section-info-header>
+
+                  </template>
+                  <!--// section-info-header -->
+                  
+                  <!-- section-content-wrap -->
+                  <template
+                    is="dom-if"
+                    if="{{ isPageComponent(component.acf_fc_layout, 'section_content_wrap') }}">
+                    
+                    <dorel-section-content-wrap
+                      content-wrappers="[[ component ]]"></dorel-section-content-wrap>
+
+                  </template>
+                  <!--// section-content-wrap -->
+
+                  <!-- dorel section hubspot -->
+                  <template 
+                    is="dom-if" 
+                    if="{{ isPageComponent(component.acf_fc_layout, 'section_hubspot') }}">
+                    
+                    <dorel-hubspot
+                      hubspot-loaded="[[ globals.Dorel.collect.options.hubspot_loaded ]]"
+                      portal-id="[[ globals.Dorel.collect.options.hubspot_portal_id ]]"
+                      form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
+
+                  </template>
+                  <!--// dorel section hubspot -->
+
+            </template>
+          </template>
+
+        </div>
+      </div>
+    </div>
   </template>
 
   <script>
@@ -24,6 +85,40 @@
           type: String
         }
         
+      },
+
+      ready: function() {
+        console.log(this.templateData);
+      },
+
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
       }
     });
   </script>
