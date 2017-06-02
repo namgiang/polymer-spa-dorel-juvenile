@@ -1,0 +1,121 @@
+<dom-module id="dorel-section-content-wrap">
+  <template>
+    <style>
+      .section-content-wrap {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter);
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      .wrap-container {
+        width: 100%;
+        display: block;
+        margin-left: calc(100% / 12);
+      }
+
+      dorel-content-wrap {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        margin-top: 0;
+        padding-top: 0;
+        float: left;
+      }
+
+      [desktop-small] dorel-content-wrap {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 8);
+        flex-basis: calc(var(--theme-column-width) * 8);
+        max-width: calc(var(--theme-column-width) * 8);
+      }
+
+      [tablets] .wrap-container, [mobile-medium] .wrap-container, [mobile-small] .wrap-container {
+        margin-left: 0;
+      }
+
+      [tablets] dorel-content-wrap, [mobile-medium] dorel-content-wrap, [mobile-small] dorel-content-wrap {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile-medium] dorel-content-wrap, [mobile-small] dorel-content-wrap {
+        padding: 0;
+      }
+
+      [mobile-medium] .section-content-wrap, [mobile-small] .section-content-wrap {
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+    </style>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <template
+      is="dom-if"
+      if="[[ contentWrappers.wrappers.length ]]">
+
+      <section class="section-content-wrap"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}"
+               tablets$="{{ tablets }}"
+               desktop-small$="{{ desktopSmall }}">
+
+        <div class="row">
+          <template
+            is="dom-repeat"
+            items="[[ contentWrappers.wrappers ]]"
+            as="contentWrap">
+            <div class="wrap-container">
+              <dorel-content-wrap
+                content-index="[[ index ]]"
+                content-title="[[ contentWrap.title ]]"
+                content-text="[[ contentWrap.text ]]">
+            </div>
+          </template>
+        </div>
+
+      </section>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-content-wrap',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name ctaData
+         * @description all data needed for this CTA defined in ACF/Wordpress
+         */
+        contentWrappers: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -1,19 +1,66 @@
 <dom-module id="dorel-content-wrap">
   <template>
     <style>
-      h2.column-headline {
-        @apply(--theme-heading);
-        font-size: var(--theme-size-display1);
-        margin: 0 0 var(--theme-component-space-inner) 0;
+      .title {
+        float: left;
+        width: 100%;
+        color: var(--theme-brand-color-1);
+        max-width: 780px;
       }
 
-      .text-center {
-        text-align: center;
+      h1.title {
+        @apply(--theme-typography-7);
       }
+
+      h2.title {
+        @apply(--theme-typography-6);
+      }
+
+      [mobile-small] h1.title {
+        @apply(--theme-typography-4);
+      }
+
+      [mobile-small] h2.title {
+        @apply(--theme-typography-3);
+      }
+
+
+      [mobile-medium] h1.title {
+        @apply(--theme-typography-6);
+      }
+
+      [mobile-medium] h2.title {
+        @apply(--theme-typography-5);
+      }
+
     </style>
-    
-    <h2 class$="column-headline text-[[ titleAlign ]]">[[ contentTitle ]]</h2>
-    <dorel-safe-html html="[[ contentHtml ]]"></dorel-safe-html>
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <div class="content-wrapper" mobile-small$="{{ mobileSmall }}"
+         mobile-medium$="{{ mobileMedium }}">
+      <div class="content">
+        <template is="dom-if" if="{{ _hasValue(contentTitle) }}">
+          <template is="dom-if" if="{{ _isMainHeader(contentIndex) }}">
+            <h1 class="title">[[ contentTitle ]]</h1>
+          </template>
+
+          <template is="dom-if" if="{{ !_isMainHeader(contentIndex) }}">
+            <h2 class="title">[[ contentTitle ]]</h2>
+          </template>
+        </template>
+
+        <template is="dom-if" if="{{ _hasValue(contentText) }}">
+          <div class="text">
+            <dorel-safe-html html="[[ contentText ]]"></dorel-safe-html>
+          </div>
+        </template>
+      </div>
+    </div>
   </template>
 
   <script>
@@ -21,16 +68,6 @@
       is: 'dorel-content-wrap',
 
       properties: {
-
-        /**
-         * @attribute
-         * @name titleAlign
-         * @description defines the alignment of the title (left/right/center)
-         */
-        titleAlign: {
-          type: String,
-          value: ''
-        },
 
         /**
          * @attribute
@@ -52,6 +89,26 @@
           value: ''
         }
 
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' && val !== '');
+      },
+
+      /**
+       * @name _isMainHeader
+       * @description check if this is the first content wrapper which should be an h1
+       *
+       * @returns Boolean
+       */
+      _isMainHeader: function (index) {
+        return (typeof index !== 'undefined' && index < 1);
       }
     });
   </script>

@@ -1,105 +1,189 @@
 <!-- hubspot needs this for the onFormReady handler -->
 <script src="/bower_components/jquery/dist/jquery.slim.min.js"></script>
-  
+
 <dom-module id="dorel-hubspot">
   <template>
     <!-- The HTML for the Hubspot forms should be created consistently, or the layouts for these might not work -->
     <!-- TODO: Make sure to test all new forms! -->
     <style>
 
-      .hbspt-form {
-        padding: var(--theme-component-space-inner-xlarge) var(--theme-component-space-inner);
+      .dorel-hubspot {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter);
+        box-sizing: border-box;
       }
 
-      fieldset, .hs_recaptcha, .hs_submit, .hs-form-field, .hs_recaptcha  {
-        @apply(--theme-bodycopy-width);
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      .wrap-container {
+        width: 100%;
+        display: block;
+        margin-left: calc(100% / 12);
+      }
+
+      #form {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        margin-top: 0;
+        padding-top: 0;
+        float: left;
+      }
+
+      .hbspt-form {
+        @apply(--theme-paragraph-text);
+        margin-top: 0;
+      }
+
+      fieldset, .hs_recaptcha, .hs_submit, .hs-form-field, .hs_recaptcha {
         display: block;
         float: none;
         margin: 0 auto;
         border: 0;
         padding: 0;
+        box-sizing: border-box;
 
       }
 
       .hs-form-field, .hs_recaptcha {
-        padding: 0 0 var(--theme-component-space-inner-medium) 0;
+        /*padding: 0 0 var(--theme-component-space-inner-medium) 0;*/
       }
 
-      .hs-input {
-        @apply(--theme-ie-bodycopy);
-        color: var(--theme-color-foreground-secondary);
-        padding: var(--theme-component-space-micro);
-        margin: var(--theme-component-space-micro) 0;
-        border: 1px solid var(--theme-color-background);
-        border-radius: var(--theme-input-border-radius);
-        width: calc(100% - 1rem);
+      input, textarea, select {
+        @apply(--theme-paragraph-text);
+        border: 1px solid var(--theme-color-monochrome-3);
+        border-radius: .5em;
         transition: border-color .3s ease;
-      }
-
-      .hs-input:last-child {
-        margin-bottom: 0;
-      }
-
-      .hs-input:hover, .hs-input.invalid:hover,  .hs-input.error:hover {
-        border-color: var(--theme-color-text-link-active);
-      }
-
-      input[type="file" i].hs-input {
-        padding: var(--theme-component-space-inner);
-        width: calc(100% - 3rem);
-      }
-
-      input[type="file" i].hs-input:hover {
-        cursor: pointer;
-      }
-
-      textarea.hs-input {
-        min-height: 8rem;
-      }
-
-      .hs-input.invalid,  .hs-input.error {
-        border-color: var(--theme-brand-color-accent-pink);
-        margin-bottom: var(--theme-component-space-micro);
-      }
-
-      .hs-button {
-        @apply(--theme-cta);
-        @apply(--theme-cta--primary);
-      }
-
-      .hs-button:hover, .hs-button:focus {
-        @apply(--theme-cta--hover);
-      }
-
-      .form-columns-2 .hs-form-field {
-        width: calc(50% - var(--theme-component-space-micro));
         float: left;
-        display: inline-block;
-        padding-right: var(--theme-component-space-micro);
+        width: 100%;
+        margin: .875em 0;
+        min-height: 2.5em;
+        padding: 0 .5em;
+        box-sizing: border-box;
       }
 
-      .form-columns-2 .hs-form-field:last-child {
-        padding-left: var(--theme-component-space-micro);
-        padding-right: 0;
+      select {
+        height: 2.75em;
       }
 
-      .hs_recaptcha > .hs-error-msgs {
-        margin-top: var(--theme-component-space-micro);
-      }
-
-      .hs-error-msgs {
-        color: var(--theme-brand-color-accent-pink);
-        font-size: var(--theme-size-small);
-        display: block;
-        padding: 0;
-        list-style: none;
+      label {
+        @apply(--theme-typography-3);
+        color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
         margin: 0;
       }
 
+      .hs-input:hover, .hs-input.invalid:hover, .hs-input.error:hover {
+        border-color: var(--theme-color-text-link-active);
+      }
+
+      textarea.hs-input {
+        min-height: 10rem;
+      }
+
+      .hs-input.invalid, .hs-input.error {
+        border-color: var(--theme-color-error);
+      }
+
+      .hs-button {
+        @apply(--theme-button);
+        @apply(--theme-button-primary);
+        padding: 0 3em;
+        cursor: pointer;
+        width: auto;
+        float: right;
+        text-align: center;
+      }
+
+      .hs-button:hover, .hs-button:focus {
+        @apply(--theme-button-active);
+      }
+
+      .hs_recaptcha > .hs-error-msgs {
+        margin-top: 0;
+      }
+
+      .hs-error-msgs {
+        @apply(--theme-typography-1);
+
+        display: block;
+        padding: 0;
+        list-style: none;
+        margin-top: -.875em;
+        float: left;
+        width: 100%;
+        margin-bottom: 1em;
+      }
+
+      .hs-error-msgs li label {
+        color: var(--theme-color-error);
+      }
+      
+      
+      [desktop-small] #form {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 8);
+        flex-basis: calc(var(--theme-column-width) * 8);
+        max-width: calc(var(--theme-column-width) * 8);
+      }
+
+      [tablets] .wrap-container, [mobile] .wrap-container {
+        margin-left: 0;
+      }
+
+      [tablets] #form, [mobile] #form {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      [mobile] #form {
+        padding: 0;
+      }
+
+      [mobile] .dorel-hubspot {
+        padding: 1.5em var(--theme-gutter);
+      }
+
+      [mobile] label {
+        @apply(--theme-typography-2);
+        margin-top: 0;
+      }
+
+      [mobile] input, [mobile] textarea {
+        margin: 1em 0;
+      }
+
+      [mobile] select {
+
+      }
     </style>
 
-    <div id="form"></div>
-  
+
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 820px)"
+                      query-matches="{{ mobile }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                      query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <div class="dorel-hubspot"
+         mobile$="{{ mobile }}"
+         tablets$="{{ tablets }}"
+         desktop-small$="{{ desktopSmall }}">
+      <div class="row">
+        <div class="wrap-container">
+          <div id="form"></div>
+        </div>
+      </div>
+    </div>
+
+
   </template>
 
   <script>
@@ -145,11 +229,11 @@
        * @description this script observes all variables needed to inject
        * the form in the Polymer application
        */
-      _embedForm: function(portalId, formId, hubspotLoaded) {
+      _embedForm: function (portalId, formId, hubspotLoaded) {
 
         // check if all variables needed are set, otherwise jump out
         if (typeof hubspotLoaded === 'undefined' || !hubspotLoaded ||
-          typeof portalId === 'undefined' || portalId === '' || 
+          typeof portalId === 'undefined' || portalId === '' ||
           typeof formId === 'undefined' || formId === '') return;
 
         // remove previously added forms ---- HACK ---- mandatory otherwise it will show all forms in the app
@@ -164,24 +248,23 @@
         var formInComponent = Polymer.dom(this.root).querySelector(formIdTarget);
 
         // Create the form if it's not in the component
-        if(formInComponent === null)
-        {
+        if (formInComponent === null) {
           // reference this for use in the hbspt object
           var self = this;
 
           // call to the forms create method of the hubspot script
           window.hbspt.forms.create({
             /*
-            * On customizing Hubspot embeds:
-            * http://bit.ly/2ouvaj6
-            */
-            css:  '' ,
+             * On customizing Hubspot embeds:
+             * http://bit.ly/2ouvaj6
+             */
+            css: '',
             portalId: portalId,
             formId: formId,
             /**
              * TODO: only works if jQuery is included
              */
-            onFormReady: function($form, ctx) {
+            onFormReady: function ($form, ctx) {
               /**
                * create a document fragment to grab the div added by the script
                * and inject it in the form div of this component
