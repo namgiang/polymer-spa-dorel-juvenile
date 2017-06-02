@@ -6,6 +6,7 @@
         float: left;
         width: 100%;
       }
+      
     </style>
 
     <template
@@ -17,7 +18,7 @@
           is="dom-repeat"
           items="[[ contentWrappers ]]"
           as="contentWrap">
-          
+
           <div class="content-wrapper">
             <div class="content">
               <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
@@ -30,7 +31,7 @@
                 </template>
               </template>
 
-              <template is="dom-if" if="{{ _hasValue(contentWrap.text) }}">
+              <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
                 <div class="text">
                   <dorel-safe-html html="[[ contentWrap.text ]]"></dorel-safe-html>
                 </div>
@@ -85,7 +86,6 @@
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '');
       },
-
 
       /**
        * @name _isMainHeader
