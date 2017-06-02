@@ -1,0 +1,54 @@
+<dom-module id="dorel-section-content-wrap">
+  <template>
+    <style></style>
+
+    <template
+      is="dom-if"
+      if="[[ contentWrappers.wrappers.length ]]">
+
+      <section class="section-content-wrap layout horizontal center center-justified wrap"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}">
+
+        <div class="row">
+          <template
+            is="dom-repeat"
+            items="[[ contentWrappers.wrappers ]]"
+            as="contentWrap">
+            <dorel-content-wrap
+              content-index="[[ index ]]"
+              content-title="[[ contentWrap.title ]]"
+              content-text="[[ contentWrap.text ]]">
+          </template>
+        </div>
+
+      </section>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-content-wrap',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name ctaData
+         * @description all data needed for this CTA defined in ACF/Wordpress
+         */
+        contentWrappers: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      }
+    });
+
+  </script>
+
+</dom-module>
