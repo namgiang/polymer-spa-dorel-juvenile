@@ -231,7 +231,8 @@
                   <!-- IMPORTANT! inline styling is required -->
                   <template is="dom-if" if="[[ store.name ]]">
                     <h3 class="location-title"
-                        style="font-size: 1.7500em;line-height: 1.7143em;margin:0;font-weight: 400;">[[ store.name ]]</h3>
+                        style="font-size: 1.7500em;line-height: 1.7143em;margin:0;font-weight: 400;">[[ store.name
+                      ]]</h3>
                   </template>
 
                   <p class="location-content" style="margin:0;">
@@ -241,44 +242,34 @@
                   </p>
 
                   <template is="dom-if" if="[[ store.address ]]">
-                    <dorel-cta style="float:left;width:auto;margin-right:1.5em;display:block"
-                               title="Plan route"
-                               type="link"
-                               target="_blank"
-                               link="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
-                               size="small"
-                               icon="dorel-icons:location">
-                      Plan route
-                    </dorel-cta>
+                    <a
+                      style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
+                      class="marker-anchor"
+                      href="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
+                      title="Plan route"
+                      target="_blank">Plan route
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:location"></iron-icon>
+                    </a>
                   </template>
 
                   <template
                     is="dom-if"
                     if="[[ store.phone_number ]]">
-                    <dorel-cta style="float:left;width:auto;margin-right:1.5em;display:block"
-                               title="Call"
-                               type="link"
-                               link="tel:{{ store.phone_number }}"
-                               size="small"
-                               icon="dorel-icons:call">
-                      <a href$="tel: {{ store.phone_number }}">
-                        [[ store.phone_number ]]
-                      </a>
-                    </dorel-cta>
+                    <a
+                      style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
+                      href="tel:{{ store.phone_number }}" title="Call" target="_blank">
+                      [[ store.phone_number ]]
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:call"></iron-icon>
+                    </a>
                   </template>
                   <template
                     is="dom-if"
                     if="[[ store.online_shop.url ]]">
-
-                    <dorel-cta style="float:left;width:auto;margin-right:1.5em;display:block"
-                               title="Visit website"
-                               type="link"
-                               target="_blank"
-                               link="[[ store.online_shop.url ]]"
-                               size="small"
-                               icon="dorel-icons:external-link">
+                    <a style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
+                       href="[[ store.online_shop.url ]]" title="Visit website" target="_blank">
                       Visit website
-                    </dorel-cta>
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:external-link"></iron-icon>
+                    </a>
                   </template>
                 </google-map-marker>
               </template>
