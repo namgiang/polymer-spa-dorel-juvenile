@@ -201,7 +201,7 @@
 
         </div>
         <template is="dom-if" if="{{ !mobile }}">
-          <template is="dom-if" if="[[ _hasProps(templateData) ]]">
+          <template is="dom-if" if="[[ _hasProps(geocoder) ]]">
             <google-map
               id="googleMap"
               language="[[ language ]]"
@@ -230,7 +230,7 @@
                   icon="/assets/images/markers/shop-marker.png">
                   <h3 class="location-title"
                       style="font-size: 1.7500em;line-height: 1.7143em;margin:0;font-weight: 400;">
-                    Shop lorem
+                    [[ store.name ]]
                   </h3>
                   <p class="location-content" style="margin:0;">
                     <template is="dom-if" if="[[ store.city ]]">[[ store.city ]]<br></template>
@@ -385,7 +385,7 @@
          */
         selectedCountry: {
           type: String,
-          value: CONFIG.LOCALE.COUNTRY
+          value: 'Netherlands'
         }
       },
 
@@ -447,7 +447,6 @@
 
         // set the variable which we use in the _setMapZoom
         this.mapLoaded = true;
-
       },
 
       /**
@@ -458,6 +457,7 @@
        * @param selectedCountry - String - contains the country's name
        */
       _setMapFocus: function (mapLoaded, selectedCountry) {
+        console.log(mapLoaded, selectedCountry, this.geocoder);
 
         // check if there is a value for the geocoder and selectedCountry
         if (!mapLoaded ||
