@@ -48,7 +48,9 @@
         margin-left: -0.5em;
       }
 
-      [tablets] dorel-product-accessory, [desktop-small] dorel-product-accessory {
+      [tablets] dorel-product-accessory,
+      [desktop-small] dorel-product-accessory,
+      [mobile-medium-alternative] dorel-product-accessory {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
         flex-basis: calc(var(--theme-column-width) * 6);
         width: calc(var(--theme-column-width) * 6);
@@ -66,16 +68,19 @@
     <!-- media queries -->
     <iron-media-query query="(max-width : 479px)"
                       query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
+    <iron-media-query query="(min-width : 480px) and (max-width : 619px)"
                       query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 620px) and (max-width : 820px)"
+                      query-matches="{{ mobileMediumAlternative }}"></iron-media-query>
     <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
                       query-matches="{{ tablets }}"></iron-media-query>
     <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
                       query-matches="{{ desktopSmall }}"></iron-media-query>
 
-    <section class="section-product-accessories layout horizontal center center-justified wrap"
+    <section class="section-product-accessories"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
+             mobile-medium-alternative$="{{ mobileMediumAlternative }}"
              tablets$="{{ tablets }}"
              desktop-small$="{{ desktopSmall }}">
       <template
