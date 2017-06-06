@@ -13,11 +13,23 @@
       }
 
       .list-group-item {
+        float: left;
+        padding: 3px;
+        margin: .625em 1em .625em 0;
+        border: 2px solid transparent;
+        border-radius: 2em;
+      }
+
+      .list-group-item.active {
+        border: 2px solid var(--theme-brand-color-1);
+      }
+
+      .list-group-item span {
+        display: block;
+        border-radius: 1em;
         width: 1.75em;
         height: 1.75em;
-        border-radius: .875em;
-        float: left;
-        margin: .625em 1em .625em 0;
+        border: 2px solid transparent;
       }
 
       .color-switcher {
@@ -31,15 +43,19 @@
       is="dom-if"
       if="[[ colorsData.length ]]">
       <div class="color-switcher">
-        <div class="color-name">Available colors:</div>
+        <div class="color-name">Available colors: [[ currentName ]]</div>
 
         <ul class="list-group">
           <template
             is="dom-repeat"
             items="[[ colorsData ]]"
             as="color">
-            <li class="list-group-item"
-                style$="background-color: [[ color.color_code ]];"></li>
+            <li class$="list-group-item {{ _isCurrentColor(currentName, color.color_name) }}">
+              <span style$="background-color: [[ color.color_code ]];"
+                data-image-url$="[[ color.color_image ]]"
+                data-name$="[[ color.color_name ]]"
+                on-tap="_changeCurrentColor"></span>      
+            </li>
           </template>
         </ul>
 
@@ -60,9 +76,62 @@
          */
         colorsData: {
           type: Array,
-          value: []
+          value: [],
+          observer: '_colorsDataChanged'
+        },
+
+        /**
+         * @attribute
+         * @name currentImage
+         * @description by default isset to the first array item
+         */
+        currentImage: {
+          type: String,
+          value: '',
+          notify: true
         }
 
+      },
+
+      /**
+       * @observer
+       * @name _colorsDataChanged
+       * @description when the colorsData changes it checks if it is set, then
+       * sets the first item to the currentName and currentImage
+       *
+       * @param newVal - Array - the newly received array
+       * @param oldVal - Array - the previous value
+       */
+      _colorsDataChanged: function(newVal, oldVal) {
+        if (typeof newVal === 'undefined' || !newVal.length) return;
+
+        this.currentName = newVal[0].color_name;
+        this.currentImage = newVal[0].color_image;
+      },
+
+      /**
+       * @onTap
+       * @name _changeCurrentColor
+       * @description when a color is clicked it will change the current values
+       *
+       * @param e - Object - the clicked object/target
+       */
+      _changeCurrentColor: function(e) {
+        this.currentImage = e.target.getAttribute('data-image-url');
+        this.currentName = e.target.getAttribute('data-name');
+      },
+
+      /**
+       * @name _isCurrentColor
+       * @description check if the item is the current one to set the active
+       * class on the list-item
+       *
+       * @param current - String - the current color name
+       * @param name - String - the name of the color item
+       * @returns String - active or empty string
+       */
+      _isCurrentColor: function(current, name) {
+        return (current === name) ? 'active' : '';
       }
     });
   </script>
