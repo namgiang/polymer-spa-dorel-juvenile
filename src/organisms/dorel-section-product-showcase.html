@@ -73,12 +73,11 @@
         float: left;
       }
 
-      .showcase-gallery-view img {
-        width: auto;
-        max-height: 28.5em;
+      .showcase-gallery-view .image {
+        height: 28.5em;
         margin: auto;
         display: block;
-        max-width: 20em;
+        width: 28.5em;
       }
 
       /* Responsive Behaviour */
@@ -100,13 +99,13 @@
         max-width: 100%;
       }
 
-      [mobile] .showcase-gallery-view img {
+      [mobile] .showcase-gallery-view .image {
         width: auto;
         height: 24em;
         margin-top: 1.5em;
       }
 
-      [tablets] .showcase-gallery-view img {
+      [tablets] .showcase-gallery-view .image {
         width: auto;
         height: 24em;
         margin-top: 1.5em;
@@ -187,10 +186,16 @@
                 </li>
               </template>
             </ul>
-            <div class="showcase-gallery-view">
-              <img src="{{ currentImage.url }}" alt=""/>
-            </div>
             <!--// Product Specs -->
+
+            <div class="showcase-gallery-view">
+              <iron-image class="image"
+                          sizing="cover"
+                          fade="true"
+                          preload
+                          placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                          src$="{{ currentImage }}"></iron-image>
+            </div>
 
             <!-- color switcher -->
             <template
@@ -198,6 +203,7 @@
               if="[[ showcaseData.colors.length ]]">
               <div class="color-mobile-container  layout horizontal center center-justified wrap">
                 <dorel-color-switcher
+                  current-image="{{ currentImage }}"
                   colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
               </div>
             </template>
@@ -238,7 +244,12 @@
           <!-- Desktop Showcase -->
           <template is="dom-if" if="{{ !mobile }}">
             <div class="showcase-gallery-view">
-              <img src="{{ currentImage.url }}" alt=""/>
+              <iron-image class="image"
+                          sizing="cover"
+                          fade="true"
+                          preload
+                          placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                          src$="{{ currentImage }}"></iron-image>
             </div>
 
             <!-- Title, usp's and extra info -->
@@ -286,6 +297,7 @@
                 is="dom-if"
                 if="[[ showcaseData.colors.length ]]">
                 <dorel-color-switcher
+                  current-image="{{ currentImage }}"
                   colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
               </template>
               <!--// color switcher -->
@@ -349,100 +361,19 @@
          * component
          */
         showcaseData: {
-          type: Object,
-          observer: '_showcaseDataChanged'
+          type: Object
         },
 
 
         /**
          * @name currentImage
-         * @description This is the current selected image, because it's an
-         * object we define the value with a function that returns an empty
-         * object by default. It is updated when we get the Wordpress data
+         * @description This is the current selected image, the image is
+         * defined by the color switcher
          */
-        // currentImage: {
-        //   type: Object,
-        //   value: function () {
-        //     return {};
-        //   }
-        // }
+        currentImage: {
+          type: String
+        }
       },
-
-      /**
-       * @name ready
-       * @description when the component is ready to use set the first
-       * image from the Wordpress data as the currentImage
-       */
-      ready: function () {
-
-        // reset current image to the first one in the array
-        this.currentImage = this.showcaseData.gallery[0];
-
-      },
-
-      /**
-       * @name ready
-       * @description when the component is ready to use set the first
-       * image from the Wordpress data as the currentImage
-       */
-      _showcaseDataChanged: function (newVal, oldVal) {
-        if (typeof newVal === 'undefined') return;
-        // reset current image to the first one in the array
-        this.currentImage = this.showcaseData.gallery[0];
-      },
-
-
-      /**
-       * @name clickThumbnail
-       * @description this will handle of a click on the thumbnail and
-       * will change the currentImage in the thumbnail clicked
-       */
-      clickThumbnail: function (event) {
-
-        // set self to get the right context in forEach
-        var self = this;
-        var previousImage = this.currentImage;
-
-        // extract the id and create currentImage var
-        var imageId = event.target.id.split('-')[1];
-
-        // find the right gallery image selected
-        this.currentImage = this.showcaseData.gallery.find(function (item) {
-
-          // set the current image if a match is found or null if not
-          return item.id === Number(imageId);
-
-        });
-
-        // track the clickThumbnail
-        this._eventTracking(event, previousImage);
-      },
-
-      /**
-       * @name _isCurrentImage
-       * @description check if the thumbnail is the current image shown
-       * @return String (current/empty)
-       */
-      // _isCurrentImage: function (item, currentItem) {
-
-      //   // if not defined, empty or null jump out
-      //   if (typeof item === 'undefined' || item === null || item === '') return;
-
-      //   // returns current or empty 
-      //   return (currentItem.ID === item.ID) ? 'current' : '';
-
-      // },
-
-      /**
-       * @name _hasImage
-       * @description check if the background image is defined
-       * @return String (placeholder/img) placeholder or img url
-       */
-      // _hasImage: function (img) {
-
-      //   // check if img is defined or not
-      //   return (typeof img === 'undefined' || img === '' || !img) ? '/assets/images/placeholders/showcase/placeholder.jpg' : img;
-      // },
 
       /**
        * @name _hasAccessories
