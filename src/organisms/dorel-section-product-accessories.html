@@ -4,17 +4,17 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
 
-      :host {
-        float: left;
-        width: 100%;
-      }
-
       .section-product-accessories {
         width: 100%;
         float: left;
         padding: 4.5em var(--theme-gutter) 7.5em var(--theme-gutter);
         box-sizing: border-box;
         background-color: var(--theme-color-monochrome-2);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
       }
 
       .title {
@@ -24,18 +24,21 @@
         text-align: center;
       }
 
-
-      .row {
+      dorel-product-accessory {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        width: calc(var(--theme-column-width) * 4);
         float: left;
-        width: 100%;
+        margin-top: 3em;
       }
-
 
       /* Responsive Behaviour */
       .section-product-accessories[mobile-small], .section-product-accessories[mobile-medium] {
         padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
       }
-     [mobile-small] .row {
+
+      [mobile-small] .row {
         margin-right: -0.25em;
         margin-left: -0.25em;
       }
@@ -43,6 +46,20 @@
       [mobile-medium] .row {
         margin-right: -0.5em;
         margin-left: -0.5em;
+      }
+
+      [tablets] dorel-product-accessory, [desktop-small] dorel-product-accessory {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        width: calc(var(--theme-column-width) * 6);
+      }
+
+      [mobile-small] dorel-product-accessory, [mobile-medium] dorel-product-accessory {
+        @apply(--theme-grid-column-mobile);
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        width: 100%;
+        margin-top: 1.5em;
       }
     </style>
 
