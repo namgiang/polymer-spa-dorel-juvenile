@@ -29,7 +29,7 @@
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 
-<link rel="import" href="templates/dorel-template-store-locator.html">
+<!-- <link rel="import" href="templates/dorel-template-store-locator.html"> -->
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
@@ -279,12 +279,6 @@
           };
           // break
           return;
-        } else if (this.page === 'store-locator') {
-          this.currentPage = pages.find(function (item) {
-            return item.slug === self.page;
-          });
-          // break
-          return;
         }
 
         // map the page variable to the item in the menu array and set it
@@ -327,7 +321,6 @@
         } else {
           // don't include the home template twice (its loaded eagerly)
           if (currentPage.template === 'home' ||
-            currentPage.template === 'store-locator' ||
             typeof currentPage.template === 'undefined') return;
 
           // import the template on demand
