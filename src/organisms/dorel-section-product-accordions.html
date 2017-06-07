@@ -59,8 +59,9 @@
       .accordion-icon {
         position: absolute;
         top: 1.5em;
-        right: 0;
+        right: 1em;
         color: var(--theme-color-text-link);
+        z-index: -1;
         transition: .3s ease color, .3s ease transform;
       }
 
@@ -128,7 +129,11 @@
                       tabindex="0"
                       role="button"
                       data-selector$="#collapse{{ index }}">[[ accordion.heading ]]</h2>
-                  <iron-icon class="accordion-icon" icon="dorel-icons:expand-more"></iron-icon>
+                  <iron-icon class="accordion-icon"
+                             icon="dorel-icons:expand-more"
+                             on-tap="_toggleCollapse"
+                             tabindex="0"
+                             role="button"></iron-icon>
                 </template>
                 <iron-collapse id$="collapse{{ index }}">
                   <template
