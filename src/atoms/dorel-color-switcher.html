@@ -9,15 +9,16 @@
         list-style: none;
         float: left;
         padding: 0;
-        margin: 0;
+        margin: 0.1875em 0;
       }
 
       .list-group-item {
         float: left;
-        padding: 3px;
-        margin: .625em 1em .625em 0;
         border: 2px solid transparent;
         border-radius: 2em;
+        padding: .25em;
+        transition: border .3s ease;
+        margin-right: .5em;
       }
 
       .list-group-item.active {
@@ -29,7 +30,14 @@
         border-radius: 1em;
         width: 1.75em;
         height: 1.75em;
-        border: 2px solid transparent;
+        border: 1px solid var(--theme-color-monochrome-3);
+        cursor: pointer;
+        transition: opacity .3s ease;
+      }
+
+      .list-group-item span:focus, .list-group-item span:hover {
+        outline: none;
+        opacity: .7;
       }
 
       .color-switcher {
@@ -38,12 +46,12 @@
       }
 
     </style>
-    
+
     <template
       is="dom-if"
       if="[[ colorsData.length ]]">
       <div class="color-switcher">
-        <div class="color-name">Available colors: [[ currentName ]]</div>
+        <div class="color-name">Selected color: [[ currentName ]]</div>
 
         <ul class="list-group">
           <template
@@ -52,9 +60,11 @@
             as="color">
             <li class$="list-group-item {{ _isCurrentColor(currentName, color.color_name) }}">
               <span style$="background-color: [[ color.color_code ]];"
-                data-image-url$="[[ color.color_image ]]"
-                data-name$="[[ color.color_name ]]"
-                on-tap="_changeCurrentColor"></span>      
+                    data-image-url$="[[ color.color_image ]]"
+                    data-name$="[[ color.color_name ]]"
+                    on-tap="_changeCurrentColor"
+                    role="button"
+                    tabindex="0"></span>
             </li>
           </template>
         </ul>
@@ -102,7 +112,7 @@
        * @param newVal - Array - the newly received array
        * @param oldVal - Array - the previous value
        */
-      _colorsDataChanged: function(newVal, oldVal) {
+      _colorsDataChanged: function (newVal, oldVal) {
         if (typeof newVal === 'undefined' || !newVal.length) return;
 
         this.currentName = newVal[0].color_name;
@@ -116,7 +126,7 @@
        *
        * @param e - Object - the clicked object/target
        */
-      _changeCurrentColor: function(e) {
+      _changeCurrentColor: function (e) {
         this.currentImage = e.target.getAttribute('data-image-url');
         this.currentName = e.target.getAttribute('data-name');
       },
@@ -130,7 +140,7 @@
        * @param name - String - the name of the color item
        * @returns String - active or empty string
        */
-      _isCurrentColor: function(current, name) {
+      _isCurrentColor: function (current, name) {
         return (current === name) ? 'active' : '';
       }
     });
