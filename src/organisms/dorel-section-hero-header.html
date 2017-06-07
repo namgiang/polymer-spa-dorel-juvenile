@@ -14,6 +14,7 @@
         font-size: var(--theme-scale-6);
         margin: 0;
         text-shadow: var(--theme-text-shadow);
+        max-width: 800px;
       }
 
       .subtitle {
@@ -84,7 +85,6 @@
         margin-top: 0;
       }
 
-
       [mobile-small] .title {
         @apply(--theme-typography-5);
         margin-top: 0;
@@ -103,27 +103,40 @@
       }
 
       [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
-        padding: 1.5em var(--theme-gutter-mobile);
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
         position: absolute;
-        bottom: -4.5em;
-        top: initial;
+        top: 0;
+
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-end-justified);
       }
 
       [mobile-small] {
         @apply(--layout-vertical);
       }
 
-      [mobile-small] .content {
-        position: initial;
+      [mobile-small] .content, [mobile-medium] .content{
+        position: static;
         padding: 0;
+        top: initial;
+        flex: initial;
+        margin: 0;
+        bottom: initial;
+        right: initial;
+        -ms-flex: auto;
+        -webkit-box-flex: auto;
+        flex: auto;
       }
 
       [mobile-small] .image {
         height: 13.5em;
       }
 
-      [mobile-small] dorel-cta {
-        margin-top: 0;
+      [mobile-small] dorel-cta, [mobile-medium] dorel-cta{
+        position: absolute;
+        right: .875em;
+        bottom: -1.5em;
       }
 
       iron-image {
@@ -140,7 +153,7 @@
                       query-matches="{{ mobileMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 767px) and (max-width : 1600px)"
                       query-matches="{{ screenLarge }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1600px)"
+    <iron-media-query query="(min-width : 1601px)"
                       query-matches="{{ screenExtraLargeUp }}"></iron-media-query>
 
     <section class="hero-header"
