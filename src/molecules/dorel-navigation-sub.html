@@ -121,7 +121,7 @@
         <dorel-tab
           class="has-submenu"
           name="[[ menuItem.title ]]"
-          on-click="dropdownToggle">
+          on-tap="_dropdownToggle">
           <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
           <template
             is="dom-if"
@@ -142,14 +142,14 @@
           <div>
             <ul class="sub-menu">
               <li>
-                <a href="[[ menuItem.url ]]" on-click="menuItemClicked">View All</a>
+                <a href="[[ menuItem.url ]]" on-tap="_menuItemClicked">View All</a>
               </li>
               <template
                 is="dom-repeat"
                 items="[[ menuItem.children ]]"
                 as="child">
                 <li>
-                  <a href="[[ child.url ]]" on-click="menuItemClicked">
+                  <a href="[[ child.url ]]" on-tap="_menuItemClicked">
                     <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
                   </a>
                 </li>
@@ -164,7 +164,7 @@
     <template is="dom-if" if="{{ !screenMediumUp }}">
       <paper-submenu opened$="{{ thisOpened }}">
         <paper-item class="menu-trigger layout horizontal justified"
-                    on-click="dropdownToggle">
+                    on-tap="_dropdownToggle">
           <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
           <template
             is="dom-if"
@@ -178,7 +178,7 @@
           </template>
         </paper-item>
         <paper-menu class="menu-content">
-          <a href="[[ menuItem.url ]]" on-click="menuItemClicked">
+          <a href="[[ menuItem.url ]]" on-tap="_menuItemClicked">
             <paper-item>View All</paper-item>
           </a>
           <template
@@ -186,7 +186,7 @@
             items="[[ menuItem.children ]]"
             as="child">
             <a href="[[ child.url ]]" title="[[ child.title ]]"
-               on-click="menuItemClicked">
+               on-tap="_menuItemClicked">
               <paper-item>
                 <dorel-safe-html html="[[ child.title ]]"></dorel-safe-html>
               </paper-item>
@@ -305,10 +305,10 @@
       },
 
       /**
-       * @name dropdownToggle
+       * @name _dropdownToggle
        * @description When a dropdown item is clicked this will be triggered
        */
-      dropdownToggle: function (event) {
+      _dropdownToggle: function (event) {
         // disable href, if set
         event.preventDefault();
 
@@ -372,10 +372,10 @@
       },
 
       /**
-       * @name menuItemClicked
+       * @name _menuItemClicked
        * @description this function will reset all states to the default (false)
        */
-      menuItemClicked: function (event) {
+      _menuItemClicked: function (event) {
         // reset all handlers
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
