@@ -38,6 +38,23 @@
         margin: 0 auto;
       }
 
+      .hamburger {
+        position: absolute;
+        top: 1em;
+        right: .5em;
+        z-index: 1000;
+        color: var(--theme-color-text-link);
+        transition: .3s ease color;
+      }
+
+      .hamburger:hover, .hamburger:focus {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .hamburger paper-icon-button {
+        padding: .25em;
+      }
+
       /* 
        * screen small order:        
        *
@@ -53,7 +70,6 @@
         order: 4;
         /* center the logo */
         @apply(--layout-horizontal);
-        @apply(--layout-center-center);
       }
 
       header[screenSmall] .header-item-menu {
@@ -100,7 +116,7 @@
       header[screenMedium] .header-item-menu {
         @apply(--layout-wrap);
         order: 4;
-        padding: 0 0 var(--theme-scale-3) 0;
+        padding: .75em 0;
       }
 
       header[screenMedium] .header-item-user-tools {
@@ -195,12 +211,37 @@
             mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
         </nav>
 
-        <div class="header-item header-item-user-tools">
+        <div class="hamburger">
+          <template is="dom-if" if="{{ screenSmall }}">
+            <template
+              is="dom-if"
+              if="{{ !mobileMenuOpened }}">
+              <paper-icon-button
+                class="paper-icn-big icon-toggle-menu"
+                icon="dorel-icons:menu"
+                on-click="toggleMobileMenu"
+                aria-label="menu">
+              </paper-icon-button>
+            </template>
+            <template
+              is="dom-if"
+              if="{{ mobileMenuOpened }}">
+              <paper-icon-button
+                class="paper-icn-big icon-toggle-menu"
+                icon="dorel-icons:close"
+                on-click="toggleMobileMenu"
+                aria-label="menu">
+              </paper-icon-button>
+            </template>
+          </template>
+        </div>
+
+        <!-- <div class="header-item header-item-user-tools">
           <dorel-user-tools
             search-opened="{{ searchOpened }}"
             sub-menu-opened="{{ subMenuOpened }}"
             mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-user-tools>
-        </div>
+        </div> -->
 
         <!-- <div class="header-item header-item-search-drawer">
           <dorel-search-drawer
@@ -273,11 +314,30 @@
        * @description handle the clicks on the logo
        */
       logoClicked: function (event) {
-
         // track this event
         this._eventTracking(event);
-
       },
+
+
+      /**
+       * @name toggleMobileMenu
+       * @description handler for toggling the mobile menu
+       */
+      toggleMobileMenu: function (event) {
+
+        // search component will always be false
+        this.searchOpened = false;
+
+        // submenu (desktop) will always be false
+        this.subMenuOpened = false;
+
+        // actual mobileMenu toggler
+        this.mobileMenuOpened = !this.mobileMenuOpened;
+
+        // send event to tracking
+        this._eventTracking(event, this.mobileMenuOpened);
+      },
+
 
       /**
        * @name _eventTracking
