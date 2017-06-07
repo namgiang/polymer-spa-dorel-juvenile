@@ -3,7 +3,14 @@
 
 <dom-module id="dorel-template-info">
   <template>
-  
+    <style>
+      .wrapper {
+        float: left;
+        width: 100%;
+        padding-bottom: 1.5em;
+      }
+    </style>
+
     <!-- TODO: Replace dummy content with ACF Stuff-->
     <!-- <dorel-page-builder
       builder-data="[[ templateData.acf.page_builder ]]"
@@ -16,14 +23,14 @@
         <div class="row">
 
           <!-- show when acf.page_builder has components -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="{{ templateData.acf.page_builder.length }}">
 
             <!-- iterate over page_builder components -->
             <template
-              is="dom-repeat" 
-              items="[[ templateData.acf.page_builder ]]" 
+              is="dom-repeat"
+              items="[[ templateData.acf.page_builder ]]"
               as="component"
               targetFramerate="1000">
 
@@ -31,18 +38,18 @@
                   <template
                     is="dom-if"
                     if="{{ isPageComponent(component.acf_fc_layout, 'section_info_header') }}">
-                    
-                    <dorel-section-info-header 
+
+                    <dorel-section-info-header
                       info-header-data="[[ component ]]"></dorel-section-info-header>
 
                   </template>
                   <!--// section-info-header -->
-                  
+
                   <!-- section-content-wrap -->
                   <template
                     is="dom-if"
                     if="{{ isPageComponent(component.acf_fc_layout, 'section_content_wrap') }}">
-                    
+
                     <dorel-section-content-wrap
                       content-wrappers="[[ component ]]"></dorel-section-content-wrap>
 
@@ -50,10 +57,10 @@
                   <!--// section-content-wrap -->
 
                   <!-- dorel section hubspot -->
-                  <template 
-                    is="dom-if" 
+                  <template
+                    is="dom-if"
                     if="{{ isPageComponent(component.acf_fc_layout, 'section_hubspot') }}">
-                    
+
                     <dorel-hubspot
                       hubspot-loaded="[[ globals.Dorel.collect.options.hubspot_loaded ]]"
                       portal-id="[[ globals.Dorel.collect.options.hubspot_portal_id ]]"
@@ -84,7 +91,7 @@
         templateData: {
           type: String
         }
-        
+
       },
 
       ready: function() {
