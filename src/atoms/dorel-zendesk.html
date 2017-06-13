@@ -1,4 +1,33 @@
 <dom-module id="dorel-zendesk">
+  <style>
+    dorel-cta {
+      position: fixed;
+      bottom: .875em;
+      right: 1.5em;
+      z-index: 10;
+    }
+    dorel-cta[mobile-small], dorel-cta[mobile-medium] {
+      right: 1em;
+    }
+  </style>
+  <template>
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <dorel-cta title="Call to action"
+               type="primary"
+               link=""
+               on-tap="_activateZenDesk"
+               size="small"
+               icon="dorel-icons:help-outline"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}">
+      Help
+    </dorel-cta>
+  </template>
   <script>
     Polymer({
       is: 'dorel-zendesk',
@@ -33,7 +62,7 @@
        * @description this script observes all variables needed to inject
        * the form in the Polymer application
        */
-      _embedForm: function(zendeskScriptSrc, zendeskLoaded) {
+      _embedForm: function (zendeskScriptSrc, zendeskLoaded) {
         // check if all variables needed are set, otherwise jump out
         if (typeof zendeskScriptSrc === 'undefined' || zendeskScriptSrc === '' ||
           typeof zendeskLoaded === 'undefined' || !zendeskLoaded ||
@@ -54,16 +83,29 @@
         var deferAtt = script.setAttribute('defer', '');
 
         document.getElementsByTagName('head')[0].appendChild(script);
+
+        //Hides the native Zendesk widget button, so we can use our own component
+        zE(function () {
+          zE.hide();
+        });
       },
 
-      /** 
+      /**
+       * @name _activateZenDesk
+       * @description Opens op the Zendenk support dialog
+       */
+      _activateZenDesk: function () {
+        zE.activate({hideOnClose: true});
+      },
+
+      /**
        * @name _scriptExists
-       * @description check if the script tag with the defined url is included 
+       * @description check if the script tag with the defined url is included
        * already in the application
        *
        * @parameter String - url string
        */
-      _scriptExists: function(url) {
+      _scriptExists: function (url) {
         // select all scripts
         var scripts = document.getElementsByTagName('script');
 
