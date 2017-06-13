@@ -2,10 +2,11 @@
   <style>
     dorel-cta {
       position: fixed;
-      bottom: .875em;
+      bottom: -.5em;
       right: 1.5em;
       z-index: 10;
     }
+
     dorel-cta[mobile-small], dorel-cta[mobile-medium] {
       right: 1em;
     }
@@ -18,7 +19,7 @@
                       query-matches="{{ mobileMedium }}"></iron-media-query>
 
     <dorel-cta title="Call to action"
-               type="primary"
+               type="secondary"
                link=""
                on-tap="_activateZenDesk"
                size="small"
@@ -84,6 +85,11 @@
 
         document.getElementsByTagName('head')[0].appendChild(script);
 
+        window.zESettings = {
+          webWidget: {
+            offset: {horizontal: '0', vertical: '-20px'}
+          }
+        };
         //Hides the native Zendesk widget button, so we can use our own component
         zE(function () {
           zE.hide();
