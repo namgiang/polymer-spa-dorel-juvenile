@@ -58,7 +58,7 @@
         padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
       }
 
-      [mobile-small] .feature-wrapper, [mobile-medium] .feature-wrapper{
+      [mobile-small] .feature-wrapper, [mobile-medium] .feature-wrapper {
         padding: 0;
       }
 
@@ -101,37 +101,35 @@
       [mobile-small] .feature-title, [mobile-medium] .feature-title {
         margin-top: 0;
       }
-
-
     </style>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)"
-                      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-                      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 767px) and (max-width : 1600px)"
-                      query-matches="{{ screenLarge }}"></iron-media-query>
+    <template
+      is="dom-if"
+      if="[[ featuresData.features.length ]]">
 
-    <section class="section-product-features layout horizontal center center-justified wrap"
-             mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}"
-             tablets$="{{ tablets }}"
-             screen-large$="{{ screenLarge }}">
+      <!-- media queries -->
+      <iron-media-query query="(max-width : 479px)"
+                        query-matches="{{ mobileSmall }}"></iron-media-query>
+      <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                        query-matches="{{ mobileMedium }}"></iron-media-query>
+      <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                        query-matches="{{ tablets }}"></iron-media-query>
+      <iron-media-query query="(min-width : 767px) and (max-width : 1600px)"
+                        query-matches="{{ screenLarge }}"></iron-media-query>
 
-      <template
-        is="dom-if"
-        if="[[ _hasValue(featuresData.title) ]]">
-        <h2 class="title">[[ featuresData.title ]]</h2>
-      </template>
+      <section class="section-product-features layout horizontal center center-justified wrap"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}"
+               tablets$="{{ tablets }}"
+               screen-large$="{{ screenLarge }}">
 
-      <template
-        is="dom-if"
-        if="[[ featuresData.features.length ]]">
+        <template
+          is="dom-if"
+          if="[[ _hasValue(featuresData.title) ]]">
+          <h2 class="title">[[ featuresData.title ]]</h2>
+        </template>
+
         <div class="row">
-
           <template
             is="dom-repeat"
             items="[[ featuresData.features ]]"
@@ -171,13 +169,10 @@
                 </div>
               </div>
             </div>
-
           </template>
-
         </div>
-      </template>
-
-    </section>
+      </section>
+    </template>
   </template>
   <script>
     Polymer({
