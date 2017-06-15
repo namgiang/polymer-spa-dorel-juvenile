@@ -1,5 +1,7 @@
+
 <link rel="import" href="../atoms/dorel-inline-usps.html">
 <link rel="import" href="../atoms/dorel-color-switcher.html">
+<link rel="import" href="../molecules/dorel-expandable-content.html">
 
 <dom-module id="dorel-section-product-showcase">
   <template>
@@ -253,6 +255,7 @@
 
             <!-- Title, usp's and extra info -->
             <div class="showcase-description">
+
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.title) ]]">
@@ -283,12 +286,14 @@
                 </template>
               </ul>
 
+
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.description) ]]">
-                <div class="product-description-text">
+                <dorel-expandable-content content="[[ showcaseData.description ]]"></dorel-expandable-content>
+                <!--<div class="product-description-text">
                   <dorel-safe-html html="[[ showcaseData.description ]]"></dorel-safe-html>
-                </div>
+                </div> -->
               </template>
 
               <!-- color switcher -->
@@ -421,7 +426,6 @@
       _viewAccessories: function (event) {
         this.accessoryScrollHandler = !this.accessoryScrollHandler;
       },
-
       /**
        * @name _eventTracking
        * @description this is for cta tracking only

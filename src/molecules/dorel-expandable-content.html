@@ -1,0 +1,99 @@
+<dom-module id="dorel-expandable-content">
+  <template>
+    <style>
+      :host {
+        --button-margin-spacing: 0;
+      }
+
+      dorel-cta {
+        float: left;
+        width: auto;
+        clear: both;
+      }
+
+      .expandable-content {
+        float: left;
+        width: 100%;
+      }
+
+      iron-collapse.iron-collapse-closed {
+        max-height: 6em !important;
+        display: block;
+
+      }
+    </style>
+
+    <template is="dom-if" if="[[content]]">
+      <section class="expandable-content">
+        <iron-collapse id="collapse" no-animation>
+          <dorel-safe-html html="[[ content  ]]"></dorel-safe-html>
+        </iron-collapse>
+        <template is="dom-if" if="[[ !expanded ]]">
+          <dorel-cta title="Read more"
+                     on-click="toggle"
+                     type="link"
+                     link=""
+                     size="small"
+                     icon="dorel-icons:expand-more">
+            Read more
+          </dorel-cta>
+        </template>
+        <template is="dom-if" if="[[ expanded ]]">
+          <dorel-cta title="Read less"
+                     on-click="toggle"
+                     type="link"
+                     link=""
+                     size="small"
+                     icon="dorel-icons:expand-less">
+            Read less
+          </dorel-cta>
+        </template>
+      </section>
+    </template>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-expandable-content',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name content
+         * @description html content
+         */
+        content: {
+          type: Object
+        },
+        /**
+         * @attribute
+         * @name expanded
+         * @description boolean that for expanding/collapsing
+         */
+        expanded: {
+          type: Boolean,
+          value: false,
+        }
+      },
+      /**
+       * @name toggle
+       * @description expands/collapses content
+       * **/
+      toggle: function () {
+        this.$$('#collapse').toggle();
+        this.expanded = !this.expanded;
+      },
+
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      hasValue: function (val) {
+        return (typeof val !== '' && val !== 'undefined' && val !== null);
+      }
+    });
+
+  </script>
+</dom-module>
