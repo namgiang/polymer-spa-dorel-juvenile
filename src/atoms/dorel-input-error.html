@@ -3,19 +3,20 @@
     <style>
       :host {
         @apply(--theme-form-input-error-message);
-        display: inline-block;
-        visibility: hidden;
+        display: none;
         float: left;
         width: 100%;
       }
 
       :host([invalid]) {
-        visibility: visible;
+        display: block;
       }
 
     </style>
-
     <content></content>
+    <template is="dom-if" if="[[ invalid ]]">
+      <content></content>
+    </template>
   </template>
 </dom-module>
 

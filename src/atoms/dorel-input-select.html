@@ -60,42 +60,46 @@
     <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
 
     <select is="iron-input" id="input"
-           aria-labelledby$="[[_ariaLabelledBy]]"
-           aria-describedby$="[[_ariaDescribedBy]]"
-           disabled$="[[disabled]]"
-           title$="[[title]]"
-           bind-value="{{ value }}"
-           invalid="{{ invalid }}"
-           prevent-invalid-input="[[preventInvalidInput]]"
-           allowed-pattern="[[allowedPattern]]"
-           validator="[[validator]]"
-           type$="[[type]]"
-           pattern$="[[pattern]]"
-           required$="[[required]]"
-           autocomplete$="[[autocomplete]]"
-           autofocus$="[[autofocus]]"
-           inputmode$="[[inputmode]]"
-           minlength$="[[minlength]]"
-           maxlength$="[[maxlength]]"
-           min$="[[min]]"
-           max$="[[max]]"
-           step$="[[step]]"
-           name$="[[name]]"
-           placeholder$="[[placeholder]]"
-           readonly$="[[readonly]]"
-           list$="[[list]]"
-           size$="[[size]]"
-           autocapitalize$="[[autocapitalize]]"
-           autocorrect$="[[autocorrect]]"
-           on-change="_onChange"
-           tabindex$="[[tabindex]]"
-           autosave$="[[autosave]]"
-           results$="[[results]]"
-           accept$="[[accept]]"
-           multiple$="[[multiple]]">
+            aria-labelledby$="[[_ariaLabelledBy]]"
+            aria-describedby$="[[_ariaDescribedBy]]"
+            disabled$="[[disabled]]"
+            title$="[[title]]"
+            bind-value="{{ value }}"
+            invalid="{{ invalid }}"
+            prevent-invalid-input="[[preventInvalidInput]]"
+            allowed-pattern="[[allowedPattern]]"
+            validator="[[validator]]"
+            type$="[[type]]"
+            pattern$="[[pattern]]"
+            required$="[[required]]"
+            autocomplete$="[[autocomplete]]"
+            autofocus$="[[autofocus]]"
+            inputmode$="[[inputmode]]"
+            minlength$="[[minlength]]"
+            maxlength$="[[maxlength]]"
+            min$="[[min]]"
+            max$="[[max]]"
+            step$="[[step]]"
+            name$="[[name]]"
+            placeholder$="[[placeholder]]"
+            readonly$="[[readonly]]"
+            list$="[[list]]"
+            size$="[[size]]"
+            autocapitalize$="[[autocapitalize]]"
+            autocorrect$="[[autocorrect]]"
+            on-change="_onChange"
+            tabindex$="[[tabindex]]"
+            autosave$="[[autosave]]"
+            results$="[[results]]"
+            accept$="[[accept]]"
+            multiple$="[[multiple]]">
 
-      <template is="dom-repeat" items="[[options]]" as="option">
-        <option>[[option]]</option>
+      <template is="dom-repeat" items="[[ options ]]" as="option">
+        <option value="[[ option.value ]]"
+                name="[[ option.label ]]"
+                selected$="[[ _isSelected(option.label, selected) ]]">
+          [[ option.label ]]
+        </option>
       </template>
     </select>
 
@@ -103,7 +107,8 @@
 
     <template is="dom-if" if="[[errorMessage]]">
       <dorel-input-error aria-live="assertive"
-                         invalid$="[[invalid]]">[[errorMessage]]</dorel-input-error>
+                         invalid$="[[invalid]]">[[errorMessage]]
+      </dorel-input-error>
     </template>
   </template>
 </dom-module>
@@ -114,6 +119,14 @@
 
     behaviors: [
       Polymer.IronFormElementBehavior,
-    ]
+    ],
+
+    /**
+     * @name _isSelected
+     * @description Sets the input option to selected when it's label is equal to the selected property
+     */
+    _isSelected: function (optionLabel, selected) {
+      return optionLabel === selected;
+    },
   });
 </script>
