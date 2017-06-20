@@ -2,11 +2,13 @@
 <link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../../bower_components/iron-input/iron-input.html">
 
-<dom-module id="dorel-input">
+<dom-module id="dorel-input-select">
   <template>
     <style>
       :host {
         display: block;
+        float: left;
+        width: 100%;
       }
 
       :host([focused]) {
@@ -21,11 +23,11 @@
         @apply(--theme-form-input-label);
       }
 
-      input {
-        @apply(--theme-form-input);
+      select {
+        @apply(--theme-form-select);
       }
 
-      :host([invalid]) input {
+      :host([invalid]) select {
         @apply(--theme-form-input-error);
       }
 
@@ -33,12 +35,13 @@
         @apply(--theme-form-input-error-label);
       }
 
-      input:hover, :host([invalid]) input:hover {
-        @apply(--theme-form-input-active);
+      select:hover, :host([invalid]) select:hover {
+        @apply(--theme-form-select-active);
       }
 
-      :host([disabled]) input {
+      :host([disabled]) select {
         @apply(--theme-form-input-disabled);
+        color:
       }
 
       :host([disabled]) label {
@@ -48,16 +51,15 @@
       :host([required]) label:after {
         content: "*";
         margin-left: .125em;
-
       }
-    </style>
 
+    </style>
 
     <content select="[prefix]"></content>
 
     <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
 
-    <input is="iron-input" id="input"
+    <select is="iron-input" id="input"
            aria-labelledby$="[[_ariaLabelledBy]]"
            aria-describedby$="[[_ariaDescribedBy]]"
            disabled$="[[disabled]]"
@@ -92,6 +94,11 @@
            accept$="[[accept]]"
            multiple$="[[multiple]]">
 
+      <template is="dom-repeat" items="[[options]]" as="option">
+        <option>[[option]]</option>
+      </template>
+    </select>
+
     <content select="[suffix]"></content>
 
     <template is="dom-if" if="[[errorMessage]]">
@@ -103,7 +110,7 @@
 
 <script>
   Polymer({
-    is: 'dorel-input',
+    is: 'dorel-input-select',
 
     behaviors: [
       Polymer.IronFormElementBehavior,

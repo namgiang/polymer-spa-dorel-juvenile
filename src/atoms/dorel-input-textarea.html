@@ -2,11 +2,13 @@
 <link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../../bower_components/iron-input/iron-input.html">
 
-<dom-module id="dorel-input">
+<dom-module id="dorel-input-textarea">
   <template>
     <style>
       :host {
         display: block;
+        float: left;
+        width: 100%;
       }
 
       :host([focused]) {
@@ -21,11 +23,11 @@
         @apply(--theme-form-input-label);
       }
 
-      input {
-        @apply(--theme-form-input);
+      textarea {
+        @apply(--theme-form-textarea);
       }
 
-      :host([invalid]) input {
+      :host([invalid]) textarea {
         @apply(--theme-form-input-error);
       }
 
@@ -33,11 +35,11 @@
         @apply(--theme-form-input-error-label);
       }
 
-      input:hover, :host([invalid]) input:hover {
+      textarea:hover, :host([invalid]) textarea:hover {
         @apply(--theme-form-input-active);
       }
 
-      :host([disabled]) input {
+      :host([disabled]) textarea {
         @apply(--theme-form-input-disabled);
       }
 
@@ -52,12 +54,11 @@
       }
     </style>
 
-
     <content select="[prefix]"></content>
 
     <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
 
-    <input is="iron-input" id="input"
+    <textarea is="iron-input" id="input"
            aria-labelledby$="[[_ariaLabelledBy]]"
            aria-describedby$="[[_ariaDescribedBy]]"
            disabled$="[[disabled]]"
@@ -90,7 +91,7 @@
            autosave$="[[autosave]]"
            results$="[[results]]"
            accept$="[[accept]]"
-           multiple$="[[multiple]]">
+           multiple$="[[multiple]]"></textarea>
 
     <content select="[suffix]"></content>
 
@@ -103,7 +104,7 @@
 
 <script>
   Polymer({
-    is: 'dorel-input',
+    is: 'dorel-input-textarea',
 
     behaviors: [
       Polymer.IronFormElementBehavior,
