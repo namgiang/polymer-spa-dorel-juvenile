@@ -25,6 +25,12 @@
 
       select {
         @apply(--theme-form-select);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 20px;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2224%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23666%22%20points%3D%2212%201%209%206%2015%206%22%3E%3C%2Fpolygon%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23666%22%20points%3D%2212%2013%209%208%2015%208%22%3E%3C%2Fpolygon%3E%0A%3C%2Fsvg%3E%0A");
+        background-repeat: no-repeat;
+        background-position: 100% 50%;
       }
 
       :host([invalid]) select {
@@ -93,14 +99,6 @@
             results$="[[results]]"
             accept$="[[accept]]"
             multiple$="[[multiple]]">
-
-      <template is="dom-repeat" items="[[ options ]]" as="option">
-        <option value="[[ option.value ]]"
-                name="[[ option.label ]]"
-                selected$="[[ _isSelected(option.label, selected) ]]">
-          [[ option.label ]]
-        </option>
-      </template>
     </select>
 
     <content select="[suffix]"></content>
@@ -116,7 +114,20 @@
 <script>
   Polymer({
     is: 'dorel-input-select',
+    properties: {
 
+      /**
+       * The options that can be selecte for this component
+       */
+      options: {
+        type: Object,
+        observer: '_setSelectionOptions'
+      }
+    },
+
+    /**
+     * Inherits behaviour form Iron Form elements
+     */
     behaviors: [
       Polymer.IronFormElementBehavior,
     ],
@@ -127,6 +138,24 @@
      */
     _isSelected: function (optionLabel, selected) {
       return optionLabel === selected;
+    },
+
+    /**
+     * @name _setSelectionOptions
+     * @description Injects Select options. This is needed because Polymer's dom-repeat doesn't work
+     * in the select element for IE browsers
+     */
+    _setSelectionOptions: function () {
+      var select = this.$.input;
+
+      for (var i = 0; i < this.options.length; i++) {
+        var option = this.options[i];
+        var newOption = document.createElement('option');
+        newOption.textContent = option.label;
+        newOption.value = option.value;
+        newOption.selected = this._isSelected(newOption.textContent, this.selected);
+        select.appendChild(newOption);
+      }
     },
   });
 </script>
