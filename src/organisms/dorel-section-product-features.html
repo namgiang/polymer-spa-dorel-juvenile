@@ -1,3 +1,6 @@
+<link rel="import" href="../molecules/dorel-product-feature.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
 <dom-module id="dorel-section-product-features">
   <template>
     <style>
@@ -15,41 +18,17 @@
         text-align: center;
       }
 
-      .feature-title {
-        @apply(--theme-typography-4);
-        float: left;
-        width: 100%;
-      }
-
-      .feature-description {
-        float: left;
-      }
-
       .row {
         @apply(--theme-grid-row);
         @apply(--layout-flex);
         @apply(--layout-center-justified);
       }
 
-      .feature {
+      dorel-product-feature {
         @apply(--theme-grid-column);
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
         flex-basis: calc(var(--theme-column-width) * 3);
         max-width: calc(var(--theme-column-width) * 3);
-        padding: 0 .75em;
-        margin-top: 3em;
-      }
-
-      .feature-wrapper {
-        padding: 0 1em;
-      }
-
-      .feature-image {
-        width: 16em;
-        height: 17.5em;
-        margin: auto;
-        float: none;
-        display: block;
       }
 
       /* Responsive Behaviour */
@@ -58,21 +37,21 @@
         padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
       }
 
-      [mobile-small] .feature-wrapper, [mobile-medium] .feature-wrapper {
-        padding: 0;
-      }
-
-      [tablets] .feature {
+      [tablets] dorel-product-feature {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
         flex-basis: calc(var(--theme-column-width) * 6);
         max-width: calc(var(--theme-column-width) * 6);
       }
 
-      [mobile-small] .feature, [mobile-medium] .feature {
+      [mobile-small] dorel-product-feature, [mobile-medium] dorel-product-feature {
         @apply(--theme-grid-column-mobile);
         -ms-flex-preferred-size: 100%;
         flex-basis: 100%;
         max-width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        float: left;
+        margin: 0;
       }
 
       [mobile-small] .row {
@@ -85,22 +64,6 @@
         margin-left: -0.5em;
       }
 
-      [mobile-small] .feature-image, [mobile-medium] .feature-image {
-        width: 8em;
-        height: 8.75em;
-        float: left;
-      }
-
-      [mobile-small] .feature-content, [mobile-medium] .feature-content {
-        width: calc(100% - 8em);
-        padding: 0 0 0 1em;
-        box-sizing: border-box;
-        float: left;
-      }
-
-      [mobile-small] .feature-title, [mobile-medium] .feature-title {
-        margin-top: 0;
-      }
     </style>
 
     <template
@@ -112,6 +75,8 @@
                         query-matches="{{ mobileSmall }}"></iron-media-query>
       <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
                         query-matches="{{ mobileMedium }}"></iron-media-query>
+      <iron-media-query query="(max-width : 767px)"
+                        query-matches="{{ mobile }}"></iron-media-query>
       <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
                         query-matches="{{ tablets }}"></iron-media-query>
       <iron-media-query query="(min-width : 767px) and (max-width : 1600px)"
@@ -130,45 +95,55 @@
         </template>
 
         <div class="row">
-          <template
-            is="dom-repeat"
-            items="[[ featuresData.features ]]"
-            as="feature">
-
-            <div class="feature">
-              <div class="feature-wrapper">
-
+          <template is="dom-if" if="[[ mobile ]]">
+            <template
+              is="dom-repeat"
+              items="[[ initialContent ]]"
+              as="feature">
+              <dorel-product-feature feature-data="[[ feature ]]"></dorel-product-feature>
+            </template>
+            <template is="dom-if" if="[[ restContent.length ]]">
+              <!-- Rest content to expand/collapse -->
+              <iron-collapse id="collapse">
                 <template
-                  is="dom-if"
-                  if="[[ _hasValue(feature.image) ]]">
-                  <iron-image class="feature-image"
-                              sizing="contain"
-                              fade="true"
-                              preload
-                              placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                              src$="[[ feature.image ]]">
-                  </iron-image>
+                  is="dom-repeat"
+                  items="[[ restContent ]]"
+                  as="feature">
+                  <dorel-product-feature feature-data="[[ feature ]]"></dorel-product-feature>
                 </template>
-
-                <div class="feature-content">
-
-                  <template
-                    is="dom-if"
-                    if="[[ _hasValue(feature.title) ]]">
-                    <h3 class="feature-title">[[ feature.title ]]</h3>
-                  </template>
-
-                  <template
-                    is="dom-if"
-                    if="[[ _hasValue(feature.description) ]]">
-                    <div class="feature-description">
-                      <dorel-safe-html html="[[ feature.description ]]"></dorel-safe-html>
-                    </div>
-                  </template>
-
-                </div>
-              </div>
-            </div>
+              </iron-collapse>
+              <!-- Toggles expand and collapse -->
+              <template is="dom-if" if="[[ !expanded ]]">
+                <dorel-cta title="Show all features"
+                           on-click="_toggle"
+                           type="link"
+                           link=""
+                           size="small"
+                           class="expand-collapse"
+                           icon="dorel-icons:expand-more">
+                  Show all features
+                </dorel-cta>
+              </template>
+              <template is="dom-if" if="[[ expanded ]]">
+                <dorel-cta title="Show less features"
+                           on-click="_toggle"
+                           type="link"
+                           link=""
+                           size="small"
+                           class="expand-collapse"
+                           icon="dorel-icons:expand-less">
+                  Show less features
+                </dorel-cta>
+              </template>
+            </template>
+          </template>
+          <template is="dom-if" if="[[ !mobile ]]">
+            <template
+              is="dom-repeat"
+              items="[[ featuresData.features ]]"
+              as="feature">
+              <dorel-product-feature feature-data="[[ feature ]]"></dorel-product-feature>
+            </template>
           </template>
         </div>
       </section>
@@ -178,7 +153,15 @@
     Polymer({
       is: 'dorel-section-product-features',
       properties: {
-
+        /**
+         * @attribute
+         * @name maxShown
+         * @description The maximum number to show on mobile, the rest will be expandable
+         */
+        maxShown: {
+          type: Number,
+          value: 3
+        },
         /**
          * @attribute
          * @name featuresData
@@ -190,7 +173,67 @@
           value: function () {
             return {};
           }
+        },
+        /**
+         * @attribute
+         * @name expanded
+         * @description boolean that for expanding/collapsing on mobile
+         */
+        expanded: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * @attribute
+         * @name initialContent
+         * @description Initially shown content, will be shortened
+         */
+        initialContent: {
+          type: String,
+          computed: '_computeInitialContent(featuresData)'
+        },
+        /**
+         * @attribute
+         * @name restContent
+         * @description Rest content, shown when component is expanded
+         */
+        restContent: {
+          type: String,
+          computed: '_computeRestContent(featuresData)'
+        },
+      },
+
+      /**
+       * @name _computeInitialContent
+       * @description Splits the content on mobile if there are too many items
+       */
+      _computeInitialContent: function (featuresData) {
+        if (featuresData.features.length > this.maxShown) {
+          return featuresData.features.slice(0, this.maxShown);
         }
+
+        return featuresData.features;
+      },
+
+      /**
+       * @name _computeRestContent
+       * @description Splits the content on mobile if there are too many items
+       */
+      _computeRestContent: function (featuresData) {
+        if (featuresData.features.length > this.maxShown) {
+          return featuresData.features.slice(this.maxShown);
+        }
+
+        return []
+      },
+
+      /**
+       * @name _toggle
+       * @description expands/collapses content
+       * **/
+      _toggle: function () {
+        this.$$('#collapse').toggle();
+        this.expanded = !this.expanded;
       },
 
       /**

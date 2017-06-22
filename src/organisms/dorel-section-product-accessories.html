@@ -111,7 +111,6 @@
               as="accessory">
               <dorel-product-accessory accessory-data="[[ accessory ]]"></dorel-product-accessory>
             </template>
-
             <template is="dom-if" if="[[ restContent.length ]]">
               <!-- Rest content to expand/collapse -->
               <iron-collapse id="collapse">
@@ -124,7 +123,7 @@
               </iron-collapse>
               <!-- Toggles expand and collapse -->
               <template is="dom-if" if="[[ !expanded ]]">
-                <dorel-cta title="Read more"
+                <dorel-cta title="Show all accessories"
                            on-click="_toggle"
                            type="link"
                            link=""
@@ -135,7 +134,7 @@
                 </dorel-cta>
               </template>
               <template is="dom-if" if="[[ expanded ]]">
-                <dorel-cta title="Read less"
+                <dorel-cta title="Show less accessories"
                            on-click="_toggle"
                            type="link"
                            link=""
@@ -179,7 +178,7 @@
          */
         maxShown: {
           type: Number,
-          value: 2
+          value: 3
         },
 
         /**
@@ -222,6 +221,7 @@
           computed: '_computeRestContent(accessoriesData)'
         },
       },
+
       /**
        * @name clickDetails
        * @description handle of the click on the details links
@@ -230,6 +230,7 @@
         // track the event
         this._eventTracking(event);
       },
+
       /**
        * @name _computeInitialContent
        * @description Splits the content on mobile if there are too many items
@@ -241,6 +242,7 @@
 
         return accessoriesData.accessories;
       },
+
       /**
        * @name _computeRestContent
        * @description Splits the content on mobile if there are too many items
@@ -262,7 +264,6 @@
         this.expanded = !this.expanded;
       },
 
-
       /**
        * @name _hasValue
        * @description checks to see if a value is set
@@ -279,7 +280,6 @@
        *
        */
       _scrollHandler: function (event) {
-        console.log('scroll in accessories');
         this.scrollIntoView({block: "end", behavior: "smooth"})
       },
 
