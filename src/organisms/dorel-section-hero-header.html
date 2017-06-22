@@ -1,6 +1,11 @@
 <dom-module id="dorel-section-hero-header">
   <template>
     <style>
+      :host {
+        float: left;
+        width: 100%;
+      }
+
       .hero-header {
         width: 100%;
         display: flex;
@@ -35,12 +40,14 @@
       }
 
       .content-wrapper {
+        @apply(--max-width-container);
         padding: var(--theme-gutter);
         width: 100%;
         height: 100%;
         box-sizing: border-box;
         position: absolute;
         right: 0;
+        left: 0;
         top: 0;
       }
 
@@ -58,8 +65,6 @@
         float: right;
         margin-top: 1.5em;
       }
-
-
 
       [screen-large] .image {
         height: 80vh;
@@ -99,7 +104,7 @@
         font-weight: var(--theme-font-weight-light);
         margin-top: 0;
       }
-      
+
       [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
         padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
         position: absolute;
@@ -160,7 +165,6 @@
                   fade="true"
                   preload
                   src$="[[ heroHeaderData.background_image ]]"></iron-image>
-
       <div class="content-wrapper">
         <div class="content">
           <header>
