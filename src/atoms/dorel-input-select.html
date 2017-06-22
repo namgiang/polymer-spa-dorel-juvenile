@@ -1,0 +1,161 @@
+<link rel="import" href="dorel-input-error.html">
+<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+
+<dom-module id="dorel-input-select">
+  <template>
+    <style>
+      :host {
+        display: block;
+        float: left;
+        width: 100%;
+      }
+
+      :host([focused]) {
+        outline: none;
+      }
+
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      label {
+        @apply(--theme-form-input-label);
+      }
+
+      select {
+        @apply(--theme-form-select);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 20px;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2224%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23666%22%20points%3D%2212%201%209%206%2015%206%22%3E%3C%2Fpolygon%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23666%22%20points%3D%2212%2013%209%208%2015%208%22%3E%3C%2Fpolygon%3E%0A%3C%2Fsvg%3E%0A");
+        background-repeat: no-repeat;
+        background-position: 100% 50%;
+      }
+
+      :host([invalid]) select {
+        @apply(--theme-form-input-error);
+      }
+
+      :host([invalid]) label {
+        @apply(--theme-form-input-error-label);
+      }
+
+      select:hover, :host([invalid]) select:hover {
+        @apply(--theme-form-select-active);
+      }
+
+      :host([disabled]) select {
+        @apply(--theme-form-input-disabled);
+        color:
+      }
+
+      :host([disabled]) label {
+        @apply(--theme-form-input-disabled-label);
+      }
+
+      :host([required]) label:after {
+        content: "*";
+        margin-left: .125em;
+      }
+
+    </style>
+
+    <content select="[prefix]"></content>
+
+    <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
+
+    <select is="iron-input" id="input"
+            aria-labelledby$="[[_ariaLabelledBy]]"
+            aria-describedby$="[[_ariaDescribedBy]]"
+            disabled$="[[disabled]]"
+            title$="[[title]]"
+            bind-value="{{ value }}"
+            invalid="{{ invalid }}"
+            prevent-invalid-input="[[preventInvalidInput]]"
+            allowed-pattern="[[allowedPattern]]"
+            validator="[[validator]]"
+            type$="[[type]]"
+            pattern$="[[pattern]]"
+            required$="[[required]]"
+            autocomplete$="[[autocomplete]]"
+            autofocus$="[[autofocus]]"
+            inputmode$="[[inputmode]]"
+            minlength$="[[minlength]]"
+            maxlength$="[[maxlength]]"
+            min$="[[min]]"
+            max$="[[max]]"
+            step$="[[step]]"
+            name$="[[name]]"
+            placeholder$="[[placeholder]]"
+            readonly$="[[readonly]]"
+            list$="[[list]]"
+            size$="[[size]]"
+            autocapitalize$="[[autocapitalize]]"
+            autocorrect$="[[autocorrect]]"
+            on-change="_onChange"
+            tabindex$="[[tabindex]]"
+            autosave$="[[autosave]]"
+            results$="[[results]]"
+            accept$="[[accept]]"
+            multiple$="[[multiple]]">
+    </select>
+
+    <content select="[suffix]"></content>
+
+    <template is="dom-if" if="[[errorMessage]]">
+      <dorel-input-error aria-live="assertive"
+                         invalid$="[[invalid]]">[[errorMessage]]
+      </dorel-input-error>
+    </template>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'dorel-input-select',
+    properties: {
+
+      /**
+       * The options that can be selecte for this component
+       */
+      options: {
+        type: Object,
+        observer: '_setSelectionOptions'
+      }
+    },
+
+    /**
+     * Inherits behaviour form Iron Form elements
+     */
+    behaviors: [
+      Polymer.IronFormElementBehavior,
+    ],
+
+    /**
+     * @name _isSelected
+     * @description Sets the input option to selected when it's label is equal to the selected property
+     */
+    _isSelected: function (optionLabel, selected) {
+      return optionLabel === selected;
+    },
+
+    /**
+     * @name _setSelectionOptions
+     * @description Injects Select options. This is needed because Polymer's dom-repeat doesn't work
+     * in the select element for IE browsers
+     */
+    _setSelectionOptions: function () {
+      var select = this.$.input;
+
+      for (var i = 0; i < this.options.length; i++) {
+        var option = this.options[i];
+        var newOption = document.createElement('option');
+        newOption.textContent = option.label;
+        newOption.value = option.value;
+        newOption.selected = this._isSelected(newOption.textContent, this.selected);
+        select.appendChild(newOption);
+      }
+    },
+  });
+</script>
