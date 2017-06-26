@@ -147,11 +147,6 @@
                       query-matches="{{ mobile }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
                       query-matches="{{ tablets }}"></iron-media-query>
-    <!--
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-                      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)"
-                      query-matches="{{ desktopFull }}"></iron-media-query> -->
 
     <template
       is="dom-if"
@@ -203,8 +198,12 @@
               if="[[ showcaseData.colors.length ]]">
               <div class="color-mobile-container  layout horizontal center center-justified wrap">
                 <dorel-color-switcher
-                  current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+                  current-image$="[[ currentImage ]]"
+                  colors-data$="[[ showcaseData.colors ]]"
+                  gtm-parent$="[[ gtmParent ]]"
+                  gtm-parent-index$="[[ gtmParentIndex ]]"
+                  gtm-child$="dorel-color-switcher"
+                  gtm-child-index$="0"></dorel-color-switcher>
               </div>
             </template>
             <!--// color switcher -->
@@ -220,7 +219,9 @@
                   on-click="_viewAccessories"
                   link=""
                   size="small"
-                  icon="dorel-icons:expand-more">
+                  icon="dorel-icons:expand-more"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]">
                   View Accessories
                 </dorel-cta>
               </template>
@@ -233,7 +234,9 @@
                   title="Find a Store"
                   link=""
                   size="small"
-                  icon="dorel-icons:chevron-right">
+                  icon="dorel-icons:chevron-right"
+                  gtm-component-parent="dorel-section-product-showcase"
+                  gtm-component-parent-index="[[ gtmComponentIndex ]]">
                   Find a Store
                 </dorel-cta>
               </template>
@@ -299,7 +302,10 @@
                 if="[[ showcaseData.colors.length ]]">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+                  colors-data="[[ showcaseData.colors ]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="dorel-color-switcher"></dorel-color-switcher>
               </template>
               <!--// color switcher -->
 
@@ -313,7 +319,9 @@
                     link=""
                     size="small"
                     on-tap="_viewAccessories"
-                    icon="dorel-icons:expand-more">
+                    icon="dorel-icons:expand-more"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]">
                     View Accessories
                   </dorel-cta>
                 </template>
@@ -326,7 +334,9 @@
                     type="primary"
                     link="[[ showcaseData.store_locator_page ]]"
                     size="small"
-                    icon="dorel-icons:chevron-right">
+                    icon="dorel-icons:chevron-right"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]">
                     Find a Store
                   </dorel-cta>
                 </template>
