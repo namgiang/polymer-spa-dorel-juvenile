@@ -50,14 +50,22 @@
         z-index: 1;
         border-radius: 0.875em;
         padding: 0 .75em;
-
       }
 
-      .accessory-image {
+      .accessory-image-container {
         float: left;
         width: 10.5em;
         height: 10.5em;
         border-radius: .5em;
+        background-color: var(--theme-color-white);
+      }
+
+      .accessory-image {
+        width: 8.5em;
+        height: 10.5em;
+        margin: auto;
+        float: none;
+        display: block;
       }
 
       .accessory-content {
@@ -67,8 +75,13 @@
         float: left;
       }
 
-      [mobile-small] .accessory-image, [mobile-medium] .accessory-image {
+      [mobile-small] .accessory-image-container, [mobile-medium] .accessory-image-container {
         width: 6em;
+        height: 6em;
+      }
+
+      [mobile-small] .accessory-image, [mobile-medium] .accessory-image {
+        width: 5em;
         height: 6em;
       }
 
@@ -115,12 +128,14 @@
           <template
             is="dom-if"
             if="{{ _hasValue(accessoryData.colors.0.color_image) }}">
-            <iron-image class="accessory-image"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="[[ accessoryData.colors.0.color_image ]]"></iron-image>
+            <div class="accessory-image-container">
+              <iron-image class="accessory-image"
+                          sizing="contain"
+                          fade="true"
+                          preload
+                          placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                          src$="[[ accessoryData.colors.0.color_image ]]"></iron-image>
+            </div>
           </template>
 
           <div class="accessory-content">
