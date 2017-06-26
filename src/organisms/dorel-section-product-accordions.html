@@ -35,6 +35,7 @@
       .accordion-heading:focus, .accordion-heading:hover {
         cursor: pointer;
         color: var(--theme-color-text-link-active);
+        outline: none;
       }
 
       .accordion-container {
@@ -94,24 +95,25 @@
 
     </style>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)"
-                      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-                      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
-                      query-matches="{{ screenLarge }}"></iron-media-query>
 
-    <section class="section-product-accordions layout horizontal"
-             mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}"
-             tablets$="{{ tablets }}">
+    <template
+      is="dom-if"
+      if="[[ accordionsData.accordions.length ]]">
+      <!-- media queries -->
+      <iron-media-query query="(max-width : 479px)"
+                        query-matches="{{ mobileSmall }}"></iron-media-query>
+      <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                        query-matches="{{ mobileMedium }}"></iron-media-query>
+      <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
+                        query-matches="{{ tablets }}"></iron-media-query>
+      <iron-media-query query="(min-width : 767px) and (max-width : 1600[x)"
+                        query-matches="{{ screenLarge }}"></iron-media-query>
 
-      <template
-        is="dom-if"
-        if="[[ accordionsData.accordions.length ]]">
+      <section class="section-product-accordions layout horizontal"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}"
+               tablets$="{{ tablets }}">
+
         <div class="row center center-justified">
           <div class="accordion">
             <template
@@ -130,10 +132,7 @@
                       role="button"
                       data-selector$="#collapse{{ index }}">[[ accordion.heading ]]</h2>
                   <iron-icon class="accordion-icon"
-                             icon="dorel-icons:expand-more"
-                             on-tap="_toggleCollapse"
-                             tabindex="0"
-                             role="button"></iron-icon>
+                             icon="dorel-icons:expand-more"></iron-icon>
                 </template>
                 <iron-collapse id$="collapse{{ index }}">
                   <template
@@ -149,9 +148,9 @@
           </div>
 
         </div>
-      </template>
-
-    </section>
+        
+      </section>
+    </template>
   </template>
   <script>
     Polymer({

@@ -19,6 +19,9 @@
         @apply(--theme-grid-row);
         @apply(--layout-flex);
         position: relative;
+        max-width: 1300px;
+        float: none;
+        margin: auto;
       }
 
       .section-heroes-image-wrapper {
@@ -30,6 +33,7 @@
         width: 100%;
         margin-right: calc(var(--theme-column-width) * 2);
         margin-top: 3em;
+        padding: 0;
       }
 
       .section-heroes-image {
@@ -56,6 +60,7 @@
       .title {
         @apply(--theme-typography-7);
         color: var(--theme-brand-color-1);
+        margin-top: 0;
       }
 
       dorel-cta {
@@ -76,18 +81,6 @@
         margin-top: 0;
       }
 
-      [tablets] .description-column {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        max-width: calc(var(--theme-column-width) * 6);
-      }
-
-      [mobile-small] .description-column, [mobile-medium] .description-column {
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-      }
-
       .section-heroes-wrap:nth-child(even) .section-heroes-image-wrapper {
         margin-right: 0;
         margin-left: calc(var(--theme-column-width) * 2);
@@ -102,8 +95,52 @@
         margin-bottom: 1.5em;
       }
 
-      .section-heroes-wrap:last-child {
-        margin-bottom: 0;
+      /* Section heroes */
+      .section-heroes-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+      }
+
+      .image-parent {
+        width: 100%;
+        height: 24em;
+        overflow: hidden;
+        border-top-right-radius: 2em;
+        border-bottom-right-radius: 1em;
+        border-top-left-radius: 2.5em;
+        margin: 0 auto;
+      }
+
+      .image-parent > .image-box {
+        width: 100%;
+        height: 100%;
+        margin: -3em 0 0 0;
+        -webkit-transform: skewY(-5deg);
+        -moz-transform: skewY(-5deg);
+        -o-transform: skewY(-5deg);
+        overflow: hidden;
+        position: relative;
+        border-radius: 2.5em;
+      }
+
+      .image-parent > .image-box > .section-heroes-image {
+        width: 100%;
+        height: 100%;
+      }
+
+      .section-heroes-wrap:nth-child(2) .image-parent > .image-box {
+        -webkit-transform: skewY(5deg);
+        -moz-transform: skewY(5deg);
+        -o-transform: skewY(5deg);
+      }
+
+      .section-heroes-wrap:nth-child(2) .image-parent {
+        border-top-left-radius: 2em;
+        border-bottom-left-radius: 1em;
+        border-top-right-radius: 2.5em;
       }
 
       /* Responsive Behaviour */
@@ -121,7 +158,7 @@
         -ms-flex-preferred-size: 100%;
         flex-basis: 100%;
         max-width: 100%;
-        padding: 0 .75em;
+
       }
 
       [mobile-small] .section-heroes-image,
@@ -133,6 +170,29 @@
         height: 21em;
       }
 
+      [mobile-small] .title,
+      [mobile-medium] .title {
+        @apply(--theme-typography-5);
+        margin-top: 0;
+      }
+
+      [mobile-small] .description,
+      [mobile-medium] .description {
+        margin-top: 0;
+      }
+
+      [tablets] .description-column {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      [mobile-small] .description-column, [mobile-medium] .description-column {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+      
     </style>
 
     <!-- media queries -->
@@ -161,13 +221,17 @@
         <div class="section-heroes-wrap layout horizontal center center-justified wrap">
           <div class="section-heroes-image-wrapper">
             <!-- background-image -->
-            <iron-image class="section-heroes-image"
-                        sizing="cover"
-                        fade="true"
-                        preload
-                        placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
-                        src$="[[ hero.background_image ]]">
-            </iron-image>
+            <div class="image-parent">
+              <div class="image-box">
+                <iron-image class="section-heroes-image"
+                            sizing="cover"
+                            fade="true"
+                            preload
+                            placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
+                            src$="[[ hero.background_image ]]">
+                </iron-image>
+              </div>
+            </div>
           </div>
           <!-- overlay image -->
           <iron-image class="section-heroes-image-overlay"

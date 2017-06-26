@@ -1,4 +1,5 @@
 <link rel="import" href="../molecules/dorel-product-accessory.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 
 <dom-module id="dorel-section-product-accessories">
   <template>
@@ -26,6 +27,10 @@
         color: var(--theme-brand-color-1);
         width: 100%;
         text-align: center;
+      }
+
+      .expand-collapse {
+        margin: auto;
       }
 
       dorel-product-accessory {
@@ -69,44 +74,89 @@
       }
     </style>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)"
-                      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 619px)"
-                      query-matches="{{ mobileMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 620px) and (max-width : 820px)"
-                      query-matches="{{ mobileMediumAlternative }}"></iron-media-query>
-    <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
-                      query-matches="{{ tablets }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-                      query-matches="{{ desktopSmall }}"></iron-media-query>
+    <template
+      is="dom-if"
+      if="[[ accessoriesData.accessories.length ]]">
 
-    <section class="section-product-accessories"
-             mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}"
-             mobile-medium-alternative$="{{ mobileMediumAlternative }}"
-             tablets$="{{ tablets }}"
-             desktop-small$="{{ desktopSmall }}">
-      <template
-        is="dom-if"
-        if="[[ _hasValue(accessoriesData.title) ]]">
-        <h2 class="title">[[ accessoriesData.title ]]</h2>
-      </template>
+      <!-- media queries -->
+      <iron-media-query query="(max-width : 479px)"
+                        query-matches="{{ mobileSmall }}"></iron-media-query>
+      <iron-media-query query="(min-width : 480px) and (max-width : 619px)"
+                        query-matches="{{ mobileMedium }}"></iron-media-query>
+      <iron-media-query query="(max-width : 619px)"
+                        query-matches="{{ mobile }}"></iron-media-query>
+      <iron-media-query query="(min-width : 620px) and (max-width : 820px)"
+                        query-matches="{{ mobileMediumAlternative }}"></iron-media-query>
+      <iron-media-query query="(min-width : 821px) and (max-width : 991px)"
+                        query-matches="{{ tablets }}"></iron-media-query>
+      <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
+                        query-matches="{{ desktopSmall }}"></iron-media-query>
 
-      <template
-        is="dom-if"
-        if="[[ accessoriesData.accessories.length ]]">
+      <section class="section-product-accessories"
+               mobile-small$="{{ mobileSmall }}"
+               mobile-medium$="{{ mobileMedium }}"
+               mobile-medium-alternative$="{{ mobileMediumAlternative }}"
+               tablets$="{{ tablets }}"
+               desktop-small$="{{ desktopSmall }}">
+        <template
+          is="dom-if"
+          if="[[ _hasValue(accessoriesData.title) ]]">
+          <h2 class="title">[[ accessoriesData.title ]]</h2>
+        </template>
         <div class="row">
-          <template
-            is="dom-repeat"
-            items="[[ accessoriesData.accessories ]]"
-            as="accessory">
-            <dorel-product-accessory accessory-data="[[ accessory ]]"></dorel-product-accessory>
+          <template is="dom-if" if="[[ mobile ]]">
+            <template
+              is="dom-repeat"
+              items="[[ initialContent ]]"
+              as="accessory">
+              <dorel-product-accessory accessory-data="[[ accessory ]]"></dorel-product-accessory>
+            </template>
+            <template is="dom-if" if="[[ restContent.length ]]">
+              <!-- Rest content to expand/collapse -->
+              <iron-collapse id="collapse">
+                <template
+                  is="dom-repeat"
+                  items="[[ restContent ]]"
+                  as="accessory">
+                  <dorel-product-accessory accessory-data="[[ accessory ]]"></dorel-product-accessory>
+                </template>
+              </iron-collapse>
+              <!-- Toggles expand and collapse -->
+              <template is="dom-if" if="[[ !expanded ]]">
+                <dorel-cta title="Show all accessories"
+                           on-click="_toggle"
+                           type="link"
+                           link=""
+                           size="small"
+                           class="expand-collapse"
+                           icon="dorel-icons:expand-more">
+                  Show all accessories
+                </dorel-cta>
+              </template>
+              <template is="dom-if" if="[[ expanded ]]">
+                <dorel-cta title="Show less accessories"
+                           on-click="_toggle"
+                           type="link"
+                           link=""
+                           size="small"
+                           class="expand-collapse"
+                           icon="dorel-icons:expand-less">
+                  Show less accessories
+                </dorel-cta>
+              </template>
+            </template>
+          </template>
+          <template is="dom-if" if="[[ !mobile ]]">
+            <template
+              is="dom-repeat"
+              items="[[ accessoriesData.accessories ]]"
+              as="accessory">
+              <dorel-product-accessory accessory-data="[[ accessory ]]"></dorel-product-accessory>
+            </template>
           </template>
         </div>
-      </template>
-
-    </section>
+      </section>
+    </template>
   </template>
 
   <script>
@@ -120,6 +170,17 @@
           notify: true,
           observer: '_scrollHandler'
         },
+
+        /**
+         * @attribute
+         * @name _numShowOnMobile
+         * @description The maximum number to show on mobile, the rest will be expandable
+         */
+        maxShown: {
+          type: Number,
+          value: 5
+        },
+
         /**
          * @attribute
          * @name accessoriesData
@@ -130,8 +191,35 @@
           value: function () {
             return {};
           }
-        }
+        },
 
+        /**
+         * @attribute
+         * @name expanded
+         * @description boolean that for expanding/collapsing on mobile
+         */
+        expanded: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * @attribute
+         * @name initialContent
+         * @description Initially shown content, will be shortened
+         */
+        initialContent: {
+          type: String,
+          computed: '_computeInitialContent(accessoriesData)'
+        },
+        /**
+         * @attribute
+         * @name restContent
+         * @description Rest content, shown when component is expanded
+         */
+        restContent: {
+          type: String,
+          computed: '_computeRestContent(accessoriesData)'
+        },
       },
 
       /**
@@ -139,12 +227,42 @@
        * @description handle of the click on the details links
        */
       clickDetails: function (event) {
-
         // track the event
         this._eventTracking(event);
-
       },
 
+      /**
+       * @name _computeInitialContent
+       * @description Splits the content on mobile if there are too many items
+       */
+      _computeInitialContent: function (accessoriesData) {
+        if (accessoriesData.accessories.length > this.maxShown) {
+          return accessoriesData.accessories.slice(0, this.maxShown);
+        }
+
+        return accessoriesData.accessories;
+      },
+
+      /**
+       * @name _computeRestContent
+       * @description Splits the content on mobile if there are too many items
+       */
+      _computeRestContent: function (accessoriesData) {
+        if (accessoriesData.accessories.length > this.maxShown) {
+          return accessoriesData.accessories.slice(this.maxShown);
+        }
+
+        return []
+      },
+
+      /**
+       * @name _toggle
+       * @description expands/collapses content
+       * **/
+      _toggle: function () {
+        this.$$('#collapse').toggle();
+        this.expanded = !this.expanded;
+      },
 
       /**
        * @name _hasValue
@@ -162,7 +280,6 @@
        *
        */
       _scrollHandler: function (event) {
-        console.log('scroll in accessories');
         this.scrollIntoView({block: "end", behavior: "smooth"})
       },
 

@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-inline-usps.html">
 <link rel="import" href="../atoms/dorel-color-switcher.html">
+<link rel="import" href="../molecules/dorel-expandable-content.html">
 
 <dom-module id="dorel-section-product-showcase">
   <template>
@@ -57,7 +58,7 @@
       }
 
       .actions dorel-cta {
-        margin: 0 1em;
+        margin: 0 1em 0 0;
         float: left;
       }
 
@@ -69,15 +70,11 @@
         margin-right: 0;
       }
 
-      .product-description-text {
-        float: left;
-      }
-
       .showcase-gallery-view .image {
-        height: 28.5em;
         margin: auto;
         display: block;
-        width: 28.5em;
+        width: 31em;
+        height: 35em;
       }
 
       /* Responsive Behaviour */
@@ -106,8 +103,9 @@
       }
 
       [tablets] .showcase-gallery-view .image {
-        width: auto;
-        height: 24em;
+
+        width: 23.25em;
+        height: 26.25em;
         margin-top: 1.5em;
       }
 
@@ -127,7 +125,7 @@
       }
 
       [mobile] .actions dorel-cta {
-        margin: 0 .5em;
+        margin: 0 .5em 0 0;
       }
 
       [mobile] .showcase-product-specs {
@@ -185,10 +183,9 @@
 
             <div class="showcase-gallery-view">
               <iron-image class="image"
-                          sizing="cover"
+                          sizing="contain"
                           fade="true"
                           preload
-                          placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
                           src$="{{ currentImage }}"></iron-image>
             </div>
 
@@ -252,12 +249,12 @@
                           sizing="cover"
                           fade="true"
                           preload
-                          placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAARUlEQVQYVx3LsQ2AQAwEwXPP9EIt9EADBOcMkRG8Lfk+MnrCHWltO709BIbgKdh+Pc0oeE5wFOy43/5jYQjGqOYQmGsrfE+bLy6etpfQAAAAAElFTkSuQmCC"
                           src$="{{ currentImage }}"></iron-image>
             </div>
 
             <!-- Title, usp's and extra info -->
             <div class="showcase-description">
+
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.title) ]]">
@@ -288,13 +285,13 @@
                 </template>
               </ul>
 
+              <!-- expandable text description -->
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.description) ]]">
-                <div class="product-description-text">
-                  <dorel-safe-html html="[[ showcaseData.description ]]"></dorel-safe-html>
-                </div>
+                <dorel-expandable-content content="[[ showcaseData.description ]]"></dorel-expandable-content>
               </template>
+              <!-- expandable text description  -->
 
               <!-- color switcher -->
               <template
@@ -433,7 +430,6 @@
       _viewAccessories: function (event) {
         this.accessoryScrollHandler = !this.accessoryScrollHandler;
       },
-
       /**
        * @name _eventTracking
        * @description this is for cta tracking only
