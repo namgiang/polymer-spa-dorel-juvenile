@@ -96,10 +96,10 @@
        mobile-small$="[[ mobileSmall ]]"
        mobile-medium$="[[ mobileMedium ]]"
        target$="[[ _isExternal(linkTarget) ]]"
-       gtm-component-parent$="[[ gtmComponentParent ]]"
-       gtm-component-parent-index$="[[ gtmComponentParentIndex ]]"
-       gtm-component-child$="[[ gtmComponentChild ]]"
-       gtm-component-child-index$="[[ gtmComponentChildIndex ]]"
+       gtm-parent$="[[ gtmParent ]]"
+       gtm-parent-index$="[[ gtmParentIndex ]]"
+       gtm-child$="[[ gtmChild ]]"
+       gtm-child-index$="[[ gtmChildIndex ]]"
        gtm-cta-index$="[[ gtmCtaIndex ]]"
        on-tap="_clickCTA">
 
@@ -212,26 +212,20 @@
           var element = Polymer.dom(event).path[1];
         }
 
-        var compParentAttr = element.getAttribute('gtm-component-parent');
-        var compParentIndexAttr = element.getAttribute('gtm-component-parent-index');
-        var compChildAttr = element.getAttribute('gtm-component-child');
-        var compChildIndexAttr = element.getAttribute('gtm-component-child-index');
-        var ctaIndexAttr = element.getAttribute('gtm-cta-index');
-
         var component = {
-          name: compParentAttr !== '' && compParentAttr !== null ? compParentAttr : 'N/A',
-          index: compParentIndexAttr !== '' && compParentIndexAttr !== null ? (Number(compParentIndexAttr) + 1) : 'N/A'
+          name: this.gtmParent,
+          index: Number(this.gtmParentIndex) + 1
         };
 
-        if (compChildAttr !== null && compChildIndexAttr !== null) {
+        if (typeof this.gtmChild !== 'undefined' && this.gtmChild !== null) {
           component.child = {
-            name: compChildAttr !== '' && compChildAttr !== null ? compChildAttr : 'N/A',
-            index: compChildIndexAttr !== '' && compChildIndexAttr !== null ? (Number(compChildIndexAttr) + 1) : 'N/A',
+            name: this.gtmChild,
+            index: Number(this.gtmChildIndex) + 1,
             event: {
               name: 'call-to-action',
               type: this.type,
               text: this.$.content.getDistributedNodes()[0].textContent,
-              index: ctaIndexAttr !== '' && ctaIndexAttr !== null ? (Number(ctaIndexAttr) + 1) : 1,
+              index: Number(this.gtmCtaIndex) + 1,
             }
           }
         } else {
@@ -239,7 +233,7 @@
             name: 'call-to-action',
             type: this.type,
             text: this.$.content.getDistributedNodes()[0].textContent,
-            index: ctaIndexAttr !== '' && ctaIndexAttr !== null ? (Number(ctaIndexAttr) + 1) : 1,
+            index: Number(this.gtmCtaIndex) + 1
           }
         }
 
