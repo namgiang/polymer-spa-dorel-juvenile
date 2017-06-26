@@ -86,7 +86,7 @@
           <paper-menu>
             <template
               is="dom-repeat"
-              items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+              items="[[ globals.Dorel.collect.menus.main_menu.items ]]"
               as="menuItem"
               initial-count="4">
 
@@ -94,11 +94,13 @@
               <template
                 is="dom-if"
                 if="[[ !menuItem.children.length ]]">
-                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
-                  on-tap="_menuItemTap">
-                  <paper-item>
-                    <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
-                  </paper-item>
+                <a class="mobile-menu-item" 
+                   href="[[ menuItem.url ]]" 
+                   title="[[ menuItem.title ]]"
+                   on-tap="_menuItemTap"
+                   gtm-parent="dorel-navigation-main"
+                   gtm-parent-index="[[ index ]]">
+                  <paper-item>[[ _unescapeHtml(menuItem.title) ]]</paper-item>
                 </a>
               </template>
 
@@ -117,7 +119,10 @@
                   menu-item="{{ menuItem }}"
                   mobile-menu-opened="{{ mobileMenuOpened }}"
                   search-opened="{{ searchOpened }}"
-                  sub-menu-opened="{{ subMenuOpened }}"></dorel-navigation-sub>
+                  sub-menu-opened="{{ subMenuOpened }}"
+                  gtm-parent="dorel-navigation-main"
+                  gtm-parent-index="[[ index ]]"
+                  ></dorel-navigation-sub>
               </template>
             </template>
             <!-- 
@@ -137,10 +142,7 @@
     </app-drawer>
 
     <!--
-    Menu for medium and larger screens
-
-    TODO: revamp the menu structure so that it's not only
-    for medium up only, but also for smaller screens
+      Desktop menu
     -->
     <template is="dom-if" if="{{ screenMediumUp }}">
 
@@ -158,7 +160,7 @@
               <!-- loop through the menu items -->
               <template
                 is="dom-repeat"
-                items="{{ globals.Dorel.collect.menus.main_menu.items }}"
+                items="[[ globals.Dorel.collect.menus.main_menu.items ]]"
                 as="menuItem">
 
                 <!-- if menu doesn't have children just show the menu item -->
@@ -168,11 +170,11 @@
                   <div>
                     <dorel-tab
                       name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]"
-                          data-gtm-index="{{ index }}"
-                          on-tap="_menuItemTap">
-                          <dorel-safe-html html="[[ menuItem.title ]]"></dorel-safe-html>
-                        </a>
+                        <a href="[[ menuItem.url ]]" 
+                           title="[[ menuItem.title ]]"
+                           on-tap="_menuItemTap"
+                           gtm-parent="dorel-navigation-main"
+                           gtm-parent-index="[[ index ]]">[[ _unescapeHtml(menuItem.title) ]] [[ index ]]</a>
                     </dorel-tab>
                   </div>
                 </template>
@@ -197,25 +199,8 @@
                     mobile-menu-opened="{{ mobileMenuOpened }}"
                     search-opened="{{ searchOpened }}"
                     sub-menu-opened="{{ subMenuOpened }}"
-                    data-gtm-index="{{ index }}"
-                    on-tap="_subMenuTap"></dorel-navigation-sub>
-
-                      <!-- <div>
-                        <ul class="submenu">
-                          <li><strong>aList title:</strong></li>
-                          <li>Another list item 1</li>
-                          <li>Another list item 2</li>
-                          <li>Another list item 3</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <ul class="submenu">
-                          <li><strong>aList title:</strong></li>
-                          <li>Another list item 1</li>
-                          <li>Another list item 2</li>
-                          <li>Another list item 3</li>
-                        </ul>
-                      </div> -->
+                    gtm-parent="dorel-navigation-main"
+                    gtm-child-index="[[ index ]]"></dorel-navigation-sub>
                     </section>
                   </div>
                 </div>
@@ -271,39 +256,25 @@
 
       },
 
-      _subMenuTap: function(event) {
-        var element = Polymer.dom(event).localTarget;
-
-        // send event data to tracking function
-        Polymer.globalsManager.set('Dorel.events', {
-          action: 'click',
-          component: 'navigation_item_#' + (element.dataGtmIndex + 1),
-          element: element.dataGtmIndex,
-          event: 'polymer_event',
-          things: {
-            'currentState': this.subMenuOpened ? 'close' : 'open',
-            'targetState': this.subMenuOpened ? 'open' : 'close',
-          }
-        });
-      },
-
       /**
        * @name _menuItemTap
        * @description handles all menu item clicks
        */
       _menuItemTap: function(event) {
-        console.log('menuTap');
         // reset all handlers
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
         this.searchOpened = false;
 
-        var element = Polymer.dom(event).path[3];
+        var element = Polymer.dom(event).localTarget;
 
         // send event data to tracking function
         Polymer.globalsManager.set('Dorel.events', {
-          action: 'switch',
-          component: 'navigation_item_#' + (element.dataGtmIndex + 1),
+          action: 'click',
+          component: {
+            name: 'dorel-navigation-main',
+            index: element.dataGtmIndex + 1
+          },
           element: element,
           event: 'polymer_event',
           things: {
@@ -312,6 +283,16 @@
           }
         });
       },
+
+      /**
+       * @name _unescapeHtml
+       * @description decode html special chars, and output the correct string
+       */
+      _unescapeHtml: function(text) {
+        var el = document.createElement('div');
+        el.innerHTML = text;
+        return el.childNodes.length === 0 ? "" : el.childNodes[0].nodeValue;
+      }
     });
   </script>
 </dom-module>
