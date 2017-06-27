@@ -10,15 +10,14 @@
 <dom-module id="dorel-header">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      .header-items {
+
+      :host {
         position: relative;
-        background-color: var(--theme-color-white);
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
+        float: left;
+        width: 100%;
       }
 
-      .header-items::before {
+      :host::before {
         content: "";
         position: absolute;
         bottom: -.75em;
@@ -34,8 +33,17 @@
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
       }
 
+      .header-items {
+        @apply(--max-width-container);
+        background-color: var(--theme-color-white);
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding: 1.5em;
+      }
+
       .header-item-menu {
-        margin: 0 auto;
+        margin: var(--header-item-menu-alignment);
       }
 
       .hamburger {
@@ -87,6 +95,7 @@
       header[screenSmall] .header-items {
         @apply(--layout-vertical);
         @apply(--layout-end-justified);
+        padding: .75em;
       }
 
       header[screenSmall] dorel-user-tools {
