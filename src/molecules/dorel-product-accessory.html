@@ -107,9 +107,7 @@
           <template
             is="dom-if"
             if="{{ accessoryData.included }}">
-            <span class="accessory-included-badge">
-              Included
-            </span>
+            <span class="accessory-included-badge">Included</span>
           </template>
 
           <template
@@ -147,15 +145,26 @@
                 on-tap="_openLightbox"
                 link="[[ accessoryData.permalink ]]"
                 size="small"
-                icon="dorel-icons:play-circle-outline">
-                View Accessory
-              </dorel-cta>
+                icon="dorel-icons:play-circle-outline"
+                gtm-action="[[ gtmAction ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="[[ gtmChild ]]"
+                gtm-child-index="[[ gtmChildIndex ]]"
+                gtm-cta-index="0">View Accessory</dorel-cta>
             </template>
           </div>
         </div>
       </div>
     </section>
-    <dorel-product-accessory-lightbox accessory-lightbox-data="[[ accessoryData ]]"></dorel-product-accessory-lightbox>
+    <dorel-product-accessory-lightbox
+      accessory-lightbox-data="[[ accessoryData ]]"
+      gtm-action="[[ gtmAction ]]"
+      gtm-parent="[[ gtmParent ]]"
+      gtm-parent-index="[[ gtmParentIndex ]]"
+      gtm-child="[[ gtmChild ]]"
+      gtm-child-index="[[ gtmChildIndex ]]"
+      gtm-cta-index="0"></dorel-product-accessory-lightbox>
   </template>
 
   <script>
@@ -184,8 +193,6 @@
       _openLightbox: function (event) {
         var lightbox = this.$$('dorel-product-accessory-lightbox');
         lightbox.open();
-        // track the event
-        this._eventTracking(event);
       },
 
       /**
@@ -196,30 +203,6 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');
-      },
-
-      /**
-       * @name _eventTracking
-       * @description this is for cta tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event) {
-
-        var globals = Polymer.globalsManager.get('Dorel');
-
-        /**
-         * Tracking on click for cta
-         */
-        Polymer.globalsManager.set('Dorel.events', {
-          action: 'click',
-          component: 'product-accessories',
-          element: Polymer.dom(event).localTarget,
-          event: 'polymer_event',
-          things: {
-            'currentPage': document.URL,
-            'targetPage': Polymer.dom(event).localTarget.href
-          }
-        });
       }
     });
 
