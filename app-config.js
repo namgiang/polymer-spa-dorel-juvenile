@@ -12,7 +12,7 @@ var CONFIG = {
 
   /**
    * Determines the shared brand theme used for the application.
-   * Name strings can only contain lower-case, alphabetic values 
+   * Name strings can only contain alphabetic values
    * and dashes to separate words:
    * - maxi-cosi
    * - dorel
@@ -20,7 +20,7 @@ var CONFIG = {
    * - safety-first
    * - baby-art
    */
-  BRAND_NAME: 'maxi-cosi',
+  BRAND_NAME: 'Maxi-Cosi',
 
   /**
    * The following information is localization info used in several parts

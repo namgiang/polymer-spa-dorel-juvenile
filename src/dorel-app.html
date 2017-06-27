@@ -12,10 +12,7 @@
 <link rel="import" href="atoms/dorel-safe-html.html">
 
 <!-- TODO: These should only be included conditionally, based on the config.js -->
-<!-- <link rel="import" href="themes/theme-dorel-shared-styles.html">-->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
-
-<!-- <link rel="import" href="themes/theme-maxi-cosi-new.html"> -->
 
 <!-- Header has priority for percieved initial load -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -28,8 +25,6 @@
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
-
-<!-- <link rel="import" href="templates/dorel-template-store-locator.html"> -->
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
@@ -105,7 +100,8 @@
 
     <dorel-header
       load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"></dorel-header>
+      page="[[ page ]]"
+      brand-name="[[ brandName ]]"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -178,6 +174,14 @@
         },
 
         /**
+         * @name brandName
+         * @description defines the brand
+         */
+        brandName: {
+          type: String
+        },
+
+        /**
          * @name currentPage
          * @description defines the currentPage
          */
@@ -240,6 +244,7 @@
         var myDomModule = document.createElement('style', 'custom-style');
         myDomModule.setAttribute('include', brandTheme);
         Polymer.dom(this.root).appendChild(myDomModule);
+        this.brandName = CONFIG.BRAND_NAME;
       },
 
       /**
