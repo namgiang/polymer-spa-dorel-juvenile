@@ -20,7 +20,7 @@ var CONFIG = {
    * - safety-first
    * - baby-art
    */
-  BRAND_NAME: 'maxi-cosi',
+  BRAND_NAME: 'Maxi-Cosi',
 
   /**
    * The following information is localization info used in several parts

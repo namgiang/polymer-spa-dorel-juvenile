@@ -110,7 +110,8 @@
 
     <dorel-header
       load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"></dorel-header>
+      page="[[ page ]]"
+      brand-name="[[ brandName ]]"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -183,6 +184,14 @@
         },
 
         /**
+         * @name brandName
+         * @description defines the brand
+         */
+        brandName: {
+          type: String
+        },
+
+        /**
          * @name currentPage
          * @description defines the currentPage
          */
@@ -245,6 +254,7 @@
         var myDomModule = document.createElement('style', 'custom-style');
         myDomModule.setAttribute('include', brandTheme);
         Polymer.dom(this.root).appendChild(myDomModule);
+        this.brandName = CONFIG.BRAND_NAME;
       },
 
       /**
