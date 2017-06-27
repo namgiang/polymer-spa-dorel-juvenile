@@ -168,11 +168,11 @@
       <div class="content-wrapper">
         <div class="content">
           <header>
-            <template is="dom-if" if="{{ hasValue(heroHeaderData.title) }}">
+            <template is="dom-if" if="{{ _hasValue(heroHeaderData.title) }}">
               <h3 class="title">[[ heroHeaderData.title ]]</h3>
             </template>
 
-            <template is="dom-if" if="{{ hasValue(heroHeaderData.sub_title) }}">
+            <template is="dom-if" if="{{ _hasValue(heroHeaderData.sub_title) }}">
               <p class="subtitle">
                 [[ heroHeaderData.sub_title ]]
               </p>
@@ -186,7 +186,10 @@
               title="[[ heroHeaderData.cta_text ]]"
               icon="dorel-icons:play-circle-outline"
               type="primary"
-              link="[[ heroHeaderData.cta_href ]]">
+              link="[[ heroHeaderData.cta_href ]]"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-cta-index="0">
               [[ heroHeaderData.cta_text ]]
             </dorel-cta>
           </template>
@@ -220,7 +223,7 @@
        *
        * @returns Sting when no image is set it returns the placeholder string
        */
-      hasValue: function (val) {
+      _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');
       }
     });

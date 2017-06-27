@@ -150,11 +150,6 @@
                       query-matches="{{ mobile }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
                       query-matches="{{ tablets }}"></iron-media-query>
-    <!--
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-                      query-matches="{{ desktopSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 1200px)"
-                      query-matches="{{ desktopFull }}"></iron-media-query> -->
 
     <template
       is="dom-if"
@@ -206,7 +201,12 @@
               <div class="color-mobile-container  layout horizontal center center-justified wrap">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+                  colors-data="[[ showcaseData.colors ]]"
+                  gtm-action="switch-color"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="dorel-color-switcher"
+                  gtm-child-index="0"></dorel-color-switcher>
               </div>
             </template>
             <!--// color switcher -->
@@ -220,9 +220,12 @@
                   type="link"
                   title="View Accessories"
                   on-click="_viewAccessories"
-                  link=""
                   size="small"
-                  icon="dorel-icons:expand-more">
+                  icon="dorel-icons:expand-more"
+                  gtm-action="scroll-to-accessories"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
                   View Accessories
                 </dorel-cta>
               </template>
@@ -235,7 +238,11 @@
                   title="Find a Store"
                   link=""
                   size="small"
-                  icon="dorel-icons:chevron-right">
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="click"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="1">
                   Find a Store
                 </dorel-cta>
               </template>
@@ -301,7 +308,12 @@
                 if="[[ showcaseData.colors.length ]]">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"></dorel-color-switcher>
+                  colors-data="[[ showcaseData.colors ]]"
+                  gtm-action="switch-color"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="dorel-color-switcher"
+                  gtm-child-index="0"></dorel-color-switcher>
               </template>
               <!--// color switcher -->
 
@@ -315,7 +327,11 @@
                     link=""
                     size="small"
                     on-tap="_viewAccessories"
-                    icon="dorel-icons:expand-more">
+                    icon="dorel-icons:expand-more"
+                    gtm-action="scroll-to-accessories"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="0">
                     View Accessories
                   </dorel-cta>
                 </template>
@@ -328,7 +344,11 @@
                     type="primary"
                     link="[[ showcaseData.store_locator_page ]]"
                     size="small"
-                    icon="dorel-icons:chevron-right">
+                    icon="dorel-icons:chevron-right"
+                    gtm-action="click"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="1">
                     Find a Store
                   </dorel-cta>
                 </template>

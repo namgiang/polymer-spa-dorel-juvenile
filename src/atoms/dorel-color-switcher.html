@@ -60,12 +60,15 @@
             items="[[ colorsData ]]"
             as="color">
             <li class$="list-group-item {{ _isCurrentColor(currentName, color.color_name) }}">
-              <span style$="background-color: [[ color.color_code ]];"
-                    data-image-url$="[[ color.color_image ]]"
-                    data-name$="[[ color.color_name ]]"
-                    on-tap="_changeCurrentColor"
+              <span on-tap="_changeCurrentColor"
                     role="button"
-                    tabindex="0"></span>
+                    tabindex="0"
+                    color-image$="[[ color.color_image ]]"
+                    color-name$="[[ color.color_name ]]"
+                    gtm-action$="[[ gtmAction ]]"
+                    gtm-child$="[[ gtmChild ]]"
+                    gtm-cta-index$="[[ index ]]"
+                    style$="background-color: [[ color.color_code ]];"></span>
             </li>
           </template>
         </ul>
@@ -108,7 +111,7 @@
        * @observer
        * @name _colorsDataChanged
        * @description when the colorsData changes it checks if it is set, then
-       * sets the first item to the currentName and currentImage
+       * sets the first item to the currentColorName and currentImage
        *
        * @param newVal - Array - the newly received array
        * @param oldVal - Array - the previous value
@@ -116,8 +119,8 @@
       _colorsDataChanged: function (newVal, oldVal) {
         if (typeof newVal === 'undefined' || !newVal.length) return;
 
-        this.currentName = newVal[0].color_name;
         this.currentImage = newVal[0].color_image;
+        this.currentName = newVal[0].color_name;
       },
 
       /**
@@ -127,9 +130,45 @@
        *
        * @param e - Object - the clicked object/target
        */
-      _changeCurrentColor: function (e) {
-        this.currentImage = e.target.getAttribute('data-image-url');
-        this.currentName = e.target.getAttribute('data-name');
+      _changeCurrentColor: function (event) {
+        var element = Polymer.dom(event).localTarget;
+
+        this.newColorImage = event.target.getAttribute('color-image');
+        this.newColorName = event.target.getAttribute('color-name');
+
+        this.gtmAction = event.target.getAttribute('gtm-action');
+        this.gtmChild = event.target.getAttribute('gtm-child');
+        this.gtmCtaIndex = event.target.getAttribute('gtm-cta-index');
+
+        var component = {
+          name: this.gtmParent,
+          index: Number(this.gtmParentIndex) + 1,
+          child: {
+            name: this.gtmChild,
+            index: 1,
+            event: {
+              name: 'color-switch',
+              colorName: this.newColorName,
+              colorImage: this.newColorImage,
+              index: Number(this.gtmCtaIndex) + 1,
+            }
+          }
+        };
+        
+        Polymer.globalsManager.set('Dorel.events', {
+          action: this.gtmAction ? this.gtmAction : 'click',
+          component: component,
+          element: element,
+          event: 'polymer_event',
+          things: {
+            currentColor: this.currentName,
+            targetColor: this.newColorName
+          }
+
+        });
+
+        this.currentImage = this.newColorImage;
+        this.currentName = this.newColorName;
       },
 
       /**

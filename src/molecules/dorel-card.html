@@ -69,7 +69,7 @@
       <!-- cardImage -->
       <template
         is="dom-if"
-        if="{{ hasValue(cardData.card_image) }}">
+        if="[[ _hasValue(cardData.card_image) ]]">
         <iron-image class="card-image"
                     sizing="cover"
                     fade="true"
@@ -84,7 +84,7 @@
         <!-- cardTitle -->
         <template
           is="dom-if"
-          if="{{ hasValue(cardData.card_title) }}">
+          if="[[ _hasValue(cardData.card_title) ]]">
           <h3 class="title">[[ cardData.card_title ]]</h3>
         </template>
         <!--// cardTitle -->
@@ -92,7 +92,7 @@
         <!-- cardContent -->
         <template
           is="dom-if"
-          if="{{ hasValue(cardData.card_text) }}">
+          if="[[ _hasValue(cardData.card_text) ]]">
           <p class="description">
             <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
           </p>
@@ -102,14 +102,19 @@
         <!-- ctaToggle -->
         <template
           is="dom-if"
-          if="{{ hasValue(cardData.cta_toggle) }}">
+          if="[[ _hasValue(cardData.cta_toggle) ]]">
           <dorel-cta
             type="primary"
             title="[[ cardData.cta_text ]]"
             link="[[ cardData.cta_link ]]"
             link-target="[[ cardData.cta_link_target ]]"
             size="small"
-            icon="dorel-icons:chevron-right">
+            icon="dorel-icons:chevron-right"
+            gtm-parent="[[ gtmParent ]]"
+            gtm-parent-index="[[ gtmParentIndex ]]"
+            gtm-child="[[ gtmChild ]]"
+            gtm-child-index="[[ gtmChildIndex ]]"
+            gtm-cta-index="0">
             [[ cardData.cta_text ]]
           </dorel-cta>
         </template>
@@ -141,7 +146,7 @@
        * @name hasValue
        * @description checks to see if a value is not empty, undefined or null
        */
-      hasValue: function (val) {
+      _hasValue: function (val) {
         return (typeof val !== '' && val !== 'undefined' && val !== null);
       }
     });

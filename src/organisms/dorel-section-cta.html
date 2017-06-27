@@ -89,7 +89,10 @@
                 link-target="[[ cta.cta_link_target ]]"
                 size="large"
                 extra-icon="dorel-cta-icons:[[ cta.cta_icon ]]"
-                icon="dorel-icons:chevron-right">
+                icon="dorel-icons:chevron-right"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-cta-index="[[ index ]]">
                 [[ cta.cta_text ]]
               </dorel-cta>
             </h2>
@@ -120,40 +123,6 @@
           }
         }
 
-      },
-
-      /**
-       * @name clickCTA
-       * @description handle the click event of the CTA
-       */
-      clickCTA: function (event) {
-
-        // Track the click event
-        this._eventTracking(event);
-      },
-
-      /**
-       * @name _eventTracking
-       * @description this is for cta tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event) {
-
-        var globals = Polymer.globalsManager.get('Dorel');
-
-        /**
-         * Tracking on click for cta
-         */
-        Polymer.globalsManager.set('Dorel.events', {
-          action: 'click',
-          component: 'call-to-action',
-          element: Polymer.dom(event).localTarget,
-          event: 'polymer_event',
-          things: {
-            'currentPage': document.URL,
-            'targetPage': Polymer.dom(event).localTarget.href
-          }
-        });
       }
     });
 
