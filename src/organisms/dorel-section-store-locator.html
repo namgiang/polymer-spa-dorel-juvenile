@@ -21,14 +21,20 @@
         width: 100%;
       }
 
-      .content-wrapper {
-        padding: 6em var(--theme-gutter) 6em var(--theme-gutter);
+      .content-header {
+        background-color: var(--theme-brand-color-1);
         float: left;
         width: 100%;
+        display: flex;
+      }
+
+      .content-wrapper {
+        padding: 6em 0;
         box-sizing: border-box;
-        background-color: var(--theme-brand-color-1);
         color: var(--theme-color-white);
-        padding-left: calc(1.5em + var(--theme-column-width));
+        max-width: var(--theme-base-paragraph-width);
+        float: none;
+        margin: auto;
       }
 
       .title {
@@ -67,6 +73,8 @@
         float: left;
         width: 100%;
         margin: 0;
+        max-width: var(--theme-base-paragraph-width);
+        margin-bottom: 1.5em;
       }
 
       google-map {
@@ -94,8 +102,10 @@
         padding: 1.5em .875em;
         border-radius: 0;
         box-sizing: border-box;
+        max-width: var(--theme-base-paragraph-width);
+        box-shadow: none;
         width: 100%;
-        float: left;
+        margin: auto;
       }
 
       [mobile-small] google-map, [mobile-medium] google-map {
@@ -147,12 +157,12 @@
              mobile$="{{ mobile }}"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}">
-
-      <div class="content-wrapper">
-        <h1 class="title">[[ templateData.acf.title ]]</h1>
-        <dorel-safe-html html="[[ templateData.acf.text ]]"></dorel-safe-html>
+      <div class="content-header">
+        <div class="content-wrapper">
+          <h1 class="title">[[ templateData.acf.title ]]</h1>
+          <dorel-safe-html html="[[ templateData.acf.text ]]"></dorel-safe-html>
+        </div>
       </div>
-
       <div class="store-locator-map">
         <div class="store-overlay">
           <h2 class="store-title">Enter a Location</h2>
@@ -559,7 +569,7 @@
         if (typeof this.addressInput === 'undefined' || this.address === this.addressInput) return;
 
         // handle the validation of the input and errors when the input is empty
-        if (this.addressInput  === '') {
+        if (this.addressInput === '') {
           this._handleErrors('ADDRESS_EMPTY');
           return;
         }

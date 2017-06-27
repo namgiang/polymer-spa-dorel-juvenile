@@ -5,7 +5,12 @@
 <dom-module id="dorel-section-product-showcase">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-host);
+      }
+      
       .section-product-showcase {
+        @apply(--max-width-container);
         width: 100%;
         float: left;
         padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
@@ -404,7 +409,7 @@
         var toggle = (typeof val !== 'undefined' && val !== '' && val);
         var currentPage = Polymer.globalsManager.get('Dorel.current.page');
 
-        var layout = currentPage.acf.page_builder.find(function(layout) {
+        var layout = currentPage.acf.page_builder.find(function (layout) {
           return layout.acf_fc_layout === 'section_product_accessories';
         });
 
