@@ -104,6 +104,7 @@
        mobile-small$="[[ mobileSmall ]]"
        mobile-medium$="[[ mobileMedium ]]"
        target$="[[ _isExternal(linkTarget) ]]"
+       gtm-action$="[[ gtmAction ]]"
        gtm-parent$="[[ gtmParent ]]"
        gtm-parent-index$="[[ gtmParentIndex ]]"
        gtm-child$="[[ gtmChild ]]"
@@ -220,6 +221,8 @@
           var element = Polymer.dom(event).path[1];
         }
 
+        var gtmAction = element.getAttribute('gtm-action');
+
         var component = {
           name: this.gtmParent,
           index: Number(this.gtmParentIndex) + 1
@@ -244,12 +247,12 @@
             index: Number(this.gtmCtaIndex) + 1
           }
         }
-
+        
         /**
          * Tracking on click for cta
          */
         Polymer.globalsManager.set('Dorel.events', {
-          action: 'click',
+          action: this.gtmAction ? this.gtmAction : 'click',
           component: component,
           element: element,
           event: 'polymer_event',
