@@ -59,7 +59,7 @@
 
     <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
 
-    <select is="iron-input" id="input"
+    <select is="iron-input" id="input" value$="{{ hostValue }}"
             aria-labelledby$="[[_ariaLabelledBy]]"
             aria-describedby$="[[_ariaDescribedBy]]"
             disabled$="[[disabled]]"
@@ -109,13 +109,26 @@
   Polymer({
     is: 'dorel-input-select',
     properties: {
+      /**
+       * The currently selected option
+       */
+      selected: {
+        type: String,
+        notify: true,
+        readOnly: false
+      },
 
       /**
-       * The options that can be selecte for this component
+       * The options that can be selected for this component
        */
       options: {
         type: Object,
         observer: '_setSelectionOptions'
+      },
+
+      hostValue: {
+        type: String,
+        observer: '_onChange'
       }
     },
 
@@ -125,6 +138,16 @@
     behaviors: [
       Polymer.IronFormElementBehavior,
     ],
+
+    /**
+     * @name _onChange
+     * @description detects a change in the selected input, and propagates it to the selected property
+     */
+    _onChange: function (event) {
+      var selectedIndex = event.path[0].value;
+      var selectedOption = this.options[selectedIndex];
+      this.selected = selectedOption.label;
+    },
 
     /**
      * @name _isSelected
@@ -148,6 +171,7 @@
         newOption.textContent = option.label;
         newOption.value = option.value;
         newOption.selected = this._isSelected(newOption.textContent, this.selected);
+
         select.appendChild(newOption);
       }
     },

@@ -13,6 +13,7 @@
 
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
+<link rel="import" href="themes/theme-dorel-shared-styles.html">
 
 <!-- Header has priority for percieved initial load -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -133,6 +134,7 @@
 
         <dorel-template-component-guide
           name="component-guide"
+          brand="{{ brandName }}"
           route="{{ subroute }}"></dorel-template-component-guide>
 
         <dorel-template-404 name="404"></dorel-template-404>
@@ -178,7 +180,9 @@
          * @description defines the brand
          */
         brandName: {
-          type: String
+          type: String,
+          notify: true,
+          readOnly: false,
         },
 
         /**
@@ -198,7 +202,8 @@
       observers: [
         '_routePageChanged(routeData.page, globals.Dorel.collect.pages)',
         '_pageChanged(page, currentPage)',
-        '_setCurrentPage(currentPage)'
+        '_setCurrentPage(currentPage)',
+        '_brandChanged(brandName)',
       ],
 
       /**
@@ -239,12 +244,26 @@
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
-        // Checks the apps config, and sets the according brand theme   
-        var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
+        this.brandName = CONFIG.BRAND_NAME;
+      },
+
+
+      /**
+       * @observer
+       * @name _brandChanged
+       * @description the brand was changed, triggers a change in shared styles
+       *
+       * @param page - String - the string of the current active brand
+       */
+      _brandChanged: function(brandName) {
+        console.log('Dorel App brand changed:');
+        console.log(this.brandName);
+        // Checks the apps config, and sets the according brand theme
+        var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-');
         var myDomModule = document.createElement('style', 'custom-style');
         myDomModule.setAttribute('include', brandTheme);
         Polymer.dom(this.root).appendChild(myDomModule);
-        this.brandName = CONFIG.BRAND_NAME;
+        Polymer.updateStyles();
       },
 
       /**

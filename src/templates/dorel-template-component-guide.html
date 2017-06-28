@@ -122,7 +122,8 @@
                   selected="{{ routeData.componentName }}"
                   fallback-selection="introduction"
                   attr-for-selected="name">
-        <dorel-component-guide-introduction name="introduction"></dorel-component-guide-introduction>
+        <dorel-component-guide-introduction brand="{{ brand }}"
+                                            name="introduction"></dorel-component-guide-introduction>
         <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
         <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
         <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
@@ -135,6 +136,17 @@
   <script>
     Polymer({
       is: 'dorel-template-component-guide',
+      properties: {
+        /**
+         * @name brand
+         * @description defines the brand
+         */
+        brand: {
+          type: String,
+          notify: true,
+          readOnly: false
+        }
+      },
       /**
        * @name _setVerticalRhythm
        * @description Toggles the vertical rhythm global variable (and it's connected overlay component)

@@ -3,8 +3,19 @@
 <dom-module id="dorel-component-guide-introduction">
   <template>
     <style include="dorel-component-guide-shared-styles"></style>
-    <style></style>
+    <style>
+      form {
+        margin-top: 3em;
+        float: left;
+        width: 100%;
+      }
+    </style>
     <h1 class="class-for-h1">Welcome to the Dorel component guide!</h1>
+    <form>
+      <dorel-input-select label="Brand switcher"
+                          options="[[ selectOptions ]]"
+                          selected="{{ brand }}"></dorel-input-select>
+    </form>
     <p>
       The Dorel component guide introduces the building blocks of our pages.
       These components use shared styles, which can be re-used by frontend developers and designers to achieve
@@ -44,6 +55,27 @@
   <script>
     Polymer({
       is: 'dorel-component-guide-introduction',
+      properties: {
+        /**
+         * The selected brand option
+         */
+        brand: {
+          type: String,
+          notify: true,
+          readOnly: false,
+          value: '',
+        },
+        /**
+         * The selectable brands
+         */
+        selectOptions: {
+          type: Array,
+          value: [
+            //{'label': 'Quinny', 'value': 0},
+            {'label': 'Maxi-Cosi', 'value': 0},
+            {'label': 'Dorel', 'value': 1}]
+        }
+      }
     });
   </script>
 </dom-module>
