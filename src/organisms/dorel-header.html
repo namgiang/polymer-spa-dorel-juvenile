@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+
 <link rel="import" href="../molecules/dorel-list-utility.html">
 <link rel="import" href="../molecules/dorel-logo.html">
 <link rel="import" href="../molecules/dorel-navigation-main.html">
@@ -10,14 +12,26 @@
 <dom-module id="dorel-header">
   <template>
     <style include="iron-flex iron-flex-alignment">
-
       :host {
+        height: 7.5em;
+        float: left;
+        width: 100%;
+        display: block;
+      }
+
+      header {
         position: relative;
         float: left;
         width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        width: 100%;
+        background-color: white;
       }
 
-      :host::before {
+      header::before {
         content: "";
         position: absolute;
         bottom: -.75em;
@@ -33,6 +47,10 @@
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
       }
 
+      [compact-menu] .header-items {
+        padding: .5em 1.5em;
+        transition: .3s ease padding;
+      }
       .header-items {
         @apply(--max-width-container);
         background-color: var(--theme-color-white);
@@ -40,6 +58,8 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
         padding: 1.5em;
+        transition: .2s ease padding;
+
       }
 
       .header-item-menu {
@@ -191,7 +211,8 @@
       screenSmall$="{{ screenSmall }}"
       screenMedium$="{{ screenMedium }}"
       screenMediumUp$="{{ screenMediumUp }}"
-      screenLargeUp$="{{ screenLargeUp }}">
+      screenLargeUp$="{{ screenLargeUp }}"
+      compact-menu$="{{ compactMenu }}">
 
       <!--
         Removed in favor of DIO-734
@@ -268,8 +289,15 @@
   <script>
     Polymer({
       is: 'dorel-header',
-
+      behaviors: [
+        //Polymer.IronScrollTargetBehavior
+      ],
       properties: {
+
+        compactMenu: {
+          type: Boolean,
+          value: false,
+        },
 
         /**
          * @attribute
@@ -325,6 +353,14 @@
         mobileMenuOpened: {
           type: Boolean
         }
+      },
+
+      attached: function () {
+        this._scrollHandler();
+      },
+
+      _scrollHandler: function () {
+        this.compactMenu = this._scrollTop > 50;
       },
 
       /**
