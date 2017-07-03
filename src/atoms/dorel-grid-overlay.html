@@ -145,6 +145,11 @@
             return document.body;
           }
         },
+        pageRoutePath: {
+          type: Object,
+          notify: true,
+          readOnly: false,
+        },
         /**
          * @name availableBrands
          * @description Available brands to switch between
@@ -171,6 +176,15 @@
         'shift+enter': '_setHorizontalGrid',
         'shift+right': '_setNextBrand',
         'shift+left': '_setPreviousBrand',
+        'shit+space': '_setPageToComponents'
+      },
+      /**
+       * @name _setPageToComponents
+       * @description Switch to the component guide page
+       * */
+      _setPageToComponents: function () {
+        //TODO: This is a bit buggy but works (somehow fires of many events)
+        this.pageRoutePath = 'component-guide/introduction/';
       },
       /**
        * @name _getIndexCurrentBrand
