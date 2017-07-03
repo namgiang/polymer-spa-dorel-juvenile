@@ -9,11 +9,17 @@
 
 <dom-module id="dorel-template-component-guide">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         display: block;
         float: left;
         width: 100%;
+      }
+
+      :root {
+        --paper-toggle-button-label-color: var(--theme-color-white);
+        --paper-toggle-button-checked-button-color: var(--theme-color-white);
+        --paper-toggle-button-checked-bar-color: var(--theme-color-black);
       }
 
       paper-item:after, paper-item:before {
@@ -46,14 +52,6 @@
         padding: 1.5em 0 0 0;
       }
 
-      paper-toggle-button {
-        @apply(--theme-typography-2);
-        margin: .75em 0 .75em 0;
-        cursor: pointer;
-        clear: both;
-        float: left;
-      }
-
       .component-guide {
         position: relative;
         float: left;
@@ -70,7 +68,6 @@
         width: 200px;
         background-color: transparent;
         padding-top: 1.5em;
-
       }
 
       .component-guide__content {
@@ -80,9 +77,27 @@
       }
 
       .component-guide__toolbar {
-        position: absolute;
-        right: 1.5em;
-        top: 1.5em;
+        float: left;
+        width: 100%;
+        background-color: var(--theme-brand-color-1);/*var(--theme-color-monochrome-2);*/
+        padding: .75em 1.5em;
+        box-sizing: border-box;
+      }
+
+
+
+      paper-toggle-button {
+        @apply(--theme-typography-2);
+        margin: .75em;
+        cursor: pointer;
+        float: left;
+      }
+
+      dorel-input-select {
+        float: left;
+        width: 15em;
+        margin-bottom: -1.5em;
+        margin-right: 3em;
       }
     </style>
 
@@ -95,6 +110,10 @@
 
     <div class="component-guide">
       <div class="component-guide__toolbar">
+        <dorel-input-select label=""
+                            options="[[ availableBrands ]]"
+                            selected="{{ brand }}"></dorel-input-select>
+
         <paper-toggle-button noink
                              checked$="[[ globals.Dorel.grid.vertical ]]"
                              on-tap="_setVerticalRhythm">
@@ -122,7 +141,6 @@
                   fallback-selection="introduction"
                   attr-for-selected="name">
         <dorel-component-guide-introduction brand="{{ brand }}"
-                                            available-brands="{{ availableBrands }}"
                                             name="introduction"></dorel-component-guide-introduction>
         <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
         <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
