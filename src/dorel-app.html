@@ -135,6 +135,7 @@
         <dorel-template-component-guide
           name="component-guide"
           brand="{{ brandName }}"
+          available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
 
         <dorel-template-404 name="404"></dorel-template-404>
@@ -183,6 +184,15 @@
           type: String,
           notify: true,
           readOnly: false,
+        },
+
+        /**
+         * @name brandNames
+         * @description available brand names (from config), used for switching between brands
+         */
+        brandNames: {
+          type: Array,
+          value: []
         },
 
         /**
@@ -244,7 +254,8 @@
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
-        this.brandName = CONFIG.BRAND_NAME;
+        this.brandNames = CONFIG.AVAILABLE_BRANDS;
+        this.brandName = this.brandNames[CONFIG.SELECTED_BRAND].label;
       },
 
 
@@ -256,8 +267,6 @@
        * @param page - String - the string of the current active brand
        */
       _brandChanged: function(brandName) {
-        console.log('Dorel App brand changed:');
-        console.log(this.brandName);
         // Checks the apps config, and sets the according brand theme
         var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-');
         var myDomModule = document.createElement('style', 'custom-style');
@@ -469,7 +478,7 @@
        * @param String | null
        */
       _defineMetaTitle: function (titleSuffix) {
-        var configBrand = CONFIG.BRAND_NAME;
+        var configBrand = this.brandName;
 
         // replace every dash with a space
         var titlePrefix = configBrand.replace(/-/g, ' ');
