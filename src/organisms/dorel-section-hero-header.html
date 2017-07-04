@@ -162,13 +162,25 @@
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}">
 
-      <!-- Show video in header if there is a video -->
-      <template is="dom-if" if="[[ _hasValue(videoId) ]]">
-        <dorel-hero-video video-id="[[ videoId ]]" thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
-      </template>
+      <!-- Show video on larger screens -->
+      <template is="dom-if" if="{{ screenLarge }}">
+        <!-- Show video in header if there is a video -->
+        <template is="dom-if" if="[[ videoId ]]">
+          <dorel-hero-video video-id="[[ videoId ]]"
+                            thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
+        </template>
 
-      <!-- Show image in headere if there is no video -->
-      <template is="dom-if" if="[[ _hasNoValue(videoId) ]]">
+        <!-- Show image in headere if there is no video -->
+        <template is="dom-if" if="[[ !videoId ]]">
+          <iron-image class="image"
+                      sizing="cover"
+                      fade="true"
+                      preload
+                      src$="[[ heroHeaderData.background_image ]]"></iron-image>
+        </template>
+      </template>
+      <!-- Don't show video on smaller screens, just the image -->
+      <template is="dom-if" if="{{ !screenLarge }}">
         <iron-image class="image"
                     sizing="cover"
                     fade="true"
@@ -216,7 +228,6 @@
         videoId: {
           type: String,
           value: 'L0bcb48y4bE',
-          //value: '',
         },
         /**
          * @attribute
@@ -231,16 +242,6 @@
         }
 
       },
-      /**
-       * @name _hasNoValue
-       * @description checks to see if a value has been set
-       *
-       * @returns False when val has no value
-       */
-      _hasNoValue: function (val) {
-        return (typeof val == 'undefined' || val == '');
-      },
-
       /**
        * @name _hasValue
        * @description checks to see if a value has been set
