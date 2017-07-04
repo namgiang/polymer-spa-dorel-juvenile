@@ -1,0 +1,93 @@
+<link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+<dom-module id="dorel-hero-video">
+  <template>
+    <style>
+      :host {
+        --google-youtube-container: {
+          position: relative;
+          padding-bottom: 56.25%;
+          height: 0 !important;
+          overflow: hidden;
+        };
+
+        --google-youtube-iframe: {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        };
+      }
+
+      google-youtube {
+        overflow: hidden;
+      }
+    </style>
+
+    <google-youtube id="googleYouTube"
+                    playsupported="{{ playSupported }}"
+                    video-id="[[ videoId ]]"
+                    state="{{ state }}"
+                    currenttime="{{ currentTime }}"
+                    currenttimeformatted="{{ currentTimeFormatted }}"
+                    duration="{{ duration }}"
+                    durationformatted="{{ durationFormatted }}"
+                    fractionloaded="{{ fractionLoaded }}"
+                    volume="{{ volume }}"
+                    playbackrate="{{ playbackRate }}"
+                    playbackquality="{{ playbackQuality }}"
+                    width="100vw"
+                    chromeless="true"
+                    modestbranding="0"
+                    autoplay="1"
+                    on-google-youtube-state-change="handleStateChange"
+                    on-google-youtube-error="handleYouTubeError">
+    </google-youtube>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'dorel-hero-video',
+    properties: {
+      videoId: String,
+      playSupported: Boolean,
+      state: Number,
+      currentTime: Number,
+      currentTimeFormatted: String,
+      duration: Number,
+      durationFormatted: String,
+      fractionLoaded: Number,
+      volume: Number,
+      playbackRate: Number,
+      playbackQuality: String,
+      events: {
+        type: Array,
+        value: []
+      }
+    },
+    computeProgress: function (currentTime, duration) {
+      return currentTime / duration;
+    },
+    computePlayDisabled: function (state, playSupported) {
+      return state == 1 || state == 3 || !playSupported;
+    },
+    computePauseDisabled: function (state) {
+      return state != 1 && state != 3;
+    },
+    handleStateChange: function (ev) {
+      this.events.push({data: ev.detail.data});
+    },
+    handleYouTubeError: function (ev) {
+      console.error('YouTube playback error', ev.detail);
+    },
+    handlePlayVideo: function (ev) {
+      this.$.googleYouTube.play();
+    },
+    handlePauseVideo: function (ev) {
+      this.$.googleYouTube.pause();
+    },
+    handleCueVideo: function (ev) {
+      this.$.googleYouTube.videoId = this.$.videoId.value;
+    }
+  });
+</script>
