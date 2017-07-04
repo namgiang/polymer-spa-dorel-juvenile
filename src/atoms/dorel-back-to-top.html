@@ -26,8 +26,9 @@
     </style>
 
     <div class="layout horizontal center center-justified">
-      <div class="back-to-top flex-center-justified" on-tap="_backToTopClick"
-           role="button" aria-label="Back to top" tabindex="0">
+      <div class="back-to-top flex-center-justified"
+           role="button" aria-label="Back to top" tabindex="0"
+           on-tap="_backToTopTap">
         <iron-icon icon="dorel-icons:vertical-align-top"></iron-icon>
       </div>
     </div>
@@ -78,11 +79,11 @@
       },
 
       /**
-       * @name backToTopClick
+       * @name _backToTopTap
        * @description Scroll to top animation function
        * Based on: http://stackoverflow.com/questions/21474678/scrolltop-animation-without-jquery
        */
-      _backToTopClick: function () {
+      _backToTopTap: function(event) {
         // Initialise the parameters for the scroll animation
         this._cosParameter = window.scrollY / 2;
         this._scrollCount = 0;
@@ -90,7 +91,14 @@
 
         // Initialises the animation loop. Bind 'this' to the function, so that the properties are still accessible
         window.requestAnimationFrame(this._scrollAnimationHandler.bind(this));
-      },
+
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'click',
+          component: 'back-to-top',
+          element: event.target,
+          event: 'polymer_event'
+        });
+      }
     });
   </script>
 
