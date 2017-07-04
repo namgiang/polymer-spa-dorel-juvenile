@@ -11,6 +11,7 @@
       app-drawer {
         z-index: 1000;
       }
+
       .menu-spacer-top {
         height: 3em;
         width: 100%;
@@ -22,17 +23,19 @@
       }
 
       .mobile-menu-item {
-		    text-decoration: none;
-	      color: var(--theme-color-black);
-	      text-transform: capitalize;
+        text-decoration: none;
+        color: var(--theme-color-black);
+        text-transform: capitalize;
       }
+
       .mobile-menu-item:hover, .mobile-menu-item:focus {
-	      color: var(--theme-color-text-link-active);
+        color: var(--theme-color-text-link-active);
       }
 
       dorel-tab:not(:first-child) {
         padding-left: 1rem;
       }
+
       paper-submenu .menu-content {
         background-color: var(--theme-color-monochrome-2);
       }
@@ -43,7 +46,7 @@
 
       /* new styling */
       dorel-tab {
-        padding: 0 var(--theme-scale-3);
+        padding: .5em var(--theme-scale-3);
         text-transform: capitalize;
       }
 
@@ -53,7 +56,7 @@
         transition: .3s ease color;
       }
 
-      dorel-tab a:hover,  dorel-tab a:focus {
+      dorel-tab a:hover, dorel-tab a:focus {
         color: var(--theme-color-text-link-active);
         cursor: pointer;
       }
@@ -66,11 +69,11 @@
     </style>
 
     <iron-media-query query="(max-width : 767px)"
-      query-matches="{{ screenSmall }}"></iron-media-query>
+                      query-matches="{{ screenSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-      query-matches="{{ screenMedium }}"></iron-media-query>
+                      query-matches="{{ screenMedium }}"></iron-media-query>
     <iron-media-query query="(min-width : 768px)"
-      query-matches="{{ screenMediumUp }}"></iron-media-query>
+                      query-matches="{{ screenMediumUp }}"></iron-media-query>
 
     <!--
       Mobile menu
@@ -82,8 +85,8 @@
         is="dom-if"
         if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
         <iron-selector role="navigation" class="drawer-list"
-          selected="[[ page ]]"
-          attr-for-selected="name">
+                       selected="[[ page ]]"
+                       attr-for-selected="name">
           <paper-menu>
             <template
               is="dom-repeat"
@@ -95,8 +98,8 @@
               <template
                 is="dom-if"
                 if="[[ !menuItem.children.length ]]">
-                <a class="mobile-menu-item" 
-                   href="[[ menuItem.url ]]" 
+                <a class="mobile-menu-item"
+                   href="[[ menuItem.url ]]"
                    title="[[ menuItem.title ]]"
                    on-tap="_menuItemTap"
                    gtm-parent="dorel-navigation-main"
@@ -123,7 +126,7 @@
                   sub-menu-opened="{{ subMenuOpened }}"
                   gtm-parent="dorel-navigation-main"
                   gtm-parent-index="[[ index ]]"
-                  ></dorel-navigation-sub>
+                ></dorel-navigation-sub>
               </template>
             </template>
             <!-- 
@@ -168,19 +171,15 @@
                 <template
                   is="dom-if"
                   if="[[ !menuItem.children.length ]]">
-                  <div>
-                    <dorel-tab
-                      name="[[ menuItem.title ]]">
-                        <a href="[[ menuItem.url ]]" 
-                           title="[[ menuItem.title ]]"
-                           on-tap="_menuItemTap"
-                           gtm-parent="dorel-navigation-main"
-                           gtm-parent-index="[[ index ]]">[[ _unescapeHtml(menuItem.title) ]]</a>
-                    </dorel-tab>
-                  </div>
+                  <dorel-tab
+                    name="[[ menuItem.title ]]">
+                    <a href="[[ menuItem.url ]]"
+                       title="[[ menuItem.title ]]"
+                       on-tap="_menuItemTap"
+                       gtm-parent="dorel-navigation-main"
+                       gtm-parent-index="[[ index ]]">[[ _unescapeHtml(menuItem.title) ]]</a>
+                  </dorel-tab>
                 </template>
-
-
                 <!-- if menu item has children:
                  - show visual indicator
                  - add the children in submenu
@@ -195,18 +194,18 @@
                    - subMenuOpened
                   -->
                   <dorel-navigation-sub
+                    compact-menu="[[ compactMenu ]]"
                     active-id="{{ activeId }}"
                     menu-item="{{ menuItem }}"
                     mobile-menu-opened="{{ mobileMenuOpened }}"
                     search-opened="{{ searchOpened }}"
                     sub-menu-opened="{{ subMenuOpened }}"
                     gtm-parent="dorel-navigation-main"
-                    gtm-child-index="[[ index ]]"></dorel-navigation-sub>
-                    </section>
-                  </div>
-                </div>
+                    gtm-child-index="[[ index ]]">
+                  </dorel-navigation-sub>
+                </template>
               </template>
-            </template>
+            </div>
           </dorel-tabs>
         </nav>
       </template>
@@ -261,7 +260,7 @@
        * @name _menuItemTap
        * @description handles all menu item clicks
        */
-      _menuItemTap: function(event) {
+      _menuItemTap: function (event) {
         // reset all handlers
         this.mobileMenuOpened = false;
         this.subMenuOpened = false;
@@ -289,7 +288,7 @@
        * @name _unescapeHtml
        * @description decode html special chars, and output the correct string
        */
-      _unescapeHtml: function(text) {
+      _unescapeHtml: function (text) {
         var el = document.createElement('div');
         el.innerHTML = text;
         return el.childNodes.length === 0 ? "" : el.childNodes[0].nodeValue;

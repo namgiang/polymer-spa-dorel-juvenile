@@ -12,7 +12,7 @@
 <dom-module id="dorel-header">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      :host {
+      .header-wrapper {
         height: 7.5em;
         float: left;
         width: 100%;
@@ -48,9 +48,9 @@
       }
 
       [compact-menu] .header-items {
-        padding: .5em 1.5em;
-        transition: .3s ease padding;
+        padding: 0 1.5em;
       }
+
       .header-items {
         @apply(--max-width-container);
         background-color: var(--theme-color-white);
@@ -58,8 +58,7 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
         padding: 1.5em;
-        transition: .2s ease padding;
-
+        transition: .15s ease padding;
       }
 
       .header-item-menu {
@@ -72,7 +71,7 @@
         right: .5em;
         z-index: 1000;
         color: var(--theme-color-text-link);
-        transition: .3s ease color;
+        transition: .3s ease color, .15s ease top;
       }
 
       #hamburger:hover, #hamburger:focus {
@@ -90,38 +89,47 @@
       2. user tools (right justified)
       3. logo (center aligned)
       */
-      /*header[screenSmall] .header-logo-and-user-tools {
-        order: 1;
-      }*/
 
-      header[screenSmall] .header-item-logo {
+      .header-wrapper[screenSmall] {
+        height: 4.5em;
+      }
+
+      [screenSmall] .header-item-logo {
         order: 4;
         /* center the logo */
         @apply(--layout-horizontal);
       }
 
-      header[screenSmall] .header-item-menu {
+      [screenSmall] .header-item-menu {
         order: 1;
       }
 
-      header[screenSmall] .header-item-user-tools {
+      [screenSmall] .header-item-user-tools {
         order: 2;
       }
 
-      header[screenSmall] .header-item-search-drawer {
+      [screenSmall] .header-item-search-drawer {
         order: 3;
       }
 
-      header[screenSmall] .header-items {
+      [screenSmall] .header-items {
         @apply(--layout-vertical);
         @apply(--layout-end-justified);
         padding: .75em;
       }
 
-      header[screenSmall] dorel-user-tools {
+      [screenSmall][compact-menu] .header-items {
+        padding: 0em .75em;
+      }
+
+      [screenSmall] dorel-user-tools {
         @apply(--layout-horizontal);
         @apply(--layout-justified);
         background-color: var(--theme-color-monochrome-2);
+      }
+
+      [screenSmall][compact-menu] #hamburger {
+        top: 0.25em;
       }
 
       /* 
@@ -131,36 +139,36 @@
       2. user tools(right justified)
       3. menu (full width)
       */
-      header[screenMedium] .header-items {
+      [screenMedium] .header-items {
         @apply(--layout-horizontal);
         @apply(--layout-center);
         @apply(--layout-wrap);
         @apply(--layout-around-justified);
       }
 
-      header[screenMedium] .header-item-logo {
+      [screenMedium] .header-item-logo {
         order: 1;
       }
 
-      header[screenMedium] .header-item-menu {
+      [screenMedium] .header-item-menu {
         @apply(--layout-wrap);
         order: 4;
         padding: .75em 0;
       }
 
-      header[screenMedium] .header-item-user-tools {
+      [screenMedium] .header-item-user-tools {
         @apply(--layout-wrap);
         order: 2;
       }
 
-      header[screenMedium] .header-item-search-drawer {
+      [screenMedium] .header-item-search-drawer {
         order: 3;
       }
 
       /* 
        * screen medium up:
        */
-      header[screenMediumUp] .header-item-search-drawer {
+      [screenMediumUp] .header-item-search-drawer {
         width: 100%;
       }
 
@@ -172,19 +180,19 @@
       3. user tools (right justified)
       */
 
-      header[screenLargeUp] .header-items {
+      [screenLargeUp] .header-items {
         /* layout horizontal header-main */
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
         @apply(--layout-center);
       }
 
-      header[screenLargeUp] .header-contain-main-elements {
+      [screenLargeUp] .header-contain-main-elements {
         @apply(--layout-horizontal);
         @apply(--layout-justified);
       }
 
-      header[screenMedium] .header-item-user-tools {
+      [screenMedium] .header-item-user-tools {
         margin-left: auto;
       }
     </style>
@@ -204,93 +212,64 @@
                       query-matches="{{ screenMediumUp }}"></iron-media-query>
     <iron-media-query query="(min-width : 992px)"
                       query-matches="{{ screenLargeUp }}"></iron-media-query>
-    <!--iron-media-query query="(min-width : 1200px)" 
-      query-matches="{{ screenExtraLargeUp }}"></iron-media-query-->
-
-    <header
-      screenSmall$="{{ screenSmall }}"
-      screenMedium$="{{ screenMedium }}"
-      screenMediumUp$="{{ screenMediumUp }}"
-      screenLargeUp$="{{ screenLargeUp }}"
-      compact-menu$="{{ compactMenu }}">
-
-      <!--
-        Removed in favor of DIO-734
-        <template is="dom-if" if="{{ screenMediumUp }}">
-          <div class="layout horizontal end-justified header-top">
-            <dorel-list-utility></dorel-list-utility>
+    <div class="header-wrapper"
+         screenSmall$="{{ screenSmall }}"
+         screenMedium$="{{ screenMedium }}"
+         screenMediumUp$="{{ screenMediumUp }}"
+         screenLargeUp$="{{ screenLargeUp }}"
+         compact-menu$="{{ compactMenu }}">
+      <header>
+        <div class="header-items">
+          <div class="header-item header-item-logo">
+            <div>
+              <a href="/" aria-label="Maxi Cosi"
+                 on-tap="_logoClicked">
+                <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
+              </a>
+            </div>
           </div>
-        </template>
-      -->
 
-      <div class="header-items">
+          <nav class="header-item header-item-menu">
+            <dorel-navigation-main
+              compact-menu="[[ compactMenu ]]"
+              search-opened="{{ searchOpened }}"
+              sub-menu-opened="{{ subMenuOpened }}"
+              mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
+          </nav>
 
-        <div class="header-item header-item-logo">
-          <div>
-            <a href="/" aria-label="Maxi Cosi"
-               on-tap="_logoClicked">
-              <dorel-logo brand-name="[[ brandName ]]"></dorel-logo>
-            </a>
+          <div id="hamburger">
+            <template is="dom-if" if="{{ screenSmall }}">
+              <template
+                is="dom-if"
+                if="{{ !mobileMenuOpened }}">
+                <paper-icon-button
+                  class="paper-icn-big icon-toggle-menu"
+                  icon="dorel-icons:menu"
+                  on-tap="_toggleMobileMenu"
+                  aria-label="menu">
+                </paper-icon-button>
+              </template>
+              <template
+                is="dom-if"
+                if="{{ mobileMenuOpened }}">
+                <paper-icon-button
+                  class="paper-icn-big icon-toggle-menu"
+                  icon="dorel-icons:close"
+                  on-tap="_toggleMobileMenu"
+                  aria-label="menu">
+                </paper-icon-button>
+              </template>
+            </template>
           </div>
         </div>
-
-        <nav class="header-item header-item-menu">
-          <dorel-navigation-main
-            search-opened="{{ searchOpened }}"
-            sub-menu-opened="{{ subMenuOpened }}"
-            mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
-        </nav>
-
-        <div id="hamburger">
-          <template is="dom-if" if="{{ screenSmall }}">
-            <template
-              is="dom-if"
-              if="{{ !mobileMenuOpened }}">
-              <paper-icon-button
-                class="paper-icn-big icon-toggle-menu"
-                icon="dorel-icons:menu"
-                on-tap="_toggleMobileMenu"
-                aria-label="menu">
-              </paper-icon-button>
-            </template>
-            <template
-              is="dom-if"
-              if="{{ mobileMenuOpened }}">
-              <paper-icon-button
-                class="paper-icn-big icon-toggle-menu"
-                icon="dorel-icons:close"
-                on-tap="_toggleMobileMenu"
-                aria-label="menu">
-              </paper-icon-button>
-            </template>
-          </template>
-        </div>
-
-        <!-- <div class="header-item header-item-user-tools">
-          <dorel-user-tools
-            search-opened="{{ searchOpened }}"
-            sub-menu-opened="{{ subMenuOpened }}"
-            mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-user-tools>
-        </div> -->
-
-        <!-- <div class="header-item header-item-search-drawer">
-          <dorel-search-drawer
-            search-opened="{{ searchOpened }}"
-            sub-menu-opened="{{ subMenuOpened }}"
-            mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-search-drawer>
-        </div>-->
-
-      </div>
-
-    </header>
-
+      </header>
+    </div>
   </template>
-
   <script>
     Polymer({
       is: 'dorel-header',
       behaviors: [
-        //Polymer.IronScrollTargetBehavior
+        Polymer.IronScrollTargetBehavior
       ],
       properties: {
 
