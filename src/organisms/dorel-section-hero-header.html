@@ -7,7 +7,6 @@
         width: 100%;
       }
 
-
       .hero-header {
         width: 100%;
         display: flex;
@@ -162,12 +161,20 @@
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}">
-      <dorel-hero-video video-id="L0bcb48y4bE" thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
-      <!-- <iron-image class="image"
-                  sizing="cover"
-                  fade="true"
-                  preload
-                  src$="[[ heroHeaderData.background_image ]]"></iron-image> -->
+
+      <!-- Show video in header if there is a video -->
+      <template is="dom-if" if="[[ _hasValue(videoId) ]]">
+        <dorel-hero-video video-id="[[ videoId ]]" thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
+      </template>
+
+      <!-- Show image in headere if there is no video -->
+      <template is="dom-if" if="[[ _hasNoValue(videoId) ]]">
+        <iron-image class="image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    src$="[[ heroHeaderData.background_image ]]"></iron-image>
+      </template>
       <div class="content-wrapper">
         <div class="content">
           <header>
@@ -206,6 +213,11 @@
 
       properties: {
 
+        videoId: {
+          type: String,
+          value: 'L0bcb48y4bE',
+          //value: '',
+        },
         /**
          * @attribute
          * @name heroHeaderData
@@ -219,12 +231,21 @@
         }
 
       },
+      /**
+       * @name _hasNoValue
+       * @description checks to see if a value has been set
+       *
+       * @returns False when val has no value
+       */
+      _hasNoValue: function (val) {
+        return (typeof val == 'undefined' || val == '');
+      },
 
       /**
-       * @name hasBackgroundImage
-       * @description checks to see if a background image is set in Wordpress
+       * @name _hasValue
+       * @description checks to see if a value has been set
        *
-       * @returns Sting when no image is set it returns the placeholder string
+       * @returns True when val has a value
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');
