@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../templates/component-guide/dorel-component-guide-shared-styles.html">
-<link rel="import" href="../themes/theme-maxi-cosi-shared-styles.html">
 
 <dom-module id="dorel-grid-overlay">
   <template>
@@ -145,12 +144,84 @@
           value: function () {
             return document.body;
           }
+        },
+        pageRoutePath: {
+          type: Object,
+          notify: true,
+          readOnly: false,
+        },
+        /**
+         * @name availableBrands
+         * @description Available brands to switch between
+         */
+        availableBrands: {
+          type: Array,
+          value: [],
+        },
+        /**
+         * @name selectedBrand
+         * @description Currently selected brand
+         */
+        selectedBrand: {
+          type: String,
+          notify: true,
+          readOnly: false,
         }
       },
+      /**
+       * Key bindings to trigger function, allowing control over the entire app
+       * */
       keyBindings: {
         'shift+backspace': '_setVerticalRhythm',
         'shift+enter': '_setHorizontalGrid',
+        'shift+right': '_setNextBrand',
+        'shift+left': '_setPreviousBrand',
+        'shit+space': '_setPageToComponents'
       },
+      /**
+       * @name _setPageToComponents
+       * @description Switch to the component guide page
+       * */
+      _setPageToComponents: function () {
+        //TODO: This is a bit buggy but works (somehow fires of many events)
+        this.pageRoutePath = 'component-guide/introduction/';
+      },
+      /**
+       * @name _getIndexCurrentBrand
+       * @description Returns the index of the currently selected brand
+       */
+      _getIndexCurrentBrand: function () {
+
+        // Get the current index of the brand
+        var indexBrand = -1;
+        for (var i = 0; i < this.availableBrands.length; i++) {
+          if (this.selectedBrand === this.availableBrands[i].label) {
+            indexBrand = i;
+          }
+        }
+        return indexBrand;
+      },
+
+      /**
+       * @name _setNextBrand
+       * @description Selects and shows next brand in the list
+       */
+      _setNextBrand: function () {
+        var indexBrand = this._getIndexCurrentBrand();
+        var newIndexBrand = (indexBrand + 1) % this.availableBrands.length;
+        this.selectedBrand = this.availableBrands[newIndexBrand].label;
+      },
+
+      /**
+       * @name _setPreviousBrand
+       * @description Selects and show previous brand in the list
+       */
+      _setPreviousBrand: function () {
+        var indexBrand = this._getIndexCurrentBrand();
+        var newIndexBrand = Math.abs((indexBrand - 1) % this.availableBrands.length);
+        this.selectedBrand = this.availableBrands[newIndexBrand].label;
+      },
+
       /**
        * @name _setVerticalRhythm
        * @description Toggles the vertical rhythm global variable (and it's connected overlay component)

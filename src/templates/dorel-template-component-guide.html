@@ -1,3 +1,4 @@
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="component-guide/dorel-component-guide-buttons.html">
 <link rel="import" href="component-guide/dorel-component-guide-colors.html">
 <link rel="import" href="component-guide/dorel-component-guide-forms.html">
@@ -5,17 +6,12 @@
 <link rel="import" href="component-guide/dorel-component-guide-layout.html">
 <link rel="import" href="component-guide/dorel-component-guide-typography.html">
 <link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<!-- <link rel="import" href="../themes/theme-maxi-cosi-new.html"> -->
+<link rel="import" href="component-guide/dorel-component-toolbar.html">
+
 
 <dom-module id="dorel-template-component-guide">
   <template>
-    <style>
-      :host {
-        display: block;
-        float: left;
-        width: 100%;
-      }
+    <style is="custom-style">
 
       paper-item:after, paper-item:before {
         background-color: var(--theme-color-white) !important;
@@ -47,18 +43,17 @@
         padding: 1.5em 0 0 0;
       }
 
-      paper-toggle-button {
-        @apply(--theme-typography-2);
-        margin: .75em 0 .75em 0;
-        cursor: pointer;
-        clear: both;
-        float: left;
+      .component-guide-container {
+        @apply(--max-width-host);
       }
 
       .component-guide {
+        @apply(--max-width-container);
         position: relative;
         float: left;
         width: 100%;
+        padding: 0 1.5em;
+        box-sizing: border-box;
       }
 
       .component-guide__sidebar, .component-guide__content {
@@ -71,19 +66,12 @@
         width: 200px;
         background-color: transparent;
         padding-top: 1.5em;
-
       }
 
       .component-guide__content {
         padding: 1.5em;
         width: calc(100% - 200px);
         min-height: calc(100vh - 112px);
-      }
-
-      .component-guide__toolbar {
-        position: absolute;
-        right: 1.5em;
-        top: 1.5em;
       }
     </style>
 
@@ -93,63 +81,59 @@
       pattern="/:componentName"
       data="{{ routeData }}"
       tail="{{ subroute }}"></app-route>
-
-    <div class="component-guide">
-      <div class="component-guide__toolbar">
-        <paper-toggle-button noink
-                             checked$="[[ globals.Dorel.grid.vertical ]]"
-                             on-tap="_setVerticalRhythm">
-          Vertical Rhythm
-        </paper-toggle-button>
-        <paper-toggle-button noink
-                             checked$="[[ globals.Dorel.grid.horizontal ]]"
-                             on-tap="_setHorizontalGrid">
-          Horizontal Grid
-        </paper-toggle-button>
+    <dorel-component-toolbar brand="{{ brand }}"
+                             available-brands="{{ availableBrands }}">
+    </dorel-component-toolbar>
+    <div class="component-guide-container">
+      <div class="component-guide">
+        <div class="component-guide__sidebar">
+          <paper-menu selected="{{ routeData.componentName }}"
+                      attr-for-selected='name'>
+            <paper-item name="introduction">Introduction</paper-item>
+            <paper-item name="typography">Typography</paper-item>
+            <paper-item name="layout-sizes">Layout & Sizes</paper-item>
+            <paper-item name="colors">Colors</paper-item>
+            <paper-item name="buttons">Buttons</paper-item>
+            <paper-item name="forms">Forms</paper-item>
+          </paper-menu>
+        </div>
+        <iron-pages class="component-guide__content"
+                    selected="{{ routeData.componentName }}"
+                    fallback-selection="introduction"
+                    attr-for-selected="name">
+          <dorel-component-guide-introduction brand="{{ brand }}"
+                                              name="introduction"></dorel-component-guide-introduction>
+          <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
+          <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
+          <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
+          <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
+          <dorel-component-guide-forms name="forms"></dorel-component-guide-forms>
+        </iron-pages>
       </div>
-      <div class="component-guide__sidebar">
-        <paper-menu selected="{{ routeData.componentName }}"
-                    attr-for-selected='name'>
-          <paper-item name="introduction">Introduction</paper-item>
-          <paper-item name="typography">Typography</paper-item>
-          <paper-item name="layout-sizes">Layout & Sizes</paper-item>
-          <paper-item name="colors">Colors</paper-item>
-          <paper-item name="buttons">Buttons</paper-item>
-          <paper-item name="forms">Forms</paper-item>
-        </paper-menu>
-      </div>
-      <iron-pages class="component-guide__content"
-                  selected="{{ routeData.componentName }}"
-                  fallback-selection="introduction"
-                  attr-for-selected="name">
-        <dorel-component-guide-introduction name="introduction"></dorel-component-guide-introduction>
-        <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
-        <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
-        <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
-        <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
-        <dorel-component-guide-forms name="forms"></dorel-component-guide-forms>
-      </iron-pages>
     </div>
   </template>
 
   <script>
     Polymer({
       is: 'dorel-template-component-guide',
-      /**
-       * @name _setVerticalRhythm
-       * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
-       */
-      _setVerticalRhythm: function () {
-        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
-        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
-      },
-      /**
-       * @name _setHorizontalGrid
-       * @description Toggles the horizontal grid global variable (and it's connected overlay component)
-       */
-      _setHorizontalGrid: function () {
-        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
-        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+      properties: {
+        /**
+         * @name brand
+         * @description defines the brand
+         */
+        brand: {
+          type: String,
+          notify: true,
+          readOnly: false
+        },
+        /**
+         * @name availableBrands
+         * @description List of available brands
+         */
+        availableBrands: {
+          type: Array,
+          value: []
+        }
       },
     });
   </script>

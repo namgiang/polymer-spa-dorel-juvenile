@@ -1,0 +1,97 @@
+<dom-module id="dorel-component-toolbar">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        background-color: var(--theme-brand-color-1);
+        margin-bottom: 1.5em;
+      }
+
+      :root {
+        --paper-toggle-button-label-color: var(--theme-color-white);
+        --paper-toggle-button-checked-button-color: var(--theme-color-white);
+        --paper-toggle-button-checked-bar-color: var(--theme-color-black);
+      }
+
+      .toolbar {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        padding: 1.5em;
+        box-sizing: border-box;
+      }
+
+      paper-toggle-button {
+        @apply(--theme-typography-2);
+        margin: .75em;
+        cursor: pointer;
+        float: right;
+      }
+
+      dorel-input-select {
+        float: right;
+        width: 15em;
+        margin-bottom: -1.5em;
+        margin-left: 3em;
+      }
+    </style>
+    <div class="toolbar">
+      <dorel-input-select label=""
+                          options="[[ availableBrands ]]"
+                          selected="{{ brand }}"></dorel-input-select>
+
+      <paper-toggle-button noink
+                           checked$="[[ globals.Dorel.grid.vertical ]]"
+                           on-tap="_setVerticalRhythm">
+        Vertical Rhythm
+      </paper-toggle-button>
+      <paper-toggle-button noink
+                           checked$="[[ globals.Dorel.grid.horizontal ]]"
+                           on-tap="_setHorizontalGrid">
+        Horizontal Grid
+      </paper-toggle-button>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-component-toolbar',
+      properties: {
+        /**
+         * @name brand
+         * @description defines the brand
+         */
+        brand: {
+          type: String,
+          notify: true,
+          readOnly: false
+        },
+        /**
+         * @name availableBrands
+         * @description List of available brands
+         */
+        availableBrands: {
+          type: Array,
+          value: []
+        }
+      },
+      /**
+       * @name _setVerticalRhythm
+       * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
+       */
+      _setVerticalRhythm: function () {
+        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
+        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
+      },
+      /**
+       * @name _setHorizontalGrid
+       * @description Toggles the horizontal grid global variable (and it's connected overlay component)
+       */
+      _setHorizontalGrid: function () {
+        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
+        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+      },
+    });
+  </script>
+</dom-module>
