@@ -101,7 +101,7 @@
                    on-tap="_menuItemTap"
                    gtm-parent="dorel-navigation-main"
                    gtm-parent-index="[[ index ]]">
-                  <paper-item>[[ _unescapeHtml(menuItem.title) ]]</paper-item>
+                  <paper-item>[[_unescapeHtml(menuItem.title)]]</paper-item>
                 </a>
               </template>
 
@@ -175,7 +175,7 @@
                            title="[[ menuItem.title ]]"
                            on-tap="_menuItemTap"
                            gtm-parent="dorel-navigation-main"
-                           gtm-parent-index="[[ index ]]">[[ _unescapeHtml(menuItem.title) ]]</a>
+                           gtm-parent-index="[[index]]">[[_unescapeHtml(menuItem.title)]]</a>
                     </dorel-tab>
                   </div>
                 </template>
@@ -199,20 +199,19 @@
                     menu-item="{{ menuItem }}"
                     mobile-menu-opened="{{ mobileMenuOpened }}"
                     search-opened="{{ searchOpened }}"
-                    sub-menu-opened="{{ subMenuOpened }}"
+                    sub-menu-opened="{{subMenuOpened}}"
                     gtm-parent="dorel-navigation-main"
-                    gtm-child-index="[[ index ]]"></dorel-navigation-sub>
-                    </section>
-                  </div>
-                </div>
-              </template>
-            </template>
+                    gtm-parent-index="[[index]]"></dorel-navigation-sub>
+
+                </template><!--// dom-if has children length -->
+
+              </template><!--// dom-repeat -->
+            </div>
           </dorel-tabs>
         </nav>
       </template>
 
-    </template>
-
+    </template><!--// dom-if desktop -->
   </template>
   <script>
     Polymer({
@@ -272,9 +271,10 @@
         // send event data to tracking function
         Polymer.globalsManager.set('Dorel.events', {
           action: 'click',
-          component: {
+          component: 'navigation',
+          structure: {
             name: 'dorel-navigation-main',
-            index: element.dataGtmIndex + 1
+            index: element.gtmParentIndex + 1
           },
           element: element,
           event: 'polymer_event',
