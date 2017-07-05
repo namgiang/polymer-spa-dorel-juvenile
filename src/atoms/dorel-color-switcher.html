@@ -140,7 +140,7 @@
         this.gtmChild = event.target.getAttribute('gtm-child');
         this.gtmCtaIndex = event.target.getAttribute('gtm-cta-index');
 
-        var component = {
+        var structure = {
           name: this.gtmParent,
           index: Number(this.gtmParentIndex) + 1,
           child: {
@@ -157,14 +157,14 @@
         
         Polymer.globalsManager.set('Dorel.events', {
           action: this.gtmAction ? this.gtmAction : 'click',
-          component: component,
+          component: 'color-switcher',
+          structure: structure,
           element: element,
           event: 'polymer_event',
           things: {
             currentColor: this.currentName,
             targetColor: this.newColorName
           }
-
         });
 
         this.currentImage = this.newColorImage;
