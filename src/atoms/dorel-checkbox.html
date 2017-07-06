@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/iron-checked-element-behavior/iron-checked-element-behavior.html">
+
+<dom-module id="dorel-checkbox">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      :host([invalid]) span {
+        color: var(--theme-color-error);
+      }
+
+      #labelText {
+        @apply(--theme-form-input-label);
+        display: inline-block;
+
+      }
+    </style>
+
+    <input type="checkbox" id="checkbox" on-tap="_onCheckTap">
+    <span id="labelText">{{ label }}</span>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-checkbox',
+      behaviors: [
+        Polymer.IronCheckedElementBehavior
+      ],
+      _onCheckTap: function () {
+        this.checked = this.$.checkbox.checked;
+      },
+    });
+  </script>
+
+</dom-module>
