@@ -165,13 +165,13 @@
       <!-- Show video on larger screens -->
       <template is="dom-if" if="{{ screenLarge }}">
         <!-- Show video in header if there is a video -->
-        <template is="dom-if" if="[[ videoId ]]">
-          <dorel-hero-video video-id="[[ videoId ]]"
+        <template is="dom-if" if="[[ heroHeaderData.videoID ]]">
+          <dorel-hero-video video-id="[[ heroHeaderData.videoID ]]"
                             thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
         </template>
 
         <!-- Show image in headere if there is no video -->
-        <template is="dom-if" if="[[ !videoId ]]">
+        <template is="dom-if" if="[[ !heroHeaderData.videoID ]]">
           <iron-image class="image"
                       sizing="cover"
                       fade="true"
@@ -224,11 +224,6 @@
       is: 'dorel-section-hero-header',
 
       properties: {
-
-        videoId: {
-          type: String,
-          value: 'L0bcb48y4bE',
-        },
         /**
          * @attribute
          * @name heroHeaderData
