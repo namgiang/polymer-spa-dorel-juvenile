@@ -1,7 +1,7 @@
 /**
  * @constant
  * @name CONFIG
- * @description all constants for the application to use 
+ * @description all constants for the application to use
  */
 var CONFIG = {
   /**
@@ -20,8 +20,8 @@ var CONFIG = {
    * - safety-first
    * - baby-art
    */
-  BRAND_NAME: 'Maxi-Cosi',
-
+  AVAILABLE_BRANDS: [{'label': 'Maxi-Cosi'}, {'label': 'Dorel'}],
+  SELECTED_BRAND: 0,
   /**
    * The following information is localization info used in several parts
    */

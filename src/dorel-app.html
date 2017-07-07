@@ -13,6 +13,7 @@
 
 <!-- TODO: These should only be included conditionally, based on the config.js -->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
+<link rel="import" href="themes/theme-dorel-shared-styles.html">
 
 <!-- Header has priority for percieved initial load -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -133,6 +134,8 @@
 
         <dorel-template-component-guide
           name="component-guide"
+          brand="{{ brandName }}"
+          available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
 
         <dorel-template-404 name="404"></dorel-template-404>
@@ -141,7 +144,9 @@
 
     <dorel-footer></dorel-footer>
 
-    <dorel-grid-overlay></dorel-grid-overlay>
+    <dorel-grid-overlay available-brands="{{ brandNames }}"
+                        selected-brand="{{ brandName }}"
+                        page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
   <script>
@@ -170,7 +175,9 @@
          * @description define the current page
          */
         page: {
-          type: String
+          type: String,
+          notify: true,
+          readOnly: false,
         },
 
         /**
@@ -178,7 +185,18 @@
          * @description defines the brand
          */
         brandName: {
-          type: String
+          type: String,
+          notify: true,
+          readOnly: false,
+        },
+
+        /**
+         * @name brandNames
+         * @description available brand names (from config), used for switching between brands
+         */
+        brandNames: {
+          type: Array,
+          value: []
         },
 
         /**
@@ -198,7 +216,8 @@
       observers: [
         '_routePageChanged(routeData.page, globals.Dorel.collect.pages)',
         '_pageChanged(page, currentPage)',
-        '_setCurrentPage(currentPage)'
+        '_setCurrentPage(currentPage)',
+        '_brandChanged(brandName)',
       ],
 
       /**
@@ -239,12 +258,33 @@
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
-        // Checks the apps config, and sets the according brand theme   
-        var brandTheme = ['theme', CONFIG.BRAND_NAME, 'shared-styles'].join('-');
-        var myDomModule = document.createElement('style', 'custom-style');
-        myDomModule.setAttribute('include', brandTheme);
-        Polymer.dom(this.root).appendChild(myDomModule);
-        this.brandName = CONFIG.BRAND_NAME;
+        this.brandNames = CONFIG.AVAILABLE_BRANDS;
+        this.brandName = this.brandNames[CONFIG.SELECTED_BRAND].label;
+      },
+
+
+      /**
+       * @observer
+       * @name _brandChanged
+       * @description the brand was changed, triggers a change in shared styles
+       *
+       * @param page - String - the string of the current active brand
+       */
+      _brandChanged: function (brandName) {
+
+        //Removed the current shared style from the dom, if it exists.
+        var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
+        if (currentSharedStyle != undefined) {
+          currentSharedStyle.remove();
+        }
+
+        // Checks the apps config, and sets the according brand theme
+        var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-').toLowerCase();
+        var domModule = document.createElement('style', 'custom-style');
+        domModule.setAttribute('include', brandTheme);
+        domModule.setAttribute('id', 'brand-shared-style');
+        Polymer.dom(this.root).appendChild(domModule);
+        Polymer.updateStyles();
       },
 
       /**
@@ -308,7 +348,6 @@
        * @param currentPage - Object - the previous page
        */
       _pageChanged: function (page, currentPage) {
-
         if (typeof page === 'undefined' || page === '' ||
           typeof currentPage === 'undefined' || currentPage === '') return;
 
@@ -450,7 +489,7 @@
        * @param String | null
        */
       _defineMetaTitle: function (titleSuffix) {
-        var configBrand = CONFIG.BRAND_NAME;
+        var configBrand = this.brandName;
 
         // replace every dash with a space
         var titlePrefix = configBrand.replace(/-/g, ' ');
