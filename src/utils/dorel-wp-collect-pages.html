@@ -1,14 +1,14 @@
 <dom-module id="dorel-wp-collect-pages">
   <template>
-    <iron-ajax 
-      auto 
-      url="[[ endPoint ]]" 
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]"
       handle-as="json"
       on-response="_pagesLoaded"></iron-ajax>
 
-    <iron-ajax 
+    <iron-ajax
       id="products"
-      url="" 
+      url=""
       handle-as="json"
       on-response="_productsLoaded"></iron-ajax>
   </template>
@@ -26,7 +26,7 @@
           type: String
         },
 
-        /** 
+        /**
          * @name collect
          * @description this array will hold all the pages collected from the
          * async requests (pages, products, posts)
@@ -36,7 +36,7 @@
           value: []
         },
 
-        /** 
+        /**
          * @name perPage
          * @description this variable indicates how many pages are retrieved
          * per request
@@ -60,7 +60,7 @@
         this.endPoint = this.globals.Dorel.wpUrl + '/wp/v2/pages?per_page=' + this.perPage;
       },
 
-      /** 
+      /**
        * @name _pagesLoaded
        * @description process the retrieved pages
        */
@@ -92,14 +92,14 @@
         productsEl.generateRequest();
       },
 
-      /** 
+      /**
        * @name _productsLoaded
        * @description process the retrieved products
        */
       _productsLoaded: function(data) {
         var self = this;
         var productsArr = data.detail.response;
-        
+
         // if we have products we need to add them
         if (productsArr.length) {
 
@@ -123,13 +123,17 @@
 
             /**
              * We will alter the acf object to comply to page-builder
-             */ 
-            var acfObj = { page_builder: [] };
-            
+             */
+            var acfObj = {
+              meta_description: productsArr[i].acf.meta_description || '',
+              meta_title: productsArr[i].acf.meta_title || '',
+              page_builder: []
+            };
+
             // run throught the normal response acf
             for (var acfKey in productsArr[i].acf.product_detail_builder[0]) {
               /**
-               * @todo: refactor! 
+               * @todo: refactor!
                * For duplicated components we need to suffix them by a number
                * when placing them in the page_builder we need to strip this number
                * because we delegate them to the page builder element
@@ -138,12 +142,12 @@
               // var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
 
               // grab all inner values of the acfType
-              var acfLayout = (productsArr[i].acf.product_detail_builder[0][acfKey]) ? 
+              var acfLayout = (productsArr[i].acf.product_detail_builder[0][acfKey]) ?
                 productsArr[i].acf.product_detail_builder[0][acfKey][0] : '';
 
               // set the new acf_fc_layout variable to the key
               acfLayout.acf_fc_layout = acfKey;
-              
+
               // place the new acf_fc_layout in the page_builder array
               acfObj.page_builder = acfObj.page_builder.concat(acfLayout);
             }
