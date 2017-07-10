@@ -370,40 +370,6 @@
       is: 'dorel-section-product-showcase',
 
       properties: {
-
-        /**
-         * @attribute rotationElement
-         * @name The object that will be rotated
-         * @description
-         */
-        rotationElement: {
-          type: Object,
-        },
-
-        /**
-         * @attribute startTracking
-         * @name Starting point of the rotation tracking
-         * @description
-         */
-        startTracking: {
-          type: Number
-        },
-
-        /**
-         * @attribute
-         * @name rotation
-         * @description The rotation value of the object
-         */
-        rotation: {
-          type: Number,
-          value: 0
-        },
-
-        rotationImages: {
-          type: Array,
-          value: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-        },
-
         /**
          * @attribute
          * @name accessoryScrollHandler
@@ -432,50 +398,6 @@
          */
         currentImage: {
           type: String
-        }
-      },
-
-      /**
-       * @name: handleTrack
-       * @description Handles tracking event and rotation behaviour
-       **/
-
-      handleTrack: function (e) {
-        switch (e.detail.state) {
-          case 'start':
-            this.startTracking = e.detail.x;
-            this.rotationElement = this.$$('#rotation-element');
-            break;
-          case 'track':
-
-            newXPosition = e.detail.x;
-            newDelta = (newXPosition - this.startTracking ) / 50;
-            // Clamp the delta between -3 and 3, to avoid too much rotation
-            newDelta = Math.max(newDelta, -3);
-            newDelta = Math.min(newDelta, 3);
-
-            // Calculates the new rotation in degress
-            this.rotation = this.rotation + newDelta;
-
-            /*
-            * Picking the right image
-            * */
-            var imageNumber = (this.rotation % 360);
-            imageNumber = imageNumber / (360 / this.rotationImages.length);
-            imageNumber = Math.round(imageNumber);
-
-            // Wrap to the list item in the list, if we have a negative imageNumber
-            if(imageNumber < 0) {
-              imageNumber = this.rotationImages.length + imageNumber;
-            }
-
-            // Make absolute (to prevent -0);
-            imageNumber = Math.abs(imageNumber);
-            console.log(imageNumber);
-
-            // Apply rotation to the image
-            this.transform('rotateY(' + this.rotation + 'deg)', this.rotationElement);
-            break;
         }
       },
 
