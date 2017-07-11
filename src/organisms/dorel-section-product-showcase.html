@@ -7,8 +7,13 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         @apply(--max-width-host);
+        perspective: 1200px;
       }
-      
+
+      #rotation-element {
+        transform-style: preserve-3d;
+      }
+
       .section-product-showcase {
         @apply(--max-width-container);
         width: 100%;
@@ -253,17 +258,16 @@
 
           <!-- Desktop Showcase -->
           <template is="dom-if" if="{{ !mobile }}">
-            <div class="showcase-gallery-view">
+            <div class="showcase-gallery-view" on-track="handleTrack">
               <iron-image class="image"
+                          id="rotation-element"
                           sizing="cover"
                           fade="true"
                           preload
                           src$="{{ currentImage }}"></iron-image>
             </div>
-
             <!-- Title, usp's and extra info -->
             <div class="showcase-description">
-
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.title) ]]">
@@ -366,7 +370,6 @@
       is: 'dorel-section-product-showcase',
 
       properties: {
-
         /**
          * @attribute
          * @name accessoryScrollHandler

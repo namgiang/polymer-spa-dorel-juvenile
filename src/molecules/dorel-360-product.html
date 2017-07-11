@@ -1,0 +1,187 @@
+<link rel="import" href="../atoms/dorel-loader.html">
+
+<dom-module id="dorel-360-product">
+  <template>
+    <style>
+      .image {
+        margin: auto;
+        display: block;
+        width: 31em;
+        height: 35em;
+        touch-action: none;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      .product {
+        float: left;
+        position: relative;
+        /* TODO: Use a var here, this is the Quinny background image color */
+        background-color: #d9d9d9;
+        width: 31em;
+        height: 35em;
+
+      }
+
+      .image {
+        opacity: 0;
+        transition: opacity .3s ease;
+      }
+
+      [preloaded] .image {
+        opacity: 1;
+      }
+    </style>
+
+    <div class="product flex" preloaded$="[[ !loading ]]">
+      <dorel-loader loading="[[ loading ]]"></dorel-loader>
+      <img style$="background-image: url('[[ currentImage ]]')" class="image" on-track="_handleTrack">
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-360-product',
+
+      properties: {
+        currentImage: {
+          type: String,
+          value: '../../../assets/images/360viewer/01.jpg',
+        },
+        /**
+         * @attribute rotationElement
+         * @name The object that will be rotated
+         * @description
+         */
+        rotationElement: {
+          type: Object,
+        },
+
+        /**
+         * @attribute startTracking
+         * @name Starting point of the rotation tracking
+         * @description
+         */
+        startTracking: {
+          type: Number
+        },
+        /**
+         * @attribute
+         * @name loading
+         * @description Indicator for when the component is done preloading all images
+         */
+        loading: {
+          type: Boolean,
+          value: true,
+        },
+        /**
+         * @attribute
+         * @name rotation
+         * @description The rotation value of the object
+         */
+        rotation: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * @attribute
+         * @name rotationImages
+         * @description A list of image objects, which are preloaded when the component is ready
+         */
+        rotationImages: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * @attribute
+         * @name rotationImagePaths
+         * @description A list of subsequent images for 360 viewing
+         */
+        rotationImagePaths: {
+          type: Array,
+          value: [],
+        },
+        newPosition: {
+          type: Number,
+        },
+        lastPosition: {
+          type: Number,
+        },
+      },
+
+      /**
+       * @name: ready
+       * @description Polymer callback event for when the component has been intialized
+       */
+      ready: function () {
+        this._preloadImages();
+      },
+
+      /**
+       * @name: _preloadImages
+       * @description Preloads all of the images for better performance
+       */
+      _preloadImages: function () {
+        for (var i = 0; i < this.rotationImagePaths.length; i++) {
+          this.rotationImages[i] = new Image();
+          this.rotationImages[i].src = this.rotationImagePaths[i];
+        }
+
+        this.loading = false;
+      },
+
+      /**
+       * @name: _handleTrack
+       * @description Handles tracking event and rotation behaviour
+       **/
+      _handleTrack: function (e) {
+        e.preventDefault();
+
+        switch (e.detail.state) {
+          case 'start':
+            this.newPosition = e.detail.x;
+            this.lastPosition = e.detail.x;
+            break;
+          case 'track':
+
+            this.lastPosition = this.newPosition;
+            this.newPosition = e.detail.x;
+
+            var newDelta = this.newPosition - this.lastPosition;
+
+            // Clamp the delta between -3 and 3, to avoid too much rotation
+            newDelta = Math.max(newDelta, -3);
+            newDelta = Math.min(newDelta, 3);
+
+            // Calculates the new rotation in degress
+            this.rotation = this.rotation + newDelta;
+
+            /*
+             * Picking the right image
+             * */
+            var imageNumber = (this.rotation % 360);
+            imageNumber = imageNumber / (360 / this.rotationImagePaths.length);
+            imageNumber = Math.round(imageNumber);
+
+            // Wrap to the list item in the list, if we have a negative imageNumber
+            if (imageNumber < 0) {
+              imageNumber = this.rotationImagePaths.length + imageNumber;
+            }
+
+            // Make absolute (to prevent -0);
+            imageNumber = Math.abs(imageNumber);
+            this.currentImage = this.rotationImagePaths[imageNumber];
+
+            break;
+        }
+
+        return false;
+      },
+    });
+
+  </script>
+
+</dom-module>
