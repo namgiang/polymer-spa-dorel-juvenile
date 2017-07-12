@@ -1,33 +1,33 @@
 <dom-module id="dorel-media-query">
   <template>
     <!-- General breakpoints, named according to devices -->
-    <iron-media-query query="[[ queries.mobileSmall ]]"
+    <iron-media-query query="[[ mediaQueries.mobileSmall ]]"
                       query-matches="{{ breakpoints.mobileSmall }}"></iron-media-query>
-    <iron-media-query query="[[ queries.mobileMedium ]]"
+    <iron-media-query query="[[ mediaQueries.mobileMedium ]]"
                       query-matches="{{ breakpoints.mobileMedium }}"></iron-media-query>
-    <iron-media-query query="[[ queries.tabletSmall ]]"
+    <iron-media-query query="[[ mediaQueries.tabletSmall ]]"
                       query-matches="{{ breakpoints.tabletSmall }}"></iron-media-query>
-    <iron-media-query query="[[ queries.tabletMedium ]]"
+    <iron-media-query query="[[ mediaQueries.tabletMedium ]]"
                       query-matches="{{ breakpoints.tabletMedium }}"></iron-media-query>
-    <iron-media-query query="[[ queries.desktopSmall ]]"
+    <iron-media-query query="[[ mediaQueries.desktopSmall ]]"
                       query-matches="{{ breakpoints.desktopSmall }}"></iron-media-query>
-    <iron-media-query query="[[ queries.desktopLarge ]]"
+    <iron-media-query query="[[ mediaQueries.desktopLarge ]]"
                       query-matches="{{ breakpoints.desktopLarge }}"></iron-media-query>
 
     <!-- Breakpoints for based on portrait orientation -->
-    <iron-media-query query="[[ queries.portraitSmall ]]"
+    <iron-media-query query="[[ mediaQueries.portraitSmall ]]"
                       query-matches="{{ breakpoints.portraitSmall }}"></iron-media-query>
-    <iron-media-query query="[[ queries.portraitMedium ]]"
+    <iron-media-query query="[[ mediaQueries.portraitMedium ]]"
                       query-matches="{{ breakpoints.portraitMedium }}"></iron-media-query>
 
     <!-- Breakpoints for based on landscape orientation -->
-    <iron-media-query query="[[ queries.landscapeSmall ]]"
+    <iron-media-query query="[[ mediaQueries.landscapeSmall ]]"
                       query-matches="{{ breakpoints.landscapeSmall }}"></iron-media-query>
-    <iron-media-query query="[[ queries.landscapeMedium ]]"
+    <iron-media-query query="[[ mediaQueries.landscapeMedium ]]"
                       query-matches="{{ breakpoints.landscapeMedium }}"></iron-media-query>
-    <iron-media-query query="[[ queries.landscapeLarge ]]"
+    <iron-media-query query="[[ mediaQueries.landscapeLarge ]]"
                       query-matches="{{ breakpoints.landscapeLarge }}"></iron-media-query>
-    <iron-media-query query="[[ queries.landscapeExtraLarge ]]"
+    <iron-media-query query="[[ mediaQueries.landscapeExtraLarge ]]"
                       query-matches="{{ breakpoints.landscapeExtraLarge }}"></iron-media-query>
   </template>
   <script>
@@ -36,11 +36,13 @@
       properties: {
         /**
          * @attribute
-         * @name queries
-         * @description A set of media-queries to be used for the breakpoints
+         * @name mediaQueries
+         * @description A set of media-mediaQueries to be used for the breakpoints
          */
-        queries: {
+        mediaQueries: {
           type: Object,
+          readOnly: true,
+          notify: true,
           value: {
             /* General breakpoints, named according to devices
              Mobile small:   .. - 360
@@ -68,9 +70,9 @@
              Large landscape:  1024 - 1440
              XL landscape:     1440 - ... */
             'landscapeSmall': '(max-width : 360px) and (orientation : landscape)',
-            'landscapeMedium': '(min-width : 361px) and (max-width : 1024px) (orientation : landscape)',
-            'landscapeLarge': '(min-width : 1025px) and (max-width : 1440px) (orientation : landscape)',
-            'landscapeExtraLarge': '(min-width : 1441px) and (orientation : landscape)'
+            'landscapeMedium': '(min-width : 361px) and (max-width : 1024px) and (orientation : landscape)',
+            'landscapeLarge': '(min-width : 1025px) and (max-width : 1440px) and (orientation : landscape)',
+            'landscapeExtraLarge': '(min-width : 1441px) and (orientation : landscape)',
           }
         },
         /**
@@ -80,6 +82,7 @@
          */
         breakpoints: {
           type: Object,
+          notify: true,
           value: {
             'mobileSmall': false,
             'mobileMedium': false,
