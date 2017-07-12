@@ -393,8 +393,11 @@
          *
          */
         selectedCountry: {
-          type: String,
-          value: CONFIG.LOCALE.COUNTRY
+          type: Object,
+          value: {
+            label: CONFIG.LOCALE.COUNTRY_NAME.charAt(0).toUpperCase() + CONFIG.LOCALE.COUNTRY_NAME.slice(1), // Capitalize first letter of the COUNTRY_NAME constant
+            value: CONFIG.LOCALE.COUNTRY_CODE
+          }
         },
 
         /**
@@ -483,7 +486,7 @@
         var self = this;
 
         // retrieve and set the maps variables
-        this._retrieveGeocode(selectedCountry).then(function (geometry) {
+        this._retrieveGeocode(selectedCountry.label).then(function (geometry) {
 
           // used in the google-map attribute latitude
           self.mapLat = geometry.location.lat();
@@ -587,7 +590,7 @@
         var self = this;
 
         // merge the address with the country
-        var query = this.addressInput + ' ' + this.selectedCountry;
+        var query = this.addressInput + ' ' + this.selectedCountry.label;
         this.address = this.addressInput;
 
         // retrieve the suggestions by query
@@ -598,6 +601,7 @@
             // define our api call
             var storeParams = '&lat=' + geometry.location.lat();
             storeParams += '&lng=' + geometry.location.lng();
+            storeParams += '&country=' + self.selectedCountry.value;
             storeParams += '&radius=' + 5;
 
             // set the endpoint, when set the api call will automatically commence
@@ -739,6 +743,10 @@
         }
 
         return hasProps;
+      },
+
+      _determineShop: function () {
+
       }
     });
   </script>
