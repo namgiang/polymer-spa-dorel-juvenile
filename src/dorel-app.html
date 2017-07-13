@@ -219,7 +219,7 @@
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(routeData.page, globals.Dorel.collect.pages)',
+        '_routePageChanged(route, globals.Dorel.collect.pages)',
         '_pageChanged(page, currentPage)',
         '_setCurrentPage(currentPage)',
         '_brandChanged(brandName)',
@@ -295,9 +295,10 @@
        * @param pages - Array - all the retrieved pages from WP
        */
       _routePageChanged: function (page, pages) {
-
         // if the route is undefined
         if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
+
+        page = page.path.split('/').splice(-2, 1).pop();
 
         // refer to this for find function
         var self = this;
@@ -308,7 +309,6 @@
          */
         this.page = page || 'home';
 
-
         // Matches the page to the component guide template
         if (this.page === 'component-guide') {
           this.currentPage = {
@@ -318,8 +318,17 @@
           return;
         }
 
-        // map the page variable to the item in the menu array and set it
+        /** map the page variable and check if it contains products
+          * if true - match the slug of the product page with the route.path
+          * if false - match the slug of the page with the route.path
+          * return the the item that matches
+        */
         this.currentPage = pages.find(function (item) {
+          if (item.products) {
+            return item.products.find(function (item) {
+              return item.slug === self.page;
+            });
+          }
           return item.slug === self.page;
         });
 
