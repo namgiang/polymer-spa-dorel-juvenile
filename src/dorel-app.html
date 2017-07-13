@@ -298,7 +298,8 @@
         // if the route is undefined
         if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
-        page = page.path.split('/').splice(-2, 1).pop();
+        // get the a clean last segment of the route.path
+        page = page.path.match(/([^\/]*)\/*$/).pop();
 
         // refer to this for find function
         var self = this;
