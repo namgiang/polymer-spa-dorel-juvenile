@@ -2,12 +2,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
-
-<link rel="import" href="../molecules/dorel-list-utility.html">
 <link rel="import" href="../molecules/dorel-logo.html">
 <link rel="import" href="../molecules/dorel-navigation-main.html">
-<link rel="import" href="../molecules/dorel-search-drawer.html">
-<link rel="import" href="../molecules/dorel-user-tools.html">
 
 <dom-module id="dorel-header">
   <template>
@@ -104,14 +100,6 @@
         order: 1;
       }
 
-      [screenSmall] .header-item-user-tools {
-        order: 2;
-      }
-
-      [screenSmall] .header-item-search-drawer {
-        order: 3;
-      }
-
       [screenSmall] .header-items {
         @apply(--layout-vertical);
         @apply(--layout-end-justified);
@@ -120,12 +108,6 @@
 
       [screenSmall][compact-menu] .header-items {
         padding: 0em .75em;
-      }
-
-      [screenSmall] dorel-user-tools {
-        @apply(--layout-horizontal);
-        @apply(--layout-justified);
-        background-color: var(--theme-color-monochrome-2);
       }
 
       [screenSmall][compact-menu] #hamburger {
@@ -156,22 +138,6 @@
         padding: .75em 0;
       }
 
-      [screenMedium] .header-item-user-tools {
-        @apply(--layout-wrap);
-        order: 2;
-      }
-
-      [screenMedium] .header-item-search-drawer {
-        order: 3;
-      }
-
-      /* 
-       * screen medium up:
-       */
-      [screenMediumUp] .header-item-search-drawer {
-        width: 100%;
-      }
-
       /* 
        * screen large up order:
        *
@@ -192,9 +158,6 @@
         @apply(--layout-justified);
       }
 
-      [screenMedium] .header-item-user-tools {
-        margin-left: auto;
-      }
     </style>
 
     <!-- static beginning AND end media queries -->
@@ -232,7 +195,6 @@
           <nav class="header-item header-item-menu">
             <dorel-navigation-main
               compact-menu="[[ compactMenu ]]"
-              search-opened="{{ searchOpened }}"
               sub-menu-opened="{{ subMenuOpened }}"
               mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
           </nav>
@@ -307,15 +269,6 @@
 
         /**
          * @exposed
-         * @name searchOpened
-         * @description defines if the search area should be opened or closed
-         */
-        searchOpened: {
-          type: Boolean
-        },
-
-        /**
-         * @exposed
          * @name submenuOpened
          * @description defines if one of the submenu's should be opened or closed
          */
@@ -375,9 +328,6 @@
        * @description handler for toggling the mobile menu
        */
       _toggleMobileMenu: function (event) {
-
-        // search component will always be false
-        this.searchOpened = false;
 
         // submenu (desktop) will always be false
         this.subMenuOpened = false;
