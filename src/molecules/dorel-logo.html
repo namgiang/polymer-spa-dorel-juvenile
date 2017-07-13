@@ -1,3 +1,4 @@
+<link rel="import" href="../atoms/dorel-media-query.html">
 <dom-module id="dorel-logo">
   <template>
     <style>
@@ -15,8 +16,8 @@
       }
 
       .logo {
-        width: var(--theme-logo-width);
-        height: var(--theme-logo-height);
+        width: var(--theme-logo-mobile-width);
+        height: var(--theme-logo-mobile-height);
         background: var(--theme-logo);
         display: block;
         background-size: contain;
@@ -25,26 +26,22 @@
         transform-origin: left;
       }
 
-      .logo[screen-small] {
-        width: var(--theme-logo-mobile-width);
-        height: var(--theme-logo-mobile-height);
+      .logo[tablet-medium-up] {
+        width: var(--theme-logo-width);
+        height: var(--theme-logo-height);
       }
 
       .logo[compact-menu] {
         transform: scale(.75);
       }
-
     </style>
-    <iron-media-query query="(max-width : 767px)"
-                      query-matches="{{ screenSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ screenMedium }}"></iron-media-query>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
     <h1 class="title">[[ brandName ]]</h1>
     <div class="logo"
-         screen-small$="{{ screenSmall }}"
-         screen-medium$="{{ screenMedium }}"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          compact-menu$="{{ compactMenu }}"></div>
-
   </template>
 
   <script>

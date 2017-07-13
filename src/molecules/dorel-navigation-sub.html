@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="../atoms/dorel-media-query.html">
 
 <dom-module id="dorel-navigation-sub">
   <template>
@@ -113,17 +114,12 @@
       }
     </style>
 
-    <iron-media-query query="(max-width : 767px)"
-                      query-matches="{{ screenSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ screenMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px)"
-                      query-matches="{{ screenMediumUp }}"></iron-media-query>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <!-- 
       Mobile Sub 
     -->
-    <template is="dom-if" if="{{ !screenMediumUp }}">
+    <template is="dom-if" if="{{ !breakpoints.tabletMediumUp }}">
       <paper-submenu opened$="{{ thisOpened }}">
         <paper-item class="menu-trigger layout horizontal justified"
                     on-click="_dropdownToggle">
@@ -167,11 +163,11 @@
     <!-- 
       Desktop sub 
     -->
-    <template is="dom-if" if="{{ screenMediumUp }}">
+    <template is="dom-if" if="{{ breakpoints.tabletMediumUp }}">
       <div class="menu-item-container"
            compact-menu$="[[ compactMenu ]]"
            opened$="{{ thisOpened }}"
-           screen-medium$="{{ screenMedium }}">
+           screen-medium$="{{ breakpoints.tabletMedium }}">
         <dorel-tab
           id="dropdown"
           class="has-submenu"
