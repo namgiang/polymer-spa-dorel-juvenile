@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-back-to-top.html">
 <link rel="import" href="../atoms/dorel-iconset-simple.html">
+<link rel="import" href="../atoms/dorel-media-query.html">
 
 <dom-module id="dorel-footer">
   <template>
@@ -12,20 +13,16 @@
 
       footer {
         @apply(--max-width-container);
-        padding: var(--theme-gutter);
+        padding: var(--theme-gutter) var(--theme-gutter-mobile);
         width: 100%;
         height: 100%;
         box-sizing: border-box;
       }
 
-      footer[screen-small] {
-        padding: var(--theme-gutter) var(--theme-gutter-mobile);
-      }
-
       /**
        * copyright and footer-menu links
        */
-      a, .footer-copyright, .footer-heading {
+      a, .footer-copyright {
         @apply(--theme-typography-2);
         color: var(--theme-footer-text-color);
         text-decoration: none;
@@ -44,9 +41,15 @@
        * footer headings
        */
       .footer-heading {
-        color: var(--theme-footer-header-color);
-        font-weight: var(--theme-footer-header-weight);
-        text-transform: uppercase;
+        @apply(--theme-typography-3);
+        color: var(--theme-color-white);
+        height: 3.5em;
+        line-height: 3.5em;
+        margin: 0;
+        position: relative;
+        cursor: pointer;
+        font-weight: 400;
+        text-transform: initial;
       }
 
       /**
@@ -79,40 +82,12 @@
       }
 
       .footer-menu ul {
-        margin: .75em 0;
         padding: 0;
+        margin: 0 0 1.5em 0;
       }
 
       .footer-menu {
         @apply(--theme-grid-column);
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
-        flex-basis: calc(var(--theme-column-width) * 2);
-        max-width: calc(var(--theme-column-width) * 2);
-      }
-
-      [screen-medium] .footer-menu {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
-        flex-basis: calc(var(--theme-column-width) * 3);
-        max-width: calc(var(--theme-column-width) * 3);
-      }
-
-      /* lists not enumerated */
-      .footer-menu li {
-        padding-left: 0;
-        list-style-type: none;
-      }
-
-      .footer-menu a:hover, .footer-menu a:focus {
-        color: var(--theme-color-white);
-      }
-
-      /* Layout */
-      .footer-info {
-        @apply(--theme-grid-row);
-      }
-
-      /* Mobile layout */
-      [screen-small] .footer-menu {
         -ms-flex-preferred-size: 100%;
         flex-basis: 100%;
         max-width: 100%;
@@ -126,36 +101,21 @@
         padding: 0;
       }
 
-      [screen-small] .footer-info {
-        margin-top: 1.5em;
-        padding: 0 .75em;
-      }
-
-      [screen-small] .footer-menu.open {
+      .footer-menu.open {
         max-height: 1000px !important;
       }
 
-      [screen-small] .footer-menu .footer-heading {
-        @apply(--theme-typography-3);
-        color: var(--theme-color-white);
-        height: 3.5em;
-        line-height: 3.5em;
-        margin: 0;
-        position: relative;
-        cursor: pointer;
-        font-weight: 400;
-        text-transform: initial;
-      }
-
-      [screen-small] ul {
-        margin: 0 0 1.5em 0;
-      }
-
-      [screen-small] li {
+      /* lists not enumerated */
+      .footer-menu li {
         padding: .75em 0;
+        list-style-type: none;
       }
 
-      [screen-small] .footer-menu .footer-heading::before {
+      .footer-menu a:hover, .footer-menu a:focus {
+        color: var(--theme-color-white);
+      }
+
+      .footer-menu .footer-heading::before {
         content: '';
         position: absolute;
         bottom: 2rem;
@@ -169,23 +129,72 @@
         transition: transform .3s ease;
       }
 
-      [screen-small] .footer-menu.open .footer-heading::before {
+      .footer-menu.open .footer-heading::before {
         transform: rotate(135deg) translate(0.375rem, -0.375rem);
       }
 
+      /* Layout */
+      .footer-info {
+        @apply(--theme-grid-row);
+        margin-top: 1.5em;
+        padding: 0;
+      }
+
+      /* Responsiv layout */
+      footer[tablet-medium-up] {
+        padding: var(--theme-gutter);
+      }
+
+      [tablet-medium-up] .footer-menu {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
+        overflow: visible;
+        max-height: inherit;
+        border: 0;
+        margin-top: 1.5em;
+      }
+
+      [desktop-small-up] .footer-menu {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
+        flex-basis: calc(var(--theme-column-width) * 2);
+        max-width: calc(var(--theme-column-width) * 2);
+      }
+
+      [tablet-medium-up] .footer-info {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .footer-heading {
+        @apply(--theme-typography-2);
+        color: var(--theme-footer-header-color);
+        font-weight: var(--theme-footer-header-weight);
+        text-transform: uppercase;
+        text-decoration: none;
+        margin-top: 0;
+        height: auto;
+      }
+
+      [tablet-medium-up] ul {
+        margin: .75em 0;
+      }
+
+      [tablet-medium-up] li {
+        padding: 0;
+      }
+
+      [tablet-medium-up] .footer-menu .footer-heading::before {
+        display: none;
+      }
+
+
     </style>
 
-    <iron-media-query query="(max-width : 767px)"
-                      query-matches="{{ screenSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ screenMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-                      query-matches="{{ desktopLarge }}"></iron-media-query>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <footer screen-small$="{{ screenSmall }}"
-            screen-medium$="{{ screenMedium }}"
-            desktop-large$="{{ screenLargeUp }}">
-
+    <footer tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+            desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
       <!-- check if we need to show the social links -->
       <template
         is="dom-if"
