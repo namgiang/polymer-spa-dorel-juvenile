@@ -211,6 +211,7 @@
               zoom="{{ mapZoom }}"
               fit-to-markers
               map-type="roadmap"
+              styles="[[ styles ]]"
               disable-map-type-control
               disable-street-view-control
               single-info-window>
@@ -229,7 +230,7 @@
                   longitude="[[ store.lng ]]"
                   store="[[ store ]]"
                   click-events="true"
-                  icon="/assets/images/markers/shop-marker.png">
+                  icon="[[ _defineStoreType(store.is_vip) ]]">
 
                   <!-- IMPORTANT! inline styling is required -->
                   <template is="dom-if" if="[[ store.name ]]">
@@ -408,6 +409,24 @@
           type: Boolean,
           value: false
         },
+
+        /**
+         * @name styles
+         * @description default styles and hiding of certain default pins
+         */
+        styles: {
+          type: Array,
+          value: [
+            {
+              featureType: 'poi',
+              stylers: [{visibility: 'off'}]
+            },
+            {
+              featureType: 'transit',
+              stylers: [{visibility: 'off'}]
+            }
+          ]
+        }
       },
 
       /**
@@ -707,6 +726,19 @@
        */
       _isDisabled: function (val) {
         return typeof val === 'undefined' || val === '';
+      },
+
+      /**
+       * @name _defineStoreType
+       * @description check if the store is of type VIP
+       *
+       * @param vip - Boolean - is this a VIP store or not
+       * @returns image url - String - pin image
+       */
+      _defineStoreType: function (vip) {
+        var markerUrl = '/assets/images/markers/';
+
+        return (typeof vip === 'undefined' || !vip) ? markerUrl + 'shop-marker.png' : markerUrl + 'vip-marker.png'; 
       },
 
       /**
