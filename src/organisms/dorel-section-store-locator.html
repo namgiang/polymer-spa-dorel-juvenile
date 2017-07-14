@@ -535,6 +535,11 @@
        * @param data - Object - the complete stores list (coming from the backend)
        */
       _storesLoaded: function (data) {
+        // if no results are retrieved, handle error handling
+        if (!data.detail.response.results.length) {
+          this._handleErrors('ZERO_RESULTS');
+        } 
+
         this.storesResponse = data.detail.response;
 
         // setup geometry fro the fitbounds
