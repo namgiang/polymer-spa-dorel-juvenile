@@ -6,6 +6,8 @@
         display: flex;
         justify-content: center;
         position: relative;
+        background-color: var(--theme-brand-color-1);
+
       }
 
       .title {
@@ -31,10 +33,6 @@
         background-repeat: no-repeat;
         background-size: cover;
         height: 25.5em;
-      }
-
-      iron-image {
-        background-color: var(--theme-brand-color-1);
       }
 
       dorel-safe-html {
@@ -76,6 +74,20 @@
         padding: 0;
       }
 
+      [text-header] .image {
+        display: none;
+      }
+
+      [text-header] .content, [text-header] .content-wrapper {
+        position: initial;
+      }
+
+      [text-header] .content-wrapper {
+        padding: 3em var(--theme-gutter);
+      }
+
+
+
       /* Responsive behaviour */
       [screen-extra-large] .image {
         height: 30.5em;
@@ -97,7 +109,7 @@
       }
 
       [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
-        padding: var(--theme-gutter) var(--theme-gutter-mobile) 0 var(--theme-gutter-mobile);
+        padding: var(--theme-gutter) var(--theme-gutter-mobile);
       }
 
       [mobile-medium] .image {
@@ -114,7 +126,7 @@
 
       [mobile-small] .content {
         bottom: 3em;
-        padding: 0 var(--theme-gutter-mobile);
+        /*padding: 0 var(--theme-gutter-mobile); */
         margin-left: 0;
       }
 
@@ -147,6 +159,7 @@
                       query-matches="{{ screenExtraLargeUp }}"></iron-media-query>
 
     <section class="section-header"
+             text-header$="{{ textHeader }}"
              info-header$="{{ infoHeader }}"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
@@ -179,8 +192,17 @@
       properties: {
         /**
          * @attribute
+         * @name textHeader
+         * @description Used for a centered, limited width layout, with paragraph content (no images)
+         **/
+        textHeader: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * @attribute
          * @name infoHeader
-         * @description Used for a slight variation in the header layout
+         * @description Used for a centered, limited width layout
          */
         infoHeader: {
           type: Boolean,
