@@ -11,18 +11,17 @@
       }
 
       .title {
-        @apply(--theme-typography-8);
-        color: var(--theme-color-white);
-        font-size: var(--theme-scale-6);
+        @apply(--theme-typography-6);
         margin: 0;
+        color: var(--theme-color-white);
         text-shadow: var(--theme-text-shadow);
       }
 
       .subtitle {
-        @apply(--theme-typography-6);
-        margin-top: .375em;
-        color: var(--theme-color-white);
+        @apply(--theme-typography-4);
         font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+        color: var(--theme-color-white);
         text-shadow: var(--theme-text-shadow);
       }
 
@@ -32,7 +31,7 @@
         background-position: 50% 50%;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 25.5em;
+        height: 16.5em;
       }
 
       dorel-safe-html {
@@ -40,7 +39,7 @@
       }
 
       .content-wrapper {
-        padding: var(--theme-gutter);
+        padding: var(--theme-gutter) var(--theme-gutter-mobile);
         width: 100%;
         height: 100%;
         box-sizing: border-box;
@@ -55,24 +54,29 @@
       .content {
         @apply(--theme-grid-column);
         padding: 0 var(--theme-gutter);
-        margin-left: var(--theme-column-width);
         position: absolute;
-        bottom: 4.5em;
         left: 0;
         text-align: left;
         margin-top: 0;
+        bottom: 3em;
+        margin-left: 0;
       }
 
       [info-header] .content {
         width: var(--theme-base-paragraph-width);
         max-width: var(--theme-base-paragraph-width);
         position: absolute;
-        margin: auto;
-        bottom: 4.5em;
-        left: 0;
-        right: 0;
         padding: 0;
       }
+
+      [info-header] .content {
+        bottom: 3em;
+        margin-left: 0;
+        left: 1em;
+        right: 1em;
+        width: auto;
+      }
+
 
       [text-header] .image {
         display: none;
@@ -82,71 +86,62 @@
         position: initial;
       }
 
-      [text-header] .content-wrapper {
+
+      /* Responsive behaviour */
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-8);
+        font-size: var(--theme-scale-6);
+        margin: 0;
+      }
+
+      [tablet-medium-up] .subtitle {
+        @apply(--theme-typography-6);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: .375em;
+      }
+
+      [tablet-medium-up] .content-wrapper {
+        padding: var(--theme-gutter);
+      }
+
+      [text-header][tablet-medium-up] .content-wrapper {
         padding: 3em var(--theme-gutter);
       }
 
-
-
-      /* Responsive behaviour */
-      [screen-extra-large] .image {
-        height: 30.5em;
+      [tablet-medium-up] .content {
+        margin-left: var(--theme-column-width);
+        bottom: 4.5em;
       }
 
-      [screen-large] .image {
-        height: 25.5em;
+      [info-header][tablet-medium-up] .content {
+        left: 1em;
+        right: 1em;
+        width: auto;
+        margin: auto;
       }
 
-      [mobile-medium] .title, [mobile-small] .title {
-        @apply(--theme-typography-7);
-        margin-top: 0;
-      }
 
-      [mobile-medium] .subtitle, [mobile-small] .subtitle {
-        @apply(--theme-typography-3);
-        font-weight: var(--theme-font-weight-light);
-        margin-top: 0;
-      }
 
-      [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
-        padding: var(--theme-gutter) var(--theme-gutter-mobile);
-      }
-
-      [mobile-medium] .image {
+      /* TODO: Image dimension will be picked up in another ticket */
+      /*[mobile-medium] .image {
         height: 18em;
       }
 
       [mobile-small] .image {
         height: 16.5em;
+      } */
+
+      [desktop-large] .image {
+        height: 30.5em;
       }
 
-      [mobile-medium] .content {
-        bottom: 3.25em;
+      [tablet-medium-up] .image {
+        height: 25.5em;
       }
-
-      [mobile-small] .content {
-        bottom: 3em;
-        /*padding: 0 var(--theme-gutter-mobile); */
-        margin-left: 0;
-      }
-
-      [info-header][mobile-medium] .content {
-        bottom: 3.25em;
-        left: 1em;
-        right: 1em;
-        width: auto;
-      }
-
-      [info-header][mobile-small] .content {
-        bottom: 3em;
-        margin-left: 0;
-        left: 1em;
-        right: 1em;
-        width: auto;
-      }
-
-
     </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <!-- media queries -->
     <iron-media-query query="(max-width : 479px)"
@@ -161,10 +156,8 @@
     <section class="section-header"
              text-header$="{{ textHeader }}"
              info-header$="{{ infoHeader }}"
-             mobile-small$="{{ mobileSmall }}"
-             mobile-medium$="{{ mobileMedium }}"
-             screen-large$="{{ screenLarge }}"
-             screen-extra-large$="{{ screenExtraLargeUp }}">
+             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+             desktop-large$="{{ breakpoints.desktopLarge }}">
       <iron-image class="image"
                   sizing="cover"
                   fade="true"
