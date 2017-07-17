@@ -5,6 +5,7 @@
 <link rel="import" href="../organisms/dorel-section-store-locator-result.html">
 <link rel="import" href="../atoms/dorel-input.html">
 <link rel="import" href="../atoms/dorel-input-select.html">
+<link rel="import" href="../organisms/dorel-section-header.html">
 
 <dom-module id="dorel-section-store-locator">
   <template>
@@ -20,29 +21,6 @@
         width: 100%;
       }
 
-      .content-header {
-        background-color: var(--theme-brand-color-1);
-        float: left;
-        width: 100%;
-        display: flex;
-      }
-
-      .content-wrapper {
-        padding: 6em 0;
-        box-sizing: border-box;
-        color: var(--theme-color-white);
-        max-width: var(--theme-base-paragraph-width);
-        float: none;
-        margin: auto;
-      }
-
-      .title {
-        @apply(--theme-typography-8);
-        color: var(--theme-color-white);
-        font-size: var(--theme-scale-6);
-        margin: 0 0 0.1875em 0;
-        text-shadow: var(--theme-text-shadow);
-      }
 
       .store-title {
         @apply(--theme-typography-4);
@@ -110,15 +88,6 @@
       [mobile-small] google-map, [mobile-medium] google-map {
         height: 90vh;
       }
-
-      [mobile-small] .title, [mobile-medium] .title {
-        @apply(--theme-typography-6);
-        margin-top: 0;
-      }
-
-      [mobile-small] .content-wrapper, [mobile-medium] .content-wrapper {
-        padding: 3em var(--theme-gutter-mobile);
-      }
     </style>
 
     <iron-ajax
@@ -152,16 +121,11 @@
     <iron-media-query query="max-width : 767px"
                       query-matches="{{ mobile }}"></iron-media-query>
 
+    <dorel-section-header section-header-data="[[ templateData.acf ]]" info-header="true"></dorel-section-header>
     <section class="section-store-locator"
              mobile$="{{ mobile }}"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}">
-      <div class="content-header">
-        <div class="content-wrapper">
-          <h1 class="title">[[ templateData.acf.title ]]</h1>
-          <dorel-safe-html html="[[ templateData.acf.text ]]"></dorel-safe-html>
-        </div>
-      </div>
       <div class="store-locator-map">
         <div class="store-overlay">
           <h2 class="store-title">Enter a Location</h2>

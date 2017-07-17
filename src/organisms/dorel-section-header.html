@@ -1,7 +1,7 @@
-<dom-module id="dorel-section-product-header">
+<dom-module id="dorel-section-header">
   <template>
     <style>
-      .product-header {
+      .section-header {
         width: 100%;
         display: flex;
         justify-content: center;
@@ -37,6 +37,10 @@
         background-color: var(--theme-brand-color-1);
       }
 
+      dorel-safe-html {
+        color: var(--theme-color-white);
+      }
+
       .content-wrapper {
         padding: var(--theme-gutter);
         width: 100%;
@@ -61,6 +65,17 @@
         margin-top: 0;
       }
 
+      [info-header] .content {
+        width: var(--theme-base-paragraph-width);
+        max-width: var(--theme-base-paragraph-width);
+        position: absolute;
+        margin: auto;
+        bottom: 4.5em;
+        left: 0;
+        right: 0;
+        padding: 0;
+      }
+
       /* Responsive behaviour */
       [screen-extra-large] .image {
         height: 30.5em;
@@ -68,10 +83,6 @@
 
       [screen-large] .image {
         height: 25.5em;
-      }
-
-      [mobile-medium] .content {
-        bottom: 3.25em;
       }
 
       [mobile-medium] .title, [mobile-small] .title {
@@ -97,10 +108,29 @@
         height: 16.5em;
       }
 
+      [mobile-medium] .content {
+        bottom: 3.25em;
+      }
+
       [mobile-small] .content {
         bottom: 3em;
         padding: 0 var(--theme-gutter-mobile);
         margin-left: 0;
+      }
+
+      [info-header][mobile-medium] .content {
+        bottom: 3.25em;
+        left: 1em;
+        right: 1em;
+        width: auto;
+      }
+
+      [info-header][mobile-small] .content {
+        bottom: 3em;
+        margin-left: 0;
+        left: 1em;
+        right: 1em;
+        width: auto;
       }
 
 
@@ -116,7 +146,8 @@
     <iron-media-query query="(min-width : 1600px)"
                       query-matches="{{ screenExtraLargeUp }}"></iron-media-query>
 
-    <section class="product-header"
+    <section class="section-header"
+             info-header$="{{ infoHeader }}"
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}"
@@ -125,16 +156,17 @@
                   sizing="cover"
                   fade="true"
                   preload
-                  src$="[[ productHeaderData.background_image ]]"></iron-image>
-
+                  src$="[[ sectionHeaderData.background_image ]]"></iron-image>
       <div class="content-wrapper">
         <div class="content">
-          <template is="dom-if" if="{{ _hasValue(productHeaderData.title) }}">
-            <h1 class="title">[[ productHeaderData.title ]]</h1>
+          <template is="dom-if" if="{{ _hasValue(sectionHeaderData.title) }}">
+            <h1 class="title">[[ sectionHeaderData.title ]]</h1>
           </template>
-
-          <template is="dom-if" if="{{ _hasValue(productHeaderData.sub_title) }}">
-            <h3 class="subtitle">[[ productHeaderData.sub_title ]]</h3>
+          <template is="dom-if" if="{{ _hasValue(sectionHeaderData.sub_title) }}">
+            <h3 class="subtitle">[[ sectionHeaderData.sub_title ]]</h3>
+          </template>
+          <template is="dom-if" if="{{ _hasValue(sectionHeaderData.text) }}">
+            <dorel-safe-html html="[[ sectionHeaderData.text ]]"></dorel-safe-html>
           </template>
         </div>
       </div>
@@ -142,16 +174,24 @@
   </template>
   <script>
     Polymer({
-      is: 'dorel-section-product-header',
+      is: 'dorel-section-header',
 
       properties: {
-
         /**
          * @attribute
-         * @name productHeaderData
+         * @name infoHeader
+         * @description Used for a slight variation in the header layout
+         */
+        infoHeader: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * @attribute
+         * @name sectionHeaderData
          * @description all data defined by ACF/Wordpress to build this component
          */
-        productHeaderData: {
+        sectionHeaderData: {
           type: Object,
           value: function () {
             return {};
@@ -167,7 +207,7 @@
        * @returns Boolean
        */
       _hasValue: function (val) {
-        return (typeof val !== 'undefined' || val !== '');
+        return (typeof val !== undefined || val !== '');
       }
     });
   </script>
