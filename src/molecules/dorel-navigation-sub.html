@@ -98,7 +98,7 @@
         cursor: pointer;
       }
 
-      [screen-medium] .section-secondary-menu {
+      [tablet-medium-up] .section-secondary-menu {
         top: 2.75em;
       }
 
@@ -110,20 +110,18 @@
       iron-icon {
         padding-left: var(--theme-scale-1);
         margin-top: -2px;
+        width: 1.5em;
+        display: inline-block;
       }
+
     </style>
 
-    <iron-media-query query="(max-width : 767px)"
-                      query-matches="{{ screenSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ screenMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px)"
-                      query-matches="{{ screenMediumUp }}"></iron-media-query>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <!-- 
       Mobile Sub 
     -->
-    <template is="dom-if" if="{{ !screenMediumUp }}">
+    <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
       <paper-submenu opened$="{{ thisOpened }}">
         <paper-item class="menu-trigger layout horizontal justified"
                     on-click="_dropdownToggle">
@@ -167,11 +165,11 @@
     <!-- 
       Desktop sub 
     -->
-    <template is="dom-if" if="{{ screenMediumUp }}">
+    <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
       <div class="menu-item-container"
            compact-menu$="[[ compactMenu ]]"
            opened$="{{ thisOpened }}"
-           screen-medium$="{{ screenMedium }}">
+           tablet-medium-up$="{{ breakpoints.tabletMedium }}">
         <dorel-tab
           id="dropdown"
           class="has-submenu"
@@ -195,7 +193,7 @@
           <div>
             <ul class="sub-menu">
               <li>
-                <a href="[[ menuItem.url ]]" 
+                <a href="[[ menuItem.url ]]"
                    class="view-all"
                    on-click="_menuItemClicked"
                    gtm-parent="[[ gtmParent ]]"
@@ -300,7 +298,7 @@
         'tap': '_onTap', // used for generic analytics
       },
 
-      _onTap: function(event) {
+      _onTap: function (event) {
         // Define parent and child gtm info
         var gtmParent = this.gtmParent;
         var gtmParentIndex = Number(this.gtmParentIndex) + 1;
@@ -472,7 +470,7 @@
        * @name _unescapeHtml
        * @description decode html special chars, and output the correct string
        */
-      _unescapeHtml: function(text) {
+      _unescapeHtml: function (text) {
         var el = document.createElement('div');
         el.innerHTML = text;
         return el.childNodes.length === 0 ? "" : el.childNodes[0].nodeValue;
