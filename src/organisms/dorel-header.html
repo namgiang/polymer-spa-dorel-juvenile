@@ -45,7 +45,6 @@
       .header-items {
         @apply(--max-width-container);
         @apply(--layout-vertical);
-        @apply(--layout-end-justified);
         background-color: var(--theme-color-white);
         box-sizing: border-box;
         transition: .15s ease padding;
@@ -53,7 +52,6 @@
       }
 
       .header-item-menu {
-        margin: var(--header-item-menu-alignment);
         order: 1;
       }
 
@@ -117,7 +115,7 @@
 
       [desktop-small-up] .header-item-logo {
         order: 1;
-        margin: 0 auto 0 0;
+        flex: 1;
       }
 
       [desktop-small-up] .header-item-menu {
@@ -130,7 +128,6 @@
         /* layout horizontal header-main */
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
-        @apply(--layout-center);
         padding: 1.5em;
       }
 
@@ -163,8 +160,8 @@
               mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
           </nav>
 
-          <div id="hamburger">
-            <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
+          <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
+            <div id="hamburger">
               <template
                 is="dom-if"
                 if="{{ !mobileMenuOpened }}">
@@ -181,8 +178,8 @@
                            on-click="_toggleMobileMenu"
                            aria-label="menu"></iron-icon>
               </template>
-            </template>
-          </div>
+            </div>
+          </template>
         </div>
       </header>
     </div>
