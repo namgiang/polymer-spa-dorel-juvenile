@@ -53,6 +53,7 @@
 
       .theme-cta--large {
         @apply(--theme-button-large);
+        height: 3em;
       }
 
       .theme-cta--large .theme-cta__content {
@@ -66,23 +67,13 @@
 
       .theme-cta__icon {
         @apply(--theme-button-icon);
-
       }
 
       .theme-cta__icon--left {
-        width: 5.125em;
-        height: 3.125em;
-        margin: .475em 0;
-      }
-
-      [mobile-small] .theme-cta__icon--left {
         width: 3em;
         height: 2.5em;
         margin: 0;
-      }
 
-      .theme-cta--large[mobile-small] {
-        height: 3em;
       }
 
       :host([disabled]) a {
@@ -94,19 +85,27 @@
         cursor: not-allowed;
       }
 
+      /* Responsive Behaviour */
+      [tablet-medium-up] .theme-cta__icon--left {
+        width: 5.125em;
+        height: 3.125em;
+        margin: .475em 0;
+      }
+
+      .theme-cta--large[tablet-medium-up] {
+        @apply(--theme-button-large);
+        height: auto;
+      }
+
     </style>
 
-    <iron-media-query query="(max-width : 479px)"
-                      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <a href$="[[ link ]]"
        title$="[[ title ]]"
        target$="[[ target ]]"
        class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
-       mobile-small$="[[ mobileSmall ]]"
-       mobile-medium$="[[ mobileMedium ]]"
+       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
        target$="[[ _isExternal(linkTarget) ]]"
        gtm-action$="[[ gtmAction ]]"
        gtm-parent$="[[ gtmParent ]]"
@@ -254,7 +253,7 @@
             index: Number(this.gtmCtaIndex) + 1
           }
         }
-        
+
         /**
          * Tracking on click for cta
          */

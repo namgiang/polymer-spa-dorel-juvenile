@@ -9,7 +9,7 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .header-wrapper {
-        height: 7.5em;
+        height: 4.5em;
         float: left;
         width: 100%;
         display: block;
@@ -43,30 +43,28 @@
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
       }
 
-      [compact-menu] .header-items {
-        padding: 0 1.5em;
-      }
-
       .header-items {
         @apply(--max-width-container);
+        @apply(--layout-vertical);
+        @apply(--layout-end-justified);
         background-color: var(--theme-color-white);
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
         box-sizing: border-box;
-        padding: 1.5em;
         transition: .15s ease padding;
+        padding: .75em;
       }
 
       .header-item-menu {
         margin: var(--header-item-menu-alignment);
+        order: 1;
       }
 
       #hamburger {
         position: absolute;
         top: 1.25em;
-        right: .5em;
+        right: .75em;
         z-index: 1000;
         color: var(--theme-color-text-link);
+        cursor: pointer;
         transition: .3s ease color, .15s ease top;
       }
 
@@ -80,108 +78,73 @@
         font-size: 1.5rem;
       }
 
-      /* 
-       * screen small order:        
-       *
-      1. menu (in sidebar)
-      2. user tools (right justified)
-      3. logo (center aligned)
-      */
-
-      .header-wrapper[screenSmall] {
-        height: 4.5em;
-      }
-
-      [screenSmall] .header-item-logo {
+      .header-item-logo {
         order: 4;
         /* center the logo */
         @apply(--layout-horizontal);
       }
 
-      [screenSmall] .header-item-menu {
-        order: 1;
-      }
-
-      [screenSmall] .header-items {
-        @apply(--layout-vertical);
-        @apply(--layout-end-justified);
-        padding: .75em;
-      }
-
-      [screenSmall][compact-menu] .header-items {
+      /* Compact Menu */
+      [compact-menu] .header-items {
         padding: 0em .75em;
       }
 
-      [screenSmall][compact-menu] #hamburger {
+      [compact-menu][desktop-small-up] .header-items {
+        padding: 0 1.5em;
+      }
+
+      [compact-menu] #hamburger {
         top: 0.5em;
       }
 
-      /* 
-       * screen medium order:        
-       *
-      1. logo (left aligned)
-      2. user tools(right justified)
-      3. menu (full width)
-      */
-      [screenMedium] .header-items {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-wrap);
-        @apply(--layout-around-justified);
+      /* Responsive Behaviour */
+      [tablet-medium-up] .header-items {
+        padding-left: 1.5em;
+        padding-right: 1.5em;
       }
 
-      [screenMedium] .header-item-logo {
+      [tablet-medium-up] #hamburger {
+        top: 2em;
+        right: 1.25em;
+      }
+
+      [compact-menu][tablet-medium-up] #hamburger {
+        top: 1.25em;
+      }
+
+      .header-wrapper[desktop-small-up] {
+        height: 7.5em;
+      }
+
+      [desktop-small-up] .header-item-logo {
         order: 1;
+        margin: 0 auto 0 0;
       }
 
-      [screenMedium] .header-item-menu {
+      [desktop-small-up] .header-item-menu {
         @apply(--layout-wrap);
         order: 4;
         padding: .75em 0;
       }
 
-      /* 
-       * screen large up order:
-       *
-      1. logo (left aligned)
-      2. menu (stacked left)
-      3. user tools (right justified)
-      */
-
-      [screenLargeUp] .header-items {
+      [desktop-small-up] .header-items {
         /* layout horizontal header-main */
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
         @apply(--layout-center);
+        padding: 1.5em;
       }
 
-      [screenLargeUp] .header-contain-main-elements {
+      [desktop-small-up] .header-contain-main-elements {
         @apply(--layout-horizontal);
         @apply(--layout-justified);
       }
-
     </style>
 
-    <!-- static beginning AND end media queries -->
-    <!--iron-media-query query="(max-width : 479px)" 
-      query-matches="{{ screenExtraSmall }}"></iron-media-query-->
-    <iron-media-query query="(max-width : 767px)"
-                      query-matches="{{ screenSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 768px) and (max-width : 991px)"
-                      query-matches="{{ screenMedium }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)"
-                      query-matches="{{ desktopLarge }}"></iron-media-query>
-
-    <!-- screen up media query's  -->
-    <iron-media-query query="(min-width : 768px)"
-                      query-matches="{{ screenMediumUp }}"></iron-media-query>
-    <iron-media-query query="(min-width : 992px)"
-                      query-matches="{{ screenLargeUp }}"></iron-media-query>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <div class="header-wrapper"
-         screenSmall$="{{ screenSmall }}"
-         screenMedium$="{{ screenMedium }}"
-         screenMediumUp$="{{ screenMediumUp }}"
-         screenLargeUp$="{{ screenLargeUp }}"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
          compact-menu$="{{ compactMenu }}">
       <header>
         <div class="header-items">
@@ -202,7 +165,7 @@
           </nav>
 
           <div id="hamburger">
-            <template is="dom-if" if="{{ screenSmall }}">
+            <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
               <template
                 is="dom-if"
                 if="{{ !mobileMenuOpened }}">
