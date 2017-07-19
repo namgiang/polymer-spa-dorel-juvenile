@@ -2,6 +2,8 @@
 <link rel="import" href="../organisms/dorel-section-category-header.html">
 <link rel="import" href="../organisms/dorel-section-category-sidebar.html">
 
+<link rel="import" href="../utils/dorel-magento-collect-products.html">
+
 <dom-module id="dorel-template-product-category">
   <template>
     <style>
@@ -117,6 +119,8 @@
 
     </style>
 
+    <dorel-magento-collect-products category="[[ category ]]"></dorel-magento-collect-products>
+
     <iron-media-query query="(max-width : 479px)"
                       query-matches="{{ mobileSmall }}"></iron-media-query>
     <iron-media-query query="(min-width : 480px) and (max-width : 820px)"
@@ -159,7 +163,7 @@
                 <template
                   is="dom-if"
                   if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
-                  <dorel-section-category-header 
+                  <dorel-section-category-header
                     category-header-data="[[ component ]]"
                     gtm-parent="dorel-section-category-header"
                     gtm-parent-index="[[ index ]]"></dorel-section-category-header>
@@ -215,12 +219,19 @@
         products: {
           type: Array,
           value: []
-        }
+        },
+
+        category: {
+          type: Number,
+          value: 0
+        },
 
       },
 
       observers: [
-        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)'
+        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)',
+        '_currentPageChanged(globals.Dorel.current.page)',
+        '_currentProductsChanged(globals.Dorel.current.products)'
       ],
 
       /**
@@ -243,17 +254,19 @@
           return category.id === self.templateData.acf.product_category;
         });
 
-        // get the products page from the pages array retrieved from WP
-        var page = pages.find(function (page) {
-          return page.template === 'products';
-        });
+      },
 
-        // check which pages have the current categoryId attached and add them to the products array
-        for (var i = 0; i < page.products.length; i++) {
-          if (page.products[i].categories.indexOf(category.id) === 0) {
-            this.products = this.products.concat(page.products[i]);
-          }
+      _currentPageChanged: function(currentPage) {
+        if(currentPage && currentPage.template && currentPage.template === 'product-category') {
+          this.category = currentPage.acf.product_category;
         }
+      },
+
+      _currentProductsChanged: function(products) {
+        if(!products){
+          return;
+        }
+        this.products = products;
       },
 
       /**
