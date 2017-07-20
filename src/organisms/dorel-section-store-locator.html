@@ -170,6 +170,7 @@
               zoom="{{ mapZoom }}"
               fit-to-markers
               map-type="roadmap"
+              styles="[[ styles ]]"
               disable-map-type-control
               disable-street-view-control
               single-info-window>
@@ -188,7 +189,7 @@
                   longitude="[[ store.lng ]]"
                   store="[[ store ]]"
                   click-events="true"
-                  icon="/assets/images/markers/shop-marker.png">
+                  icon="[[ _defineStoreType(store.is_vip) ]]">
 
                   <!-- IMPORTANT! inline styling is required -->
                   <template is="dom-if" if="[[ store.name ]]">
@@ -352,8 +353,11 @@
          *
          */
         selectedCountry: {
-          type: String,
-          value: CONFIG.LOCALE.COUNTRY
+          type: Object,
+          value: {
+            label: CONFIG.LOCALE.COUNTRY_NAME.charAt(0).toUpperCase() + CONFIG.LOCALE.COUNTRY_NAME.slice(1), // Capitalize first letter of the COUNTRY_NAME constant
+            value: CONFIG.LOCALE.COUNTRY_CODE
+          }
         },
 
         /**
@@ -364,6 +368,24 @@
           type: Boolean,
           value: false
         },
+
+        /**
+         * @name styles
+         * @description default styles and hiding of certain default pins
+         */
+        styles: {
+          type: Array,
+          value: [
+            {
+              featureType: 'poi',
+              stylers: [{visibility: 'off'}]
+            },
+            {
+              featureType: 'transit',
+              stylers: [{visibility: 'off'}]
+            }
+          ]
+        }
       },
 
       /**
@@ -442,7 +464,7 @@
         var self = this;
 
         // retrieve and set the maps variables
-        this._retrieveGeocode(selectedCountry).then(function (geometry) {
+        this._retrieveGeocode(selectedCountry.label).then(function (geometry) {
 
           // used in the google-map attribute latitude
           self.mapLat = geometry.location.lat();
@@ -491,6 +513,11 @@
        * @param data - Object - the complete stores list (coming from the backend)
        */
       _storesLoaded: function (data) {
+        // if no results are retrieved, handle error handling
+        if (!data.detail.response.results.length) {
+          this._handleErrors('ZERO_RESULTS');
+        } 
+
         this.storesResponse = data.detail.response;
 
         // setup geometry fro the fitbounds
@@ -546,7 +573,7 @@
         var self = this;
 
         // merge the address with the country
-        var query = this.addressInput + ' ' + this.selectedCountry;
+        var query = this.addressInput + ' ' + this.selectedCountry.label;
         this.address = this.addressInput;
 
         // retrieve the suggestions by query
@@ -557,6 +584,7 @@
             // define our api call
             var storeParams = '&lat=' + geometry.location.lat();
             storeParams += '&lng=' + geometry.location.lng();
+            storeParams += '&country=' + self.selectedCountry.value;
             storeParams += '&radius=' + 5;
 
             // set the endpoint, when set the api call will automatically commence
@@ -657,6 +685,19 @@
        */
       _isDisabled: function (val) {
         return typeof val === 'undefined' || val === '';
+      },
+
+      /**
+       * @name _defineStoreType
+       * @description check if the store is of type VIP
+       *
+       * @param vip - Boolean - is this a VIP store or not
+       * @returns image url - String - pin image
+       */
+      _defineStoreType: function (vip) {
+        var markerUrl = '/assets/images/markers/';
+
+        return (typeof vip === 'undefined' || !vip) ? markerUrl + 'shop-marker.png' : markerUrl + 'vip-marker.png'; 
       },
 
       /**

@@ -26,7 +26,8 @@ var CONFIG = {
    * The following information is localization info used in several parts
    */
   LOCALE: {
-    COUNTRY: 'Australia',       // country name in own country language (capitalized)
+    COUNTRY_NAME: 'australia',       // country name in own country language (capitalized)
+    COUNTRY_CODE: 'AU',         // country code (used for storelocator)
     LANGUAGE: 'en',             // language in short notation
     LANG_CONTENT: 'en-AU',
     LINK_ALT: 'http://www.maxi-cosi.com/au-en'
