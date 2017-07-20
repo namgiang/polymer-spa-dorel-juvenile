@@ -144,9 +144,15 @@
      * @description detects a change in the selected input, and propagates it to the selected property
      */
     _onChange: function (event) {
-      var selectedIndex = event.path[0].value;
-      var selectedOption = this.options[selectedIndex];
-      this.selected = selectedOption.label;
+      var selectedValue = event.path[0].value;
+      var selectedOption = this.options.find(function(option) {
+        return option.value === selectedValue;
+      });
+
+      this.selected = { 
+        label: selectedOption.label,
+        value: selectedOption.value
+      };
     },
 
     /**
@@ -170,8 +176,8 @@
         var newOption = document.createElement('option');
         newOption.textContent = option.label;
         // Use the option value, or default to the list index
-        newOption.value = i;
-        newOption.selected = this._isSelected(newOption.textContent, this.selected);
+        newOption.value = option.value;
+        newOption.selected = this._isSelected(newOption.textContent, this.selected.label);
 
         select.appendChild(newOption);
       }
