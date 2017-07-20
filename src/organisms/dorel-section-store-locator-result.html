@@ -24,7 +24,7 @@
       }
     </style>
 
-    <div class="dorel-section-store-locator-result">
+    <div class$="dorel-section-store-locator-result [[ _isVip(store.is_vip) ]]">
       <template
         is="dom-if"
         if="[[ !store.address ]]">
@@ -105,6 +105,18 @@
           }
         }
       },
+
+      /**
+       * @name _isVip
+       * @description checks to see if the retailer is a vip store.
+       * if it is it will return a string 'vip'
+       *
+       * @param - vip - Boolean - is_vip from api response
+       * @returns 'vip' - String
+       */
+      _isVip: function (vip) {
+        return (typeof vip !== 'undefined' && vip) ? 'vip' : '';
+      }
     });
   </script>
 </dom-module>
