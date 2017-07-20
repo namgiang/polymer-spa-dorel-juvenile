@@ -1,17 +1,113 @@
 <dom-module id="dorel-responsive-image">
   <template>
-    <style></style>
+    <style>
+      /*
+       TODO: Add the styling for wide-screen and full-screen images, and for each breakpoint
+      */
 
+      /* TODO: Remove this later. Basic styling for debug purposes */
+      iron-image {
+        float: left;
+        width: 15em;
+        height: 15em;
+        clear: both;
+        display: block;
+      }
+
+      h2 {
+        @apply(--theme-typography-4);
+        margin-top: 24px;
+        margin-bottom: 24px;
+        float: left;
+      }
+
+    </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <section class="responsive-image"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-
+    <h2>[[ currentImageDerivative ]]</h2>
+    <!-- TODO: Add the breakpoints here -->
+    <section image-type$="[[ imageType ]]">
+      <iron-image sizing="cover"
+                  fade="true"
+                  preload
+                  src$="[[ currentImageSource ]]">
+      </iron-image>
     </section>
   </template>
   <script>
     Polymer({
       is: 'dorel-responsive-image',
-    });
+      observers: [
+        '_breakpointsChanged(breakpoints.*)'
+      ],
+      properties: {
+        /**
+         * @attribute
+         * @name imageSources
+         * @description a dictionary containing the image sources for each derivative
+         */
+        imageSources: {
+          type: Object,
+          // TODO: This should be retrieved from Bynder. Currently using some placeholders for testing purposes.
+          value: {
+            'small-portrait': '../../assets/images/derivatives/derivative-portrait-small.jpg',
+            'small-landscape': '../../assets/images/derivatives/derivative-landscape-small.jpg',
+            'large-portrait': '../../assets/images/derivatives/derivative-portrait-retina.jpg',
+            'large-landscape': '../../assets/images/derivatives/derivative-landscape-retina.jpg',
+          }
+        },
+        /**
+         * @attribute
+         * @name currentImageDerivative
+         * @description a string containing the source of the currently shown image
+         */
+        currentImageSource: {
+          type: String,
+        },
+        /**
+         * @attribute
+         * @name currentImageDerivative
+         * @description a string containing the label of the currently shown image derivative
+         */
+        currentImageDerivative: {
+          type: String,
+        },
+        /**
+         * @attribute
+         * @name breakpoints
+         * @description Breakpoints for devices and screen orientations, set by dorel-media-query
+         */
+        breakpoints: {
+          type: Object,
+        },
+        /* TODO: We will support these in the styling */
+        /**
+         * @attribute
+         * @name imageType
+         * @description Image types, defaults to wide-screen and can be set to full-screen
+         */
+        imageType: {
+          type: String,
+          value: 'wide-screen'
+        }
+      },
+      /**
+       * @name _breakpointsChanged
+       * @description Observes the breakpoints, determines the screen size and orientation,
+       * and changes the shown image accordingly
+       */
+      _breakpointsChanged: function () {
+        // First determine the orientation of the device
+        var orientationLabel = (this.breakpoints.portrait) ? 'portrait' : 'landscape';
+        // Next, retrieve the right breakpoint according to the orientation
+        var orientationBreakpoint = (orientationLabel === 'portrait') ? this.breakpoints.portraitLargeUp : this.breakpoints.desktopSmallUp
+        // Check the breakpoint to distinguish between large and small devices.
+        var sizeLabel = orientationBreakpoint ? 'large' : 'small';
 
+        // Now we can create the derivative name
+        this.currentImageDerivative = sizeLabel + '-' + orientationLabel;
+        // And retrieve its source
+        this.currentImageSource = this.imageSources[this.currentImageDerivative];
+      },
+    });
   </script>
 </dom-module>
