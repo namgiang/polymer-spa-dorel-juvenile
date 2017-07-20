@@ -1,0 +1,185 @@
+<dom-module id="dorel-wp-collect-pages">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]"
+      handle-as="json"
+      on-response="_pagesLoaded"></iron-ajax>
+
+    <iron-ajax
+      id="products"
+      url=""
+      handle-as="json"
+      on-response="_productsLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-pages',
+
+      properties: {
+        /**
+         * @name endPoint
+         * @description the endpoint or url of the api
+         */
+        endPoint: {
+          type: String
+        },
+
+        /**
+         * @name collect
+         * @description this array will hold all the pages collected from the
+         * async requests (pages, products, posts)
+         */
+        collect: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * @name perPage
+         * @description this variable indicates how many pages are retrieved
+         * per request
+         */
+        perPage: {
+          type: Number,
+          value: 100
+        }
+      },
+
+      observers: [
+        '_initPages(globals.Dorel.wpUrl)'
+      ],
+
+      /**
+       * @name _initPages
+       * @description Observer function which defines the endpoint when it's available as a global variable
+       */
+      _initPages: function(wpUrl) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+        this.endPoint = this.globals.Dorel.wpUrl + '/wp/v2/pages?per_page=' + this.perPage;
+      },
+
+      /**
+       * @name _pagesLoaded
+       * @description process the retrieved pages
+       */
+      _pagesLoaded: function(data) {
+        var self = this;
+        var productsEl = self.$.products;
+        var pages = data.detail.response;
+
+        if (!pages.length) return;
+
+        // iterate over all pages items, alter its template
+        for (var i = 0, len = pages.length; i < len; i++) {
+
+          // alter the template, strip 'page-' prefix
+          var template = pages[i].template.slice(0, -4);
+          var pageName = template.replace('page-','');
+
+          // set pageObjects template property
+          pages[i].template = pageName;
+        }
+
+        // extend the collect pages object with the new page
+        self.collect = self.collect.concat(pages);
+
+        // define url for retrieving products
+        productsEl.url = this.globals.Dorel.wpUrl + '/wp/v2/products';
+
+        // do the products call
+        productsEl.generateRequest();
+      },
+
+      /**
+       * @name _productsLoaded
+       * @description process the retrieved products
+       */
+      _productsLoaded: function(data) {
+        var self = this;
+        var productsArr = data.detail.response;
+
+        // if we have products we need to add them
+        if (productsArr.length) {
+
+          // create upper level products
+          var productsObject = {
+            slug: 'products',
+            template: 'products',
+            title: {
+              rendered: 'products'
+            },
+            products: []
+          };
+
+          // iterate over all products items, alter its title and set the right url
+          for (var i = 0, len = productsArr.length; i < len; i++) {
+            /**
+             * Assign a template to this taxonomy this is used by
+             * the template switcher (dorel-template.html)
+             */
+            productsArr[i].template = 'product-detail';
+
+            /**
+             * We will alter the acf object to comply to page-builder
+             */
+            var acfObj = {
+              meta_description: productsArr[i].acf.meta_description || '',
+              meta_title: productsArr[i].acf.meta_title || '',
+              page_builder: []
+            };
+
+            // run throught the normal response acf
+            for (var acfKey in productsArr[i].acf.product_detail_builder[0]) {
+              /**
+               * @todo: refactor!
+               * For duplicated components we need to suffix them by a number
+               * when placing them in the page_builder we need to strip this number
+               * because we delegate them to the page builder element
+               */
+              // var keyArr = acfKey.split('_');
+              // var hasNumber = !isNaN(Number(keyArr[keyArr.length - 1]));
+
+              // grab all inner values of the acfType
+              var acfLayout = (productsArr[i].acf.product_detail_builder[0][acfKey]) ?
+                productsArr[i].acf.product_detail_builder[0][acfKey][0] : '';
+
+              // set the new acf_fc_layout variable to the key
+              acfLayout.acf_fc_layout = acfKey;
+
+              // place the new acf_fc_layout in the page_builder array
+              acfObj.page_builder = acfObj.page_builder.concat(acfLayout);
+            }
+
+            // replace the old acf object with the new formed acf
+            productsArr[i].acf = acfObj;
+          }
+        }
+
+        // extend the collect pages with the new product page
+        productsObject.products = productsObject.products.concat(productsArr);
+        self.collect = self.collect.concat(productsObject);
+
+        // set the new collect obj
+        Polymer.globalsManager.set('Dorel.collect.pages', self.collect);
+      },
+
+      /**
+       * @name _hasProps
+       * @description check if the observed data model has properties
+       */
+      _hasProps: function(dataObj) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasProps = false;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dataObj) {
+          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+        }
+
+        return hasProps;
+      }
+    });
+  </script>
+</dom-module>

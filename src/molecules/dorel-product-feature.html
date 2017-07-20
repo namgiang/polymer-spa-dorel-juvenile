@@ -1,0 +1,122 @@
+<dom-module id="dorel-product-feature">
+  <template>
+    <style>
+      :host {
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+
+      .feature {
+        margin-top: 3em;
+      }
+
+      .feature-image {
+        width: 8em;
+        height: 8.75em;
+        float: left;
+        margin: auto;
+        display: block;
+      }
+
+      .feature-title {
+        @apply(--theme-typography-5);
+        margin-top: 0;
+        float: left;
+        width: 100%;
+      }
+
+      .feature-description {
+        float: left;
+      }
+
+      .feature-content {
+        width: calc(100% - 8em);
+        padding: 0 0 0 1em;
+        box-sizing: border-box;
+        float: left;
+      }
+
+      [tablet-medium-up] .feature-image {
+        width: 16em;
+        height: 17.5em;
+        float: none;
+      }
+
+      [tablet-medium-up] .feature-content {
+        width: auto;
+        padding: .75em;
+        float: none;
+      }
+
+      [tablet-medium-up] .feature-title {
+        @apply(--theme-typography-4);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="feature">
+        <div class="feature-wrapper">
+          <template
+            is="dom-if"
+            if="[[ _hasValue(featureData.image) ]]">
+            <iron-image class="feature-image"
+                        sizing="contain"
+                        fade="true"
+                        preload
+                        src$="[[ featureData.image ]]">
+            </iron-image>
+          </template>
+          <div class="feature-content">
+            <template
+              is="dom-if"
+              if="[[ _hasValue(featureData.title) ]]">
+              <h3 class="feature-title">[[ featureData.title ]]</h3>
+            </template>
+            <template
+              is="dom-if"
+              if="[[ _hasValue(featureData.description) ]]">
+              <div class="feature-description">
+                <dorel-safe-html html="[[ featureData.description ]]"></dorel-safe-html>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-product-feature',
+
+      properties: {
+        /**
+         * @attribute
+         * @name featureData
+         * @description data retrieved from ACF/Wordpress to build up this page
+         */
+        featureData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      },
+    });
+
+  </script>
+
+</dom-module>

@@ -1,0 +1,253 @@
+<link rel="import" href="../molecules/dorel-hero-video.html">
+<dom-module id="dorel-section-hero-header">
+  <template>
+    <style>
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      .hero-header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+
+      .title {
+        @apply(--theme-typography-8);
+        color: var(--theme-color-white);
+        font-size: var(--theme-scale-6);
+        margin: 0;
+        text-shadow: var(--theme-text-shadow);
+        max-width: 800px;
+      }
+
+      .subtitle {
+        @apply(--theme-typography-6);
+        margin-top: .375em;
+        color: var(--theme-color-white);
+        font-weight: var(--theme-font-weight-light);
+        text-shadow: var(--theme-text-shadow);
+      }
+
+      .image {
+        width: 100%;
+        display: block;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 40.5em;
+      }
+
+      .content-wrapper {
+        @apply(--max-width-container);
+        padding: var(--theme-gutter);
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+      }
+
+      .content {
+        @apply(--theme-grid-column);
+        position: absolute;
+        top: 60%;
+        right: 0;
+        text-align: right;
+        padding: 0 1.5em;
+
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        float: right;
+        margin-top: 1.5em;
+      }
+
+      [screen-large] .image {
+        height: 80vh;
+        min-height: 25.5em;
+      }
+
+      [mobile-medium] .content {
+        bottom: 3em;
+      }
+
+      [mobile-medium] dorel-cta {
+        margin-top: 0;
+      }
+
+      [mobile-medium] .image {
+        height: 25.5em;
+      }
+
+      [mobile-medium] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
+      }
+
+      [mobile-small] .title {
+        @apply(--theme-typography-5);
+        margin-top: 0;
+      }
+
+      [mobile-medium] .subtitle {
+        @apply(--theme-typography-5);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+      }
+
+      [mobile-small] .subtitle {
+        @apply(--theme-typography-3);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+      }
+
+      [mobile-medium] .content-wrapper, [mobile-small] .content-wrapper {
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+        position: absolute;
+        top: 0;
+
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-end-justified);
+      }
+
+      [mobile-small] {
+        @apply(--layout-vertical);
+      }
+
+      [mobile-small] .content, [mobile-medium] .content {
+        position: static;
+        padding: 0;
+        top: initial;
+        flex: initial;
+        margin: 0;
+        bottom: initial;
+        right: initial;
+        -ms-flex: auto;
+        -webkit-box-flex: auto;
+        flex: auto;
+      }
+
+      [mobile-small] .image {
+        height: 13.5em;
+      }
+
+      [mobile-small] dorel-cta, [mobile-medium] dorel-cta {
+        position: absolute;
+        right: .875em;
+        bottom: -1.5em;
+      }
+
+      iron-image {
+        background-color: var(--theme-brand-color-1);
+      }
+
+
+    </style>
+
+    <!-- TODO: Refactor to dorel-media-query in DIO-1242 -->
+    <!-- media queries -->
+    <iron-media-query query="(max-width : 479px)"
+                      query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
+                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 767px)"
+                      query-matches="{{ screenLarge }}"></iron-media-query>
+    <section class="hero-header"
+             mobile-small$="{{ mobileSmall }}"
+             mobile-medium$="{{ mobileMedium }}"
+             screen-large$="{{ screenLarge }}">
+
+      <!-- Show video on larger screens -->
+      <template is="dom-if" if="{{ screenLarge }}">
+        <!-- Show video in header if there is a video -->
+        <template is="dom-if" if="[[ heroHeaderData.video_id ]]">
+          <dorel-hero-video video-id="[[ heroHeaderData.video_id ]]"
+                            thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
+        </template>
+
+        <!-- Show image in headere if there is no video -->
+        <template is="dom-if" if="[[ !heroHeaderData.video_id ]]">
+          <iron-image class="image"
+                      sizing="cover"
+                      fade="true"
+                      preload
+                      src$="[[ heroHeaderData.background_image ]]"></iron-image>
+        </template>
+      </template>
+      <!-- Don't show video on smaller screens, just the image -->
+      <template is="dom-if" if="{{ !screenLarge }}">
+        <iron-image class="image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    src$="[[ heroHeaderData.background_image ]]"></iron-image>
+      </template>
+      <div class="content-wrapper">
+        <div class="content">
+          <header>
+            <template is="dom-if" if="{{ _hasValue(heroHeaderData.title) }}">
+              <h3 class="title">[[ heroHeaderData.title ]]</h3>
+            </template>
+
+            <template is="dom-if" if="{{ _hasValue(heroHeaderData.sub_title) }}">
+              <p class="subtitle">
+                [[ heroHeaderData.sub_title ]]
+              </p>
+            </template>
+          </header>
+
+          <!--<template
+            is="dom-if"
+            if="[[ heroHeaderData.cta_toggle ]]">
+            <dorel-cta
+              title="[[ heroHeaderData.cta_text ]]"
+              icon="dorel-icons:play-circle-outline"
+              type="primary"
+              link="[[ heroHeaderData.cta_href ]]"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-cta-index="0">
+              [[ heroHeaderData.cta_text ]]
+            </dorel-cta>
+          </template> -->
+        </div>
+      </div>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-hero-header',
+
+      properties: {
+        /**
+         * @attribute
+         * @name heroHeaderData
+         * @description all data defined by ACF/Wordpress to build this component
+         */
+        heroHeaderData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      },
+      /**
+       * @name _hasValue
+       * @description checks to see if a value has been set
+       *
+       * @returns True when val has a value
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
+    });
+  </script>
+</dom-module>

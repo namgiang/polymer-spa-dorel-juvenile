@@ -1,0 +1,125 @@
+<dom-module id="dorel-section-category-header">
+  <template>
+    <style>
+      :host {
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+
+      .title {
+        @apply(--theme-typography-6);
+        color: var(--theme-color-white);
+        margin: 0;
+        text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .subtitle {
+        @apply(--theme-typography-4);
+        color: var(--theme-color-white);
+        font-weight: var(--theme-font-weight-light);
+        text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.5);
+        margin-top: 0;
+      }
+
+      .image {
+        width: 100%;
+        display: block;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 15em;
+      }
+
+      .header-wrapper {
+        border-radius: var(--theme-border-radius-3);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .content-wrapper {
+        position: absolute;
+        padding: 1.5em;
+        left: 0;
+        bottom: 0;
+      }
+
+      /* Responsive Behaviour */
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-8);
+        margin: 0;
+      }
+
+      [tablet-medium-up] .subtitle {
+        @apply(--theme-typography-6);
+        margin-top: .375em;
+        font-weight: var(--theme-font-weight-light);
+      }
+
+      [tablet-medium-up] .content-wrapper {
+        padding: 0;
+        left: 2em;
+        bottom: 2em;
+
+      }
+
+      [tablet-medium-up] .image {
+        height: 25.5em;
+      }
+
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="category-header" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="header-wrapper">
+        <iron-image class="image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    src$="[[ categoryHeaderData.background_image ]]"></iron-image>
+        <div class="content-wrapper">
+          <div class="content">
+            <template is="dom-if" if="{{ _hasValue(categoryHeaderData.title) }}">
+              <h3 class="title">[[ categoryHeaderData.title ]]</h3>
+            </template>
+
+            <template is="dom-if" if="{{ _hasValue(categoryHeaderData.sub_title) }}">
+              <h4 class="subtitle">[[ categoryHeaderData.sub_title ]]</h4>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-category-header',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name categoryHeaderData
+         * @description all data defined by ACF/Wordpress to build this component
+         */
+        categoryHeaderData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
+    });
+  </script>
+</dom-module>

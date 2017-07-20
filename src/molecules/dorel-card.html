@@ -1,0 +1,148 @@
+<link rel="import" href="../atoms/dorel-cta.html">
+
+<dom-module id="dorel-card">
+  <template>
+    <style include="iron-flex">
+      :host {
+        @apply(--layout-horizontal);
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+
+      .card {
+        background-color: var(--theme-color-white);
+        border-radius: var(--theme-border-radius-1);
+        float: left;
+        margin-top: 1.5em;
+        overflow: hidden;
+        flex: 1;
+        -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+      }
+
+      .description {
+        @apply(--theme-typography-2);
+        float: left;
+        width: 100%;
+      }
+
+      .card-content {
+        padding: 0 1.5em 1.5em 1.5em;
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      dorel-cta {
+        float: left;
+      }
+
+      .card-image {
+        width: 100%;
+        float: left;
+        height: 12em;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-6);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div class="card" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <!-- cardImage -->
+      <template
+        is="dom-if"
+        if="[[ _hasValue(cardData.card_image) ]]">
+        <iron-image class="card-image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    src$="[[ cardData.card_image ]]">
+        </iron-image>
+      </template>
+      <!--// cardImage -->
+
+      <div class="card-content">
+        <!-- cardTitle -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.card_title) ]]">
+          <h3 class="title">[[ cardData.card_title ]]</h3>
+        </template>
+        <!--// cardTitle -->
+
+        <!-- cardContent -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.card_text) ]]">
+          <p class="description">
+            <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+          </p>
+        </template>
+        <!--// cardContent -->
+
+        <!-- ctaToggle -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.cta_toggle) ]]">
+          <dorel-cta
+            type="primary"
+            title="[[ cardData.cta_text ]]"
+            link="[[ cardData.cta_link ]]"
+            link-target="[[ cardData.cta_link_target ]]"
+            size="small"
+            icon="dorel-icons:chevron-right"
+            gtm-parent="[[ gtmParent ]]"
+            gtm-parent-index="[[ gtmParentIndex ]]"
+            gtm-child="[[ gtmChild ]]"
+            gtm-child-index="[[ gtmChildIndex ]]"
+            gtm-cta-index="0">
+            [[ cardData.cta_text ]]
+          </dorel-cta>
+        </template>
+        <!--// ctaToggle -->
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-card',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name cardData
+         * @description data coming from ACF/Wordpress needed to build up this component
+         */
+        cardData: {
+          type: Object
+        }
+
+      },
+
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      _hasValue: function (val) {
+        return (val !== '' && typeof val !== 'undefined' && val !== null);
+      }
+    });
+
+  </script>
+
+</dom-module>

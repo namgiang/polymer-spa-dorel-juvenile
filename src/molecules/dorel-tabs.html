@@ -1,0 +1,30 @@
+<link rel="import" href="../atoms/dorel-tabs-overlay.html">
+
+<dom-module id="dorel-tabs">
+  <template strip-whitespace>
+    <style></style>
+    <div id="container">
+      <dorel-tabs-overlay id="overlay"></dorel-tabs-overlay>
+      <content></content>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-tabs',
+
+      behaviors: [
+        Polymer.IronSelectableBehavior
+      ],
+
+      observers: [
+        '_onSelectedItemChanged(selectedItem)'
+      ],
+
+      _onSelectedItemChanged: function(selectedItem) {
+        if (selectedItem === undefined && this.selected) return;
+
+        this.$.overlay.target = selectedItem;
+      },
+    });
+  </script>
+</dom-module>

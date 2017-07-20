@@ -1,0 +1,183 @@
+<link rel="import" href="../molecules/dorel-category-listing-item.html">
+
+<dom-module id="dorel-category-listing">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-container);
+        width: 100%;
+        margin: auto;
+        float: none;
+        display: block;
+      }
+
+      .category-listing {
+        margin-left: 0;
+        box-sizing: border-box;
+        padding: 0 var(--theme-gutter-mobile) 1.5em var(--theme-gutter-mobile);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        @apply(--theme-grid-row-margins);
+      }
+
+      dorel-category-listing-item {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      dorel-cta {
+        width: auto;
+        margin: auto;
+      }
+
+      /* Responsive behaviour */
+      [tablet-medium-up] dorel-category-listing-item, [tablet-small] dorel-category-listing-item {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+
+      }
+
+      [desktop-small-up] dorel-category-listing-item {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+      }
+
+      [desktop-small-up] .category-listing {
+        margin-left: calc(25% - .5em);
+      }
+
+      [tablet-medium-up] .category-listing {
+        padding: 0 var(--theme-gutter) 1.5em var(--theme-gutter);
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div tablet-small$="{{ breakpoints.tabletSmall }}"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+
+      <section class="category-listing layout horizontal center center-justified wrap">
+        <div class="row narrow-row">
+          <template
+            is="dom-repeat"
+            items="[[ productsData ]]"
+            as="product">
+            <dorel-category-listing-item
+              colors-data="[[ _retrieveColors(product) ]]"
+              link-url="[[ _retrieveLinkUrl(product) ]]"
+              product-name="[[ _retrieveProductName(product) ]]"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-child="dorel-category-listing-item"
+              gtm-child-index="[[ index ]]"></dorel-category-listing-item>
+          </template>
+        </div>
+      </section>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-listing',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name productsData
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
+         */
+        productsData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name matchSection
+       * @description this function matches an acf layout to a given layout name (matchLayout)
+       *
+       * @param acfLayouts - Array - array of page_builder layouts
+       * @param matchLayout - String - the layout name to match to
+       * @return Object - matched layout
+       */
+      matchSection: function (acfLayouts, matchLayout) {
+        return acfLayouts.find(function (layout) {
+          return layout.acf_fc_layout === matchLayout;
+        });
+      },
+
+      /**
+       * @name _retrieveImageUrl
+       * @description retrieve the imageUrl for the product
+       *
+       * @param product - Object - the current product
+       * @return String - image url
+       */
+      _retrieveImageUrl: function (product) {
+        if (!product.acf.page_builder.length) return;
+
+        var acfSection = this.matchSection(product.acf.page_builder, 'section_product_showcase');
+
+        return acfSection.gallery[0].url;
+      },
+
+      /**
+       * @name _retrieveColors
+       * @description retrieves the colors array for the product
+       *
+       * @param product - Object - the current product
+       * @return Array - colors
+       */
+      _retrieveColors: function (product) {
+        if (!product.acf.page_builder.length) return;
+
+        var acfSection = this.matchSection(product.acf.page_builder, 'section_product_showcase');
+
+        return acfSection.colors;
+      },
+
+      /**
+       * @name _retrieveProductName
+       * @description retrieves the product name
+       *
+       * @param product - Object - the current product
+       * @return String - product name
+       */
+      _retrieveProductName: function (product) {
+        if (!product.acf.page_builder.length) return;
+
+        var acfSection = this.matchSection(product.acf.page_builder, 'section_product_showcase');
+
+        return acfSection.title;
+      },
+
+      /**
+       * @name _retrieveLinkUrl
+       * @description retrieves the product link url
+       *
+       * @param product - Object - the current product
+       * @return String - product link url
+       */
+      _retrieveLinkUrl: function (product) {
+        return product.link;
+      }
+    });
+  </script>
+
+</dom-module>

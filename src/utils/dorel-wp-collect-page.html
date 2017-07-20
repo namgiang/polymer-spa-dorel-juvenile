@@ -1,0 +1,107 @@
+<dom-module id="dorel-wp-collect-page">
+  <template>
+    <iron-ajax
+      id="page"
+      url="" 
+      handle-as="json"
+      on-response="_pageLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-page',
+      
+      properties: {
+        /**
+         * @name endPoint
+         * @description the endpoint or url of the api
+         */
+        endPoint: {
+          type: String
+        },
+
+        /**
+         * `pageSlug` the slug of the page (last segment of the url), as
+         * defined by the dorel-app routing
+         */
+        pageSlug: {
+          type: String
+        },
+
+      },
+
+      observers: [
+        '_retrievePage(pageSlug, globals.Dorel.wpUrl)'
+      ],
+
+      _retrievePage: function(pageSlug, wpUrl) {
+        if (typeof pageSlug === 'undefined' || pageSlug === ''
+          || typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+
+        // switch(newVal) {
+        //   // home is eagerly loaded
+        //   case 'products':
+        //     newVal = this._getLastUrlSegment(document.URL);
+        //   break;
+
+        //   default:
+        //     newVal = newVal;
+        //   break;
+        // }
+
+
+        var pageEl = this.$.page;
+        pageEl.url = this.globals.Dorel.wpUrl + '/wp/v2/pages?slug=' + pageSlug;
+
+         // do the products call
+        pageEl.generateRequest();
+      },
+
+      _pageLoaded: function(data) {
+
+        var response = data.detail.response;
+        var page = response[0];
+
+        // alter the template, strip 'page-' prefix
+        var template = page.template.slice(0, -4);
+        var pageName = template.replace('page-','');
+
+        // set pageObjects template property
+        page.template = pageName;
+
+        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
+        Polymer.globalsManager.set('Dorel.current.page', page);
+
+        // import the footer after the currentPage is loaded --- Currently loaded in collect-pages
+        // this.importHref(this.resolveUrl('../organisms/dorel-footer.html'), null, null, true);
+      },
+
+      /**
+       * @name _getLastUrlSegment
+       * @description get the last segment of the url (deprecated)
+       */
+      _getLastUrlSegment: function(url) {
+        var urlArr = document.URL.split('/');
+        var cleanedArr = urlArr.clean('');
+
+        newVal = urlArr[urlArr.length-1];
+      },
+
+      /**
+       * @name _hasProps
+       * @description check if the observed data model has properties
+       */
+      _hasProps: function(dataObj) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasProps = false;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dataObj) {
+          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+        }
+
+        return hasProps;
+      }
+    });
+  </script>
+</dom-module>

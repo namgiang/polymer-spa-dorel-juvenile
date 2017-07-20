@@ -1,0 +1,264 @@
+<dom-module id="dorel-section-heroes">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-host);
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+
+      .section-heroes {
+        @apply(--max-width-container);
+        padding: 0 var(--theme-gutter-mobile);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .section-heroes-wrap {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        position: relative;
+        max-width: 1300px;
+        float: none;
+        margin: auto;
+      }
+
+      .section-heroes-wrap:first-child .section-heroes-image-wrapper {
+        margin-top: 3em;
+      }
+
+      .section-heroes-image-wrapper {
+        @apply(--theme-grid-column);
+        float: left;
+        width: 100%;
+        margin-top: 1.5em;
+        padding: 0;
+        margin-left: 0 !important;
+        margin-right: 0;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      .section-heroes-image {
+        float: left;
+        width: 100%;
+        height: 18em;
+        border-radius: 2em;
+        /*height: 100%; */
+        display: block;
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+      }
+
+      .section-heroes-image-overlay {
+        position: absolute;
+        right: 0;
+        width: 10em;
+        height: 28.5em;
+        width: calc(var(--theme-column-width) * 4);
+        top: 10em;
+        filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=12, OffY=12, Color='#444') ";
+        filter: url(#drop-shadow);
+        -webkit-filter: drop-shadow(-7px 12px 7px rgba(0, 0, 0, .15));
+        filter: drop-shadow(-7px 12px 7px rgba(0, 0, 0, .15));
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        margin-top: 0;
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-cta {
+        float: left;
+      }
+
+      .description {
+        @apply(--theme-typography-2);
+        max-width: 28em;
+        margin-top: 0;
+      }
+
+      .description-column {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        padding: 0 .75em;
+        margin-top: 0;
+      }
+
+      .section-heroes-wrap:nth-child(even) .section-heroes-image-wrapper {
+        margin-right: 0;
+        margin-left: calc(var(--theme-column-width) * 2);
+      }
+
+      .section-heroes-wrap:nth-child(even) .section-heroes-image-overlay {
+        right: initial;
+        left: 0;
+      }
+
+      .section-heroes-wrap {
+        margin-bottom: 1.5em;
+      }
+
+      .image-parent {
+        width: 100%;
+        height: 24em;
+        overflow: hidden;
+        border-top-right-radius: 2em;
+        border-bottom-right-radius: 1em;
+        border-top-left-radius: 2.5em;
+        margin: 0 auto;
+      }
+
+      .image-parent > .image-box {
+        width: 100%;
+        height: 100%;
+        margin: -3em 0 0 0;
+        -webkit-transform: skewY(-5deg);
+        -moz-transform: skewY(-5deg);
+        -o-transform: skewY(-5deg);
+        overflow: hidden;
+        position: relative;
+        border-radius: 2.5em;
+      }
+
+      .image-parent > .image-box > .section-heroes-image {
+        width: 100%;
+        height: 100%;
+      }
+
+      .section-heroes-wrap:nth-child(2) .image-parent > .image-box {
+        -webkit-transform: skewY(5deg);
+        -moz-transform: skewY(5deg);
+        -o-transform: skewY(5deg);
+      }
+
+      .section-heroes-wrap:nth-child(2) .image-parent {
+        border-top-left-radius: 2em;
+        border-bottom-left-radius: 1em;
+        border-top-right-radius: 2.5em;
+      }
+
+      /* Responsive Behaviour */
+      .section-heroes[tablet-medium-up] {
+        padding: 0 var(--theme-gutter) var(--theme-gutter) var(--theme-gutter);
+      }
+
+      [desktop-small-up] .section-heroes-image-wrapper {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 10);
+        flex-basis: calc(var(--theme-column-width) * 10);
+        max-width: calc(var(--theme-column-width) * 10);
+        margin-right: calc(var(--theme-column-width) * 2);
+      }
+
+      [tablet-medium-up] .section-heroes-image {
+        height: 28.5em;
+      }
+
+      [tablet-medium-up] .description-column {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      [desktop-small-up] .description-column {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] .description {
+        margin-top: 1.5em;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section-heroes"
+             desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+
+      <template
+        is="dom-repeat"
+        items="[[ heroesData.heroes ]]"
+        as="hero">
+        <div class="section-heroes-wrap layout horizontal center center-justified wrap">
+          <div class="section-heroes-image-wrapper">
+            <!-- background-image -->
+            <div class="image-parent">
+              <div class="image-box">
+                <iron-image class="section-heroes-image"
+                            sizing="cover"
+                            fade="true"
+                            preload
+                            src$="[[ hero.background_image ]]">
+                </iron-image>
+              </div>
+            </div>
+          </div>
+          <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
+            <!-- overlay image -->
+            <iron-image class="section-heroes-image-overlay"
+                        sizing="contain"
+                        fade="true"
+                        preload
+                        src$="[[ hero.overlay_image ]]">
+            </iron-image>
+          </template>
+
+          <div class="description-column">
+            <h3 class="title">[[ hero.title ]]</h3>
+            <p class="description">[[ hero.sub_title ]]</p>
+            <template
+              is="dom-if"
+              if="[[ hero.cta_toggle ]]">
+              <dorel-cta
+                title="[[ hero.cta_text ]]"
+                type="primary"
+                link="[[ hero.cta_href ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="dorel-section-hero"
+                gtm-child-index="[[ index ]]"
+                gtm-cta-index="0">
+                [[ hero.cta_text ]]
+              </dorel-cta>
+            </template>
+          </div>
+        </div>
+      </template>
+    </section>
+  </template>
+  <script>
+
+    Polymer({
+      is: 'dorel-section-heroes',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name heroesData
+         * @description all info from the page-builder needed for the hero component
+         */
+        heroesData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+    });
+
+  </script>
+
+</dom-module>

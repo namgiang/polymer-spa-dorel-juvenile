@@ -1,0 +1,449 @@
+<link rel="import" href="../atoms/dorel-color-switcher.html">
+<link rel="import" href="../molecules/dorel-expandable-content.html">
+
+<dom-module id="dorel-section-product-showcase">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-host);
+        perspective: 1200px;
+      }
+
+      #rotation-element {
+        transform-style: preserve-3d;
+      }
+
+      .section-product-showcase {
+        @apply(--max-width-container);
+        padding: 1.5em var(--theme-gutter-mobile) 1.5em var(--theme-gutter-mobile);
+        width: 100%;
+        float: left;
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+        @apply(--theme-grid-row-mobile-margins);
+      }
+
+      .showcase-gallery-view {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        margin: auto;
+      }
+
+      .showcase-description {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        margin-top: 1.5em;
+      }
+
+      .showcase-description {
+        float: left;
+      }
+
+      .showcase-title {
+        @apply(--theme-typography-8);
+        color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
+      }
+
+      .showcase-product-specs {
+        @apply(--theme-typography-1);
+        margin-top: 0;
+        list-style: none;
+        float: left;
+        padding: 0;
+        width: initial;
+      }
+
+      .showcase-product-specs li {
+        float: left;
+        margin-right: 1em;
+      }
+
+      .actions, .color-mobile-container {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+
+      .actions dorel-cta {
+        margin: 0 .5em 0 0;
+      }
+
+      .actions dorel-cta:first-child {
+        margin-left: 0;
+      }
+
+      .actions dorel-cta:last-child {
+        margin-right: 0;
+      }
+
+      .showcase-gallery-view .image {
+        width: 100%;
+        height: 24em;
+        margin: 1.5em auto 0 auto;
+      }
+
+      /* Responsive Behaviour */
+      [tablet-medium-up] .showcase-gallery-view {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      /* TODO: not sure if we actually need this */
+      [tablet-medium-up] .actions, [tablet-medium-up] .color-mobile-container {
+
+      }
+
+      [tablet-medium-up] .showcase-gallery-view .image {
+        margin: auto;
+        display: block;
+        width: 31em;
+        height: 34.5em;
+      }
+
+      [tablet-medium] .showcase-gallery-view .image {
+        width: 23.25em;
+        height: 26.25em;
+        margin-top: 1.5em;
+      }
+
+      [tablet-medium-up] .showcase-description {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+      }
+
+      .section-product-showcase[tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+      }
+
+      [tablet-medium-up] .actions dorel-cta {
+        margin: 0 1em 0 0;
+        float: left;
+      }
+
+      [tablet-medium-up] .showcase-product-specs {
+        @apply(--theme-typography-2);
+        width: 100%;
+        margin: 1.5em 0 0 0;
+      }
+
+      [tablet-medium-up] .showcase-product-specs li {
+        margin-right: 1.5em;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <template
+      is="dom-if"
+      if="[[ showcaseData ]]">
+      <section class="section-product-showcase layout horizontal center center-justified wrap"
+               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+               tablet-medium$="{{ breakpoints.tabletMedium }}">
+
+        <div class="row">
+          <!-- Mobile Showcase -->
+          <template is="dom-if" if="{{ !breakpoints.tabletMediumUp }}">
+            <!-- Product Specs -->
+            <ul class="showcase-product-specs">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.age_category) ]]">
+                <li>
+                  Age: [[ showcaseData.age_category ]]
+                </li>
+              </template>
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.max_weight) ]]">
+                <li>
+                  Weight: max. [[ showcaseData.max_weight ]] kg.
+                </li>
+              </template>
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.size) ]]">
+                <li>
+                  Size: [[ showcaseData.size ]] cm
+                </li>
+              </template>
+            </ul>
+            <!--// Product Specs -->
+
+            <div class="showcase-gallery-view">
+              <iron-image class="image"
+                          sizing="contain"
+                          fade="true"
+                          preload
+                          src$="{{ currentImage }}"></iron-image>
+            </div>
+
+            <!-- color switcher -->
+            <template
+              is="dom-if"
+              if="[[ showcaseData.colors.length ]]">
+              <div class="color-mobile-container  layout horizontal center center-justified wrap">
+                <dorel-color-switcher
+                  current-image="{{ currentImage }}"
+                  colors-data="[[ showcaseData.colors ]]"
+                  gtm-action="switch-color"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="dorel-color-switcher"
+                  gtm-child-index="0"></dorel-color-switcher>
+              </div>
+            </template>
+            <!--// color switcher -->
+
+            <!-- Actions -->
+            <div class="actions layout horizontal center center-justified wrap">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.accesoires_button) ]]">
+                <dorel-cta
+                  type="link"
+                  title="View Accessories"
+                  on-click="_viewAccessories"
+                  size="small"
+                  icon="dorel-icons:expand-more"
+                  gtm-action="scroll-to-accessories"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  View Accessories
+                </dorel-cta>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+                <dorel-cta
+                  type="primary"
+                  title="Find a Store"
+                  link=""
+                  size="small"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="click"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="1">
+                  Find a Store
+                </dorel-cta>
+              </template>
+            </div>
+            <!--// Actions -->
+          </template>
+          <!--// Mobile Showcase -->
+
+          <!-- Desktop Showcase -->
+          <template is="dom-if" if="{{ breakpoints.tabletMediumUp }}">
+            <div class="showcase-gallery-view" on-track="handleTrack">
+              <iron-image class="image"
+                          id="rotation-element"
+                          sizing="cover"
+                          fade="true"
+                          preload
+                          src$="{{ currentImage }}"></iron-image>
+            </div>
+            <!-- Title, usp's and extra info -->
+            <div class="showcase-description">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.title) ]]">
+                <p class="showcase-title">[[ showcaseData.title ]]</p>
+              </template>
+
+              <ul class="showcase-product-specs">
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.age_category) ]]">
+                  <li>
+                    Age: [[ showcaseData.age_category ]]
+                  </li>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.max_weight) ]]">
+                  <li>
+                    Weight: max. [[ showcaseData.max_weight ]] kg.
+                  </li>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(showcaseData.size) ]]">
+                  <li>
+                    Size: [[ showcaseData.size ]] cm
+                  </li>
+                </template>
+              </ul>
+
+              <!-- expandable text description -->
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.description) ]]">
+                <dorel-expandable-content content="[[ showcaseData.description ]]"></dorel-expandable-content>
+              </template>
+              <!-- expandable text description  -->
+
+              <!-- color switcher -->
+              <template
+                is="dom-if"
+                if="[[ showcaseData.colors.length ]]">
+                <dorel-color-switcher
+                  current-image="{{ currentImage }}"
+                  colors-data="[[ showcaseData.colors ]]"
+                  gtm-action="switch-color"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="dorel-color-switcher"
+                  gtm-child-index="0"></dorel-color-switcher>
+              </template>
+              <!--// color switcher -->
+
+              <div class="actions">
+                <template
+                  is="dom-if"
+                  if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
+                  <dorel-cta
+                    type="link"
+                    title="View Accessories"
+                    link=""
+                    size="small"
+                    on-click="_viewAccessories"
+                    icon="dorel-icons:expand-more"
+                    gtm-action="scroll-to-accessories"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="0">
+                    View Accessories
+                  </dorel-cta>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, showcaseData.store_locator_page) ]]">
+                  <dorel-cta
+                    title="Find a Store"
+                    type="primary"
+                    link="[[ showcaseData.store_locator_page ]]"
+                    size="small"
+                    icon="dorel-icons:chevron-right"
+                    gtm-action="click"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="1">
+                    Find a Store
+                  </dorel-cta>
+                </template>
+              </div>
+            </div>
+          </template>
+          <!--// Desktop Showcase -->
+        </div>
+      </section>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-product-showcase',
+
+      properties: {
+        /**
+         * @attribute
+         * @name accessoryScrollHandler
+         * @description exposes the accessoryScrollHandler to other components
+         */
+        accessoryScrollHandler: {
+          type: Boolean,
+          notify: true
+        },
+
+        /**
+         * @attribute
+         * @name showcaseData
+         * @description the showcase data is defined as an attribute on this
+         * component
+         */
+        showcaseData: {
+          type: Object
+        },
+
+
+        /**
+         * @name currentImage
+         * @description This is the current selected image, the image is
+         * defined by the color switcher
+         */
+        currentImage: {
+          type: String
+        }
+      },
+
+      /**
+       * @name _hasAccessories
+       * @description check if a the accessories are defined
+       * and if the toggle is enabled in WP
+       *
+       * @return Boolean
+       */
+      _hasAccessories: function (val) {
+        var toggle = (typeof val !== 'undefined' && val !== '' && val);
+        var currentPage = Polymer.globalsManager.get('Dorel.current.page');
+
+        var layout = currentPage.acf.page_builder.find(function (layout) {
+          return layout.acf_fc_layout === 'section_product_accessories';
+        });
+
+        return (toggle && layout.accessories.length);
+      },
+
+      /**
+       * @name _hasStoreLocator
+       * @description check if a store-locator page is defined and
+       * if the toggle is enabled in WP
+       *
+       * @return Boolean
+       */
+      _hasStoreLocator: function (toggle, page) {
+        toggle = (typeof toggle !== 'undefined' && toggle !== '' && toggle);
+        page = (typeof page !== 'undefined' && page !== '');
+
+        return (toggle && page);
+      },
+
+      /**
+       * @name _hasValue
+       * @description check if a value is set
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' && val !== '' && val);
+      },
+
+      /**
+       * @name _viewAccessories
+       * @description scroll to the accesory section
+       * */
+      _viewAccessories: function (event) {
+        this.accessoryScrollHandler = !this.accessoryScrollHandler;
+      }
+    });
+  </script>
+</dom-module>

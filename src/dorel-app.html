@@ -1,172 +1,220 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="utils/dorel-global-variables.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/google-tag-manager/google-tag-manager.html">
-<link rel="import" href="../bower_components/wp-collect-pages/wp-collect-page.html">
-<link rel="import" href="../bower_components/wp-collect-menus/wp-collect-menu.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+<!-- used by store locator -->
+<link rel="import" href="atoms/dorel-safe-html.html">
+
+<!-- TODO: These should only be included conditionally, based on the config.js -->
+<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
+<link rel="import" href="themes/theme-dorel-shared-styles.html">
+
+<!-- Header has priority for percieved initial load -->
+<link rel="import" href="organisms/dorel-header.html">
+
+<!-- Since 'home' is the default route, eagerly load it. -->
+<link rel="import" href="templates/dorel-template-home.html">
+
+<!-- Load the breakpoints early as well -->
+<link rel="import" href="atoms/dorel-media-query.html">
+
+<link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
+<link rel="import" href="utils/dorel-wp-collect-pages.html">
+<link rel="import" href="utils/dorel-wp-collect-options.html">
+<link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-wp-collect-categories.html">
+<link rel="import" href="utils/dorel-meta-manager.html">
+<link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
   <template>
     <style>
+      /*
+       * Application wide styling
+       * - Will define standard styling for components
+       */
       :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
-
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        @apply(--theme-typography-2);
+        margin: 0;
+        --primary-color: var(--theme-brand-color-1);
+        color: var(--theme-color-black);
         display: block;
+        min-height: 100vh;
       }
 
-      app-header {
-        color: #fff;
-        background-color: var(--app-primary-color);
-      }
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
-      .drawer-list {
-        margin: 0 20px;
+      :root {
+        /* global input colors */
+        --paper-input-container-underline: {
+          border-bottom: 2px solid var(--theme-brand-color-1);
+        };
+
       }
 
-      .drawer-list a {
-        display: block;
-
-        padding: 0 16px;
-
-        text-decoration: none;
-
-        color: var(--app-secondary-color);
-
-        line-height: 40px;
+      main {
+        min-height: calc(100vh - 155px);
       }
 
-      .drawer-list a.iron-selected {
-        color: black;
-
-        font-weight: bold;
+      iron-pages {
+        margin: 0 auto;
       }
+
     </style>
-    
+
+    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
+    <dorel-wp-collect-menu-locations
+      wp-url="{{ globals.Dorel.wpUrl }}"></dorel-wp-collect-menu-locations>
+
+    <!-- collect all pages from wordpress -->
+    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+
+    <!-- collect the options pages -->
+    <dorel-wp-collect-options
+      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+
+    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
+    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
+
+    <dorel-wp-collect-categories></dorel-wp-collect-categories>
+
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-  
+    <dorel-gtm-events
+      gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
+
+    <dorel-third-party
+      hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
+      hubspot-portal-id="{{ globals.Dorel.collect.options.hubspot_portal_id }}"
+      zendesk-toggle="[[ globals.Dorel.collect.options.zendesk_toggle ]]"
+      zendesk-host="[[ globals.Dorel.collect.options.zendesk_host ]]"></dorel-third-party>
+
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
     <app-route
-        route="{{ route }}"
-        pattern="/:page"
-        data="{{ routeData }}"
-        tail="{{ subroute }}"></app-route>
+      route="{{ route }}"
+      pattern="/:page"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
 
-    <!-- drawer -->
-    <app-drawer-layout fullbleed>
-      <app-drawer>
-        <app-toolbar>Menu</app-toolbar>
+    <dorel-meta-manager
+      brand-name="[[ brandName ]]"
+      id="metaManager"></dorel-meta-manager>
 
-        <!-- retrieve menu items -->
-        <wp-collect-menu
-          wp-url="[[ wpUrl ]]"
-          menu-location="main_menu" 
-          menu-data="{{ menuData }}">
-          <template is="dom-if" if="[[ menuData.length ]]">
-            <iron-selector class="drawer-list" role="navigation"
-              selected="[[ page ]]" 
-              attr-for-selected="name">
+    <dorel-header
+      load-complete="[[ loadComplete ]]"
+      page="[[ page ]]"
+      brand-name="[[ brandName ]]"></dorel-header>
 
-              <template id="menu" is="dom-repeat" items="[[ menuData ]]" as="menuItem">
-                <a href="[[ menuItem.url ]]" name="[[ menuItem.title ]]">
-                  <span>[[ menuItem.title ]]</span>
-                </a>
-              </template>
+    <!-- content pages -->
+    <main id="main" role="main">
 
-            </iron-selector>
-          </template>    
-        </wp-collect-menu>
+      <iron-pages role="main"
+                  selected="[[ currentPage.template ]]"
+                  attr-for-selected="name">
 
-      </app-drawer>
+        <dorel-template-home
+          name="home"
+          template-data="[[ currentPage ]]"></dorel-template-home>
 
-      <!-- main content -->
-      <app-header-layout has-scrolling-region>
-        
-        <!-- content header -->
-        <app-header 
-          condenses 
-          reveals 
-          effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button 
-              icon="menu" 
-              drawer-toggle></paper-icon-button>
-            <div main-title>App Title</div>
-          </app-toolbar>
-        </app-header>
-        
-        <!-- content pages -->
-        <iron-pages role="main" 
-          selected="{{ currentPage.object_id }}" 
-          attr-for-selected="page-id" 
-          fallback-selection="404">
+        <dorel-template-info
+          name="info"
+          template-data="[[ currentPage ]]"></dorel-template-info>
 
-          <template id="pages" 
-            is="dom-repeat" 
-            items="[[ menuData ]]" 
-            as="pageItem">
+        <dorel-template-store-locator
+          name="store-locator"
+          template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
-            <wp-collect-page
-              wp-url="[[ wpUrl ]]"
-              page-id="[[ pageItem.object_id ]]"
-              page-data="{{ index }}">
-                
-              <!-- page content -->
-              <div class="card">
-                <h2>page-id: [[ index.id ]]</h2>
-              </div>  
+        <dorel-template-products
+          name="products"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-products>
 
-            </wp-collect-page>
+        <dorel-template-product-category
+          name="product-category"
+          template-data="[[ currentPage ]]"></dorel-template-product-category>
 
-            <dorel-404 name="404"></dorel-404>
+        <dorel-template-component-guide
+          name="component-guide"
+          brand="{{ brandName }}"
+          available-brands="{{ brandNames }}"
+          route="{{ subroute }}"></dorel-template-component-guide>
 
-          </template>
-        </iron-pages>
+        <dorel-template-404 name="404"></dorel-template-404>
+      </iron-pages>
+    </main>
 
-      </app-header-layout>
-    </app-drawer-layout>
+    <dorel-footer></dorel-footer>
+
+    <dorel-grid-overlay available-brands="{{ brandNames }}"
+                        selected-brand="{{ brandName }}"
+                        page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
   <script>
+    // performance logging
+    window.performance && performance.mark && performance.mark('dorel-app - before register');
+
     Polymer({
       is: 'dorel-app',
 
-      /** 
+      /**
        * @name properties
        * @description all properties this component uses
        */
       properties: {
-        wpUrl: {
-          type: String,
-          value: [((wp-url))]
+
+        /**
+         * @name route
+         * @description defines the current route
+         */
+        route: {
+          type: String
         },
 
+        /**
+         * @name page
+         * @description define the current page
+         */
         page: {
           type: String,
-          observer: '_pageChanged' // when this var changes call this function
-        },
-        
-        menuData: {
-          type: Array
+          notify: true,
+          readOnly: false,
         },
 
+        /**
+         * @name brandName
+         * @description defines the brand
+         */
+        brandName: {
+          type: String,
+          notify: true,
+          readOnly: false,
+        },
+
+        /**
+         * @name brandNames
+         * @description available brand names (from config), used for switching between brands
+         */
+        brandNames: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * @name currentPage
+         * @description defines the currentPage
+         */
         currentPage: {
-          type: Number
+          type: Object
         }
+
       },
 
       /**
@@ -174,52 +222,311 @@
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(routeData.page)',
-        '_setCurrentPage(page, menuData)'
+        '_routePageChanged(route, globals.Dorel.collect.pages)',
+        '_pageChanged(page, currentPage)',
+        '_setCurrentPage(currentPage)',
+        '_brandChanged(brandName)',
       ],
 
-      /** 
-       * @name _routePageChanged
-       * @description set the page to the page var or home if not set
-       */
-      _routePageChanged: function(page) {
-        this.page = page || 'homepage';
+      created: function () {
+        window.performance && performance.mark && performance.mark('dorel-app.created');
+
+        // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
+        Polymer.globalsManager.set('Dorel', {
+          wpUrl: {}, // will be a string later (bug inside globalsManager)
+          dioApiUrl: {},
+          locale: {},
+          collect: {},
+          current: {},
+          events: {},
+          grid: {
+            horizontal: false,
+            vertical: false
+          }
+        });
+
+        // Custom elements polyfill safe way to indicate an element has been upgraded.
+        this.removeAttribute('unresolved');
       },
 
-      /** 
-       * @name _pageChanged
-       * @description when the page variable changes handle stuff
-       */
-      _pageChanged: function(page) {
-        // set the page template url
-        // var resolvedPageUrl = this.resolveUrl('../bower_components/wp-collect-pages/wp-collect-page.html');
+      ready: function () {
 
-        // Load page import on demand. Show 404 page if fails
-        // this.importHref(resolvedPageUrl, null, this._showPage404, true);
+        // Define the wpUrl in the globals (object becomes string)
+        Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
+
+        // Define the custom api in the globals (obj becomes string)
+        Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
+        Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
+
+        this.brandNames = CONFIG.AVAILABLE_BRANDS;
+        this.brandName = this.brandNames[CONFIG.SELECTED_BRAND].label;
       },
 
-      /** 
-       * @name _showPage404
-       * @description sets the page variable to the 404 page
+
+      /**
+       * @observer
+       * @name _brandChanged
+       * @description the brand was changed, triggers a change in shared styles
+       *
+       * @param page - String - the string of the current active brand
        */
-      _showPage404: function() {
-        this.page = '404';
+      _brandChanged: function (brandName) {
+
+        //Removed the current shared style from the dom, if it exists.
+        var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
+        if (currentSharedStyle != undefined) {
+          currentSharedStyle.remove();
+        }
+
+        // Checks the apps config, and sets the according brand theme
+        var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-').toLowerCase();
+        var domModule = document.createElement('style', 'custom-style');
+        domModule.setAttribute('include', brandTheme);
+        domModule.setAttribute('id', 'brand-shared-style');
+        Polymer.dom(this.root).appendChild(domModule);
+        Polymer.updateStyles();
       },
 
       /**
-       * @name _setCurrentPage
-       * @description set the current pageId by matching it with the
-       * current menu item chosen
+       * @observer
+       * @name _routePageChanged
+       * @description on url/route change get the first segment of the url
+       * then set it as the page. With those settings start the setCurrentPage
+       * which will change the iron-pages selected
+       *
+       * @param page - String - the route page string
+       * @param pages - Array - all the retrieved pages from WP
        */
-      _setCurrentPage: function(page, menu) {
-        // if menu array has no items
-        if( !menu.length ) { return; }
+      _routePageChanged: function (page, pages) {
+        // if the route is undefined
+        if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
-        // map the page variable to the item in the menu array and set it 
-        this.currentPage = menu.find(function(item) {
-          return (page === item.title.toLowerCase()) ? item.object_id : false;
+        // get the a clean last segment of the route.path
+        page = page.path.match(/([^\/]*)\/*$/).pop();
+
+        // refer to this for find function
+        var self = this;
+
+        /**
+         * if last segment is undefined or empty string set to home,
+         * all others to segment
+         */
+        this.page = page || 'home';
+
+        // Matches the page to the component guide template
+        if (this.page === 'component-guide') {
+          this.currentPage = {
+            template: 'component-guide'
+          };
+          // break
+          return;
+        }
+
+        /** map the page variable and check if it contains products
+          * if true - match the slug of the product page with the route.path
+          * if false - match the slug of the page with the route.path
+          * return the the item that matches
+        */
+        this.currentPage = pages.find(function (item) {
+          if (item.products) {
+            return item.products.find(function (item) {
+              return item.slug === self.page;
+            });
+          }
+          return item.slug === self.page;
         });
+
+        // when the page cannot be matched, it is always the 404
+        if (typeof this.currentPage === 'undefined') {
+
+          // set the page to 404
+          this.page = '404';
+
+          // set the currentPage to 404
+          this.currentPage = {
+            template: '404'
+          };
+        }
+      },
+
+      /**
+       * @observer
+       * @name _pageChanged
+       * @description when the page variable changes lazyload the page
+       * or retrieve it all the way.
+       * @param page - string - the page we need to transition to
+       * @param currentPage - Object - the previous page
+       */
+      _pageChanged: function (page, currentPage) {
+        if (typeof page === 'undefined' || page === '' ||
+          typeof currentPage === 'undefined' || currentPage === '') return;
+
+        // home route is eagerly loaded
+        if (page === 'home') {
+
+          this._ensureLazyLoaded();
+
+          // other routes are lazy loaded
+        } else {
+          // don't include the home template twice (its loaded eagerly)
+          if (currentPage.template === 'home' ||
+            typeof currentPage.template === 'undefined') return;
+
+          // import the template on demand
+          this.importHref(
+            this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
+            function () {
+              this._ensureLazyLoaded();
+            }, null, false);
+
+        }
+
+      },
+
+      /**
+       * @observer
+       * @name _setCurrentPage
+       * @description set the current page in the globals
+       */
+      _setCurrentPage: function (currentPage) {
+
+        /**
+         * if we are dealing with products we need to match
+         * which product it is
+         */
+        if (currentPage.slug === 'products') {
+
+          // get last segment slug
+          var lastSegment = this._getLastSegment(document.URL);
+
+          // match it with the products
+          currentPage = currentPage.products.find(function (item) {
+            return item.slug === lastSegment;
+          });
+        }
+
+        // set the global currentPage
+        Polymer.globalsManager.set('Dorel.current.page', currentPage);
+
+        // TODO: Maybe create a separate component for meta changes?
+        if (currentPage !== undefined &&
+            currentPage.acf &&
+            currentPage.acf.meta_title &&
+            currentPage.acf.meta_description) {
+          this.$.metaManager.addMetaData({
+            metaTitle: currentPage.acf.meta_title,
+            metaDescription: currentPage.acf.meta_description
+          });
+        }
+
+        // tracking of the pageload
+        this._eventTracking();
+      },
+
+      /**
+       * @name _ensureLazyLoaded
+       * @description if the load is completed we will add the resources
+       * the service worker will kick in after that.
+       */
+      _ensureLazyLoaded: function () {
+        var self = this;
+
+        // scroll up when a page is changed
+        window.scrollTo(0, 0);
+
+        // load lazy resources after render and set `loadComplete` when done.
+        if (!this.loadComplete) {
+          Polymer.RenderStatus.afterNextRender(this, function () {
+            this.importHref(this.resolveUrl('dorel-app-resources.html'), function () {
+
+              // Register service worker if supported.
+              if ('serviceWorker' in navigator) {
+                // navigator.serviceWorker.register('/service-worker.js');
+              }
+
+              this.loadComplete = true;
+              this._removeLoadPlaceholder();
+              // import the footer after the pages are loaded
+              this.importHref(this.resolveUrl('organisms/dorel-footer.html'), null, null, false);
+            });
+          });
+        }
+
+      },
+
+      /**
+       * @name _removeLoadPlaceholder
+       * @description removes loading spinner and placeholders before the page is loaded
+       */
+      _removeLoadPlaceholder: function () {
+        var placeholder = document.getElementById('load-placeholder');
+        placeholder.remove();
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for pageload tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function () {
+        var globalsObj = Polymer.globalsManager.get('Dorel');
+        var globalsCopy = this._cloneObj(globalsObj);
+
+        /**
+         * Tracking on pageload
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'loaded',
+          component: 'page',
+          element: this,
+          event: 'polymer_event',
+          things: {
+            'currentPage': (typeof globalsCopy.current.page === 'undefined') ?
+              document.URL : globalsCopy.current.page,
+            'globals': globalsCopy
+          }
+        });
+      },
+
+      /**
+       * @name _cloneObj
+       * @description creates a clone of an object
+       *
+       * @parameter Object - object to clone
+       */
+      _cloneObj: function (obj) {
+
+        // if object is not defined or not an object, jump out
+        if (null == obj || "object" != typeof obj) return obj;
+
+        // make a reference to the object's constructor
+        var copy = obj.constructor();
+
+        // iterate over every attribute in the object and make a copy
+        for (var attr in obj) {
+          if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+
+        // return the copied object
+        return copy;
+      },
+
+      /**
+       * @name _getLastSegment
+       * @description strips the last segment from the url
+       *
+       * @parameter String - current document url
+       */
+      _getLastSegment: function (url) {
+        url = url.replace(/(^\w+:|^)\/\//, '');
+
+        if (url.lastIndexOf('/') === (url.length - 1)) {
+          url = url.substr(0, url.lastIndexOf('/'));
+        }
+
+        return url.substr(url.lastIndexOf('/') + 1, url.length);
       }
+
     });
   </script>
 </dom-module>

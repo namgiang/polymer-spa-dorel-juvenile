@@ -1,0 +1,133 @@
+<dom-module id="dorel-video-wrap">
+  <template>
+    <style>
+      .video-wrap {
+        text-align: center;
+        position: relative;
+        min-height: 315px;
+        margin: var(--theme-component-space-inner) 0;
+      }
+      .video-wrap iframe {
+        margin: 0 auto;
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        left: 0;
+        top: 0;
+      }
+    </style>
+    
+    <template
+      is="dom-if"
+      if="[[ hasVideoId(videoId) ]]">
+
+      <template
+        is="dom-if"
+        if="[[ isYoutubeVideo(videoType) ]]">
+        <div class="video-wrap">
+          <iframe src="https://www.youtube.com/embed/[[ videoId ]]" 
+            frameborder="0" 
+            allowfullscreen
+            on-click="_iframeClick"></iframe>
+        </div>
+      </template>
+
+    </template>
+
+  </template>
+
+  <script>
+    /**
+     * @todo let big-video component use this component as well
+     */
+    Polymer({
+      is: 'dorel-video-wrap',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name videoType
+         * @description defines the type of the source (e.g. vimeo, youtube)
+         */
+        videoType: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * @attribute
+         * @name videoId
+         * @description marks the id of the Youtube video
+         */
+        videoId: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * @name playVideo
+         * @description defines if the video currently playing
+         */
+        playVideo: {
+          type: Boolean,
+          value: false
+        }
+        
+      },
+
+      /**
+       * @name hasVideoId
+       * @description check to see if a value is set
+       *
+       * @returns Boolean if it is not undefined, empty or null (true/false)
+       */
+      hasVideoId: function(videoId) {
+        return (typeof videoId !== 'undefined' || videoId !== '' || videoId !== null);
+      },
+
+      /**
+       * @name isYoutube
+       * @description check to see if it is a Youtube video
+       *
+       * @returns Boolean if the videoType is youtube
+       */
+      isYoutubeVideo: function(videoType) {
+        return (typeof videoType !== 'undefined' && videoType === 'youtube');
+      },
+
+      /**
+       * @name iframeClick
+       * @description handles clicks on the iframe
+       */
+      _iframeClick: function(event) {
+        this.playVideo = !this.playVideo;
+
+        this._eventTracking(event);
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for cta tracking only
+       * more info http://bit.ly/2nb6I7G
+       *
+       * @todo tracking isn't working currently, because an iframe is used for videos
+       */
+      _eventTracking: function(event) {
+
+        var globals = Polymer.globalsManager.get('Dorel');
+
+        /** 
+         * Tracking on click for cta
+         */
+        Polymer.globalsManager.set('Dorel.events', {
+          action: (this.playVideo) ? 'play' : 'stop',
+          component: 'big-video',
+          element: Polymer.dom(event).localTarget,
+          event: 'polymer_event'
+        });
+      }
+    });
+  </script>
+
+</dom-module>

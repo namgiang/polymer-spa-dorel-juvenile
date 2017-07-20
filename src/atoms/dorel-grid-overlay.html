@@ -1,0 +1,237 @@
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../templates/component-guide/dorel-component-guide-shared-styles.html">
+
+<dom-module id="dorel-grid-overlay">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      .vertical-rhythm {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        opacity: 0;
+        z-index: 10000;
+        height: 100%;
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAAYCAYAAADQ+yzZAAAAF0lEQVQYV2NkgALG4cEoLy//39nZyQgAHvQEGSEIElQAAAAASUVORK5CYII=);
+        transition: opacity .5s ease;
+        pointer-events: none;
+      }
+
+      .vertical-rhythm[shown] {
+        opacity: 1;
+      }
+
+      .horizontal-grid {
+        @apply(--max-width-container);
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        z-index: 10000;
+        transition: opacity .5s ease;
+        pointer-events: none;
+
+      }
+
+      .horizontal-grid[shown] {
+        opacity: 1;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile);
+        padding: 0 var(--theme-gutter-mobile);
+
+      }
+
+      .column {
+        @apply(--theme-grid-column);
+        @apply(--theme-grid-column-mobile);
+        -ms-flex-preferred-size: var(--theme-column-width);
+        flex-basis: var(--theme-column-width);
+        max-width: var(--theme-column-width);
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .column-content {
+        background-color: var(--theme-brand-color-1);
+        height: 100vh;
+        opacity: .25;
+      }
+
+      /* Responsive Behaviour */
+      [tablet-medium-up] .column {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-margins);
+        padding: 0 var(--theme-gutter);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
+      <div class="horizontal-grid" shown$="[[ globals.Dorel.grid.horizontal ]]">
+        <div class="row">
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+          <div class="column">
+            <div class="column-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-grid-overlay',
+      behaviors: [
+        Polymer.IronA11yKeysBehavior
+      ],
+      properties: {
+        keyEventTarget: {
+          type: Object,
+          value: function () {
+            return document.body;
+          }
+        },
+        pageRoutePath: {
+          type: Object,
+          notify: true,
+          readOnly: false,
+        },
+        /**
+         * @name availableBrands
+         * @description Available brands to switch between
+         */
+        availableBrands: {
+          type: Array,
+          value: [],
+        },
+        /**
+         * @name selectedBrand
+         * @description Currently selected brand
+         */
+        selectedBrand: {
+          type: String,
+          notify: true,
+          readOnly: false,
+        }
+      },
+      /**
+       * Key bindings to trigger function, allowing control over the entire app
+       * */
+      keyBindings: {
+        'shift+backspace': '_setVerticalRhythm',
+        'shift+enter': '_setHorizontalGrid',
+        'shift+right': '_setNextBrand',
+        'shift+left': '_setPreviousBrand',
+        //'shift+space': '_setPageToComponents'
+      },
+      /**
+       * @name _setPageToComponents
+       * @description Switch to the component guide page
+       * */
+      _setPageToComponents: function () {
+        //TODO: This is a bit buggy but works (somehow fires of many events)
+        this.pageRoutePath = 'component-guide/introduction/';
+      },
+      /**
+       * @name _getIndexCurrentBrand
+       * @description Returns the index of the currently selected brand
+       */
+      _getIndexCurrentBrand: function () {
+
+        // Get the current index of the brand
+        var indexBrand = -1;
+        for (var i = 0; i < this.availableBrands.length; i++) {
+          if (this.selectedBrand === this.availableBrands[i].label) {
+            indexBrand = i;
+          }
+        }
+        return indexBrand;
+      },
+
+      /**
+       * @name _setNextBrand
+       * @description Selects and shows next brand in the list
+       */
+      _setNextBrand: function () {
+        var indexBrand = this._getIndexCurrentBrand();
+        var newIndexBrand = (indexBrand + 1) % this.availableBrands.length;
+        this.selectedBrand = this.availableBrands[newIndexBrand].label;
+      },
+
+      /**
+       * @name _setPreviousBrand
+       * @description Selects and show previous brand in the list
+       */
+      _setPreviousBrand: function () {
+        var indexBrand = this._getIndexCurrentBrand();
+        var newIndexBrand = Math.abs((indexBrand - 1) % this.availableBrands.length);
+        this.selectedBrand = this.availableBrands[newIndexBrand].label;
+      },
+
+      /**
+       * @name _setVerticalRhythm
+       * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
+       */
+      _setVerticalRhythm: function () {
+        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
+        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
+      },
+      /**
+       * @name _setHorizontalGrid
+       * @description Toggles the horizontal grid global variable (and it's connected overlay component)
+       */
+      _setHorizontalGrid: function () {
+        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
+        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+      },
+    });
+  </script>
+
+</dom-module>

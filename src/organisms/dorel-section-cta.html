@@ -1,0 +1,117 @@
+<link rel="import" href="../atoms/dorel-icons-cta-section.html">
+
+<dom-module id="dorel-section-cta">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        --button-margin-spacing: 0;
+        @apply(--max-width-host);
+      }
+
+      dorel-cta {
+        margin-top: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      .section-cta {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        margin-top: 1.5em;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: center;
+      }
+
+      h2 {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 100%;
+        -webkit-flex-basis: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        display: initial;
+        padding: 0;
+        margin: 0;
+
+        font-size: 1em;
+      }
+
+      /* Responsive styling */
+      [tablet-medium-up] h2 {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        -webkit-flex-basis: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+      }
+
+      .section-cta[tablet-medium-up] {
+        padding: 0 var(--theme-gutter);
+        margin-top: -3em;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <template is="dom-if" if="[[ ctaData.ctas.length ]]">
+      <section class="section-cta layout horizontal center center-justified wrap"
+               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+        <div class="row">
+          <template
+            is="dom-repeat"
+            items="[[ ctaData.ctas ]]"
+            as="cta">
+            <h2>
+              <dorel-cta
+                type="tertiary"
+                title="[[ cta.cta_text ]]"
+                link="[[ cta.cta_link ]]"
+                link-target="[[ cta.cta_link_target ]]"
+                size="large"
+                extra-icon="dorel-cta-icons:[[ cta.cta_icon ]]"
+                icon="dorel-icons:chevron-right"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-cta-index="[[ index ]]">
+                [[ cta.cta_text ]]
+              </dorel-cta>
+            </h2>
+          </template>
+        </div>
+      </section>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-cta',
+      properties: {
+        /**
+         * @attribute
+         * @name ctaData
+         * @description all data needed for this CTA defined in ACF/Wordpress
+         */
+        ctaData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      }
+    });
+
+  </script>
+</dom-module>

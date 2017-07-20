@@ -1,0 +1,214 @@
+<link rel="import" href="../molecules/dorel-product-accessory-lightbox.html">
+
+<dom-module id="dorel-product-accessory">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :root {
+        --button-margin-spacing: 0;
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+
+      .accessory-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .accessory-description {
+        float: left;
+      }
+
+      dorel-cta {
+        float: left;
+        clear: both;
+        margin-top: 0;
+
+      }
+
+      dorel-cta a {
+        margin-top: 0;
+      }
+
+      .accessory {
+        float: left;
+      }
+
+      .accessory-wrapper {
+        float: left;
+        width: 100%;
+        position: relative;
+      }
+
+      .accessory-included-badge {
+        @apply(--theme-typography-1);
+        background-color: var(--theme-brand-complementary-color-3);
+        color: var(--theme-color-white);
+        margin-top: 0;
+        position: absolute;
+        top: .5em;
+        left: .5em;
+        z-index: 1;
+        border-radius: 0.875em;
+        padding: 0 .75em;
+      }
+
+      .accessory-image-container {
+        float: left;
+        border-radius: var(--theme-border-radius-1);
+        background-color: var(--theme-color-white);
+        width: 6em;
+        height: 6em;
+      }
+
+      .accessory-image {
+        width: 5em;
+        height: 6em;
+        margin: auto;
+        float: none;
+        display: block;
+      }
+
+      .accessory-content {
+        width: calc(100% - 6em);
+        padding: 0 1em;
+        box-sizing: border-box;
+        float: left;
+      }
+
+      /* Responsive Behaviour */
+      [tablet-medium-up] .accessory-image-container {
+        width: 10.5em;
+        height: 10.5em;
+      }
+
+      [tablet-medium-up] .accessory-image {
+        width: 8.5em;
+        height: 10.5em;
+      }
+
+      [tablet-medium-up] .accessory-content {
+        width: calc(100% - 10.5em);
+        padding: 0 1.5em;
+      }
+
+      [tablet-medium-up] dorel-cta {
+        margin-top: 1.5em;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section-product-accessory" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="accessory">
+        <div class="accessory-wrapper">
+
+          <template
+            is="dom-if"
+            if="{{ accessoryData.included }}">
+            <span class="accessory-included-badge">Included</span>
+          </template>
+
+          <template
+            is="dom-if"
+            if="{{ _hasValue(accessoryData.colors.0.color_image) }}">
+            <div class="accessory-image-container">
+              <iron-image class="accessory-image"
+                          sizing="contain"
+                          fade="true"
+                          preload
+                          src$="[[ accessoryData.colors.0.color_image ]]"></iron-image>
+            </div>
+          </template>
+
+          <div class="accessory-content">
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryData.title) }}">
+              <h3 class="accessory-title">[[ accessoryData.title ]]</h3>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryData.excerpt) }}">
+              <div class="accessory-description">
+                <dorel-safe-html html="[[ accessoryData.excerpt ]]"></dorel-safe-html>
+              </div>
+            </template>
+
+            <template
+              is="dom-if"
+              if="{{ _hasValue(accessoryData.permalink) }}">
+              <dorel-cta
+                type="link"
+                title="View Accessories"
+                on-click="_openLightbox"
+                link="[[ accessoryData.permalink ]]"
+                size="small"
+                icon="dorel-icons:play-circle-outline"
+                gtm-action="[[ gtmAction ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="[[ gtmChild ]]"
+                gtm-child-index="[[ gtmChildIndex ]]"
+                gtm-cta-index="0">View Accessory
+              </dorel-cta>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+    <dorel-product-accessory-lightbox
+      accessory-lightbox-data="[[ accessoryData ]]"
+      gtm-action="[[ gtmAction ]]"
+      gtm-parent="[[ gtmParent ]]"
+      gtm-parent-index="[[ gtmParentIndex ]]"
+      gtm-child="[[ gtmChild ]]"
+      gtm-child-index="[[ gtmChildIndex ]]"
+      gtm-cta-index="0"></dorel-product-accessory-lightbox>
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-product-accessory',
+
+      properties: {
+        /**
+         * @attribute
+         * @name accessoryData
+         * @description data retrieved from ACF/Wordpress to build up this page
+         */
+        accessoryData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _openLightbox
+       * @description handle of the click on the details links
+       */
+      _openLightbox: function (event) {
+        var lightbox = this.$$('dorel-product-accessory-lightbox');
+        lightbox.open();
+      },
+
+      /**
+       * @name _hasValue
+       * @description checks to see if a value is set
+       *
+       * @returns Boolean
+       */
+      _hasValue: function (val) {
+        return (typeof val !== 'undefined' || val !== '');
+      }
+    });
+
+  </script>
+
+</dom-module>

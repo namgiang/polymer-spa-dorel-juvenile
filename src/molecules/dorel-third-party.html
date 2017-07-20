@@ -1,0 +1,166 @@
+<dom-module id="dorel-third-party">
+  <template>
+    <template
+      is="dom-if"
+      if="{{ globals.Dorel.collect.options.zendesk_loaded }}">
+      <dorel-zendesk
+        zendesk-loaded="{{ globals.Dorel.collect.options.zendesk_loaded }}"></dorel-zendesk>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-third-party',
+
+      properties: {
+
+        /**
+         * @name hubspotToggle
+         * @description defines the toggle defined in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
+        hubspotToggle: {
+          type: Boolean
+        },
+
+        /**
+         * @name hubspotPortalId
+         * @description defines portal ID set in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
+        hubspotPortalId: {
+          type: String
+        },
+
+        /**
+         * @name hubspotScriptSrc
+         * @description the third-party source of the JavaScript
+         * non-minified: //js.hsforms.net/forms/v2-legacy.js
+         * minified: //js.hsforms.net/forms/v2.js
+         */
+        hubspotScriptSrc: {
+          type: String,
+          value: '//js.hsforms.net/forms/v2.js'
+        },
+
+        /**
+         * @name zendeskToggle
+         * @description defines the toggle set in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
+        zendeskToggle: {
+          type: Boolean
+        },
+
+        /**
+         * @name zendeskHost
+         * @description defines the host of the Zendesk, this should be
+         * the subdomain that has been defined in the WP theme settings under
+         * Zendesk Host
+         */
+        zendeskHost: {
+          type: String
+        }
+      },
+
+      observers: [
+        '_initHubspot(hubspotToggle, hubspotPortalId, hubspotScriptSrc)',
+        '_initZendesk(zendeskToggle, zendeskHost)'
+      ],
+
+      /** 
+       * @name _initHubSpot
+       * @description adds the Hubspot JavaScript to the head and imports the
+       * dorel-hubspot component
+       *
+       * @parameter hubspotToggle Boolean - indicates wheter the toggle is set in WP
+       * @parameter hubspotPortalId String - the portal id of hubspot
+       * @parameter hubspotScriptSrc String - the source of the hubspot javascript
+       */
+      _initHubspot: function(hubspotToggle, hubspotPortalId, hubspotScriptSrc) {
+        // make sure the toggle, portalId, src are set/true and if the script isn't included yet
+        if ( typeof hubspotToggle === 'undefined' || !hubspotToggle ||
+          typeof hubspotPortalId === 'undefined' || hubspotPortalId === '' ||
+          typeof hubspotScriptSrc === 'undefined' ||
+          this._scriptExists(hubspotScriptSrc) ) return;
+          
+        var self = this;
+
+        // create script tag
+        var script = document.createElement('script');
+
+        // add source of script
+        script.src = hubspotScriptSrc;
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        script.onload = function() {
+          // import the dorel-hubspot component, needs to be async FALSE!!!!!
+          self.importHref(
+            self.resolveUrl('../atoms/dorel-hubspot.html'), function() {
+              Polymer.globalsManager.set('Dorel.collect.options.hubspot_loaded', true);
+            }, null, false
+          );
+        };
+      },
+
+      /** 
+       * @name _initZenDesk
+       * @description adds the Zendesk JavaScript to the head and imports the
+       * dorel-zendesk component
+       *
+       * @parameter zendeskToggle Boolean - indicates wheter the toggle is set in WP
+       * @parameter zendeskHost String - the portal id of Zendesk
+       */
+      _initZendesk: function(zendeskToggle, zendeskHost) {
+        if ( typeof zendeskToggle === 'undefined' || !zendeskToggle ||
+          typeof zendeskHost === 'undefined' || zendeskHost === '') return;
+
+        /** 
+         * This is the Zendesk script that needs to be included to make it work
+         * Please refer to http://bit.ly/2ps5eto for more information
+         */
+        var self = this;
+
+        window.zEmbed || (function() {
+          var queue = [];
+
+          window.zEmbed = function() {
+            queue.push(arguments);
+          }
+          window.zE = window.zE || window.zEmbed;
+          document.zendeskHost = self.zendeskHost;
+          document.zEQueue = queue;
+        }());
+
+        // import the dorel-hubspot component
+        self.importHref(
+          self.resolveUrl('../atoms/dorel-zendesk.html'), function() {
+            Polymer.globalsManager.set('Dorel.collect.options.zendesk_loaded', true);
+          }, null, true
+        );
+      },
+
+      /** 
+       * @name _scriptExists
+       * @description check if the script tag with the defined url is included 
+       * already in the application
+       *
+       * @parameter String - url string
+       */
+      _scriptExists: function(url) {
+        // select all scripts
+        var scripts = document.getElementsByTagName('script');
+
+        // check if we have a match
+        for (var i = scripts.length; i--;) {
+          return (scripts[i].src === url);
+        }
+
+        // return false if no match is found
+        return false;
+      }
+    });
+  </script>
+</dom-module>

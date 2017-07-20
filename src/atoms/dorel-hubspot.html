@@ -1,0 +1,243 @@
+<!-- hubspot needs this for the onFormReady handler -->
+<script src="/bower_components/jquery/dist/jquery.slim.min.js"></script>
+
+<dom-module id="dorel-hubspot">
+  <template>
+    <!-- The HTML for the Hubspot forms should be created consistently, or the layouts for these might not work -->
+    <!-- TODO: Make sure to test all new forms! -->
+    <style>
+
+      .hubspot {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter-mobile) 0 var(--theme-gutter-mobile);
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      .wrap-container {
+        width: 100%;
+        display: block;
+      }
+
+      #form {
+        margin-top: 0;
+        padding-top: 0;
+        max-width: var(--theme-base-paragraph-width);
+        float: none;
+
+      }
+
+      .hbspt-form {
+        @apply(--theme-paragraph-text);
+        margin-top: 0;
+      }
+
+      fieldset, .hs_recaptcha, .hs_submit, .hs-form-field, .hs_recaptcha {
+        display: block;
+        float: none;
+        margin: 0 auto;
+        border: 0;
+        padding: 0;
+        box-sizing: border-box;
+
+      }
+
+      .hs-form-field, .hs_recaptcha {
+        /*padding: 0 0 var(--theme-component-space-inner-medium) 0;*/
+      }
+
+      input, textarea, select {
+        @apply(--theme-form-input);
+      }
+
+      select {
+        @apply(--theme-form-select);
+      }
+
+      label {
+        @apply(--theme-form-input-label);
+        @apply(--theme-typography-2);
+        margin-top: 0;
+      }
+
+      .hs-input:hover, .hs-input.invalid:hover, .hs-input.error:hover {
+        @apply(--theme-form-input-active);
+      }
+
+      textarea.hs-input {
+        @apply(--theme-form-textarea);
+      }
+
+      .hs-input.invalid, .hs-input.error {
+        @apply(--theme-form-input-error);
+        margin-bottom: 0;
+      }
+
+      .hs-button {
+        @apply(--theme-button);
+        @apply(--theme-button-primary);
+        padding: 0 3em;
+        cursor: pointer;
+        width: auto;
+        float: right;
+        text-align: center;
+      }
+
+      .hs-button:hover, .hs-button:focus {
+        @apply(--theme-button-active);
+      }
+
+      .hs_recaptcha > .hs-error-msgs {
+        margin-top: 0;
+      }
+
+      .hs-error-msgs {
+        @apply(--theme-typography-1);
+        display: block;
+        padding: 0;
+        list-style: none;
+        margin-top: 0em;
+        margin-bottom: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      .hs-error-msgs li label {
+        color: var(--theme-color-error);
+      }
+
+      /* Responsive Behaviour */
+      [tablet-medium-up] .hubspot {
+        padding: 1.5em var(--theme-gutter) 0 var(--theme-gutter);
+      }
+
+      [tablet-medium-up] label {
+        @apply(--theme-form-input-label);
+      }
+
+      [tablet-medium-up] #form {
+        margin: auto;
+      }
+
+    </style>
+
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div class="hubspot" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="row">
+        <div class="wrap-container">
+          <div id="form"></div>
+        </div>
+      </div>
+    </div>
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-hubspot',
+
+      properties: {
+
+        /**
+         * @name portalId
+         * @description defines portal ID defined in the WP theme settings
+         * this is retrieved through the wp-collect-options and placed in
+         * the globals object
+         */
+        portalId: {
+          type: String
+        },
+
+        /**
+         * @name formid
+         * @description defines form ID defined in the WP page builder component
+         */
+        formId: {
+          type: String
+        },
+
+        /**
+         * @name hubspotLoaded
+         * @description this variable defines if the hubspot script is loaded
+         */
+        hubspotLoaded: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      observers: [
+        '_embedForm(portalId, formId, hubspotLoaded)'
+      ],
+
+      /**
+       * @name _embedForm
+       * @description this script observes all variables needed to inject
+       * the form in the Polymer application
+       */
+      _embedForm: function (portalId, formId, hubspotLoaded) {
+
+        // check if all variables needed are set, otherwise jump out
+        if (typeof hubspotLoaded === 'undefined' || !hubspotLoaded ||
+          typeof portalId === 'undefined' || portalId === '' ||
+          typeof formId === 'undefined' || formId === '') return;
+
+        // remove previously added forms ---- HACK ---- mandatory otherwise it will show all forms in the app
+        if (this.$.form.hasChildNodes()) {
+          while (this.$.form.firstChild) {
+            this.$.form.removeChild(this.$.form.firstChild);
+          }
+        }
+
+        // Check if a form with the ID already exists in this component
+        var formIdTarget = '#hsForm_' + formId;
+        var formInComponent = Polymer.dom(this.root).querySelector(formIdTarget);
+
+        // Create the form if it's not in the component
+        if (formInComponent === null) {
+          // reference this for use in the hbspt object
+          var self = this;
+
+          // call to the forms create method of the hubspot script
+          window.hbspt.forms.create({
+            /*
+             * On customizing Hubspot embeds:
+             * http://bit.ly/2ouvaj6
+             */
+            css: '',
+            portalId: portalId,
+            formId: formId,
+            /**
+             * TODO: only works if jQuery is included
+             */
+            onFormReady: function ($form, ctx) {
+              /**
+               * create a document fragment to grab the div added by the script
+               * and inject it in the form div of this component
+               */
+              var fragment = document.createDocumentFragment();
+
+              // CloneNode doesn't transfer any event bindings, even if set to true
+              //fragment.appendChild($form[0].parentNode.cloneNode(true));
+
+              // Jquery's clone (hubspot dependency) doesn't transfer any event bindings, even if set to true
+              //fragment.appendChild($($form[0].parentNode).clone(true, true)[0]);
+
+              // Back to using appendChild without cloning, this works in all browsers.
+              // However, Firefox and Safari will fall back on old styling if form errors appear.
+              fragment.appendChild($form[0].parentNode);
+              Polymer.dom(self.$.form).appendChild(fragment);
+            }
+          });
+        }
+      }
+    });
+  </script>
+</dom-module>

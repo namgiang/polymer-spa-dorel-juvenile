@@ -1,0 +1,363 @@
+<link rel="import" href="../atoms/dorel-content-wrap.html">
+<link rel="import" href="../atoms/dorel-video-wrap.html">
+<link rel="import" href="../organisms/dorel-section-cards.html">
+<link rel="import" href="../organisms/dorel-section-cta.html">
+<link rel="import" href="../organisms/dorel-section-heroes.html">
+<link rel="import" href="../organisms/dorel-section-hero-header.html">
+<link rel="import" href="../organisms/dorel-section-slideshow.html">
+
+<dom-module id="dorel-page-builder">
+  <template>
+    <style>
+      .wrapper {
+        opacity: 0;  /* make things invisible upon start */
+        -webkit-animation: fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+        -moz-animation: fadeIn ease 1;
+        animation: fadeIn ease 1;
+        -webkit-animation-duration: 1s;
+        -moz-animation-duration: .1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+        -moz-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+      }
+
+      @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+
+      dorel-layout-section dorel-page-builder {
+        width: 100%;
+        display: flex;
+      }
+
+      dorel-hero {
+        --dorel-hero-bg: {
+          min-height: 540px; /* temporary */
+          background-size: cover;
+          background-position: 0 -230px;;
+          background-repeat: no-repeat;
+        };
+      }
+    </style>
+
+    <div class="wrapper">
+
+    <!-- show when acf.page_builder has components -->
+    <template 
+      is="dom-if" 
+      if="{{ builderData.length }}">
+
+      <!-- iterate over page_builder components -->
+      <template
+        is="dom-repeat" 
+        items="[[ builderData ]]" 
+        as="component"
+        targetFramerate="1000">
+
+
+
+
+
+
+
+        <!-- section-hero-header -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_hero_header') }}">
+          
+          <dorel-section-hero-header
+            hero-header-data="[[ component ]]"
+            gtm-parent="dorel-section-hero-header"
+            gtm-parent-index="[[ index ]]"></dorel-section-hero-header>
+
+        </template>
+        <!--// section-hero-header -->
+
+
+
+
+        <!-- section-cta -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_cta') }}">
+
+          <dorel-section-cta
+            cta-data="[[ component ]]"
+            gtm-parent="dorel-section-cta"
+            gtm-parent-index="[[ index ]]"></dorel-section-cta>
+
+        </template>
+        <!--// section-cta -->
+
+
+
+
+
+        <!-- dorel section hero -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_heroes') }}">
+          
+          <dorel-section-heroes 
+            heroes-data="[[ component ]]"
+            gtm-parent="dorel-section-heroes"
+            gtm-parent-index="[[ index ]]"></dorel-section-heroes>
+
+        </template>
+        <!--// dorel section hero -->
+
+
+
+
+        <!-- section-cards -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_cards') }}">
+
+          <dorel-section-cards
+            cards-data="[[ component ]]"
+            gtm-parent="dorel-section-cards"
+            gtm-parent-index="[[ index ]]"></dorel-section-cards>
+
+        </template>
+        <!--// section-cards -->
+
+
+
+
+
+        <!-- dorel content_wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'content_wrap') }}">
+          
+          <dorel-content-wrap
+            title-type="[[ component.title_type ]]"
+            title-align="[[ component.title_align ]]"
+            content-title="[[ component.title ]]"
+            content-html="[[ component.text ]]"
+            gtm-component-index="[[ index ]]"></dorel-content-wrap>
+
+        </template>
+        <!--// dorel content_wrapper -->
+
+
+
+
+
+        <!-- dorel video-wrap -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'video_wrap') }}">
+          
+          <dorel-video-wrap
+            video-type="[[ component.video_type ]]"
+            video-id="[[ component.video_id ]]"
+            gtm-component-index="[[ index ]]"></dorel-video-wrap>
+
+        </template>
+        <!--// dorel video-wrap -->
+
+
+
+
+
+        <!-- dorel section hubspot -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_hubspot') }}">
+          
+          <dorel-hubspot
+            hubspot-loaded="[[ globals.Dorel.collect.options.hubspot_loaded ]]"
+            portal-id="[[ globals.Dorel.collect.options.hubspot_portal_id ]]"
+            form-id="{{ component.hubspot_form_id }}"
+            gtm-component-index="[[ index ]]"></dorel-hubspot>
+
+        </template>
+        <!--// dorel section hubspot -->
+
+
+
+
+
+        <!-- section-usps -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'section_usps') }}">
+          
+          <dorel-section-usps
+            usps-data="[[ component ]]"
+            gtm-component-index="[[ index ]]"></dorel-section-usps>
+
+        </template>
+        <!--// section-usps -->
+
+
+
+
+
+        <!-- dorel slider -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'slider') }}">
+          
+          <dorel-slider>
+            <dorel-slider-slide
+              slide-data="[[ component.slides ]]"
+              slide-index="0">
+            </dorel-slider-slide>
+
+            <dorel-slider-slide
+              slide-data="[[ component.slides ]]"
+              slide-index="1">
+            </dorel-slider-slide>
+          </dorel-slider>
+
+          
+          <template
+            is="dom-repeat" 
+            items="[[ component.slides ]]">
+            <dorel-slider-slide
+              slide-data="[[ item ]]"
+              slide-index="{{ index }}">
+            </dorel-slider-slide>
+
+          </template>
+          
+
+        </template>
+        <!--// dorel slider -->
+
+
+        <!-- ////////////////// TODO: Refactor \\\\\\\\\\\\\\\\\\\ -->
+
+
+        <!-- dorel column-wrapper -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
+
+          <dorel-layout-section>
+            <dorel-page-builder 
+              builder-data="[[ component.columns ]]"
+              gtm-component-index="[[ index ]]"></dorel-page-builder>
+          </dorel-layout-section>
+
+        </template>
+        <!--// dorel column-wrapper -->
+
+
+
+
+        <!-- column_full -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'column_full') }}">
+          
+          <!-- column-half -->
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+
+        </template>
+        <!--// column_full -->
+
+
+
+
+
+        <!-- column_half -->
+        <template 
+          is="dom-if" 
+          if="{{ isPageComponent(component.acf_fc_layout, 'column_half') }}">
+          
+          <!-- column-half -->
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+
+        </template>
+        <!--// column_half -->
+
+
+
+
+
+      </template><!--// dom-repeat -->
+    </template><!--// dom-if -->
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-page-builder',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name builderData
+         * @description all data needed to build up a certain component
+         */
+        builderData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the complete page/template data object
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+
+      },
+
+      /** 
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function(response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+        
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
+    });
+  </script>
+</dom-module>

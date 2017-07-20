@@ -14,6 +14,9 @@ You will need a running Wordpress instance to make all ajax requests work. In th
 
 ##### Prerequisites
 
+- Polymer CLI: Read installing instructions on the [polymer website](https://www.polymer-project.org/1.0/start/toolbox/set-up).
+- Bower: run `$ bower install` on initial setup
+
 Clone this repository:
     
     git clone git@github.com:dorel/polymer-spa-dorel-juvenile.git
@@ -31,7 +34,7 @@ by the following
 This command serves the app at `http://localhost:8080` and provides basic URL
 routing for the app:
 
-    polymer serve --open
+    `polymer serve --open`
 
 
 ### Build
@@ -46,7 +49,7 @@ In addition the command also creates a fallback `build/bundled` folder,
 generated using fragment bundling, suitable for serving from non
 H2/push-compatible servers or to clients that do not support H2/Push.
 
-    polymer build
+    `grunt build`
 
 ### Preview the build
 
@@ -58,7 +61,7 @@ in an unbundled state, as it would be served by a push-compatible server:
 This command serves the minified version of the app at `http://localhost:8080`
 generated using fragment bundling:
 
-    polymer serve build/bundled
+    `polymer serve build/bundled`
 
 ### Run tests
 

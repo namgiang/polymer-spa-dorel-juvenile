@@ -1,0 +1,235 @@
+<link rel="import" href="../organisms/dorel-category-listing.html">
+<link rel="import" href="../organisms/dorel-section-category-header.html">
+<link rel="import" href="../organisms/dorel-section-category-sidebar.html">
+
+<dom-module id="dorel-template-product-category">
+  <template>
+    <style>
+      :root {
+        /* Override the default background-color for the multi sections */
+        --theme-multi-background-color: var(--theme-color-background-tertiary);
+        --theme-multi-no-background-color: transparent;
+        --theme-multi-bottom-padding: var(--theme-component-space-inner-xlarge);
+        float: left;
+        width: 100%;
+      }
+
+      .container {
+        @apply(--max-width-container);
+        padding-top: 1.5em;
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      dorel-section-category-header {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        order: 0;
+        margin-top: 0;
+      }
+
+      dorel-section-category-sidebar {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        order: 1;
+        margin-top: 1.5em;
+      }
+
+      dorel-layout-section dorel-page-builder {
+        width: 100%;
+        display: flex;
+      }
+
+      [desktop-small-up] dorel-section-category-header {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
+        flex-basis: calc(var(--theme-column-width) * 9);
+        max-width: calc(var(--theme-column-width) * 9);
+        order: 1;
+      }
+
+      [desktop-small-up] dorel-section-category-sidebar {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
+        order: 0;
+      }
+
+      [tablet-medium-up] .container {
+        padding: 1.5em var(--theme-gutter) 0 var(--theme-gutter);
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+      <iron-ajax
+        auto
+        url="[[ categoriesEndPoint ]]"
+        handle-as="json"
+        on-response="_categoriesLoaded"></iron-ajax>
+
+      <!-- show when acf.page_builder has components -->
+      <template
+        is="dom-if"
+        if="{{ products.length }}">
+
+        <!-- show when acf.page_builder has components -->
+        <template
+          is="dom-if"
+          if="{{ templateData.acf.page_builder.length }}">
+
+          <div class="container layout horizontal center center-justified wrap">
+            <div class="row">
+              <!-- iterate over page_builder components -->
+              <template
+                is="dom-repeat"
+                items="[[ templateData.acf.page_builder ]]"
+                as="component"
+                targetFramerate="1000">
+
+                <!-- section-category-header -->
+                <template
+                  is="dom-if"
+                  if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
+                  <dorel-section-category-header
+                    category-header-data="[[ component ]]"
+                    gtm-parent="dorel-section-category-header"
+                    gtm-parent-index="[[ index ]]"></dorel-section-category-header>
+                </template>
+                <!--// section-category-header -->
+
+                <!-- section-category-sidebar -->
+                <template
+                  is="dom-if"
+                  if="{{ isPageComponent(component.acf_fc_layout, 'section_category_sidebar') }}">
+                  <dorel-section-category-sidebar
+                    category-sidebar-data="[[ component ]]"
+                    gtm-parent="dorel-section-category-sidebar"
+                    gtm-parent-index="[[ index ]]"></dorel-section-product-sidebar>
+                </template>
+                <!--// section-category-sidebar -->
+              </template>
+            </div>
+          </div>
+        </template>
+      </template>
+
+      <dorel-category-listing
+        products-data="[[ products ]]"
+        gtm-parent="dorel-category-listing"
+        gtm-parent-index="2"></dorel-category-listing>
+
+      <template
+        is="dom-if"
+        if="{{ !products.length }}">
+        <p>No products assigned to this category</p>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-template-product-category',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+
+        products: {
+          type: Array,
+          value: []
+        }
+
+      },
+
+      observers: [
+        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)'
+      ],
+
+      /**
+       * @observer
+       * @name _initProductsPage
+       * @description initializes all data for the category-listing. It matches the current
+       * pages categoryId to the category in the categories collect. After that it will match
+       * all the products that comply to the categoryId
+       *
+       * @param page - Array - categories array (all categories in WP)
+       * @param pages - Array - all the retrieved pages from WP
+       */
+      _initProductsPage: function (categories, pages) {
+        // reference this
+        var self = this;
+        this.products = [];
+
+        // match the current page categoryId to the categories array retrieved from WP
+        var category = categories.find(function (category) {
+          return category.id === self.templateData.acf.product_category;
+        });
+
+        // get the products page from the pages array retrieved from WP
+        var page = pages.find(function (page) {
+          return page.template === 'products';
+        });
+
+        // check which pages have the current categoryId attached and add them to the products array
+        for (var i = 0; i < page.products.length; i++) {
+          if (page.products[i].categories.indexOf(category.id) === 0) {
+            this.products = this.products.concat(page.products[i]);
+          }
+        }
+      },
+
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,65 @@
+<dom-module id="dorel-wp-collect-options">
+  <template>
+    <iron-ajax 
+      auto 
+      url="[[ endPoint ]]" 
+      handle-as="json"
+      on-response="_optionsLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wp-collect-options',
+
+      properties: {},
+      observers: [
+        '_initOptions(globals.Dorel.wpUrl)'
+      ],
+
+      /**
+       * @name _initOptions
+       * @description Observer function which defines the endpoint when it's available as a global variable
+       */
+      _initOptions: function(wpUrl) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+
+        this.endPoint = this.globals.Dorel.wpUrl + '/acf/v2/options';
+      },
+
+      /** 
+       * @name _optionsLoaded
+       * @description retrieve all the options
+       */
+      _optionsLoaded: function(data) {
+        var options = data.detail.response;
+
+        // prepare collect object for options
+        Polymer.globalsManager.set('Dorel.collect.options', {});
+
+        // iterate over the keys of the response
+        for (var key in options.acf) {
+
+          // first put the response in the globals to use it later
+          Polymer.globalsManager.set('Dorel.collect.options.' + key,
+            options.acf[key]);
+        };
+      },
+
+      /**
+       * @name _hasProps
+       * @description check if the observed data model has properties
+       */
+      _hasProps: function(dataObj) {
+        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+        var hasProps = false;
+
+        // check for properties in the dorelEvt object
+        for (var prop in dataObj) {
+          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+        }
+
+        return hasProps;
+      }
+    });
+  </script>
+</dom-module>

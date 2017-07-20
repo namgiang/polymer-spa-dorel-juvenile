@@ -1,0 +1,65 @@
+<dom-module id="dorel-logo">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .title {
+        height: 0;
+        width: 0;
+        overflow: hidden;
+        opacity: 0;
+        margin: 0;
+        padding: 0;
+      }
+
+      .logo {
+        width: var(--theme-logo-mobile-width);
+        height: var(--theme-logo-mobile-height);
+        background: var(--theme-logo);
+        display: block;
+        background-size: contain;
+        overflow: hidden;
+        transition: transform .45s ease;
+        -ms-transform-origin: left;
+        -webkit-transform-origin: left;
+        transform-origin: left;
+      }
+
+      .logo[tablet-medium-up] {
+        width: var(--theme-logo-width);
+        height: var(--theme-logo-height);
+      }
+
+      .logo[compact-menu] {
+        -ms-transform: scale(.75);
+        -webkit-transform: scale(.75);
+        transform: scale(.75);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <h1 class="title">[[ brandName ]]</h1>
+    <div class="logo"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         compact-menu$="{{ compactMenu }}"></div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-logo',
+      properties: {
+        /**
+         * @attribute
+         * @name brandName
+         * @description defines the brand of the page
+         */
+        brandName: {
+          type: String
+        },
+      }
+    });
+  </script>
+</dom-module>
