@@ -2,6 +2,8 @@
 <link rel="import" href="../organisms/dorel-section-category-header.html">
 <link rel="import" href="../organisms/dorel-section-category-sidebar.html">
 
+<link rel="import" href="../utils/dorel-magento-collect-products.html">
+
 <dom-module id="dorel-template-product-category">
   <template>
     <style>
@@ -71,15 +73,12 @@
       }
     </style>
 
+    <dorel-magento-collect-products category="[[ category ]]"></dorel-magento-collect-products>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
-      <iron-ajax
-        auto
-        url="[[ categoriesEndPoint ]]"
-        handle-as="json"
-        on-response="_categoriesLoaded"></iron-ajax>
 
       <!-- show when acf.page_builder has components -->
       <template
@@ -127,10 +126,13 @@
         </template>
       </template>
 
-      <dorel-category-listing
-        products-data="[[ products ]]"
-        gtm-parent="dorel-category-listing"
-        gtm-parent-index="2"></dorel-category-listing>
+      <template is="dom-if" if="products.length">
+        <dorel-category-listing
+          products-data="[[ products ]]"
+          sort="[[ sort ]]"
+          gtm-parent="dorel-category-listing"
+          gtm-parent-index="2"></dorel-category-listing>
+      </template>
 
       <template
         is="dom-if"
@@ -160,12 +162,19 @@
         products: {
           type: Array,
           value: []
-        }
+        },
+
+        category: {
+          type: Number,
+          value: 0
+        },
 
       },
 
       observers: [
-        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)'
+        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)',
+        '_currentPageChanged(globals.Dorel.current.page)',
+        '_currentProductsChanged(globals.Dorel.current.products)'
       ],
 
       /**
@@ -188,17 +197,26 @@
           return category.id === self.templateData.acf.product_category;
         });
 
-        // get the products page from the pages array retrieved from WP
-        var page = pages.find(function (page) {
-          return page.template === 'products';
-        });
+      },
 
-        // check which pages have the current categoryId attached and add them to the products array
-        for (var i = 0; i < page.products.length; i++) {
-          if (page.products[i].categories.indexOf(category.id) === 0) {
-            this.products = this.products.concat(page.products[i]);
-          }
+      _currentPageChanged: function(currentPage) {
+        if(currentPage && currentPage.template && currentPage.template === 'product-category') {
+          var options = currentPage.acf.page_builder.find(function(item) {
+            return item.acf_fc_layout === 'section_magento';
+          });
+          this.category = options.magento_category_picker;
+          this.sort = {
+            type: options.magento_product_sorting,
+            order: options.magento_sort_order
+          };
         }
+      },
+
+      _currentProductsChanged: function(products) {
+        if(!products){
+          return;
+        }
+        this.products = products;
       },
 
       /**

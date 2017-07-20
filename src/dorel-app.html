@@ -147,6 +147,7 @@
           route="{{ subroute }}"></dorel-template-component-guide>
 
         <dorel-template-404 name="404"></dorel-template-404>
+
       </iron-pages>
     </main>
 
@@ -238,6 +239,14 @@
           locale: {},
           collect: {},
           current: {},
+          product: {
+            products: [],
+            retreivedCategories: [],
+            auth: {
+              token: '',
+              timestamp: ''
+            }
+          },
           events: {},
           grid: {
             horizontal: false,
@@ -301,6 +310,9 @@
         // if the route is undefined
         if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
+        //get first segment of url;
+        firstSegment = page.path.split( '/' )[1];
+
         // get the a clean last segment of the route.path
         page = page.path.match(/([^\/]*)\/*$/).pop();
 
@@ -335,6 +347,12 @@
           }
           return item.slug === self.page;
         });
+
+        if(!this.currentPage && firstSegment.length) {
+          this.currentPage = pages.find(function(item) {
+              return item.acf_category_field === firstSegment;
+          });
+        }
 
         // when the page cannot be matched, it is always the 404
         if (typeof this.currentPage === 'undefined') {
