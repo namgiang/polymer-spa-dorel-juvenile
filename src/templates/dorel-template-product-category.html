@@ -79,11 +79,6 @@
 
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
-      <iron-ajax
-        auto
-        url="[[ categoriesEndPoint ]]"
-        handle-as="json"
-        on-response="_categoriesLoaded"></iron-ajax>
 
       <!-- show when acf.page_builder has components -->
       <template
@@ -131,10 +126,13 @@
         </template>
       </template>
 
-      <dorel-category-listing
-        products-data="[[ products ]]"
-        gtm-parent="dorel-category-listing"
-        gtm-parent-index="2"></dorel-category-listing>
+      <template is="dom-if" if="products.length">
+        <dorel-category-listing
+          products-data="[[ products ]]"
+          sort="[[ sort ]]"
+          gtm-parent="dorel-category-listing"
+          gtm-parent-index="2"></dorel-category-listing>
+      </template>
 
       <template
         is="dom-if"
@@ -203,7 +201,14 @@
 
       _currentPageChanged: function(currentPage) {
         if(currentPage && currentPage.template && currentPage.template === 'product-category') {
-          this.category = currentPage.acf.product_category;
+          var options = currentPage.acf.page_builder.find(function(item) {
+            return item.acf_fc_layout === 'section_magento';
+          });
+          this.category = options.magento_category_picker;
+          this.sort = {
+            type: options.magento_product_sorting,
+            order: options.magento_sort_order
+          };
         }
       },
 

@@ -22,6 +22,14 @@
       input="1"
       handle-as="json"></iron-ajax>
 
+    <iron-ajax
+      id="colorMap"
+      content-type="application/json"
+      method="get"
+      input="1"
+      handle-as="json"
+      on-response="_colorMapResponse"></iron-ajax>
+
   </template>
 
   <script>
@@ -87,12 +95,37 @@
             this._authenticate();
           } else {
             //else the token is valid
-            this._getProductsByCategory();
+            this._getColorMap();
           }
         } else {
           // authenticate because timestamp is not set
           this._authenticate();
         }
+      },
+
+      /**
+       * @name _checkIfColorMappingExists
+       */
+      _getColorMap: function() {
+        if(this.colorMap) {
+          this._getProductsByCategory();
+        } else {
+          var colorMapEl = this.$.colorMap;
+          var token = Polymer.globalsManager.get('Dorel.product.auth.token');
+          if(token) {
+            colorMapEl.headers = {Authorization: 'Bearer ' + token};
+            //TODO Add end-point to CONFIG
+            colorMapEl.url = 'http://mage2.api.dev-mc.dorel-app.net/rest/V1/products/attributes/car_seat_color/options';
+            colorMapEl.generateRequest();
+          }
+        }
+      },
+
+      /**
+       * @name _checkIfColorMappingExists
+       */
+      _colorMapResponse: function(response) {
+        this._getProductsByCategory();
       },
 
       /**
@@ -104,7 +137,6 @@
         var auth = this.$.authenticate;
 
         //TODO remove credentials
-
         var params = {
           username: 'api_user',
           password: 'DorelAp1@#'
@@ -112,7 +144,6 @@
         auth.body = JSON.stringify(params);
 
         //TODO set magento url from config
-
         auth.url = 'http://mage2.api.dev-mc.dorel-app.net/rest/V1/integration/admin/token';
         auth.generateRequest();
       },
@@ -127,7 +158,7 @@
         var newTimestamp = Date.now();
         Polymer.globalsManager.set('Dorel.product.auth.token', token);
         Polymer.globalsManager.set('Dorel.product.auth.timestamp', newTimestamp);
-        this._getProductsByCategory();
+        this._getColorMap();
       },
 
       /**

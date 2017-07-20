@@ -75,7 +75,7 @@
           <template is="dom-if" if="products.length">
           <template
             is="dom-repeat"
-            items="[[ productsData ]]"
+            items="[[ sortProducts(productsData) ]]"
             as="product">
 
             <dorel-category-listing-item
@@ -107,6 +107,42 @@
           type: Array,
           value: []
         },
+
+        sort: {
+          type: Object
+        }
+      },
+
+      sortProducts: function(items) {
+        if(!items.length) {
+          return [];
+        }
+        var type = this.sort.type;
+        if(type && type !== 'none') {
+          return this._sortString(items, this.sort);
+        }
+        return items;
+      },
+
+
+      _sortString: function(items, sort) {
+        return items.sort(function(a, b) {
+          if(!(typeof a[sort.type] === 'string' && typeof b[sort.type] === 'string')
+            && !(typeof a[sort.type] === 'number' && typeof b[sort.type] === 'number')) {
+            return 0;
+          }
+
+          var a = typeof a[sort.type] === 'string' ? a[sort.type].toUpperCase() : a[sort.type];
+          var b = typeof b[sort.type] === 'string' ? b[sort.type].toUpperCase() : b[sort.type];
+          if (a < b) {
+            return sort.order === 'asc' ? -1 : 1;
+          }
+          if (a > b) {
+            return sort.order === 'asc' ? 1 : -1;
+          }
+          // names must be equal
+          return 0;
+        });
       }
     });
   </script>
