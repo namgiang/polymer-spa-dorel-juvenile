@@ -1,3 +1,4 @@
+<link rel="import" href="../molecules/dorel-hero-video.html">
 <dom-module id="dorel-section-hero-header">
   <template>
     <style>
@@ -54,10 +55,11 @@
       .content {
         @apply(--theme-grid-column);
         position: absolute;
-        bottom: 4.5em;
+        top: 60%;
         right: 0;
         text-align: right;
         padding: 0 1.5em;
+
         margin-top: 0;
       }
 
@@ -149,6 +151,7 @@
 
     </style>
 
+    <!-- TODO: Refactor to dorel-media-query in DIO-1242 -->
     <!-- media queries -->
     <iron-media-query query="(max-width : 479px)"
                       query-matches="{{ mobileSmall }}"></iron-media-query>
@@ -160,11 +163,32 @@
              mobile-small$="{{ mobileSmall }}"
              mobile-medium$="{{ mobileMedium }}"
              screen-large$="{{ screenLarge }}">
-      <iron-image class="image"
-                  sizing="cover"
-                  fade="true"
-                  preload
-                  src$="[[ heroHeaderData.background_image ]]"></iron-image>
+
+      <!-- Show video on larger screens -->
+      <template is="dom-if" if="{{ screenLarge }}">
+        <!-- Show video in header if there is a video -->
+        <template is="dom-if" if="[[ heroHeaderData.video_id ]]">
+          <dorel-hero-video video-id="[[ heroHeaderData.video_id ]]"
+                            thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
+        </template>
+
+        <!-- Show image in headere if there is no video -->
+        <template is="dom-if" if="[[ !heroHeaderData.video_id ]]">
+          <iron-image class="image"
+                      sizing="cover"
+                      fade="true"
+                      preload
+                      src$="[[ heroHeaderData.background_image ]]"></iron-image>
+        </template>
+      </template>
+      <!-- Don't show video on smaller screens, just the image -->
+      <template is="dom-if" if="{{ !screenLarge }}">
+        <iron-image class="image"
+                    sizing="cover"
+                    fade="true"
+                    preload
+                    src$="[[ heroHeaderData.background_image ]]"></iron-image>
+      </template>
       <div class="content-wrapper">
         <div class="content">
           <header>
@@ -179,7 +203,7 @@
             </template>
           </header>
 
-          <template
+          <!--<template
             is="dom-if"
             if="[[ heroHeaderData.cta_toggle ]]">
             <dorel-cta
@@ -192,7 +216,7 @@
               gtm-cta-index="0">
               [[ heroHeaderData.cta_text ]]
             </dorel-cta>
-          </template>
+          </template> -->
         </div>
       </div>
     </section>
@@ -202,7 +226,6 @@
       is: 'dorel-section-hero-header',
 
       properties: {
-
         /**
          * @attribute
          * @name heroHeaderData
@@ -216,12 +239,11 @@
         }
 
       },
-
       /**
-       * @name hasBackgroundImage
-       * @description checks to see if a background image is set in Wordpress
+       * @name _hasValue
+       * @description checks to see if a value has been set
        *
-       * @returns Sting when no image is set it returns the placeholder string
+       * @returns True when val has a value
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' || val !== '');

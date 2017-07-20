@@ -15,17 +15,9 @@
         margin-top: 1.5em;
         overflow: hidden;
         flex: 1;
-
         -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
-      }
-
-      .title {
-        @apply(--theme-typography-6);
-        color: var(--theme-brand-color-1);
-        float: left;
-        width: 100%;
       }
 
       .description {
@@ -51,22 +43,22 @@
         height: 12em;
       }
 
-      [mobile-small] .title, [mobile-medium] .title {
+      .title {
         @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-6);
       }
 
     </style>
 
-    <!-- media queries -->
-    <iron-media-query query="(max-width : 479px)"
-                      query-matches="{{ mobileSmall }}"></iron-media-query>
-    <iron-media-query query="(min-width : 480px) and (max-width : 767px)"
-                      query-matches="{{ mobileMedium }}"></iron-media-query>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-
-    <div class="card"
-         mobile-small$="{{ mobileSmall }}"
-         mobile-medium$="{{ mobileMedium }}">
+    <div class="card" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <!-- cardImage -->
       <template
         is="dom-if"
