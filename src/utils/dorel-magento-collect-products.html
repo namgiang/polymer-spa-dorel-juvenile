@@ -115,7 +115,7 @@
           if(token) {
             colorMapEl.headers = {Authorization: 'Bearer ' + token};
             //TODO Add end-point to CONFIG
-            colorMapEl.url = 'http://mage2.api.dev-mc.dorel-app.net/rest/V1/products/attributes/car_seat_color/options';
+            colorMapEl.url = CONFIG.ECOM_URL + '/rest/V1/products/attributes/car_seat_color/options';
             colorMapEl.generateRequest();
           }
         }
@@ -144,7 +144,7 @@
         auth.body = JSON.stringify(params);
 
         //TODO set magento url from config
-        auth.url = 'http://mage2.api.dev-mc.dorel-app.net/rest/V1/integration/admin/token';
+        auth.url = CONFIG.ECOM_URL + '/rest/V1/integration/admin/token';
         auth.generateRequest();
       },
 
@@ -172,7 +172,7 @@
         if(token && this.category) {
           productsEl.headers = {Authorization: 'Bearer ' + token}
           //TODO Add end-point to CONFIG
-          productsEl.url = 'http://mage2.api.dev-mc.dorel-app.net/rest/V1/products' +
+          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products' +
           '?searchCriteria[filter_groups][0][filters][0][field]=category_id' +
           '&searchCriteria[filter_groups][0][filters][0][value]=' + this.category +
           '&searchCriteria[pageSize]=' + 10 +
@@ -257,7 +257,7 @@
         var childProductsEl = this.$.childProducts;
         childProductsEl.headers = {Authorization: 'Bearer ' + token};
         //TODO Add end-point to config
-        childProductsEl.url = 'http://mage2.api.dev-mc.dorel-app.net/rest/V1/configurable-products/' +
+        childProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/configurable-products/' +
         id + '/children';
 
         return childProductsEl.generateRequest().completes;
@@ -331,7 +331,7 @@
           product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
 
           //TODO set image url segment variable in config
-          product.color_image = 'http://mage2.api.dev-mc.dorel-app.net/media/catalog/product/' +
+          product.color_image = CONFIG.ECOM_URL + '/media/catalog/product/' +
           self._retrieveCustomAttribute(oldProductModel, 'image');
           return product;
         });
