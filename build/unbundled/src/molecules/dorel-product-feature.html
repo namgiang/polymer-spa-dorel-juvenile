@@ -1,0 +1,84 @@
+<html><head></head><body><dom-module id="dorel-product-feature">
+  <template>
+    <style>
+      :host {
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+
+      .feature {
+        margin-top: 3em;
+      }
+
+      .feature-image {
+        width: 16em;
+        height: 17.5em;
+        margin: auto;
+        float: none;
+        display: block;
+      }
+
+      .feature-title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+      }
+
+      .feature-description {
+        float: left;
+      }
+
+      [mobile-small] .feature-image, [mobile-medium] .feature-image {
+        width: 8em;
+        height: 8.75em;
+        float: left;
+      }
+
+      [mobile-small] .feature-content, [mobile-medium] .feature-content {
+        width: calc(100% - 8em);
+        padding: 0 0 0 1em;
+        box-sizing: border-box;
+        float: left;
+      }
+
+      [mobile-small] .feature-title, [mobile-medium] .feature-title {
+        margin-top: 0;
+      }
+
+      [mobile-small] .feature-wrapper, [mobile-medium] .feature-wrapper {
+        padding: 0;
+      }
+
+    </style>
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)" query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <section mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}" tablets$="{{ tablets }}" desktop-small$="{{ desktopSmall }}">
+      <div class="feature">
+        <div class="feature-wrapper">
+          <template is="dom-if" if="[[ _hasValue(featureData.image) ]]">
+            <iron-image class="feature-image" sizing="contain" fade="true" preload="" src$="[[ featureData.image ]]">
+            </iron-image>
+          </template>
+          <div class="feature-content">
+            <template is="dom-if" if="[[ _hasValue(featureData.title) ]]">
+              <h3 class="feature-title">[[ featureData.title ]]</h3>
+            </template>
+            <template is="dom-if" if="[[ _hasValue(featureData.description) ]]">
+              <div class="feature-description">
+                <dorel-safe-html html="[[ featureData.description ]]"></dorel-safe-html>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script>Polymer({is:"dorel-product-feature",properties:{featureData:{type:Object,value:function(){return{}}}},_hasValue:function(e){return"undefined"!=typeof e||""!==e}});</script>
+
+</dom-module>
+</body></html>

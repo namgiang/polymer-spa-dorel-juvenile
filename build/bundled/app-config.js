@@ -1,0 +1,1 @@
+var CONFIG={CMS_URL:"//dorel-wp.dev/wp-json",DIO_API_URL:"https://api.dorel.io/v1",AVAILABLE_BRANDS:[{label:"Maxi-Cosi"},{label:"Dorel"}],SELECTED_BRAND:0,LOCALE:{COUNTRY:"Australia",LANGUAGE:"en",LANG_CONTENT:"en-AU",LINK_ALT:"http://www.maxi-cosi.com/au-en"}};

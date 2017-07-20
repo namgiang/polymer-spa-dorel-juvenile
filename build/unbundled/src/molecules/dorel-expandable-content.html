@@ -1,0 +1,56 @@
+<html><head><link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
+</head><body><dom-module id="dorel-expandable-content">
+  <template>
+    <style>
+      :host {
+        --button-margin-spacing: 0;
+      }
+
+      dorel-cta {
+        float: left;
+        width: auto;
+        clear: both;
+      }
+
+      dorel-safe-html {
+        display: block;
+        clear: both;
+        float: none;
+      }
+
+      #collapse {
+        float: left;
+        width: 100%;
+      }
+
+    </style>
+
+    <template is="dom-if" if="[[content]]">
+      <section class="expandable-content">
+        
+        <dorel-safe-html html="[[ initialContent ]]"></dorel-safe-html>
+        
+        <template is="dom-if" if="[[ restContent ]]">
+          <iron-collapse id="collapse">
+            <dorel-safe-html html="[[ restContent  ]]"></dorel-safe-html>
+          </iron-collapse>
+          
+          <template is="dom-if" if="[[ !expanded ]]">
+            <dorel-cta title="Read more" on-click="_toggle" type="link" link="" size="small" icon="dorel-icons:expand-more">
+              Read more
+            </dorel-cta>
+          </template>
+          <template is="dom-if" if="[[ expanded ]]">
+            <dorel-cta title="Read less" on-click="_toggle" type="link" link="" size="small" icon="dorel-icons:expand-less">
+              Read less
+            </dorel-cta>
+          </template>
+        </template>
+      </section>
+    </template>
+  </template>
+
+  <script>Polymer({is:"dorel-expandable-content",properties:{content:{type:Object},expanded:{type:Boolean,value:!1},initialContent:{type:String,computed:"_computeInitialContent(content)"},restContent:{type:String,computed:"_computeRestContent(content)"}},_computeInitialContent:function(t){var e=new RegExp("(<p>.*</p>)","g"),n=t.match(e);return n.length>1?n[0]:t},_computeRestContent:function(t){var e=new RegExp("(<p>.*</p>)","g"),n=t.match(e);if(n.length>1)return n.shift(),n.join("")},_toggle:function(){this.$$("#collapse").toggle(),this.expanded=!this.expanded},hasValue:function(t){return""!=typeof t&&"undefined"!==t&&null!==t}});</script>
+</dom-module>
+</body></html>

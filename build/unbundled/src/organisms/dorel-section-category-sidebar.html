@@ -1,0 +1,43 @@
+<html><head></head><body><dom-module id="dorel-section-category-sidebar">
+  <template>
+    <style>
+      .title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+      }
+      
+    </style>
+
+    <template is="dom-if" if="[[ _hasSidebar(categorySidebarData.sidebar) ]]">
+      <aside class="category-sidebar">
+
+        <template is="dom-repeat" items="[[ contentWrappers ]]" as="contentWrap">
+
+          <div class="content-wrapper">
+            <div class="content">
+              <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
+                <template is="dom-if" if="{{ _isMainHeader(index) }}">
+                  <h1 class="title">[[ contentWrap.title ]]</h1>
+                </template>
+
+                <template is="dom-if" if="{{ !_isMainHeader(index) }}">
+                  <h2 class="title">[[ contentWrap.title ]]</h2>
+                </template>
+              </template>
+
+              <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
+                <div class="text">
+                  <dorel-safe-html html="[[ contentWrap.text ]]"></dorel-safe-html>
+                </div>
+              </template>
+            </div>
+          </div>
+
+        </template>
+      </aside>
+    </template>
+  </template>
+  <script>Polymer({is:"dorel-section-category-sidebar",properties:{categorySidebarData:{type:Object,value:function(){return{}}}},ready:function(){this.contentWrappers=this.categorySidebarData.sidebar[0].content_wrappers},_hasSidebar:function(e){return"undefined"!=typeof e||e.length&&e[0].content_wrap.length},_hasValue:function(e){return"undefined"!=typeof e&&""!==e},_isMainHeader:function(e){return"undefined"!=typeof e&&e<1}});</script>
+</dom-module>
+</body></html>

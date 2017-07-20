@@ -1,0 +1,217 @@
+<html><head><link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../molecules/dorel-icons.html">
+<link rel="import" href="../organisms/dorel-section-store-locator-results.html">
+<link rel="import" href="../organisms/dorel-section-store-locator-result.html">
+<link rel="import" href="../atoms/dorel-input.html">
+<link rel="import" href="../atoms/dorel-input-select.html">
+
+</head><body><dom-module id="dorel-section-store-locator">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+
+      :host {
+        --button-margin-spacing: 0;
+      }
+
+      .section-store-locator,
+      .store-locator-map {
+        position: relative;
+        width: 100%;
+      }
+
+      .content-header {
+        background-color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
+        display: flex;
+      }
+
+      .content-wrapper {
+        padding: 6em 0;
+        box-sizing: border-box;
+        color: var(--theme-color-white);
+        max-width: var(--theme-base-paragraph-width);
+        float: none;
+        margin: auto;
+      }
+
+      .title {
+        @apply(--theme-typography-8);
+        color: var(--theme-color-white);
+        font-size: var(--theme-scale-6);
+        margin: 0 0 0.1875em 0;
+        text-shadow: var(--theme-text-shadow);
+      }
+
+      .store-title {
+        @apply(--theme-typography-4);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .store-locator-map {
+        float: left;
+      }
+
+      .store-overlay {
+        background-color: var(--theme-color-white);
+        box-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.125);
+        position: absolute;
+        top: 1.5em;
+        right: 1.5em;
+        padding: 1.5em;
+        width: 300px;
+        z-index: 1000;
+        border-radius: var(--theme-border-radius-2);
+      }
+
+      .submit-button-wrapper {
+        font-size: 1em;
+        float: left;
+        width: 100%;
+        margin: 0;
+        max-width: var(--theme-base-paragraph-width);
+        margin-bottom: 1.5em;
+      }
+
+      google-map {
+        width: 100%;
+        height: 37.5em;
+        position: relative;
+        float: left;
+      }
+
+      form {
+        float: left;
+        margin-top: 1.5em;
+        width: 100%;
+      }
+
+      dorel-cta {
+        float: left;
+        width: 100%;
+      }
+
+      [mobile-small] .store-overlay, [mobile-medium] .store-overlay {
+        position: initial;
+        top: 0;
+        right: 0;
+        padding: 1.5em .875em;
+        border-radius: 0;
+        box-sizing: border-box;
+        max-width: var(--theme-base-paragraph-width);
+        box-shadow: none;
+        width: 100%;
+        margin: auto;
+      }
+
+      [mobile-small] google-map, [mobile-medium] google-map {
+        height: 90vh;
+      }
+
+      [mobile-small] .title, [mobile-medium] .title {
+        @apply(--theme-typography-6);
+        margin-top: 0;
+      }
+
+      [mobile-small] .content-wrapper, [mobile-medium] .content-wrapper {
+        padding: 3em var(--theme-gutter-mobile);
+      }
+    </style>
+
+    <iron-ajax auto="" url="[[ countriesEndPoint ]]" handle-as="json" on-response="_countriesLoaded"></iron-ajax>
+
+    <iron-ajax auto="" url="[[ storesEndPoint ]]" handle-as="json" on-response="_storesLoaded"></iron-ajax>
+
+    <template is="dom-if" if="[[ _hasProps(templateData) ]]">
+      <google-maps-api id="api" api-key="[[ apiKey ]]" language="[[ language ]]" on-api-load="_mapApiLoaded"></google-maps-api>
+    </template>
+
+    
+    <iron-a11y-keys id="a11y" target="[[_form]]" keys="enter" on-keys-pressed="_submitLocator"></iron-a11y-keys>
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="max-width : 767px" query-matches="{{ mobile }}"></iron-media-query>
+
+    <section class="section-store-locator" mobile$="{{ mobile }}" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}">
+      <div class="content-header">
+        <div class="content-wrapper">
+          <h1 class="title">[[ templateData.acf.title ]]</h1>
+          <dorel-safe-html html="[[ templateData.acf.text ]]"></dorel-safe-html>
+        </div>
+      </div>
+      <div class="store-locator-map">
+        <div class="store-overlay">
+          <h2 class="store-title">Enter a Location</h2>
+          <form is="iron-form" method="get" action="/" id="store-locator-form">
+
+            <dorel-input-select label="Select a country" options="[[ countriesResponse.results ]]" selected="{{ selectedCountry }}" disabled$="[[ !countriesResponse.results.length ]]"></dorel-input-select>
+
+            <dorel-input id="address-input" label="Type in address" value="{{ addressInput }}" error-message="{{ addressError }}" invalid$="{{ addressInvalid }}" disabled$="[[ !selectedCountry ]]" required=""></dorel-input>
+
+            <h2 class="submit-button-wrapper">
+              <dorel-cta id="submit-button" on-click="_submitLocator" disabled$="{{ _isDisabled(addressInput) }}" type="primary" link="" size="small" icon="dorel-icons:chevron-right" gtm-action="submit-stores" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index="0">Find Stores</dorel-cta>
+            </h2>
+          </form>
+
+        </div>
+        <template is="dom-if" if="{{ !mobile }}">
+          <template is="dom-if" if="[[ apiLoaded ]]">
+            <google-map id="googleMap" language="[[ language ]]" map="{{ map }}" disable-zoom="[[ disableZoom ]]" api-key="[[ apiKey ]]" latitude="{{ mapLat }}" longitude="{{ mapLng }}" zoom="{{ mapZoom }}" fit-to-markers="" map-type="roadmap" disable-map-type-control="" disable-street-view-control="" single-info-window="">
+
+              <template is="dom-repeat" items="{{ storesResponse.results }}" as="store">
+                <google-map-marker latitude="[[ storesResponse.originalLat ]]" longitude="[[ storesResponse.originalLng ]]" icon="/assets/images/markers/home-marker.png"></google-map-marker>
+
+                <google-map-marker latitude="[[ store.lat ]]" longitude="[[ store.lng ]]" store="[[ store ]]" click-events="true" icon="/assets/images/markers/shop-marker.png">
+
+                  
+                  <template is="dom-if" if="[[ store.name ]]">
+                    <h3 class="location-title" style="font-size: 1.7500em;line-height: 1.7143em;margin:0;font-weight: 400">[[ store.name
+                      ]]</h3>
+                  </template>
+
+                  <p class="location-content" style="margin:0">
+                    <template is="dom-if" if="[[ store.city ]]">[[ store.city ]]<br></template>
+                    <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+                    <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+                  </p>
+
+                  <template is="dom-if" if="[[ store.address ]]">
+                    <a style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em" class="marker-anchor" href="http://maps.google.com/maps?z=16&amp;daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]" title="Plan route" target="_blank">Plan route
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:location"></iron-icon>
+                    </a>
+                  </template>
+
+                  <template is="dom-if" if="[[ store.phone_number ]]">
+                    <a style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em" href="tel:{{ store.phone_number }}" title="Call" target="_blank">
+                      [[ store.phone_number ]]
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:call"></iron-icon>
+                    </a>
+                  </template>
+                  <template is="dom-if" if="[[ store.online_shop.url ]]">
+                    <a style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em" href="[[ store.online_shop.url ]]" title="Visit website" target="_blank">
+                      Visit website
+                      <iron-icon class="theme-cta__icon" icon="dorel-icons:external-link"></iron-icon>
+                    </a>
+                  </template>
+                </google-map-marker>
+              </template>
+            </google-map>
+          </template>
+        </template>
+      </div>
+
+      <template is="dom-if" if="[[  storesResponse.results ]]">
+        <dorel-section-store-locator-results results="[[ storesResponse.results ]]" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="dorel-section-store-locator-results"></dorel-section-store-locator-results>
+      </template>
+    </section>
+  </template>
+
+  <script>Polymer({is:"dorel-section-store-locator",properties:{templateData:{type:Object,value:function(){return{}}},apiLoaded:{type:Boolean,value:!1,observer:"_initStoreLocator"},_form:{type:Object,value:function(){return this.$["store-locator-form"]}},language:{type:String,value:CONFIG.LOCALE.LANGUAGE},apiKey:{type:String,value:"AIzaSyBYMyWp_Ex0Vti2UUDNOs979yVJ5sts1iA"},disableZoom:{type:Boolean,value:!0},mapLoaded:{type:Boolean,value:!1},countriesResponse:{type:Object,value:function(){return{}}},countryStoresArr:{type:Array,value:[]},selectedCountry:{type:String,value:CONFIG.LOCALE.COUNTRY},addressInvalid:{type:Boolean,value:!1}},listeners:{"google-map-ready":"_mapLoaded"},observers:["_setMapZoom(mapLoaded, geometry)","_setMapFocus(mapLoaded, selectedCountry)"],_mapApiLoaded:function(){this.apiLoaded=!0},_initStoreLocator:function(e){"undefined"!=typeof e&&e&&(this.geocoder=new google.maps.Geocoder,this.autocomplete=new google.maps.places.AutocompleteService,this.countriesEndPoint=this.globals.Dorel.dioApiUrl+"/retailers/countries?brandName=maxi_cosi&localeCode="+this.language)},_mapLoaded:function(){this.mapLoaded=!0},_setMapFocus:function(e,t){if(e&&"undefined"!=typeof t&&"undefined"!=typeof this.geocoder){var s=this;this._retrieveGeocode(t).then(function(e){s.mapLat=e.location.lat(),s.mapLng=e.location.lng(),s.geometry=e})}},_setMapZoom:function(e,t){e&&"undefined"!=typeof t&&this.map.fitBounds(t.viewport)},_countriesLoaded:function(e){this.countriesResponse=e.detail.response},_storesLoaded:function(e){this.storesResponse=e.detail.response;var t={org:{lat:this.storesResponse.originalLat,lng:this.storesResponse.originalLng},res:{lat:this.storesResponse.results[this.storesResponse.totalResults-1].lat,lng:this.storesResponse.results[this.storesResponse.totalResults-1].lng}},s=new google.maps.LatLng(t.org.lat,t.org.lng),o=new google.maps.LatLng(t.res.lat,t.res.lng),n=new google.maps.LatLngBounds;n.extend(s),n.extend(o),this.map.fitBounds(n)},_submitLocator:function(e){if("undefined"!=typeof this.addressInput&&this.address!==this.addressInput){if(""===this.addressInput)return void this._handleErrors("ADDRESS_EMPTY");this.$["address-input"].invalid=!1,this.addressInvalid=!1,this.storesResponse={results:[]};var t=this,s=this.addressInput+" "+this.selectedCountry;this.address=this.addressInput,this.predictions=this._retrieveSuggestions(s).then(function(e){t._retrieveGeocode(e.description).then(function(e){var s="&lat="+e.location.lat();s+="&lng="+e.location.lng(),s+="&radius=5",t.storesEndPoint=t.globals.Dorel.dioApiUrl+"/retailers?brandName=maxi_cosi"+s},function(e){t._handleErrors(e)})},function(e){t._handleErrors(e)})}},_retrieveGeocode:function(e){var t=this;return new Promise(function(s,o){t.geocoder.geocode({address:e},function(e,t){"OK"===t?s(e[0].geometry):o(t)})})},_retrieveSuggestions:function(e){var t=this;return new Promise(function(s,o){t.autocomplete.getQueryPredictions({input:e},function(e,t){t!=google.maps.places.PlacesServiceStatus.OK?o(t):s(e[0])})})},_isDisabled:function(e){return"undefined"==typeof e||""===e},_handleErrors:function(e){switch(e){case"ZERO_RESULTS":this.addressError="No results found for this address!";break;case"ADDRESS_EMPTY":this.addressError="This field cannot be empty"}this.$["address-input"].invalid=!0,this.addressInvalid=!0},_hasProps:function(e){var t=!1;for(var s in e)t=!!e.hasOwnProperty(s);return t}});</script>
+</dom-module>
+</body></html>

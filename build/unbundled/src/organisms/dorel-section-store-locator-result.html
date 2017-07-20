@@ -1,0 +1,54 @@
+<html><head></head><body><dom-module id="dorel-section-store-locator-result">
+  <template>
+    <style include="iron-flex iron-flex-alignment" is="custom-style">
+      :root {
+        --button-margin-spacing: 0;
+      }
+
+      .location-title {
+        @apply(--theme-typography-5);
+        width: 100%;
+        text-align: left;
+        margin-top: 0;
+      }
+
+      .location-content {
+        @apply(--theme-paragraph-text);
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        width: auto;
+        float: left;
+        margin-right: 1.5em;
+      }
+    </style>
+
+    <div class="dorel-section-store-locator-result">
+      <template is="dom-if" if="[[ !store.address ]]">
+        <p class="location-content">No Address Available</p>
+      </template>
+      <template is="dom-if" if="[[ store.address ]]">
+        <h3 class="location-title">[[ store.name ]]</h3>
+        <p class="location-content">
+          <template is="dom-if" if="[[ store.city ]]">[[ store.city ]]<br></template>
+          <template is="dom-if" if="[[ store.address ]]">[[ store.address ]]<br></template>
+          <template is="dom-if" if="[[ store.postal_code ]]">[[ store.postal_code ]]<br></template>
+        </p>
+        <template is="dom-if" if="[[ store.address ]]">
+          <dorel-cta title="Plan route" type="link" target="_blank" link="http://maps.google.com/maps?z=16&amp;daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]" size="small" icon="dorel-icons:location" gtm-action="plan-route-retailer" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-cta-index="0">Plan route</dorel-cta>
+        </template>
+        <template is="dom-if" if="[[ store.phone_number ]]">
+          <dorel-cta title="Call" type="link" link="tel:[[ store.phone_number ]]" size="small" icon="dorel-icons:call" gtm-action="call-retailer" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-cta-index="1">[[ store.phone_number ]]</dorel-cta>
+        </template>
+        <template is="dom-if" if="[[ store.online_shop.url ]]">
+
+          <dorel-cta title="Visit website" type="link" target="_blank" link="[[ store.online_shop.url ]]" size="small" icon="dorel-icons:external-link" gtm-action="visit-website-retailer" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-cta-index="2">Visit website</dorel-cta>
+        </template>
+      </template>
+    </div>
+  </template>
+
+  <script>Polymer({is:"dorel-section-store-locator-result",properties:{store:{type:Object,value:function(){return{}}}}});</script>
+</dom-module>
+</body></html>
