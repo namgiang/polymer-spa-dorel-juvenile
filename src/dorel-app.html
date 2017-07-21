@@ -104,13 +104,13 @@
       tail="{{ subroute }}"></app-route>
 
     <dorel-meta-manager
-      brand-name="[[ brandName ]]"
+      brand-name="[[ brand.label ]]"
       id="metaManager"></dorel-meta-manager>
 
     <dorel-header
       load-complete="[[ loadComplete ]]"
       page="[[ page ]]"
-      brand-name="[[ brandName ]]"></dorel-header>
+      brand-name="[[ brand.label ]]"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -142,7 +142,7 @@
 
         <dorel-template-component-guide
           name="component-guide"
-          brand="{{ brandName }}"
+          brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
 
@@ -154,7 +154,7 @@
     <dorel-footer></dorel-footer>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
-                        selected-brand="{{ brandName }}"
+                        selected-brand="{{ brand.label }}"
                         page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
@@ -190,16 +190,6 @@
         },
 
         /**
-         * @name brandName
-         * @description defines the brand
-         */
-        brandName: {
-          type: String,
-          notify: true,
-          readOnly: false,
-        },
-
-        /**
          * @name brandNames
          * @description available brand names (from config), used for switching between brands
          */
@@ -226,7 +216,7 @@
         '_routePageChanged(route, globals.Dorel.collect.pages)',
         '_pageChanged(page, currentPage)',
         '_setCurrentPage(currentPage)',
-        '_brandChanged(brandName)',
+        '_brandChanged(brand)',
       ],
 
       created: function () {
@@ -268,7 +258,7 @@
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
         this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brandName = this.brandNames[CONFIG.SELECTED_BRAND].label;
+        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
       },
 
 
@@ -279,7 +269,7 @@
        *
        * @param page - String - the string of the current active brand
        */
-      _brandChanged: function (brandName) {
+      _brandChanged: function (brand) {
 
         //Removed the current shared style from the dom, if it exists.
         var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
@@ -288,7 +278,7 @@
         }
 
         // Checks the apps config, and sets the according brand theme
-        var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-').toLowerCase();
+        var brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
         var domModule = document.createElement('style', 'custom-style');
         domModule.setAttribute('include', brandTheme);
         domModule.setAttribute('id', 'brand-shared-style');
