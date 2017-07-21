@@ -1,4 +1,4 @@
-<dom-module id="dorel-magento-collect-products">
+<dom-module id="dorel-magento-collect-product">
   <template>
 
     <iron-ajax
@@ -9,7 +9,7 @@
       on-response="_authResponse"></iron-ajax>
 
     <iron-ajax
-      id="products"
+      id="product"
       content-type="application/json"
       method="get"
       handle-as="json"
@@ -34,7 +34,7 @@
 
   <script>
     Polymer({
-      is: 'dorel-magento-collect-products',
+      is: 'dorel-magento-collect-product',
 
       properties: {
 
@@ -46,12 +46,16 @@
         category: {
           type: Number,
           value: 0
+        },
+
+        productName: {
+          type: String
         }
 
       },
 
       observers: [
-        '_categoryChanged(category)'
+        '_categoryChanged(category, productName)'
       ],
 
       /**
@@ -59,23 +63,18 @@
        * @description will be called by observer if category changes by parent;
        * @param category - Number
        */
-      _categoryChanged: function(category) {
-        if(!category) {
+      _categoryChanged: function(category, productName) {
+        if(!category || !productName) {
           return;
         }
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
-        var retreivedCategories = Polymer.globalsManager.get('Dorel.product.retreivedCategories') || [];
+        var existingProduct = products.find(function(product) {
+          return product.url === productName;
+        });
 
-        //if category is already retreived
-        if(retreivedCategories.indexOf(category) > -1){
-          //filter out products that have a other category
-          var currentProducts = products.filter(function(item) {
-              return item.category === category;
-          });
-          // set current products
-          this._setCurrentProducts(currentProducts);
-         return;
+        if(existingProduct) {
+          return this._setCurrentProducts([existingProduct]);
         }
 
         // get timestamp from globals
@@ -108,13 +107,12 @@
        */
       _getColorMap: function() {
         if(this.colorMap) {
-          this._getProductsByCategory();
+          this._getProduct();
         } else {
           var colorMapEl = this.$.colorMap;
           var token = Polymer.globalsManager.get('Dorel.product.auth.token');
           if(token) {
             colorMapEl.headers = {Authorization: 'Bearer ' + token};
-            //TODO Add end-point to CONFIG
             colorMapEl.url = CONFIG.ECOM_URL + '/rest/V1/products/attributes/car_seat_color/options';
             colorMapEl.generateRequest();
           }
@@ -125,7 +123,7 @@
        * @name _checkIfColorMappingExists
        */
       _colorMapResponse: function(response) {
-        this._getProductsByCategory();
+        this._getProduct();
       },
 
       /**
@@ -162,20 +160,22 @@
       },
 
       /**
-       * @name _getProductsByCategory
+       * @name _getProduct
        * @description set correct end-point and make call to end-point to retreive products by category
        * @param category - Number
        */
-      _getProductsByCategory: function(category) {
-        var productsEl = this.$.products;
+      _getProduct: function(category) {
+        var productsEl = this.$.product;
         var token = Polymer.globalsManager.get('Dorel.product.auth.token');
+
+        var productName = this.productName;
         if(token && this.category) {
-          productsEl.headers = {Authorization: 'Bearer ' + token}
-          //TODO Add end-point to CONFIG
-          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products' +
-          '?searchCriteria[filter_groups][0][filters][0][field]=category_id' +
-          '&searchCriteria[filter_groups][0][filters][0][value]=' + this.category +
-          '&searchCriteria[filter_groups][1][filters][0][field]=visibility&searchCriteria[filter_groups][1][filters][0][value]=4';
+          productsEl.headers = {Authorization: 'Bearer ' + token};
+          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products?' +
+          '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
+          '&searchCriteria[filter_groups][1][filters][0][value]=4' +
+          '&searchCriteria[filter_groups][2][filters][0][field]=url_key' +
+          '&searchCriteria[filter_groups][2][filters][0][value]=' + this.productName;
 
           productsEl.generateRequest();
         }
@@ -183,22 +183,17 @@
 
       /**
        * @name _productResponse
-       * @description response of the _getProductsByCategory call;
+       * @description response of the _getProduct call;
        * @param response
        */
       _productResponse: function(response) {
 
-        // set category variable
+        //set products from response
+        var newProduct = response.detail.response.items;
         var category = this.category;
 
-        //add category to list to keep count of what categories are retreived
-        this._addCategoryToRetreivedCategories(category);
-
-        //set products from response
-        var newProducts = response.detail.response.items;
-
         //if there are no products in response early return
-        if(!newProducts.length) {
+        if(!newProduct) {
           return;
         }
 
@@ -206,7 +201,7 @@
         var self = this;
 
         // Map the newProducts the childProducts can be retreived and added to the product
-        Promise.all(newProducts.map(function(product) {
+        Promise.all(newProduct.map(function(product) {
           // every product will return function with a new promise from iron-ajax
           return self._getChildProducts(product.sku).then(function(data) {
               //if promise is resolved create new data model for child products
@@ -225,15 +220,15 @@
        * @description will merge the old and new products and remove the duplicates and set the global products
        * @param newProducts - Array
        */
-      _setProducts: function(newProducts) {
+      _setProducts: function(newProduct) {
         //set the current products
-        this._setCurrentProducts(newProducts);
+        this._setCurrentProducts(newProduct);
 
         //get all the "cached" products
         var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
 
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
-        var products = oldProducts.concat(newProducts.filter(function (item, index) {
+        var products = oldProducts.concat(newProduct.filter(function (item, index) {
             var exists = false;
             oldProducts.forEach(function (oldItem) {
               if (oldItem.id === item.id) {
@@ -255,7 +250,6 @@
         var token = Polymer.globalsManager.get('Dorel.product.auth.token');
         var childProductsEl = this.$.childProducts;
         childProductsEl.headers = {Authorization: 'Bearer ' + token};
-        //TODO Add end-point to config
         childProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/configurable-products/' +
         id + '/children';
 
@@ -267,27 +261,8 @@
        * @description this method will set global current products;
        * @param products - Array
        */
-      _setCurrentProducts: function(products) {
-        Polymer.globalsManager.set('Dorel.current.products', products);
-      },
-
-      /**
-       * @name _addCategoryToRetreivedCategories
-       * @description this method will handle global retreivedCategories to keep track on what categories are already retreived;
-       * @param category - Number
-       */
-      _addCategoryToRetreivedCategories: function(category) {
-        //get retreived categories
-        var retreivedCategories = Polymer.globalsManager.get('Dorel.product.retreivedCategories') || [];
-
-        //check if it does not exists
-        if(retreivedCategories.indexOf(category) < 0) {
-          //add current category
-          retreivedCategories.push(category);
-        }
-
-        //set global categories to keep track on what categories are already retreived
-        Polymer.globalsManager.set('Dorel.product.retreivedCategories', retreivedCategories);
+      _setCurrentProducts: function(product) {
+        Polymer.globalsManager.set('Dorel.current.product', product);
       },
 
       /**
@@ -299,31 +274,34 @@
        * @param childProducts - Array - all the child products of the main product
        * current keys: sku, id, name, created_at, category, childProducts, description, url
        */
-       _createDataModelProduct: function(product, category, childProducts) {
-         var oldProductModel = product;
-         var product = {};
-         product.sku = oldProductModel.sku;
-         product.id = oldProductModel.id;
-         product.name = oldProductModel.name;
-         product.created_at = oldProductModel.created_at;
-         product.category = category;
-         product.childProducts = childProducts;
-         product.description = this._retrieveCustomAttribute(oldProductModel, 'description');
-         product.age = this._retrieveCustomAttribute(oldProductModel, 'age');
-         product.max_weight = this._retrieveCustomAttribute(oldProductModel, 'max_weight');
-         product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
-         product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
-         product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
-         product.url = this._retrieveCustomAttribute(oldProductModel, 'url_key');
+      _createDataModelProduct: function(product, category, childProducts) {
+        var oldProductModel = product;
+        var product = {};
+        product.sku = oldProductModel.sku;
+        product.id = oldProductModel.id;
+        product.name = oldProductModel.name;
+        product.created_at = oldProductModel.created_at;
+        product.category = category;
+        product.childProducts = childProducts;
+        product.description = this._retrieveCustomAttribute(oldProductModel, 'description');
+        product.age = this._retrieveCustomAttribute(oldProductModel, 'age');
+        product.max_weight = this._retrieveCustomAttribute(oldProductModel, 'max_weight');
+        product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
+        product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
+        product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
+        product.url = this._retrieveCustomAttribute(oldProductModel, 'url_key');
 
-         // missing from Magento:
+        // missing from Magento:
 
-         // SHOWCASE
-         // accesoires_button: Boolean
-         // store_locator_button: Boolean
-         // store_locator_page: "https://www.maxi-cosi.com.au/find-a-store/"
+        // SHOWCASE
+        // accesoires_button: Boolean
+        // store_locator_button: Boolean
+        // store_locator_page: string "https://www.maxi-cosi.com.au/find-a-store/"
 
-         return product;
+
+
+
+        return product;
       },
 
       /**
@@ -342,7 +320,6 @@
           product.color_name = oldProductModel.sku;
           product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
 
-          //TODO set image url segment variable in config
           product.color_image = CONFIG.ECOM_URL + '/media/catalog/product/' +
           self._retrieveCustomAttribute(oldProductModel, 'image');
           return product;

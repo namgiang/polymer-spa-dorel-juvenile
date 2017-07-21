@@ -172,45 +172,8 @@
       },
 
       observers: [
-        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)',
-        '_currentPageChanged(globals.Dorel.current.page)',
         '_currentProductsChanged(globals.Dorel.current.products)'
       ],
-
-      /**
-       * @observer
-       * @name _initProductsPage
-       * @description initializes all data for the category-listing. It matches the current
-       * pages categoryId to the category in the categories collect. After that it will match
-       * all the products that comply to the categoryId
-       *
-       * @param page - Array - categories array (all categories in WP)
-       * @param pages - Array - all the retrieved pages from WP
-       */
-      _initProductsPage: function (categories, pages) {
-        // reference this
-        var self = this;
-        this.products = [];
-
-        // match the current page categoryId to the categories array retrieved from WP
-        var category = categories.find(function (category) {
-          return category.id === self.templateData.acf.product_category;
-        });
-
-      },
-
-      _currentPageChanged: function(currentPage) {
-        if(currentPage && currentPage.template && currentPage.template === 'product-category') {
-          var options = currentPage.acf.page_builder.find(function(item) {
-            return item.acf_fc_layout === 'section_magento';
-          });
-          this.category = options.magento_category_picker;
-          this.sort = {
-            type: options.magento_product_sorting,
-            order: options.magento_sort_order
-          };
-        }
-      },
 
       _currentProductsChanged: function(products) {
         if(!products){

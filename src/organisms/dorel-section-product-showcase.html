@@ -174,7 +174,7 @@
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.max_weight) ]]">
                 <li>
-                  Weight: max. [[ showcaseData.max_weight ]] kg.
+                  Weight: [[ showcaseData.max_weight ]]
                 </li>
               </template>
               <template
@@ -198,11 +198,11 @@
             <!-- color switcher -->
             <template
               is="dom-if"
-              if="[[ showcaseData.colors.length ]]">
+              if="[[ showcaseData.childProducts.length ]]">
               <div class="color-mobile-container  layout horizontal center center-justified wrap">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"
+                  colors-data="[[ showcaseData.childProducts ]]"
                   gtm-action="switch-color"
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"
@@ -266,23 +266,23 @@
             <div class="showcase-description">
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.title) ]]">
-                <p class="showcase-title">[[ showcaseData.title ]]</p>
+                if="[[ _hasValue(showcaseData.name) ]]">
+                <p class="showcase-title">[[ showcaseData.name ]]</p>
               </template>
 
               <ul class="showcase-product-specs">
                 <template
                   is="dom-if"
-                  if="[[ _hasValue(showcaseData.age_category) ]]">
+                  if="[[ _hasValue(showcaseData.age) ]]">
                   <li>
-                    Age: [[ showcaseData.age_category ]]
+                    Age: [[ showcaseData.age ]]
                   </li>
                 </template>
                 <template
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.max_weight) ]]">
                   <li>
-                    Weight: max. [[ showcaseData.max_weight ]] kg.
+                    Weight: [[ showcaseData.max_weight ]]
                   </li>
                 </template>
                 <template
@@ -305,10 +305,10 @@
               <!-- color switcher -->
               <template
                 is="dom-if"
-                if="[[ showcaseData.colors.length ]]">
+                if="[[ showcaseData.childProducts.length ]]">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"
+                  colors-data="[[ showcaseData.childProducts ]]"
                   gtm-action="switch-color"
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"
@@ -318,6 +318,7 @@
               <!--// color switcher -->
 
               <div class="actions">
+
                 <template
                   is="dom-if"
                   if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
@@ -405,6 +406,9 @@
        * @return Boolean
        */
       _hasAccessories: function (val) {
+        //TODO Refactor this method if data is available from magento
+        return false;
+
         var toggle = (typeof val !== 'undefined' && val !== '' && val);
         var currentPage = Polymer.globalsManager.get('Dorel.current.page');
 
