@@ -442,25 +442,9 @@
        */
       _setCurrentPage: function (currentPage) {
 
-        // /**
-        //  * if we are dealing with products we need to match
-        //  * which product it is
-        //  */
-        // if (currentPage.slug === 'products') {
-        //
-        //   // get last segment slug
-        //   var lastSegment = this._getLastSegment(document.URL);
-        //
-        //   // match it with the products
-        //   currentPage = currentPage.products.find(function (item) {
-        //     return item.slug === lastSegment;
-        //   });
-        // }
-
         // set the global currentPage
         Polymer.globalsManager.set('Dorel.current.page', currentPage);
 
-        // TODO: Maybe create a separate component for meta changes?
         if (currentPage !== undefined &&
             currentPage.acf &&
             currentPage.acf.meta_title &&
@@ -578,22 +562,6 @@
 
         // return the copied object
         return copy;
-      },
-
-      /**
-       * @name _getLastSegment
-       * @description strips the last segment from the url
-       *
-       * @parameter String - current document url
-       */
-      _getLastSegment: function (url) {
-        url = url.replace(/(^\w+:|^)\/\//, '');
-
-        if (url.lastIndexOf('/') === (url.length - 1)) {
-          url = url.substr(0, url.lastIndexOf('/'));
-        }
-
-        return url.substr(url.lastIndexOf('/') + 1, url.length);
       }
 
     });
