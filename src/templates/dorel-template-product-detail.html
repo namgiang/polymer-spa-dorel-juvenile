@@ -71,8 +71,6 @@
 
     <dorel-magento-collect-product category="[[ category ]]" product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
 
-    <dorel-meta-manager id="metaManager"></dorel-meta-manager>
-
     <!-- define routing for products -->
     <app-route
       route="{{ route }}"
@@ -173,7 +171,6 @@
 
       observers: [
         '_setCurrentProduct(globals.Dorel.current.product)',
-        '_setMetaOfProduct(product)',
         '_setHeader(product)'
       ],
 
@@ -191,16 +188,6 @@
           title: product.name,
           sub_title: product.description
         }
-      },
-
-      _setMetaOfProduct: function(currentProduct) {
-        if(!currentProduct) {
-          return;
-        }
-        this.$.metaManager.addMetaData({
-          metaTitle: currentProduct.meta_title,
-          metaDescription: currentProduct.meta_description
-        });
       }
 
     });

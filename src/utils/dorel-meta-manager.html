@@ -15,6 +15,10 @@
 
       },
 
+      observers: [
+        '_productMetaData(globals.Dorel.current.product)'
+      ],
+
       /**
        * @name listeners
        * @description listens to all different fires
@@ -117,6 +121,17 @@
 
         // add the meta tag to the head
         document.getElementsByTagName('head')[0].appendChild(meta);
+      },
+
+      _productMetaData: function(product) {
+        if(!product.length) {
+          return;
+        }
+        var metaData = {
+          metaTitle: product[0].meta_title,
+          metaDescription: product[0].meta_description
+        };
+        this.addMetaData(metaData);
       }
 
     });
