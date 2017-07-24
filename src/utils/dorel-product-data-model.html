@@ -5,6 +5,13 @@
   <script>
     Polymer({
       is: 'dorel-product-data-model',
+      properties: {
+
+        colorMap: {
+          type: Array
+        }
+
+      },
 
       /**
        * @name _createDataModelProduct
@@ -45,15 +52,22 @@
        * current keys: color_name, color_name, color_image
        */
       _createDataModelChildProduct: function(products) {
+        var map = this.colorMap;
+
         var self = this;
 
         return products.map(function(product) {
           var oldProductModel = product;
           var product = {};
-          product.color_name = oldProductModel.sku;
+
+          if(map && map.length) {
+            var color = map.find(function(item){
+              return item.value === self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
+            });
+            product.color_name = color.label;
+          }
           product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
 
-          //TODO set image url segment variable in config
           product.color_image = CONFIG.ECOM_URL + '/media/catalog/product/' +
           self._retrieveCustomAttribute(oldProductModel, 'image');
           return product;

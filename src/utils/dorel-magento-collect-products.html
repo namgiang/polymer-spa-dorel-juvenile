@@ -1,12 +1,19 @@
 <link rel="import" href="dorel-magento-auth.html">
 <link rel="import" href="dorel-product-data-model.html">
+<link rel="import" href="dorel-product-color-map.html">
 
 <dom-module id="dorel-magento-collect-products">
   <template>
 
     <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
 
-    <dorel-product-data-model id="transform"></dorel-product-data-model>
+    <dorel-product-color-map
+      color-map="{{ colorMap }}"
+      token="[[ token ]]"></dorel-product-color-map>
+
+    <dorel-product-data-model
+      id="transform"
+      color-map="[[ colorMap ]]"></dorel-product-data-model>
 
     <iron-ajax
       id="products"
@@ -21,14 +28,6 @@
       method="get"
       input="1"
       handle-as="json"></iron-ajax>
-
-    <iron-ajax
-      id="colorMap"
-      content-type="application/json"
-      method="get"
-      input="1"
-      handle-as="json"
-      on-response="_colorMapResponse"></iron-ajax>
 
   </template>
 
@@ -51,12 +50,17 @@
         token: {
           type: String,
           value: ''
+        },
+
+        colorMap: {
+          type: Array,
+          value: []
         }
 
       },
 
       observers: [
-        '_categoryChanged(category, token)'
+        '_categoryChanged(category, token, colorMap)'
       ],
 
       /**
@@ -64,12 +68,15 @@
        * @description will be called by observer if category changes by parent;
        * @param category - Number
        */
-      _categoryChanged: function(category, token) {
+      _categoryChanged: function(category, token, colorMap) {
         if(!category) {
           return;
         }
         if(!token) {
           return this.$.auth.retreiveToken();
+        }
+        if(!colorMap || !colorMap.length) {
+          return;
         }
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
@@ -84,68 +91,9 @@
           // set current products
           return this._setCurrentProducts(currentProducts);
         }
-
-        return this._getColorMap();
+ 
+        return this._getProductsByCategory(this.category);
       },
-
-      /**
-       * @name _checkIfColorMappingExists
-       */
-      _getColorMap: function() {
-        if(this.colorMap) {
-          this._getProductsByCategory();
-        } else {
-          var colorMapEl = this.$.colorMap;
-          var token = Polymer.globalsManager.get('Dorel.product.auth.token');
-          if(token) {
-            colorMapEl.headers = {Authorization: 'Bearer ' + token};
-            //TODO Add end-point to CONFIG
-            colorMapEl.url = CONFIG.ECOM_URL + '/rest/V1/products/attributes/car_seat_color/options';
-            colorMapEl.generateRequest();
-          }
-        }
-      },
-
-      /**
-       * @name _checkIfColorMappingExists
-       */
-      _colorMapResponse: function(response) {
-        this._getProductsByCategory();
-      },
-
-      /**
-       * @name _authenticate
-       * @description set correct end-point and credentials and make call to end-point to retreive token
-       * @param response
-       */
-      _authenticate: function() {
-        var auth = this.$.authenticate;
-
-        //TODO remove credentials
-        var params = {
-          username: 'api_user',
-          password: 'DorelAp1@#'
-        };
-        auth.body = JSON.stringify(params);
-
-        //TODO set magento url from config
-        auth.url = CONFIG.ECOM_URL + '/rest/V1/integration/admin/token';
-        auth.generateRequest();
-      },
-
-      /**
-       * @name _authResponse
-       * @description set token and set newTimestamp for token because token is only valid for a certain amount of time
-       * @param response
-       */
-      _authResponse: function(response) {
-        var token = response.detail.response;
-        var newTimestamp = Date.now();
-        Polymer.globalsManager.set('Dorel.product.auth.token', token);
-        Polymer.globalsManager.set('Dorel.product.auth.timestamp', newTimestamp);
-        this._getColorMap();
-      },
-
       /**
        * @name _getProductsByCategory
        * @description set correct end-point and make call to end-point to retreive products by category

@@ -1,12 +1,21 @@
 <link rel="import" href="dorel-magento-auth.html">
 <link rel="import" href="dorel-product-data-model.html">
+<link rel="import" href="dorel-product-color-map.html">
 
 <dom-module id="dorel-magento-collect-product">
   <template>
 
-    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+    <dorel-magento-auth
+      id="auth"
+      token="{{ token }}"></dorel-magento-auth>
 
-    <dorel-product-data-model id="transform"></dorel-product-data-model>
+    <dorel-product-color-map
+      color-map="{{ colorMap }}"
+      token="[[ token ]]"></dorel-product-color-map>
+
+    <dorel-product-data-model
+      id="transform"
+      color-map="[[ colorMap ]]"></dorel-product-data-model>
 
     <iron-ajax
       id="product"
@@ -21,14 +30,6 @@
       method="get"
       input="1"
       handle-as="json"></iron-ajax>
-
-    <iron-ajax
-      id="colorMap"
-      content-type="application/json"
-      method="get"
-      input="1"
-      handle-as="json"
-      on-response="_colorMapResponse"></iron-ajax>
 
   </template>
 
@@ -55,12 +56,17 @@
         token: {
           type: String,
           value: ''
+        },
+
+        colorMap: {
+          type: Array,
+          value: []
         }
 
       },
 
       observers: [
-        '_categoryChanged(category, productName, token)'
+        '_categoryChanged(category, productName, token, colorMap)'
       ],
 
       /**
@@ -70,12 +76,15 @@
        * @param productName - String
        * @param token - String
        */
-      _categoryChanged: function(category, productName, token) {
+      _categoryChanged: function(category, productName, token, colorMap) {
         if(!category || !productName) {
           return;
         }
         if(!token) {
           return this.$.auth.retreiveToken();
+        }
+        if(!colorMap || !colorMap.length) {
+          return;
         }
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
@@ -84,34 +93,10 @@
         });
 
         if(existingProduct) {
-          return this._setCurrentProducts([existingProduct]);
+          return this._setCurrentProduct([existingProduct]);
         }
 
-        return this._getColorMap();
-      },
-
-      /**
-       * @name _checkIfColorMappingExists
-       */
-      _getColorMap: function() {
-        if(this.colorMap) {
-          this._getProduct();
-        } else {
-          var colorMapEl = this.$.colorMap;
-          var token = Polymer.globalsManager.get('Dorel.product.auth.token');
-          if(token) {
-            colorMapEl.headers = {Authorization: 'Bearer ' + token};
-            colorMapEl.url = CONFIG.ECOM_URL + '/rest/V1/products/attributes/car_seat_color/options';
-            colorMapEl.generateRequest();
-          }
-        }
-      },
-
-      /**
-       * @name _checkIfColorMappingExists
-       */
-      _colorMapResponse: function(response) {
-        this._getProduct();
+        return this._getProduct();
       },
 
       /**
@@ -175,7 +160,7 @@
        */
       _setProducts: function(newProduct) {
         //set the current products
-        this._setCurrentProducts(newProduct);
+        this._setCurrentProduct(newProduct);
 
         //get all the "cached" products
         var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
@@ -210,11 +195,11 @@
       },
 
       /**
-       * @name _setCurrentProducts
-       * @description this method will set global current products;
-       * @param products - Array
+       * @name _setCurrentProduct
+       * @description this method will set global current product;
+       * @param product - Array
        */
-      _setCurrentProducts: function(product) {
+      _setCurrentProduct: function(product) {
         Polymer.globalsManager.set('Dorel.current.product', product);
       }
 
