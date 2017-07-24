@@ -71,6 +71,8 @@
 
     <dorel-magento-collect-product category="[[ category ]]" product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
 
+    <dorel-meta-manager id="metaManager"></dorel-meta-manager>
+
     <!-- define routing for products -->
     <app-route
       route="{{ route }}"
@@ -82,10 +84,10 @@
 
       <template is="dom-if"
         if="[[ product ]]">
-        <!-- <dorel-section-header
-          section-header-data="[[ component ]]"
+        <dorel-section-header
+          section-header-data="[[ product ]]"
           gtm-parent="dorel-section-header"
-          gtm-parent-index="[[ index ]]"></dorel-section-header> -->
+          gtm-parent-index="[[ index ]]"></dorel-section-header>
 
 
         <dorel-section-product-showcase
@@ -110,15 +112,15 @@
           gtm-parent="dorel-section-product-accessories"
           gtm-parent-index="[[ index ]]"></dorel-section-product-accessories> -->
 
-        <dorel-section-product-accordions
+        <!-- <dorel-section-product-accordions
           accordions-data="[[ product ]]"
           gtm-parent="dorel-section-product-accordions"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-accordions>
+          gtm-parent-index="[[ index ]]"></dorel-section-product-accordions> -->
 
         <!-- <dorel-section-product-video
           video-data="[[ component ]]"
           gtm-parent="dorel-section-product-video"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-video> --> -->
+          gtm-parent-index="[[ index ]]"></dorel-section-product-video> -->
 
         <!-- <dorel-section-slideshow
           slideshow-data="[[ component ]]"
@@ -170,7 +172,9 @@
       },
 
       observers: [
-        '_setCurrentProduct(globals.Dorel.current.product)'
+        '_setCurrentProduct(globals.Dorel.current.product)',
+        '_setMetaOfProduct(product)',
+        '_setHeader(product)'
       ],
 
       _setCurrentProduct: function(currentProduct) {
@@ -181,6 +185,23 @@
         this.product = currentProduct[0];
       },
 
+      _setHeader: function(product) {
+        this.header = {
+          background_image: product.name,
+          title: product.name,
+          sub_title: product.description
+        }
+      },
+
+      _setMetaOfProduct: function(currentProduct) {
+        if(!currentProduct) {
+          return;
+        }
+        this.$.metaManager.addMetaData({
+          metaTitle: currentProduct.meta_title,
+          metaDescription: currentProduct.meta_description
+        });
+      }
 
     });
   </script>
