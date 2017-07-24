@@ -5,12 +5,6 @@
       url="[[ endPoint ]]"
       handle-as="json"
       on-response="_pagesLoaded"></iron-ajax>
-
-    <iron-ajax
-      id="products"
-      url=""
-      handle-as="json"
-      on-response="_productsLoaded"></iron-ajax>
   </template>
 
   <script>
@@ -29,7 +23,7 @@
         /**
          * @name collect
          * @description this array will hold all the pages collected from the
-         * async requests (pages, products, posts)
+         * async requests (pages, posts)
          */
         collect: {
           type: Array,
@@ -66,7 +60,6 @@
        */
       _pagesLoaded: function(data) {
         var self = this;
-        var productsEl = self.$.products;
         var pages = data.detail.response;
 
         if (!pages.length) return;
