@@ -1,4 +1,5 @@
 <link rel="import" href="../molecules/dorel-category-listing-item.html">
+<link rel="import" href="../atoms/dorel-loader.html">
 
 <dom-module id="dorel-category-listing">
   <template>
@@ -9,6 +10,7 @@
         margin: auto;
         float: none;
         display: block;
+        min-height: 100vh;
       }
 
       .category-listing {
@@ -21,6 +23,12 @@
         @apply(--theme-grid-row);
         @apply(--layout-flex);
         @apply(--theme-grid-row-margins);
+        position: relative;
+      }
+
+      dorel-loader {
+        padding-top: 12em;
+        float: left;
       }
 
       dorel-category-listing-item {
@@ -72,12 +80,10 @@
 
       <section class="category-listing layout horizontal center center-justified wrap">
         <div class="row narrow-row">
-          <template is="dom-if" if="products.length">
           <template
             is="dom-repeat"
             items="[[ sortProducts(productsData) ]]"
             as="product">
-
             <dorel-category-listing-item
               colors-data="[[ product.childProducts ]]"
               link-url="[[ product.url ]]"
@@ -87,7 +93,7 @@
               gtm-child="dorel-category-listing-item"
               gtm-child-index="[[ index ]]"></dorel-category-listing-item>
           </template>
-        </template>
+          <dorel-loader loading="[[ !productsData.length ]]"></dorel-loader>
         </div>
       </section>
     </div>
@@ -97,7 +103,6 @@
       is: 'dorel-category-listing',
 
       properties: {
-
         /**
          * @attribute
          * @name productsData
@@ -113,21 +118,21 @@
         }
       },
 
-      sortProducts: function(items) {
-        if(!items.length) {
+      sortProducts: function (items) {
+        if (!items.length) {
           return [];
         }
         var type = this.sort.type;
-        if(type && type !== 'none') {
+        if (type && type !== 'none') {
           return this._sortString(items, this.sort);
         }
         return items;
       },
 
 
-      _sortString: function(items, sort) {
-        return items.sort(function(a, b) {
-          if(!(typeof a[sort.type] === 'string' && typeof b[sort.type] === 'string')
+      _sortString: function (items, sort) {
+        return items.sort(function (a, b) {
+          if (!(typeof a[sort.type] === 'string' && typeof b[sort.type] === 'string')
             && !(typeof a[sort.type] === 'number' && typeof b[sort.type] === 'number')) {
             return 0;
           }
