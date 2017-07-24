@@ -25,32 +25,47 @@
        createDataModelProduct: function(product, category, children) {
          var childProducts = this._createDataModelChildProduct(children);
          var oldProductModel = product;
-         var product = {};
-         product.sku = oldProductModel.sku;
-         product.id = oldProductModel.id;
-         product.name = oldProductModel.name;
-         product.created_at = oldProductModel.created_at;
-         product.category = category;
-         product.childProducts = childProducts;
-         product.description = this._retrieveCustomAttribute(oldProductModel, 'description');
-         product.age = this._retrieveCustomAttribute(oldProductModel, 'age');
-         product.max_weight = this._retrieveCustomAttribute(oldProductModel, 'max_weight');
+         var product = {
+           sku: oldProductModel.sku,
+           id: oldProductModel.id,
+           name: oldProductModel.name,
+           created_at: oldProductModel.created_at,
+           category: category,
+           childProducts: childProducts,
+           description: this._retrieveCustomAttribute(oldProductModel, 'description'),
+           age: this._retrieveCustomAttribute(oldProductModel, 'age'),
+           max_weight: this._retrieveCustomAttribute(oldProductModel, 'max_weight'),
+           url: this._retrieveCustomAttribute(oldProductModel, 'url_key'),
+           video_section: {
+             video_id: this._retrieveCustomAttribute(oldProductModel, 'video_id')
+           },
+           header_section: {
+             title: this._retrieveCustomAttribute(oldProductModel, 'section_title'),
+             sub_title: this._retrieveCustomAttribute(oldProductModel, 'section_sub_title'),
+             background_image: this._getMediaUrl(this._retrieveCustomAttribute(oldProductModel, 'section_image'))
+           },
+           meta_data: {
+             meta_title: this._retrieveCustomAttribute(oldProductModel, 'meta_title'),
+             meta_description: this._retrieveCustomAttribute(oldProductModel, 'meta_description')
+           }
+         };
+
+         if(oldProductModel.product_links && oldProductModel.product_links.length) {
+           var relatedProducts = oldProductModel.product_links.filter(function(item) {
+             return item.link_type === 'related';
+           });
+           if(relatedProducts.length) {
+             product.relatedProducts = [];
+             relatedProducts.forEach(function(item) {
+               product.relatedProducts.push(item.linked_product_sku);
+             });
+           }
+         }
+
         //  product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
         //  product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
         //  product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
-         product.url = this._retrieveCustomAttribute(oldProductModel, 'url_key');
-         product.video_section = {
-           video_id: this._retrieveCustomAttribute(oldProductModel, 'video_id')
-         };
-         product.header_section = {
-           title: this._retrieveCustomAttribute(oldProductModel, 'section_title'),
-           sub_title: this._retrieveCustomAttribute(oldProductModel, 'section_sub_title'),
-           background_image: this._getMediaUrl(this._retrieveCustomAttribute(oldProductModel, 'section_image'))
-         };
-         product.meta_data = {
-           meta_title: this._retrieveCustomAttribute(oldProductModel, 'meta_title'),
-           meta_description: this._retrieveCustomAttribute(oldProductModel, 'meta_description'),
-         };
+
          return product;
       },
 
@@ -98,7 +113,7 @@
       },
 
       _getMediaUrl: function(pathSegment) {
-        return CONFIG.ECOM_URL + '/media/catalog/product/' + pathSegment;
+        return pathSegment ? CONFIG.ECOM_URL + '/media/catalog/product/' + pathSegment : null;
       }
 
     });

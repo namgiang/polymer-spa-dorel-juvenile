@@ -7,6 +7,7 @@
 <link rel="import" href="../organisms/dorel-section-product-usps.html">
 
 <link rel="import" href="../utils/dorel-magento-collect-product.html">
+<link rel="import" href="../utils/dorel-magento-collect-related-product.html">
 
 <dom-module id="dorel-template-product-detail">
   <template>
@@ -71,6 +72,8 @@
 
     <dorel-magento-collect-product category="[[ category ]]" product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
 
+    <dorel-magento-collect-related-product category="[[ category ]]" product-names="[[ product.relatedProducts ]]" related-products="{{ relatedProducts }}"></dorel-magento-collect-related-product>
+
     <!-- define routing for products -->
     <app-route
       route="{{ route }}"
@@ -104,21 +107,26 @@
           gtm-parent="dorel-section-product-features"
           gtm-parent-index="[[ index ]]"></dorel-section-product-features> -->
 
-        <!-- <dorel-section-product-accessories
-          accessory-scroll-handler="{{ accessoryScrollHandler }}"
-          accessories-data="[[ component ]]"
-          gtm-parent="dorel-section-product-accessories"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-accessories> -->
+          <p>[[ relatedProducts.accessories.length ]]</p>
+        <template
+          is="dom-if"
+          if="{{ relatedProducts.accessories.length > 0}}">
+          <dorel-section-product-accessories
+            accessory-scroll-handler="{{ accessoryScrollHandler }}"
+            accessories-data="[[ relatedProducts ]]"
+            gtm-parent="dorel-section-product-accessories"
+            gtm-parent-index="[[ index ]]"></dorel-section-product-accessories>
+        </template>
 
         <!-- <dorel-section-product-accordions
           accordions-data="[[ product ]]"
           gtm-parent="dorel-section-product-accordions"
           gtm-parent-index="[[ index ]]"></dorel-section-product-accordions> -->
 
-        <dorel-section-product-video
+        <!-- <dorel-section-product-video
           video-data="[[ product.video_section ]]"
           gtm-parent="dorel-section-product-video"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-video>
+          gtm-parent-index="[[ index ]]"></dorel-section-product-video> -->
 
         <!-- <dorel-section-slideshow
           slideshow-data="[[ component ]]"
@@ -166,6 +174,14 @@
         category: {
           type: Number,
           value: 0
+        },
+
+        colorMap : {
+          type: Array
+        },
+
+        relatedProducts: {
+          type: Array
         }
       },
 
