@@ -1,0 +1,83 @@
+<dom-module id="dorel-product-modal-transformer">
+  <template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-product-modal-transformer',
+
+      properties: {
+
+      },
+
+      /**
+       * @name _createDataModelProduct
+       * @description this method will create and return a new data model for a main product
+       * @type helperMethod - purpose: create a data model that is more suitable then the one retreived by magento
+       * @param product - Object - a main product retreived
+       * @param category - Number - a number of the currert active category to keep reference (magento does not return category id)
+       * @param children - Array - all the child products of the main product
+       * current keys: sku, id, name, created_at, category, childProducts, description, url
+       */
+       createDataModelProduct: function(product, category, children) {
+         var childProducts = this._createDataModelChildProduct(children);
+         var oldProductModel = product;
+         var product = {};
+         product.sku = oldProductModel.sku;
+         product.id = oldProductModel.id;
+         product.name = oldProductModel.name;
+         product.created_at = oldProductModel.created_at;
+         product.category = category;
+         product.childProducts = childProducts;
+         product.description = this._retrieveCustomAttribute(oldProductModel, 'description');
+         product.age = this._retrieveCustomAttribute(oldProductModel, 'age');
+         product.max_weight = this._retrieveCustomAttribute(oldProductModel, 'max_weight');
+         product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
+         product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
+         product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
+         product.url = this._retrieveCustomAttribute(oldProductModel, 'url_key');
+         product.meta_title = this._retrieveCustomAttribute(oldProductModel, 'meta_title');
+         product.meta_description = this._retrieveCustomAttribute(oldProductModel, 'meta_description');
+         return product;
+      },
+
+      /**
+       * @name _createDataModelChildProduct
+       * @description this method will create and return a new data model for a child product
+       * @type helperMethod - purpose: create a data model that is more suitable then the one retreived by magento
+       * @param products - Array - all the child products of a main product
+       * current keys: color_name, color_name, color_image
+       */
+      _createDataModelChildProduct: function(products) {
+        var self = this;
+
+        return products.map(function(product) {
+          var oldProductModel = product;
+          var product = {};
+          product.color_name = oldProductModel.sku;
+          product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
+
+          //TODO set image url segment variable in config
+          product.color_image = CONFIG.ECOM_URL + '/media/catalog/product/' +
+          self._retrieveCustomAttribute(oldProductModel, 'image');
+          return product;
+        });
+      },
+
+      /**
+       * @name _retrieveCustomAttribute
+       * @description this method find a Object with the attributeKey in the custom_attributes Array and return the value;
+       * @type helperMethod
+       * @param product - Object
+       * @param attributeKey - String
+       */
+      _retrieveCustomAttribute: function(product, attributeKey) {
+        var attribute = product.custom_attributes.find(function(attribute) {
+          return attribute.attribute_code === attributeKey;
+        });
+        return attribute ? attribute.value : '';
+      }
+
+    });
+  </script>
+</dom-module>

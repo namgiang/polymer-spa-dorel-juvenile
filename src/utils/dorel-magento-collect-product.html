@@ -1,12 +1,12 @@
+<link rel="import" href="dorel-magento-auth.html">
+<link rel="import" href="dorel-product-modal-transformer.html">
+
 <dom-module id="dorel-magento-collect-product">
   <template>
 
-    <iron-ajax
-      id="authenticate"
-      content-type="application/json"
-      method="post"
-      handle-as="json"
-      on-response="_authResponse"></iron-ajax>
+    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+
+    <dorel-product-modal-transformer id="transform"></dorel-product-modal-transformer>
 
     <iron-ajax
       id="product"
@@ -50,22 +50,32 @@
 
         productName: {
           type: String
+        },
+
+        token: {
+          type: String,
+          value: ''
         }
 
       },
 
       observers: [
-        '_categoryChanged(category, productName)'
+        '_categoryChanged(category, productName, token)'
       ],
 
       /**
        * @name _categoryChanged
        * @description will be called by observer if category changes by parent;
        * @param category - Number
+       * @param productName - String
+       * @param token - String
        */
-      _categoryChanged: function(category, productName) {
+      _categoryChanged: function(category, productName, token) {
         if(!category || !productName) {
           return;
+        }
+        if(!token) {
+          return this.$.auth.retreiveToken();
         }
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
@@ -77,29 +87,7 @@
           return this._setCurrentProducts([existingProduct]);
         }
 
-        // get timestamp from globals
-        var timestamp = Polymer.globalsManager.get('Dorel.product.auth.timestamp');
-
-        // check if timestamp is set
-        if(timestamp) {
-
-          //if timestamp exists calculate time difference between the previous set timestamp and the current time
-          var seconds = Math.abs(timestamp - Date.now()) / 1000;
-
-          //calculate the amount of hours
-          var hours = Math.floor(seconds / 3600) % 24;
-
-          if(hours && hours >= 4) {
-            //if hours exists and is equal or bigger than 4 authenticate because token is not valid anymore
-            this._authenticate();
-          } else {
-            //else the token is valid
-            this._getColorMap();
-          }
-        } else {
-          // authenticate because timestamp is not set
-          this._authenticate();
-        }
+        return this._getColorMap();
       },
 
       /**
@@ -124,39 +112,6 @@
        */
       _colorMapResponse: function(response) {
         this._getProduct();
-      },
-
-      /**
-       * @name _authenticate
-       * @description set correct end-point and credentials and make call to end-point to retreive token
-       * @param response
-       */
-      _authenticate: function() {
-        var auth = this.$.authenticate;
-
-        //TODO remove credentials
-        var params = {
-          username: 'api_user',
-          password: 'DorelAp1@#'
-        };
-        auth.body = JSON.stringify(params);
-
-        //TODO set magento url from config
-        auth.url = CONFIG.ECOM_URL + '/rest/V1/integration/admin/token';
-        auth.generateRequest();
-      },
-
-      /**
-       * @name _authResponse
-       * @description set token and set newTimestamp for token because token is only valid for a certain amount of time
-       * @param response
-       */
-      _authResponse: function(response) {
-        var token = response.detail.response;
-        var newTimestamp = Date.now();
-        Polymer.globalsManager.set('Dorel.product.auth.token', token);
-        Polymer.globalsManager.set('Dorel.product.auth.timestamp', newTimestamp);
-        this._getColorMap();
       },
 
       /**
@@ -204,10 +159,8 @@
         Promise.all(newProduct.map(function(product) {
           // every product will return function with a new promise from iron-ajax
           return self._getChildProducts(product.sku).then(function(data) {
-              //if promise is resolved create new data model for child products
-              var childProducts = self._createDataModelChildProduct(data.response);
               // create new data model for product and return this to array
-              return self._createDataModelProduct(product, category, childProducts);
+              return self.$.transform.createDataModelProduct(product, category, data.response);
           });
         })).then(function(newProducts) {
             // if promise.all is resolved call the setProducts
@@ -263,74 +216,6 @@
        */
       _setCurrentProducts: function(product) {
         Polymer.globalsManager.set('Dorel.current.product', product);
-      },
-
-      /**
-       * @name _createDataModelProduct
-       * @description this method will create and return a new data model for a main product
-       * @type helperMethod - purpose: create a data model that is more suitable then the one retreived by magento
-       * @param product - Object - a main product retreived
-       * @param category - Number - a number of the currert active category to keep reference (magento does not return category id)
-       * @param childProducts - Array - all the child products of the main product
-       * current keys: sku, id, name, created_at, category, childProducts, description, url
-       */
-      _createDataModelProduct: function(product, category, childProducts) {
-        var oldProductModel = product;
-        var product = {};
-        product.sku = oldProductModel.sku;
-        product.id = oldProductModel.id;
-        product.name = oldProductModel.name;
-        product.created_at = oldProductModel.created_at;
-        product.category = category;
-        product.childProducts = childProducts;
-        product.description = this._retrieveCustomAttribute(oldProductModel, 'description');
-        product.age = this._retrieveCustomAttribute(oldProductModel, 'age');
-        product.max_weight = this._retrieveCustomAttribute(oldProductModel, 'max_weight');
-        product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
-        product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
-        product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
-        product.url = this._retrieveCustomAttribute(oldProductModel, 'url_key');
-        product.meta_title = this._retrieveCustomAttribute(oldProductModel, 'meta_title');
-        product.meta_description = this._retrieveCustomAttribute(oldProductModel, 'meta_description');
-
-        return product;
-      },
-
-      /**
-       * @name _createDataModelChildProduct
-       * @description this method will create and return a new data model for a child product
-       * @type helperMethod - purpose: create a data model that is more suitable then the one retreived by magento
-       * @param products - Array - all the child products of a main product
-       * current keys: color_name, color_name, color_image
-       */
-      _createDataModelChildProduct: function(products) {
-        var self = this;
-
-        return products.map(function(product) {
-          var oldProductModel = product;
-          var product = {};
-          product.color_name = oldProductModel.sku;
-          product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
-
-          product.color_image = CONFIG.ECOM_URL + '/media/catalog/product/' +
-          self._retrieveCustomAttribute(oldProductModel, 'image');
-          return product;
-        });
-      },
-
-
-      /**
-       * @name _retrieveCustomAttribute
-       * @description this method find a Object with the attributeKey in the custom_attributes Array and return the value;
-       * @type helperMethod
-       * @param product - Object
-       * @param attributeKey - String
-       */
-      _retrieveCustomAttribute: function(product, attributeKey) {
-        var attribute = product.custom_attributes.find(function(attribute) {
-          return attribute.attribute_code === attributeKey;
-        });
-        return attribute ? attribute.value : '';
       }
 
     });
