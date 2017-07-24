@@ -14,6 +14,7 @@
         --theme-multi-bottom-padding: var(--theme-component-space-inner-xlarge);
         float: left;
         width: 100%;
+        background-color: var(--theme-color-white);
       }
 
       .container {
@@ -83,62 +84,47 @@
       <!-- show when acf.page_builder has components -->
       <template
         is="dom-if"
-        if="{{ products.length }}">
+        if="{{ templateData.acf.page_builder.length }}">
 
-        <!-- show when acf.page_builder has components -->
-        <template
-          is="dom-if"
-          if="{{ templateData.acf.page_builder.length }}">
+        <div class="container layout horizontal center center-justified wrap">
+          <div class="row">
+            <!-- iterate over page_builder components -->
+            <template
+              is="dom-repeat"
+              items="[[ templateData.acf.page_builder ]]"
+              as="component"
+              targetFramerate="1000">
 
-          <div class="container layout horizontal center center-justified wrap">
-            <div class="row">
-              <!-- iterate over page_builder components -->
+              <!-- section-category-header -->
               <template
-                is="dom-repeat"
-                items="[[ templateData.acf.page_builder ]]"
-                as="component"
-                targetFramerate="1000">
-
-                <!-- section-category-header -->
-                <template
-                  is="dom-if"
-                  if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
-                  <dorel-section-category-header
-                    category-header-data="[[ component ]]"
-                    gtm-parent="dorel-section-category-header"
-                    gtm-parent-index="[[ index ]]"></dorel-section-category-header>
-                </template>
-                <!--// section-category-header -->
-
-                <!-- section-category-sidebar -->
-                <template
-                  is="dom-if"
-                  if="{{ isPageComponent(component.acf_fc_layout, 'section_category_sidebar') }}">
-                  <dorel-section-category-sidebar
-                    category-sidebar-data="[[ component ]]"
-                    gtm-parent="dorel-section-category-sidebar"
-                    gtm-parent-index="[[ index ]]"></dorel-section-product-sidebar>
-                </template>
-                <!--// section-category-sidebar -->
+                is="dom-if"
+                if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
+                <dorel-section-category-header
+                  category-header-data="[[ component ]]"
+                  gtm-parent="dorel-section-category-header"
+                  gtm-parent-index="[[ index ]]"></dorel-section-category-header>
               </template>
-            </div>
+              <!--// section-category-header -->
+
+              <!-- section-category-sidebar -->
+              <template
+                is="dom-if"
+                if="{{ isPageComponent(component.acf_fc_layout, 'section_category_sidebar') }}">
+                <dorel-section-category-sidebar
+                  category-sidebar-data="[[ component ]]"
+                  gtm-parent="dorel-section-category-sidebar"
+                  gtm-parent-index="[[ index ]]"></dorel-section-product-sidebar>
+              </template>
+              <!--// section-category-sidebar -->
+            </template>
           </div>
-        </template>
+        </div>
       </template>
-
-      <template is="dom-if" if="products.length">
-        <dorel-category-listing
-          products-data="[[ products ]]"
-          sort="[[ sort ]]"
-          gtm-parent="dorel-category-listing"
-          gtm-parent-index="2"></dorel-category-listing>
-      </template>
-
-      <template
-        is="dom-if"
-        if="{{ !products.length }}">
-        <p>No products assigned to this category</p>
-      </template>
+      <dorel-category-listing
+        products-data="[[ products ]]"
+        sort="[[ sort ]]"
+        gtm-parent="dorel-category-listing"
+        gtm-parent-index="2"></dorel-category-listing>
     </div>
   </template>
   <script>
@@ -199,9 +185,9 @@
 
       },
 
-      _currentPageChanged: function(currentPage) {
-        if(currentPage && currentPage.template && currentPage.template === 'product-category') {
-          var options = currentPage.acf.page_builder.find(function(item) {
+      _currentPageChanged: function (currentPage) {
+        if (currentPage && currentPage.template && currentPage.template === 'product-category') {
+          var options = currentPage.acf.page_builder.find(function (item) {
             return item.acf_fc_layout === 'section_magento';
           });
           this.category = options.magento_category_picker;
@@ -212,8 +198,8 @@
         }
       },
 
-      _currentProductsChanged: function(products) {
-        if(!products){
+      _currentProductsChanged: function (products) {
+        if (!products) {
           return;
         }
         this.products = products;

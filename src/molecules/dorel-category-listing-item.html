@@ -6,6 +6,23 @@
       --button-margin-spacing: 0;
     }
 
+    :host {
+      opacity: 0;  /* make things invisible upon start */
+      -webkit-animation: fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+      -moz-animation: fadeIn ease 1;
+      animation: fadeIn ease 1;
+      -webkit-animation-duration: 1s;
+      -moz-animation-duration: .1s;
+      animation-duration: 1s;
+      -webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+      -moz-animation-fill-mode: forwards;
+      animation-fill-mode: forwards;
+    }
+
+    @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+    @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+
     .category-listing-item {
       float: left;
       width: 100%;
@@ -47,14 +64,17 @@
     dorel-color-switcher {
       width: 100%;
     }
+
+    .category-listing-item[fade] {
+      opacity: 1;
+    }
   </style>
   <template>
-    <section class="category-listing-item">
+    <section class="category-listing-item" fade$="[[ fade ]]">
       <div class="image-wrapper horizontal layout center">
         <iron-image class="image"
                     sizing="contain"
                     fade="true"
-                    preload
                     src$="{{ currentProductImage }}"></iron-image>
       </div>
       <div class="content-wrapper">
@@ -88,8 +108,11 @@
   <script>
     Polymer({
       is: 'dorel-category-listing-item',
-
       properties: {
+        fade: {
+          type: Boolean,
+          value: false,
+        },
         /**
          * @attribute
          * @name colorsData
