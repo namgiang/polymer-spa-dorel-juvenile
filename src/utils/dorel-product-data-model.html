@@ -35,12 +35,22 @@
          product.description = this._retrieveCustomAttribute(oldProductModel, 'description');
          product.age = this._retrieveCustomAttribute(oldProductModel, 'age');
          product.max_weight = this._retrieveCustomAttribute(oldProductModel, 'max_weight');
-         product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
-         product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
-         product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
+        //  product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
+        //  product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
+        //  product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
          product.url = this._retrieveCustomAttribute(oldProductModel, 'url_key');
-         product.meta_title = this._retrieveCustomAttribute(oldProductModel, 'meta_title');
-         product.meta_description = this._retrieveCustomAttribute(oldProductModel, 'meta_description');
+         product.video_section = {
+           video_id: this._retrieveCustomAttribute(oldProductModel, 'video_id')
+         };
+         product.header_section = {
+           title: this._retrieveCustomAttribute(oldProductModel, 'section_title'),
+           sub_title: this._retrieveCustomAttribute(oldProductModel, 'section_sub_title'),
+           background_image: this._getMediaUrl(this._retrieveCustomAttribute(oldProductModel, 'section_image'))
+         };
+         product.meta_data = {
+           meta_title: this._retrieveCustomAttribute(oldProductModel, 'meta_title'),
+           meta_description: this._retrieveCustomAttribute(oldProductModel, 'meta_description'),
+         };
          return product;
       },
 
@@ -68,8 +78,7 @@
           }
           product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
 
-          product.color_image = CONFIG.ECOM_URL + '/media/catalog/product/' +
-          self._retrieveCustomAttribute(oldProductModel, 'image');
+          product.color_image = self._getMediaUrl(self._retrieveCustomAttribute(oldProductModel, 'image'))
           return product;
         });
       },
@@ -86,6 +95,10 @@
           return attribute.attribute_code === attributeKey;
         });
         return attribute ? attribute.value : '';
+      },
+
+      _getMediaUrl: function(pathSegment) {
+        return CONFIG.ECOM_URL + '/media/catalog/product/' + pathSegment;
       }
 
     });
