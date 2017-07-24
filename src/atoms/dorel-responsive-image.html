@@ -1,37 +1,67 @@
 <dom-module id="dorel-responsive-image">
   <template>
     <style>
-      /*
-       TODO: Add the styling for wide-screen and full-screen images, and for each breakpoint
-      */
-
-      /* TODO: Remove this later. Basic styling for debug purposes */
       iron-image {
         float: left;
-        width: 15em;
-        height: 15em;
         clear: both;
+        width: 100vw;
         display: block;
       }
 
-      h2 {
-        @apply(--theme-typography-4);
-        margin-top: 24px;
-        margin-bottom: 24px;
-        float: left;
+      /* Full-screen Image Styling */
+      [image-type='full-screen'][portrait-small] {
+        /* 9:16 */
+        height: calc( calc( 100vw / 9 ) * 16 );
+
+      }
+
+      [image-type='full-screen'][portrait-medium],
+      [image-type='full-screen'][portrait-retina] {
+        /* 3:4 */
+        height: calc( calc( 100vw / 3 ) * 4 );
+
+      }
+
+      [image-type='full-screen'][landscape-small],
+      [image-type='full-screen'][landscape-medium],
+      [image-type='full-screen'][landscape-large],
+      [image-type='full-screen'][landscape-extra-large] {
+        /* 16:9 */
+        height: calc( calc( 100vw / 16 ) * 9 );
+
+      }
+
+      /* Widescreen Image Styling */
+      [image-type='wide-screen'][portrait-small],
+      [image-type='wide-screen'][portrait-medium] {
+        /* 3:2 */
+        height: calc( calc( 100vw / 3 ) * 2 );
+      }
+
+      [image-type='wide-screen'][portrait-retina],
+      [image-type='wide-screen'][landscape-small],
+      [image-type='wide-screen'][landscape-medium],
+      [image-type='wide-screen'][landscape-large],
+      [image-type='wide-screen'][landscape-extra-large] {
+        /* 3:1 */
+        height: calc( calc( 100vw / 3 ) * 1 );
       }
 
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <h2>[[ currentImageDerivative ]]</h2>
-    <!-- TODO: Add the breakpoints here -->
-    <section image-type$="[[ imageType ]]">
-      <iron-image sizing="cover"
-                  fade="true"
-                  preload
-                  src$="[[ currentImageSource ]]">
-      </iron-image>
-    </section>
+    <iron-image sizing="cover"
+                fade="true"
+                preload
+                src$="[[ currentImageSource ]]"
+                image-type$="[[ imageType ]]"
+                portrait-small$="[[ breakpoints.portraitSmall ]]"
+                portrait-medium$="[[ breakpoints.portraitMedium ]]"
+                portrait-retina$="[[ breakpoints.portraitLargeUp ]]"
+                landscape-small$="[[ breakpoints.landscapeSmall ]]"
+                landscape-medium$="[[ breakpoints.landscapeMedium ]]"
+                landscape-large$="[[ breakpoints.landscapeLarge ]]"
+                landscape-extra-large$="[[ breakpoints.landscapeExtraLarge]]">
+    </iron-image>
   </template>
   <script>
     Polymer({
@@ -62,6 +92,7 @@
          */
         currentImageSource: {
           type: String,
+
         },
         /**
          * @attribute
@@ -79,7 +110,6 @@
         breakpoints: {
           type: Object,
         },
-        /* TODO: We will support these in the styling */
         /**
          * @attribute
          * @name imageType
@@ -87,7 +117,8 @@
          */
         imageType: {
           type: String,
-          value: 'wide-screen'
+          value: 'wide-screen',
+          reflectToAttribute: true,
         }
       },
       /**
