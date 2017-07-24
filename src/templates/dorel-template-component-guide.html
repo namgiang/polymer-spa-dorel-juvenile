@@ -55,28 +55,18 @@
 
       .component-guide-container {
         @apply(--max-width-host);
-      }
-
-      .component-guide {
-        @apply(--max-width-container);
-        padding: 0 var(--theme-gutter);
         position: relative;
         float: left;
         width: 100%;
-        box-sizing: border-box;
         background-color: var(--theme-color-white);
       }
 
-      .component-guide__navigation, .component-guide__content {
-        display: inline-block;
-        float: left;
-        box-sizing: border-box;
-      }
-
       .component-guide__navigation {
-        float: left;
-        width: 100%;
+        @apply(--max-width-container);
+        padding: 0 var(--theme-gutter);
+        box-sizing: border-box;
         background-color: transparent;
+        width: 100%;
       }
 
       .component-guide__content {
@@ -96,37 +86,38 @@
                              available-brands="{{ availableBrands }}">
     </dorel-component-toolbar>
     <div class="component-guide-container">
-      <div class="component-guide">
-        <div class="component-guide__navigation">
-          <paper-menu selected="{{ routeData.componentName }}"
-                      attr-for-selected='name'>
-            <paper-item name="introduction">Introduction</paper-item>
-            <paper-item name="typography">Typography</paper-item>
-            <paper-item name="layout-sizes">Layout & Sizes</paper-item>
-            <paper-item name="colors">Colors</paper-item>
-            <paper-item name="buttons">Buttons</paper-item>
-            <paper-item name="forms">Forms</paper-item>
-            <paper-item name="home">Home</paper-item>
-            <paper-item name="product-widgets">Product Widgets</paper-item>
-            <paper-item name="breakpoints">Breakpoints</paper-item>
-          </paper-menu>
-        </div>
-        <iron-pages class="component-guide__content"
-                    selected="{{ routeData.componentName }}"
-                    fallback-selection="introduction"
-                    attr-for-selected="name">
-          <dorel-component-guide-introduction brand="{{ brand }}"
-                                              name="introduction"></dorel-component-guide-introduction>
-          <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
-          <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
-          <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
-          <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
-          <dorel-component-guide-forms name="forms"></dorel-component-guide-forms>
-          <dorel-component-guide-home name="home"></dorel-component-guide-home>
-          <dorel-component-guide-product-widgets name="product-widgets"></dorel-component-guide-product-widgets>
-          <dorel-component-guide-breakpoints name="breakpoints"></dorel-component-guide-breakpoints>
-        </iron-pages>
+      <div class="component-guide__navigation">
+        <paper-menu selected="{{ routeData.componentName }}"
+                    attr-for-selected='name'>
+          <paper-item name="introduction">Introduction</paper-item>
+          <paper-item name="typography">Typography</paper-item>
+          <paper-item name="layout-sizes">Layout & Sizes</paper-item>
+          <paper-item name="colors">Colors</paper-item>
+          <paper-item name="buttons">Buttons</paper-item>
+          <paper-item name="forms">Forms</paper-item>
+          <paper-item name="home">Home</paper-item>
+          <paper-item name="product-widgets">Product Widgets</paper-item>
+          <paper-item name="breakpoints">Breakpoints</paper-item>
+        </paper-menu>
       </div>
+    </div>
+    <div class="component-guide-container">
+      <iron-pages class="component-guide__content"
+                  selected="{{ routeData.componentName }}"
+                  fallback-selection="introduction"
+                  attr-for-selected="name">
+        <dorel-component-guide-introduction brand="{{ brand }}"
+                                            name="introduction"></dorel-component-guide-introduction>
+        <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
+        <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
+        <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
+        <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
+        <dorel-component-guide-forms name="forms"></dorel-component-guide-forms>
+        <dorel-component-guide-home name="home"></dorel-component-guide-home>
+        <dorel-component-guide-product-widgets name="product-widgets"></dorel-component-guide-product-widgets>
+        <dorel-component-guide-breakpoints name="breakpoints"></dorel-component-guide-breakpoints>
+      </iron-pages>
+    </div>
     </div>
   </template>
 
