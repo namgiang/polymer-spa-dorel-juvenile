@@ -89,7 +89,7 @@
     <div class="wrapper">
 
       <template is="dom-if"
-        if="[[ product ]]">
+        if="[[ _isProductSet(product, loaded) ]]">
         <dorel-section-header
           section-header-data="[[ product.header_section ]]"
           gtm-parent="dorel-section-header"
@@ -99,7 +99,6 @@
         <dorel-section-product-showcase
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
           showcase-data="[[ product ]]"
-          related-products="[[ relatedProducts ]]"
           gtm-parent="dorel-section-product-showcase"
           gtm-parent-index="[[ index ]]"></dorel-section-product-showcase>
 
@@ -115,10 +114,11 @@
 
         <template
           is="dom-if"
-          if="{{ relatedProducts.accessories.length > 0}}">
+          if="[[ relatedProducts.accessories.length > 0 ]]">
           <dorel-section-product-accessories
             accessory-scroll-handler="{{ accessoryScrollHandler }}"
             accessories-data="[[ relatedProducts ]]"
+            accessories-options="[[ product.related_product_section ]]"
             gtm-parent="dorel-section-product-accessories"
             gtm-parent-index="[[ index ]]"></dorel-section-product-accessories>
         </template>
@@ -187,6 +187,11 @@
 
         relatedProducts: {
           type: Array
+        },
+
+        loaded: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -195,12 +200,17 @@
         '_getRelatedProducts(product, relatedProducts)'
       ],
 
+      _isProductSet: function(product, loaded) {
+          return (product && loaded) ? true : false;
+      },
+
       _setCurrentProduct: function(currentProduct) {
         if(!currentProduct || !currentProduct.length) {
+          this.loaded = false;
           return;
         }
-
         this.product = currentProduct[0];
+        this.loaded = true;
       },
 
       _getRelatedProducts: function(product) {

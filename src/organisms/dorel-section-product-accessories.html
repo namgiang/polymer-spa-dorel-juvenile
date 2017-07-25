@@ -114,9 +114,10 @@
                desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
         <template
           is="dom-if"
-          if="[[ _hasValue(accessoriesData.title) ]]">
-          <h2 class="title">[[ accessoriesData.title ]]</h2>
+          if="[[ _hasValue(accessoriesOptions.title) ]]">
+          <h2 class="title">[[ accessoriesOptions.title ]]</h2>
         </template>
+
         <div class="row">
           <!-- mobile -->
           <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
@@ -236,6 +237,10 @@
           }
         },
 
+        accessoriesOptions: {
+          type: Object
+        },
+
         /**
          * @attribute
          * @name expanded
@@ -264,6 +269,10 @@
           computed: '_computeRestContent(accessoriesData)'
         },
       },
+
+      observers: [
+        '_setIncluded(accessoriesData, accessoriesOptions)'
+      ],
 
       /**
        * @name _computeInitialContent
@@ -315,6 +324,19 @@
        */
       _scrollHandler: function (event) {
         this.scrollIntoView({block: "end", behavior: "smooth"})
+      },
+
+      _setIncluded: function(accessoriesData, accessoriesOptions) {
+        if(!accessoriesData || !accessoriesOptions || !accessoriesOptions.included_products.length ) {
+          return;
+        }
+        var included = accessoriesOptions.included_products.replace(' ', '').split(',');
+        accessoriesData.accessories.forEach(function(accessory) {
+          if(included.indexOf(accessory.sku) > -1) {
+            accessory.included = true;
+          }
+        });
+        this.accessoriesData = accessoriesData;
       }
     });
 
