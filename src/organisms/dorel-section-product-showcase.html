@@ -237,7 +237,7 @@
                 <dorel-cta
                   type="primary"
                   title="Find a Store"
-                  link=""
+                  link="[[ showcaseData.store_locator_page ]]"
                   size="small"
                   icon="dorel-icons:chevron-right"
                   gtm-action="click"
@@ -395,9 +395,22 @@
          */
         currentImage: {
           type: String
-        }
+        },
       },
 
+      ready: function() {
+         this.showcaseData.accesoires_button = true;
+         //TODO //TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
+         var pages = Polymer.globalsManager.get('Dorel.collect.pages');
+         var storePage = pages.find(function(page) {
+           return page.template === 'store-locator';
+         });
+         if(storePage) {
+           this.showcaseData.store_locator_button = true;
+           this.showcaseData.store_locator_page = storePage.link;
+         }
+         //TO BE REMOVED
+      },
       /**
        * @name _hasAccessories
        * @description check if a the accessories are defined
@@ -406,17 +419,8 @@
        * @return Boolean
        */
       _hasAccessories: function (val) {
-        //TODO Refactor this method if data is available from magento
-        return false;
-
         var toggle = (typeof val !== 'undefined' && val !== '' && val);
-        var currentPage = Polymer.globalsManager.get('Dorel.current.page');
-
-        var layout = currentPage.acf.page_builder.find(function (layout) {
-          return layout.acf_fc_layout === 'section_product_accessories';
-        });
-
-        return (toggle && layout.accessories.length);
+        return (toggle && this.showcaseData.relatedProducts.length);
       },
 
       /**

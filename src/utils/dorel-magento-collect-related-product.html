@@ -79,10 +79,6 @@
 
       },
 
-      observers: [
-        '_getRelatedProducts(category, productNames, token, colorMap, globals.Dorel.product.products)'
-      ],
-
       /**
        * @name _categoryChanged
        * @description will be called by observer if category changes by parent;
@@ -90,11 +86,18 @@
        * @param productName - String
        * @param token - String
        */
-      _getRelatedProducts: function(category, productNames, token, colorMap, products) {
+      getRelatedProducts: function(category, productNames) {
         if(this.loading) {
           return;
         }
-        if(!category || !productNames || !products.length) {
+        productNames = productNames.map(function(name) {
+          return name.toLowerCase().split(' ').join('-');
+        });
+        var products = Polymer.globalsManager.get('Dorel.product.products') || [];
+        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
+        var colorMap = Polymer.globalsManager.get('Dorel.product.colorMap');
+        this.colorMap = colorMap;
+        if(!category || !productNames) {
           return;
         }
         if(!token) {
@@ -104,7 +107,6 @@
           return;
         }
         this.loading = true;
-        debugger;
         var existingProduct = products.find(function(product) {
           return product.sku.indexOf(productNames) > -1;
         });
@@ -136,12 +138,14 @@
 
           productNames.forEach(function(link, index) {
             var segment = '&searchCriteria[filter_groups][1][filters][' + filterIndex + '][field]=sku' +
-                          '&searchCriteria[filter_groups][1][filters][0][value]=' + link
+                          '&searchCriteria[filter_groups][1][filters]['+ filterIndex +'][value]=' + link
             related.push(segment);
             filterIndex = filterIndex + 1;
           });
-          related = related.join();
+          related = related.join('');
+
           relatedProductsEl.url = related;
+
 
           return relatedProductsEl.generateRequest();
         }
@@ -228,7 +232,8 @@
        */
       _setCurrentRelatedProduct: function(products) {
         this.relatedProducts = {
-          accessories: products
+          accessories: products,
+          title: 'test'
         }
         this.loading = false;
       }

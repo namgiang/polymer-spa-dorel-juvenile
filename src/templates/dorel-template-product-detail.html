@@ -72,7 +72,12 @@
 
     <dorel-magento-collect-product category="[[ category ]]" product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
 
-    <dorel-magento-collect-related-product category="[[ category ]]" product-names="[[ product.relatedProducts ]]" related-products="{{ relatedProducts }}"></dorel-magento-collect-related-product>
+    <dorel-magento-collect-related-product
+      id="relatedProducts"
+      category="[[ category ]]"
+      product-names="[[ product.relatedProducts ]]"
+      related-products="{{ relatedProducts }}">
+    </dorel-magento-collect-related-product>
 
     <!-- define routing for products -->
     <app-route
@@ -94,6 +99,7 @@
         <dorel-section-product-showcase
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
           showcase-data="[[ product ]]"
+          related-products="[[ relatedProducts ]]"
           gtm-parent="dorel-section-product-showcase"
           gtm-parent-index="[[ index ]]"></dorel-section-product-showcase>
 
@@ -107,7 +113,6 @@
           gtm-parent="dorel-section-product-features"
           gtm-parent-index="[[ index ]]"></dorel-section-product-features> -->
 
-          <p>[[ relatedProducts.accessories.length ]]</p>
         <template
           is="dom-if"
           if="{{ relatedProducts.accessories.length > 0}}">
@@ -187,7 +192,7 @@
 
       observers: [
         '_setCurrentProduct(globals.Dorel.current.product)',
-        '_setHeader(product)'
+        '_getRelatedProducts(product, relatedProducts)'
       ],
 
       _setCurrentProduct: function(currentProduct) {
@@ -198,12 +203,11 @@
         this.product = currentProduct[0];
       },
 
-      _setHeader: function(product) {
-        this.header = {
-          background_image: product.name,
-          title: product.name,
-          sub_title: product.description
+      _getRelatedProducts: function(product) {
+        if(!product || !product.relatedProducts || !product.relatedProducts.length) {
+          return;
         }
+        this.$.relatedProducts.getRelatedProducts(product.category, product.relatedProducts);
       }
 
     });
