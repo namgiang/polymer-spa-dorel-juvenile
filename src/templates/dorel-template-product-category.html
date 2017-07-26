@@ -145,15 +145,25 @@
           }
         },
 
+        /**
+         * @attribute
+         * @name products
+         * @description the data coming from the globals
+         */
         products: {
           type: Array,
           value: []
         },
 
+        /**
+         * @attribute
+         * @name category
+         * @description inherit by parent will be used by collect-products
+         */
         category: {
           type: Number,
           value: 0
-        },
+        }
 
       },
 
@@ -161,6 +171,13 @@
         '_currentProductsChanged(globals.Dorel.current.products)'
       ],
 
+      /**
+       * @name _currentProductsChanged
+       * @description will be called by observer if products changes
+       * if products is empty it will early return
+       * else it will set this.products
+       * @param products - Array
+       */
       _currentProductsChanged: function(products) {
         if(!products){
           return;

@@ -128,10 +128,10 @@
           gtm-parent="dorel-section-product-accordions"
           gtm-parent-index="[[ index ]]"></dorel-section-product-accordions> -->
 
-        <!-- <dorel-section-product-video
+        <dorel-section-product-video
           video-data="[[ product.video_section ]]"
           gtm-parent="dorel-section-product-video"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-video> -->
+          gtm-parent-index="[[ index ]]"></dorel-section-product-video>
 
         <!-- <dorel-section-slideshow
           slideshow-data="[[ component ]]"
@@ -176,19 +176,40 @@
           value: false,
         },
 
+        /**
+         * @attribute
+         * @name category
+         * @description the category that will be used by product-collect
+         */
         category: {
           type: Number,
           value: 0
         },
 
+        /**
+         * @attribute
+         * @name colorMap
+         * @description the colorMapping that will be used by product-collect
+         */
         colorMap : {
           type: Array
         },
 
+        /**
+         * @attribute
+         * @name relatedProducts
+         * @description a array of strings with the relatedProducts
+           will be used by the collect-related-product
+         */
         relatedProducts: {
           type: Array
         },
 
+        /**
+         * @attribute
+         * @name loaded
+         * @description a Boolean that will be used to show or hide the page
+         */
         loaded: {
           type: Boolean,
           value: false
@@ -200,10 +221,25 @@
         '_getRelatedProducts(product, relatedProducts)'
       ],
 
+      /**
+       * @name _isProductSet
+       * @description will be used by the template
+       * returns a Boolean that either hide or shows the page
+       * @param product - Object
+       * @param loaded - Boolean
+       */
       _isProductSet: function(product, loaded) {
           return (product && loaded) ? true : false;
       },
 
+      /**
+       * @name _setCurrentProduct
+       * @description will be called by observer if currentProduct changes
+       * if currentProduct is empty it will set loaded to false
+       * else it will set the product with the first Object from the currentProduct Array
+       * and set loaded to true
+       * @param currentProduct - Array
+       */
       _setCurrentProduct: function(currentProduct) {
         if(!currentProduct || !currentProduct.length) {
           this.loaded = false;
@@ -213,6 +249,13 @@
         this.loaded = true;
       },
 
+      /**
+       * @name _getRelatedProducts
+       * @description will be called by observer if product changes
+       * if product is empty or product does not have any relatedProducts it will early return
+       * else it will call the getRelatedProducts from the relatedProducts collect element
+       * @param product - Object
+       */
       _getRelatedProducts: function(product) {
         if(!product || !product.relatedProducts || !product.relatedProducts.length) {
           return;
