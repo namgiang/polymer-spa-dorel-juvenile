@@ -279,7 +279,7 @@
        * @description Splits the content on mobile if there are too many items
        */
       _computeInitialContent: function (accessoriesData) {
-        if (accessoriesData.accessories.length > this.maxShown) {
+        if (accessoriesData && accessoriesData.accessories && accessoriesData.accessories.length > this.maxShown) {
           return accessoriesData.accessories.slice(0, this.maxShown);
         }
 
@@ -291,7 +291,7 @@
        * @description Splits the content on mobile if there are too many items
        */
       _computeRestContent: function (accessoriesData) {
-        if (accessoriesData.accessories.length > this.maxShown) {
+        if (accessoriesData && accessoriesData.accessories && accessoriesData.accessories.length > this.maxShown) {
           return accessoriesData.accessories.slice(this.maxShown);
         }
 
@@ -327,7 +327,7 @@
       },
 
       _setIncluded: function(accessoriesData, accessoriesOptions) {
-        if(!accessoriesData || !accessoriesOptions || !accessoriesOptions.included_products.length ) {
+        if(!accessoriesData || !accessoriesOptions || !accessoriesOptions.included_products || !accessoriesOptions.included_products.length ) {
           return;
         }
         var included = accessoriesOptions.included_products.replace(' ', '').split(',');

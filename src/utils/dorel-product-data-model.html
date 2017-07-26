@@ -23,6 +23,9 @@
        * current keys: sku, id, name, created_at, category, childProducts, description, url
        */
        createDataModelProduct: function(product, category, children) {
+         if(!children.length) {
+           children.push(product);
+         }
          var childProducts = this._createDataModelChildProduct(children);
          var oldProductModel = product;
          var product = {
@@ -56,15 +59,7 @@
          };
 
          if(oldProductModel.product_links && oldProductModel.product_links.length) {
-           var relatedProducts = oldProductModel.product_links.filter(function(item) {
-             return item.link_type === 'related';
-           });
-           if(relatedProducts.length) {
-             product.relatedProducts = [];
-             relatedProducts.forEach(function(item) {
-               product.relatedProducts.push(item.linked_product_sku);
-             });
-           }
+           product.relatedProducts = this._getRelatedProducts(oldProductModel.product_links);
          }
 
         //  product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
@@ -83,7 +78,6 @@
        */
       _createDataModelChildProduct: function(products) {
         var map = this.colorMap;
-
         var self = this;
 
         return products.map(function(product) {
@@ -98,7 +92,7 @@
           }
           product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
 
-          product.color_image = self._getMediaUrl(self._retrieveCustomAttribute(oldProductModel, 'image'))
+          product.color_image = self._getMediaUrl(self._retrieveCustomAttribute(oldProductModel, 'image'));
           return product;
         });
       },
@@ -117,8 +111,51 @@
         return attribute ? attribute.value : '';
       },
 
+      /**
+       * @name _getMediaUrl
+       * @description this method will return the end-point to retreive media or null if pathSegment is empty
+       * @type helperMethod
+       * @param pathSegment - string
+       */
       _getMediaUrl: function(pathSegment) {
         return pathSegment ? CONFIG.ECOM_URL + '/media/catalog/product/' + pathSegment : null;
+      },
+
+      /**
+       * @name _getRelatedProducts
+       * @description this method will return a new sorted Array
+       * @param productLinks_ - Array
+       */
+      _getRelatedProducts: function(productLinks_) {
+        // filter out the productLinks.link_type that don't have the value related
+        var productLinks = productLinks_.filter(function(item) {
+          return item.link_type === 'related';
+        });
+        // if productsLinks contains objects
+        if(productLinks.length) {
+          // create a new array that will contain string value's of the relatedProducts sku's
+          var relatedProducts = [];
+          // sort the productLinks based on the position given by magento
+          productLinks.sort(function (a, b) {
+            if (a.position > b.position) {
+              return -1;
+            }
+            if(b.position > a.position) {
+              return 1;
+            }
+            return 0;
+          }).forEach(function(item) {
+            //  make sure all the sku's are lowcase and spaces are replaced with a `-`
+            var sku = item.linked_product_sku.toLowerCase().split(' ').join('-');
+            // push value to relatedProducts Array
+            relatedProducts.push(sku);
+          });
+          // return the new Array
+          return relatedProducts;
+        } else {
+          // else return a empty Array
+          return [];
+        }
       }
 
     });

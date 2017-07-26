@@ -65,6 +65,11 @@
         loading: {
           type: Boolean,
           value: false
+        },
+
+        existingProducts: {
+          type: Array,
+          value: []
         }
 
       },
@@ -73,16 +78,14 @@
        * @name _categoryChanged
        * @description will be called by observer if category changes by parent;
        * @param category - Number
-       * @param productName - String
-       * @param token - String
+       * @param productNames - String
        */
       getRelatedProducts: function(category, productNames) {
+        // if loading is true early return
         if(this.loading) {
           return;
         }
-        productNames = productNames.map(function(name) {
-          return name.toLowerCase().split(' ').join('-');
-        });
+        // get the current products
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
         var token = Polymer.globalsManager.get('Dorel.product.auth.token');
         var colorMap = Polymer.globalsManager.get('Dorel.product.colorMap');
@@ -96,13 +99,22 @@
         if(!colorMap || !colorMap.length) {
           return;
         }
+        this.existingProducts = [];
+
+        var self = this;
+
         this.loading = true;
-        var existingProduct = products.find(function(product) {
-          return product.sku.indexOf(productNames) > -1;
+        products.forEach(function(product) {
+          if(productNames.indexOf(product.url) > -1) {
+            self.existingProducts.push(product);
+            productNames = productNames.filter(function(name){
+              return name !== product.url;
+            });
+          }
         });
 
-        if(existingProduct) {
-          return this._setCurrentRelatedProduct([existingProduct]);
+        if(!productNames || !productNames.length) {
+          return this._setCurrentRelatedProduct(this.existingProducts);
         }
 
         return this._getProduct(productNames);
@@ -149,11 +161,12 @@
       _productResponse: function(response) {
 
         //set products from response
-        var newProduct = response.detail.response.items;
+        var newProducts = response.detail.response.items;
+
         var category = this.category;
 
         //if there are no products in response early return
-        if(!newProduct) {
+        if(!newProducts) {
           return;
         }
 
@@ -161,16 +174,19 @@
         var self = this;
 
         // Map the newProducts the childProducts can be retreived and added to the product
-        Promise.all(newProduct.map(function(product) {
+        Promise.all(newProducts.map(function(product) {
           // every product will return function with a new promise from iron-ajax
           return self._getChildProducts(product.sku).then(function(data) {
               var childProducts = data.response;
               // create new data model for product and return this to array
               return self.$.transform.createDataModelProduct(product, category, childProducts);
           });
-        })).then(function(newProducts) {
+        })).then(function(products) {
             // if promise.all is resolved call the setProducts
-            self._setProducts(newProducts);
+            if(self.existingProducts.length) {
+              products = self._mergeArrays(products, self.existingProducts);
+            }
+            self._setProducts(products);
         });
       },
 
@@ -179,23 +195,14 @@
        * @description will merge the old and new products and remove the duplicates and set the global products
        * @param newProducts - Array
        */
-      _setProducts: function(newProduct) {
+      _setProducts: function(newProducts) {
         //set the current products
-        this._setCurrentRelatedProduct(newProduct);
+        this._setCurrentRelatedProduct(newProducts);
 
         //get all the "cached" products
         var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
 
-        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
-        var products = oldProducts.concat(newProduct.filter(function (item, index) {
-            var exists = false;
-            oldProducts.forEach(function (oldItem) {
-              if (oldItem.id === item.id) {
-                exists = true;
-              }
-            });
-            return !exists;
-        }));
+        var products = this._mergeArrays(oldProducts, newProducts);
 
         Polymer.globalsManager.set('Dorel.product.products', products);
       },
@@ -221,13 +228,43 @@
        * @param product - Array
        */
       _setCurrentRelatedProduct: function(products) {
+        var order = this.productNames;
+        products = this._mapOrder(products, order, 'url');
         this.relatedProducts = {
-          accessories: products,
-          title: 'test'
+          accessories: products
         }
         this.loading = false;
-      }
+      },
 
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function (item, index) {
+            var exists = false;
+            array1.forEach(function (oldItem) {
+              if (oldItem.id === item.id) {
+                exists = true;
+              }
+            });
+            return !exists;
+        }));
+      },
+
+      /**
+       * @name _mapOrder
+       * @description this method will sort the array with a order array
+       * @param id - String
+       */
+      _mapOrder: function(array, order, key) {
+        return array.sort(function (a, b) {
+          if (order.indexOf(a[key]) > order.indexOf(b[key])) {
+            return -1;
+          }
+          if(order.indexOf(b[key]) > order.indexOf(a[key])) {
+            return 1;
+          }
+          return 0;
+        });
+      }
     });
   </script>
 </dom-module>

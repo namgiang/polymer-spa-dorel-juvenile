@@ -60,39 +60,47 @@
       },
 
       observers: [
-        '_categoryChanged(category, token, colorMap)'
+        '_init(category, token, colorMap)'
       ],
 
       /**
        * @name _categoryChanged
-       * @description will be called by observer if category changes by parent;
+       * @description will be called by observert;
        * @param category - Number
+       * @param token - String
+       * @param colorMap - Array
        */
-      _categoryChanged: function(category, token, colorMap) {
+      _init: function(category, token, colorMap) {
+        // if category is empty we can't make the call return
         if(!category) {
           return;
         }
+        // if token is empty retreive the token _init will be triggered if token is retreived
         if(!token) {
           return this.$.auth.retreiveToken();
         }
+        // if colorMap is empty return _init will be triggered if colorMap is changed
         if(!colorMap || !colorMap.length) {
           return;
         }
+        // get all the products that are saved in the global
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
+        // get all the categories that are already retreived
         var retreivedCategories = Polymer.globalsManager.get('Dorel.product.retreivedCategories') || [];
 
-        //if category is already retreived
+        //if category is already in the retreived categories
         if(retreivedCategories.indexOf(category) > -1){
-          //filter out products that have a other category
+          // filter out products that have a other category
           var currentProducts = products.filter(function(item) {
               return item.category === category;
           });
           // set current products
           return this._setCurrentProducts(currentProducts);
+        } else {
+          // else retreive the products by category that is not in the saved retreived categories
+          return this._getProductsByCategory(this.category);
         }
- 
-        return this._getProductsByCategory(this.category);
       },
       /**
        * @name _getProductsByCategory
@@ -101,17 +109,13 @@
        */
       _getProductsByCategory: function(category) {
         var productsEl = this.$.products;
-        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
-        if(token && this.category) {
-          productsEl.headers = {Authorization: 'Bearer ' + token}
-          //TODO Add end-point to CONFIG
+          productsEl.headers = {Authorization: 'Bearer ' + this.token}
           productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products' +
           '?searchCriteria[filter_groups][0][filters][0][field]=category_id' +
           '&searchCriteria[filter_groups][0][filters][0][value]=' + this.category +
-          '&searchCriteria[filter_groups][1][filters][0][field]=visibility&searchCriteria[filter_groups][1][filters][0][value]=4';
-
+          '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
+          '&searchCriteria[filter_groups][1][filters][0][value]=4';
           productsEl.generateRequest();
-        }
       },
 
       /**
@@ -173,7 +177,7 @@
             });
             return !exists;
         }));
-
+        // set new array of products in the global saved products
         Polymer.globalsManager.set('Dorel.product.products', products);
       },
 
