@@ -74,7 +74,11 @@
        * @returns Boolean
        */
       _hasSidebar: function (sidebar) {
-        return (typeof sidebar !== 'undefined' || sidebar.length && sidebar[0].content_wrap.length);
+        if(typeof sidebar !== 'undefined' && sidebar.length > 0){
+          return sidebar[0].content_wrappers.length;
+        }
+
+        return false;
       },
 
       /**
