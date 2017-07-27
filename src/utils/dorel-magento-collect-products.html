@@ -75,7 +75,7 @@
         if(!category) {
           return;
         }
-        // if token is empty retreive the token _init will be triggered if token is retreived
+        // if token is empty retreive the token _init will be triggered if token is retrieved
         if(!token) {
           return this.$.auth.retreiveToken();
         }
@@ -86,11 +86,11 @@
         // get all the products that are saved in the global
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
-        // get all the categories that are already retreived
-        var retreivedCategories = Polymer.globalsManager.get('Dorel.product.retreivedCategories') || [];
+        // get all the categories that are already retrieved
+        var retrievedCategories = Polymer.globalsManager.get('Dorel.product.retrievedCategories') || [];
 
-        //if category is already in the retreived categories
-        if(retreivedCategories.indexOf(category) > -1){
+        //if category is already in the retrieved categories
+        if(retrievedCategories.indexOf(category) > -1){
           // filter out products that have a other category
           var currentProducts = products.filter(function(item) {
               return item.category === category;
@@ -98,7 +98,7 @@
           // set current products
           return this._setCurrentProducts(currentProducts);
         } else {
-          // else retreive the products by category that is not in the saved retreived categories
+          // else retreive the products by category that is not in the saved retrieved categories
           return this._getProductsByCategory(this.category);
         }
       },
@@ -128,8 +128,8 @@
         // set category variable
         var category = this.category;
 
-        //add category to list to keep count of what categories are retreived
-        this._addCategoryToRetreivedCategories(category);
+        //add category to list to keep count of what categories are retrieved
+        this._addCategoryToretrievedCategories(category);
 
         //set products from response
         var newProducts = response.detail.response.items;
@@ -142,7 +142,7 @@
         // refer to this
         var self = this;
 
-        // Map the newProducts the childProducts can be retreived and added to the product
+        // Map the newProducts the childProducts can be retrieved and added to the product
         Promise.all(newProducts.map(function(product) {
           // every product will return function with a new promise from iron-ajax
           return self._getChildProducts(product.sku).then(function(data) {
@@ -207,22 +207,22 @@
       },
 
       /**
-       * @name _addCategoryToRetreivedCategories
-       * @description this method will handle global retreivedCategories to keep track on what categories are already retreived;
+       * @name _addCategoryToretrievedCategories
+       * @description this method will handle global retrievedCategories to keep track on what categories are already retrieved;
        * @param category - Number
        */
-      _addCategoryToRetreivedCategories: function(category) {
-        //get retreived categories
-        var retreivedCategories = Polymer.globalsManager.get('Dorel.product.retreivedCategories') || [];
+      _addCategoryToretrievedCategories: function(category) {
+        //get retrieved categories
+        var retrievedCategories = Polymer.globalsManager.get('Dorel.product.retrievedCategories') || [];
 
         //check if it does not exists
-        if(retreivedCategories.indexOf(category) < 0) {
+        if(retrievedCategories.indexOf(category) < 0) {
           //add current category
-          retreivedCategories.push(category);
+          retrievedCategories.push(category);
         }
 
-        //set global categories to keep track on what categories are already retreived
-        Polymer.globalsManager.set('Dorel.product.retreivedCategories', retreivedCategories);
+        //set global categories to keep track on what categories are already retrieved
+        Polymer.globalsManager.set('Dorel.product.retrievedCategories', retrievedCategories);
       }
     });
   </script>

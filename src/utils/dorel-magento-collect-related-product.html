@@ -51,7 +51,7 @@
 
         /**
          * @name token
-         * @description will be retreived by the globalsManager
+         * @description will be retrieved by the globalsManager
          * auth token will be used in the headers of api call
          */
         token: {
@@ -61,7 +61,7 @@
 
         /**
          * @name colorMap
-         * @description will be retreived by the globalsManager
+         * @description will be retrieved by the globalsManager
          * will be used the get the correct value for colors and colorNames
          */
         colorMap: {
@@ -92,7 +92,7 @@
 
         /**
          * @name existingProducts
-         * @description a Array that can contain products that are already retreived
+         * @description a Array that can contain products that are already retrieved
          */
         existingProducts: {
           type: Array,
@@ -228,7 +228,7 @@
         // refer to this
         var self = this;
 
-        // Map the newProducts the childProducts can be retreived and added to the product
+        // Map the newProducts the childProducts can be retrieved and added to the product
         Promise.all(newProducts.map(function(product) {
           // every product will return function with a new promise from iron-ajax
           return self._getChildProducts(product.sku).then(function(data) {
@@ -239,11 +239,11 @@
         })).then(function(products) {
             // if the existingProducts Array contain products
             if(self.existingProducts.length) {
-              // merge the existingProducts with the new retreived products and set the relatedProducts
+              // merge the existingProducts with the new retrieved products and set the relatedProducts
               var mergedProducts = self._mergeArrays(products, self.existingProducts);
               self._setCurrentRelatedProduct(mergedProducts);
             } else {
-              // set the relatedProducts with the new retreived products
+              // set the relatedProducts with the new retrieved products
               self._setCurrentRelatedProduct(products);
             }
             // call setProducts with the products
