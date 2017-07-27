@@ -128,6 +128,15 @@
 
         <template
           is="dom-if"
+          if="[[ product.video_section && product.video_section && product.video_section.video_id && product.video_section.video_id.length ]]">
+        <dorel-section-product-video
+          video-data="[[ product.video_section ]]"
+          gtm-parent="dorel-section-product-video"
+          gtm-parent-index="[[ index ]]"></dorel-section-product-video>
+        </template>
+
+        <template
+          is="dom-if"
           if="[[ featuresData && featuresData.features && featuresData.features.length > 1 ]]">
           <dorel-section-product-features
             features-data="[[ featuresData ]]"
@@ -150,11 +159,6 @@
           accordions-data="[[ product ]]"
           gtm-parent="dorel-section-product-accordions"
           gtm-parent-index="[[ index ]]"></dorel-section-product-accordions> -->
-
-        <!-- <dorel-section-product-video
-          video-data="[[ product.video_section ]]"
-          gtm-parent="dorel-section-product-video"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-video> -->
 
         <!-- <dorel-section-slideshow
           slideshow-data="[[ component ]]"
@@ -281,6 +285,8 @@
        */
       _getRelatedProducts: function(product) {
         if(!product || !product.relatedProducts || !product.relatedProducts.length) {
+          // reset the relatedProducts
+          this.$.relatedProducts.getRelatedProducts(product.category, []);
           return;
         }
         this.$.relatedProducts.getRelatedProducts(product.category, product.relatedProducts);

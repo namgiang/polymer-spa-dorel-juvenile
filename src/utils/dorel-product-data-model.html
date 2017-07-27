@@ -85,12 +85,16 @@
           var product = {};
 
           if(map && map.length) {
-            var color = map.find(function(item){
+            var color = map.find(function(item) {
               return item.value === self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
             });
-            product.color_name = color.label;
+            product.color_name = color ? color.label : 'Default';
+            product.color_code = color ? color.swatchlabel : '#ffffff';
+
+            if (product.color_code.length && product.color_code.substring(0, 1) !== '#') {
+              product.color_code = '#' + product.color_code;
+            }
           }
-          product.color_code = self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
 
           product.color_image = self._getMediaUrl(self._retrieveCustomAttribute(oldProductModel, 'image'));
           return product;
