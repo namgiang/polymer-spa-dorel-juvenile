@@ -1,0 +1,70 @@
+<link rel="import" href="dorel-magento-auth.html">
+
+<dom-module id="dorel-magento-collect-features">
+  <template>
+
+    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+
+    <iron-ajax
+      id="featuresCollect"
+      content-type="application/json"
+      method="get"
+      input="1"
+      on-response="_featuresResponse"
+      handle-as="json"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-magento-collect-features',
+
+      properties: {
+
+        featuresData: {
+          type: Object,
+          notify: true,
+          value: []
+        },
+
+        productId: {
+          type: String,
+          value: ''
+        },
+
+        token: {
+          type: String,
+          value: ''
+        }
+
+      },
+
+      observers: [
+        '_getFeatures(productId, token)'
+      ],
+
+      _getFeatures: function(productId, token) {
+        if(!token) {
+          return this.$.auth.retreiveToken();
+        }
+
+        if(!productId) {
+          return;
+        }
+
+        var featuresProductsEl = this.$.featuresCollect;
+        // set header with the token
+        featuresProductsEl.headers = {Authorization: 'Bearer ' + token};
+        // set the url with the endPoint
+        featuresProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel-featurebuilder/featurelist?product_id=' + productId;
+        // make the call
+        return featuresProductsEl.generateRequest();
+      },
+
+      _featuresResponse: function(response) {
+       this.featuresData = response.detail.response[0];
+      }
+
+    });
+  </script>
+</dom-module>
