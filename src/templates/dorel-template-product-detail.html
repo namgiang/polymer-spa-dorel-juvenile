@@ -8,6 +8,7 @@
 
 <link rel="import" href="../utils/dorel-magento-collect-product.html">
 <link rel="import" href="../utils/dorel-magento-collect-related-product.html">
+<link rel="import" href="../utils/dorel-magento-collect-usp.html">
 
 <dom-module id="dorel-template-product-detail">
   <template>
@@ -70,7 +71,9 @@
       }
     </style>
 
-    <dorel-magento-collect-product category="[[ category ]]" product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
+    <dorel-magento-collect-product
+      category="[[ category ]]"
+      product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
 
     <dorel-magento-collect-related-product
       id="relatedProducts"
@@ -78,6 +81,10 @@
       product-names="[[ product.relatedProducts ]]"
       related-products="{{ relatedProducts }}">
     </dorel-magento-collect-related-product>
+
+    <dorel-magento-collect-usp
+      product-id="[[ product.id ]]"
+      usp-data="{{ uspData }}"></dorel-magento-collect-usp>
 
     <!-- define routing for products -->
     <app-route
@@ -102,10 +109,14 @@
           gtm-parent="dorel-section-product-showcase"
           gtm-parent-index="[[ index ]]"></dorel-section-product-showcase>
 
-        <!-- <dorel-section-product-usps
-          usps-data="[[ component ]]"
-          gtm-parent="dorel-section-product-usps"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-usps> -->
+        <template
+          is="dom-if"
+          if="[[ uspData && uspData.usps.length ]]">
+          <dorel-section-product-usps
+            usps-data="[[ uspData ]]"
+            gtm-parent="dorel-section-product-usps"
+            gtm-parent-index="[[ index ]]"></dorel-section-product-usps>
+        </template>
 
         <!-- <dorel-section-product-features
           features-data="[[ component ]]"
@@ -198,12 +209,21 @@
         /**
          * @attribute
          * @name relatedProducts
-         * @description a array of strings with the relatedProducts
+         * @description Array of strings with the relatedProducts
            will be used by the collect-related-product
          */
         relatedProducts: {
           type: Array
         },
+
+        /**
+         * @attribute
+         * @name uspsData
+         * @description Array of Objects - usps
+         */
+         uspsData: {
+           type: Array
+         },
 
         /**
          * @attribute
