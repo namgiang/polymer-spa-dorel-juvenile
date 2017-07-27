@@ -52,6 +52,23 @@
           return;
         }
 
+        var existingUsps = Polymer.globalsManager.get('Dorel.product.attributes.usps') || [];
+
+        if(existingUsps.length) {
+          var usp = existingUsps.find(function(usp) {
+            return usp.product_id === productId;
+          });
+        }
+
+        if(usp) {
+          this.uspData = usp;
+        } else {
+          this._retrieveUsps(productId, token);
+        }
+
+      },
+
+      _retrieveUsps: function(productId, token) {
         var uspProductsEl = this.$.uspCollect;
         // set header with the token
         uspProductsEl.headers = {Authorization: 'Bearer ' + token};
@@ -62,7 +79,30 @@
       },
 
       _uspResponse: function(response) {
-       this.uspData = response.detail.response[0];
+        var uspData = response.detail.response[0];
+        uspData.product_id = this.productId;
+        this.uspData = uspData;
+        this._setUsps(uspData);
+      },
+
+      _setUsps: function(newUspData) {
+        var existingUsps = Polymer.globalsManager.get('Dorel.product.attributes.usps') || [];
+        var uspData = this._mergeArrays(existingUsps, [newUspData]);
+
+        Polymer.globalsManager.set('Dorel.product.attributes.usps', uspData);
+      },
+
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function (item, index) {
+            var exists = false;
+            array1.forEach(function (oldItem) {
+              if (oldItem.product_id === item.product_id) {
+                exists = true;
+              }
+            });
+            return !exists;
+        }));
       }
 
     });

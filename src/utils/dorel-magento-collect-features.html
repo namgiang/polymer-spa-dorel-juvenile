@@ -52,6 +52,22 @@
           return;
         }
 
+        var existingFeatures = Polymer.globalsManager.get('Dorel.product.attributes.features') || [];
+
+        if(existingFeatures.length) {
+          var feature = existingFeatures.find(function(feature) {
+            return feature.product_id === productId;
+          });
+        }
+
+        if(feature) {
+          this.featuresData = feature;
+        } else {
+          this._retrieveFeatures(productId, token);
+        }
+      },
+
+      _retrieveFeatures: function(productId, token) {
         var featuresProductsEl = this.$.featuresCollect;
         // set header with the token
         featuresProductsEl.headers = {Authorization: 'Bearer ' + token};
@@ -62,7 +78,30 @@
       },
 
       _featuresResponse: function(response) {
-       this.featuresData = response.detail.response[0];
+        var featuresData = response.detail.response[0];
+        featuresData.product_id = this.productId;
+        this.featuresData = featuresData;
+        this._setFeatures(featuresData);
+      },
+
+      _setFeatures: function(newFeaturesData) {
+        var existingFeatures = Polymer.globalsManager.get('Dorel.product.attributes.features') || [];
+        var featuresData = this._mergeArrays(existingFeatures, [newFeaturesData]);
+
+        Polymer.globalsManager.set('Dorel.product.attributes.features', featuresData);
+      },
+
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function (item, index) {
+            var exists = false;
+            array1.forEach(function (oldItem) {
+              if (oldItem.product_id === item.product_id) {
+                exists = true;
+              }
+            });
+            return !exists;
+        }));
       }
 
     });
