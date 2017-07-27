@@ -156,7 +156,7 @@
          * @description Currently selected brand
          */
         selectedBrand: {
-          type: String,
+          type: Object,
           notify: true,
           readOnly: false,
         }
@@ -184,15 +184,14 @@
        * @description Returns the index of the currently selected brand
        */
       _getIndexCurrentBrand: function () {
-
         // Get the current index of the brand
-        var indexBrand = -1;
         for (var i = 0; i < this.availableBrands.length; i++) {
-          if (this.selectedBrand === this.availableBrands[i].label) {
-            indexBrand = i;
+          if (this.selectedBrand === this.availableBrands[i]) {
+            return i;
           }
         }
-        return indexBrand;
+
+        return -1;
       },
 
       /**
@@ -202,7 +201,7 @@
       _setNextBrand: function () {
         var indexBrand = this._getIndexCurrentBrand();
         var newIndexBrand = (indexBrand + 1) % this.availableBrands.length;
-        this.selectedBrand = this.availableBrands[newIndexBrand].label;
+        this.selectedBrand = this.availableBrands[newIndexBrand];
       },
 
       /**
@@ -212,7 +211,7 @@
       _setPreviousBrand: function () {
         var indexBrand = this._getIndexCurrentBrand();
         var newIndexBrand = Math.abs((indexBrand - 1) % this.availableBrands.length);
-        this.selectedBrand = this.availableBrands[newIndexBrand].label;
+        this.selectedBrand = this.availableBrands[newIndexBrand];
       },
 
       /**
