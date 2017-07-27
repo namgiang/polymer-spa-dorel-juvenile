@@ -1,27 +1,27 @@
 <link rel="import" href="dorel-magento-auth.html">
 
-<dom-module id="dorel-magento-collect-usp">
+<dom-module id="dorel-magento-collect-accordion">
   <template>
 
     <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
 
     <iron-ajax
-      id="uspCollect"
+      id="accordion"
       content-type="application/json"
       method="get"
       input="1"
-      on-response="_uspResponse"
+      on-response="_accordionResponse"
       handle-as="json"></iron-ajax>
 
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-magento-collect-usp',
+      is: 'dorel-magento-collect-accordion',
 
       properties: {
 
-        uspData: {
+        accordionData: {
           type: Object,
           notify: true,
           value: {}
@@ -40,10 +40,10 @@
       },
 
       observers: [
-        '_getUsps(productId, token)'
+        '_getAccordion(productId, token)'
       ],
 
-      _getUsps: function(productId, token) {
+      _getAccordion: function(productId, token) {
         if(!token) {
           return this.$.auth.retreiveToken();
         }
@@ -52,17 +52,17 @@
           return;
         }
 
-        var uspProductsEl = this.$.uspCollect;
+        var accordionEl = this.$.accordion;
         // set header with the token
-        uspProductsEl.headers = {Authorization: 'Bearer ' + token};
+        accordionEl.headers = {Authorization: 'Bearer ' + token};
         // set the url with the endPoint
-        uspProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel-uspbuilder/usplist?product_id=' + productId;
+        accordionEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel-accordionbuilder/accordionlist?product_id=' + productId;
         // make the call
-        return uspProductsEl.generateRequest();
+        return accordionEl.generateRequest();
       },
 
-      _uspResponse: function(response) {
-       this.uspData = response.detail.response[0];
+      _accordionResponse: function(response) {
+        this.accordionData = response.detail.response[0];
       }
 
     });

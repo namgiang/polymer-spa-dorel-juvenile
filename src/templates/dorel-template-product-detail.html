@@ -10,6 +10,7 @@
 <link rel="import" href="../utils/dorel-magento-collect-related-product.html">
 <link rel="import" href="../utils/dorel-magento-collect-usp.html">
 <link rel="import" href="../utils/dorel-magento-collect-features.html">
+<link rel="import" href="../utils/dorel-magento-collect-accordion.html">
 
 <dom-module id="dorel-template-product-detail">
   <template>
@@ -91,6 +92,10 @@
       product-id="[[ product.id ]]"
       features-data="{{ featuresData }}"></dorel-magento-collect-features>
 
+    <dorel-magento-collect-accordion
+      product-id="[[ product.id ]]"
+      accordion-data="{{ accordionData }}"></dorel-magento-collect-accordion>
+
     <!-- define routing for products -->
     <app-route
       route="{{ route }}"
@@ -155,10 +160,14 @@
             gtm-parent-index="[[ index ]]"></dorel-section-product-accessories>
         </template>
 
-        <!-- <dorel-section-product-accordions
-          accordions-data="[[ product ]]"
-          gtm-parent="dorel-section-product-accordions"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-accordions> -->
+        <template
+          is="dom-if"
+          if="[[ accordionData ]]">
+          <dorel-section-product-accordions
+            accordions-data="[[ accordionData ]]"
+            gtm-parent="dorel-section-product-accordions"
+            gtm-parent-index="[[ index ]]"></dorel-section-product-accordions>
+        </template>
 
         <!-- <dorel-section-slideshow
           slideshow-data="[[ component ]]"
