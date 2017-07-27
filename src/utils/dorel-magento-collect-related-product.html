@@ -32,28 +32,47 @@
 
         /**
          * @name category
-         * @description this category is inherit by the parent and
-         * will be used in the filter for the call to the magento end-point
+         * @description category will be send by parent
+         * will be used in to build up the filter in the api call
          */
         category: {
           type: Number,
           value: 0
         },
 
+        /**
+         * @name productNames
+         * @description productNames will be send by parent
+         * will be used in to build up the filter in the api call
+         */
         productNames: {
           type: Array
         },
 
+        /**
+         * @name token
+         * @description will be retreived by the globalsManager
+         * auth token will be used in the headers of api call
+         */
         token: {
           type: String,
           value: ''
         },
 
+        /**
+         * @name colorMap
+         * @description will be retreived by the globalsManager
+         * will be used the get the correct value for colors and colorNames
+         */
         colorMap: {
           type: Array,
           value: []
         },
 
+        /**
+         * @name relatedProducts
+         * @description will be set and used by the parent
+         */
         relatedProducts: {
           type: Object,
           notify: true,
@@ -62,11 +81,19 @@
           }
         },
 
+        /**
+         * @name loading
+         * @description will be used to not make unnessary calls
+         */
         loading: {
           type: Boolean,
           value: false
         },
 
+        /**
+         * @name existingProducts
+         * @description a Array that can contain products that are already retreived
+         */
         existingProducts: {
           type: Array,
           value: []
@@ -87,37 +114,57 @@
         }
         // get the current products
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
-        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
-        var colorMap = Polymer.globalsManager.get('Dorel.product.colorMap');
-        this.colorMap = colorMap;
+        // get the token
+        this.token = Polymer.globalsManager.get('Dorel.product.auth.token');
+        // set colorMap so product-data-model component can use it
+        this.colorMap = Polymer.globalsManager.get('Dorel.product.colorMap');
+
+        // if category or productNames does not exists we can't make the call so return
         if(!category || !productNames) {
           return;
         }
-        if(!token) {
+
+        // set category that will be used in _productResponse
+        this.category = category;
+
+        // if token does not exists we can't make the call so return
+        if(!this.token) {
           return;
         }
-        if(!colorMap || !colorMap.length) {
+        // if colorMap does not exists we can't extract the correct colors so return
+        if(!this.colorMap || !this.colorMap.length) {
           return;
         }
+        // reset the existingProducts to a empty Array
         this.existingProducts = [];
 
         var self = this;
 
+        // set loading to true so it won't make unnessary multiple calls
         this.loading = true;
+
+        // check if the products in productsNames already are in the saved products
         products.forEach(function(product) {
+          // if the url of a product is in the Array of the productNames
           if(productNames.indexOf(product.url) > -1) {
+            // Add this product to the existingProducts Array
             self.existingProducts.push(product);
+            // Remove the name from the productNames
             productNames = productNames.filter(function(name){
               return name !== product.url;
             });
           }
         });
 
+        // if the productNames are empty because of the filter it means
+        // that all the products are already in saved in the globalsManager
         if(!productNames || !productNames.length) {
+          // set relatedProducts
           return this._setCurrentRelatedProduct(this.existingProducts);
+        } else {
+          // else continue to get the remaining products in the productNames
+          return this._getProduct(productNames);
         }
-
-        return this._getProduct(productNames);
       },
 
       /**
@@ -126,31 +173,38 @@
        * @param category - Number
        */
       _getProduct: function(productNames) {
-        if(productNames && productNames.length) {
-          var token = Polymer.globalsManager.get('Dorel.product.auth.token');
-          var relatedProductsEl = this.$.relatedProducts;
-          relatedProductsEl.headers = {Authorization: 'Bearer ' + token};
+        // select the iron-ajax element
+        var relatedProductsEl = this.$.relatedProducts;
+        // set header with the token
+        relatedProductsEl.headers = {Authorization: 'Bearer ' + this.token};
 
-          var firstSegment = CONFIG.ECOM_URL + '/rest/V1/products?' +
-          '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
-          '&searchCriteria[filter_groups][1][filters][0][value]=4';
-          var related = [];
-          related.push(firstSegment);
-          var filterIndex = 0;
+        // set the first segment of the end-point with a filter
+        var firstSegment = CONFIG.ECOM_URL + '/rest/V1/products?' +
+        '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
+        '&searchCriteria[filter_groups][1][filters][0][value]=4';
+        // create a empty array that will be filled with all the parts of the api call
+        var endPoint = [];
+        // add the firstSegment to the endPoint array
+        endPoint.push(firstSegment);
 
-          productNames.forEach(function(link, index) {
-            var segment = '&searchCriteria[filter_groups][1][filters][' + filterIndex + '][field]=sku' +
-                          '&searchCriteria[filter_groups][1][filters]['+ filterIndex +'][value]=' + link
-            related.push(segment);
-            filterIndex = filterIndex + 1;
-          });
-          related = related.join('');
-
-          relatedProductsEl.url = related;
-
-
-          return relatedProductsEl.generateRequest();
-        }
+        // set the default filterIndex, filterIndex will be used to increment for every filter that is added to the endPoint
+        var filterIndex = 0;
+        // for every productName add a filter to the endPoint Array
+        productNames.forEach(function(sku, index) {
+          // set segment filter with the filterIndex and the sku
+          var segment = '&searchCriteria[filter_groups][1][filters][' + filterIndex + '][field]=sku' +
+                        '&searchCriteria[filter_groups][1][filters]['+ filterIndex +'][value]=' + sku;
+          // add the segment to the endPoint
+          endPoint.push(segment);
+          // add + 1 to the filterIndex for the next segment
+          filterIndex = filterIndex + 1;
+        });
+        // convert the Array to a string
+        endPoint = endPoint.join('');
+        // set the url with the endPoint
+        relatedProductsEl.url = endPoint;
+        // make the call
+        return relatedProductsEl.generateRequest();
       },
 
       /**
@@ -163,10 +217,11 @@
         //set products from response
         var newProducts = response.detail.response.items;
 
-        var category = this.category;
-
         //if there are no products in response early return
         if(!newProducts) {
+          this.relatedProducts = {
+            accessories: []
+          }
           return;
         }
 
@@ -179,13 +234,19 @@
           return self._getChildProducts(product.sku).then(function(data) {
               var childProducts = data.response;
               // create new data model for product and return this to array
-              return self.$.transform.createDataModelProduct(product, category, childProducts);
+              return self.$.transform.createDataModelProduct(product, this.category, childProducts);
           });
         })).then(function(products) {
-            // if promise.all is resolved call the setProducts
+            // if the existingProducts Array contain products
             if(self.existingProducts.length) {
-              products = self._mergeArrays(products, self.existingProducts);
+              // merge the existingProducts with the new retreived products and set the relatedProducts
+              var mergedProducts = self._mergeArrays(products, self.existingProducts);
+              this._setCurrentRelatedProduct(mergedProducts);
+            } else {
+              // set the relatedProducts with the new retreived products
+              this._setCurrentRelatedProduct(products);
             }
+            // call setProducts with the products
             self._setProducts(products);
         });
       },
@@ -196,14 +257,13 @@
        * @param newProducts - Array
        */
       _setProducts: function(newProducts) {
-        //set the current products
-        this._setCurrentRelatedProduct(newProducts);
-
         //get all the "cached" products
         var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
 
+        // merge the oldProducts and the new products
         var products = this._mergeArrays(oldProducts, newProducts);
 
+        // set the globalsManager with the merged products
         Polymer.globalsManager.set('Dorel.product.products', products);
       },
 
@@ -228,11 +288,15 @@
        * @param product - Array
        */
       _setCurrentRelatedProduct: function(products) {
+        // get the order of the Array productNames
         var order = this.productNames;
+        // set the products in the correct order
         products = this._mapOrder(products, order, 'url');
+        // set this.relatedProducts (this will passed to parent)
         this.relatedProducts = {
           accessories: products
         }
+        // set loading false so getRelatedProducts can be called again
         this.loading = false;
       },
 
