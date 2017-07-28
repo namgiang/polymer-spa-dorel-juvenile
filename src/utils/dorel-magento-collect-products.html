@@ -60,6 +60,12 @@
         products: {
           type: Array,
           notify: true
+        },
+
+        retrievingProducts: {
+          type: Boolean,
+          notify: true,
+          value: false
         }
 
       },
@@ -88,6 +94,9 @@
         if(!colorMap || !colorMap.length) {
           return;
         }
+
+        this.retrievingProducts = true;
+
         // get all the products that are saved in the global
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
@@ -141,7 +150,8 @@
 
         //if there are no products in response early return
         if(!newProducts.length) {
-          return;
+          // set empty Array so parent will reset the products
+          return this._setCurrentProducts([]);
         }
 
         // refer to this
@@ -209,6 +219,7 @@
        */
       _setCurrentProducts: function(products) {
         this.products = products;
+        this.retrievingProducts = false;
       },
 
       /**
