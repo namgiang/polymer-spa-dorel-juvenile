@@ -74,7 +74,9 @@
       }
     </style>
 
-    <dorel-magento-collect-products category="[[ category ]]"></dorel-magento-collect-products>
+    <dorel-magento-collect-products
+      category="[[ category ]]"
+      products="{{ products }}"></dorel-magento-collect-products>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -163,27 +165,14 @@
         category: {
           type: Number,
           value: 0
+        },
+
+        products: {
+          type: Array
         }
 
       },
 
-      observers: [
-        '_currentProductsChanged(globals.Dorel.current.products)'
-      ],
-
-      /**
-       * @name _currentProductsChanged
-       * @description will be called by observer if products changes
-       * if products is empty it will early return
-       * else it will set this.products
-       * @param products - Array
-       */
-      _currentProductsChanged: function(products) {
-        if(!products){
-          return;
-        }
-        this.products = products;
-      },
 
       /**
        * @name isPageComponent
