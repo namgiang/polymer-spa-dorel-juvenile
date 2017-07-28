@@ -398,8 +398,11 @@
         },
       },
 
+      observers: [
+        '_hasRelatedProducts(showcaseData)'
+      ],
+
       ready: function() {
-         this.showcaseData.accesoires_button = true;
          //TODO //TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = Polymer.globalsManager.get('Dorel.collect.pages');
          var storePage = pages.find(function(page) {
@@ -443,6 +446,17 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '' && val);
+      },
+
+      _hasRelatedProducts: function(showcaseData) {
+        if(!showcaseData || !Object.keys(showcaseData).length) {
+          return;
+        }
+        if(showcaseData.relatedProducts && showcaseData.relatedProducts.length) {
+          this.showcaseData.accesoires_button = true;
+        } else {
+          this.showcaseData.accesoires_button = false;
+        }
       },
 
       /**
