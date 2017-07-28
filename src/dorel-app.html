@@ -246,7 +246,6 @@
           collect: {},
           current: {
             products: [],
-            product: [],
             brandName: ''
           },
           product: {
@@ -356,6 +355,7 @@
           * if false - match the slug of the page with the route.path
           * return the the item that matches
         */
+
         this.currentPage = pages.find(function (item) {
           return item.slug === self.page;
         });
@@ -395,7 +395,11 @@
 
         // set the currentPage to 404
         this.currentPage = {
-          template: '404'
+          template: '404',
+          acf: {
+            meta_title: '404',
+            meta_description: '404 - This page does not exist'
+          }
         };
       },
 
@@ -452,7 +456,6 @@
             metaDescription: currentPage.acf.meta_description
           });
         }
-
         // tracking of the pageload
         this._eventTracking();
       },
