@@ -61,6 +61,17 @@
         colorMap: {
           type: Array,
           value: []
+        },
+
+        currentProduct: {
+          type: Object,
+          notify: true
+        },
+
+        retrievingProduct: {
+          type: Boolean,
+          notify: true,
+          value: false
         }
 
       },
@@ -91,12 +102,11 @@
           return;
         }
 
+        //set retrievingProduct to true so parent will know that product is being retrieved
+        this.retrievingProduct = true;
+
         // get all the products that are saved in the global
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
-
-        // set currentProduct with a empty array so a detail page will remove the old current product
-        // this will result in a more natural user experience when routing from product-detail to a other product-detail
-        this._setCurrentProduct([]);
 
         // check if the productName (potential new current product) is already in the saved products
         var existingProduct = products.find(function(product) {
@@ -105,9 +115,9 @@
 
         // if the product already exists set this product else retrieve product from api
         if(existingProduct) {
-          return this._setCurrentProduct([existingProduct]);
+          return this._setCurrentProduct(existingProduct);
         } else {
-          return this._getProduct();
+          return this._getProduct(category, productName, token);
         }
       },
 
@@ -116,16 +126,16 @@
        * @description make call to end-point to retreive product
        * @param category - Number
        */
-      _getProduct: function(category) {
+      _getProduct: function(category, productName, token) {
         var productsEl = this.$.product;
-        productsEl.headers = {Authorization: 'Bearer ' + this.token};
+        productsEl.headers = {Authorization: 'Bearer ' + token};
         productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products?' +
         '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
         '&searchCriteria[filter_groups][1][filters][0][value]=4' +
         '&searchCriteria[filter_groups][2][filters][0][field]=sku' +
-        '&searchCriteria[filter_groups][2][filters][0][value]=' + this.productName +
+        '&searchCriteria[filter_groups][2][filters][0][value]=' + productName +
         '&searchCriteria[filter_groups][3][filters][0][field]=category_id' +
-        '&searchCriteria[filter_groups][3][filters][0][value]=' + this.category;
+        '&searchCriteria[filter_groups][3][filters][0][value]=' + category;
 
         productsEl.generateRequest();
       },
@@ -137,31 +147,29 @@
        */
       _productResponse: function(response) {
 
-        //set products from response
-        var newProduct = response.detail.response.items;
+        //set newProducts Array from response
+        var newProducts = response.detail.response.items;
         var category = this.category;
 
-        //if there are no products in response early return
-        if(!newProduct.length) {
-          this._setCurrentProduct([]);
-         // set the global currentPage
-          Polymer.globalsManager.set('Dorel.current.page', { template: '404' });
-          return
+        //if there are no products in Array
+        if(!newProducts.length) {
+          //set the currentProduct with a empty Object so parent will know it should show a 404
+          return this._setCurrentProduct({});
         }
 
         // refer to this
         var self = this;
 
         // Map the newProducts the childProducts can be retrieved and added to the product
-        Promise.all(newProduct.map(function(product) {
+        Promise.all(newProducts.map(function(product) {
           // every product will return function with a new promise from iron-ajax
           return self._getChildProducts(product.sku).then(function(data) {
             // create new data model for product and return this to array
             return self.$.transform.createDataModelProduct(product, category, data.response);
           });
-        })).then(function(newProducts) {
+        })).then(function(mergedProducts) {
             // if promise.all is resolved call the setProducts
-            self._setProducts(newProducts);
+            self._setProducts(mergedProducts);
         });
       },
 
@@ -170,15 +178,15 @@
        * @description will merge the old and new products and remove the duplicates and set the global products
        * @param newProducts - Array
        */
-      _setProducts: function(newProduct) {
-        //set the current products
-        this._setCurrentProduct(newProduct);
+      _setProducts: function(newProducts) {
+        //set the current product with the first Object from Array
+        this._setCurrentProduct(newProducts[0]);
 
         //get all the "cached" products
         var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
 
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
-        var products = oldProducts.concat(newProduct.filter(function (item, index) {
+        var products = oldProducts.concat(newProducts.filter(function (item, index) {
             var exists = false;
             oldProducts.forEach(function (oldItem) {
               if (oldItem.id === item.id) {
@@ -208,10 +216,15 @@
       /**
        * @name _setCurrentProduct
        * @description this method will set global current product;
-       * @param product - Array
+       * @param product - Object
        */
       _setCurrentProduct: function(product) {
+        //set current product in global so meta-data will be set
         Polymer.globalsManager.set('Dorel.current.product', product);
+        //set current product so it will be available for parent
+        this.currentProduct = product;
+        //set retrievingProduct to false so parent will know that product is retrieved
+        this.retrievingProduct = false;
       }
 
     });

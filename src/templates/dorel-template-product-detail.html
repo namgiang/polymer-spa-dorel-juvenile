@@ -12,6 +12,10 @@
 <link rel="import" href="../utils/dorel-magento-collect-features.html">
 <link rel="import" href="../utils/dorel-magento-collect-accordion.html">
 
+<link rel="import" href="../atoms/dorel-loader.html">
+
+<link rel="import" href="dorel-template-404.html">
+
 <dom-module id="dorel-template-product-detail">
   <template>
     <style>
@@ -35,6 +39,14 @@
         -webkit-animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
         -moz-animation-fill-mode: forwards;
         animation-fill-mode: forwards;
+      }
+
+      .loading-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100vh;
       }
 
       @-webkit-keyframes fadeIn {
@@ -75,7 +87,9 @@
 
     <dorel-magento-collect-product
       category="[[ category ]]"
-      product-name="[[ routeData.productName ]]"></dorel-magento-collect-product>
+      product-name="[[ routeData.productName ]]"
+      current-product="{{ product }}"
+      retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product>
 
     <dorel-magento-collect-related-product
       id="relatedProducts"
@@ -103,24 +117,37 @@
       data="{{ routeData }}"
       tail="{{ subroute }}"></app-route>
 
+    <template is="dom-if" if="[[ retrievingProduct ]]">
+      <div class="loading-wrapper">
+        <dorel-loader loading="[[ retrievingProduct ]]"></dorel-loader>
+      </div>
+    </template>
+
+
     <div class="wrapper">
 
       <template is="dom-if"
-        if="[[ _isProductSet(product, loaded) ]]">
+        if="[[ _isProductNotFound(product, retrievingProduct) ]]">
+        <dorel-template-404 name="404"></dorel-template-404>
+      </template>
+
+
+      <template is="dom-if"
+        if="[[ _isProductSet(product, retrievingProduct) ]]">
         <template
           is="dom-if"
           if="[[ product.header_section ]]">
           <dorel-section-header
             section-header-data="[[ product.header_section ]]"
             gtm-parent="dorel-section-header"
-            gtm-parent-index="[[ index ]]"></dorel-section-header>
+            gtm-parent-index="0"></dorel-section-header>
         </template>
 
         <dorel-section-product-showcase
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
           showcase-data="[[ product ]]"
           gtm-parent="dorel-section-product-showcase"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-showcase>
+          gtm-parent-index="1"></dorel-section-product-showcase>
 
         <template
           is="dom-if"
@@ -128,7 +155,7 @@
           <dorel-section-product-usps
             usps-data="[[ uspData ]]"
             gtm-parent="dorel-section-product-usps"
-            gtm-parent-index="[[ index ]]"></dorel-section-product-usps>
+            gtm-parent-index="2"></dorel-section-product-usps>
         </template>
 
         <template
@@ -137,7 +164,7 @@
         <dorel-section-product-video
           video-data="[[ product.video_section ]]"
           gtm-parent="dorel-section-product-video"
-          gtm-parent-index="[[ index ]]"></dorel-section-product-video>
+          gtm-parent-index="3"></dorel-section-product-video>
         </template>
 
         <template
@@ -146,18 +173,18 @@
           <dorel-section-product-features
             features-data="[[ featuresData ]]"
             gtm-parent="dorel-section-product-features"
-            gtm-parent-index="[[ index ]]"></dorel-section-product-features>
+            gtm-parent-index="4"></dorel-section-product-features>
         </template>
 
         <template
           is="dom-if"
-          if="[[ relatedProducts.accessories.length ]]">
+          if="[[ _hasRelatedProducts(product, relatedProducts) ]]">
           <dorel-section-product-accessories
             accessory-scroll-handler="{{ accessoryScrollHandler }}"
             accessories-data="[[ relatedProducts ]]"
             accessories-options="[[ product.related_product_section ]]"
             gtm-parent="dorel-section-product-accessories"
-            gtm-parent-index="[[ index ]]"></dorel-section-product-accessories>
+            gtm-parent-index="5"></dorel-section-product-accessories>
         </template>
 
         <template
@@ -166,7 +193,7 @@
           <dorel-section-product-accordions
             accordions-data="[[ accordionData ]]"
             gtm-parent="dorel-section-product-accordions"
-            gtm-parent-index="[[ index ]]"></dorel-section-product-accordions>
+            gtm-parent-index="6"></dorel-section-product-accordions>
         </template>
 
         <!-- <dorel-section-slideshow
@@ -174,7 +201,6 @@
           gtm-parent="dorel-section-slideshow"
           gtm-parent-index="[[ index ]]"></dorel-section-slideshow> -->
       </template>
-
     </div>
 
   </template>
@@ -246,15 +272,20 @@
          * @name loaded
          * @description a Boolean that will be used to show or hide the page
          */
-        loaded: {
+        retrievingProduct: {
           type: Boolean,
-          value: false
+          value: true
+        },
+
+        product: {
+          type: Object,
+          value: {}
         }
+
       },
 
       observers: [
-        '_setCurrentProduct(globals.Dorel.current.product)',
-        '_getRelatedProducts(product, relatedProducts)'
+        '_getRelatedProducts(product)'
       ],
 
       /**
@@ -264,25 +295,21 @@
        * @param product - Object
        * @param loaded - Boolean
        */
-      _isProductSet: function(product, loaded) {
-          return (product && loaded) ? true : false;
+      _isProductSet: function(product, loading) {
+          var isObjectEmpty = (Object.keys(product).length === 0 &&
+            product.constructor === Object);
+          return Boolean(!isObjectEmpty && !loading);
       },
 
-      /**
-       * @name _setCurrentProduct
-       * @description will be called by observer if currentProduct changes
-       * if currentProduct is empty it will set loaded to false
-       * else it will set the product with the first Object from the currentProduct Array
-       * and set loaded to true
-       * @param currentProduct - Array
-       */
-      _setCurrentProduct: function(currentProduct) {
-        if(!currentProduct || !currentProduct.length) {
-          this.loaded = false;
-          return;
-        }
-        this.product = currentProduct[0];
-        this.loaded = true;
+      _isProductNotFound: function(product, loading) {
+          var isObjectEmpty = (Object.keys(product).length === 0 &&
+            product.constructor === Object);
+          return (isObjectEmpty && !loading);
+      },
+
+      _hasRelatedProducts: function(product, relatedProducts) {
+        return Boolean(product && product.relatedProducts && relatedProducts &&
+          relatedProducts.accessories && relatedProducts.accessories.length);
       },
 
       /**
@@ -293,9 +320,7 @@
        * @param product - Object
        */
       _getRelatedProducts: function(product) {
-        if(!product || !product.relatedProducts || !product.relatedProducts.length) {
-          // reset the relatedProducts
-          this.$.relatedProducts.getRelatedProducts(product.category, []);
+        if(Object.keys(product).length === 0 || !product.relatedProducts || !product.relatedProducts.length) {
           return;
         }
         this.$.relatedProducts.getRelatedProducts(product.category, product.relatedProducts);
