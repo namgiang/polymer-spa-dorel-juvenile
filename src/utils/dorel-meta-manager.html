@@ -124,12 +124,14 @@
       },
 
       _productMetaData: function(product) {
-        if(!product.length) {
+        //inital current.product is not set so it will return
+        if(!product) {
           return;
         }
+        // if product.meta_data exists use title or description else 404
         var metaData = {
-          metaTitle: product[0].meta_data.meta_title,
-          metaDescription: product[0].meta_data.meta_description
+          metaTitle: product.meta_data ? product.meta_data.meta_title : '404',
+          metaDescription: product.meta_data ? product.meta_data.meta_description : '404 - The page does not exist'
         };
         this.addMetaData(metaData);
       }
