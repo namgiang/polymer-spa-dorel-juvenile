@@ -114,9 +114,10 @@
                desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
         <template
           is="dom-if"
-          if="[[ _hasValue(accessoriesData.title) ]]">
-          <h2 class="title">[[ accessoriesData.title ]]</h2>
+          if="[[ _hasValue(accessoriesOptions.title) ]]">
+          <h2 class="title">[[ accessoriesOptions.title ]]</h2>
         </template>
+
         <div class="row">
           <!-- mobile -->
           <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
@@ -236,6 +237,10 @@
           }
         },
 
+        accessoriesOptions: {
+          type: Object
+        },
+
         /**
          * @attribute
          * @name expanded
@@ -265,12 +270,16 @@
         },
       },
 
+      observers: [
+        '_setIncluded(accessoriesData, accessoriesOptions)'
+      ],
+
       /**
        * @name _computeInitialContent
        * @description Splits the content on mobile if there are too many items
        */
       _computeInitialContent: function (accessoriesData) {
-        if (accessoriesData.accessories.length > this.maxShown) {
+        if (accessoriesData && accessoriesData.accessories && accessoriesData.accessories.length > this.maxShown) {
           return accessoriesData.accessories.slice(0, this.maxShown);
         }
 
@@ -282,7 +291,7 @@
        * @description Splits the content on mobile if there are too many items
        */
       _computeRestContent: function (accessoriesData) {
-        if (accessoriesData.accessories.length > this.maxShown) {
+        if (accessoriesData && accessoriesData.accessories && accessoriesData.accessories.length > this.maxShown) {
           return accessoriesData.accessories.slice(this.maxShown);
         }
 
@@ -315,6 +324,19 @@
        */
       _scrollHandler: function (event) {
         this.scrollIntoView({block: "end", behavior: "smooth"})
+      },
+
+      _setIncluded: function(accessoriesData, accessoriesOptions) {
+        if(!accessoriesData || !accessoriesOptions || !accessoriesOptions.included_products || !accessoriesOptions.included_products.length ) {
+          return;
+        }
+        var included = accessoriesOptions.included_products.replace(' ', '').split(',');
+        accessoriesData.accessories.forEach(function(accessory) {
+          if(included.indexOf(accessory.sku) > -1) {
+            accessory.included = true;
+          }
+        });
+        this.accessoriesData = accessoriesData;
       }
     });
 

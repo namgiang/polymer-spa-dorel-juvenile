@@ -74,7 +74,10 @@
       }
     </style>
 
-    <dorel-magento-collect-products category="[[ category ]]"></dorel-magento-collect-products>
+    <dorel-magento-collect-products
+      category="[[ category ]]"
+      retrieving-products="{{ retrievingProducts }}"
+      products="{{ products }}"></dorel-magento-collect-products>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -120,8 +123,10 @@
           </div>
         </div>
       </template>
+
       <dorel-category-listing
         products-data="[[ products ]]"
+        retrieving-products="[[ retrievingProducts ]]"
         sort="[[ sort ]]"
         gtm-parent="dorel-category-listing"
         gtm-parent-index="2"></dorel-category-listing>
@@ -145,65 +150,37 @@
           }
         },
 
+        /**
+         * @attribute
+         * @name products
+         * @description the data coming from the globals
+         */
         products: {
           type: Array,
           value: []
         },
 
+        /**
+         * @attribute
+         * @name category
+         * @description inherit by parent will be used by collect-products
+         */
         category: {
           type: Number,
           value: 0
         },
 
-      },
+        products: {
+          type: Array
+        },
 
-      observers: [
-        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)',
-        '_currentPageChanged(globals.Dorel.current.page)',
-        '_currentProductsChanged(globals.Dorel.current.products)'
-      ],
-
-      /**
-       * @observer
-       * @name _initProductsPage
-       * @description initializes all data for the category-listing. It matches the current
-       * pages categoryId to the category in the categories collect. After that it will match
-       * all the products that comply to the categoryId
-       *
-       * @param page - Array - categories array (all categories in WP)
-       * @param pages - Array - all the retrieved pages from WP
-       */
-      _initProductsPage: function (categories, pages) {
-        // reference this
-        var self = this;
-        this.products = [];
-
-        // match the current page categoryId to the categories array retrieved from WP
-        var category = categories.find(function (category) {
-          return category.id === self.templateData.acf.product_category;
-        });
-
-      },
-
-      _currentPageChanged: function (currentPage) {
-        if (currentPage && currentPage.template && currentPage.template === 'product-category') {
-          var options = currentPage.acf.page_builder.find(function (item) {
-            return item.acf_fc_layout === 'section_magento';
-          });
-          this.category = options.magento_category_picker;
-          this.sort = {
-            type: options.magento_product_sorting,
-            order: options.magento_sort_order
-          };
+        retrievingProducts: {
+          type: Boolean,
+          value: true
         }
+
       },
 
-      _currentProductsChanged: function (products) {
-        if (!products) {
-          return;
-        }
-        this.products = products;
-      },
 
       /**
        * @name isPageComponent

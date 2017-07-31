@@ -1,0 +1,109 @@
+<link rel="import" href="dorel-magento-auth.html">
+
+<dom-module id="dorel-magento-collect-features">
+  <template>
+
+    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+
+    <iron-ajax
+      id="featuresCollect"
+      content-type="application/json"
+      method="get"
+      input="1"
+      on-response="_featuresResponse"
+      handle-as="json"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-magento-collect-features',
+
+      properties: {
+
+        featuresData: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+
+        productId: {
+          type: String,
+          value: ''
+        },
+
+        token: {
+          type: String,
+          value: ''
+        }
+
+      },
+
+      observers: [
+        '_getFeatures(productId, token)'
+      ],
+
+      _getFeatures: function(productId, token) {
+        if(!token) {
+          return this.$.auth.retreiveToken();
+        }
+
+        if(!productId) {
+          return;
+        }
+
+        var existingFeatures = Polymer.globalsManager.get('Dorel.product.attributes.features') || [];
+
+        if(existingFeatures.length) {
+          var feature = existingFeatures.find(function(feature) {
+            return feature.product_id === productId;
+          });
+        }
+
+        if(feature) {
+          this.featuresData = feature;
+        } else {
+          this._retrieveFeatures(productId, token);
+        }
+      },
+
+      _retrieveFeatures: function(productId, token) {
+        var featuresProductsEl = this.$.featuresCollect;
+        // set header with the token
+        featuresProductsEl.headers = {Authorization: 'Bearer ' + token};
+        // set the url with the endPoint
+        featuresProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel-featurebuilder/featurelist?product_id=' + productId;
+        // make the call
+        return featuresProductsEl.generateRequest();
+      },
+
+      _featuresResponse: function(response) {
+        var featuresData = response.detail.response[0];
+        featuresData.product_id = this.productId;
+        this.featuresData = featuresData;
+        this._setFeatures(featuresData);
+      },
+
+      _setFeatures: function(newFeaturesData) {
+        var existingFeatures = Polymer.globalsManager.get('Dorel.product.attributes.features') || [];
+        var featuresData = this._mergeArrays(existingFeatures, [newFeaturesData]);
+
+        Polymer.globalsManager.set('Dorel.product.attributes.features', featuresData);
+      },
+
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function (item, index) {
+            var exists = false;
+            array1.forEach(function (oldItem) {
+              if (oldItem.product_id === item.product_id) {
+                exists = true;
+              }
+            });
+            return !exists;
+        }));
+      }
+
+    });
+  </script>
+</dom-module>

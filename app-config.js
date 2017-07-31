@@ -21,7 +21,7 @@ var CONFIG = {
    * - safety-first
    * - baby-art
    */
-  AVAILABLE_BRANDS: [{'label': 'Maxi-Cosi', value: 'Maxi-Cosi'}, {'label': 'Dorel', value: 'Dorel'}],
+  AVAILABLE_BRANDS: [{'label': 'Maxi-Cosi'}, {'label': 'Dorel'}],
   SELECTED_BRAND: 0,
   /**
    * The following information is localization info used in several parts
