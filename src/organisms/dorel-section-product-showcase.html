@@ -233,11 +233,11 @@
 
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+                if="[[ _hasValue(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
                 <dorel-cta
                   type="primary"
                   title="Find a Store"
-                  link="[[ showcaseData.store_locator_page ]]"
+                  link="[[ storeLocatorPage.link ]]"
                   size="small"
                   icon="dorel-icons:chevron-right"
                   gtm-action="click"
@@ -339,11 +339,11 @@
 
                 <template
                   is="dom-if"
-                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, showcaseData.store_locator_page) ]]">
+                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
                   <dorel-cta
                     title="Find a Store"
                     type="primary"
-                    link="[[ showcaseData.store_locator_page ]]"
+                    link="[[ storeLocatorPage.link ]]"
                     size="small"
                     icon="dorel-icons:chevron-right"
                     gtm-action="click"
@@ -405,15 +405,14 @@
       ready: function() {
          //TODO //TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = Polymer.globalsManager.get('Dorel.collect.pages');
-         var storePage = pages.find(function(page) {
+         this.storeLocatorPage = pages.find(function(page) {
            return page.template === 'store-locator';
          });
-         if(storePage) {
+         if(this.storeLocatorPage) {
            this.showcaseData.store_locator_button = true;
-           this.showcaseData.store_locator_page = storePage.link;
          }
-         //TO BE REMOVED
       },
+
       /**
        * @name _hasAccessories
        * @description check if a the accessories are defined
