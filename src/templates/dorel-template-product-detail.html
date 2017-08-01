@@ -284,10 +284,6 @@
 
       },
 
-      observers: [
-        '_getRelatedProducts(product)'
-      ],
-
       /**
        * @name _isProductSet
        * @description will be used by the template
@@ -310,20 +306,6 @@
       _hasRelatedProducts: function(product, relatedProducts) {
         return Boolean(product && product.relatedProducts && relatedProducts &&
           relatedProducts.accessories && relatedProducts.accessories.length);
-      },
-
-      /**
-       * @name _getRelatedProducts
-       * @description will be called by observer if product changes
-       * if product is empty or product does not have any relatedProducts it will early return
-       * else it will call the getRelatedProducts from the relatedProducts collect element
-       * @param product - Object
-       */
-      _getRelatedProducts: function(product) {
-        if(Object.keys(product).length === 0 || !product.relatedProducts || !product.relatedProducts.length) {
-          return;
-        }
-        this.$.relatedProducts.getRelatedProducts(product.category, product.relatedProducts);
       }
 
     });
