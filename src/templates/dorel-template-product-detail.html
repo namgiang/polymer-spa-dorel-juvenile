@@ -5,14 +5,7 @@
 <link rel="import" href="../organisms/dorel-section-product-showcase.html">
 <link rel="import" href="../organisms/dorel-section-product-video.html">
 <link rel="import" href="../organisms/dorel-section-product-usps.html">
-
 <link rel="import" href="../utils/dorel-magento-collect-product.html">
-<link rel="import" href="../utils/dorel-magento-collect-related-product.html">
-<link rel="import" href="../utils/dorel-magento-collect-usp.html">
-<link rel="import" href="../utils/dorel-magento-collect-features.html">
-<link rel="import" href="../utils/dorel-magento-collect-accordion.html">
-
-<link rel="import" href="../atoms/dorel-loader.html">
 
 <link rel="import" href="dorel-template-404.html">
 
@@ -91,25 +84,6 @@
       current-product="{{ product }}"
       retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product>
 
-    <dorel-magento-collect-related-product
-      id="relatedProducts"
-      category="[[ category ]]"
-      product-names="[[ product.relatedProducts ]]"
-      related-products="{{ relatedProducts }}">
-    </dorel-magento-collect-related-product>
-
-    <dorel-magento-collect-usp
-      product-id="[[ product.id ]]"
-      usp-data="{{ uspData }}"></dorel-magento-collect-usp>
-
-    <dorel-magento-collect-features
-      product-id="[[ product.id ]]"
-      features-data="{{ featuresData }}"></dorel-magento-collect-features>
-
-    <dorel-magento-collect-accordion
-      product-id="[[ product.id ]]"
-      accordion-data="{{ accordionData }}"></dorel-magento-collect-accordion>
-
     <!-- define routing for products -->
     <app-route
       route="{{ route }}"
@@ -149,14 +123,10 @@
           gtm-parent="dorel-section-product-showcase"
           gtm-parent-index="1"></dorel-section-product-showcase>
 
-        <template
-          is="dom-if"
-          if="[[ uspData.usps.length ]]">
-          <dorel-section-product-usps
-            usps-data="[[ uspData ]]"
-            gtm-parent="dorel-section-product-usps"
-            gtm-parent-index="2"></dorel-section-product-usps>
-        </template>
+        <dorel-section-product-usps
+          product-id="[[ product.id ]]"
+          gtm-parent="dorel-section-product-usps"
+          gtm-parent-index="2"></dorel-section-product-usps>
 
         <template
           is="dom-if"
@@ -167,39 +137,24 @@
           gtm-parent-index="3"></dorel-section-product-video>
         </template>
 
-        <template
-          is="dom-if"
-          if="[[ featuresData.features.length > 1 ]]">
-          <dorel-section-product-features
-            features-data="[[ featuresData ]]"
-            gtm-parent="dorel-section-product-features"
-            gtm-parent-index="4"></dorel-section-product-features>
-        </template>
+        <dorel-section-product-features
+          product-id="[[ product.id ]]"
+          gtm-parent="dorel-section-product-features"
+          gtm-parent-index="4"></dorel-section-product-features>
 
-        <template
-          is="dom-if"
-          if="[[ _hasRelatedProducts(product, relatedProducts) ]]">
-          <dorel-section-product-accessories
-            accessory-scroll-handler="{{ accessoryScrollHandler }}"
-            accessories-data="[[ relatedProducts ]]"
-            accessories-options="[[ product.related_product_section ]]"
-            gtm-parent="dorel-section-product-accessories"
-            gtm-parent-index="5"></dorel-section-product-accessories>
-        </template>
+        <dorel-section-product-accessories
+          accessory-scroll-handler="{{ accessoryScrollHandler }}"
+          category="[[ product.category ]]"
+          related-products="[[ product.relatedProducts ]]"
+          accessories-options="[[ product.related_product_section ]]"
+          gtm-parent="dorel-section-product-accessories"
+          gtm-parent-index="5"></dorel-section-product-accessories>
 
-        <template
-          is="dom-if"
-          if="[[ accordionData ]]">
-          <dorel-section-product-accordions
-            accordions-data="[[ accordionData ]]"
-            gtm-parent="dorel-section-product-accordions"
-            gtm-parent-index="6"></dorel-section-product-accordions>
-        </template>
+        <dorel-section-product-accordions
+          product-id="[[ product.id ]]"
+          gtm-parent="dorel-section-product-accordions"
+          gtm-parent-index="6"></dorel-section-product-accordions>
 
-        <!-- <dorel-section-slideshow
-          slideshow-data="[[ component ]]"
-          gtm-parent="dorel-section-slideshow"
-          gtm-parent-index="[[ index ]]"></dorel-section-slideshow> -->
       </template>
     </div>
 
@@ -284,10 +239,6 @@
 
       },
 
-      observers: [
-        '_getRelatedProducts(product)'
-      ],
-
       /**
        * @name _isProductSet
        * @description will be used by the template
@@ -305,25 +256,6 @@
           var isObjectEmpty = (Object.keys(product).length === 0 &&
             product.constructor === Object);
           return (isObjectEmpty && !loading);
-      },
-
-      _hasRelatedProducts: function(product, relatedProducts) {
-        return Boolean(product && product.relatedProducts && relatedProducts &&
-          relatedProducts.accessories && relatedProducts.accessories.length);
-      },
-
-      /**
-       * @name _getRelatedProducts
-       * @description will be called by observer if product changes
-       * if product is empty or product does not have any relatedProducts it will early return
-       * else it will call the getRelatedProducts from the relatedProducts collect element
-       * @param product - Object
-       */
-      _getRelatedProducts: function(product) {
-        if(Object.keys(product).length === 0 || !product.relatedProducts || !product.relatedProducts.length) {
-          return;
-        }
-        this.$.relatedProducts.getRelatedProducts(product.category, product.relatedProducts);
       }
 
     });
