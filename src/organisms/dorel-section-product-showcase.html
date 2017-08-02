@@ -1,4 +1,3 @@
-<link rel="import" href="../atoms/dorel-color-switcher.html">
 <link rel="import" href="../molecules/dorel-expandable-content.html">
 
 <dom-module id="dorel-section-product-showcase">
@@ -174,7 +173,7 @@
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.max_weight) ]]">
                 <li>
-                  Weight: max. [[ showcaseData.max_weight ]] kg.
+                  Weight: [[ showcaseData.max_weight ]]
                 </li>
               </template>
               <template
@@ -198,11 +197,11 @@
             <!-- color switcher -->
             <template
               is="dom-if"
-              if="[[ showcaseData.colors.length ]]">
+              if="[[ showcaseData.childProducts.length ]]">
               <div class="color-mobile-container  layout horizontal center center-justified wrap">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"
+                  colors-data="[[ showcaseData.childProducts ]]"
                   gtm-action="switch-color"
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"
@@ -233,11 +232,11 @@
 
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.store_locator_button) ]]">
+                if="[[ _hasValue(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
                 <dorel-cta
                   type="primary"
                   title="Find a Store"
-                  link=""
+                  link="[[ storeLocatorPage.link ]]"
                   size="small"
                   icon="dorel-icons:chevron-right"
                   gtm-action="click"
@@ -266,23 +265,23 @@
             <div class="showcase-description">
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.title) ]]">
-                <p class="showcase-title">[[ showcaseData.title ]]</p>
+                if="[[ _hasValue(showcaseData.name) ]]">
+                <p class="showcase-title">[[ showcaseData.name ]]</p>
               </template>
 
               <ul class="showcase-product-specs">
                 <template
                   is="dom-if"
-                  if="[[ _hasValue(showcaseData.age_category) ]]">
+                  if="[[ _hasValue(showcaseData.age) ]]">
                   <li>
-                    Age: [[ showcaseData.age_category ]]
+                    Age: [[ showcaseData.age ]]
                   </li>
                 </template>
                 <template
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.max_weight) ]]">
                   <li>
-                    Weight: max. [[ showcaseData.max_weight ]] kg.
+                    Weight: [[ showcaseData.max_weight ]]
                   </li>
                 </template>
                 <template
@@ -305,10 +304,10 @@
               <!-- color switcher -->
               <template
                 is="dom-if"
-                if="[[ showcaseData.colors.length ]]">
+                if="[[ showcaseData.childProducts.length ]]">
                 <dorel-color-switcher
                   current-image="{{ currentImage }}"
-                  colors-data="[[ showcaseData.colors ]]"
+                  colors-data="[[ showcaseData.childProducts ]]"
                   gtm-action="switch-color"
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"
@@ -318,6 +317,7 @@
               <!--// color switcher -->
 
               <div class="actions">
+
                 <template
                   is="dom-if"
                   if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
@@ -338,11 +338,11 @@
 
                 <template
                   is="dom-if"
-                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, showcaseData.store_locator_page) ]]">
+                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
                   <dorel-cta
                     title="Find a Store"
                     type="primary"
-                    link="[[ showcaseData.store_locator_page ]]"
+                    link="[[ storeLocatorPage.link ]]"
                     size="small"
                     icon="dorel-icons:chevron-right"
                     gtm-action="click"
@@ -394,7 +394,22 @@
          */
         currentImage: {
           type: String
-        }
+        },
+      },
+
+      observers: [
+        '_hasRelatedProducts(showcaseData)'
+      ],
+
+      ready: function() {
+         //TODO //TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
+         var pages = Polymer.globalsManager.get('Dorel.collect.pages');
+         this.storeLocatorPage = pages.find(function(page) {
+           return page.template === 'store-locator';
+         });
+         if(this.storeLocatorPage) {
+           this.showcaseData.store_locator_button = true;
+         }
       },
 
       /**
@@ -406,13 +421,7 @@
        */
       _hasAccessories: function (val) {
         var toggle = (typeof val !== 'undefined' && val !== '' && val);
-        var currentPage = Polymer.globalsManager.get('Dorel.current.page');
-
-        var layout = currentPage.acf.page_builder.find(function (layout) {
-          return layout.acf_fc_layout === 'section_product_accessories';
-        });
-
-        return (toggle && layout.accessories.length);
+        return (toggle && this.showcaseData && this.showcaseData.relatedProducts && this.showcaseData.relatedProducts.length);
       },
 
       /**
@@ -435,6 +444,17 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '' && val);
+      },
+
+      _hasRelatedProducts: function(showcaseData) {
+        if(!showcaseData || !Object.keys(showcaseData).length) {
+          return;
+        }
+        if(showcaseData.relatedProducts && showcaseData.relatedProducts.length) {
+          this.showcaseData.accesoires_button = true;
+        } else {
+          this.showcaseData.accesoires_button = false;
+        }
       },
 
       /**

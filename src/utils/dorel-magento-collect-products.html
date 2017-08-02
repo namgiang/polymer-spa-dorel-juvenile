@@ -1,0 +1,241 @@
+<dom-module id="dorel-magento-collect-products">
+  <template>
+
+    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+
+    <dorel-product-color-map
+      color-map="{{ colorMap }}"
+      token="[[ token ]]"></dorel-product-color-map>
+
+    <dorel-product-data-model
+      id="transform"
+      color-map="[[ colorMap ]]"></dorel-product-data-model>
+
+    <iron-ajax
+      id="products"
+      content-type="application/json"
+      method="get"
+      handle-as="json"
+      on-response="_productResponse"></iron-ajax>
+
+    <iron-ajax
+      id="childProducts"
+      content-type="application/json"
+      method="get"
+      input="1"
+      handle-as="json"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-magento-collect-products',
+
+      properties: {
+
+        /**
+         * @name category
+         * @description this category is inherit by the parent and
+         * will be used in the filter for the call to the magento end-point
+         */
+        category: {
+          type: Number,
+          value: 0
+        },
+
+        token: {
+          type: String,
+          value: ''
+        },
+
+        colorMap: {
+          type: Array,
+          value: []
+        },
+
+        products: {
+          type: Array,
+          notify: true
+        },
+
+        retrievingProducts: {
+          type: Boolean,
+          notify: true,
+          value: false
+        }
+
+      },
+
+      observers: [
+        '_init(category, token, colorMap)'
+      ],
+
+      /**
+       * @name _categoryChanged
+       * @description will be called by observert;
+       * @param category - Number
+       * @param token - String
+       * @param colorMap - Array
+       */
+      _init: function(category, token, colorMap) {
+        // if category is empty we can't make the call return
+        if(!category) {
+          return;
+        }
+        // if token is empty retreive the token _init will be triggered if token is retrieved
+        if(!token) {
+          return this.$.auth.retrieveToken();
+        }
+        // if colorMap is empty return _init will be triggered if colorMap is changed
+        if(!colorMap || !colorMap.length) {
+          return;
+        }
+
+        this.retrievingProducts = true;
+
+        // get all the products that are saved in the global
+        var products = Polymer.globalsManager.get('Dorel.product.products') || [];
+
+        // get all the categories that are already retrieved
+        var retrievedCategories = Polymer.globalsManager.get('Dorel.product.retrievedCategories') || [];
+
+        //if category is already in the retrieved categories
+        if(retrievedCategories.indexOf(category) > -1){
+          // filter out products that have a other category
+          var currentProducts = products.filter(function(item) {
+              return item.category === category;
+          });
+          // set current products
+          return this._setCurrentProducts(currentProducts);
+        } else {
+          // else retreive the products by category that is not in the saved retrieved categories
+          return this._getProductsByCategory(this.category);
+        }
+      },
+      /**
+       * @name _getProductsByCategory
+       * @description set correct end-point and make call to end-point to retreive products by category
+       * @param category - Number
+       */
+      _getProductsByCategory: function(category) {
+        var productsEl = this.$.products;
+          productsEl.headers = {Authorization: 'Bearer ' + this.token}
+          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products' +
+          '?searchCriteria[filter_groups][0][filters][0][field]=category_id' +
+          '&searchCriteria[filter_groups][0][filters][0][value]=' + this.category +
+          '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
+          '&searchCriteria[filter_groups][1][filters][0][value]=4';
+          productsEl.generateRequest();
+      },
+
+      /**
+       * @name _productResponse
+       * @description response of the _getProductsByCategory call;
+       * @param response
+       */
+      _productResponse: function(response) {
+
+        // set category variable
+        var category = this.category;
+
+        //add category to list to keep count of what categories are retrieved
+        this._addCategoryToretrievedCategories(category);
+
+        //set products from response
+        var newProducts = response.detail.response.items;
+
+        //if there are no products in response early return
+        if(!newProducts.length) {
+          // set empty Array so parent will reset the products
+          return this._setCurrentProducts([]);
+        }
+
+        // refer to this
+        var self = this;
+
+        // Map the newProducts the childProducts can be retrieved and added to the product
+        Promise.all(newProducts.map(function(product) {
+          // every product will return function with a new promise from iron-ajax
+          return self._getChildProducts(product.sku).then(function(data) {
+              // create new data model for product and return this to array
+              return self.$.transform.createDataModelProduct(product, category, data.response);
+          });
+        })).then(function(newProducts) {
+            // if promise.all is resolved call the setProducts
+            self._setProducts(newProducts);
+        });
+      },
+
+      /**
+       * @name _setProducts
+       * @description will merge the old and new products and remove the duplicates and set the global products
+       * @param newProducts - Array
+       */
+      _setProducts: function(newProducts) {
+        //set the current products
+        this._setCurrentProducts(newProducts);
+
+        //get all the "cached" products
+        var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
+
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        var products = oldProducts.concat(newProducts.filter(function (item, index) {
+            var exists = false;
+            oldProducts.forEach(function (oldItem) {
+              if (oldItem.id === item.id) {
+                exists = true;
+              }
+            });
+            return !exists;
+        }));
+        // set new array of products in the global saved products
+        Polymer.globalsManager.set('Dorel.product.products', products);
+      },
+
+      /**
+       * @name _getChildProducts
+       * @description this method call the magento end-point to retreive all the child products of the main product with the given `Id`
+       * @param id - String
+       */
+      _getChildProducts: function(id) {
+        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
+        var childProductsEl = this.$.childProducts;
+        childProductsEl.headers = {Authorization: 'Bearer ' + token};
+        //TODO Add end-point to config
+        childProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/configurable-products/' +
+        id + '/children';
+
+        return childProductsEl.generateRequest().completes;
+      },
+
+      /**
+       * @name _setCurrentProducts
+       * @description this method will set global current products;
+       * @param products - Array
+       */
+      _setCurrentProducts: function(products) {
+        this.products = products;
+        this.retrievingProducts = false;
+      },
+
+      /**
+       * @name _addCategoryToretrievedCategories
+       * @description this method will handle global retrievedCategories to keep track on what categories are already retrieved;
+       * @param category - Number
+       */
+      _addCategoryToretrievedCategories: function(category) {
+        //get retrieved categories
+        var retrievedCategories = Polymer.globalsManager.get('Dorel.product.retrievedCategories') || [];
+
+        //check if it does not exists
+        if(retrievedCategories.indexOf(category) < 0) {
+          //add current category
+          retrievedCategories.push(category);
+        }
+
+        //set global categories to keep track on what categories are already retrieved
+        Polymer.globalsManager.set('Dorel.product.retrievedCategories', retrievedCategories);
+      }
+    });
+  </script>
+</dom-module>

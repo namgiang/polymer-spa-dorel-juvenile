@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
 
 <dom-module id="dorel-section-product-accordions">
   <template>
@@ -57,7 +58,6 @@
 
       .accordion-content {
         padding: 0 1.5em 1.5em 1.5em;
-        margin-top: -1.5em;
         float: left;
         width: 100%;
         box-sizing: border-box;
@@ -96,6 +96,12 @@
       }
     </style>
 
+
+    <dorel-magento-collect-custom-data
+      product-id="[[ productId ]]"
+      data="{{ accordionsData }}"
+      type="accordions"></dorel-magento-collect-custom-data>
+
     <template
       is="dom-if"
       if="[[ accordionsData.accordions.length ]]">
@@ -132,9 +138,9 @@
                 <iron-collapse id$="collapse{{ index }}">
                   <template
                     is="dom-if"
-                    if="[[ _hasValue(accordion.content) ]]">
+                    if="[[ _hasValue(accordion.description) ]]">
                     <div class="accordion-content">
-                      <dorel-safe-html html="[[ accordion.content ]]"></dorel-safe-html>
+                      <dorel-safe-html html="[[ accordion.description ]]"></dorel-safe-html>
                     </div>
                   </template>
                 </iron-collapse>
@@ -151,6 +157,10 @@
     Polymer({
       is: 'dorel-section-product-accordions',
       properties: {
+
+        productId: {
+          type: Number
+        },
 
         /**
          * @attribute

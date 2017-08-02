@@ -15,7 +15,7 @@
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
 
-<!-- Header has priority for percieved initial load -->
+<!-- Header has priority for perceived initial load -->
 <link rel="import" href="organisms/dorel-header.html">
 
 <!-- Since 'home' is the default route, eagerly load it. -->
@@ -23,6 +23,9 @@
 
 <!-- Load the breakpoints early as well -->
 <link rel="import" href="atoms/dorel-media-query.html">
+
+<!-- Load the magento authentication eagerly -->
+<link rel="import" href="utils/dorel-magento-auth.html">
 
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
@@ -104,13 +107,13 @@
       tail="{{ subroute }}"></app-route>
 
     <dorel-meta-manager
-      brand-name="[[ brandName ]]"
+      brand-name="[[ brand.label ]]"
       id="metaManager"></dorel-meta-manager>
 
     <dorel-header
       load-complete="[[ loadComplete ]]"
       page="[[ page ]]"
-      brand-name="[[ brandName ]]"></dorel-header>
+      brand-name="[[ brand.label ]]"></dorel-header>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -136,24 +139,33 @@
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-products>
 
+        <dorel-template-product-detail
+          name="product-detail"
+          route="[[ subroute ]]"
+          category="[[ category ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-detail>
+
         <dorel-template-product-category
           name="product-category"
+          category="[[ category ]]"
+          sort="[[ sort ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
         <dorel-template-component-guide
           name="component-guide"
-          brand="{{ brandName }}"
+          brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
 
         <dorel-template-404 name="404"></dorel-template-404>
+
       </iron-pages>
     </main>
 
     <dorel-footer></dorel-footer>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
-                        selected-brand="{{ brandName }}"
+                        selected-brand="{{ brand }}"
                         page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
@@ -189,16 +201,6 @@
         },
 
         /**
-         * @name brandName
-         * @description defines the brand
-         */
-        brandName: {
-          type: String,
-          notify: true,
-          readOnly: false,
-        },
-
-        /**
          * @name brandNames
          * @description available brand names (from config), used for switching between brands
          */
@@ -213,7 +215,15 @@
          */
         currentPage: {
           type: Object
-        }
+        },
+
+        category: {
+          type: Number
+        },
+
+        sort: {
+          type: Object
+        },
 
       },
 
@@ -225,7 +235,7 @@
         '_routePageChanged(route, globals.Dorel.collect.pages)',
         '_pageChanged(page, currentPage)',
         '_setCurrentPage(currentPage)',
-        '_brandChanged(brandName)',
+        '_brandChanged(brand)'
       ],
 
       created: function () {
@@ -237,7 +247,23 @@
           dioApiUrl: {},
           locale: {},
           collect: {},
-          current: {},
+          current: {
+            brandName: ''
+          },
+          product: {
+            products: [],
+            attributes: {
+              accordions: [],
+              features: [],
+              usps: []
+            },
+            retrievedCategories: [],
+            auth: {
+              token: '',
+              timestamp: ''
+            },
+            colorMap: []
+          },
           events: {},
           grid: {
             horizontal: false,
@@ -259,7 +285,8 @@
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
 
         this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brandName = this.brandNames[CONFIG.SELECTED_BRAND].label;
+        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
+        Polymer.globalsManager.set('Dorel.current.brandName', this.brand);
       },
 
 
@@ -270,8 +297,7 @@
        *
        * @param page - String - the string of the current active brand
        */
-      _brandChanged: function (brandName) {
-
+      _brandChanged: function (brand) {
         //Removed the current shared style from the dom, if it exists.
         var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
         if (currentSharedStyle != undefined) {
@@ -279,7 +305,7 @@
         }
 
         // Checks the apps config, and sets the according brand theme
-        var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-').toLowerCase();
+        var brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
         var domModule = document.createElement('style', 'custom-style');
         domModule.setAttribute('include', brandTheme);
         domModule.setAttribute('id', 'brand-shared-style');
@@ -300,6 +326,9 @@
       _routePageChanged: function (page, pages) {
         // if the route is undefined
         if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
+
+        //get first segment of url;
+        firstSegment = page.path.split( '/' )[1];
 
         // get the a clean last segment of the route.path
         page = page.path.match(/([^\/]*)\/*$/).pop();
@@ -327,26 +356,52 @@
           * if false - match the slug of the page with the route.path
           * return the the item that matches
         */
+
         this.currentPage = pages.find(function (item) {
-          if (item.products) {
-            return item.products.find(function (item) {
-              return item.slug === self.page;
-            });
-          }
           return item.slug === self.page;
         });
 
+        if(!this.currentPage && firstSegment.length) {
+          var parent = pages.find(function(item) {
+            return item.slug === firstSegment;
+          });
+
+          if(!parent) {
+            return this._setPageNotFound();
+          }
+          var options = parent.acf.page_builder.find(function(_item) {
+            return _item.acf_fc_layout === 'section_detail_page_template_selector';
+          });
+          if(!options) {
+            return this._setPageNotFound();
+          }
+
+          this.currentPage = pages.find(function(_page) {
+             return _page.template === options.select_detail_template || _page.template === 'product-detail';  //default
+          });
+
+        }
+
         // when the page cannot be matched, it is always the 404
         if (typeof this.currentPage === 'undefined') {
-
-          // set the page to 404
-          this.page = '404';
-
-          // set the currentPage to 404
-          this.currentPage = {
-            template: '404'
-          };
+          this._setPageNotFound();
+        } else {
+          this._setProductCategory(pages, firstSegment);
         }
+      },
+
+      _setPageNotFound: function() {
+        // set the page to 404
+        this.page = '404';
+
+        // set the currentPage to 404
+        this.currentPage = {
+          template: '404',
+          acf: {
+            meta_title: '404',
+            meta_description: '404 - This page does not exist'
+          }
+        };
       },
 
       /**
@@ -390,25 +445,9 @@
        */
       _setCurrentPage: function (currentPage) {
 
-        /**
-         * if we are dealing with products we need to match
-         * which product it is
-         */
-        if (currentPage.slug === 'products') {
-
-          // get last segment slug
-          var lastSegment = this._getLastSegment(document.URL);
-
-          // match it with the products
-          currentPage = currentPage.products.find(function (item) {
-            return item.slug === lastSegment;
-          });
-        }
-
         // set the global currentPage
         Polymer.globalsManager.set('Dorel.current.page', currentPage);
 
-        // TODO: Maybe create a separate component for meta changes?
         if (currentPage !== undefined &&
             currentPage.acf &&
             currentPage.acf.meta_title &&
@@ -418,7 +457,6 @@
             metaDescription: currentPage.acf.meta_description
           });
         }
-
         // tracking of the pageload
         this._eventTracking();
       },
@@ -451,7 +489,24 @@
             });
           });
         }
+      },
 
+      _setProductCategory: function(pages, categoryName) {
+        var mainCategoryPage = pages.find(function(item) {
+          return item.slug === categoryName;
+        });
+        if(!mainCategoryPage || !mainCategoryPage.acf || !mainCategoryPage.acf.page_builder || mainCategoryPage.template !== 'product-category') {
+          return;
+        }
+        var magentoSection = mainCategoryPage.acf.page_builder.find(function(item) {
+          return item.acf_fc_layout === 'section_magento';
+        });
+        var category = magentoSection.magento_category_picker;
+        this.category = typeof category === 'string' ? parseInt(category) : category;
+        this.sort = {
+          type: magentoSection.magento_product_sorting,
+          order: magentoSection.magento_sort_order
+        };
       },
 
       /**
@@ -509,22 +564,6 @@
 
         // return the copied object
         return copy;
-      },
-
-      /**
-       * @name _getLastSegment
-       * @description strips the last segment from the url
-       *
-       * @parameter String - current document url
-       */
-      _getLastSegment: function (url) {
-        url = url.replace(/(^\w+:|^)\/\//, '');
-
-        if (url.lastIndexOf('/') === (url.length - 1)) {
-          url = url.substr(0, url.lastIndexOf('/'));
-        }
-
-        return url.substr(url.lastIndexOf('/') + 1, url.length);
       }
 
     });
