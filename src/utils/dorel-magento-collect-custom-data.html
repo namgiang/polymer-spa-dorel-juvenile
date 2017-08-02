@@ -1,0 +1,120 @@
+<dom-module id="dorel-magento-collect-custom-data">
+  <template>
+
+    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+
+    <iron-ajax
+      id="collect"
+      content-type="application/json"
+      method="get"
+      input="1"
+      on-response="_response"
+      handle-as="json"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-magento-collect-custom-data',
+
+      properties: {
+
+        data: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+
+        productId: {
+          type: String,
+          value: ''
+        },
+
+        token: {
+          type: String,
+          value: ''
+        },
+
+        type: {
+          type: String
+        }
+
+      },
+
+      observers: [
+        '_get(productId, token, type)'
+      ],
+
+      _get: function(productId, token, type) {
+        if(!token) {
+          return this.$.auth.retrieveToken();
+        }
+
+        if(!productId || !type) {
+          return;
+        }
+
+        var existing = Polymer.globalsManager.get('Dorel.product.attributes.' + type) || [];
+
+        if(existing.length) {
+          var item = existing.find(function(_item) {
+            return _item.product_id === productId;
+          });
+        }
+
+        if(item) {
+          this.data = item;
+        } else {
+          this._retrieveData(productId, token, type);
+        }
+
+      },
+
+      _retrieveData: function(productId, token, type) {
+        var collectProductEl = this.$.collect;
+        // set header with the token
+        collectProductEl.headers = {Authorization: 'Bearer ' + token};
+
+        var urlMap = {
+          usps: '/rest/V1/dorel-uspbuilder/usplist?product_id=',
+          features: '/rest/V1/dorel-featurebuilder/featurelist?product_id=',
+          accordions: '/rest/V1/dorel-accordionbuilder/accordionlist?product_id='
+        };
+
+        if(urlMap[type]) {
+          // set the url with the endPoint
+          collectProductEl.url = CONFIG.ECOM_URL + urlMap[type] + productId;
+          // make the call
+          return collectProductEl.generateRequest();
+        }
+      },
+
+      _response: function(response) {
+        var data = response.detail.response[0];
+        data.product_id = this.productId;
+        this.data = data;
+        this._setData(data);
+      },
+
+      _setData: function(newData) {
+        var existingData = Polymer.globalsManager.get('Dorel.product.attributes.' + this.type ) || [];
+        var data = this._mergeArrays(existingData, [newData]);
+
+        Polymer.globalsManager.set('Dorel.product.attributes.' + this.type, data);
+      },
+
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function (item, index) {
+            var exists = false;
+            array1.forEach(function (oldItem) {
+              if (oldItem.product_id === item.product_id) {
+                exists = true;
+              }
+            });
+            return !exists;
+        }));
+      }
+
+    });
+  </script>
+</dom-module>
