@@ -1,19 +1,53 @@
 <link rel="import" href="dorel-responsive-image.html">
 <dom-module id="dorel-bynder-image">
   <template>
-    <style>
-    </style>
-
     <section class="section">
-
+      <dorel-responsive-image image-source="[[_getImageSources(bynderData) ]]"></dorel-responsive-image>
     </section>
-
   </template>
 
   <script>
     Polymer({
       is: 'dorel-bynder-image',
-      properties: {}
+      properties: {
+        /**
+         * @name bynderData
+         * @description data coming from Bynder.
+         * Note: Currently filled with Dummy data, as described in
+         * https://developer-docs.bynder.com/API/Getting-Started/Downloading-assets/
+         * As stated in the documentation:
+         * In most cases working with one of the links that is provided in the thumbnails of the mediaItems will suffice.
+         */
+        bynderData: {
+          type: Object,
+          value: {
+            "height": 220,
+            "version": 1,
+            "fileName": "Twitter-1364b483-a8c2-41fa-8feb-b8a797696990.jpg",
+            "dateCreated": "2017-03-22T13:40:36Z",
+            "size": 21348,
+            "width": 440,
+            "id": "1364B483-A8C2-41FA-8FEBB8A797696990",
+            "thumbnails": {
+              'small-portrait': '../../assets/images/derivatives/derivative-portrait-small.jpg',
+              'small-landscape': '../../assets/images/derivatives/derivative-landscape-small.jpg',
+              'large-portrait': '../../assets/images/derivatives/derivative-portrait-retina.jpg',
+              'large-landscape': '../../assets/images/derivatives/derivative-landscape-retina.jpg',
+            },
+            "active": 1,
+            "type": "web"
+          }
+        }
+      },
+      /**
+       * @name _getImageSources
+       * @description Mapping from the Bynder data model into a compatible datastructure for dorel-responsive-image
+       */
+      _getImageSources(bynderData) {
+        // TODO: Revisit this later, mapping Bynder JSON to our dorel-responsive-image might not be as simple as this,
+        // this is based on the example given in the Bynder API documentation
+        return bynderData.thumbnails;
+      }
     });
   </script>
 
