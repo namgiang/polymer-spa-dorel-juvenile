@@ -2,8 +2,7 @@
 <dom-module id="dorel-bynder-image">
   <template>
     <section class="section">
-      <!-- TODO: Full screen and widescreen images need to be set depending on the context and brand. Revisit this later -->
-      <dorel-responsive-image image-type="full-screen"
+      <dorel-responsive-image image-type="[[ imageType ]]"
                               image-source="[[ _getImageSources(bynderData) ]]"></dorel-responsive-image>
     </section>
   </template>
@@ -12,6 +11,16 @@
     Polymer({
       is: 'dorel-bynder-image',
       properties: {
+        /**
+         * @attribute
+         * @name imageType
+         * @description Image types, defaults to wide-screen and can be set to full-screen
+         */
+        imageType: {
+          type: String,
+          value: 'wide-screen',
+          reflectToAttribute: true,
+        },
         /**
          * @name bynderData
          * @description data coming from Bynder.
