@@ -2,7 +2,9 @@
 <dom-module id="dorel-bynder-image">
   <template>
     <section class="section">
-      <dorel-responsive-image image-source="[[_getImageSources(bynderData) ]]"></dorel-responsive-image>
+      <!-- TODO: Full screen and widescreen images need to be set depending on the context and brand. Revisit this later -->
+      <dorel-responsive-image image-type="full-screen"
+                              image-source="[[ _getImageSources(bynderData) ]]"></dorel-responsive-image>
     </section>
   </template>
 
@@ -45,10 +47,9 @@
        */
       _getImageSources(bynderData) {
         // TODO: Revisit this later, mapping Bynder JSON to our dorel-responsive-image might not be as simple as this,
-        // this is based on the example given in the Bynder API documentation
+        // but this is based on the example given in the Bynder API documentation
         return bynderData.thumbnails;
       }
     });
   </script>
-
 </dom-module>
