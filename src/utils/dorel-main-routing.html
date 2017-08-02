@@ -1,0 +1,141 @@
+<dom-module id="dorel-main-routing">
+  <script>
+    Polymer({
+      is: 'dorel-main-routing',
+
+      properties: {
+
+        /**
+         * @name route
+         * @description defines the current route
+         */
+        route: {
+          type: Object
+        },
+
+        /**
+         * @name brandName
+         * @description defines the current brand
+         */
+        currentPage: {
+          type: Object,
+          notify: true
+        },
+
+        urlSegment: {
+          type: String,
+          notify: true,
+          value: null
+        }
+
+      },
+
+      observers: [
+        '_routePageChanged(route, globals.Dorel.collect.pages)'
+      ],
+
+      /**
+       * @observer
+       * @name _routePageChanged
+       * @description on url/route change get the first segment of the url
+       * then set it as the page. With those settings start the setCurrentPage
+       * which will change the iron-pages selected
+       *
+       * @param page - String - the route page string
+       * @param pages - Array - all the retrieved pages from WP
+       */
+      _routePageChanged: function (route, pages) {
+        // if the route is undefined
+        if (typeof route === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
+
+        // get the a clean last segment of the route.path
+        lastSegment = route.path.match(/([^\/]*)\/*$/).pop();
+
+        // refer to this for find function
+        var self = this;
+
+        /**
+         * if last segment is undefined or empty string set to home,
+         * all others to segment
+         */
+        this.page = lastSegment || 'home';
+
+        // Matches the page to the component guide template
+        if (this.page === 'component-guide') {
+          this.currentPage = {
+            template: 'component-guide'
+          };
+          // break
+          return;
+        }
+
+        /** map the page variable and check if it contains products
+          * if true - match the slug of the product page with the route.path
+          * if false - match the slug of the page with the route.path
+          * return the the item that matches
+        */
+
+        this.currentPage = pages.find(function (item) {
+          return item.slug === self.page;
+        });
+
+        if(!this.currentPage && route.path && route.path.length) {
+          // path without the last segment of the url
+          var routePath = (window.location.origin + route.path);
+          var parent = pages.find(function(_page) {
+            return self._compareUrls(_page.link, routePath, lastSegment);
+          });
+
+          if(!parent) {
+            return this._setPageNotFound();
+          }
+          var options = parent.acf.page_builder.find(function(_item) {
+            return _item.acf_fc_layout === 'section_detail_page_template_selector';
+          });
+          
+          if(!options) {
+            return this._setPageNotFound();
+          }
+
+          this.currentPage = pages.find(function(_page) {
+             return _page.template === options.select_detail_template || _page.template === 'product-detail';  //default
+          });
+        }
+
+        // when the page cannot be matched, it is always the 404
+        if (typeof this.currentPage === 'undefined') {
+          this._setPageNotFound();
+        }
+      },
+
+      _setPageNotFound: function() {
+        // set the page to 404
+        this.page = '404';
+
+        // set the currentPage to 404
+        this.currentPage = {
+          template: '404',
+          acf: {
+            meta_title: '404',
+            meta_description: '404 - This page does not exist'
+          }
+        };
+      },
+
+      _compareUrls: function(url, routePath, lastSegment) {
+        url = this._cleanString(url + lastSegment);
+        routePath = this._cleanString(routePath);
+        return Boolean(url === routePath);
+      },
+
+      _cleanString: function(string) {
+        string = this._stripQueryStringAndHashFromPath(string);
+        return string.replace(/[\/\[\]\&]+|/g, '');
+      },
+
+      _stripQueryStringAndHashFromPath: function(url) {
+        return url.split("?")[0].split("#")[0];
+      }
+    });
+  </script>
+</dom-module>

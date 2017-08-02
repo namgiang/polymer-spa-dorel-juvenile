@@ -1,0 +1,80 @@
+<dom-module id="dorel-product-category-manager">
+  <script>
+    Polymer({
+      is: 'dorel-product-category-manager',
+
+      properties: {
+
+        route: {
+          type: Object
+        },
+
+        category: {
+          type: Number,
+          notify: true,
+          value: null
+        },
+
+        sort: {
+          type: Object,
+          notify: true,
+          value: {}
+        }
+
+      },
+
+      observers: [
+        '_setProductCategory(route, globals.Dorel.collect.pages)'
+      ],
+
+      _setProductCategory: function(route, pages) {
+        if(!route || !route.path || !route.path.length || !pages || !pages.length) {
+          return;
+        }
+
+        var categoryName = this._getCategorySegment(route);
+
+        if(!categoryName.length) {
+          return;
+        }
+        var mainCategoryPage = pages.find(function(item) {
+          return item.slug === categoryName;
+        });
+
+        if(!mainCategoryPage || !mainCategoryPage.acf || !mainCategoryPage.acf.page_builder || mainCategoryPage.template !== 'product-category') {
+          return;
+        }
+        var magentoSection = mainCategoryPage.acf.page_builder.find(function(item) {
+          return item.acf_fc_layout === 'section_magento';
+        });
+        var category = magentoSection.magento_category_picker;
+        this.category = typeof category === 'string' ? parseInt(category) : category;
+        this.sort = {
+          type: magentoSection.magento_product_sorting,
+          order: magentoSection.magento_sort_order
+        };
+      },
+
+      _getCategorySegment: function(route) {
+        var array = route.path.split( '/' ).filter(Boolean)
+        var numberOfSegments = array.length;
+
+        var index;
+
+        switch (true) {
+          case numberOfSegments <= 2:
+            index = 0;
+            break;
+          case numberOfSegments >= 3:
+            index = numberOfSegments - 2;
+            break;
+          default:
+            index = numberOfSegments;
+        }
+        return array[index];
+      }
+
+
+    });
+  </script>
+</dom-module>
