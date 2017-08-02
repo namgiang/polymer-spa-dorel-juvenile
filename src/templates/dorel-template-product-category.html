@@ -181,6 +181,24 @@
 
       },
 
+      observers: [
+        '_setInitialProductSorting(templateData)'
+      ],
+
+      _setInitialProductSorting: function(templateData) {
+        if(!templateData || !templateData.acf ||
+          !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return;
+        }
+        var magentoSection = this.templateData.acf.page_builder.find(function(item) {
+          return item.acf_fc_layout === 'section_magento';
+        });
+        this.sort = {
+          type: magentoSection ? magentoSection.magento_product_sorting : 'name',
+          order: magentoSection ? magentoSection.magento_sort_order : 'asc'
+        };
+      },
+
 
       /**
        * @name isPageComponent

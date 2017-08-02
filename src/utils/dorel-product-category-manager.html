@@ -5,10 +5,6 @@
 
       properties: {
 
-        route: {
-          type: Object
-        },
-
         category: {
           type: Number,
           notify: true,
@@ -19,32 +15,23 @@
           type: Object,
           notify: true,
           value: {}
+        },
+
+        categoryPage: {
+          type: Object
         }
 
       },
 
       observers: [
-        '_setProductCategory(route, globals.Dorel.collect.pages)'
+        '_setProductCategory(categoryPage)'
       ],
 
-      _setProductCategory: function(route, pages) {
-        if(!route || !route.path || !route.path.length || !pages || !pages.length) {
+      _setProductCategory: function(categoryPage) {
+        if(!categoryPage || !categoryPage.acf || !categoryPage.acf.page_builder || categoryPage.template !== 'product-category') {
           return;
         }
-
-        var categoryName = this._getCategorySegment(route);
-
-        if(!categoryName.length) {
-          return;
-        }
-        var mainCategoryPage = pages.find(function(item) {
-          return item.slug === categoryName;
-        });
-
-        if(!mainCategoryPage || !mainCategoryPage.acf || !mainCategoryPage.acf.page_builder || mainCategoryPage.template !== 'product-category') {
-          return;
-        }
-        var magentoSection = mainCategoryPage.acf.page_builder.find(function(item) {
+        var magentoSection = categoryPage.acf.page_builder.find(function(item) {
           return item.acf_fc_layout === 'section_magento';
         });
         var category = magentoSection.magento_category_picker;
@@ -53,28 +40,7 @@
           type: magentoSection.magento_product_sorting,
           order: magentoSection.magento_sort_order
         };
-      },
-
-      _getCategorySegment: function(route) {
-        var array = route.path.split( '/' ).filter(Boolean)
-        var numberOfSegments = array.length;
-
-        var index;
-
-        switch (true) {
-          case numberOfSegments <= 2:
-            index = 0;
-            break;
-          case numberOfSegments >= 3:
-            index = numberOfSegments - 2;
-            break;
-          default:
-            index = numberOfSegments;
-        }
-        return array[index];
       }
-
-
     });
   </script>
 </dom-module>
