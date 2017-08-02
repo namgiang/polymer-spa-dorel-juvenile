@@ -15,7 +15,7 @@
 
         /**
          * @name currentPage
-         * @description the currentPage
+         * @description the currentPage will be used to select page
          */
         currentPage: {
           type: Object,
@@ -82,12 +82,10 @@
           return item.slug === self.page;
         });
 
-        var routePath = (window.location.origin + route.path);
-
         var last = this.currentPage ? '' : lastSegment;
 
         var parent = pages.find(function(_page) {
-          return self._compareUrls(_page.link, routePath, last);
+          return self._compareUrls(_page.link, route.path, last);
         });
 
         if(!this.currentPage && route.path && route.path.length) {
@@ -118,6 +116,10 @@
         }
       },
 
+      /**
+       * @name _setPageNotFound
+       * @description set the currentPage to a 404 page
+       */
       _setPageNotFound: function() {
         // set the page to 404
         this.page = '404';
@@ -132,13 +134,21 @@
         };
       },
 
+      /**
+       * @name _setCategoryPage
+       * @description set the categoryPage so it will be passed to the parent
+       */
       _setCategoryPage: function(categoryPage) {
         this.categoryPage = categoryPage;
       },
 
+      /**
+       * @name _compareUrls
+       * @description return a Boolean if the url + lastSegment and routePath matches;
+       */
       _compareUrls: function(url, routePath, lastSegment) {
         url = this._cleanString(url + lastSegment);
-        routePath = this._cleanString(routePath);
+        routePath = this._cleanString(window.location.origin + routePath);
         return Boolean(url === routePath);
       },
 
