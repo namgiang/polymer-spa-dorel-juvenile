@@ -1,0 +1,109 @@
+<dom-module id="dorel-section-seo">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+      .seo-wrapper {
+        background-color: #f5f5f5;
+        display: block;
+        padding: var(--theme-gutter) var(--theme-gutter-mobile);
+        margin-top: 1.5em;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .column {
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-4);
+        margin: 0;
+        color: var(--theme-color-black);
+      }
+
+      .description {
+        @apply(--theme-typography-2);
+        font-weight: var(--theme-font-weight-normal);
+        margin-top: 1.5em;
+        color: var(--theme-color-black);
+      }
+
+      /* tablet-medium-up */
+
+      .seo-wrapper[tablet-medium-up] {
+        margin-top: 3em;
+        padding: 3em;
+      }
+
+      [tablet-medium-up] .column {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 8);
+        flex-basis: calc(var(--theme-column-width) * 8);
+        max-width: calc(var(--theme-column-width) * 8);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-6);
+        font-size: var(--theme-scale-4);
+        margin: 0;
+      }
+
+      [tablet-medium-up] .description {
+        @apply(--theme-typography-2);
+        margin-top: 1.5em;
+        font-weight: var(--theme-font-weight-normal);
+      }
+
+      /* desktop-large-up */
+
+      .seo-wrapper[desktop-large] {
+        margin-top: 3em;
+        padding: 5em;
+      }
+
+      [desktop-large] .column {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
+      }
+
+      [desktop-large] .title {
+        @apply(--theme-typography-7);
+        font-size: var(--theme-scale-4);
+        margin: 0;
+      }
+
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div class="seo-wrapper"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+      desktop-large$="{{ breakpoints.desktopLarge }}">
+      <div class="column">
+        <h1 class="title">[[ metaTitle ]]</h1>
+        <h2 class="description">
+          [[ metaDescription ]]
+        </h2>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-seo',
+      properties: {
+
+        metaTitle: {
+          type: String,
+        },
+
+        metaDescription: {
+          type: String,
+        }
+
+      }
+
+    });
+  </script>
+</dom-module>
