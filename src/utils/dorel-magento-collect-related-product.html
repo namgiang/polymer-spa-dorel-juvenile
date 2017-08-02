@@ -1,11 +1,15 @@
-<link rel="import" href="dorel-product-data-model.html">
-
 <dom-module id="dorel-magento-collect-related-product">
   <template>
 
     <dorel-product-data-model
       id="transform"
       color-map="[[ colorMap ]]"></dorel-product-data-model>
+
+    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+
+    <dorel-product-color-map
+      color-map="{{ colorMap }}"
+      token="[[ token ]]"></dorel-product-color-map>
 
     <iron-ajax
       id="childProducts"
@@ -82,12 +86,13 @@
         },
 
         /**
-         * @name loading
-         * @description will be used to not make unnessary calls
+         * @name retrievingRelatedProducts
+         * @description will be used to not make unnessary calls and used a loading indicator
          */
-        loading: {
+        retrievingRelatedProducts: {
           type: Boolean,
-          value: false
+          value: false,
+          notify: true
         },
 
         /**
@@ -101,47 +106,45 @@
 
       },
 
+      observers: [
+        '_getRelatedProducts(category, productNames, token, colorMap)'
+      ],
+
       /**
-       * @name _categoryChanged
+       * @name getRelatedProducts
        * @description will be called by observer if category changes by parent
        * @param category - Number
        * @param productNames - String
        */
-      getRelatedProducts: function(category, productNames) {
+      _getRelatedProducts: function(category, productNames, token, colorMap) {
         // if loading is true early return
-        if(this.loading) {
+        if(this.retrievingRelatedProducts) {
           return;
         }
-        // get the current products
-        var products = Polymer.globalsManager.get('Dorel.product.products') || [];
-        // get the token
-        this.token = Polymer.globalsManager.get('Dorel.product.auth.token');
-        // set colorMap so product-data-model component can use it
-        this.colorMap = Polymer.globalsManager.get('Dorel.product.colorMap');
+
+        // if token does not exists we can't make the call so return retrieveToken
+        if(!token) {
+           return this.$.auth.retrieveToken();
+        }
 
         // if category or productNames does not exists we can't make the call so return
-        if(!category || !productNames) {
+        if(!category || !productNames || !colorMap.length) {
           return;
         }
+
+        // get the current products
+        var products = Polymer.globalsManager.get('Dorel.product.products') || [];
 
         // set category that will be used in _productResponse
         this.category = category;
 
-        // if token does not exists we can't make the call so return
-        if(!this.token) {
-          return;
-        }
-        // if colorMap does not exists we can't extract the correct colors so return
-        if(!this.colorMap || !this.colorMap.length) {
-          return;
-        }
         // reset the existingProducts to a empty Array
         this.existingProducts = [];
 
         var self = this;
 
         // set loading to true so it won't make unnessary multiple calls
-        this.loading = true;
+        this.retrievingRelatedProducts = true;
 
         // check if the products in productsNames already are in the saved products
         products.forEach(function(product) {
@@ -297,7 +300,7 @@
           accessories: products
         }
         // set loading false so getRelatedProducts can be called again
-        this.loading = false;
+        this.retrievingRelatedProducts = false;
       },
 
       _mergeArrays: function(array1, array2) {
