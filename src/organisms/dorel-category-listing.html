@@ -70,7 +70,7 @@
         <div class="row narrow-row">
           <template
             is="dom-repeat"
-            items="[[ sortProducts(productsData) ]]"
+            items="[[ products ]]"
             as="product">
             <dorel-category-listing-item
               colors-data="[[ product.childProducts ]]"
@@ -108,10 +108,37 @@
         retrievingProducts: {
           type: Boolean,
           value: false
+        },
+
+        products: {
+          type: Array,
+          notify: true,
+          value: function() { return []; }
         }
       },
 
-      sortProducts: function (items) {
+      observers: [
+        '_setProducts(productsData, retrievingProducts)'
+      ],
+
+      _setProducts: function(productsData, retrievingProducts) {
+
+        if(!productsData.length || retrievingProducts) {
+          this.products = [];
+          return;
+        }
+        var products = this._sortProducts(productsData);
+        this.products = [];
+        var self = this;
+        products.forEach(function(item) {
+          self.push('products', item);
+        });
+      },
+
+      _sortProducts: function (items) {
+        if(this.retrievingProducts) {
+          return [];
+        }
         if (!items.length) {
           return [];
         }
