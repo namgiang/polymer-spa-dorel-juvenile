@@ -188,7 +188,7 @@
         /**
          * @attribute
          * @name products
-         * @description the data coming from the globals
+         * @description the data coming from the collect-products component
          */
         products: {
           type: Array,
@@ -205,10 +205,14 @@
           value: 0
         },
 
-        products: {
-          type: Array
-        },
-
+        /**
+         * @attribute
+         * @name category
+         * @description a loading indicator from the collect-products component
+         * if products are retrieved it will set Boolean to false
+         * if products are being retrieved it will set Boolean to true
+         * initial value is true because component does not have products initially
+         */
         retrievingProducts: {
           type: Boolean,
           value: true
@@ -220,6 +224,12 @@
         '_setInitialProductSorting(templateData)'
       ],
 
+      /**
+       * observer
+       * @name _setInitialProductSorting
+       * @description will set the sort Object that will be used by the category-listing component
+       * @param templateData - Object
+       */
       _setInitialProductSorting: function(templateData) {
         if(!templateData || !templateData.acf ||
           !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
@@ -232,6 +242,13 @@
         };
       },
 
+      /**
+       * @name getComponent
+       * @description will be used to select the correct component from the page builder
+       * @param templateData - Object
+       * @param componentName - String
+       * @returns returns a Object that will be used by the template
+       */
       getComponent: function(templateData, componentName) {
         if(!templateData || !templateData.acf ||
           !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
