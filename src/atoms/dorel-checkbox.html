@@ -18,13 +18,14 @@
         cursor: pointer;
         margin-left: .5em;
         transition: color .3s ease;
+        user-select: none;
       }
 
       label:before {
         box-sizing: border-box;
         content: '';
-        background: var(--theme-color-white);
-        border: 1px solid var(--theme-color-monochrome-3);
+        background: var(--theme-checkbox-background-color);
+        border: 1px solid var(--theme-checkbox-border-color);
         display: inline-block;
         width: auto;
         cursor: pointer;
@@ -47,7 +48,7 @@
         background: transparent;
         top: .375em;
         left: .25em;
-        border: .125em solid var(--theme-brand-color-1);
+        border: .125em solid var(--theme-checkbox-check-color);
         border-top: none;
         border-right: none;
         transform: rotate(-45deg);
@@ -55,11 +56,11 @@
       }
 
       label:hover {
-        color: var(--theme-brand-color-1);
+        color: var(--theme-checkbox-hover-color);
       }
 
       label:hover:before {
-        border-color: var(--theme-brand-color-1)
+        border-color: var(--theme-checkbox-hover-color)
       }
 
       input[type=checkbox]:checked + label:after {
@@ -77,17 +78,40 @@
     </style>
 
     <input type="checkbox" id="dorel-checkbox-input" on-click="_onCheck">
-    <label class="label" for="dorel-checkbox-input">Testing this</label>
+    <label class="label" for="dorel-checkbox-input">[[ label ]]</label>
 
   </template>
   <script>
     Polymer({
       is: 'dorel-checkbox',
+
+      properties: {
+        /**
+         * @name checked
+         * @description The value set to the checkbox
+         */
+        checked: {
+          type: Boolean,
+          value: false,
+        },
+      },
       behaviors: [
         Polymer.IronCheckedElementBehavior
       ],
+      /**
+       * @name attached
+       * @description Attached callback, sets the native checkbox to the component's checked property
+       */
+      attached: function () {
+        this.$['dorel-checkbox-input'].checked = this.checked;
+
+      },
+      /**
+       * @name _onCheck
+       * @description event binding the synchronises the native checkbox with the components' checked property
+       */
       _onCheck: function () {
-        this.checked = this.$.checkbox.checked;
+        this.checked = this.$['dorel-checkbox-input'].checked;
       },
     });
   </script>

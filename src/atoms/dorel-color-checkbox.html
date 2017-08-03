@@ -1,0 +1,38 @@
+<link rel="import" href="dorel-checkbox.html">
+<dom-module id="dorel-color-checkbox">
+  <template>
+    <style>
+      :host {
+        --theme-checkbox-check-color: var(--theme-color-white);
+      }
+    </style>
+    <dorel-checkbox checked="{{ checked }}" label="[[ label ]]"></dorel-checkbox>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-color-checkbox',
+      properties: {
+        /**
+         * @name colorCode
+         * @description The css variable used to color the checkbox
+         */
+        colorCode: {
+          type: String,
+        }
+      },
+      /**
+       * @name attached
+       * @description Attached callback, sets the color variables according to the colorCode property
+       */
+      attached: function () {
+        this.updateStyles({
+          '--theme-checkbox-background-color': this.colorCode,
+          '--theme-checkbox-hover-color': this.colorCode,
+          '--theme-checkbox-hover-color': this.colorCode,
+
+        });
+      },
+    });
+  </script>
+
+</dom-module>
