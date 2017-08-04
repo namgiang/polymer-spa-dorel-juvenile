@@ -60,6 +60,7 @@
               <a
                 class="link"
                 href="[[ getUrl(menuItem) ]]"
+                on-click="_menuItemTap"
                 gtm-parent="dorel-category-submenu"
                 gtm-parent-index="[[ index ]]">[[ menuItem.post_title ]]</a>
             </li>
@@ -92,7 +93,27 @@
        */
       getUrl: function(menuItem) {
         return window.location.href + menuItem.post_name;
-      }
+      },
+
+      _menuItemTap: function (event) {
+        var element = Polymer.dom(event).localTarget;
+
+        // send event data to tracking function
+        Polymer.globalsManager.set('Dorel.events', {
+          action: 'click',
+          component: 'dorel-category-submenu',
+          structure: {
+            name: 'dorel-category-submenu-item',
+            index: Number(element.gtmParentIndex) + 1
+          },
+          element: element,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': element.href
+          }
+        });
+      },
     });
   </script>
 </dom-module>
