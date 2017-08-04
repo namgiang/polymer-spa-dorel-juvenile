@@ -1,6 +1,6 @@
 <link rel="import" href="../organisms/dorel-category-listing.html">
 <link rel="import" href="../organisms/dorel-section-category-header.html">
-<link rel="import" href="../organisms/dorel-section-category-sidebar.html">
+<link rel="import" href="../organisms/dorel-category-submenu.html">
 
 <link rel="import" href="../utils/dorel-magento-collect-products.html">
 
@@ -28,6 +28,16 @@
         @apply(--layout-flex);
       }
 
+      .content {
+        width: 100%;
+        @apply(--theme-grid-column);
+      }
+
+      .sidebar {
+        width: 100%;
+        @apply(--theme-grid-column);
+      }
+
       dorel-section-category-header {
         @apply(--theme-grid-column);
         -ms-flex-preferred-size: 100%;
@@ -52,16 +62,9 @@
       }
 
       [desktop-small-up] dorel-section-category-header {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
-        flex-basis: calc(var(--theme-column-width) * 9);
-        max-width: calc(var(--theme-column-width) * 9);
-        order: 1;
-      }
-
-      [desktop-small-up] dorel-section-category-sidebar {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
-        flex-basis: calc(var(--theme-column-width) * 3);
-        max-width: calc(var(--theme-column-width) * 3);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 12);
+        flex-basis: calc(var(--theme-column-width) * 12);
+        max-width: calc(var(--theme-column-width) * 12);
         order: 0;
       }
 
@@ -71,6 +74,22 @@
 
       [tablet-medium-up] .row {
         @apply(--theme-grid-row-margins);
+      }
+
+      [desktop-small-up] .main-content {
+        display: flex;
+      }
+
+      [desktop-small-up] .content {
+        -ms-flex-preferred-size: calc( var(--theme-column-width) * 9 );
+        flex-basis: calc( var(--theme-column-width) * 9 );
+        max-width:  calc( var(--theme-column-width) * 9 );
+      }
+
+      [desktop-small-up] .sidebar {
+        -ms-flex-preferred-size: calc( var(--theme-column-width) * 3 );
+        flex-basis: calc( var(--theme-column-width) * 3 );
+        max-width:  calc( var(--theme-column-width) * 3 );
       }
     </style>
 
@@ -84,6 +103,8 @@
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
+
+
       <!-- show when acf.page_builder has components -->
       <template
         is="dom-if"
@@ -91,46 +112,60 @@
 
         <div class="container layout horizontal center center-justified wrap">
           <div class="row">
-            <!-- iterate over page_builder components -->
+
             <template
-              is="dom-repeat"
-              items="[[ templateData.acf.page_builder ]]"
-              as="component"
-              targetFramerate="1000">
-
-              <!-- section-category-header -->
-              <template
-                is="dom-if"
-                if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
-                <dorel-section-category-header
-                  category-header-data="[[ component ]]"
-                  gtm-parent="dorel-section-category-header"
-                  gtm-parent-index="[[ index ]]"></dorel-section-category-header>
-              </template>
-              <!--// section-category-header -->
-
-              <!-- section-category-sidebar -->
-              <template
-                is="dom-if"
-                if="{{ isPageComponent(component.acf_fc_layout, 'section_category_sidebar') }}">
-                <dorel-section-category-sidebar
-                  category-sidebar-data="[[ component ]]"
-                  gtm-parent="dorel-section-category-sidebar"
-                  gtm-parent-index="[[ index ]]"></dorel-section-product-sidebar>
-              </template>
-              <!--// section-category-sidebar -->
+              is="dom-if"
+              if="{{ getComponent(templateData, 'section_category_header') }}">
+              <dorel-section-category-header
+                category-header-data="[[ getComponent(templateData, 'section_category_header') ]]"
+                gtm-parent="dorel-section-category-header"
+                gtm-parent-index="[[ index ]]"></dorel-section-category-header>
             </template>
-          </div>
-        </div>
-      </template>
 
-      <dorel-category-listing
-        products-data="[[ products ]]"
-        retrieving-products="[[ retrievingProducts ]]"
-        sort="[[ sort ]]"
-        gtm-parent="dorel-category-listing"
-        gtm-parent-index="2"></dorel-category-listing>
-    </div>
+
+            <div class="sidebar">
+              <template
+                is="dom-if"
+                if="{{ templateData.acf.show_sub_category_menu }}">
+                <dorel-category-submenu
+                  items="[[ templateData.acf.sub_category_menu ]]">
+                </dorel-category-submenu>
+              </template>
+              <template
+                is="dom-if"
+                if="{{ templateData.acf.show_filters_on_page }}">
+                <p>filters</p>
+              </template>
+            </div>
+
+            <div class="content">
+              <template
+                is="dom-if"
+                if="{{ getComponent(templateData, 'section_magento') }}">
+                  <dorel-category-listing
+                    products-data="[[ products ]]"
+                    retrieving-products="[[ retrievingProducts ]]"
+                    sort="[[ sort ]]"
+                    gtm-parent="dorel-category-listing"
+                    gtm-parent-index="2"></dorel-category-listing>
+              </template>
+            </div>
+
+          </template>
+          <template
+            is="dom-if"
+            if="{{ templateData.acf.title }}">
+            <dorel-section-seo
+              meta-title="[[ templateData.acf.title ]]"
+              meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
+          </template>
+        </div>
+        </div>
+      </div>
+
+
+
+
   </template>
   <script>
     Polymer({
@@ -153,7 +188,7 @@
         /**
          * @attribute
          * @name products
-         * @description the data coming from the globals
+         * @description the data coming from the collect-products component
          */
         products: {
           type: Array,
@@ -170,15 +205,58 @@
           value: 0
         },
 
-        products: {
-          type: Array
-        },
-
+        /**
+         * @attribute
+         * @name category
+         * @description a loading indicator from the collect-products component
+         * if products are retrieved it will set Boolean to false
+         * if products are being retrieved it will set Boolean to true
+         * initial value is true because component does not have products initially
+         */
         retrievingProducts: {
           type: Boolean,
           value: true
         }
 
+      },
+
+      observers: [
+        '_setInitialProductSorting(templateData)'
+      ],
+
+      /**
+       * observer
+       * @name _setInitialProductSorting
+       * @description will set the sort Object that will be used by the category-listing component
+       * @param templateData - Object
+       */
+      _setInitialProductSorting: function(templateData) {
+        if(!templateData || !templateData.acf ||
+          !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return;
+        }
+        var magentoSection = this.getComponent(templateData, 'section_magento');
+        this.sort = {
+          type: magentoSection ? magentoSection.magento_product_sorting : 'name',
+          order: magentoSection ? magentoSection.magento_sort_order : 'asc'
+        };
+      },
+
+      /**
+       * @name getComponent
+       * @description will be used to select the correct component from the page builder
+       * @param templateData - Object
+       * @param componentName - String
+       * @returns returns a Object that will be used by the template
+       */
+      getComponent: function(templateData, componentName) {
+        if(!templateData || !templateData.acf ||
+          !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return;
+        }
+        return templateData.acf.page_builder.find(function(component) {
+          return component.acf_fc_layout === componentName;
+        });
       },
 
 

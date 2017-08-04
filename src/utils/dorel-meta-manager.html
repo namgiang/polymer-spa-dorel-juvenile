@@ -13,37 +13,39 @@
           type: String
         },
 
+        currentPage: {
+          type: Object
+        }
+
       },
 
       observers: [
+        '_setPageMetaData(currentPage)',
         '_productMetaData(globals.Dorel.current.product)'
       ],
 
-      /**
-       * @name listeners
-       * @description listens to all different fires
-       */
-      listeners: {
-        'addMetaData': '_addMetaData'
+      _setPageMetaData: function(currentPage) {
+        if (!currentPage || !currentPage.acf) {
+          return;
+        }
+        this.addMetaData(currentPage.acf)
       },
-
       /**
        * @name addMetaData
        * @description adds the right seo meta data
        */
-      addMetaData: function (metaData) {
-        if (typeof metaData === 'undefined') return;
+      addMetaData: function(metaData) {
 
         // add the page's title
-        if (typeof metaData.metaTitle !== 'undefined') {
-          document.title = this._defineMetaTitle(metaData.metaTitle);
+        if (typeof metaData.meta_title !== 'undefined' && metaData.meta_title.length) {
+          document.title = this._defineMetaTitle(metaData.meta_title);
         }
 
         // add the page's description
-        if (typeof metaData.metaDescription !== 'undefined') {
+        if (typeof metaData.meta_description !== 'undefined' && metaData.meta_title.length) {
           var metaDesc = document.createElement('meta');
           metaDesc.name = 'description';
-          metaDesc.content = metaData.metaDescription;
+          metaDesc.content = metaData.meta_description;
           document.getElementsByTagName('head')[0].appendChild(metaDesc);
         }
 
@@ -130,8 +132,8 @@
         }
         // if product.meta_data exists use title or description else 404
         var metaData = {
-          metaTitle: product.meta_data ? product.meta_data.meta_title : '404',
-          metaDescription: product.meta_data ? product.meta_data.meta_description : '404 - The page does not exist'
+          meta_title: product.meta_data ? product.meta_data.meta_title : '404',
+          meta_description: product.meta_data ? product.meta_data.meta_description : '404 - The page does not exist'
         };
         this.addMetaData(metaData);
       }
