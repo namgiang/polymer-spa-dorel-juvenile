@@ -92,7 +92,9 @@
        * @returns String
        */
       getUrl: function(menuItem) {
-        return window.location.href + menuItem.post_name;
+        var currentUrl = window.location.href.split('?')[0].split('#')[0];
+        currentUrl = currentUrl.substr(-1) === '/' ? currentUrl : currentUrl + '/';
+        return currentUrl + menuItem.post_name;
       },
 
       /**

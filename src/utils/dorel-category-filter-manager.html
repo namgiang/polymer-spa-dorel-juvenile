@@ -1,0 +1,54 @@
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<dom-module id="dorel-category-filter-manager">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+    </style>
+    <app-location route="{{ route }}"></app-location>
+    <app-route
+      route="{{ route }}"
+      pattern="/:page"></app-route>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-filter-manager',
+
+      properties: {
+        route: {
+          type: Object,
+          notify: true,
+          value: function() { return {}; }
+        },
+
+        filters: {
+          type: Array,
+          notify: true,
+          reflectToAttribute: true,
+          value: function() { return []; }
+        }
+      },
+
+      observers: [
+        '_getRoute(route)'
+      ],
+
+
+      _getRoute: function(route) {
+        if(!route || !route.__queryParams || !Object.keys(route.__queryParams).length) {
+          this.filters = [];
+          return;
+        }
+        var self = this;
+        Object.keys(route.__queryParams).forEach(function(key, value) {
+          var filterItem = { [key]: route.__queryParams[key] }
+          self.push('filters', filterItem);
+        });
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -1,4 +1,5 @@
 <link rel="import" href="../molecules/dorel-category-listing-item.html">
+<link rel="import" href="../utils/dorel-category-filter-manager.html">
 
 <dom-module id="dorel-category-listing">
   <template>
@@ -66,12 +67,18 @@
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
+      <dorel-category-filter-manager
+        filters="{{ filters }}">
+      </dorel-category-filter-manager>
+
       <section class="category-listing layout horizontal center center-justified wrap">
+
         <div class="row narrow-row">
           <template
             is="dom-repeat"
             items="[[ products ]]"
-            as="product">
+            as="product"
+            filter="[[ _filter(filters.*) ]]">
             <dorel-category-listing-item
               colors-data="[[ product.childProducts ]]"
               link-url="[[ product.url ]]"
@@ -131,12 +138,54 @@
           type: Array,
           notify: true,
           value: function() { return []; }
-        }
+        },
+
+        filters: {
+          type: Array
+        },
       },
 
       observers: [
         '_setProducts(productsData, retrievingProducts)'
       ],
+
+      _filter: function(filters) {
+        var self = this;
+        return function(product) {
+          if(!filters || !filters.base || !filters.base.length) {
+            return true;
+          }
+          if (!product) {
+            return false;
+          }
+          var showProduct = true;
+          filters.base.forEach(function(filter) {
+            var key = Object.keys(filter)[0];
+            var value = product[key] ? product[key] : self.findVal(product, key);
+            showProduct = Boolean(value && !value.toString().indexOf(filter[key]));
+          });
+          return showProduct;
+        };
+      },
+
+      findVal: function(object, key) {
+        var value;
+        var self = this;
+        Object.keys(object).some(function(k) {
+            if (k === key) {
+                value = object[k];
+                return true;
+            }
+            if (object[k] && typeof object[k] === 'object') {
+                value = self.findVal(object[k], key);
+                return value !== undefined;
+            }
+            // if(object[k] && typeof Array.isArray(object[k])) {
+            //   debugger;
+            // }
+        });
+        return value;
+      },
 
       /**
        * observer
