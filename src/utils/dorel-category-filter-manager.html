@@ -60,7 +60,100 @@
           var filterItem = { [key]: route.__queryParams[key] }
           self.push('filters', filterItem);
         });
+      },
+
+      /**
+       * @name shouldShowProduct
+       * @description A public function that returns a Boolean
+       * @param product - Array
+       * @param filters - Array
+       * @returns Boolean if all the conditions are met return true too show the product
+       */
+      shouldShowProduct: function(product, filters) {
+        var self = this;
+        // showProduct is default to true
+        var showProduct = true;
+        // loop over the filters and if condition is not met it will set showProduct to false
+        filters.base.forEach(function(filter) {
+          // if the showProduct is already false return;
+          if(showProduct === false) {
+            return
+          }
+          // get the key of the filter (there is only 1)
+          var key = Object.keys(filter)[0];
+
+          // set the value with the product and the key
+          var values = self._findVal(product, key);
+          // if key is price
+          if(key === 'price') {
+            // make a number of the String
+            var price = Number(filter[key]);
+            // check if the price of the product is lower or equal to the filter price limit (value)
+            showProduct = Boolean(values && !(price <= values[0]));
+          } else {
+            // create a Array when splitting on spaces
+            var filterValues = filter[key].split(' ').map(function(item) {
+              // make a string and replace a `-` with a space for comparison
+              return item.toString().split('-').join(' ');
+            });
+            // check if product.key exists in the filterValues
+            showProduct = Boolean(values && values.some(function(value) {
+                return filterValues.indexOf(value) >= 0;
+            }));
+           }
+        });
+        // return a Boolean - if true it will show the product
+        return showProduct;
+      },
+
+      /**
+       * @name _findVal
+       * @description A recursive helper function that is used to retrieve the value
+       * @param object - Object
+       * @param key - String
+       * returns a Array of values
+       */
+      _findVal: function(object, key) {
+        var value;
+        var self = this;
+        Object.keys(object).some(function(k) {
+            // if k is equal to key set value an return true so some() will stop and _findVal will return Array
+            if (k === key) {
+                value = [object[k]];
+                return true;
+            }
+            // if object[k] has length and is a Array
+            if(object[k].length && Array.isArray(object[k])) {
+              // set empty array
+              var results = [];
+              // loop over array
+              object[k].forEach(function(item) {
+                // if item in the array is a object and the item[key] exists
+                if (typeof item === 'object' && item[key]) {
+                  // push the values to the results array
+                  results.push(item[key]);
+                }
+              });
+              // if results has length it means we have the correct Array
+              if(results.length) {
+                // set value with the array and return true so some() will stop and _findVal will return the Array
+                value = results;
+                return true;
+              } else {
+                // it's not the correct Array so continue looping
+                value = self._findVal(object[k], key);
+                return value !== undefined;
+              }
+            }
+            if (object[k] && typeof object[k] === 'object') {
+                // it's not the correct key so continue looping
+                value = self._findVal(object[k], key);
+                return value !== undefined;
+            }
+        });
+        return value;
       }
+
     });
 
   </script>

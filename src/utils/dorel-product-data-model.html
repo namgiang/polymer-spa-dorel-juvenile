@@ -28,6 +28,10 @@
          }
          var childProducts = this._createDataModelChildProduct(children);
          var oldProductModel = product;
+
+         var price = (oldProductModel.price && oldProductModel.price.length &&
+           childProducts && childProducts.length && childProducts[0].price) ? oldProductModel.price : childProducts[0].price;
+
          var product = {
            sku: oldProductModel.sku,
            id: oldProductModel.id,
@@ -35,6 +39,7 @@
            created_at: oldProductModel.created_at,
            categories: [category],
            childProducts: childProducts,
+           price: price,
            description: this._retrieveCustomAttribute(oldProductModel, 'description'),
            age: this._retrieveCustomAttribute(oldProductModel, 'age'),
            max_weight: this._retrieveCustomAttribute(oldProductModel, 'max_weight'),
@@ -89,7 +94,9 @@
               return item.value === self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
             });
             product.color_name = color ? color.label : 'Default';
+            product.color = color ? color.label : 'Default';
             product.color_code = color ? color.swatchlabel : '#ffffff';
+            product.price = oldProductModel.price;
 
             if (product.color_code.length && product.color_code.substring(0, 1) !== '#') {
               product.color_code = '#' + product.color_code;
