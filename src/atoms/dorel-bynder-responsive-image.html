@@ -1,34 +1,25 @@
 <link rel="import" href="dorel-responsive-image.html">
-<dom-module id="dorel-bynder-image">
+<dom-module id="dorel-bynder-responsive-image">
   <template>
-    <style>
-      :host {
-        /* These can be overwritten in a encapsulating component */
-        --bynder-image-width: 16em;
-        --bynder-image-height: 9em;
-      }
-
-      iron-image {
-        width: var(--bynder-image-width);
-        height: var(--bynder-image-height);
-      }
-
-    </style>
     <section class="section">
-      <h1>Testje hier</h1>
-      <iron-image sizing="cover"
-                  fade="true"
-                  preload
-                  src$="[[ _getImageSource(bynderDerivativeName) ]]">
+      <dorel-responsive-image image-type="[[ imageType ]]"
+                              image-source="[[ _getImageSources(bynderData) ]]"></dorel-responsive-image>
     </section>
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-bynder-image',
+      is: 'dorel-bynder-responsive-image',
       properties: {
-        bynderDerivativeName: {
+        /**
+         * @attribute
+         * @name imageType
+         * @description Image types, defaults to wide-screen and can be set to full-screen
+         */
+        imageType: {
           type: String,
+          value: 'wide-screen',
+          reflectToAttribute: true,
         },
         /**
          * @name bynderData
@@ -60,14 +51,13 @@
         }
       },
       /**
-       * @name _getImageSource
-       * @description Retrieves the correct image source in the Bynder data
+       * @name _getImageSources
+       * @description Mapping from the Bynder data model into a compatible datastructure for dorel-responsive-image
        */
-      _getImageSource(bynderDerivativeName) {
+      _getImageSources(bynderData) {
         // TODO: Revisit this later, mapping Bynder JSON to our dorel-responsive-image might not be as simple as this,
         // but this is based on the example given in the Bynder API documentation
-        // TODO: First check if the derivative name is present in thumbnail, otherwise output or throw an error
-        return this.bynderData.thumbnails[bynderDerivativeName];
+        return bynderData.thumbnails;
       }
     });
   </script>
