@@ -103,7 +103,7 @@
         if(retrievedCategories.indexOf(category) > -1){
           // filter out products that have a other category
           var currentProducts = products.filter(function(item) {
-              return item.category === category;
+              return item.categories.indexOf(category) > -1;
           });
           // set current products
           return this._setCurrentProducts(currentProducts);
@@ -179,15 +179,8 @@
         var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
 
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
-        var products = oldProducts.concat(newProducts.filter(function (item, index) {
-            var exists = false;
-            oldProducts.forEach(function (oldItem) {
-              if (oldItem.id === item.id) {
-                exists = true;
-              }
-            });
-            return !exists;
-        }));
+        var products = this._mergeArrays(oldProducts, newProducts);
+        
         // set new array of products in the global saved products
         Polymer.globalsManager.set('Dorel.product.products', products);
       },
@@ -216,6 +209,27 @@
       _setCurrentProducts: function(products) {
         this.products = products;
         this.retrievingProducts = false;
+      },
+
+      /**
+       * @name _mergeArrays
+       * @description this method will merge 2 arrays of products
+       * @param array1 - Array
+       * @param array2 - Array
+       */
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function (item, index) {
+            var exists = false;
+            array1.forEach(function (oldItem) {
+              if (oldItem.id === item.id) {
+                exists = true;
+                // add new category to oldItem
+                oldItem.categories.push(item.categories[0]);
+              }
+            });
+            return !exists;
+        }));
       },
 
       /**
