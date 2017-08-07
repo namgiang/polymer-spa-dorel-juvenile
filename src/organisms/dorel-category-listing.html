@@ -78,7 +78,7 @@
             is="dom-repeat"
             items="[[ products ]]"
             as="product"
-            filter="[[ _filter(filters.*) ]]">
+            filter="[[ _filterProducts(filters.*) ]]">
             <dorel-category-listing-item
               colors-data="[[ product.childProducts ]]"
               link-url="[[ product.url ]]"
@@ -224,9 +224,9 @@
        * @name _filter
        * @description A function that is used by the dom-repeat in the template
        * @param filters - Array
-       *
+       * @returns Boolean if true show the product
        */
-      _filter: function(filters) {
+      _filterProducts: function(filters) {
         var self = this;
         return function(product) {
           if(!filters || !filters.base || !filters.base.length) {
@@ -238,14 +238,20 @@
           var showProduct = true;
           filters.base.forEach(function(filter) {
             var key = Object.keys(filter)[0];
-            var value = product[key] ? product[key] : self.findVal(product, key);
+            var value = self._findVal(product, key);
             showProduct = Boolean(value && !value.toString().indexOf(filter[key]));
           });
           return showProduct;
         };
       },
 
-      findVal: function(object, key) {
+      /**
+       * @name _findVal
+       * @description A recursive helper function that is used to retrieve the value
+       * @param object - Object
+       * @param key - String
+       */
+      _findVal: function(object, key) {
         var value;
         var self = this;
         Object.keys(object).some(function(k) {
@@ -254,7 +260,7 @@
                 return true;
             }
             if (object[k] && typeof object[k] === 'object') {
-                value = self.findVal(object[k], key);
+                value = self._findVal(object[k], key);
                 return value !== undefined;
             }
         });
