@@ -149,44 +149,6 @@
         '_setProducts(productsData, retrievingProducts)'
       ],
 
-      _filter: function(filters) {
-        var self = this;
-        return function(product) {
-          if(!filters || !filters.base || !filters.base.length) {
-            return true;
-          }
-          if (!product) {
-            return false;
-          }
-          var showProduct = true;
-          filters.base.forEach(function(filter) {
-            var key = Object.keys(filter)[0];
-            var value = product[key] ? product[key] : self.findVal(product, key);
-            showProduct = Boolean(value && !value.toString().indexOf(filter[key]));
-          });
-          return showProduct;
-        };
-      },
-
-      findVal: function(object, key) {
-        var value;
-        var self = this;
-        Object.keys(object).some(function(k) {
-            if (k === key) {
-                value = object[k];
-                return true;
-            }
-            if (object[k] && typeof object[k] === 'object') {
-                value = self.findVal(object[k], key);
-                return value !== undefined;
-            }
-            // if(object[k] && typeof Array.isArray(object[k])) {
-            //   debugger;
-            // }
-        });
-        return value;
-      },
-
       /**
        * observer
        * @name _setProducts
@@ -256,6 +218,47 @@
           // names must be equal
           return 0;
         });
+      },
+
+      /**
+       * @name _filter
+       * @description A function that is used by the dom-repeat in the template
+       * @param filters - Array
+       *
+       */
+      _filter: function(filters) {
+        var self = this;
+        return function(product) {
+          if(!filters || !filters.base || !filters.base.length) {
+            return true;
+          }
+          if (!product) {
+            return false;
+          }
+          var showProduct = true;
+          filters.base.forEach(function(filter) {
+            var key = Object.keys(filter)[0];
+            var value = product[key] ? product[key] : self.findVal(product, key);
+            showProduct = Boolean(value && !value.toString().indexOf(filter[key]));
+          });
+          return showProduct;
+        };
+      },
+
+      findVal: function(object, key) {
+        var value;
+        var self = this;
+        Object.keys(object).some(function(k) {
+            if (k === key) {
+                value = object[k];
+                return true;
+            }
+            if (object[k] && typeof object[k] === 'object') {
+                value = self.findVal(object[k], key);
+                return value !== undefined;
+            }
+        });
+        return value;
       }
     });
   </script>

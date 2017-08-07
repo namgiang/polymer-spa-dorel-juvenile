@@ -17,12 +17,19 @@
       is: 'dorel-category-filter-manager',
 
       properties: {
+        /**
+         * @name route
+         * @description this is passed by the app-route component
+         */
         route: {
           type: Object,
-          notify: true,
           value: function() { return {}; }
         },
 
+        /**
+         * @name filters
+         * @description Array of filters that will be passed to parent
+         */
         filters: {
           type: Array,
           notify: true,
@@ -35,7 +42,14 @@
         '_getRoute(route)'
       ],
 
-
+      /**
+       * observer
+       * @name _getRoute
+       * @description will set the filters
+       * @param route - Object
+       * if the route changes it will check if there are queryParams in the route
+       * if there are queryParams it will loop over the queryParams and set the filters Array
+       */
       _getRoute: function(route) {
         if(!route || !route.__queryParams || !Object.keys(route.__queryParams).length) {
           this.filters = [];
