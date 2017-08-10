@@ -130,6 +130,11 @@
                 value = [object[k]];
                 return true;
             }
+            if (object[k] && typeof object[k] === 'object' && !Array.isArray(object[k])) {
+                // it's not the correct key so continue looping
+                value = self._findVal(object[k], key);
+                return value !== undefined;
+            }
             // if object[k] has length and is a Array
             if(object[k].length && Array.isArray(object[k])) {
               // set empty array
@@ -152,11 +157,6 @@
                 value = self._findVal(object[k], key);
                 return value !== undefined;
               }
-            }
-            if (object[k] && typeof object[k] === 'object') {
-                // it's not the correct key so continue looping
-                value = self._findVal(object[k], key);
-                return value !== undefined;
             }
         });
         return value;

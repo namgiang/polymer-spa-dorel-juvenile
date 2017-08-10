@@ -30,7 +30,7 @@
          var oldProductModel = product;
 
          var price = (oldProductModel.price && oldProductModel.price.length &&
-           childProducts && childProducts.length && childProducts[0].price) ? oldProductModel.price : childProducts[0].price;
+           childProducts && childProducts.length && childProducts) ? oldProductModel.price : this._getHighestPrice(childProducts);
 
          var product = {
            sku: oldProductModel.sku,
@@ -96,7 +96,7 @@
             product.color_name = color ? color.label : 'Default';
             product.color = color ? color.label : 'Default';
             product.color_code = color ? color.swatchlabel : '#ffffff';
-            product.price = oldProductModel.price;
+            product.childPrice = oldProductModel.price;
             product.sku = oldProductModel.sku;
 
             if (product.color_code.length && product.color_code.substring(0, 1) !== '#') {
@@ -168,7 +168,19 @@
           // else return a empty Array
           return [];
         }
-      }
+      },
+
+      /**
+       * @name _getHighestPrice
+       * @description helperMethod to retrieve highestprice from childProducts
+       * @param productLinks_ - Array
+       */
+      _getHighestPrice: function(childProducts) {
+        var pricesArray = childProducts.map(function(item){
+          return item.childPrice || 0;
+        });
+        return Math.min.apply(Math, pricesArray);
+      },
 
     });
   </script>

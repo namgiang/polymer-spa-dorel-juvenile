@@ -111,6 +111,10 @@
 
         filters: {
           type: Array
+        },
+
+        currentColorBlock: {
+          type: Boolean
         }
       },
 
@@ -138,7 +142,9 @@
             var selectedColor = self.colorsData.find(function(_color) {
               return _color.sku === color.sku;
             });
-            self._setCurrentColor(selectedColor);
+            if(selectedColor) {
+              self._setCurrentColor(selectedColor);
+            }
           }
           return showProduct;
         };
@@ -152,15 +158,28 @@
       _filterHelper: function(product, filters) {
         var colorObject = filters.base.find(function(filter) {
           return filter.color;
-        })
-        if(colorObject.color && colorObject.color.length) {
+        });
+
+        var priceObject = filters.base.find(function(filter) {
+          return filter.price;
+        });
+
+        var showProductPrice = true;
+        if(priceObject) {
+          // make a number of the String
+          var price = Number(priceObject.price[0]);
+          // check if the price of the product is lower or equal to the filter price limit (value)
+          showProductPrice = Boolean(price && !(price <= product.childPrice));
+        }
+
+        var showProductColor = true;
+        if(colorObject && colorObject.color && colorObject.color.length) {
           var isMatch = colorObject.color.find(function(item) {
             return product.color_name === item.split('-').join(' ');
           });
-          return isMatch ? true : false;
-        } else {
-          return true;
+          showProductColor = isMatch ? true : false;
         }
+        return Boolean(showProductColor && showProductPrice);
       },
 
       _setCurrentColor: function(newColor) {
