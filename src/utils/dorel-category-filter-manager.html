@@ -96,8 +96,17 @@
           if(key === 'price') {
             // make a number of the String
             var price = Number(filter[key]);
-            // check if the price of the product is lower or equal to the filter price limit (value)
-            showProduct = Boolean(values && !(price <= values[0]));
+
+            if(product.childProducts.length) {
+              var remainingChildProducts = product.childProducts.filter(function(childProduct) {
+                return self._filterChildProductsHelper(childProduct, self.filters);
+              });
+              showProduct = Boolean(remainingChildProducts && remainingChildProducts ? true : false);
+            } else {
+              // check if the price of the product is lower or equal to the filter price limit (value)
+              showProduct = Boolean(values && !(price <= values[0]));
+            }
+
           } else {
             // create a Array when splitting on spaces
             var filterValues = filter[key].map(function(item) {
@@ -130,11 +139,6 @@
                 value = [object[k]];
                 return true;
             }
-            if (object[k] && typeof object[k] === 'object' && !Array.isArray(object[k])) {
-                // it's not the correct key so continue looping
-                value = self._findVal(object[k], key);
-                return value !== undefined;
-            }
             // if object[k] has length and is a Array
             if(object[k].length && Array.isArray(object[k])) {
               // set empty array
@@ -158,9 +162,46 @@
                 return value !== undefined;
               }
             }
+            if (object[k] && typeof object[k] === 'object' && !Array.isArray(object[k])) {
+                // it's not the correct key so continue looping
+                value = self._findVal(object[k], key);
+                return value !== undefined;
+            }
         });
         return value;
-      }
+      },
+
+      /**
+       * @name _filterChildProductsHelper
+       * @param product - Object
+       * @param filters - Array - filters inerited by parent => from the queryParams
+       */
+      _filterChildProductsHelper: function(product, filters) {
+        var colorObject = filters.find(function(filter) {
+          return filter.color;
+        });
+
+        var priceObject = filters.find(function(filter) {
+          return filter.price;
+        });
+
+        var showProductPrice = true;
+        if(priceObject) {
+          // make a number of the String
+          var price = Number(priceObject.price[0]);
+          // check if the price of the product is lower or equal to the filter price limit (value)
+          showProductPrice = Boolean(price && !(price <= product.childPrice));
+        }
+
+        var showProductColor = true;
+        if(colorObject && colorObject.color && colorObject.color.length) {
+          var isMatch = colorObject.color.find(function(item) {
+            return product.color_name === item.split('-').join(' ');
+          });
+          showProductColor = isMatch ? true : false;
+        }
+        return Boolean(showProductColor && showProductPrice);
+      },
 
     });
 

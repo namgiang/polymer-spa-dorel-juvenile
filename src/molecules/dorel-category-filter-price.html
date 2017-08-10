@@ -19,7 +19,7 @@
     <div class="slider-wrapper">
       <div>Max: €[[ price ]],- </div>
       <dorel-slider snaps
-                    max="2000"
+                    max="[[ filterData.maxPrice ]]"
                     max-markers="8"
                     step="5"
                     slider-value="{{ price }}">
@@ -48,11 +48,23 @@
           notify: true
         },
 
+        filterData: {
+          type: Object,
+          value: {
+            maxPrice: 5000
+          }
+        }
+
       },
 
       observers: [
+        '_filterData(filterData)',
         '_setPrice(price)'
       ],
+
+      _filterData: function(filterData) {
+      },
+
 
       attached: function() {
         var price = this.queryParams && this.queryParams.price ? parseInt(this.queryParams.price) : 0;

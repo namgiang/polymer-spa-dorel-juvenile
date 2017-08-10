@@ -4,6 +4,8 @@
 <link rel="import" href="../../bower_components/app-route/app-route-converter.html">
 <link rel="import" href="../../bower_components/iron-location/iron-query-params.html">
 
+<link rel="import" href="../utils/dorel-category-filter-data-collector.html">
+
 <link rel="import" href="../molecules/dorel-category-filter-price.html">
 <link rel="import" href="../molecules/dorel-category-filter-colors.html">
 
@@ -33,8 +35,15 @@
     <app-route route="{{route}}" pattern="/:page" data="{{data}}">
     </app-route>
 
+    <dorel-category-filter-data-collector
+      product-data="[[ productData ]]"
+      filter-data="{{ filterData }}">
+    </dorel-category-filter-data-collector>
+
+
     <dorel-category-filter-price
       query-params="[[ queryParams ]]"
+      filter-data="[[ filterData.priceFilter ]]"
       on-update-filter="_setFilters">
     </dorel-category-filter-price>
 
@@ -47,13 +56,6 @@
     Polymer({
       is: 'dorel-category-filter',
       properties: {
-
-        colors: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        },
 
         path: {
           type: String,
@@ -69,6 +71,14 @@
           type: Object,
           notify: true
         },
+
+        productData: {
+          type: Array
+        },
+
+        filterData: {
+          type: Object
+        }
 
       },
 

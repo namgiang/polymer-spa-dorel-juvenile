@@ -1,0 +1,73 @@
+<dom-module id="dorel-category-filter-data-collector">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-filter-data-collector',
+
+      properties: {
+        /**
+         * @name productData
+         * @description this is passed by the parent component
+         */
+        productData: {
+          type: Array,
+          value: function() { return []; }
+        },
+
+        filterData: {
+          type: Object,
+          notify: true
+        }
+
+      },
+
+      observers: [
+        '_productDataChanged(productData)'
+      ],
+
+      _productDataChanged: function(products) {
+        if(!products || !products.length) {
+          return;
+        }
+        var filterData = {};
+        filterData.priceFilter = this._setPriceFilter(products);
+        this._setFilterData(filterData);
+      },
+
+
+      _setFilterData: function(filterData) {
+        this.set('filterData', filterData);
+      },
+
+      _setColors: function(product) {
+        return {}
+      },
+
+      _setPriceFilter: function(products) {
+        var priceFilter = {};
+        var maxPrice = 0;
+        products.forEach(function(product) {
+          if(!product.childProducts) {
+            maxPrice = product.price > maxPrice ? product.price : maxPrice;
+          } else {
+            var childProductPrices = product.childProducts.map(function(childProduct) {
+              return childProduct.childPrice || 0;
+            });
+            var higestChildPrice = Math.max.apply(Math, childProductPrices);
+            maxPrice = higestChildPrice > maxPrice ? higestChildPrice : maxPrice;
+          }
+        });
+        priceFilter.maxPrice = maxPrice;
+        return priceFilter;
+      }
+
+    });
+
+  </script>
+
+</dom-module>
