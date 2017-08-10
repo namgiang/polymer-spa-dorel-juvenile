@@ -55,11 +55,23 @@
           return;
         }
         var self = this;
-        Object.keys(queryParams).forEach(function(key, value) {
-          var filterItemArray = queryParams[key].split(',')
-          var filterItem = { [key]: filterItemArray };
-          self.push('filters', filterItem);
+        var filters = [];
+
+        filters = Object.keys(queryParams).map(function(key, value) {
+          var filterItem = {};
+          var valueIsNumber = !isNaN(queryParams[key]);
+          if(valueIsNumber) {
+            filterItem.values = [Number(queryParams[key])];
+            filterItem.type = 'Number';
+          } else {
+            filterItem.values = queryParams[key].split(',');
+            filterItem.type = 'String';
+          }
+          filterItem.key = key;
+          return filterItem;
         });
+
+        self.set('filters', filters);
       },
 
       /**
@@ -70,57 +82,34 @@
        * @returns Boolean if all the conditions are met return true too show the product
        */
       shouldShowProduct: function(product, filters) {
-        if(!product) {
-          return false;
-        }
-
-        if(!filters) {
-          return true;
-        }
-
         var self = this;
-        // showProduct is default to true
-        var showProduct = true;
-        // loop over the filters and if condition is not met it will set showProduct to false
-        filters.base.forEach(function(filter) {
-          // if the showProduct is already false return;
-          if(showProduct === false) {
-            return
-          }
-          // get the key of the filter (there is only 1)
-          var key = Object.keys(filter)[0];
+        return Boolean(filters.value.every(function(filter) {
+          var productValues = self._findVal(product, filter.key);
+          return self._resultByKey(filter.values, productValues, filter.key);
+        }));
+      },
 
-          // set the value with the product and the key
-          var values = self._findVal(product, key);
-          // if key is price
-          if(key === 'price') {
-            // make a number of the String
-            var price = Number(filter[key]);
+      _resultByKey: function(filterValues, productValues, key) {
+        var result;
+        switch (key) {
+            case 'price':
+                result = this._checkIfValueIsBigger(filterValues, productValues);
+                break;
+            default:
+                result = this._checkIfValueIsMatch(filterValues, productValues);
+        }
+        return Boolean(result);
+      },
 
-            if(product.childProducts.length) {
-              var remainingChildProducts = product.childProducts.filter(function(childProduct) {
-                return self._filterChildProductsHelper(childProduct, self.filters);
-              });
-              showProduct = Boolean(remainingChildProducts && remainingChildProducts ? true : false);
-            } else {
-              // check if the price of the product is lower or equal to the filter price limit (value)
-              showProduct = Boolean(values && !(price <= values[0]));
-            }
+      _checkIfValueIsBigger: function(filterValues, productValues) {
+          var lowestPrice = Math.min.apply(Math, productValues);
+          return Boolean(filterValues[0] > lowestPrice);
+      },
 
-          } else {
-            // create a Array when splitting on spaces
-            var filterValues = filter[key].map(function(item) {
-              // make a string and replace a `-` with a space for comparison
-              return item.toString().split('-').join(' ');
-            });
-            // check if product.key exists in the filterValues
-            showProduct = Boolean(values && values.some(function(value) {
-                return filterValues.indexOf(value) > -1;
-            }));
-           }
-        });
-        // return a Boolean - if true it will show the product
-        return showProduct;
+      _checkIfValueIsMatch: function(filterValues, productValues) {
+          return productValues.some(function(productValue) {
+            return filterValues.indexOf(productValue) > -1;
+          });
       },
 
       /**
@@ -169,40 +158,7 @@
             }
         });
         return value;
-      },
-
-      /**
-       * @name _filterChildProductsHelper
-       * @param product - Object
-       * @param filters - Array - filters inerited by parent => from the queryParams
-       */
-      _filterChildProductsHelper: function(product, filters) {
-        var colorObject = filters.find(function(filter) {
-          return filter.color;
-        });
-
-        var priceObject = filters.find(function(filter) {
-          return filter.price;
-        });
-
-        var showProductPrice = true;
-        if(priceObject) {
-          // make a number of the String
-          var price = Number(priceObject.price[0]);
-          // check if the price of the product is lower or equal to the filter price limit (value)
-          showProductPrice = Boolean(price && !(price <= product.childPrice));
-        }
-
-        var showProductColor = true;
-        if(colorObject && colorObject.color && colorObject.color.length) {
-          var isMatch = colorObject.color.find(function(item) {
-            return product.color_name === item.split('-').join(' ');
-          });
-          showProductColor = isMatch ? true : false;
-        }
-        return Boolean(showProductColor && showProductPrice);
-      },
-
+      }
     });
 
   </script>

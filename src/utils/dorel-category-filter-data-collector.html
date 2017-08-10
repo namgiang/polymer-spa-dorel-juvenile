@@ -56,10 +56,10 @@
             maxPrice = product.price > maxPrice ? product.price : maxPrice;
           } else {
             var childProductPrices = product.childProducts.map(function(childProduct) {
-              return childProduct.childPrice || 0;
+              return childProduct.price || 0;
             });
-            var higestChildPrice = Math.max.apply(Math, childProductPrices);
-            maxPrice = higestChildPrice > maxPrice ? higestChildPrice : maxPrice;
+            var higestPrice = Math.max.apply(Math, childProductPrices);
+            maxPrice = higestPrice > maxPrice ? higestPrice : maxPrice;
           }
         });
         priceFilter.maxPrice = maxPrice;

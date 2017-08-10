@@ -1,3 +1,5 @@
+<link rel="import" href="../utils/dorel-category-filter-manager.html">
+
 <dom-module id="dorel-color-switcher">
   <template>
     <style>
@@ -47,6 +49,11 @@
       }
 
     </style>
+
+    <dorel-category-filter-manager
+      id="categoryManager"
+      filters="{{ filters }}">
+    </dorel-category-filter-manager>
 
     <template
       is="dom-if"
@@ -127,6 +134,7 @@
        */
       _filterChildProducts: function(filters) {
         var self = this;
+        var currentColorSelected = false;
         return function(color) {
           // if no filters are applied return true
           if(!filters || !filters.base || !filters.base.length) {
@@ -137,49 +145,18 @@
           if (!color) {
             return false;
           }
-          var showProduct = self._filterHelper(color, filters);
-          if(showProduct === true) {
+          var showProduct = self.$.categoryManager.shouldShowProduct(color, filters);
+          if(showProduct === true && currentColorSelected === false) {
             var selectedColor = self.colorsData.find(function(_color) {
               return _color.sku === color.sku;
             });
             if(selectedColor) {
               self._setCurrentColor(selectedColor);
+              currentColorSelected = true;
             }
           }
           return showProduct;
         };
-      },
-
-      /**
-       * @name _filterHelper
-       * @param product - Object
-       * @param filters - Array - filters inerited by parent => from the queryParams
-       */
-      _filterHelper: function(product, filters) {
-        var colorObject = filters.base.find(function(filter) {
-          return filter.color;
-        });
-
-        var priceObject = filters.base.find(function(filter) {
-          return filter.price;
-        });
-
-        var showProductPrice = true;
-        if(priceObject) {
-          // make a number of the String
-          var price = Number(priceObject.price[0]);
-          // check if the price of the product is lower or equal to the filter price limit (value)
-          showProductPrice = Boolean(price && !(price <= product.childPrice));
-        }
-
-        var showProductColor = true;
-        if(colorObject && colorObject.color && colorObject.color.length) {
-          var isMatch = colorObject.color.find(function(item) {
-            return product.color_name === item.split('-').join(' ');
-          });
-          showProductColor = isMatch ? true : false;
-        }
-        return Boolean(showProductColor && showProductPrice);
       },
 
       _setCurrentColor: function(newColor) {
