@@ -7,10 +7,7 @@
       :host {
       }
     </style>
-    <app-location route="{{ route }}"></app-location>
-    <app-route
-      route="{{ route }}"
-      pattern="/:page"></app-route>
+    <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
   </template>
   <script>
     Polymer({
@@ -39,8 +36,10 @@
       },
 
       observers: [
-        '_getRoute(route)'
+        '_getQueryParams(queryParams)'
       ],
+
+
 
       /**
        * observer
@@ -50,14 +49,15 @@
        * if the route changes it will check if there are queryParams in the route
        * if there are queryParams it will loop over the queryParams and set the filters Array
        */
-      _getRoute: function(route) {
-        if(!route || !route.__queryParams || !Object.keys(route.__queryParams).length) {
-          this.filters = [];
+      _getQueryParams: function(queryParams) {
+        this.filters = [];
+        if(!queryParams || !Object.keys(queryParams).length) {
           return;
         }
         var self = this;
-        Object.keys(route.__queryParams).forEach(function(key, value) {
-          var filterItem = { [key]: route.__queryParams[key] }
+        Object.keys(queryParams).forEach(function(key, value) {
+          var filterItemArray = queryParams[key].split(',')
+          var filterItem = { [key]: filterItemArray };
           self.push('filters', filterItem);
         });
       },
@@ -70,6 +70,14 @@
        * @returns Boolean if all the conditions are met return true too show the product
        */
       shouldShowProduct: function(product, filters) {
+        if(!product) {
+          return false;
+        }
+
+        if(!filters) {
+          return true;
+        }
+
         var self = this;
         // showProduct is default to true
         var showProduct = true;
@@ -92,13 +100,13 @@
             showProduct = Boolean(values && !(price <= values[0]));
           } else {
             // create a Array when splitting on spaces
-            var filterValues = filter[key].split(' ').map(function(item) {
+            var filterValues = filter[key].map(function(item) {
               // make a string and replace a `-` with a space for comparison
               return item.toString().split('-').join(' ');
             });
             // check if product.key exists in the filterValues
             showProduct = Boolean(values && values.some(function(value) {
-                return filterValues.indexOf(value) >= 0;
+                return filterValues.indexOf(value) > -1;
             }));
            }
         });

@@ -58,7 +58,8 @@
           <template
             is="dom-repeat"
             items="[[ colorsData ]]"
-            as="color">
+            as="color"
+            filter="[[ _filterChildProducts(filters.*) ]]">
             <li class$="list-group-item {{ _isCurrentColor(currentName, color.color_name) }}">
               <span on-click="_changeCurrentColor"
                     role="button"
@@ -90,8 +91,7 @@
          */
         colorsData: {
           type: Array,
-          value: [],
-          observer: '_colorsDataChanged'
+          value: []
         },
 
         /**
@@ -103,24 +103,66 @@
           type: String,
           value: '',
           notify: true
-        }
+        },
 
+        colors: {
+          type: String,
+        },
+
+        filters: {
+          type: Array
+        }
       },
 
       /**
-       * @observer
-       * @name _colorsDataChanged
-       * @description when the colorsData changes it checks if it is set, then
-       * sets the first item to the currentColorName and currentImage
-       *
-       * @param newVal - Array - the newly received array
-       * @param oldVal - Array - the previous value
+       * @name _filterChildProducts
+       * @description a filter that is used by the template
+       * Additional functionality is to call _setCurrentColor whenever the filters change
+       * @param filters - Array - filters inerited by parent => from the queryParams
        */
-      _colorsDataChanged: function (newVal, oldVal) {
-        if (typeof newVal === 'undefined' || !newVal.length) return;
+      _filterChildProducts: function(filters) {
+        var self = this;
+        return function(color) {
+          // if no filters are applied return true
+          if(!filters || !filters.base || !filters.base.length) {
+            self._setCurrentColor(self.colorsData[0]);
+            return true;
+          }
+          // if there is no product return false
+          if (!color) {
+            return false;
+          }
+          var showProduct = self._filterHelper(color, filters);
+          if(showProduct === true) {
+            var selectedColor = self.colorsData.find(function(_color) {
+              return _color.sku === color.sku;
+            });
+            self._setCurrentColor(selectedColor);
+          }
+          return showProduct;
+        };
+      },
 
-        this.currentImage = newVal[0].color_image;
-        this.currentName = newVal[0].color_name;
+      _filterHelper: function(product, filters) {
+        var colorObject = filters.base.find(function(filter) {
+          return filter.color;
+        })
+        if(colorObject.color && colorObject.color.length) {
+          var isMatch = colorObject.color.find(function(item) {
+            return product.color_name === item.split('-').join(' ');
+          });
+          return isMatch ? true : false;
+        } else {
+          return true;
+        }
+      },
+
+      _setCurrentColor: function(newColor) {
+        if(!newColor) {
+          return;
+        }
+        this.set('currentImage', newColor.color_image);
+        this.set('currentName', newColor.color_name);
       },
 
       /**
@@ -154,7 +196,7 @@
             }
           }
         };
-        
+
         Polymer.globalsManager.set('Dorel.events', {
           action: this.gtmAction ? this.gtmAction : 'click',
           component: 'color-switcher',

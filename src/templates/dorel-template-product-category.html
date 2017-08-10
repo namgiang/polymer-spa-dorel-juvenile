@@ -29,14 +29,24 @@
         @apply(--layout-flex);
       }
 
+      .top-nav {
+        width: 100%;
+        @apply(--theme-grid-column);
+        text-align: right;
+        min-height: 56px;
+        padding: 0 2em 0 2em;
+      }
+
       .content {
         width: 100%;
         @apply(--theme-grid-column);
+        margin-top: 0;
       }
 
       .sidebar {
         width: 100%;
         @apply(--theme-grid-column);
+        margin-top: 0;
       }
 
       dorel-section-category-header {
@@ -121,6 +131,12 @@
                 gtm-parent-index="[[ index ]]"></dorel-section-category-header>
             </template>
 
+            <div class="top-nav">
+              <template is="dom-if" if="{{ renderedCount !== 'undefined' }}">
+                <p><b>[[ renderedCount ]]</b> Results</p>
+              </template>
+            </div>
+
 
             <div class="sidebar">
               <template
@@ -146,6 +162,7 @@
                     products-data="[[ products ]]"
                     retrieving-products="[[ retrievingProducts ]]"
                     sort="[[ sort ]]"
+                    rendered-count="{{ renderedCount }}"
                     gtm-parent="dorel-category-listing"
                     gtm-parent-index="2"></dorel-category-listing>
               </template>
@@ -216,6 +233,10 @@
         retrievingProducts: {
           type: Boolean,
           value: true
+        },
+
+        renderedCount: {
+          type: Number
         }
 
       },

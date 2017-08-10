@@ -59,6 +59,15 @@
         @apply(--theme-grid-row-margins);
       }
 
+      .no-products {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1.5em;
+        background-color: #f9f9f9;
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -79,10 +88,14 @@
             is="dom-repeat"
             items="[[ products ]]"
             as="product"
-            filter="[[ _filterProducts(filters.*) ]]">
+            filter="[[ _filterProducts(filters.*) ]]"
+            observe="childProducts"
+            id="test"
+            rendered-item-count="{{ renderedCount }}">
             <dorel-category-listing-item
               colors-data="[[ product.childProducts ]]"
               link-url="[[ product.url ]]"
+              filters="[[ filters ]]"
               product-name="[[ product.name ]]"
               gtm-parent="[[ gtmParent ]]"
               gtm-parent-index="[[ gtmParentIndex ]]"
@@ -90,6 +103,11 @@
               gtm-child-index="[[ index ]]"></dorel-category-listing-item>
           </template>
           <dorel-loader loading="[[ retrievingProducts ]]"></dorel-loader>
+          <template is="dom-if" if="{{ checkIfProductsAreEmpty(renderedCount, retrievingProducts) }}">
+            <div class="no-products">
+              0 Results
+            </div>
+          </template>
         </div>
       </section>
     </div>
@@ -144,6 +162,11 @@
         filters: {
           type: Array
         },
+
+        renderedCount: {
+          type: Number,
+          notify: true
+        }
       },
 
       observers: [
@@ -161,11 +184,11 @@
        */
       _setProducts: function(productsData, retrievingProducts) {
         if(!productsData.length || retrievingProducts) {
-          this.products = [];
+          this.set('products', []);
           return;
         }
         var products = this._sortProducts(productsData);
-        this.products = [];
+        this.set('products', []);
         var self = this;
         products.forEach(function(item) {
           self.push('products', item);
@@ -241,6 +264,10 @@
           // returns a Boolean - if true it will show the product
           return self.$.categoryManager.shouldShowProduct(product, filters);
         };
+      },
+
+      checkIfProductsAreEmpty: function(renderedCount, retrievingProducts) {
+        return Boolean(renderedCount !== 'undefined' && renderedCount === 0 && retrievingProducts === false);
       }
 
     });

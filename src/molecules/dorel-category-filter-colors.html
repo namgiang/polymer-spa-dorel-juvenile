@@ -1,0 +1,125 @@
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../atoms/dorel-color-checkbox.html">
+
+
+<dom-module id="dorel-category-filter-colors">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-container);
+        display: flex;
+        width: 100%;
+      }
+      .checkbox {
+        display: flex;
+        width: 100%;
+      }
+      .checkboxes {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+    </style>
+
+    <div class="checkboxes">
+      <template is="dom-repeat"
+        is="dom-repeat"
+        id="colors"
+        items="[[ colors ]]"
+        as="color">
+        <div class="checkbox">
+          <paper-checkbox on-change="setFilters" checked="{{ color.checked }}">[[ color.name ]]</paper-checkbox>
+        </div>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-filter-colors',
+      properties: {
+
+        colors: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        queryParams: {
+          type: Object,
+          notify: true
+        },
+
+        colorMap: {
+          type: Array
+        }
+
+      },
+
+      observers: [
+        '_setInitial(globals.Dorel.product.colorMap)'
+      ],
+
+      _setInitial: function(colorMap) {
+        if(!colorMap || !colorMap.length) {
+          return
+        }
+        var self = this;
+        colorMap.forEach(function(item) {
+          var color = {
+            name: item.label.replace(/ /g,"-"),
+            code: '#' + item.swatchlabel,
+            checked: false
+          };
+          self.push('colors', color);
+        });
+        this._setInitalChecked(this.queryParams);
+      },
+
+      _setInitalChecked: function(queryParams) {
+        if(queryParams.color && this.colors.length) {
+          var array = queryParams.color.split(',');
+          this.colors.map(function(color) {
+            if(array.indexOf(color.name) > -1) {
+              color.checked = true;
+            } else {
+              color.checked = false;
+            }
+            return color;
+          });
+        }
+      },
+
+      setFilters: function(e) {
+        var color = this.$.colors.itemForElement(e.target);
+        var queryParams = this.queryParams || {};
+
+        var keyArray = queryParams.color ?  queryParams.color.split(',') : [];
+        var item = keyArray.indexOf(color.name);
+
+        if(item > -1) {
+          // remove
+          queryParams.color = keyArray.filter(function(item) {
+            return item !== color.name;
+          });
+          if(!queryParams.color.length) {
+            delete queryParams.color;
+          }
+        } else {
+          // set
+          if(!queryParams.color || !queryParams.color.length) {
+            queryParams.color = [color.name];
+          } else {
+            keyArray.push(color.name);
+            queryParams.color = keyArray;
+          }
+        }
+
+        this.fire('update-filter', { value: queryParams });
+      }
+
+    });
+  </script>
+
+</dom-module>
