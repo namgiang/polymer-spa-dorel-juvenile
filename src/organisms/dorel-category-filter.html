@@ -35,22 +35,24 @@
     <app-route route="{{route}}" pattern="/:page" data="{{data}}">
     </app-route>
 
-    <dorel-category-filter-data-collector
-      product-data="[[ productData ]]"
-      filter-data="{{ filterData }}">
-    </dorel-category-filter-data-collector>
+    <template is="dom-if" if="[[ !retrievingProducts ]]">
+      <dorel-category-filter-data-collector
+        product-data="[[ productData ]]"
+        filter-data="{{ filterData }}">
+      </dorel-category-filter-data-collector>
 
+      <dorel-category-filter-price
+        query-params="[[ queryParams ]]"
+        filter-data="[[ filterData.priceFilter ]]"
+        on-update-filter="_setFilters">
+      </dorel-category-filter-price>
 
-    <dorel-category-filter-price
-      query-params="[[ queryParams ]]"
-      filter-data="[[ filterData.priceFilter ]]"
-      on-update-filter="_setFilters">
-    </dorel-category-filter-price>
-
-    <dorel-category-filter-colors
-      query-params="[[ queryParams ]]"
-      on-update-filter="_setFilters">
-    </dorel-category-filter-colors>
+      <dorel-category-filter-colors
+        query-params="[[ queryParams ]]"
+        filter-data="[[ filterData.colorFilter ]]"
+        on-update-filter="_setFilters">
+      </dorel-category-filter-colors>
+    </template>
   </template>
   <script>
     Polymer({
@@ -78,6 +80,11 @@
 
         filterData: {
           type: Object
+        },
+
+        retrievingProducts : {
+          type: Boolean,
+          value: true
         }
 
       },
@@ -91,7 +98,9 @@
         var filterUrl = this._encodeParams(params)
           .replace(/%3F/g, '?').replace(/%2F/g, '/').replace(/'/g, '%27');
         if(this.route) {
-          this.set('path',  this.route.path);
+          var routePath = this.route.path;
+          var path = routePath.slice(-1) === '/' ? routePath.slice(0, -1) : routePath;
+          this.set('path', path);
         }
         this.set('query', filterUrl);
       },

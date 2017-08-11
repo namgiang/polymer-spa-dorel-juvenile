@@ -48,44 +48,44 @@
           notify: true
         },
 
-        colorMap: {
+        filterData: {
+          type: Array
+        },
+
+        colors: {
           type: Array
         }
 
       },
 
       observers: [
-        '_setInitial(globals.Dorel.product.colorMap)'
+        '_setInitial(filterData)'
       ],
 
-      _setInitial: function(colorMap) {
-        if(!colorMap || !colorMap.length) {
-          return
+      _setInitial: function(filterData) {
+        if(!filterData) {
+          return;
         }
-        var self = this;
-        colorMap.forEach(function(item) {
-          var color = {
-            name: item.label,
-            code: '#' + item.swatchlabel,
-            checked: false
-          };
-          self.push('colors', color);
-        });
-        this._setInitalChecked(this.queryParams);
+
+        this._setInitalChecked(filterData, this.queryParams);
       },
 
-      _setInitalChecked: function(queryParams) {
-        if(queryParams.color && this.colors.length) {
-          var array = queryParams.color.split(',');
-          this.colors.map(function(color) {
+      _setInitalChecked: function(filterData, queryParams) {
+        this.set('colors', []);
+        var self = this;
+        filterData.colors.forEach(function(color) {
+          if(queryParams.color) {
+            var array = queryParams.color.split(',');
             if(array.indexOf(color.name) > -1) {
               color.checked = true;
             } else {
               color.checked = false;
             }
-            return color;
-          });
-        }
+          } else {
+            color.checked = false;
+          }
+          self.push('colors', color);
+        });
       },
 
       setFilters: function(e) {

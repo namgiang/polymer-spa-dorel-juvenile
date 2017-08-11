@@ -36,6 +36,7 @@
         }
         var filterData = {};
         filterData.priceFilter = this._setPriceFilter(products);
+        filterData.colorFilter = this._setColorFilter(products);
         this._setFilterData(filterData);
       },
 
@@ -44,8 +45,34 @@
         this.set('filterData', filterData);
       },
 
-      _setColors: function(product) {
-        return {}
+      _setColorFilter: function(products) {
+        var colorFilter = {};
+        var colors = [];
+        var self = this;
+        products.forEach(function(product) {
+          var newColor;
+          product.childProducts.forEach(function(childProduct) {
+            newColor = {
+              name: childProduct.color,
+              code: childProduct.color_code,
+              checked: false,
+              amount: 1
+            };
+            var placeIndex;
+            var exist = colors.find(function(item, index) {
+              placeIndex = index;
+              return item.name === newColor.name;
+            })
+            if(exist) {
+              colors[placeIndex].amount = colors[placeIndex].amount + 1;
+            } else {
+              colors.push(newColor);
+            }
+          });
+        });
+
+        colorFilter.colors = colors;
+        return colorFilter;
       },
 
       _setPriceFilter: function(products) {

@@ -89,7 +89,7 @@
         <h2 class="title">[[ productName ]]</h2>
         <dorel-cta
           type="link"
-          link="[[ linkUrl ]]"
+          link="[[ _setDynamicProductUrl(linkUrl) ]]"
           size="small"
           icon="dorel-icons:play-circle-outline"
           gtm-action="click"
@@ -157,7 +157,21 @@
         productName: {
           type: String,
           value: ''
-        },
+        }
+      },
+
+      _setDynamicProductUrl: function(linkUrl) {
+
+        var windowLocation = window.location.origin + window.location.pathname;
+        var lastChar = windowLocation.slice(-1);
+
+        if(lastChar !== '/') {
+           linkUrl = '/' + linkUrl;
+        }
+
+        return windowLocation + linkUrl;
+
+
       }
     });
   </script>

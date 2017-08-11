@@ -36,10 +36,8 @@
       },
 
       observers: [
-        '_getQueryParams(queryParams)'
+        '_getQueryParams(route, queryParams)'
       ],
-
-
 
       /**
        * observer
@@ -49,8 +47,8 @@
        * if the route changes it will check if there are queryParams in the route
        * if there are queryParams it will loop over the queryParams and set the filters Array
        */
-      _getQueryParams: function(queryParams) {
-        this.filters = [];
+      _getQueryParams: function(route, queryParams) {
+        this.set('filters', []);
         if(!queryParams || !Object.keys(queryParams).length) {
           return;
         }
@@ -83,33 +81,53 @@
        */
       shouldShowProduct: function(product, filters) {
         var self = this;
-        return Boolean(filters.value.every(function(filter) {
+        return this._checkChildProducts(product, filters) && this._checkProduct(product, filters);
+      },
+
+      _checkProduct: function(product, filters) {
+        var self = this;
+        return filters.value.every(function(filter) {
           var productValues = self._findVal(product, filter.key);
           return self._resultByKey(filter.values, productValues, filter.key);
-        }));
+        });
+      },
+
+      _checkChildProducts: function(product, filters) {
+        var self = this;
+        //if it does not have childProducts it means it is a childProduct so return true
+        if(!product.childProducts) {
+          return true;
+        }
+        // if product has childProducts then check if one of these is true
+        return product.childProducts.some(function(childProduct) {
+          return filters.value.every(function(filter) {
+            var childProductValues = self._findVal(childProduct, filter.key);
+            return self._resultByKey(filter.values, childProductValues, filter.key);
+          });
+        });
       },
 
       _resultByKey: function(filterValues, productValues, key) {
         var result;
         switch (key) {
             case 'price':
-                result = this._checkIfValueIsBigger(filterValues, productValues);
+                result = this._checkIfValueIsBigger(filterValues, productValues); // true
                 break;
             default:
-                result = this._checkIfValueIsMatch(filterValues, productValues);
+                result = this._checkIfValueIsMatch(filterValues, productValues); // true
         }
         return Boolean(result);
       },
 
       _checkIfValueIsBigger: function(filterValues, productValues) {
           var lowestPrice = Math.min.apply(Math, productValues);
-          return Boolean(filterValues[0] > lowestPrice);
+          return Boolean(filterValues[0] >= lowestPrice);
       },
 
       _checkIfValueIsMatch: function(filterValues, productValues) {
           return productValues.some(function(productValue) {
             return filterValues.indexOf(productValue) > -1;
-          });
+          })
       },
 
       /**
