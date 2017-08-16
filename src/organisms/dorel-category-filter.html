@@ -35,12 +35,12 @@
     <app-route route="{{route}}" pattern="/:page" data="{{data}}">
     </app-route>
 
-    <template is="dom-if" if="[[ !retrievingProducts ]]">
-      <dorel-category-filter-data-collector
-        product-data="[[ productData ]]"
-        filter-data="{{ filterData }}">
-      </dorel-category-filter-data-collector>
+    <dorel-category-filter-data-collector
+      product-data="[[ productData ]]"
+      filter-data="{{ filterData }}">
+    </dorel-category-filter-data-collector>
 
+    <template is="dom-if" if="[[ showFilters(retrievingProducts, filterData) ]]" restamp="true">
       <dorel-category-filter-price
         query-params="[[ queryParams ]]"
         filter-data="[[ filterData.priceFilter ]]"
@@ -103,6 +103,10 @@
           this.set('path', path);
         }
         this.set('query', filterUrl);
+      },
+
+      showFilters: function(retrievingProducts, filterData) {
+        return Boolean(retrievingProducts === false && filterData);
       },
 
       _encodeParams: function(params) {

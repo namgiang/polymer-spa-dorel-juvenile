@@ -24,6 +24,7 @@
         is="dom-repeat"
         id="colors"
         items="[[ colors ]]"
+        restamp="true"
         as="color">
         <div class="checkbox">
           <dorel-checkbox on-change="setFilters" checked="{{ color.checked }}" label="[[ color.name ]]" color-code="[[ color.code ]]"></dorel-checkbox>
@@ -52,14 +53,11 @@
           type: Array
         },
 
-        colors: {
-          type: Array
-        }
-
       },
 
       observers: [
-        '_setInitial(filterData)'
+        '_setInitial(filterData)',
+        '_setChecked(queryParams)'
       ],
 
       _setInitial: function(filterData) {
@@ -67,25 +65,28 @@
           return;
         }
 
-        this._setInitalChecked(filterData, this.queryParams);
+        this._setInitalChecked(filterData);
       },
 
-      _setInitalChecked: function(filterData, queryParams) {
+      _setInitalChecked: function(filterData) {
         this.set('colors', []);
         var self = this;
         filterData.colors.forEach(function(color) {
-          if(queryParams.color) {
-            var array = queryParams.color.split(',');
-            if(array.indexOf(color.name) > -1) {
-              color.checked = true;
-            } else {
-              color.checked = false;
-            }
-          } else {
-            color.checked = false;
-          }
           self.push('colors', color);
         });
+      },
+
+      _setChecked: function(queryParams) {
+        var colorsParams = queryParams.color ? queryParams.color.split(',') : [];
+        var filterData = this.get('filterData');
+        if(filterData.colors) {
+          var colors = filterData.colors.map(function(color){
+            var existsInParams = Boolean(colorsParams.indexOf(color.name) > -1);
+            color.checked = existsInParams;
+            return color;
+          });
+          this.set('colors', colors);
+        }
       },
 
       setFilters: function(e) {
@@ -114,6 +115,14 @@
         }
 
         this.fire('update-filter', { value: queryParams });
+      },
+
+      created: function() {
+        console.log('test', 'created');
+      },
+
+      detached: function() {
+        console.log('test', 'detached');
       }
 
     });
