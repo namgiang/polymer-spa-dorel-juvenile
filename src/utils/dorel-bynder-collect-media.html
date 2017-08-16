@@ -14,10 +14,22 @@
     Polymer({
       is: 'dorel-bynder-collect-media',
       properties: {
+        /**
+         * @name mediaId
+         * @description The Bynder media ID used to retrieve assets
+         */
         mediaId: {
           type: String,
           value: '',
           observer: '_onMediaIdChange'
+        },
+        /**
+         * @name mediaContent
+         * @description the content retrieved using from Bynder
+         */
+        mediaContent: {
+          type: Object,
+          notify: true,
         }
       },
       /**
@@ -129,8 +141,7 @@
        */
       _mediaResponse: function (response) {
         console.log('Retrieved Bynder media');
-        var mediaResponse = response.detail.response;
-        console.log(mediaResponse);
+        this.mediaContent = response.detail.response;
       }
     });
   </script>
