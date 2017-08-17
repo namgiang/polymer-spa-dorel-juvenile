@@ -31,7 +31,7 @@
         imageType: {
           type: String,
           value: 'wide-screen',
-          reflectToAttribute: true,
+          reflectToAttribute: true
         },
         /**
          * @name mediaContent
@@ -40,7 +40,7 @@
         mediaContent: {
           type: Object,
           notify: true,
-          observer: '_onMediaContentChanged',
+          observer: '_onMediaContentChanged'
         },
         /**
          * @name imageSources
@@ -48,7 +48,7 @@
          */
         imageSources: {
           type: Object,
-          notify: true,
+          notify: true
         }
       },
       /**
@@ -76,14 +76,14 @@
        */
       _getMappedImageSources: function (imageSources, mediaContent) {
         // TODO: check if derivative exists, and return the proper path.
-        // We still need more information on the derivative data to implement t his correctly
+        // We still need more information on the derivative data to implement this correctly
         return imageSources;
       },
       /**
        * @name _getImageSources
        * @description Maps the Bynder data into an object that is compatible with dorel-responsive-image
        */
-      _onMediaContentChanged() {
+      _onMediaContentChanged: function() {
         // First create a default image sources dictionary
         var derivativeLabels = ['placeholder', 'small-portrait', 'small-landscape', 'large-portrait', 'large-landscape'];
         var sources = this._getDefaultImageSources(derivativeLabels, this.mediaContent);
