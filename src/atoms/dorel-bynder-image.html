@@ -1,4 +1,5 @@
 <link rel="import" href="dorel-responsive-image.html">
+<link rel="import" href="../utils/dorel-bynder-collect-media.html">
 <dom-module id="dorel-bynder-image">
   <template>
     <style>
@@ -11,15 +12,18 @@
       iron-image {
         width: var(--bynder-image-width);
         height: var(--bynder-image-height);
+        background-color: var(--theme-brand-color-1);
       }
 
     </style>
+    <dorel-bynder-collect-media media-id="[[ mediaId ]]"
+                                media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
     <section class="section">
-      <h1>Testje hier</h1>
       <iron-image sizing="cover"
                   fade="true"
                   preload
-                  src$="[[ _getImageSource(bynderDerivativeName) ]]">
+                  placeholder$="[[ imagePlaceholder ]]"
+                  src$="[[ imageSource ]]">
     </section>
   </template>
 
@@ -27,48 +31,77 @@
     Polymer({
       is: 'dorel-bynder-image',
       properties: {
-        bynderDerivativeName: {
+        /**
+         * @name width
+         * @description The width for displaying the image (set as a css property)
+         */
+        width: {
+          type: String,
+          value: '1em'
+        },
+        /**
+         * @name height
+         * @description The height for displaying the image (set as a css property)
+         */
+        height: {
+          type: String,
+          value: '1em'
+        },
+        /**
+         * @name mediaId
+         * @description The ID used to retrieve the asset from Bynder
+         */
+        mediaId: {
+          type: String
+        },
+        /**
+         * @name mediaContent
+         * @description data coming from Bynder.
+         */
+        mediaContent: {
+          type: Object,
+          notify: true,
+          observer: '_onMediaContentChanged'
+        },
+        /**
+         * @name derivativeIdentifier
+         * @description The identifier to retrieve the correct derivative
+         */
+        derivativeIdentifier: {
+          type: String,
+          value: ''
+        },
+        /**
+         * @name imageSource
+         * @description The source of the image to be displayed
+         */
+        imageSource: {
           type: String,
         },
         /**
-         * @name bynderData
-         * @description data coming from Bynder.
-         * Note: Currently filled with Dummy data, as described in
-         * https://developer-docs.bynder.com/API/Getting-Started/Downloading-assets/
-         * As stated in the documentation:
-         * In most cases working with one of the links that is provided in the thumbnails of the mediaItems will suffice.
+         * @name imagePlaceholder
+         * @description The image placeholder for the image
          */
-        bynderData: {
-          type: Object,
-          value: {
-            "height": 220,
-            "version": 1,
-            "fileName": "Twitter-1364b483-a8c2-41fa-8feb-b8a797696990.jpg",
-            "dateCreated": "2017-03-22T13:40:36Z",
-            "size": 21348,
-            "width": 440,
-            "id": "1364B483-A8C2-41FA-8FEBB8A797696990",
-            "thumbnails": {
-              'small-portrait': '../../assets/images/derivatives/derivative-portrait-small.jpg',
-              'small-landscape': '../../assets/images/derivatives/derivative-landscape-small.jpg',
-              'large-portrait': '../../assets/images/derivatives/derivative-portrait-retina.jpg',
-              'large-landscape': '../../assets/images/derivatives/derivative-landscape-retina.jpg',
-            },
-            "active": 1,
-            "type": "web"
-          }
+        imagePlaceholder: {
+          type: String,
         }
       },
       /**
-       * @name _getImageSource
+       * @name _onMediaContentChanged
        * @description Retrieves the correct image source in the Bynder data
        */
-      _getImageSource(bynderDerivativeName) {
-        // TODO: Revisit this later, mapping Bynder JSON to our dorel-responsive-image might not be as simple as this,
-        // but this is based on the example given in the Bynder API documentation
-        // TODO: First check if the derivative name is present in thumbnail, otherwise output or throw an error
-        return this.bynderData.thumbnails[bynderDerivativeName];
-      }
+      _onMediaContentChanged: function () {
+        // Default to the root media thumbnail and webimage
+        if (this.derivativeIdentifier === '') {
+          this.imagePlaceholder = this.mediaContent.thumbnails.mini;
+          this.imageSource = this.mediaContent.thumbnails.webimage;
+        }
+        // Retrieve the derivative if one is specified
+        else {
+          // TODO: check if mediaContent exists, and return the proper derivative path
+        }
+      },
+
     });
   </script>
 </dom-module>
