@@ -1,9 +1,14 @@
 <link rel="import" href="dorel-responsive-image.html">
+<link rel="import" href="../utils/dorel-bynder-collect-media.html">
+
 <dom-module id="dorel-bynder-responsive-image">
   <template>
+    <!-- Handles the ajax call and returns the bynder data -->
+    <dorel-bynder-collect-media media-id="[[ mediaId ]]"
+                                media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
     <section class="section">
       <dorel-responsive-image image-type="[[ imageType ]]"
-                              image-source="[[ _getImageSources(bynderData) ]]"></dorel-responsive-image>
+                              image-sources="[[ imageSources ]]"></dorel-responsive-image>
     </section>
   </template>
 
@@ -11,6 +16,13 @@
     Polymer({
       is: 'dorel-bynder-responsive-image',
       properties: {
+        /**
+         * @name mediaId
+         * @description The ID used to retrieve the asset from Bynder
+         */
+        mediaId: {
+          type: String
+        },
         /**
          * @attribute
          * @name imageType
@@ -22,42 +34,62 @@
           reflectToAttribute: true,
         },
         /**
-         * @name bynderData
+         * @name mediaContent
          * @description data coming from Bynder.
-         * Note: Currently filled with Dummy data, as described in
-         * https://developer-docs.bynder.com/API/Getting-Started/Downloading-assets/
-         * As stated in the documentation:
-         * In most cases working with one of the links that is provided in the thumbnails of the mediaItems will suffice.
          */
-        bynderData: {
+        mediaContent: {
           type: Object,
-          value: {
-            "height": 220,
-            "version": 1,
-            "fileName": "Twitter-1364b483-a8c2-41fa-8feb-b8a797696990.jpg",
-            "dateCreated": "2017-03-22T13:40:36Z",
-            "size": 21348,
-            "width": 440,
-            "id": "1364B483-A8C2-41FA-8FEBB8A797696990",
-            "thumbnails": {
-              'small-portrait': '../../assets/images/derivatives/derivative-portrait-small.jpg',
-              'small-landscape': '../../assets/images/derivatives/derivative-landscape-small.jpg',
-              'large-portrait': '../../assets/images/derivatives/derivative-portrait-retina.jpg',
-              'large-landscape': '../../assets/images/derivatives/derivative-landscape-retina.jpg',
-            },
-            "active": 1,
-            "type": "web"
-          }
+          notify: true,
+          observer: '_onMediaContentChanged',
+        },
+        /**
+         * @name imageSources
+         * @description Various image derivatives and their source
+         */
+        imageSources: {
+          type: Object,
+          notify: true,
         }
       },
       /**
-       * @name _getImageSources
-       * @description Mapping from the Bynder data model into a compatible datastructure for dorel-responsive-image
+       * @name _getDefaultImageSources
+       * @description Returns a dictionary with the given derivative labels and a default Bynder image
        */
-      _getImageSources(bynderData) {
-        // TODO: Revisit this later, mapping Bynder JSON to our dorel-responsive-image might not be as simple as this,
-        // but this is based on the example given in the Bynder API documentation
-        return bynderData.thumbnails;
+      _getDefaultImageSources: function (derivativeLabels, mediaContent) {
+        var imageSources = {};
+
+        // Fill up the imageSource with the default root webimage
+        for (var i = 0; i < derivativeLabels.length; i++) {
+          var derivativeLabel = derivativeLabels[i];
+          imageSources[derivativeLabel] = mediaContent.thumbnails.webimage;
+        }
+
+        // Set the placeholder with the mini thumbnail
+        imageSources['placeholder'] = mediaContent.thumbnails.mini;
+
+        return imageSources;
+      },
+      /**
+       * @name _setMappedImageSources
+       * @description Returns a dictionary in which the default images have been replaced
+       * with the correct Bynder derivative (if it exists)
+       */
+      _getMappedImageSources: function (imageSources, mediaContent) {
+        // TODO: check if derivative exists, and return the proper path.
+        // We still need more information on the derivative data to implement t his correctly
+        return imageSources;
+      },
+      /**
+       * @name _getImageSources
+       * @description Maps the Bynder data into an object that is compatible with dorel-responsive-image
+       */
+      _onMediaContentChanged() {
+        // First create a default image sources dictionary
+        var derivativeLabels = ['placeholder', 'small-portrait', 'small-landscape', 'large-portrait', 'large-landscape'];
+        var sources = this._getDefaultImageSources(derivativeLabels, this.mediaContent);
+
+        // Next, replace the default images with the correct derivatives if they are available
+        this.imageSources = this._getMappedImageSources(sources, this.mediaContent);
       }
     });
   </script>

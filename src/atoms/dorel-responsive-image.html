@@ -1,6 +1,7 @@
 <dom-module id="dorel-responsive-image">
   <template>
     <style>
+
       iron-image {
         float: left;
         clear: both;
@@ -9,6 +10,7 @@
         background-position: 50% 50%;
         background-repeat: no-repeat;
         background-size: cover;
+        background-color: var(--theme-brand-color-1);
       }
 
       /*  The following styling determines the aspect ratios for the images.
@@ -19,14 +21,14 @@
       /* Full-screen Image Styling */
       [image-type='full-screen'][portrait-small] {
         /* 9:16 */
-        height: calc( ( 100vw / 9 ) * 16 );
+        height: calc((100vw / 9) * 16);
 
       }
 
       [image-type='full-screen'][portrait-medium],
       [image-type='full-screen'][portrait-retina] {
         /* 3:4 */
-        height: calc( ( 100vw / 3 ) * 4 );
+        height: calc((100vw / 3) * 4);
 
       }
 
@@ -35,7 +37,7 @@
       [image-type='full-screen'][landscape-large],
       [image-type='full-screen'][landscape-extra-large] {
         /* 16:9 */
-        height: calc( ( 100vw / 16 ) * 9 );
+        height: calc((100vw / 16) * 9);
 
       }
 
@@ -43,7 +45,7 @@
       [image-type='wide-screen'][portrait-small],
       [image-type='wide-screen'][portrait-medium] {
         /* 3:2 */
-        height: calc( ( 100vw / 3 ) * 2 );
+        height: calc((100vw / 3) * 2);
       }
 
       [image-type='wide-screen'][portrait-retina],
@@ -52,7 +54,7 @@
       [image-type='wide-screen'][landscape-large],
       [image-type='wide-screen'][landscape-extra-large] {
         /* 3:1 */
-        height: calc( ( 100vw / 3 ) * 1 );
+        height: calc((100vw / 3) * 1);
       }
 
     </style>
@@ -60,6 +62,7 @@
     <iron-image sizing="cover"
                 fade="true"
                 preload
+                placeholder$="[[ currentImagePlaceholder ]]"
                 src$="[[ currentImageSource ]]"
                 image-type$="[[ imageType ]]"
                 portrait-small$="[[ breakpoints.portraitSmall ]]"
@@ -85,13 +88,8 @@
          */
         imageSources: {
           type: Object,
-          // TODO: This should be retrieved from Bynder. Currently using some placeholders for testing purposes.
-          value: {
-            'small-portrait': '../../assets/images/derivatives/derivative-portrait-small.jpg',
-            'small-landscape': '../../assets/images/derivatives/derivative-landscape-small.jpg',
-            'large-portrait': '../../assets/images/derivatives/derivative-portrait-retina.jpg',
-            'large-landscape': '../../assets/images/derivatives/derivative-landscape-retina.jpg',
-          }
+          observer: '_imageSourcesChanged',
+          notify: true
         },
         /**
          * @attribute
@@ -100,7 +98,15 @@
          */
         currentImageSource: {
           type: String,
-
+        },
+        /**
+         * @attribute
+         * @name currentImagePlaceholder
+         * @description a string containing the source of the placeholder
+         */
+        currentImagePlaceholder: {
+          type: String,
+          notify: true
         },
         /**
          * @attribute
@@ -109,6 +115,7 @@
          */
         currentImageDerivative: {
           type: String,
+          notify: true
         },
         /**
          * @attribute
@@ -130,11 +137,20 @@
         }
       },
       /**
-       * @name _breakpointsChanged
-       * @description Observes the breakpoints, determines the screen size and orientation,
-       * and changes the shown image accordingly
+       * @name _setImagePlaceholder
+       * @description Sets the image placeholder if it's available
        */
-      _breakpointsChanged: function () {
+      _setImagePlaceholder: function () {
+        // Set the image placeholder
+        if (this.imageSources.hasOwnProperty('placeholder')) {
+          this.currentImagePlaceholder = this.imageSources['placeholder'];
+        }
+      },
+      /**
+       * @name _setImage
+       * @description Determines the screen size and orientation and changes the shown image accordingly
+       */
+      _setImage: function () {
         // First determine the orientation of the device
         var orientationLabel = (this.breakpoints.portrait) ? 'portrait' : 'landscape';
         // Next, retrieve the right breakpoint according to the orientation
@@ -144,8 +160,30 @@
 
         // Now we can create the derivative name
         this.currentImageDerivative = sizeLabel + '-' + orientationLabel;
+
         // And retrieve its source
-        this.currentImageSource = this.imageSources[this.currentImageDerivative];
+        if (this.imageSources.hasOwnProperty(this.currentImageDerivative)) {
+          this.currentImageSource = this.imageSources[this.currentImageDerivative];
+        }
+      },
+      /**
+       * @name _imageSourcesChanged
+       * @description Observes the image sources, and sets the right image
+       */
+      _imageSourcesChanged: function () {
+        if (this.imageSources !== undefined && this.imageSources !== null) {
+          this._setImagePlaceholder();
+          this._setImage();
+        }
+      },
+      /**
+       * @name _breakpointsChanged
+       * @description Observes the breakpoints, and sets the right image
+       */
+      _breakpointsChanged: function () {
+        if (this.imageSources !== undefined && this.imageSources !== null) {
+          this._setImage();
+        }
       },
     });
   </script>
