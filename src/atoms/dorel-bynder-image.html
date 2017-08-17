@@ -37,7 +37,7 @@
          */
         width: {
           type: String,
-          value: '1em'
+          value: '16em',
         },
         /**
          * @name height
@@ -45,7 +45,7 @@
          */
         height: {
           type: String,
-          value: '1em'
+          value: '9em',
         },
         /**
          * @name mediaId
@@ -98,10 +98,27 @@
         }
         // Retrieve the derivative if one is specified
         else {
-          // TODO: check if mediaContent exists, and return the proper derivative path
+          // TODO: check if mediaContent exists, and return the proper derivative path.
+          // We still need more information on the derivative data infrastucture to implement this
         }
       },
-
+      /**
+       * @name _setSize
+       * @description Sets the image size according to given width and height properties
+       */
+      _setSize: function () {
+        this.updateStyles({
+          '--bynder-image-width': this.width,
+          '--bynder-image-height': this.height,
+        });
+      },
+      /**
+       * @name attached
+       * @description Attached callback, sets the given image size
+       */
+      attached: function () {
+        this._setSize();
+      }
     });
   </script>
 </dom-module>
