@@ -33,13 +33,27 @@
 
          var colorGroup = {
            name: 'color',
+           option: 'match-some',
            values: []
          };
 
          var priceGroup = {
            name: 'price',
+           option: 'match-some',
            values: []
          };
+
+         var safetyGroup = {
+           name: 'safety',
+           option: 'match-every',
+           values: [
+             { value: 'airbags' }
+           ]
+         }
+
+         if(oldProductModel.name === 'Citi') {
+           safetyGroup.values.push({ value: 'airprotect' })
+         }
 
          childProducts.forEach(function(childProduct) {
            var color = {
@@ -57,6 +71,7 @@
 
          filterGroups.push(colorGroup);
          filterGroups.push(priceGroup);
+         filterGroups.push(safetyGroup);
 
          var product = {
            sku: oldProductModel.sku,
@@ -119,19 +134,34 @@
               return item.value === self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
             });
 
+            var test = oldProductModel.name === 'Citi-Black Raven' ? [
+              { value: 'airbags' },
+              { value: 'airprotect' }
+            ] : [
+              { value: 'airbags' }
+            ]
+
            var filterGroups = [
              {
                name: 'color',
+               option: 'match-some',
+               type: 'single',
                values: [
                  { value: color.label }
                ]
              },
              {
                name: 'price',
+               option: 'match-some',
                values: [
                  { value: oldProductModel.price }
                ]
              },
+             {
+               name: 'safety',
+               option: 'match-every',
+               values: test
+             }
            ];
 
             product.color_name = color ? color.label : 'Default';

@@ -74,29 +74,34 @@
       shouldShowProduct: function(product, filters) {
         var self = this;
         return filters.value.every(function(filter) {
-          var productValues = self._findInFilterGroup(product, filter.key);
-          return self._resultByKey(filter.values, productValues, filter.key);
+          var group = self._findFilterGroup(product, filter.key);
+          // if product has childProducts check childProducts
+          if(product.childProducts && product.childProducts.length) {
+            return product.childProducts.some(function(childProduct) {
+              return self.shouldShowProduct(childProduct, filters);
+            }) && self._resultByKey(filter.values, group.values, filter.key, group.option);
+          } else {
+            return self._resultByKey(filter.values, group.values, filter.key, group.option);
+          }
         });
       },
 
       /**
        * @name _resultByKey
-       * @description A helper method that will call a function depending on the key
+       * @description A helper method that will call a function depending on the key and the option
        * @param filterValues - Array
        * @param productValues - Array
        * @param key - String
        * @returns Boolean
        */
-      _resultByKey: function(filterValues, productValues, key) {
-        var result;
-        switch (key) {
-            case 'price':
-                result = this._checkIfValueIsBigger(filterValues, productValues);
-                break;
-            default:
-                result = this._checkIfValueIsMatch(filterValues, productValues);
+      _resultByKey: function(filterValues, productValues, key, option) {
+        if(option === 'match-every') {
+          return this._checkIfEveryValueMatches(filterValues, productValues);
+        } else if (key === 'price') {
+          return this._checkIfValueIsBigger(filterValues, productValues);
+        } else {
+          return this._checkIfSomeValueMatches(filterValues, productValues);
         }
-        return Boolean(result);
       },
 
       /**
@@ -110,40 +115,55 @@
           return productValues.some(function(productValue) {
             return filterValues.some(function(filterValue) {
               return Number(filterValue.value) >= productValue.value;
-            })
+            });
           });
       },
 
       /**
-       * @name _checkIfValueIsMatch
+       * @name _checkIfSomeValueMatches
        * @description A helper method that will check if some of the productValues match some of the filterValues
        * @param filterValues - Array
        * @param productValues - Array
        * @returns Boolean
        */
-      _checkIfValueIsMatch: function(filterValues, productValues) {
+      _checkIfSomeValueMatches: function(filterValues, productValues) {
+        return productValues.some(function(productValue) {
+          return filterValues.some(function(filterValue) {
+            return filterValue.value === productValue.value;
+          })
+        });
+      },
+
+      /**
+       * @name _checkIfEveryValueMatches
+       * @description A helper method that will check if every of the filterValues match some of the productValues
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @returns Boolean
+       */
+      _checkIfEveryValueMatches: function(filterValues, productValues) {
+        return filterValues.every(function(filterValue) {
           return productValues.some(function(productValue) {
-            return filterValues.some(function(filterValue) {
-              return filterValue.value === productValue.value;
-            })
-          });
+            return productValue.value === filterValue.value;
+          })
+        });
       },
 
       /**
        * @name _findInFilterGroup
-       * @description A helper method that finds the filterGroup that matches the key
+       * @description A helper method that finds a filterGroup on a product that matches the key
        * @param product - Object
        * @param key - String
-       * @returns Array
+       * @returns Object
        */
-      _findInFilterGroup: function(product, key) {
+      _findFilterGroup: function(product, key) {
         if(!product || !product.filter_groups || !product.filter_groups.length) {
-          return [];
+          return {};
         }
-        var filterGroup = product.filter_groups.find(function(item) {
+        var group = product.filter_groups.find(function(item) {
           return item.name === key;
         });
-        return filterGroup ? filterGroup.values : [];
+        return group ? group : {};
       }
     });
 
