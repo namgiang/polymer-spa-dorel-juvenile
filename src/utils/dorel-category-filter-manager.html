@@ -109,6 +109,9 @@
 
       _resultByKey: function(filterValues, productValues, key) {
         var result;
+        if(!productValues) {
+          return true;
+        }
         switch (key) {
             case 'price':
                 result = this._checkIfValueIsBigger(filterValues, productValues); // true
@@ -125,6 +128,9 @@
       },
 
       _checkIfValueIsMatch: function(filterValues, productValues) {
+          if(productValues[0].constructor === Array) {
+            productValues = productValues[0];
+          }
           return productValues.some(function(productValue) {
             return filterValues.indexOf(productValue) > -1;
           })
