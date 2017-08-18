@@ -35,7 +35,7 @@
         width: 100%;
         @apply(--theme-grid-column);
         text-align: right;
-        min-height: 1.5em;
+        height: 1.5em;
       }
 
       .content {
@@ -47,6 +47,11 @@
       .sidebar {
         width: 100%;
         @apply(--theme-grid-column);
+      }
+
+      .amount {
+        height: 1.5rem;
+        margin: 0;
       }
 
       dorel-section-category-header {
@@ -131,11 +136,11 @@
                 gtm-parent-index="[[ index ]]"></dorel-section-category-header>
             </template>
 
-            <!-- <div class="top-nav">
+            <div class="top-nav">
               <template is="dom-if" if="{{ renderedCount !== 'undefined' }}">
-                <p><b>[[ renderedCount ]]</b> Results</p>
+                <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
               </template>
-            </div> -->
+            </div>
 
 
             <div class="sidebar">
@@ -153,6 +158,7 @@
                 if="{{ templateData.acf.show_filters_on_page }}">
                 <dorel-expandable-panel header="Filters" opened>
                   <dorel-category-filter
+                    filter-options="[[ templateData.acf ]]"
                     retrieving-products="[[ retrievingProducts ]]"
                     product-data="[[ products ]]">
                   </dorel-category-filter>
