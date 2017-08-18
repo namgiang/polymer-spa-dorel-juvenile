@@ -15,10 +15,10 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         @apply(--max-width-container);
-        display: flex;
-        width: calc(100% - 2em);
-        margin-left: 2em;
-        flex-direction: column;
+        display: block;
+        width: 100%;
+        padding: 0 .75rem;
+        box-sizing: border-box;
       }
     </style>
     <!-- <iron-location path="{{path}}" query="{{query}}"></iron-location> -->
@@ -41,17 +41,20 @@
     </dorel-category-filter-data-collector>
 
     <template is="dom-if" if="[[ showFilters(retrievingProducts, filterData) ]]" restamp="true">
-      <dorel-category-filter-price
-        query-params="[[ queryParams ]]"
-        filter-data="[[ filterData.priceFilter ]]"
-        on-update-filter="_setFilters">
-      </dorel-category-filter-price>
-
-      <dorel-category-filter-colors
-        query-params="[[ queryParams ]]"
-        filter-data="[[ filterData.colorFilter ]]"
-        on-update-filter="_setFilters">
-      </dorel-category-filter-colors>
+      <template is="dom-if" if="filterOptions.filter_pricing">
+        <dorel-category-filter-price
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filterData.priceFilter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-price>
+      </template>
+      <template is="dom-if" if="filterOptions.filter_colors">
+        <dorel-category-filter-colors
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filterData.colorFilter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-colors>
+      </template>
     </template>
   </template>
   <script>
@@ -85,6 +88,10 @@
         retrievingProducts : {
           type: Boolean,
           value: true
+        },
+
+        filterOptions: {
+          type: Object
         }
 
       },

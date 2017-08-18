@@ -5,20 +5,28 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         @apply(--max-width-container);
-        display: flex;
+        display: block;
         width: 100%;
+        margin: .75rem 0;
       }
       .checkbox {
         display: flex;
         width: 100%;
+        min-height: 1.5rem;
       }
       .checkboxes {
-        display: flex;
-        flex-direction: column;
+        display: block;
         width: 100%;
       }
+      .filter-name {
+        font-weight: 600;
+        min-height: 1.5rem;
+        line-height: 1.5rem;
+      }
     </style>
-
+    <div class="filter-name">
+      Colors
+    </div>
     <div class="checkboxes">
       <template is="dom-repeat"
         is="dom-repeat"
@@ -115,14 +123,6 @@
         }
 
         this.fire('update-filter', { value: queryParams });
-      },
-
-      created: function() {
-        console.log('test', 'created');
-      },
-
-      detached: function() {
-        console.log('test', 'detached');
       }
 
     });
