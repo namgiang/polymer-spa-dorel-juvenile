@@ -53,22 +53,14 @@
           return;
         }
         var self = this;
-        var filters = [];
-
-        filters = Object.keys(queryParams).map(function(key, value) {
+        var filters = Object.keys(queryParams).map(function(key, value) {
           var filterItem = {};
-          var valueIsNumber = !isNaN(queryParams[key]);
-          if(valueIsNumber) {
-            filterItem.values = [Number(queryParams[key])];
-            filterItem.type = 'Number';
-          } else {
-            filterItem.values = queryParams[key].split(',');
-            filterItem.type = 'String';
-          }
+          filterItem.values = queryParams[key].split(',').map(function(value) {
+            return { value: value };
+          });
           filterItem.key = key;
           return filterItem;
         });
-
         self.set('filters', filters);
       },
 
@@ -81,107 +73,77 @@
        */
       shouldShowProduct: function(product, filters) {
         var self = this;
-        return this._checkChildProducts(product, filters) && this._checkProduct(product, filters);
-      },
-
-      _checkProduct: function(product, filters) {
-        var self = this;
         return filters.value.every(function(filter) {
-          var productValues = self._findVal(product, filter.key);
+          var productValues = self._findInFilterGroup(product, filter.key);
           return self._resultByKey(filter.values, productValues, filter.key);
         });
       },
 
-      _checkChildProducts: function(product, filters) {
-        var self = this;
-        //if it does not have childProducts it means it is a childProduct so return true
-        if(!product.childProducts) {
-          return true;
-        }
-        // if product has childProducts then check if one of these is true
-        return product.childProducts.some(function(childProduct) {
-          return filters.value.every(function(filter) {
-            var childProductValues = self._findVal(childProduct, filter.key);
-            return self._resultByKey(filter.values, childProductValues, filter.key);
-          });
-        });
-      },
-
+      /**
+       * @name _resultByKey
+       * @description A helper method that will call a function depending on the key
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @param key - String
+       * @returns Boolean
+       */
       _resultByKey: function(filterValues, productValues, key) {
         var result;
-        if(!productValues) {
-          return true;
-        }
         switch (key) {
             case 'price':
-                result = this._checkIfValueIsBigger(filterValues, productValues); // true
+                result = this._checkIfValueIsBigger(filterValues, productValues);
                 break;
             default:
-                result = this._checkIfValueIsMatch(filterValues, productValues); // true
+                result = this._checkIfValueIsMatch(filterValues, productValues);
         }
         return Boolean(result);
       },
 
+      /**
+       * @name _checkIfValueIsMatch
+       * @description A helper method that will check if some of the filterValues are bigger then some of the productValues
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @returns Boolean
+       */
       _checkIfValueIsBigger: function(filterValues, productValues) {
-          var lowestPrice = Math.min.apply(Math, productValues);
-          return Boolean(filterValues[0] >= lowestPrice);
-      },
-
-      _checkIfValueIsMatch: function(filterValues, productValues) {
-          if(productValues[0].constructor === Array) {
-            productValues = productValues[0];
-          }
           return productValues.some(function(productValue) {
-            return filterValues.indexOf(productValue) > -1;
-          })
+            return filterValues.some(function(filterValue) {
+              return Number(filterValue.value) >= productValue.value;
+            })
+          });
       },
 
       /**
-       * @name _findVal
-       * @description A recursive helper function that is used to retrieve the value
-       * @param object - Object
-       * @param key - String
-       * returns a Array of values
+       * @name _checkIfValueIsMatch
+       * @description A helper method that will check if some of the productValues match some of the filterValues
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @returns Boolean
        */
-      _findVal: function(object, key) {
-        var value;
-        var self = this;
-        Object.keys(object).some(function(k) {
-            // if k is equal to key set value an return true so some() will stop and _findVal will return Array
-            if (k === key) {
-                value = [object[k]];
-                return true;
-            }
-            // if object[k] has length and is a Array
-            if(object[k].length && Array.isArray(object[k])) {
-              // set empty array
-              var results = [];
-              // loop over array
-              object[k].forEach(function(item) {
-                // if item in the array is a object and the item[key] exists
-                if (typeof item === 'object' && item[key]) {
-                  // push the values to the results array
-                  results.push(item[key]);
-                }
-              });
-              // if results has length it means we have the correct Array
-              if(results.length) {
-                // set value with the array and return true so some() will stop and _findVal will return the Array
-                value = results;
-                return true;
-              } else {
-                // it's not the correct Array so continue looping
-                value = self._findVal(object[k], key);
-                return value !== undefined;
-              }
-            }
-            if (object[k] && typeof object[k] === 'object' && !Array.isArray(object[k])) {
-                // it's not the correct key so continue looping
-                value = self._findVal(object[k], key);
-                return value !== undefined;
-            }
+      _checkIfValueIsMatch: function(filterValues, productValues) {
+          return productValues.some(function(productValue) {
+            return filterValues.some(function(filterValue) {
+              return filterValue.value === productValue.value;
+            })
+          });
+      },
+
+      /**
+       * @name _findInFilterGroup
+       * @description A helper method that finds the filterGroup that matches the key
+       * @param product - Object
+       * @param key - String
+       * @returns Array
+       */
+      _findInFilterGroup: function(product, key) {
+        if(!product || !product.filter_groups || !product.filter_groups.length) {
+          return [];
+        }
+        var filterGroup = product.filter_groups.find(function(item) {
+          return item.name === key;
         });
-        return value;
+        return filterGroup ? filterGroup.values : [];
       }
     });
 
