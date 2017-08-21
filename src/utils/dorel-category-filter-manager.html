@@ -75,9 +75,9 @@
         var self = this;
         return filters.value.every(function(filter) {
           var group = self._findFilterGroup(product, filter.key);
-          // if product has childProducts check childProducts too
-          if(product.childProducts && product.childProducts.length) {
-            return product.childProducts.some(function(childProduct) {
+          // if product has child_products check child_products too
+          if(product.child_products && product.child_products.length) {
+            return product.child_products.some(function(childProduct) {
               return self.shouldShowProduct(childProduct, filters);
             }) && self._resultByKey(filter.values, group.values, filter.key, group.option);
           } else {

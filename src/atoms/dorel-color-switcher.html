@@ -57,7 +57,7 @@
 
     <template
       is="dom-if"
-      if="[[ colorsData.length ]]">
+      if="[[ colorsData ]]">
       <div class="color-switcher">
         <div class="color-name">Color: [[ currentName ]]</div>
 
@@ -65,18 +65,18 @@
           <template
             is="dom-repeat"
             items="[[ colorsData ]]"
-            as="color"
+            as="item"
             filter="[[ _filterChildProducts(filters.*) ]]">
-            <li class$="list-group-item {{ _isCurrentColor(currentName, color.color_name) }}">
+            <li class$="list-group-item {{ _isCurrentColor(currentName, item.color.name) }}">
               <span on-click="_changeCurrentColor"
                     role="button"
                     tabindex="0"
-                    color-image$="[[ color.color_image ]]"
-                    color-name$="[[ color.color_name ]]"
+                    color-image$="[[ item.images.image ]]"
+                    color-name$="[[ item.color.name ]]"
                     gtm-action$="[[ gtmAction ]]"
                     gtm-child$="[[ gtmChild ]]"
                     gtm-cta-index$="[[ index ]]"
-                    style$="background-color: [[ color.color_code ]];"></span>
+                    style$="background-color: [[ item.color.value ]];"></span>
             </li>
           </template>
         </ul>
@@ -163,8 +163,8 @@
         if(!newColor) {
           return;
         }
-        this.set('currentImage', newColor.color_image);
-        this.set('currentName', newColor.color_name);
+        this.set('currentImage', newColor.images.image);
+        this.set('currentName', newColor.color.name);
       },
 
       /**

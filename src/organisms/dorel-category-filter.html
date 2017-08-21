@@ -40,36 +40,20 @@
       filter-data="{{ filterData }}">
     </dorel-category-filter-data-collector>
 
-    <!-- <template is="dom-if" if="[[ showFilters(retrievingProducts, filterData) ]]" restamp="true">
-      <template is="dom-if" if="filterOptions.filter_pricing">
-        <dorel-category-filter-price
-          query-params="[[ queryParams ]]"
-          filter-data="[[ filterData.priceFilter ]]"
-          on-update-filter="_setFilters">
-        </dorel-category-filter-price>
-      </template>
-      <template is="dom-if" if="filterOptions.filter_colors">
-        <dorel-category-filter-colors
-          query-params="[[ queryParams ]]"
-          filter-data="[[ filterData.colorFilter ]]"
-          on-update-filter="_setFilters">
-        </dorel-category-filter-colors>
-      </template>
-    </template> -->
 
-    <template
-      is="dom-repeat"
-      items="[[ filterData ]]"
-      as="filter">
+      <template
+        is="dom-repeat"
+        items="[[ filterData ]]"
+        as="filter">
 
-      <template is="dom-if" if="[[ checkComponent(filter, 'checkbox') ]]">
+      <template is="dom-if" if="[[ checkComponent(filter, 'checkbox', retrievingProducts) ]]">
         <dorel-category-filter-checkbox
           query-params="[[ queryParams ]]"
           filter-data="[[ filter ]]"
           on-update-filter="_setFilters">
         </dorel-category-filter-checkbox>
       </template>
-      <template is="dom-if" if="[[ checkComponent(filter, 'slider') ]]">
+      <template is="dom-if" if="[[ checkComponent(filter, 'slider', retrievingProducts) ]]">
         <dorel-category-filter-slider
           query-params="[[ queryParams ]]"
           filter-data="[[ filter ]]"
@@ -136,10 +120,6 @@
         this.set('query', filterUrl);
       },
 
-      showFilters: function(retrievingProducts, filterData) {
-        return Boolean(retrievingProducts === false && filterData);
-      },
-
       _encodeParams: function(params) {
         var encodedParams = [];
         for (var key in params) {
@@ -163,8 +143,8 @@
        * @param filter - Object
        * @param type - String
        **/
-      checkComponent: function(filter, type) {
-        return Boolean(filter.type === type);
+      checkComponent: function(filter, type, retrievingProducts) {
+        return Boolean(filter.type === type && retrievingProducts === false);
       }
 
     });
