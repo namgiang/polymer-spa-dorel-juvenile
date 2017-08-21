@@ -33,18 +33,24 @@
 
          var colorGroup = {
            name: 'color',
+           label: 'Colors',
+           type: 'checkbox',
            option: 'match-some',
            values: []
          };
 
          var priceGroup = {
            name: 'price',
+           label: 'Price',
+           type: 'slider',
            option: 'match-some',
            values: []
          };
 
          var safetyGroup = {
            name: 'safety',
+           label: 'Safety',
+           type: 'checkbox',
            option: 'match-every',
            values: [
              { value: 'airbags' }
@@ -52,12 +58,12 @@
          }
 
          if(oldProductModel.name === 'Citi') {
-           safetyGroup.values.push({ value: 'airprotect' })
+           safetyGroup.values.push({ value: 'airprotect' }, { value: 'i-size' })
          }
 
          childProducts.forEach(function(childProduct) {
            var color = {
-             value: childProduct.color_name
+             value: childProduct.color_name, color: childProduct.color_code
            }
            colorGroup.values.push(color);
          });
@@ -136,7 +142,8 @@
 
             var test = oldProductModel.name === 'Citi-Black Raven' ? [
               { value: 'airbags' },
-              { value: 'airprotect' }
+              { value: 'airprotect' },
+              { value: 'i-size' }
             ] : [
               { value: 'airbags' }
             ]
@@ -144,14 +151,18 @@
            var filterGroups = [
              {
                name: 'color',
+               label: 'Colors',
+               type: 'checkbox',
                option: 'match-some',
                type: 'single',
                values: [
-                 { value: color.label }
+                 { value: color.label, color: color.swatchlabel }
                ]
              },
              {
                name: 'price',
+               label: 'Price',
+               type: 'slider',
                option: 'match-some',
                values: [
                  { value: oldProductModel.price }
@@ -159,6 +170,8 @@
              },
              {
                name: 'safety',
+               label: 'Safety',
+               type: 'checkbox',
                option: 'match-every',
                values: test
              }

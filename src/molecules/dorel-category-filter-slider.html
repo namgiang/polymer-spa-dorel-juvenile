@@ -1,0 +1,130 @@
+<link rel="import" href="../atoms/dorel-slider.html">
+
+<dom-module id="dorel-category-filter-slider">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-container);
+        display: flex;
+        width: 100%;
+        margin: .75rem 0;
+      }
+      .price-filter-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+      .price-indicator {
+        min-height: 1.5rem;
+        line-height: 1.5rem;
+      }
+      .filter-name {
+        font-weight: 600;
+        min-height: 1.5rem;
+        line-height: 1.5rem;
+      }
+    </style>
+
+    <div class="price-filter-wrapper">
+      <div class="filter-name">
+        [[ filterData.label ]]
+      </div>
+      <div class="price-indicator">
+        Max: €[[ sliderValue ]],-
+      </div>
+      <dorel-slider class="slider"
+                    snaps
+                    max="[[ maxAmount ]]"
+                    max-markers="8"
+                    step="5"
+                    slider-value="{{ sliderValue }}">
+      </dorel-slider>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-filter-slider',
+      properties: {
+
+
+        /**
+         * @attribute
+         * @name sliderValue
+         * @description number that is used by the template and too set the queryParams
+         */
+        sliderValue: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * @attribute
+         * @name queryParams
+         * @description Object passed by parent
+         */
+        queryParams: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name filterData
+         * @description Object passed by parent that contains the filters
+         */
+        filterData: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name maxAmount
+         * @description Number that is created according to the highest value,
+         * is used by the slider
+         */
+        maxAmount: {
+          type: Number
+        }
+
+      },
+
+      observers: [
+        '_setSlider(sliderValue, filterData)',
+      ],
+
+      /**
+       * observer
+       * @name setFilters
+       * @description either adds or removes a value to the queryParams
+       * also sets the maxAmount by using highest value of the values
+       * @param sliderValue - Number
+       * @param filterData - Object
+       **/
+      _setSlider: function(sliderValue, filterData) {
+        if(!this.filterData || !this.filterData.name) {
+          return;
+        }
+        if(this.filterData.values && this.filterData.values.length) {
+          var maxAmount = 0;
+          var amounts = this.filterData.values.map(function(item) {
+            return item.value;
+          });
+          var higestAmount = Math.max.apply(Math, amounts);
+          this.set('maxAmount', higestAmount);
+        }
+        var queryParams = this.queryParams || {};
+        var filterSort = this.filterData.name;
+
+        var exists = queryParams[this.filterData.name] ? queryParams[this.filterData.name] : null;
+
+        if(sliderValue === 0 && exists) {
+          delete queryParams[this.filterData.name];
+        } else {
+          queryParams[this.filterData.name] = sliderValue;
+        }
+        this.fire('update-filter', { value: queryParams });
+      }
+
+    });
+  </script>
+
+</dom-module>

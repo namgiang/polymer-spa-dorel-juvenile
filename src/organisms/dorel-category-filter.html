@@ -6,8 +6,8 @@
 
 <link rel="import" href="../utils/dorel-category-filter-data-collector.html">
 
-<link rel="import" href="../molecules/dorel-category-filter-price.html">
-<link rel="import" href="../molecules/dorel-category-filter-colors.html">
+<link rel="import" href="../molecules/dorel-category-filter-slider.html">
+<link rel="import" href="../molecules/dorel-category-filter-checkbox.html">
 
 
 <dom-module id="dorel-category-filter">
@@ -40,7 +40,7 @@
       filter-data="{{ filterData }}">
     </dorel-category-filter-data-collector>
 
-    <template is="dom-if" if="[[ showFilters(retrievingProducts, filterData) ]]" restamp="true">
+    <!-- <template is="dom-if" if="[[ showFilters(retrievingProducts, filterData) ]]" restamp="true">
       <template is="dom-if" if="filterOptions.filter_pricing">
         <dorel-category-filter-price
           query-params="[[ queryParams ]]"
@@ -55,7 +55,31 @@
           on-update-filter="_setFilters">
         </dorel-category-filter-colors>
       </template>
+    </template> -->
+
+    <template
+      is="dom-repeat"
+      items="[[ filterData ]]"
+      as="filter">
+
+      <template is="dom-if" if="[[ checkComponent(filter, 'checkbox') ]]">
+        <dorel-category-filter-checkbox
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-checkbox>
+      </template>
+      <template is="dom-if" if="[[ checkComponent(filter, 'slider') ]]">
+        <dorel-category-filter-slider
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-slider>
+      </template>
+
     </template>
+
+
   </template>
   <script>
     Polymer({
@@ -82,7 +106,7 @@
         },
 
         filterData: {
-          type: Object
+          type: Array
         },
 
         retrievingProducts : {
@@ -131,6 +155,16 @@
           }
         }
         return encodedParams.join('&');
+      },
+
+      /**
+       * @name checkComponent
+       * @description check if filter should be rendered in template
+       * @param filter - Object
+       * @param type - String
+       **/
+      checkComponent: function(filter, type) {
+        return Boolean(filter.type === type);
       }
 
     });
