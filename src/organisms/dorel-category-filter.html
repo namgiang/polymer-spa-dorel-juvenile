@@ -1,0 +1,173 @@
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route-converter.html">
+<link rel="import" href="../../bower_components/iron-location/iron-query-params.html">
+
+<link rel="import" href="../utils/dorel-category-filter-data-collector.html">
+
+<link rel="import" href="../molecules/dorel-category-filter-slider.html">
+<link rel="import" href="../molecules/dorel-category-filter-checkbox.html">
+
+
+<dom-module id="dorel-category-filter">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-container);
+        display: block;
+        width: 100%;
+        padding: 0 .75rem;
+        box-sizing: border-box;
+      }
+    </style>
+    <!-- <iron-location path="{{path}}" query="{{query}}"></iron-location> -->
+    <app-location route="{{ route }}"></app-location>
+    <iron-query-params
+        params-string="{{query}}"
+        params-object="{{queryParams}}">
+    </iron-query-params>
+    <app-route-converter
+        path="{{path}}"
+        query-params="{{queryParams}}"
+        route="{{route}}">
+    </app-route-converter>
+    <app-route route="{{route}}" pattern="/:page" data="{{data}}">
+    </app-route>
+
+    <dorel-category-filter-data-collector
+      product-data="[[ productData ]]"
+      filter-data="{{ filterData }}">
+    </dorel-category-filter-data-collector>
+
+    <!-- <template is="dom-if" if="[[ showFilters(retrievingProducts, filterData) ]]" restamp="true">
+      <template is="dom-if" if="filterOptions.filter_pricing">
+        <dorel-category-filter-price
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filterData.priceFilter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-price>
+      </template>
+      <template is="dom-if" if="filterOptions.filter_colors">
+        <dorel-category-filter-colors
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filterData.colorFilter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-colors>
+      </template>
+    </template> -->
+
+    <template
+      is="dom-repeat"
+      items="[[ filterData ]]"
+      as="filter">
+
+      <template is="dom-if" if="[[ checkComponent(filter, 'checkbox') ]]">
+        <dorel-category-filter-checkbox
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-checkbox>
+      </template>
+      <template is="dom-if" if="[[ checkComponent(filter, 'slider') ]]">
+        <dorel-category-filter-slider
+          query-params="[[ queryParams ]]"
+          filter-data="[[ filter ]]"
+          on-update-filter="_setFilters">
+        </dorel-category-filter-slider>
+      </template>
+
+    </template>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-filter',
+      properties: {
+
+        path: {
+          type: String,
+          notify: true
+        },
+
+        queryParams: {
+          type: Object,
+          notify: true
+        },
+
+        route: {
+          type: Object,
+          notify: true
+        },
+
+        productData: {
+          type: Array
+        },
+
+        filterData: {
+          type: Array
+        },
+
+        retrievingProducts : {
+          type: Boolean,
+          value: true
+        },
+
+        filterOptions: {
+          type: Object
+        }
+
+      },
+
+      listeners: {
+        'update-filter': '_setFilters'
+      },
+
+      _setFilters: function(event) {
+        var params = event.detail.value;
+        var filterUrl = this._encodeParams(params)
+          .replace(/%3F/g, '?').replace(/%2F/g, '/').replace(/'/g, '%27');
+        if(this.route) {
+          var routePath = this.route.path;
+          var path = routePath.slice(-1) === '/' ? routePath.slice(0, -1) : routePath;
+          this.set('path', path);
+        }
+        this.set('query', filterUrl);
+      },
+
+      showFilters: function(retrievingProducts, filterData) {
+        return Boolean(retrievingProducts === false && filterData);
+      },
+
+      _encodeParams: function(params) {
+        var encodedParams = [];
+        for (var key in params) {
+          var value = params[key];
+          if (value === '') {
+            encodedParams.push(encodeURI(key));
+          } else if (value) {
+            encodedParams.push(
+                encodeURI(key) +
+                '=' +
+                encodeURI(value.toString())
+            );
+          }
+        }
+        return encodedParams.join('&');
+      },
+
+      /**
+       * @name checkComponent
+       * @description check if filter should be rendered in template
+       * @param filter - Object
+       * @param type - String
+       **/
+      checkComponent: function(filter, type) {
+        return Boolean(filter.type === type);
+      }
+
+    });
+  </script>
+
+</dom-module>

@@ -61,7 +61,7 @@
         retrievingProducts: {
           type: Boolean,
           notify: true,
-          value: false
+          value: true
         }
 
       },
@@ -91,7 +91,7 @@
           return;
         }
 
-        this.retrievingProducts = true;
+        this.set('retrievingProducts', true);
 
         // get all the products that are saved in the global
         var products = Polymer.globalsManager.get('Dorel.product.products') || [];
@@ -180,7 +180,7 @@
 
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
         var products = this._mergeArrays(oldProducts, newProducts);
-        
+
         // set new array of products in the global saved products
         Polymer.globalsManager.set('Dorel.product.products', products);
       },
@@ -208,7 +208,7 @@
        */
       _setCurrentProducts: function(products) {
         this.products = products;
-        this.retrievingProducts = false;
+        this.set('retrievingProducts', false);
       },
 
       /**

@@ -10,15 +10,18 @@
       }
 
       .menu {
-        margin: 1.5em 0 0 0;
-        padding-left: 1.5em;
-        list-style-type: none;
+        margin: .75rem 0 .75rem 0;
+        padding-left: 2em;
+      }
+
+      .menu-item {
+        min-height: 1.5rem;
       }
 
       .link {
-        @apply(--theme-typography-2);
-        @apply(--theme-text-link);
-        color: var(--theme-color-text-link);
+        @apply(--theme-typography-3);
+        color: var(--theme-color-monochrome-7);
+        text-decoration: none;
       }
 
       .link:hover {
@@ -31,17 +34,12 @@
       }
 
       [tablet-medium-up] .menu {
-        margin: 1.5em 0 0 0;
-        padding-left: 2em;
-      }
-
-      [desktop-small-up] .menu {
-        margin: 1.5em 0 1.5em 0;
+        margin: .75rem 0 .75rem 0;
         padding-left: 2em;
       }
 
       [desktop-small-up] .link {
-        @apply(--theme-typography-4);
+        @apply(--theme-typography-3);
       }
 
     </style>
@@ -92,7 +90,9 @@
        * @returns String
        */
       getUrl: function(menuItem) {
-        return window.location.href + menuItem.post_name;
+        var currentUrl = window.location.href.split('?')[0].split('#')[0];
+        currentUrl = currentUrl.substr(-1) === '/' ? currentUrl : currentUrl + '/';
+        return currentUrl + menuItem.post_name;
       },
 
       /**

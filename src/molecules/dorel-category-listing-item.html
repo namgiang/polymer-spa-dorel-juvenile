@@ -80,6 +80,7 @@
         <dorel-color-switcher
           current-image="{{ currentProductImage }}"
           colors-data="[[ colorsData ]]"
+          filters="[[ filters ]]"
           gtm-action="color-switch"
           gtm-parent="[[ gtmParent ]]"
           gtm-parent-index="[[ gtmParentIndex ]]"
@@ -88,7 +89,7 @@
         <h2 class="title">[[ productName ]]</h2>
         <dorel-cta
           type="link"
-          link="[[ linkUrl ]]"
+          link="[[ _setDynamicProductUrl(linkUrl) ]]"
           size="small"
           icon="dorel-icons:play-circle-outline"
           gtm-action="click"
@@ -112,6 +113,12 @@
           type: Boolean,
           value: false,
         },
+
+
+        filters: {
+          type: Array
+        },
+
         /**
          * @attribute
          * @name colorsData
@@ -151,6 +158,18 @@
           type: String,
           value: ''
         }
+      },
+
+      _setDynamicProductUrl: function(linkUrl) {
+
+        var windowLocation = window.location.origin + window.location.pathname;
+        var lastChar = windowLocation.slice(-1);
+
+        if(lastChar !== '/') {
+           linkUrl = '/' + linkUrl;
+        }
+
+        return windowLocation + linkUrl;
       }
     });
   </script>

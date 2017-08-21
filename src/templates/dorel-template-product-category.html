@@ -1,6 +1,9 @@
+<link rel="import" href="../atoms/dorel-expandable-panel.html">
+
 <link rel="import" href="../organisms/dorel-category-listing.html">
 <link rel="import" href="../organisms/dorel-section-category-header.html">
 <link rel="import" href="../organisms/dorel-category-submenu.html">
+<link rel="import" href="../organisms/dorel-category-filter.html">
 
 <link rel="import" href="../utils/dorel-magento-collect-products.html">
 
@@ -28,14 +31,27 @@
         @apply(--layout-flex);
       }
 
+      .top-nav {
+        width: 100%;
+        @apply(--theme-grid-column);
+        text-align: right;
+        height: 1.5em;
+      }
+
       .content {
         width: 100%;
         @apply(--theme-grid-column);
+        margin-top: 0;
       }
 
       .sidebar {
         width: 100%;
         @apply(--theme-grid-column);
+      }
+
+      .amount {
+        height: 1.5rem;
+        margin: 0;
       }
 
       dorel-section-category-header {
@@ -103,8 +119,6 @@
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
-
-
       <!-- show when acf.page_builder has components -->
       <template
         is="dom-if"
@@ -122,19 +136,33 @@
                 gtm-parent-index="[[ index ]]"></dorel-section-category-header>
             </template>
 
+            <div class="top-nav">
+              <template is="dom-if" if="{{ renderedCount !== 'undefined' }}">
+                <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
+              </template>
+            </div>
+
 
             <div class="sidebar">
               <template
                 is="dom-if"
                 if="{{ templateData.acf.show_sub_category_menu }}">
-                <dorel-category-submenu
-                  items="[[ templateData.acf.sub_category_menu ]]">
-                </dorel-category-submenu>
+                <dorel-expandable-panel header="Subcategories" opened>
+                  <dorel-category-submenu
+                    items="[[ templateData.acf.sub_category_menu ]]">
+                  </dorel-category-submenu>
+                </dorel-expandable-panel>
               </template>
               <template
                 is="dom-if"
                 if="{{ templateData.acf.show_filters_on_page }}">
-                <p>filters</p>
+                <dorel-expandable-panel header="Filters" opened>
+                  <dorel-category-filter
+                    filter-options="[[ templateData.acf ]]"
+                    retrieving-products="[[ retrievingProducts ]]"
+                    product-data="[[ products ]]">
+                  </dorel-category-filter>
+                </dorel-expandable-panel>
               </template>
             </div>
 
@@ -146,6 +174,7 @@
                     products-data="[[ products ]]"
                     retrieving-products="[[ retrievingProducts ]]"
                     sort="[[ sort ]]"
+                    rendered-count="{{ renderedCount }}"
                     gtm-parent="dorel-category-listing"
                     gtm-parent-index="2"></dorel-category-listing>
               </template>
@@ -216,6 +245,10 @@
         retrievingProducts: {
           type: Boolean,
           value: true
+        },
+
+        renderedCount: {
+          type: Number
         }
 
       },

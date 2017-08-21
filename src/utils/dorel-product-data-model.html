@@ -28,6 +28,57 @@
          }
          var childProducts = this._createDataModelChildProduct(children);
          var oldProductModel = product;
+
+         var filterGroups = [];
+
+         var colorGroup = {
+           name: 'color',
+           label: 'Colors',
+           type: 'checkbox',
+           option: 'match-some',
+           values: []
+         };
+
+         var priceGroup = {
+           name: 'price',
+           label: 'Price',
+           type: 'slider',
+           option: 'match-some',
+           values: []
+         };
+
+         var safetyGroup = {
+           name: 'safety',
+           label: 'Safety',
+           type: 'checkbox',
+           option: 'match-every',
+           values: [
+             { value: 'airbags' }
+           ]
+         }
+
+         if(oldProductModel.name === 'Citi') {
+           safetyGroup.values.push({ value: 'airprotect' }, { value: 'i-size' })
+         }
+
+         childProducts.forEach(function(childProduct) {
+           var color = {
+             value: childProduct.color_name, color: childProduct.color_code
+           }
+           colorGroup.values.push(color);
+         });
+
+         childProducts.forEach(function(childProduct) {
+           var price = {
+             value: childProduct.price
+           }
+           priceGroup.values.push(price);
+         });
+
+         filterGroups.push(colorGroup);
+         filterGroups.push(priceGroup);
+         filterGroups.push(safetyGroup);
+
          var product = {
            sku: oldProductModel.sku,
            id: oldProductModel.id,
@@ -43,6 +94,7 @@
            video_section: {
              video_id: this._retrieveCustomAttribute(oldProductModel, 'video_id')
            },
+           filter_groups: filterGroups,
            related_product_section: {
              title: this._retrieveCustomAttribute(oldProductModel, 'related_title'),
              included_products: this._retrieveCustomAttribute(oldProductModel, 'related_product_sku')
@@ -65,7 +117,6 @@
         //  product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
         //  product.pdf_manual_link = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link');
         //  product.pdf_manual_link_text = this._retrieveCustomAttribute(oldProductModel, 'pdf_manual_link_text');
-
          return product;
       },
 
@@ -88,8 +139,50 @@
             var color = map.find(function(item) {
               return item.value === self._retrieveCustomAttribute(oldProductModel, 'car_seat_color');
             });
+
+            var test = oldProductModel.name === 'Citi-Black Raven' ? [
+              { value: 'airbags' },
+              { value: 'airprotect' },
+              { value: 'i-size' }
+            ] : [
+              { value: 'airbags' }
+            ]
+
+           var filterGroups = [
+             {
+               name: 'color',
+               label: 'Colors',
+               type: 'checkbox',
+               option: 'match-some',
+               type: 'single',
+               values: [
+                 { value: color.label, color: color.swatchlabel }
+               ]
+             },
+             {
+               name: 'price',
+               label: 'Price',
+               type: 'slider',
+               option: 'match-some',
+               values: [
+                 { value: oldProductModel.price }
+               ]
+             },
+             {
+               name: 'safety',
+               label: 'Safety',
+               type: 'checkbox',
+               option: 'match-every',
+               values: test
+             }
+           ];
+
             product.color_name = color ? color.label : 'Default';
+            product.color = color ? color.label : 'Default';
             product.color_code = color ? color.swatchlabel : '#ffffff';
+            product.price = oldProductModel.price;
+            product.sku = oldProductModel.sku;
+            product.filter_groups = filterGroups;
 
             if (product.color_code.length && product.color_code.substring(0, 1) !== '#') {
               product.color_code = '#' + product.color_code;
