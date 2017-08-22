@@ -1,3 +1,5 @@
+<link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
+
 <dom-module id="dorel-section-product-usps">
   <template>
     <style>
@@ -93,69 +95,82 @@
 
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-magento-collect-custom-data
+      product-id="[[ productId ]]"
+      data="{{ uspsData }}"
+      type="usps"></dorel-magento-collect-custom-data>
+      
+    <template is="dom-if"
+      if="[[ uspsData.usps.length ]]">
 
-    <section class="section-product-usps layout horizontal center center-justified wrap"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-             tablet-medium$="{{ breakpoints.tabletMedium }}">
+      <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-      <template
-        is="dom-if"
-        if="[[ _hasValue(uspsData.title) ]]">
-        <h4 class="title">[[ uspsData.title ]]</h4>
-      </template>
+      <section class="section-product-usps layout horizontal center center-justified wrap"
+               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+               tablet-medium$="{{ breakpoints.tabletMedium }}">
 
-      <template
-        is="dom-if"
-        if="[[ uspsData.usps.length ]]">
-        <div class="row">
+        <template
+          is="dom-if"
+          if="[[ _hasValue(uspsData.title) ]]">
+          <h4 class="title">[[ uspsData.title ]]</h4>
+        </template>
 
-          <template
-            is="dom-repeat"
-            items="[[ uspsData.usps ]]"
-            as="usp">
+        <template
+          is="dom-if"
+          if="[[ uspsData.usps.length ]]">
+          <div class="row">
 
-            <div class="usp">
-              <div class="usp-wrapper">
+            <template
+              is="dom-repeat"
+              items="[[ uspsData.usps ]]"
+              as="usp">
 
-                <template
-                  is="dom-if"
-                  if="[[ _hasValue(usp.image) ]]">
-                  <iron-image class="usp-image"
-                              sizing="cover"
-                              fade="true"
-                              preload
-                              src$="[[ usp.image ]]">
-                  </iron-image>
-                </template>
-
-                <div class="usp-content">
+              <div class="usp">
+                <div class="usp-wrapper">
 
                   <template
                     is="dom-if"
-                    if="[[ _hasValue(usp.title) ]]">
-                    <h3 class="usp-title">[[ usp.title ]]</h3>
+                    if="[[ _hasValue(usp.image) ]]">
+                    <iron-image class="usp-image"
+                                sizing="cover"
+                                fade="true"
+                                preload
+                                src$="[[ usp.image ]]">
+                    </iron-image>
                   </template>
 
-                  <template
-                    is="dom-if"
-                    if="[[ _hasValue(usp.description) ]]">
-                    <div class="usp-description">
-                      <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
-                    </div>
-                  </template>
+                  <div class="usp-content">
+
+                    <template
+                      is="dom-if"
+                      if="[[ _hasValue(usp.title) ]]">
+                      <h3 class="usp-title">[[ usp.title ]]</h3>
+                    </template>
+
+                    <template
+                      is="dom-if"
+                      if="[[ _hasValue(usp.description) ]]">
+                      <div class="usp-description">
+                        <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
+                      </div>
+                    </template>
+                  </div>
                 </div>
               </div>
-            </div>
-          </template>
-        </div>
-      </template>
-    </section>
+            </template>
+          </div>
+        </template>
+      </section>
+    </template>
   </template>
   <script>
     Polymer({
       is: 'dorel-section-product-usps',
       properties: {
+
+        productId: {
+          type: Number
+        },
 
         /**
          * @attribute
@@ -164,10 +179,7 @@
          * with ACF/Wordpress data about the component
          */
         uspsData: {
-          type: Object,
-          value: function () {
-            return {};
-          }
+          type: Object
         }
       },
 
