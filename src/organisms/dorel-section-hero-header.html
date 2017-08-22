@@ -1,4 +1,5 @@
 <link rel="import" href="../molecules/dorel-hero-video.html">
+<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
 <dom-module id="dorel-section-hero-header">
   <template>
     <style>
@@ -55,17 +56,12 @@
       .content {
         @apply(--theme-grid-column);
         position: absolute;
-        top: 60%;
+        bottom: 25%;
         right: 0;
         text-align: right;
         padding: 0 1.5em;
 
         margin-top: 0;
-      }
-
-      dorel-cta {
-        float: right;
-        margin-top: 1.5em;
       }
 
       [screen-large] .image {
@@ -77,9 +73,6 @@
         bottom: 3em;
       }
 
-      [mobile-medium] dorel-cta {
-        margin-top: 0;
-      }
 
       [mobile-medium] .image {
         height: 25.5em;
@@ -138,12 +131,6 @@
         height: 13.5em;
       }
 
-      [mobile-small] dorel-cta, [mobile-medium] dorel-cta {
-        position: absolute;
-        right: .875em;
-        bottom: -1.5em;
-      }
-
       iron-image {
         background-color: var(--theme-brand-color-1);
       }
@@ -169,25 +156,19 @@
         <!-- Show video in header if there is a video -->
         <template is="dom-if" if="[[ heroHeaderData.video_id ]]">
           <dorel-hero-video video-id="[[ heroHeaderData.video_id ]]"
-                            thumbnail="[[ heroHeaderData.background_image ]]"></dorel-hero-video>
+                            thumbnail="[[ heroHeaderData.bynder_background_image ]]"></dorel-hero-video>
         </template>
 
-        <!-- Show image in headere if there is no video -->
+        <!-- Show image in header if there is no video -->
         <template is="dom-if" if="[[ !heroHeaderData.video_id ]]">
-          <iron-image class="image"
-                      sizing="cover"
-                      fade="true"
-                      preload
-                      src$="[[ heroHeaderData.background_image ]]"></iron-image>
+          <dorel-bynder-responsive-image
+            media-id="[[ heroHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
         </template>
       </template>
       <!-- Don't show video on smaller screens, just the image -->
       <template is="dom-if" if="{{ !screenLarge }}">
-        <iron-image class="image"
-                    sizing="cover"
-                    fade="true"
-                    preload
-                    src$="[[ heroHeaderData.background_image ]]"></iron-image>
+        <dorel-bynder-responsive-image
+          media-id="[[ heroHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
       </template>
       <div class="content-wrapper">
         <div class="content">
