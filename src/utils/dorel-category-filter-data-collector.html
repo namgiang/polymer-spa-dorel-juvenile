@@ -76,7 +76,16 @@
         var self = this;
         var filters = [];
         products.forEach(function(product) {
+          if(!product || !product.filter_groups || !product.filter_groups.length) {
+            return;
+          }
           product.filter_groups.forEach(function(group) {
+            if(!group.values || !group.values.length) {
+              return;
+            }
+            group.values = group.values.filter(function(item) {
+              return item.value;
+            });
             var index;
             var existingFilter = filters.find(function(item, i) {
               index = i;
@@ -85,7 +94,9 @@
             if(existingFilter) {
               filters[index].values = self._mergeArrays(existingFilter.values, group.values);
             } else {
-              filters.push(group);
+              if(group.values.length) {
+                filters.push(group);
+              }
             }
           })
         });

@@ -79,9 +79,9 @@
           if(product.child_products && product.child_products.length) {
             return product.child_products.some(function(childProduct) {
               return self.shouldShowProduct(childProduct, filters);
-            }) && self._resultByKey(filter.values, group.values, filter.key, group.option);
+            }) && self._resultByKey(filter.values, group.values, filter.key, group.type, group.option);
           } else {
-            return self._resultByKey(filter.values, group.values, filter.key, group.option);
+            return self._resultByKey(filter.values, group.values, filter.key, group.type, group.option);
           }
         });
       },
@@ -94,10 +94,10 @@
        * @param key - String
        * @returns Boolean
        */
-      _resultByKey: function(filterValues, productValues, key, option) {
+      _resultByKey: function(filterValues, productValues, key, type, option) {
         if(option === 'match-every') {
           return this._checkIfEveryValueMatches(filterValues, productValues);
-        } else if (key === 'price') {
+        } else if (type === 'slider') {
           return this._checkIfValueIsBigger(filterValues, productValues);
         } else {
           return this._checkIfSomeValueMatches(filterValues, productValues);
@@ -114,7 +114,7 @@
       _checkIfValueIsBigger: function(filterValues, productValues) {
           return productValues.some(function(productValue) {
             return filterValues.some(function(filterValue) {
-              return Number(filterValue.value) >= productValue.value;
+              return Number(filterValue.value) >= Number(productValue.value);
             });
           });
       },
