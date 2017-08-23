@@ -72,14 +72,11 @@
           return;
         }
 
-        /** map the page variable and check if it contains products
-          * if true - match the slug of the product page with the route.path
-          * if false - match the slug of the page with the route.path
-          * return the the item that matches
-        */
+        var url = (window.location.origin + this.route.path);
+        var fullUrl = url.slice(-1) === '/' ? url : url + '/';
 
-        this.currentPage = pages.find(function (item) {
-          return item.slug === self.page;
+        this.currentPage = pages.find(function(item) {
+          return item.link === fullUrl || item.slug === 'home' && self.page === 'home';
         });
 
         var last = this.currentPage ? '' : lastSegment;
