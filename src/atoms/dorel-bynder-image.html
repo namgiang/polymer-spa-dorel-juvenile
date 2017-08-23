@@ -4,35 +4,88 @@
     <style>
       :host {
         /* These can be overwritten in a encapsulating component */
-        --bynder-image-width: 16em;
-        --bynder-image-height: 9em;
-        width: var(--bynder-image-width);
-        height: var(--bynder-image-height);
+        --image-mobile-width: 16em;
+        --image-mobile-height: 9em;
+        --image-tablet-width: 16em;
+        --image-tablet-height: 9em;
+        --image-width: 16em;
+        --image-height: 9em;
+        --image-background-color: var(--theme-brand-color-1);
       }
 
       iron-image {
-        width: var(--bynder-image-width);
-        height: var(--bynder-image-height);
-        background-color: var(--theme-brand-color-1);
+        width: var(--image-mobile-width);
+        height: var(--image-mobile-height);
+        background-color: var(--image-background-color);
+      }
+
+      [tablet-small] iron-image {
+        width: var(--image-tablet-width);
+        height: var(--image-tablet-height);
+      }
+
+      [tablet-medium-up] iron-image {
+        width: var(--image-width);
+        height: var(--image-height);
       }
     </style>
 
     <!-- Handles the ajax call and returns the bynder data -->
     <dorel-bynder-collect-media media-id="[[ mediaId ]]"
                                 media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
-    <section class="section">
-      <iron-image sizing="cover"
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <iron-image sizing="[[ sizing ]]"
                   fade="true"
                   preload
                   placeholder$="[[ imagePlaceholder ]]"
                   src$="[[ imageSource ]]">
     </section>
   </template>
-
   <script>
     Polymer({
       is: 'dorel-bynder-image',
       properties: {
+        sizing: {
+          type: String,
+          value: 'cover'
+        },
+        /**
+         * @name mobileWidth
+         * @description The width for displaying the image on mobile (set as a css property)
+         */
+        mobileWidth: {
+          type: String,
+          value: '16em',
+        },
+        /**
+         * @name mobileHeight
+         * @description The height for displaying the image on mobile (set as a css property)
+         */
+        mobileHeight: {
+          type: String,
+          value: '9em',
+        },
+        /**
+         * @name tabletWidth
+         * @description The width for displaying the image on tablet (set as a css property)
+         */
+        tabletWidth: {
+          type: String,
+          value: '16em',
+        },
+        /**
+         * @name tabletHeight
+         * @description The height for displaying the image on tablet (set as a css property)
+         */
+        tabletHeight: {
+          type: String,
+          value: '9em',
+        },
         /**
          * @name width
          * @description The width for displaying the image (set as a css property)
@@ -109,9 +162,22 @@
        * @description Sets the image size according to given width and height properties
        */
       _setSize: function () {
+
+        var backgroundColor = 'transparent';
+        //No background color vor transparent images;
+        if (this.sizing !== 'contain') {
+          backgroundColor = this.getComputedStyleValue('--image-background-color');
+        }
+
+
         this.updateStyles({
-          '--bynder-image-width': this.width,
-          '--bynder-image-height': this.height,
+          '--image-mobile-width': this.mobileWidth,
+          '--image-mobile-height': this.mobileHeight,
+          '--image-tablet-width': this.tabletWidth,
+          '--image-tablet-height': this.tabletHeight,
+          '--image-width': this.width,
+          '--image-height': this.height,
+          '--image-background-color': backgroundColor,
         });
       },
       /**
