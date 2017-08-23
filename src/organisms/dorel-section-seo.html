@@ -1,0 +1,95 @@
+<dom-module id="dorel-section-seo">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        background-color: var(--theme-color-monochrome-2);
+      }
+
+      .seo-wrapper {
+        @apply(--max-width-container);
+        box-sizing: border-box;
+        display: block;
+        margin-top: 1.5em;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .column {
+        width: 100%;
+        padding: 4.5em var(--theme-gutter-mobile);
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        margin: 0;
+      }
+
+      .description {
+        @apply(--theme-paragraph-text);
+      }
+
+      /* tablet-medium-up */
+      .seo-wrapper[tablet-medium-up] {
+        margin-top: 3em;
+      }
+
+      [tablet-medium-up] .column {
+        padding: 6em var(--theme-gutter);
+      }
+
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+        margin: 0;
+      }
+
+      /* desktop-small-up */
+      [desktop-small-up] .column {
+        margin-left: calc(25% - .5em);
+      }
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div class="seo-wrapper layout horizontal center center-justified wrap"
+         desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="column ">
+        <h1 class="title">[[ metaTitle ]]</h1>
+        <h2 class="description">
+          <dorel-safe-html html="[[ metaDescription ]]"></dorel-safe-html>
+        </h2>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-seo',
+      properties: {
+
+        /**
+         * @attribute
+         * @name metaTitle
+         * @description String that is used by template
+         */
+        metaTitle: {
+          type: String,
+        },
+
+        /**
+         * @attribute
+         * @name metaDescription
+         * @description String that is used by template
+         * may contain inline html
+         */
+        metaDescription: {
+          type: String,
+        }
+
+      }
+
+    });
+  </script>
+</dom-module>
