@@ -159,7 +159,7 @@
                 if="{{ templateData.acf.show_filters_on_page }}">
                 <dorel-expandable-panel header="Filters" opened>
                   <dorel-category-filter
-                    filter-options="[[ templateData.acf ]]"
+                    filter-data="[[ getFilterData(templateData) ]]"
                     retrieving-products="[[ retrievingProducts ]]"
                     product-data="[[ products ]]">
                   </dorel-category-filter>
@@ -255,11 +255,32 @@
       },
 
       observers: [
-        '_setInitialProductSorting(templateData)'
+        '_templateDataChanged(templateData)'
       ],
-
       /**
        * observer
+       * @name _setInitialProductSorting
+       * @description will call functions
+       * @param templateData - Object
+       */
+      _templateDataChanged: function(templateData) {
+        this._setInitialProductSorting(templateData);
+      },
+
+      getFilterData: function(templateData) {
+        if(!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return [];
+        }
+        var magentoFilterSection = templateData.acf.page_builder.find(function(section) {
+          return section.acf_fc_layout === 'section_magento_filtering';
+        });
+        if(!magentoFilterSection || !magentoFilterSection.filter_groups) {
+          return [];
+        }
+        return magentoFilterSection.filter_groups;
+      },
+
+      /**
        * @name _setInitialProductSorting
        * @description will set the sort Object that will be used by the category-listing component
        * @param templateData - Object
@@ -270,10 +291,11 @@
           return;
         }
         var magentoSection = this.getComponent(templateData, 'section_magento');
-        this.sort = {
+        var sort = {
           type: magentoSection ? magentoSection.magento_product_sorting : 'name',
           order: magentoSection ? magentoSection.magento_sort_order : 'asc'
         };
+        this.set('sort', sort);
       },
 
       /**
