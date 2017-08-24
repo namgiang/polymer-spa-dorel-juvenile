@@ -132,12 +132,14 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="section-header"
-             text-header$="{{ textHeader }}"
-             info-header$="{{ infoHeader }}"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-             desktop-large$="{{ breakpoints.desktopLarge }}">
-
-      <dorel-bynder-responsive-image media-id="[[ sectionHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
+             text-header$="[[ textHeader ]]"
+             info-header$="[[ infoHeader ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-large$="[[ breakpoints.desktopLarge ]]">
+      <template is="dom-if" if="[[ !textHeader ]]">
+        <dorel-bynder-responsive-image
+          media-id="[[ sectionHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
+      </template>
       <div class="content-wrapper">
         <div class="content">
           <template is="dom-if" if="{{ _hasValue(sectionHeaderData.title) }}">
