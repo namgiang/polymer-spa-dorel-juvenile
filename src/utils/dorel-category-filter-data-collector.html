@@ -86,13 +86,11 @@
             group.values = group.values.filter(function(item) {
               return item.value;
             });
-            var index;
             var existingFilter = filters.find(function(item, i) {
-              index = i;
               return item.name === group.name;
             });
             if(existingFilter) {
-              filters[index].values = self._mergeArrays(existingFilter.values, group.values);
+              existingFilter.values = self._mergeArrays(existingFilter.values, group.values);
             } else {
               if(group.values.length) {
                 filters.push(group);

@@ -97,7 +97,8 @@
          */
         route: {
           type: Object,
-          notify: true
+          notify: true,
+          observer: '_resetQueryParams'
         },
 
         /**
@@ -132,6 +133,15 @@
 
       listeners: {
         'update-filter': '_setFilters'
+      },
+
+      _resetQueryParams: function(oldValue, newValue) {
+        if(!oldValue || !oldValue.path || !newValue || !newValue.path) {
+          return;
+        }
+        if(oldValue.path !== newValue.path) {
+          this.set('query', '')
+        }
       },
 
       /**

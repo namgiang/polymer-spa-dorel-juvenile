@@ -37,7 +37,7 @@
 
       observers: [
         '_getQueryParams(route, queryParams)'
-      ],
+      ], 
 
       /**
        * observer
@@ -95,6 +95,9 @@
        * @returns Boolean
        */
       _resultByKey: function(filterValues, productValues, key, type, option) {
+        if(!productValues) {
+          return false;
+        }
         if(option === 'match-every') {
           return this._checkIfEveryValueMatches(filterValues, productValues);
         } else if (type === 'slider') {
