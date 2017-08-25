@@ -1,9 +1,5 @@
 <dom-module id="dorel-category-filter-data-collector">
   <template>
-    <style include="iron-flex iron-flex-alignment">
-      :host {
-      }
-    </style>
   </template>
   <script>
     Polymer({
@@ -36,20 +32,11 @@
         filterGroups: {
           type: Array,
           notify: true
-        },
-
-        /**
-         * @name queryParams
-         * @description Object passed from parent
-         */
-        queryParams: {
-          type: Object
         }
-
       },
 
       observers: [
-        '_productDataChanged(productData, filterData)'
+        '_productDataChanged(productData)'
       ],
 
       /**
@@ -59,12 +46,12 @@
        * will set the filterData with response of _setFilters
        * @param products - Array
        */
-      _productDataChanged: function(products, filterData) {
-        if(!products || !products.length || !filterData) {
+      _productDataChanged: function(products) {
+        if(!products) {
           return;
         }
+        var filterData = this.get('filterData') ? this.get('filterData') : [];
         this.set('filterGroups', []);
-        var query = this.get('queryParams');
         var filterGroups = this._setFilters(products, filterData);
         this.set('filterGroups', filterGroups);
       },

@@ -83,6 +83,7 @@
         '_setChecked(queryParams)'
       ],
 
+
       /**
         * observer
        * @name _setInitalChecked
@@ -91,9 +92,11 @@
        * **/
       _setInitalChecked: function(filterData) {
         if(!filterData) {
+          this.set('checkboxes', []);
           return;
         }
         this.set('checkboxes', filterData.values);
+        this.notifyPath('checkboxes', this.checkboxes);
       },
 
       /**
@@ -113,8 +116,13 @@
             checkbox.checked = existsInParams;
             return checkbox;
           });
+          var self = this;
+          this.set('checkboxes', []);
+          checkboxes.forEach(function(checkbox) {
+            self.push('checkboxes', checkbox);
+          });
+          this.notifyPath('checkboxes', this.checkboxes);
 
-          this.set('checkboxes', checkboxes);
         }
       },
 
@@ -154,10 +162,9 @@
 
       _sort: function(val) {
         var self = this;
-
-        /* TODO remove below if sort_values is implemented in wordpress */
-        return function(a, b) {
-          return 0;
+        val = val[0];
+        if(!val || !val.type) {
+          return;
         }
         switch(val.type) {
             case 'color':
