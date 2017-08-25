@@ -118,7 +118,7 @@
                   <dorel-section-category-sidebar
                     category-sidebar-data="[[ component ]]"
                     gtm-parent="dorel-section-category-sidebar"
-                    gtm-parent-index="[[ index ]]"></dorel-section-product-sidebar>
+                    gtm-parent-index="[[ index ]]"></dorel-section-category-sidebar>
                 </template>
                 <!--// section-category-sidebar -->
               </template>
@@ -154,22 +154,27 @@
           type: Object,
           value: function () {
             return {};
-          }
+          },
+          observer: '_templateDataChanged'
         },
 
         products: {
           type: Array,
           value: []
         }
-
       },
-
-      observers: [
-        '_initProductsPage(globals.Dorel.collect.categories, globals.Dorel.collect.pages)'
-      ],
-
       /**
-       * @observer
+       * @name _templateDataChanged
+       * @description Observer for the template data. When it changes, the content will be updated.
+       */
+      _templateDataChanged: function () {
+        if (this.templateData.template === "product-category") {
+          var categories = Polymer.globalsManager.get('Dorel.collect.categories');
+          var pages = Polymer.globalsManager.get('Dorel.collect.pages');
+          this._initProductsPage(categories, pages);
+        }
+      },
+      /**
        * @name _initProductsPage
        * @description initializes all data for the category-listing. It matches the current
        * pages categoryId to the category in the categories collect. After that it will match
@@ -211,7 +216,6 @@
        * @returns Boolean if the two values match or not (true/false)
        */
       isPageComponent: function (response, cname) {
-
         // get last char
         var lastChar = response.substr(response.length - 1);
 
