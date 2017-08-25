@@ -8,7 +8,8 @@
                                 media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
     <section class="section">
       <dorel-responsive-image image-type="[[ imageType ]]"
-                              image-sources="[[ imageSources ]]"></dorel-responsive-image>
+                              image-sources="[[ imageSources ]]"
+                              alt="[[ alt ]]"></dorel-responsive-image>
     </section>
   </template>
 
@@ -65,6 +66,10 @@
             'large-landscape': 'extra large'
           }
         },
+        alt: {
+          type: String,
+          value: ''
+        }
       },
       /**
        * @name _getDefaultImageSources
@@ -112,6 +117,9 @@
 
         // Next, replace the default images with the correct derivatives if they are available
         this.imageSources = this._getMappedImageSources(sources, this.mediaContent);
+
+        // Set the Bynder description to this component's alt property
+        this.alt = this.mediaContent.description;
       }
     });
   </script>

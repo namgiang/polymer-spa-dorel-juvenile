@@ -42,6 +42,8 @@
       <iron-image sizing="[[ sizing ]]"
                   fade="true"
                   preload
+                  title$="[[ alt ]]"
+                  alt$="[[ alt ]]"
                   placeholder$="[[ imagePlaceholder ]]"
                   src$="[[ imageSource ]]">
     </section>
@@ -139,6 +141,14 @@
          */
         imagePlaceholder: {
           type: String,
+        },
+        /**
+         * @name alt
+         * @description Alt attribute for SEO
+         */
+        alt: {
+          type: String,
+          value: ''
         }
       },
       /**
@@ -146,6 +156,9 @@
        * @description Retrieves the correct image source in the Bynder data
        */
       _onMediaContentChanged: function () {
+        // Set the Bynder description to this component's alt propertys
+        this.alt = this.mediaContent.description;
+
         // Default to the root media thumbnail and webimage
         if (this.derivativeIdentifier === '') {
           this.imagePlaceholder = this.mediaContent.thumbnails.mini;
