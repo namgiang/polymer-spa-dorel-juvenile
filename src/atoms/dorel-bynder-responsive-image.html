@@ -49,19 +49,33 @@
         imageSources: {
           type: Object,
           notify: true
-        }
+        },
+        /**
+         * @name derivativeMapping
+         * @description The Dorel defined derivatives and the corresponding Bynder asset
+         * Note: This is subject to change once we get the correct derivatives.
+         */
+        derivativeMapping: {
+          type: Object,
+          value: {
+            'placeholder': 'mini',
+            'small-portrait': 'image mobile portrait',
+            'small-landscape': 'small',
+            'large-portrait': 'extra large',
+            'large-landscape': 'extra large'
+          }
+        },
       },
       /**
        * @name _getDefaultImageSources
        * @description Returns a dictionary with the given derivative labels and a default Bynder image
        */
-      _getDefaultImageSources: function (derivativeLabels, mediaContent) {
+      _getDefaultImageSources: function (mediaContent) {
         var imageSources = {};
 
-        // Fill up the imageSource with the default root webimage
-        for (var i = 0; i < derivativeLabels.length; i++) {
-          var derivativeLabel = derivativeLabels[i];
-          imageSources[derivativeLabel] = mediaContent.thumbnails.webimage;
+        //Default all the derivative values
+        for (var key in this.derivativeMapping) {
+          imageSources[key] = mediaContent.thumbnails.webimage;
         }
 
         // Set the placeholder with the mini thumbnail
@@ -75,18 +89,26 @@
        * with the correct Bynder derivative (if it exists)
        */
       _getMappedImageSources: function (imageSources, mediaContent) {
-        // TODO: check if derivative exists, and return the proper path.
-        // We still need more information on the derivative data to implement this correctly
+
+        var bynderDerivatives = mediaContent.thumbnails;
+
+        for (var key in this.derivativeMapping) {
+          var value = this.derivativeMapping[key];
+          // Maps the bynder derivative
+          if (bynderDerivatives.hasOwnProperty(value)) {
+            imageSources[key] = bynderDerivatives[value];
+          }
+        }
+
         return imageSources;
       },
       /**
        * @name _getImageSources
        * @description Maps the Bynder data into an object that is compatible with dorel-responsive-image
        */
-      _onMediaContentChanged: function() {
+      _onMediaContentChanged: function () {
         // First create a default image sources dictionary
-        var derivativeLabels = ['placeholder', 'small-portrait', 'small-landscape', 'large-portrait', 'large-landscape'];
-        var sources = this._getDefaultImageSources(derivativeLabels, this.mediaContent);
+        var sources = this._getDefaultImageSources(this.mediaContent);
 
         // Next, replace the default images with the correct derivatives if they are available
         this.imageSources = this._getMappedImageSources(sources, this.mediaContent);

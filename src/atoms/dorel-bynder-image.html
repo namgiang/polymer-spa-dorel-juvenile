@@ -153,8 +153,12 @@
         }
         // Retrieve the derivative if one is specified
         else {
-          // TODO: check if mediaContent exists, and return the proper derivative path.
-          // We still need more information on the derivative data to implement this correctly
+          var bynderDerivatives = this.mediaContent.thumbnails;
+          // Checks if the derivative exists
+          if (bynderDerivatives.hasOwnProperty(this.derivativeIdentifier)) {
+            this.imageSource = bynderDerivatives[this.derivativeIdentifier];
+
+          }
         }
       },
       /**
