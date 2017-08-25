@@ -54,14 +54,14 @@
       .section-heroes-image-overlay {
         position: absolute;
         right: 0;
-        width: 10em;
-        height: 28.5em;
-        width: calc(var(--theme-column-width) * 4);
+        left: initial;
         top: 10em;
         filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=12, OffY=12, Color='#444') ";
         filter: url(#drop-shadow);
         -webkit-filter: drop-shadow(-7px 12px 7px rgba(0, 0, 0, .15));
         filter: drop-shadow(-7px 12px 7px rgba(0, 0, 0, .15));
+        width: 33.333%;
+        height: auto;
       }
 
       .title {
@@ -196,22 +196,27 @@
             <!-- background-image -->
             <div class="image-parent">
               <div class="image-box">
-                <iron-image class="section-heroes-image"
-                            sizing="cover"
-                            fade="true"
-                            preload
-                            src$="[[ hero.background_image ]]">
-                </iron-image>
+                <dorel-bynder-image media-id="[[ hero.bynder_background_image ]]"
+                                    mobile-width="100%"
+                                    mobile-height="26em"
+                                    tablet-width="100%"
+                                    tablet-height="26em"
+                                    width="100%"
+                                    height="26em"></dorel-bynder-image>
               </div>
             </div>
           </div>
           <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
             <!-- overlay image -->
-            <iron-image class="section-heroes-image-overlay"
-                        sizing="contain"
-                        fade="true"
-                        preload
-                        src$="[[ hero.overlay_image ]]">
+            <dorel-bynder-image class="section-heroes-image-overlay"
+                                sizing="contain"
+                                media-id="[[ hero.bynder_overlay_image ]]"
+                                mobile-width="100%"
+                                mobile-height="28.5em"
+                                tablet-width="100%"
+                                tablet-height="28.5em"
+                                width="100%"
+                                height="28.5em"></dorel-bynder-image>
             </iron-image>
           </template>
 
@@ -242,9 +247,7 @@
 
     Polymer({
       is: 'dorel-section-heroes',
-
       properties: {
-
         /**
          * @attribute
          * @name heroesData

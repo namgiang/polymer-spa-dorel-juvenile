@@ -1,3 +1,5 @@
+<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+
 <dom-module id="dorel-section-header">
   <template>
     <style>
@@ -76,7 +78,6 @@
         width: auto;
       }
 
-
       [text-header] .image {
         display: none;
       }
@@ -84,7 +85,6 @@
       [text-header] .content, [text-header] .content-wrapper {
         position: initial;
       }
-
 
       /* Responsive behaviour */
 
@@ -132,15 +132,14 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="section-header"
-             text-header$="{{ textHeader }}"
-             info-header$="{{ infoHeader }}"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-             desktop-large$="{{ breakpoints.desktopLarge }}">
-      <iron-image class="image"
-                  sizing="cover"
-                  fade="true"
-                  preload
-                  src$="[[ sectionHeaderData.background_image ]]"></iron-image>
+             text-header$="[[ textHeader ]]"
+             info-header$="[[ infoHeader ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-large$="[[ breakpoints.desktopLarge ]]">
+      <template is="dom-if" if="[[ !textHeader ]]">
+        <dorel-bynder-responsive-image
+          media-id="[[ sectionHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
+      </template>
       <div class="content-wrapper">
         <div class="content">
           <template is="dom-if" if="{{ _hasValue(sectionHeaderData.title) }}">
@@ -152,6 +151,7 @@
           <template is="dom-if" if="{{ _hasValue(sectionHeaderData.text) }}">
             <dorel-safe-html html="[[ sectionHeaderData.text ]]"></dorel-safe-html>
           </template>
+          <!-- TODO: Potentially we will also need to support a CTA here-->
         </div>
       </div>
     </section>

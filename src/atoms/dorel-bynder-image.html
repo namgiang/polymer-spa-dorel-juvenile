@@ -1,0 +1,209 @@
+<link rel="import" href="../utils/dorel-bynder-collect-media.html">
+<dom-module id="dorel-bynder-image">
+  <template>
+    <style>
+      :host {
+        /* These can be overwritten in a encapsulating component */
+        --image-mobile-width: 16em;
+        --image-mobile-height: 9em;
+        --image-tablet-width: 16em;
+        --image-tablet-height: 9em;
+        --image-width: 16em;
+        --image-height: 9em;
+        --image-background-color: var(--theme-brand-color-1);
+      }
+
+      iron-image {
+        width: var(--image-mobile-width);
+        height: var(--image-mobile-height);
+        background-color: var(--image-background-color);
+      }
+
+      [tablet-small] iron-image {
+        width: var(--image-tablet-width);
+        height: var(--image-tablet-height);
+      }
+
+      [tablet-medium-up] iron-image {
+        width: var(--image-width);
+        height: var(--image-height);
+      }
+    </style>
+
+    <!-- Handles the ajax call and returns the bynder data -->
+    <dorel-bynder-collect-media media-id="[[ mediaId ]]"
+                                media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <iron-image sizing="[[ sizing ]]"
+                  fade="true"
+                  preload
+                  title$="[[ alt ]]"
+                  alt$="[[ alt ]]"
+                  placeholder$="[[ imagePlaceholder ]]"
+                  src$="[[ imageSource ]]">
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-bynder-image',
+      properties: {
+        sizing: {
+          type: String,
+          value: 'cover'
+        },
+        /**
+         * @name mobileWidth
+         * @description The width for displaying the image on mobile (set as a css property)
+         */
+        mobileWidth: {
+          type: String,
+          value: '16em',
+        },
+        /**
+         * @name mobileHeight
+         * @description The height for displaying the image on mobile (set as a css property)
+         */
+        mobileHeight: {
+          type: String,
+          value: '9em',
+        },
+        /**
+         * @name tabletWidth
+         * @description The width for displaying the image on tablet (set as a css property)
+         */
+        tabletWidth: {
+          type: String,
+          value: '16em',
+        },
+        /**
+         * @name tabletHeight
+         * @description The height for displaying the image on tablet (set as a css property)
+         */
+        tabletHeight: {
+          type: String,
+          value: '9em',
+        },
+        /**
+         * @name width
+         * @description The width for displaying the image (set as a css property)
+         */
+        width: {
+          type: String,
+          value: '16em',
+        },
+        /**
+         * @name height
+         * @description The height for displaying the image (set as a css property)
+         */
+        height: {
+          type: String,
+          value: '9em',
+        },
+        /**
+         * @name mediaId
+         * @description The ID used to retrieve the asset from Bynder
+         */
+        mediaId: {
+          type: String
+        },
+        /**
+         * @name mediaContent
+         * @description data coming from Bynder.
+         */
+        mediaContent: {
+          type: Object,
+          notify: true,
+          observer: '_onMediaContentChanged'
+        },
+        /**
+         * @name derivativeIdentifier
+         * @description The identifier to retrieve the correct derivative
+         */
+        derivativeIdentifier: {
+          type: String,
+          value: ''
+        },
+        /**
+         * @name imageSource
+         * @description The source of the image to be displayed
+         */
+        imageSource: {
+          type: String,
+        },
+        /**
+         * @name imagePlaceholder
+         * @description The image placeholder for the image
+         */
+        imagePlaceholder: {
+          type: String,
+        },
+        /**
+         * @name alt
+         * @description Alt attribute for SEO
+         */
+        alt: {
+          type: String,
+          value: ''
+        }
+      },
+      /**
+       * @name _onMediaContentChanged
+       * @description Retrieves the correct image source in the Bynder data
+       */
+      _onMediaContentChanged: function () {
+        // Set the Bynder description to this component's alt propertys
+        this.alt = this.mediaContent.description;
+
+        // Default to the root media thumbnail and webimage
+        if (this.derivativeIdentifier === '') {
+          this.imagePlaceholder = this.mediaContent.thumbnails.mini;
+          this.imageSource = this.mediaContent.thumbnails.webimage;
+        }
+        // Retrieve the derivative if one is specified
+        else {
+          var bynderDerivatives = this.mediaContent.thumbnails;
+          // Checks if the derivative exists
+          if (bynderDerivatives.hasOwnProperty(this.derivativeIdentifier)) {
+            this.imageSource = bynderDerivatives[this.derivativeIdentifier];
+
+          }
+        }
+      },
+      /**
+       * @name _setSize
+       * @description Sets the image size according to given width and height properties
+       */
+      _setSize: function () {
+
+        var backgroundColor = 'transparent';
+        //No background color vor transparent images;
+        if (this.sizing !== 'contain') {
+          backgroundColor = this.getComputedStyleValue('--image-background-color');
+        }
+
+
+        this.updateStyles({
+          '--image-mobile-width': this.mobileWidth,
+          '--image-mobile-height': this.mobileHeight,
+          '--image-tablet-width': this.tabletWidth,
+          '--image-tablet-height': this.tabletHeight,
+          '--image-width': this.width,
+          '--image-height': this.height,
+          '--image-background-color': backgroundColor,
+        });
+      },
+      /**
+       * @name attached
+       * @description Attached callback, sets the given image size
+       */
+      attached: function () {
+        this._setSize();
+      }
+    });
+  </script>
+</dom-module>

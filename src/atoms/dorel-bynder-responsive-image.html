@@ -1,0 +1,126 @@
+<link rel="import" href="dorel-responsive-image.html">
+<link rel="import" href="../utils/dorel-bynder-collect-media.html">
+
+<dom-module id="dorel-bynder-responsive-image">
+  <template>
+    <!-- Handles the ajax call and returns the bynder data -->
+    <dorel-bynder-collect-media media-id="[[ mediaId ]]"
+                                media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
+    <section class="section">
+      <dorel-responsive-image image-type="[[ imageType ]]"
+                              image-sources="[[ imageSources ]]"
+                              alt="[[ alt ]]"></dorel-responsive-image>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-bynder-responsive-image',
+      properties: {
+        /**
+         * @name mediaId
+         * @description The ID used to retrieve the asset from Bynder
+         */
+        mediaId: {
+          type: String
+        },
+        /**
+         * @attribute
+         * @name imageType
+         * @description Image types, defaults to wide-screen and can be set to full-screen
+         */
+        imageType: {
+          type: String,
+          value: 'wide-screen',
+          reflectToAttribute: true
+        },
+        /**
+         * @name mediaContent
+         * @description data coming from Bynder.
+         */
+        mediaContent: {
+          type: Object,
+          notify: true,
+          observer: '_onMediaContentChanged'
+        },
+        /**
+         * @name imageSources
+         * @description Various image derivatives and their source
+         */
+        imageSources: {
+          type: Object,
+          notify: true
+        },
+        /**
+         * @name derivativeMapping
+         * @description The Dorel defined derivatives and the corresponding Bynder asset
+         * Note: This is subject to change once we get the correct derivatives.
+         */
+        derivativeMapping: {
+          type: Object,
+          value: {
+            'placeholder': 'mini',
+            'small-portrait': 'image mobile portrait',
+            'small-landscape': 'small',
+            'large-portrait': 'extra large',
+            'large-landscape': 'extra large'
+          }
+        },
+        alt: {
+          type: String,
+          value: ''
+        }
+      },
+      /**
+       * @name _getDefaultImageSources
+       * @description Returns a dictionary with the given derivative labels and a default Bynder image
+       */
+      _getDefaultImageSources: function (mediaContent) {
+        var imageSources = {};
+
+        //Default all the derivative values
+        for (var key in this.derivativeMapping) {
+          imageSources[key] = mediaContent.thumbnails.webimage;
+        }
+
+        // Set the placeholder with the mini thumbnail
+        imageSources['placeholder'] = mediaContent.thumbnails.mini;
+
+        return imageSources;
+      },
+      /**
+       * @name _setMappedImageSources
+       * @description Returns a dictionary in which the default images have been replaced
+       * with the correct Bynder derivative (if it exists)
+       */
+      _getMappedImageSources: function (imageSources, mediaContent) {
+
+        var bynderDerivatives = mediaContent.thumbnails;
+
+        for (var key in this.derivativeMapping) {
+          var value = this.derivativeMapping[key];
+          // Maps the bynder derivative
+          if (bynderDerivatives.hasOwnProperty(value)) {
+            imageSources[key] = bynderDerivatives[value];
+          }
+        }
+
+        return imageSources;
+      },
+      /**
+       * @name _getImageSources
+       * @description Maps the Bynder data into an object that is compatible with dorel-responsive-image
+       */
+      _onMediaContentChanged: function () {
+        // First create a default image sources dictionary
+        var sources = this._getDefaultImageSources(this.mediaContent);
+
+        // Next, replace the default images with the correct derivatives if they are available
+        this.imageSources = this._getMappedImageSources(sources, this.mediaContent);
+
+        // Set the Bynder description to this component's alt property
+        this.alt = this.mediaContent.description;
+      }
+    });
+  </script>
+</dom-module>

@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
 <dom-module id="dorel-hero-video">
   <template>
     <style>
@@ -26,7 +27,7 @@
         overflow: hidden;
       }
 
-      .thumbnail-image {
+      dorel-bynder-responsive-image {
         width: 100%;
         height: 100%;
         position: absolute;
@@ -39,7 +40,7 @@
         transition: opacity .3s ease;
       }
 
-      .thumbnail-image[playing] {
+      dorel-bynder-responsive-image[playing] {
         opacity: 0;
       }
     </style>
@@ -64,9 +65,10 @@
                     on-google-youtube-state-change="handleStateChange"
                     on-google-youtube-error="handleYouTubeError">
     </google-youtube>
-    <div class="thumbnail-image"
-         playing$="[[ playbackstarted ]]"
-         style$="background-image:url('[[ thumbnail ]]');"></div>
+
+    <dorel-bynder-responsive-image
+      playing$="[[ playbackstarted ]]"
+      media-id="[[ thumbnail ]]" image-type="full-screen"></dorel-bynder-responsive-image>
   </template>
 </dom-module>
 <script>
