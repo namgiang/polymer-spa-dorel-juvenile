@@ -33,7 +33,7 @@
         id="checkboxes"
         items="[[ checkboxes ]]"
         restamp="true"
-        sort="{{_sort(filterData.sort_values)}}"
+        sort="{{_sort(filterData.sort_values_type)}}"
         as="checkbox">
         <div class="checkbox">
           <dorel-checkbox on-change="setFilters" checked="{{ checkbox.checked }}" label="[[ checkbox.value ]]" color-code="[[ checkbox.color ]]"></dorel-checkbox>
@@ -162,28 +162,28 @@
 
       _sort: function(val) {
         var self = this;
-        val = val[0];
-        if(!val || !val.type) {
+        var order = this.filterData.sort_values_order;
+        if(!val) {
           return;
         }
-        switch(val.type) {
+        switch(val) {
             case 'color':
               return function(a, b) {
-                if(val.order === 'descending') {
+                if(order === 'descending') {
                   return self._sortByColor(b, a);
                 }
                 return self._sortByColor(a, b);
               };
             case 'alphabetical':
               return function(a, b) {
-                if(val.order === 'descending') {
+                if(order === 'descending') {
                   return self._sortAlphabetical(b, a);
                 }
                 return self._sortAlphabetical(a, b);
               }
             case 'default':
               return function(a, b) {
-                if(val.order === 'descending') {
+                if(order === 'descending') {
                   return self._sortByOrder(b, a);
                 }
                 return self._sortByOrder(a, b);
