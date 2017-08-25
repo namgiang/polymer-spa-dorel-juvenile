@@ -37,7 +37,7 @@
 
       observers: [
         '_getQueryParams(route, queryParams)'
-      ], 
+      ],
 
       /**
        * observer
@@ -73,15 +73,22 @@
        */
       shouldShowProduct: function(product, filters) {
         var self = this;
+
+        var activeFilterGroups = Polymer.globalsManager.get('Dorel.product.activeFilterGroups');
+
         return filters.value.every(function(filter) {
           var group = self._findFilterGroup(product, filter.key);
           // if product has child_products check child_products too
+          var activeOption = activeFilterGroups.find(function(filterGroup){
+            return filterGroup.name === filter.key;
+          });
+          var option = activeOption && activeOption.option ? activeOption.option : group.option;
           if(product.child_products && product.child_products.length) {
             return product.child_products.some(function(childProduct) {
               return self.shouldShowProduct(childProduct, filters);
-            }) && self._resultByKey(filter.values, group.values, filter.key, group.type, group.option);
+            }) && self._resultByKey(filter.values, group.values, filter.key, group.type, option);
           } else {
-            return self._resultByKey(filter.values, group.values, filter.key, group.type, group.option);
+            return self._resultByKey(filter.values, group.values, filter.key, group.type, option);
           }
         });
       },
@@ -98,6 +105,7 @@
         if(!productValues) {
           return false;
         }
+
         if(option === 'match-every') {
           return this._checkIfEveryValueMatches(filterValues, productValues);
         } else if (type === 'slider') {

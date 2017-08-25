@@ -265,6 +265,11 @@
        */
       _templateDataChanged: function(templateData) {
         this._setInitialProductSorting(templateData);
+        if(!templateData) {
+          return;
+        }
+        var filterGroups = this.getComponent(templateData, 'section_magento_filtering', 'filter_groups');
+        Polymer.globalsManager.set('Dorel.product.activeFilterGroups', filterGroups);
       },
 
       /**
