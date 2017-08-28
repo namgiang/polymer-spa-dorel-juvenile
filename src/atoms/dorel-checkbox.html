@@ -1,5 +1,4 @@
-<link rel="import" href="../../bower_components/iron-checked-element-behavior/iron-checked-element-behavior.html">
-
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <dom-module id="dorel-checkbox">
   <template>
     <style>
@@ -8,86 +7,89 @@
         width: auto;
         position: relative;
         float: left;
-      }
 
-      :host([invalid]) span {
-        color: var(--theme-color-error);
-      }
+        --paper-checkbox-checked-color: var(--theme-brand-color-1);
+        --paper-checkbox-checkmark-color: var(--theme-monochrome-1);
+        --paper-checkbox-label-color: var(--theme-color-black);
+        --paper-checkbox-unchecked-color: var(--theme-color-black);
+        --paper-font-common-base: var(--theme-font);
 
-      label {
-        cursor: pointer;
-        margin-left: .5em;
-        transition: color .3s ease;
-      }
-
-      label:before {
-        box-sizing: border-box;
-        content: '';
-        background: var(--theme-color-white);
-        border: 1px solid var(--theme-color-monochrome-3);
-        display: inline-block;
-        width: auto;
-        cursor: pointer;
-        position: absolute;
-        width: 1.5em;
-        height: 1.5em;
-        top: 0;
-        left: 0;
-        border-radius: var(--theme-border-radius-1);
-        transition: border-color .3s ease;
-      }
-
-      label:after {
-        box-sizing: border-box;
-        opacity: 0.2;
-        content: '';
-        position: absolute;
-        width: 1em;
-        height: .5em;
-        background: transparent;
-        top: .375em;
-        left: .25em;
-        border: .125em solid var(--theme-brand-color-1);
-        border-top: none;
-        border-right: none;
-        transform: rotate(-45deg);
-        transition: opacity .3s ease;
-      }
-
-      label:hover {
-        color: var(--theme-brand-color-1);
-      }
-
-      label:hover:before {
-        border-color: var(--theme-brand-color-1)
-      }
-
-      input[type=checkbox]:checked + label:after {
-        opacity: 1;
-      }
-
-      input {
-        float: left;
-        display: inline-block;
-        width: 1.5em;
-        height: 1.5em;
-        font-size: 1em;
-        margin: 0;
       }
     </style>
 
-    <input type="checkbox" id="dorel-checkbox-input" on-click="_onCheck">
-    <label class="label" for="dorel-checkbox-input">Testing this</label>
+    <paper-checkbox checked="{{ checked }}"
+                    disabled="[[ disabled ]]"
+                    on-change="_onChangeHandler"
+                    noink>[[ label ]]
+    </paper-checkbox>
 
   </template>
   <script>
     Polymer({
       is: 'dorel-checkbox',
-      behaviors: [
-        Polymer.IronCheckedElementBehavior
+      properties: {
+        /**
+         * @name checked
+         * @description The checked state of the checkbox
+         */
+        checked: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        /**
+         * @name disabled
+         * @description The disabled state of the checkbox
+         */
+        disabled: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * @name label
+         * @description The checkbox label
+         */
+        label: {
+          type: String,
+          value: ''
+        },
+        /**
+         * @name colorCode
+         * @description The css variable used to color the checkbox
+         */
+        colorCode: {
+          type: String,
+          value: 'transparent'
+        }
+      },
+
+      observers: [
+        'updateColor(colorCode)'
       ],
-      _onCheck: function () {
-        this.checked = this.$.checkbox.checked;
+
+      ready: function() {
+        this.set('checked', false);
+      },
+
+      /**
+       * @name _onChangeHandler
+       * @description handles the on-change for the paper-checkbox, and fires an on-change from the dorel-checkbox upwards
+       */
+      _onChangeHandler: function (e, detail) {
+        this.fire('on-change');
+      },
+
+      /**
+       * @name attached
+       * @description Updates the styling if a color code is provided for the checkbox
+       */
+      updateColor: function(colorCode) {
+        var color = colorCode ? colorCode : this.getComputedStyleValue('--paper-checkbox-checked-color');
+        this.updateStyles({
+          '--paper-checkbox-unchecked-background-color': colorCode,
+          '--paper-checkbox-unchecked-color': colorCode,
+          '--paper-checkbox-checked-color': colorCode
+        });
       },
     });
   </script>

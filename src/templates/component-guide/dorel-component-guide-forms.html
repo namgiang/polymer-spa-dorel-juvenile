@@ -3,6 +3,8 @@
 <link rel="import" href="../../atoms/dorel-input-textarea.html">
 <link rel="import" href="../../atoms/dorel-input-select.html">
 <link rel="import" href="../../atoms/dorel-checkbox.html">
+<link rel="import" href="../../atoms/dorel-slider.html">
+<link rel="import" href="../../atoms/dorel-radio-group.html">
 
 <dom-module id="dorel-component-guide-forms">
   <template>
@@ -17,6 +19,32 @@
         float: left;
         width: 100%;
       }
+
+      dorel-checkbox {
+        display: block;
+        clear: both;
+      }
+
+      dorel-color-checkbox {
+        margin-bottom: 1.5em;
+        float: left;
+      }
+
+      dorel-slider {
+        width: 50%;
+        float: left;
+      }
+
+      dorel-radio-group {
+        margin-top: 1.5em;
+      }
+
+      .color-checkboxes dorel-checkbox {
+        float: left;
+        display: inline-block;
+        clear: initial;
+      }
+
     </style>
     <section class="content-container">
       <h1 class="class-for-h1">Forms</h1>
@@ -24,7 +52,44 @@
         Specifications for form and input elements
       </p>
       <hr>
-      <h2 class="class-for-h2">Input Field</h2>
+      <h2 class="class-for-h2">Radio Buttons</h2>
+      <p>A radio button group, based on the paper-radio-group.
+        <br>The currently selected option: <i>[[ radioSelected ]]</i>
+      </p>
+      <dorel-radio-group options="[[ radioOptions ]]"
+                         selected="{{ radioSelected }}">
+      </dorel-radio-group>
+      <hr>
+      <h2 class="class-for-h2">Checkboxes</h2>
+      <p>A regular checkbox accepting a <i>label</i> and a <i>checked</i> value in its attributes</p>
+      <form>
+        <dorel-checkbox label="Regular checkbox"></dorel-checkbox>
+        <dorel-checkbox label="Checked checkbox" checked="true"></dorel-checkbox>
+      </form>
+      <hr>
+      <h2 class="class-for-h2">Colored Checkboxes</h2>
+      <p>
+        A colored checkbox, based on a regular checkbox. An additional color code can be passed to this component, using
+        it's <i>color-code</i> attribute.
+      </p>
+      <form class="color-checkboxes">
+        <dorel-checkbox color-code="#a31e22"></dorel-checkbox>
+        <dorel-checkbox color-code="#e15b50"></dorel-checkbox>
+        <dorel-checkbox color-code="#ffbe5f"></dorel-checkbox>
+        <dorel-checkbox color-code="#008eb4"></dorel-checkbox>
+        <dorel-checkbox color-code="#013d54"></dorel-checkbox>
+      </form>
+      <hr>
+      <h2 class="class-for-h2">Slider</h2>
+      <p>The slider based on the paper-slider component</p>
+      <form>
+        <dorel-slider snaps max="8"
+                      max-markers="8"
+                      step="1"
+                      slider-value="2"></dorel-slider>
+      </form>
+      <hr>
+      <h2 class="class-for-h2">Input Fields</h2>
       <form>
         <dorel-input label="Regular input field"></dorel-input>
         <dorel-input label="Required input field" required></dorel-input>
@@ -35,7 +100,7 @@
         <dorel-input label="Disabled input field" disabled></dorel-input>
       </form>
       <hr>
-      <h2 class="class-for-h2">Textarea Field</h2>
+      <h2 class="class-for-h2">Textarea Fields</h2>
       <form>
         <dorel-input-textarea label="Regular Textarea"></dorel-input-textarea>
         <dorel-input-textarea label="Required Textarea"
@@ -47,7 +112,7 @@
                               disabled></dorel-input-textarea>
       </form>
       <hr>
-      <h2 class="class-for-h2">Select Input Field</h2>
+      <h2 class="class-for-h2">Select Input Fields</h2>
       <form>
         <dorel-input-select label="Regular Select Input"
                             options="[[ selectOptions ]]"></dorel-input-select>
@@ -62,17 +127,40 @@
                             options="[[ selectOptions ]]"
                             disabled></dorel-input-select>
       </form>
-      <h2 class="class-for-h2">Checkboxes</h2>
-      <form>
-        <dorel-checkbox label="Regular checkbox"></dorel-checkbox>
-      </form>
-      <hr>
     </section>
   </template>
   <script>
     Polymer({
       is: 'dorel-component-guide-forms',
       properties: {
+        /**
+         * @name radioSelected
+         * @description currently selected option for example radio button group
+         */
+        radioSelected: {
+          type: String,
+          value: 'medium',
+          notify: true,
+          readOnly: false,
+        },
+        /**
+         * @name radioOptions
+         * @description Dummy content for the radio button group
+         */
+        radioOptions: {
+          type: Array,
+          notify: true,
+          readOnly: false,
+          value: [
+            {'name': 'small', 'label': 'Small'},
+            {'name': 'medium', 'label': 'Medium'},
+            {'name': 'large', 'label': 'Large'}
+          ]
+        },
+        /**
+         * @name selectOptions
+         * @description Dummy content for select inputs
+         */
         selectOptions: {
           type: Array,
           value: [

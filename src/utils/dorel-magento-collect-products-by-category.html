@@ -1,15 +1,5 @@
-<dom-module id="dorel-magento-collect-products">
+<dom-module id="dorel-magento-collect-products-by-category">
   <template>
-
-    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
-
-    <dorel-product-color-map
-      color-map="{{ colorMap }}"
-      token="[[ token ]]"></dorel-product-color-map>
-
-    <dorel-product-data-model
-      id="transform"
-      color-map="[[ colorMap ]]"></dorel-product-data-model>
 
     <iron-ajax
       id="products"
@@ -18,18 +8,12 @@
       handle-as="json"
       on-response="_productResponse"></iron-ajax>
 
-    <iron-ajax
-      id="childProducts"
-      content-type="application/json"
-      method="get"
-      input="1"
-      handle-as="json"></iron-ajax>
 
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-magento-collect-products',
+      is: 'dorel-magento-collect-products-by-category',
 
       properties: {
 
@@ -43,16 +27,6 @@
           value: 0
         },
 
-        token: {
-          type: String,
-          value: ''
-        },
-
-        colorMap: {
-          type: Array,
-          value: []
-        },
-
         products: {
           type: Array,
           notify: true
@@ -60,34 +34,22 @@
 
         retrievingProducts: {
           type: Boolean,
-          notify: true,
-          value: true
+          notify: true
         }
-
       },
 
       observers: [
-        '_init(category, token, colorMap)'
+        '_init(category)'
       ],
 
       /**
        * @name _categoryChanged
        * @description will be called by observert;
        * @param category - Number
-       * @param token - String
-       * @param colorMap - Array
        */
-      _init: function(category, token, colorMap) {
+      _init: function(category) {
         // if category is empty we can't make the call return
         if(!category) {
-          return;
-        }
-        // if token is empty retreive the token _init will be triggered if token is retrieved
-        if(!token) {
-          return this.$.auth.retrieveToken();
-        }
-        // if colorMap is empty return _init will be triggered if colorMap is changed
-        if(!colorMap || !colorMap.length) {
           return;
         }
 
@@ -120,11 +82,8 @@
       _getProductsByCategory: function(category) {
         var productsEl = this.$.products;
           productsEl.headers = {Authorization: 'Bearer ' + this.token}
-          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products' +
-          '?searchCriteria[filter_groups][0][filters][0][field]=category_id' +
-          '&searchCriteria[filter_groups][0][filters][0][value]=' + this.category +
-          '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
-          '&searchCriteria[filter_groups][1][filters][0][value]=4';
+          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/category/' +
+          category + '/product/'
           productsEl.generateRequest();
       },
 
@@ -142,28 +101,17 @@
         this._addCategoryToretrievedCategories(category);
 
         //set products from response
-        var newProducts = response.detail.response.items;
+        var newProducts = response.detail.response;
 
         //if there are no products in response early return
-        if(!newProducts.length) {
+        if(!newProducts || !newProducts.length) {
           // set empty Array so parent will reset the products
           return this._setCurrentProducts([]);
+        } else {
+          this._setProducts(newProducts);
         }
 
-        // refer to this
-        var self = this;
 
-        // Map the newProducts the childProducts can be retrieved and added to the product
-        Promise.all(newProducts.map(function(product) {
-          // every product will return function with a new promise from iron-ajax
-          return self._getChildProducts(product.sku).then(function(data) {
-              // create new data model for product and return this to array
-              return self.$.transform.createDataModelProduct(product, category, data.response);
-          });
-        })).then(function(newProducts) {
-            // if promise.all is resolved call the setProducts
-            self._setProducts(newProducts);
-        });
       },
 
       /**
@@ -186,28 +134,12 @@
       },
 
       /**
-       * @name _getChildProducts
-       * @description this method call the magento end-point to retreive all the child products of the main product with the given `Id`
-       * @param id - String
-       */
-      _getChildProducts: function(id) {
-        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
-        var childProductsEl = this.$.childProducts;
-        childProductsEl.headers = {Authorization: 'Bearer ' + token};
-        //TODO Add end-point to config
-        childProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/configurable-products/' +
-        id + '/children';
-
-        return childProductsEl.generateRequest().completes;
-      },
-
-      /**
        * @name _setCurrentProducts
        * @description this method will set global current products;
        * @param products - Array
        */
       _setCurrentProducts: function(products) {
-        this.products = products;
+        this.set('products', products);
         this.set('retrievingProducts', false);
       },
 

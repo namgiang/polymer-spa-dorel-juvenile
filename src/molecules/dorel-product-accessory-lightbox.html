@@ -27,13 +27,14 @@
 
       .accessory-title {
         @apply(--theme-typography-4);
-        float: left;
         width: 100%;
         margin-top: 0;
         padding: 0 !important;
       }
 
       .accessory-description {
+        margin-top: 1.5rem;
+        display: flex;
         @apply(--theme-typography-2);
       }
 
@@ -176,28 +177,28 @@
                           src$="{{ currentAccessoryImage }}"></iron-image>
             </div>
 
-            <template is="dom-if" if="[[ accessoryLightboxData.childProducts.length ]]">
+            <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
               <dorel-color-switcher
                 current-image="{{ currentAccessoryImage }}"
-                colors-data="[[ accessoryLightboxData.childProducts ]]"></dorel-color-switcher>
+                colors-data="[[ accessoryLightboxData.child_products ]]"></dorel-color-switcher>
             </template>
 
             <div class="lightbox-description">
-              <template is="dom-if" if="[[ accessoryLightboxData.name ]]">
-                <h4 class="accessory-title">[[ accessoryLightboxData.name ]]</h4>
+              <template is="dom-if" if="[[ accessoryLightboxData.name.value ]]">
+                <h4 class="accessory-title">[[ accessoryLightboxData.name.value ]]</h4>
               </template>
 
               <template
                 is="dom-if"
-                if="{{ _hasValue(accessoryLightboxData.excerpt) }}">
+                if="{{ _hasValue(accessoryLightboxData.excerpt.value) }}">
                 <div class="accessory-description accessory-excerpt">
-                  <dorel-safe-html html="[[ accessoryLightboxData.excerpt ]]"></dorel-safe-html>
+                  <dorel-safe-html html="[[ accessoryLightboxData.excerpt.value ]]"></dorel-safe-html>
                 </div>
               </template>
 
-              <template is="dom-if" if="[[ accessoryLightboxData.description ]]">
+              <template is="dom-if" if="[[ accessoryLightboxData.description.value ]]">
                 <div class="accessory-description">
-                  <dorel-safe-html html="[[ accessoryLightboxData.description ]]"></dorel-safe-html>
+                  <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
                 </div>
               </template>
             </div>
@@ -237,28 +238,28 @@
                           src$="{{ currentAccessoryImage }}"></iron-image>
             </div>
             <div class="lightbox-description">
-              <template is="dom-if" if="[[ accessoryLightboxData.name ]]">
-                <h4 class="accessory-title">[[ accessoryLightboxData.name ]]</h4>
+              <template is="dom-if" if="[[ accessoryLightboxData.name.value ]]">
+                <h4 class="accessory-title">[[ accessoryLightboxData.name.value ]]</h4>
               </template>
 
               <template
                 is="dom-if"
-                if="{{ _hasValue(accessoryLightboxData.excerpt) }}">
+                if="{{ _hasValue(accessoryLightboxData.excerpt.value) }}">
                 <div class="accessory-description accessory-excerpt">
-                  <dorel-safe-html html="[[ accessoryLightboxData.excerpt ]]"></dorel-safe-html>
+                  <dorel-safe-html html="[[ accessoryLightboxData.excerpt.value ]]"></dorel-safe-html>
                 </div>
               </template>
 
-              <template is="dom-if" if="[[ accessoryLightboxData.description ]]">
+              <template is="dom-if" if="[[ accessoryLightboxData.description.value ]]">
                 <div class="accessory-description">
-                  <dorel-safe-html html="[[ accessoryLightboxData.description ]]"></dorel-safe-html>
+                  <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
                 </div>
               </template>
 
-              <template is="dom-if" if="[[ accessoryLightboxData.childProducts.length ]]">
+              <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
                 <dorel-color-switcher
                   current-image="{{ currentAccessoryImage }}"
-                  colors-data="[[ accessoryLightboxData.childProducts ]]"
+                  colors-data="[[ accessoryLightboxData.child_products ]]"
                   gtm-action="switch-color"
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"

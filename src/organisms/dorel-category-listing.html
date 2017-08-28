@@ -1,4 +1,5 @@
 <link rel="import" href="../molecules/dorel-category-listing-item.html">
+<link rel="import" href="../utils/dorel-category-filter-manager.html">
 
 <dom-module id="dorel-category-listing">
   <template>
@@ -58,6 +59,15 @@
         @apply(--theme-grid-row-margins);
       }
 
+      .no-products {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1.5em;
+        background-color: #f9f9f9;
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -66,22 +76,38 @@
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
+      <dorel-category-filter-manager
+        id="categoryManager"
+        filters="{{ filters }}">
+      </dorel-category-filter-manager>
+
       <section class="category-listing layout horizontal center center-justified wrap">
+
         <div class="row narrow-row">
           <template
             is="dom-repeat"
             items="[[ products ]]"
-            as="product">
+            as="product"
+            filter="[[ _filterProducts(filters.*) ]]"
+            observe="childProducts"
+            id="test"
+            rendered-item-count="{{ renderedCount }}">
             <dorel-category-listing-item
-              colors-data="[[ product.childProducts ]]"
+              colors-data="[[ product.child_products ]]"
               link-url="[[ product.url ]]"
-              product-name="[[ product.name ]]"
+              filters="[[ filters ]]"
+              product-name="[[ product.name.value ]]"
               gtm-parent="[[ gtmParent ]]"
               gtm-parent-index="[[ gtmParentIndex ]]"
               gtm-child="dorel-category-listing-item"
               gtm-child-index="[[ index ]]"></dorel-category-listing-item>
           </template>
           <dorel-loader loading="[[ retrievingProducts ]]"></dorel-loader>
+          <template is="dom-if" if="{{ checkIfProductsAreEmpty(renderedCount, retrievingProducts) }}">
+            <div class="no-products">
+              0 Results
+            </div>
+          </template>
         </div>
       </section>
     </div>
@@ -131,6 +157,15 @@
           type: Array,
           notify: true,
           value: function() { return []; }
+        },
+
+        filters: {
+          type: Array
+        },
+
+        renderedCount: {
+          type: Number,
+          notify: true
         }
       },
 
@@ -149,11 +184,11 @@
        */
       _setProducts: function(productsData, retrievingProducts) {
         if(!productsData.length || retrievingProducts) {
-          this.products = [];
+          this.set('products', []);
           return;
         }
         var products = this._sortProducts(productsData);
-        this.products = [];
+        this.set('products', []);
         var self = this;
         products.forEach(function(item) {
           self.push('products', item);
@@ -207,7 +242,34 @@
           // names must be equal
           return 0;
         });
+      },
+
+      /**
+       * @name _filterProducts
+       * @description A function that is used by the dom-repeat in the template
+       * @param filters - Array
+       * @returns Boolean if true show the product
+       */
+      _filterProducts: function(filters) {
+        var self = this;
+        return function(product) {
+          // if no filters are applied return true
+          if(!filters || !filters.base || !filters.base.length) {
+            return true;
+          }
+          // if there is no product return false
+          if (!product) {
+            return false;
+          }
+          // returns a Boolean - if true it will show the product
+          return self.$.categoryManager.shouldShowProduct(product, filters);
+        };
+      },
+
+      checkIfProductsAreEmpty: function(renderedCount, retrievingProducts) {
+        return Boolean(renderedCount !== 'undefined' && renderedCount === 0 && retrievingProducts === false);
       }
+
     });
   </script>
 
