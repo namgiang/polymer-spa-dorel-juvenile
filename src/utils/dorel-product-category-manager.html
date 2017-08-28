@@ -1,0 +1,52 @@
+<dom-module id="dorel-product-category-manager">
+  <script>
+    Polymer({
+      is: 'dorel-product-category-manager',
+
+      properties: {
+
+        /**
+         * @name category
+         * @description will be used to pass to parent
+         * output
+         */
+        category: {
+          type: Number,
+          notify: true,
+          value: null
+        },
+
+        /**
+         * @name categoryPage
+         * @description will be used for selecting the category
+         * input - inherited by parent
+         */
+        categoryPage: {
+          type: Object
+        }
+
+      },
+
+      observers: [
+        '_setProductCategory(categoryPage)'
+      ],
+
+      /**
+       * observer
+       * @name _setProductCategory
+       * @description will select the category if there is a magento section on the categoryPage
+       * @param categoryPage - Object
+       */
+      _setProductCategory: function(categoryPage) {
+        if(!categoryPage || !categoryPage.acf || !categoryPage.acf.page_builder || categoryPage.template !== 'product-category') {
+          return;
+        }
+        var magentoSection = categoryPage.acf.page_builder.find(function(item) {
+          return item.acf_fc_layout === 'section_magento';
+        });
+        var category = magentoSection.magento_category_picker;
+        this.category = typeof category === 'string' ? parseInt(category) : category;
+      }
+    });
+  </script>
+</dom-module>

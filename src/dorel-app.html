@@ -33,6 +33,9 @@
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
+<link rel="import" href="utils/dorel-main-routing.html">
+<link rel="import" href="utils/dorel-product-category-manager.html">
+
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
@@ -67,6 +70,7 @@
 
       iron-pages {
         margin: 0 auto;
+        min-height: 100vh;
       }
 
     </style>
@@ -106,9 +110,23 @@
       data="{{ routeData }}"
       tail="{{ subroute }}"></app-route>
 
+    <dorel-main-routing
+      route="[[ route ]]"
+      category-page="{{ categoryPage }}"
+      current-page="{{ currentPage }}">
+    </dorel-main-routing>
+
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
-      id="metaManager"></dorel-meta-manager>
+      current-page="[[ currentPage ]]"
+      id="metaManager">
+    </dorel-meta-manager>
+
+    <dorel-product-category-manager
+      category-page="[[ categoryPage ]]"
+      sort="{{ sort }}"
+      category="{{ category }}">
+    </dorel-product-category-manager>
 
     <dorel-header
       load-complete="[[ loadComplete ]]"
@@ -147,8 +165,8 @@
 
         <dorel-template-product-category
           name="product-category"
+          route="[[ subroute ]]"
           category="[[ category ]]"
-          sort="[[ sort ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
         <dorel-template-component-guide
@@ -217,13 +235,13 @@
           type: Object
         },
 
-        category: {
-          type: Number
-        },
-
-        sort: {
+        categoryPage: {
           type: Object
         },
+
+        category: {
+          type: Number
+        }
 
       },
 
@@ -232,9 +250,7 @@
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(route, globals.Dorel.collect.pages)',
-        '_pageChanged(page, currentPage)',
-        '_setCurrentPage(currentPage)',
+        '_pageChanged(currentPage)',
         '_brandChanged(brand)'
       ],
 
@@ -315,148 +331,26 @@
 
       /**
        * @observer
-       * @name _routePageChanged
-       * @description on url/route change get the first segment of the url
-       * then set it as the page. With those settings start the setCurrentPage
-       * which will change the iron-pages selected
-       *
-       * @param page - String - the route page string
-       * @param pages - Array - all the retrieved pages from WP
-       */
-      _routePageChanged: function (page, pages) {
-        // if the route is undefined
-        if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
-
-        //get first segment of url;
-        firstSegment = page.path.split( '/' )[1];
-
-        // get the a clean last segment of the route.path
-        page = page.path.match(/([^\/]*)\/*$/).pop();
-
-        // refer to this for find function
-        var self = this;
-
-        /**
-         * if last segment is undefined or empty string set to home,
-         * all others to segment
-         */
-        this.page = page || 'home';
-
-        // Matches the page to the component guide template
-        if (this.page === 'component-guide') {
-          this.currentPage = {
-            template: 'component-guide'
-          };
-          // break
-          return;
-        }
-
-        /** map the page variable and check if it contains products
-          * if true - match the slug of the product page with the route.path
-          * if false - match the slug of the page with the route.path
-          * return the the item that matches
-        */
-
-        this.currentPage = pages.find(function (item) {
-          return item.slug === self.page;
-        });
-
-        if(!this.currentPage && firstSegment.length) {
-          var parent = pages.find(function(item) {
-            return item.slug === firstSegment;
-          });
-
-          if(!parent) {
-            return this._setPageNotFound();
-          }
-          var options = parent.acf.page_builder.find(function(_item) {
-            return _item.acf_fc_layout === 'section_detail_page_template_selector';
-          });
-          if(!options) {
-            return this._setPageNotFound();
-          }
-
-          this.currentPage = pages.find(function(_page) {
-             return _page.template === options.select_detail_template || _page.template === 'product-detail';  //default
-          });
-
-        }
-
-        // when the page cannot be matched, it is always the 404
-        if (typeof this.currentPage === 'undefined') {
-          this._setPageNotFound();
-        } else {
-          this._setProductCategory(pages, firstSegment);
-        }
-      },
-
-      _setPageNotFound: function() {
-        // set the page to 404
-        this.page = '404';
-
-        // set the currentPage to 404
-        this.currentPage = {
-          template: '404',
-          acf: {
-            meta_title: '404',
-            meta_description: '404 - This page does not exist'
-          }
-        };
-      },
-
-      /**
-       * @observer
        * @name _pageChanged
        * @description when the page variable changes lazyload the page
        * or retrieve it all the way.
-       * @param page - string - the page we need to transition to
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function (page, currentPage) {
-        if (typeof page === 'undefined' || page === '' ||
-          typeof currentPage === 'undefined' || currentPage === '') return;
+      _pageChanged: function(currentPage) {
+        if (typeof currentPage === 'undefined' || currentPage === '') {
+          return;
+        }
 
-        // home route is eagerly loaded
-        if (page === 'home') {
-
+        if(currentPage.template === 'home') {
           this._ensureLazyLoaded();
-
-          // other routes are lazy loaded
         } else {
-          // don't include the home template twice (its loaded eagerly)
-          if (currentPage.template === 'home' ||
-            typeof currentPage.template === 'undefined') return;
-
-          // import the template on demand
           this.importHref(
             this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
             function () {
               this._ensureLazyLoaded();
             }, null, false);
-
         }
 
-      },
-
-      /**
-       * @observer
-       * @name _setCurrentPage
-       * @description set the current page in the globals
-       */
-      _setCurrentPage: function (currentPage) {
-
-        // set the global currentPage
-        Polymer.globalsManager.set('Dorel.current.page', currentPage);
-
-        if (currentPage !== undefined &&
-            currentPage.acf &&
-            currentPage.acf.meta_title &&
-            currentPage.acf.meta_description) {
-          this.$.metaManager.addMetaData({
-            metaTitle: currentPage.acf.meta_title,
-            metaDescription: currentPage.acf.meta_description
-          });
-        }
         // tracking of the pageload
         this._eventTracking();
       },
@@ -489,24 +383,6 @@
             });
           });
         }
-      },
-
-      _setProductCategory: function(pages, categoryName) {
-        var mainCategoryPage = pages.find(function(item) {
-          return item.slug === categoryName;
-        });
-        if(!mainCategoryPage || !mainCategoryPage.acf || !mainCategoryPage.acf.page_builder || mainCategoryPage.template !== 'product-category') {
-          return;
-        }
-        var magentoSection = mainCategoryPage.acf.page_builder.find(function(item) {
-          return item.acf_fc_layout === 'section_magento';
-        });
-        var category = magentoSection.magento_category_picker;
-        this.category = typeof category === 'string' ? parseInt(category) : category;
-        this.sort = {
-          type: magentoSection.magento_product_sorting,
-          order: magentoSection.magento_sort_order
-        };
       },
 
       /**
