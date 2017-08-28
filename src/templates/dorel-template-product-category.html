@@ -103,19 +103,10 @@
 
         <!-- iterate over page_builder components -->
         <template
-          is="dom-repeat"
-          items="[[ templateData.acf.page_builder ]]"
-          as="component"
-          targetFramerate="1000">
-
-          <!-- section-info-header -->
-          <template
-            is="dom-if"
-            if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
-            <dorel-section-header section-header-data="[[ component ]]" gtm-parent="dorel-section--header"
-                                  gtm-parent-index="[[ index ]]"></dorel-section-header>
-          </template>
-          <!--// section-info-header -->
+          is="dom-if"
+          if="{{ shouldShowComponent(templateData, 'section_category_header') }}">
+          <dorel-section-header section-header-data="[[ getComponent(templateData, 'section_category_header') ]]" gtm-parent="dorel-section--header"
+                                gtm-parent-index="[[ index ]]"></dorel-section-header>
         </template>
 
         <div class="container layout horizontal center center-justified wrap">
