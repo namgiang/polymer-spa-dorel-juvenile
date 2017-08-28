@@ -55,9 +55,17 @@
         var self = this;
         var filters = Object.keys(queryParams).map(function(key, value) {
           var filterItem = {};
-          filterItem.values = queryParams[key].split(',').map(function(value) {
-            return { value: value };
-          });
+          if(queryParams[key].split(' ').length >= 2) {
+            filterItem.values = queryParams[key].split(' ').map(function(value) {
+              return { value: value };
+            });
+            filterItem.option = 'match-every';
+          } else {
+            filterItem.values = queryParams[key].split(',').map(function(value) {
+              return { value: value };
+            });
+            filterItem.option = 'match-some';
+          }
           filterItem.key = key;
           return filterItem;
         });
@@ -73,15 +81,16 @@
        */
       shouldShowProduct: function(product, filters) {
         var self = this;
+
         return filters.value.every(function(filter) {
           var group = self._findFilterGroup(product, filter.key);
-          // if product has childProducts check childProducts too
-          if(product.childProducts && product.childProducts.length) {
-            return product.childProducts.some(function(childProduct) {
+          // if product has child_products check child_products too
+          if(product.child_products && product.child_products.length) {
+            return product.child_products.some(function(childProduct) {
               return self.shouldShowProduct(childProduct, filters);
-            }) && self._resultByKey(filter.values, group.values, filter.key, group.option);
+            }) && self._resultByKey(filter.values, group.values, filter.key, group.type, filter.option);
           } else {
-            return self._resultByKey(filter.values, group.values, filter.key, group.option);
+            return self._resultByKey(filter.values, group.values, filter.key, group.type, filter.option);
           }
         });
       },
@@ -94,10 +103,14 @@
        * @param key - String
        * @returns Boolean
        */
-      _resultByKey: function(filterValues, productValues, key, option) {
+      _resultByKey: function(filterValues, productValues, key, type, option) {
+        if(!productValues) {
+          return false;
+        }
+
         if(option === 'match-every') {
           return this._checkIfEveryValueMatches(filterValues, productValues);
-        } else if (key === 'price') {
+        } else if (type === 'slider') {
           return this._checkIfValueIsBigger(filterValues, productValues);
         } else {
           return this._checkIfSomeValueMatches(filterValues, productValues);
@@ -114,7 +127,7 @@
       _checkIfValueIsBigger: function(filterValues, productValues) {
           return productValues.some(function(productValue) {
             return filterValues.some(function(filterValue) {
-              return Number(filterValue.value) >= productValue.value;
+              return Number(filterValue.value) >= Number(productValue.value);
             });
           });
       },
@@ -129,7 +142,7 @@
       _checkIfSomeValueMatches: function(filterValues, productValues) {
         return productValues.some(function(productValue) {
           return filterValues.some(function(filterValue) {
-            return filterValue.value === productValue.value;
+            return filterValue.value === productValue.value.replace(/\s/g, '-');
           })
         });
       },

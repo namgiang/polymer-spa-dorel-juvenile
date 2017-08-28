@@ -63,7 +63,7 @@
 
          childProducts.forEach(function(childProduct) {
            var color = {
-             value: childProduct.color_name, color: childProduct.color_code
+             value: childProduct.color.name, color: childProduct.color.value
            }
            colorGroup.values.push(color);
          });
@@ -82,15 +82,33 @@
          var product = {
            sku: oldProductModel.sku,
            id: oldProductModel.id,
-           name: oldProductModel.name,
-           created_at: oldProductModel.created_at,
+           name: {
+             label: 'Name',
+             value: oldProductModel.name,
+           },
+           created_at: {
+             label: 'Created at:',
+             value: oldProductModel.created_at
+           },
            categories: [category],
-           childProducts: childProducts,
-           description: this._retrieveCustomAttribute(oldProductModel, 'description'),
-           age: this._retrieveCustomAttribute(oldProductModel, 'age'),
-           max_weight: this._retrieveCustomAttribute(oldProductModel, 'max_weight'),
+           child_products: childProducts,
+           description: {
+             label: 'description',
+             value: this._retrieveCustomAttribute(oldProductModel, 'description'),
+           },
+           age: {
+             label: 'Age',
+             value: this._retrieveCustomAttribute(oldProductModel, 'age')
+           },
+           max_weight: {
+             label: 'Max weight',
+             value: this._retrieveCustomAttribute(oldProductModel, 'max_weight')
+           },
            url: this._retrieveCustomAttribute(oldProductModel, 'url_key'),
-           excerpt: this._retrieveCustomAttribute(oldProductModel, 'short_description'),
+           excerpt: {
+             label: 'Excerpt',
+             value: this._retrieveCustomAttribute(oldProductModel, 'short_description')
+           },
            video_section: {
              video_id: this._retrieveCustomAttribute(oldProductModel, 'video_id')
            },
@@ -111,7 +129,7 @@
          };
 
          if(oldProductModel.product_links && oldProductModel.product_links.length) {
-           product.relatedProducts = this._getRelatedProducts(oldProductModel.product_links);
+           product.related_products = this._getRelatedProducts(oldProductModel.product_links);
          }
 
         //  product.size = this._retrieveCustomAttribute(oldProductModel, 'size');
@@ -148,6 +166,8 @@
               { value: 'airbags' }
             ]
 
+            var currentColor = '#' + color.swatchlabel;
+
            var filterGroups = [
              {
                name: 'color',
@@ -156,7 +176,7 @@
                option: 'match-some',
                type: 'single',
                values: [
-                 { value: color.label, color: color.swatchlabel }
+                 { value: color.label, color: currentColor }
                ]
              },
              {
@@ -177,19 +197,28 @@
              }
            ];
 
-            product.color_name = color ? color.label : 'Default';
-            product.color = color ? color.label : 'Default';
-            product.color_code = color ? color.swatchlabel : '#ffffff';
-            product.price = oldProductModel.price;
+            product.price = {
+              label: 'Price',
+              currency: '&euro;',
+              value: oldProductModel.price,
+            };
             product.sku = oldProductModel.sku;
             product.filter_groups = filterGroups;
 
-            if (product.color_code.length && product.color_code.substring(0, 1) !== '#') {
-              product.color_code = '#' + product.color_code;
+            product.color = {
+              name: color.label,
+              label: 'Color',
+              value: color.swatchlabel,
+              type: 'hex'
+            }
+
+            if (product.color.value.length && product.color.value.substring(0, 1) !== '#') {
+              product.color.value = '#' + product.color.value;
             }
           }
 
-          product.color_image = self._getMediaUrl(self._retrieveCustomAttribute(oldProductModel, 'image'));
+          product.images = {};
+          product.images.image = self._getMediaUrl(self._retrieveCustomAttribute(oldProductModel, 'image'));
           return product;
         });
       },

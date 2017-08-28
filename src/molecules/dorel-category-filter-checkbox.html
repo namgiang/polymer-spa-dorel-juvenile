@@ -33,9 +33,10 @@
         id="checkboxes"
         items="[[ checkboxes ]]"
         restamp="true"
+        sort="{{_sort(filterData.sort_values_type)}}"
         as="checkbox">
         <div class="checkbox">
-          <dorel-checkbox on-change="setFilters" checked="{{ checkbox.checked }}" label="[[ checkbox.value ]]" color-code="[[ checkbox.color ]]"></dorel-checkbox>
+          <dorel-checkbox on-change="setFilters" checked="{{ checkbox.checked }}" label="[[ checkbox.label ]]" color-code="[[ checkbox.color ]]"></dorel-checkbox>
         </div>
       </template>
     </div>
@@ -73,7 +74,7 @@
          */
         filterData: {
           type: Object
-        },
+        }
 
       },
 
@@ -81,6 +82,7 @@
         '_setInitalChecked(filterData)',
         '_setChecked(queryParams)'
       ],
+
 
       /**
         * observer
@@ -90,9 +92,11 @@
        * **/
       _setInitalChecked: function(filterData) {
         if(!filterData) {
+          this.set('checkboxes', []);
           return;
         }
         this.set('checkboxes', filterData.values);
+        this.notifyPath('checkboxes', this.checkboxes);
       },
 
       /**
@@ -104,7 +108,7 @@
        * @param queryParams - Object
        * **/
       _setChecked: function(queryParams) {
-        var checkboxParams = queryParams[this.filterData.name] ? queryParams[this.filterData.name].split(',') : [];
+        var checkboxParams = queryParams[this.filterData.name] ? queryParams[this.filterData.name].split(/[\s,]+/) : [];
         var filterData = this.get('filterData');
         if(filterData.values) {
           var checkboxes = filterData.values.map(function(checkbox){
@@ -112,7 +116,13 @@
             checkbox.checked = existsInParams;
             return checkbox;
           });
-          this.set('checkboxes', checkboxes);
+          var self = this;
+          this.set('checkboxes', []);
+          checkboxes.forEach(function(checkbox) {
+            self.push('checkboxes', checkbox);
+          });
+          this.notifyPath('checkboxes', this.checkboxes);
+
         }
       },
 
@@ -126,7 +136,7 @@
         var checkbox = this.$.checkboxes.itemForElement(e.target);
         var queryParams = this.queryParams || {};
 
-        var keyArray = queryParams[this.filterData.name] ?  queryParams[this.filterData.name].split(',') : [];
+        var keyArray = queryParams[this.filterData.name] ?  queryParams[this.filterData.name].split(/[\s,]+/) : [];
         var item = keyArray.indexOf(checkbox.value);
 
         if(item > -1) {
@@ -142,12 +152,98 @@
           if(!queryParams[this.filterData.name] || !queryParams[this.filterData.name].length) {
             queryParams[this.filterData.name] = [checkbox.value];
           } else {
-            keyArray.push(checkbox.value);
-            queryParams[this.filterData.name] = keyArray;
+            if(this.filterData.option === 'match-every') {
+              queryParams[this.filterData.name] = queryParams[this.filterData.name] + '+' + checkbox.value;
+            } else {
+              keyArray.push(checkbox.value);
+              queryParams[this.filterData.name] = keyArray;
+            }
           }
         }
 
         this.fire('update-filter', { value: queryParams });
+      },
+
+      _sort: function(val) {
+        var self = this;
+        var order = this.filterData.sort_values_order;
+        if(!val) {
+          return;
+        }
+        switch(val) {
+            case 'color':
+              return function(a, b) {
+                if(order === 'descending') {
+                  return self._sortByColor(b, a);
+                }
+                return self._sortByColor(a, b);
+              };
+            case 'alphabetical':
+              return function(a, b) {
+                if(order === 'descending') {
+                  return self._sortAlphabetical(b, a);
+                }
+                return self._sortAlphabetical(a, b);
+              }
+            case 'default':
+              return function(a, b) {
+                if(order === 'descending') {
+                  return self._sortByOrder(b, a);
+                }
+                return self._sortByOrder(a, b);
+              }
+          }
+      },
+
+      _sortByOrder: function(a, b) {
+        if(!a.order || !b.order) {
+          return 0;
+        }
+        a.order = Number(a.order);
+        b.order = Number(b.order);
+        return (a.order < b.order) ? -1 : (a.order > b.order) ? 1 : 0;
+      },
+
+      _sortAlphabetical: function(a, b) {
+         var textA = a.value.toUpperCase();
+         var textB = b.value.toUpperCase();
+         return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      },
+
+      _sortByColor: function(a, b) {
+        if(!a.color || !b.color) {
+          return 0;
+        }
+        a = a.color.substr(1);
+        b = b.color.substr(1);
+        var ax = parseInt(a,16)
+        if (isNaN(ax)) throw "First value is not a hexidecimal number"
+
+        var bx = parseInt(b,16)
+        if (isNaN(bx)) throw "Second value is not a hexidecimal number"
+
+        // easiest check
+        if (ax < bx) return -1
+        if (ax > bx) return  1
+
+        // If it's a really big hexadecimal number, such as a BSON ID,
+        // then parsing it creates the largest number javascript can handle: 2.5282188864409287e+28
+        // If they're both valid hex values, but both convert to that number, then a check on string length will be enough
+        if (typeof a == 'string' && typeof b == 'string') {
+          if (a.length < b.length) return -1
+          if (a.length > b.length) return  1
+        }
+
+        // otherwise, look through each character and figure out what's going on
+        var x, y, i, l
+        for (i = 0, l = a.length; i < l; i+=1) {
+          x = parseInt(a[i], 16)
+          y = parseInt(b[i], 16)
+          if (x < y) return -1
+          if (x > y) return  1
+        }
+
+        return 0
       }
 
     });

@@ -5,7 +5,7 @@
 <link rel="import" href="../organisms/dorel-category-submenu.html">
 <link rel="import" href="../organisms/dorel-category-filter.html">
 
-<link rel="import" href="../utils/dorel-magento-collect-products.html">
+<link rel="import" href="../utils/dorel-magento-collect-products-by-category.html">
 
 <dom-module id="dorel-template-product-category">
   <template>
@@ -109,10 +109,11 @@
       }
     </style>
 
-    <dorel-magento-collect-products
+    <dorel-magento-collect-products-by-category
       category="[[ category ]]"
       retrieving-products="{{ retrievingProducts }}"
-      products="{{ products }}"></dorel-magento-collect-products>
+      products="{{ products }}"></dorel-magento-collect-products-by-category>
+
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -129,7 +130,7 @@
 
             <template
               is="dom-if"
-              if="{{ getComponent(templateData, 'section_category_header') }}">
+              if="{{ shouldShowComponent(templateData, 'section_category_header') }}">
               <dorel-section-category-header
                 category-header-data="[[ getComponent(templateData, 'section_category_header') ]]"
                 gtm-parent="dorel-section-category-header"
@@ -146,19 +147,19 @@
             <div class="sidebar">
               <template
                 is="dom-if"
-                if="{{ templateData.acf.show_sub_category_menu }}">
+                if="{{ shouldShowComponent(templateData, 'section_sub_categories', 'sub_menu') }}">
                 <dorel-expandable-panel header="Subcategories" opened>
                   <dorel-category-submenu
-                    items="[[ templateData.acf.sub_category_menu ]]">
+                    items="[[ getComponent(templateData, 'section_sub_categories', 'sub_menu') ]]">
                   </dorel-category-submenu>
                 </dorel-expandable-panel>
               </template>
               <template
                 is="dom-if"
-                if="{{ templateData.acf.show_filters_on_page }}">
+                if="{{ shouldShowComponent(templateData, 'section_magento_filtering', 'filter_groups') }}">
                 <dorel-expandable-panel header="Filters" opened>
                   <dorel-category-filter
-                    filter-options="[[ templateData.acf ]]"
+                    filter-data="[[ getComponent(templateData, 'section_magento_filtering', 'filter_groups') ]]"
                     retrieving-products="[[ retrievingProducts ]]"
                     product-data="[[ products ]]">
                   </dorel-category-filter>
@@ -169,7 +170,7 @@
             <div class="content">
               <template
                 is="dom-if"
-                if="{{ getComponent(templateData, 'section_magento') }}">
+                if="{{ shouldShowComponent(templateData, 'section_magento') }}">
                   <dorel-category-listing
                     products-data="[[ products ]]"
                     retrieving-products="[[ retrievingProducts ]]"
@@ -254,11 +255,50 @@
       },
 
       observers: [
-        '_setInitialProductSorting(templateData)'
+        '_templateDataChanged(templateData)'
       ],
-
       /**
        * observer
+       * @name _setInitialProductSorting
+       * @description will call functions
+       * @param templateData - Object
+       */
+      _templateDataChanged: function(templateData) {
+        this._setInitialProductSorting(templateData);
+        if(!templateData) {
+          return;
+        }
+      },
+
+      /**
+       * @name getComponent
+       * @description will be used to select the correct component from the page builder
+       * @param templateData - Object
+       * @param selector - String
+       * @param key - Optional
+       * @returns returns a Object that will be used by the template
+       */
+      getComponent: function(templateData, selector, key) {
+        if(!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return [];
+        }
+        var pageBuilderComponent = templateData.acf.page_builder.find(function(section) {
+          return section.acf_fc_layout === selector;
+        });
+        if(!pageBuilderComponent) {
+          return null;
+        }
+        return key ? pageBuilderComponent[key] : pageBuilderComponent;
+      },
+
+      shouldShowComponent: function(templateData, selector, key) {
+        var data = this.getComponent(templateData, selector, key);
+        // if a key is provided check if it has items in the array otherwise only check if defined
+        var check = key ? data && data.length : data;
+        return Boolean(data);
+      },
+
+      /**
        * @name _setInitialProductSorting
        * @description will set the sort Object that will be used by the category-listing component
        * @param templateData - Object
@@ -269,58 +309,11 @@
           return;
         }
         var magentoSection = this.getComponent(templateData, 'section_magento');
-        this.sort = {
+        var sort = {
           type: magentoSection ? magentoSection.magento_product_sorting : 'name',
           order: magentoSection ? magentoSection.magento_sort_order : 'asc'
         };
-      },
-
-      /**
-       * @name getComponent
-       * @description will be used to select the correct component from the page builder
-       * @param templateData - Object
-       * @param componentName - String
-       * @returns returns a Object that will be used by the template
-       */
-      getComponent: function(templateData, componentName) {
-        if(!templateData || !templateData.acf ||
-          !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
-          return;
-        }
-        return templateData.acf.page_builder.find(function(component) {
-          return component.acf_fc_layout === componentName;
-        });
-      },
-
-
-      /**
-       * @name isPageComponent
-       * @description compares to values to see if they match, for some
-       * components they can be doubled. They will always be suffixed with
-       * their number like section_multi and section_multi_2. In those
-       * cases we need to treat them as section_multi's.
-       *
-       * @returns Boolean if the two values match or not (true/false)
-       */
-      isPageComponent: function (response, cname) {
-
-        // get last char
-        var lastChar = response.substr(response.length - 1);
-
-        // find out if it is a number
-        var isNumber = !isNaN(Number(lastChar));
-
-        // if it is a number treat it accordingly
-        if (isNumber) {
-          var keyArr = response.split('_');
-          keyArr.pop();
-          strippedResponse = keyArr.join('_');
-
-          return strippedResponse === cname;
-        }
-
-        // all other cases just compare them
-        return response === cname;
+        this.set('sort', sort);
       }
     });
   </script>
