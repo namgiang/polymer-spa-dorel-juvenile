@@ -1,10 +1,10 @@
 <link rel="import" href="../atoms/dorel-expandable-panel.html">
-
 <link rel="import" href="../organisms/dorel-category-listing.html">
-<link rel="import" href="../organisms/dorel-section-category-header.html">
+<link rel="import" href="../organisms/dorel-section-header.html">
+<link rel="import" href="../organisms/dorel-section-category-sidebar.html">
+<link rel="import" href="../utils/dorel-magento-collect-products.html">
 <link rel="import" href="../organisms/dorel-category-submenu.html">
 <link rel="import" href="../organisms/dorel-category-filter.html">
-
 <link rel="import" href="../utils/dorel-magento-collect-products-by-category.html">
 
 <dom-module id="dorel-template-product-category">
@@ -54,34 +54,9 @@
         margin: 0;
       }
 
-      dorel-section-category-header {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        order: 0;
-        margin-top: 0;
-      }
-
-      dorel-section-category-sidebar {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        order: 1;
-        margin-top: 1.5em;
-      }
-
       dorel-layout-section dorel-page-builder {
         width: 100%;
         display: flex;
-      }
-
-      [desktop-small-up] dorel-section-category-header {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 12);
-        flex-basis: calc(var(--theme-column-width) * 12);
-        max-width: calc(var(--theme-column-width) * 12);
-        order: 0;
       }
 
       [tablet-medium-up] .container {
@@ -97,15 +72,15 @@
       }
 
       [desktop-small-up] .content {
-        -ms-flex-preferred-size: calc( var(--theme-column-width) * 9 );
-        flex-basis: calc( var(--theme-column-width) * 9 );
-        max-width:  calc( var(--theme-column-width) * 9 );
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
+        flex-basis: calc(var(--theme-column-width) * 9);
+        max-width: calc(var(--theme-column-width) * 9);
       }
 
       [desktop-small-up] .sidebar {
-        -ms-flex-preferred-size: calc( var(--theme-column-width) * 3 );
-        flex-basis: calc( var(--theme-column-width) * 3 );
-        max-width:  calc( var(--theme-column-width) * 3 );
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
       }
     </style>
 
@@ -125,24 +100,31 @@
         is="dom-if"
         if="{{ templateData.acf.page_builder.length }}">
 
+
+        <!-- iterate over page_builder components -->
+        <template
+          is="dom-repeat"
+          items="[[ templateData.acf.page_builder ]]"
+          as="component"
+          targetFramerate="1000">
+
+          <!-- section-info-header -->
+          <template
+            is="dom-if"
+            if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
+            <dorel-section-header section-header-data="[[ component ]]" gtm-parent="dorel-section--header"
+                                  gtm-parent-index="[[ index ]]"></dorel-section-header>
+          </template>
+          <!--// section-info-header -->
+        </template>
+
         <div class="container layout horizontal center center-justified wrap">
           <div class="row">
-
-            <template
-              is="dom-if"
-              if="{{ shouldShowComponent(templateData, 'section_category_header') }}">
-              <dorel-section-category-header
-                category-header-data="[[ getComponent(templateData, 'section_category_header') ]]"
-                gtm-parent="dorel-section-category-header"
-                gtm-parent-index="[[ index ]]"></dorel-section-category-header>
-            </template>
-
             <div class="top-nav">
               <template is="dom-if" if="{{ renderedCount !== 'undefined' }}">
                 <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
               </template>
             </div>
-
 
             <div class="sidebar">
               <template
@@ -171,29 +153,27 @@
               <template
                 is="dom-if"
                 if="{{ shouldShowComponent(templateData, 'section_magento') }}">
-                  <dorel-category-listing
-                    products-data="[[ products ]]"
-                    retrieving-products="[[ retrievingProducts ]]"
-                    sort="[[ sort ]]"
-                    rendered-count="{{ renderedCount }}"
-                    gtm-parent="dorel-category-listing"
-                    gtm-parent-index="2"></dorel-category-listing>
+                <dorel-category-listing
+                  products-data="[[ products ]]"
+                  retrieving-products="[[ retrievingProducts ]]"
+                  sort="[[ sort ]]"
+                  rendered-count="{{ renderedCount }}"
+                  gtm-parent="dorel-category-listing"
+                  gtm-parent-index="2"></dorel-category-listing>
               </template>
             </div>
 
-          </template>
-          <template
-            is="dom-if"
-            if="{{ templateData.acf.title }}">
-            <dorel-section-seo
-              meta-title="[[ templateData.acf.title ]]"
-              meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
-          </template>
-        </div>
-        </div>
-      </div>
-
-
+      </template>
+      <template
+        is="dom-if"
+        if="{{ templateData.acf.title }}">
+        <dorel-section-seo
+          meta-title="[[ templateData.acf.title ]]"
+          meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
+      </template>
+    </div>
+    </div>
+    </div>
 
 
   </template>
@@ -263,9 +243,9 @@
        * @description will call functions
        * @param templateData - Object
        */
-      _templateDataChanged: function(templateData) {
+      _templateDataChanged: function (templateData) {
         this._setInitialProductSorting(templateData);
-        if(!templateData) {
+        if (!templateData) {
           return;
         }
       },
@@ -278,20 +258,20 @@
        * @param key - Optional
        * @returns returns a Object that will be used by the template
        */
-      getComponent: function(templateData, selector, key) {
-        if(!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+      getComponent: function (templateData, selector, key) {
+        if (!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
           return [];
         }
-        var pageBuilderComponent = templateData.acf.page_builder.find(function(section) {
+        var pageBuilderComponent = templateData.acf.page_builder.find(function (section) {
           return section.acf_fc_layout === selector;
         });
-        if(!pageBuilderComponent) {
+        if (!pageBuilderComponent) {
           return null;
         }
         return key ? pageBuilderComponent[key] : pageBuilderComponent;
       },
 
-      shouldShowComponent: function(templateData, selector, key) {
+      shouldShowComponent: function (templateData, selector, key) {
         var data = this.getComponent(templateData, selector, key);
         // if a key is provided check if it has items in the array otherwise only check if defined
         var check = key ? data && data.length : data;
@@ -303,9 +283,8 @@
        * @description will set the sort Object that will be used by the category-listing component
        * @param templateData - Object
        */
-      _setInitialProductSorting: function(templateData) {
-        if(!templateData || !templateData.acf ||
-          !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+      _setInitialProductSorting: function (templateData) {
+        if (!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
           return;
         }
         var magentoSection = this.getComponent(templateData, 'section_magento');
