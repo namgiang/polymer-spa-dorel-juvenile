@@ -108,7 +108,7 @@
        * @param queryParams - Object
        * **/
       _setChecked: function(queryParams) {
-        var checkboxParams = queryParams[this.filterData.name] ? queryParams[this.filterData.name].split(',') : [];
+        var checkboxParams = queryParams[this.filterData.name] ? queryParams[this.filterData.name].split(/[\s,]+/) : [];
         var filterData = this.get('filterData');
         if(filterData.values) {
           var checkboxes = filterData.values.map(function(checkbox){
@@ -136,7 +136,7 @@
         var checkbox = this.$.checkboxes.itemForElement(e.target);
         var queryParams = this.queryParams || {};
 
-        var keyArray = queryParams[this.filterData.name] ?  queryParams[this.filterData.name].split(',') : [];
+        var keyArray = queryParams[this.filterData.name] ?  queryParams[this.filterData.name].split(/[\s,]+/) : [];
         var item = keyArray.indexOf(checkbox.value);
 
         if(item > -1) {
@@ -152,8 +152,12 @@
           if(!queryParams[this.filterData.name] || !queryParams[this.filterData.name].length) {
             queryParams[this.filterData.name] = [checkbox.value];
           } else {
-            keyArray.push(checkbox.value);
-            queryParams[this.filterData.name] = keyArray;
+            if(this.filterData.option === 'match-every') {
+              queryParams[this.filterData.name] = queryParams[this.filterData.name] + '+' + checkbox.value;
+            } else {
+              keyArray.push(checkbox.value);
+              queryParams[this.filterData.name] = keyArray;
+            }
           }
         }
 
