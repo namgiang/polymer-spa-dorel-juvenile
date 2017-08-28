@@ -6,7 +6,7 @@
         float: left;
         width: 100%;
       }
-      
+
     </style>
 
     <template
@@ -58,15 +58,19 @@
           type: Object,
           value: function () {
             return {};
-          }
+          },
+          observer: '_onCategorySidebarDataChanged'
         }
-
       },
-
-      ready: function () {
-        this.contentWrappers = this.categorySidebarData.sidebar[0].content_wrappers;
+      /**
+       * @name _onCategorySidebarDataChanged
+       * @description Observer to the sidebardata, sets the right content when changed.
+       */
+      _onCategorySidebarDataChanged: function () {
+        if (this.categorySidebarData.hasOwnProperty('sidebar')) {
+          this.contentWrappers = this.categorySidebarData.sidebar[0].content_wrappers;
+        }
       },
-
       /**
        * @name _hasSidebar
        * @description checks to see if the sidebar and the content_wrap has items
@@ -74,7 +78,7 @@
        * @returns Boolean
        */
       _hasSidebar: function (sidebar) {
-        if(typeof sidebar !== 'undefined' && sidebar.length > 0){
+        if (typeof sidebar !== 'undefined' && sidebar.length > 0) {
           return sidebar[0].content_wrappers.length;
         }
 
