@@ -31,7 +31,7 @@
       </div>
       <template is="dom-if" if="[[ isSet(sliderValue, 'true') ]]">
         <div class="price-indicator">
-          Max: €[[ sliderValue ]],-
+          Max: &euro;[[ sliderValue ]],-
         </div>
       </template>
       <template is="dom-if" if="[[ isSet(sliderValue, 'false') ]]">
@@ -42,8 +42,9 @@
       <dorel-slider class="slider"
                     snaps
                     max="[[ maxAmount ]]"
+                    min="[[ minAmount ]]"
                     max-markers="8"
-                    step="5"
+                    step="1"
                     slider-value="{{ sliderValue }}">
       </dorel-slider>
     </div>
@@ -79,7 +80,8 @@
          * @description Object passed by parent that contains the filters
          */
         filterData: {
-          type: Object
+          type: Object,
+          observer: '_setInitial'
         },
 
         /**
@@ -90,6 +92,10 @@
          */
         maxAmount: {
           type: Number
+        },
+
+        minAmount: {
+          type: Number
         }
 
       },
@@ -97,6 +103,25 @@
       observers: [
         '_setSlider(sliderValue, filterData)',
       ],
+
+      _setInitial: function(filterData, newFilterdata) {
+        if(!this.filterData || !this.filterData.name) {
+          return;
+        }
+        if(this.filterData.values && this.filterData.values.length && !newFilterdata) {
+          var maxAmount = 0;
+          var amounts = this.filterData.values.map(function(item) {
+            return item.value;
+          });
+          var higestAmount = Math.max.apply(Math, amounts);
+          var lowestAmount = Math.min.apply(Math, amounts);
+          var string = lowestAmount.toString().split('.')[0];
+          lowestAmount = Number(string);
+          this.set('maxAmount', higestAmount);
+          this.set('sliderValue', higestAmount);
+          this.set('minAmount', lowestAmount);
+        }
+      },
 
       /**
        * observer
@@ -106,24 +131,12 @@
        * @param sliderValue - Number
        * @param filterData - Object
        **/
-      _setSlider: function(sliderValue, filterData) {
-        if(!this.filterData || !this.filterData.name) {
-          return;
-        }
-        if(this.filterData.values && this.filterData.values.length) {
-          var maxAmount = 0;
-          var amounts = this.filterData.values.map(function(item) {
-            return item.value;
-          });
-          var higestAmount = Math.max.apply(Math, amounts);
-          this.set('maxAmount', higestAmount);
-        }
+      _setSlider: function(sliderValue) {
         var queryParams = this.queryParams || {};
-        var filterSort = this.filterData.name;
 
         var exists = queryParams[this.filterData.name] ? queryParams[this.filterData.name] : null;
 
-        if(sliderValue === 0 && exists) {
+        if(sliderValue === 0 && exists || this.maxAmount === sliderValue) {
           delete queryParams[this.filterData.name];
         } else {
           queryParams[this.filterData.name] = sliderValue;
@@ -135,7 +148,7 @@
         if(boolean === 'true') {
           return Boolean(sliderValue > 0)
         }
-        return Boolean(sliderValue === 0) 
+        return Boolean(sliderValue === 0)
       }
 
     });
