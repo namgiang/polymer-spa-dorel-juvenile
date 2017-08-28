@@ -55,16 +55,16 @@
         var self = this;
         var filters = Object.keys(queryParams).map(function(key, value) {
           var filterItem = {};
-          if(queryParams[key].split(',').length > 1) {
-            filterItem.values = queryParams[key].split(',').map(function(value) {
-              return { value: value };
-            });
-            filterItem.option = 'match-some';
-          } else {
+          if(queryParams[key].split(' ').length >= 2) {
             filterItem.values = queryParams[key].split(' ').map(function(value) {
               return { value: value };
             });
             filterItem.option = 'match-every';
+          } else {
+            filterItem.values = queryParams[key].split(',').map(function(value) {
+              return { value: value };
+            });
+            filterItem.option = 'match-some';
           }
           filterItem.key = key;
           return filterItem;
@@ -142,7 +142,7 @@
       _checkIfSomeValueMatches: function(filterValues, productValues) {
         return productValues.some(function(productValue) {
           return filterValues.some(function(filterValue) {
-            return filterValue.value === productValue.value;
+            return filterValue.value === productValue.value.replace(/\s/g, '-');
           })
         });
       },

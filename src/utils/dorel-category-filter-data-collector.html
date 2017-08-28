@@ -75,6 +75,13 @@
             }
             product.filter_groups.forEach(function(productFilterGroup) {
               if(productFilterGroup.name === group.name) {
+                productFilterGroup.values.map(function(item) {
+                  item.label = item.value;
+                  if(typeof item.value === 'string') {
+                    item.value = item.value.replace(/\s/g, '-');
+                  }
+                  return item;
+                });
                 group.values = self._mergeArrays(group.values, productFilterGroup.values);
               }
             });

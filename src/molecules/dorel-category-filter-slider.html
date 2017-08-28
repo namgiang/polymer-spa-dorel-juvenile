@@ -29,9 +29,16 @@
       <div class="filter-name">
         [[ filterData.label ]]
       </div>
-      <div class="price-indicator">
-        Max: €[[ sliderValue ]],-
-      </div>
+      <template is="dom-if" if="[[ isSet(sliderValue, 'true') ]]">
+        <div class="price-indicator">
+          Max: €[[ sliderValue ]],-
+        </div>
+      </template>
+      <template is="dom-if" if="[[ isSet(sliderValue, 'false') ]]">
+        <div class="price-indicator">
+          Filter not active
+        </div>
+      </template>
       <dorel-slider class="slider"
                     snaps
                     max="[[ maxAmount ]]"
@@ -122,6 +129,13 @@
           queryParams[this.filterData.name] = sliderValue;
         }
         this.fire('update-filter', { value: queryParams });
+      },
+
+      isSet: function(sliderValue, boolean) {
+        if(boolean === 'true') {
+          return Boolean(sliderValue > 0)
+        }
+        return Boolean(sliderValue === 0) 
       }
 
     });
