@@ -156,21 +156,23 @@
        * @description Retrieves the correct image source in the Bynder data
        */
       _onMediaContentChanged: function () {
-        // Set the Bynder description to this component's alt propertys
-        this.alt = this.mediaContent.description;
+        if (typeof this.mediaContent !== 'undefined' && this.mediaContent.hasOwnProperty('thumbnails')) {
+          // Set the Bynder description to this component's alt properties
+          this.alt = this.mediaContent.description;
 
-        // Default to the root media thumbnail and webimage
-        if (this.derivativeIdentifier === '') {
-          this.imagePlaceholder = this.mediaContent.thumbnails.mini;
-          this.imageSource = this.mediaContent.thumbnails.webimage;
-        }
-        // Retrieve the derivative if one is specified
-        else {
-          var bynderDerivatives = this.mediaContent.thumbnails;
-          // Checks if the derivative exists
-          if (bynderDerivatives.hasOwnProperty(this.derivativeIdentifier)) {
-            this.imageSource = bynderDerivatives[this.derivativeIdentifier];
+          // Default to the root media thumbnail and webimage
+          if (this.derivativeIdentifier === '') {
+            this.imagePlaceholder = this.mediaContent.thumbnails.mini;
+            this.imageSource = this.mediaContent.thumbnails.webimage;
+          }
+          // Retrieve the derivative if one is specified
+          else {
+            var bynderDerivatives = this.mediaContent.thumbnails;
+            // Checks if the derivative exists
+            if (bynderDerivatives.hasOwnProperty(this.derivativeIdentifier)) {
+              this.imageSource = bynderDerivatives[this.derivativeIdentifier];
 
+            }
           }
         }
       },
