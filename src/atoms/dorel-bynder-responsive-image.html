@@ -78,14 +78,16 @@
       _getDefaultImageSources: function (mediaContent) {
         var imageSources = {};
 
-        //Default all the derivative values
-        for (var key in this.derivativeMapping) {
-          imageSources[key] = mediaContent.thumbnails.webimage;
+        if (mediaContent.hasOwnProperty('thumbnails')) {
+
+          //Default all the derivative values
+          for (var key in this.derivativeMapping) {
+            imageSources[key] = mediaContent.thumbnails.webimage;
+          }
+
+          // Set the placeholder with the mini thumbnail
+          imageSources['placeholder'] = mediaContent.thumbnails.mini;
         }
-
-        // Set the placeholder with the mini thumbnail
-        imageSources['placeholder'] = mediaContent.thumbnails.mini;
-
         return imageSources;
       },
       /**
@@ -95,14 +97,17 @@
        */
       _getMappedImageSources: function (imageSources, mediaContent) {
 
-        var bynderDerivatives = mediaContent.thumbnails;
+        if (mediaContent.hasOwnProperty('thumbnails')) {
+          var bynderDerivatives = mediaContent.thumbnails;
 
-        for (var key in this.derivativeMapping) {
-          var value = this.derivativeMapping[key];
-          // Maps the bynder derivative
-          if (bynderDerivatives.hasOwnProperty(value)) {
-            imageSources[key] = bynderDerivatives[value];
+          for (var key in this.derivativeMapping) {
+            var value = this.derivativeMapping[key];
+            // Maps the bynder derivative
+            if (bynderDerivatives.hasOwnProperty(value)) {
+              imageSources[key] = bynderDerivatives[value];
+            }
           }
+
         }
 
         return imageSources;
@@ -112,14 +117,20 @@
        * @description Maps the Bynder data into an object that is compatible with dorel-responsive-image
        */
       _onMediaContentChanged: function () {
-        // First create a default image sources dictionary
-        var sources = this._getDefaultImageSources(this.mediaContent);
+        // Initialise the image sources
+        if (typeof this.mediaContent !== 'undefined' && this.mediaContent.hasOwnProperty('thumbnails')) {
+          // First create a default image sources dictionary
+          var sources = this._getDefaultImageSources(this.mediaContent);
 
-        // Next, replace the default images with the correct derivatives if they are available
-        this.imageSources = this._getMappedImageSources(sources, this.mediaContent);
+          // Next, replace the default images with the correct derivatives if they are available
+          this.imageSources = this._getMappedImageSources(sources, this.mediaContent);
 
-        // Set the Bynder description to this component's alt property
-        this.alt = this.mediaContent.description;
+          // Set the Bynder description to this component's alt property
+          this.alt = this.mediaContent.description;
+        }
+        else {
+          this.imageSources = {};
+        }
       }
     });
   </script>
