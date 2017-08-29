@@ -1,0 +1,105 @@
+<link rel="import" href="../../molecules/dorel-car-details-form.html">
+<dom-module id="dorel-step-car-information">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --iron-icon-fill-color: var(--theme-brand-color-1);
+        --iron-icon-width:	3em;
+        --iron-icon-height: 3em;
+      }
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+      .column {
+        @apply(--theme-grid-column);
+        @apply(--theme-grid-column-mobile);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        width: 100%;
+        margin-top: 0;
+        display: flex;
+        padding: 3em;
+        position: relative;
+      }
+      .column--left {
+        justify-content: flex-end;
+      }
+      .wrapper {
+        display: block;
+        width: 100%;
+      }
+      .image-wrapper {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      .image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+      }
+      .content {
+        max-width: calc(var(--theme-column-width) * 8);
+        width: 100%;
+        position: relative;
+        border-radius: var(--theme-button-border-radius);
+      }
+      .box {
+        background-color: #fff;
+        border-radius: var(--theme-button-border-radius);
+        padding: .75em 1.5em;
+      }
+      .content-title {
+        @apply(--theme-typography-4);
+        margin: 0;
+      }
+    </style>
+    <div class="wrapper">
+      <div class="container layout horizontal center center-justified wrap">
+        <div class="row">
+          <template is="dom-if" if="[[ data ]]">
+            <div class="column column--left">
+              <div class="content">
+                <h2 class="content-title">[[ data.main_section.title ]]</h2>
+                <dorel-car-details-form
+                  form-data="[[ data.main_section.form ]]">
+                </dorel-car-details-form>
+              </div>
+            </div>
+            <div class="column">
+              <dorel-bynder-image class="image"
+                          sizing="cover"
+                          width="50vw"
+                          height="100vh"
+                          fade="true"
+                          media-id$="[[ data.sub_section.background_image_id ]]"></dorel-bynder-image>
+              <div class="content">
+                <div class="box">
+                  <div><iron-icon icon="dorel-icons:back-to-top"></iron-icon></div>
+                  <p>[[ data.sub_section.description ]]</p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-step-car-information',
+
+      properties: {
+        data: {
+          type: Object
+        }
+      }
+      });
+  </script>
+</dom-module>

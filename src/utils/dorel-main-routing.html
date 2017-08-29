@@ -75,9 +75,16 @@
         var url = (window.location.origin + this.route.path);
         var fullUrl = url.slice(-1) === '/' ? url : url + '/';
 
-        this.currentPage = pages.find(function(item) {
+        var currentPage = pages.find(function(item) {
           return item.link === fullUrl || item.slug === 'home' && self.page === 'home';
         });
+
+        //TODO REMOVE
+        if(currentPage.slug === 'product-advisory') {
+          currentPage.template = 'product-advisory-tool';
+        }
+
+        this.set('currentPage', currentPage);
 
         var last = this.currentPage ? '' : lastSegment;
 

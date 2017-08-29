@@ -1,0 +1,131 @@
+<link rel="import" href="../atoms/dorel-input-select.html">
+
+<dom-module id="dorel-car-details-form">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        padding: 0 .75rem;
+        box-sizing: border-box;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        background-color: #f5f5f5;
+      }
+      .form_title {
+        padding: .75em 1.5em .75em .75em;
+        @apply(--theme-typography-4);
+        margin: 0;
+        background-color: #505050;
+        color: #fff;
+        border-top-left-radius: var(--theme-button-border-radius);
+        border-top-right-radius: var(--theme-button-border-radius);
+      }
+      .form_groups {
+        padding: .75em .75em .75em .75em;
+      }
+    </style>
+    <div class="form">
+
+      <h2 class="form_title">[[ formData.form_title ]]</h2>
+      <div class="form_groups">
+
+        <template is="dom-repeat"
+          items="[[ formGroups ]]"
+          as="form_group">
+          <span>[[ form_group.disabled ]]</span>
+          <dorel-input-select
+            label="[[ form_group.label ]]"
+            options="[[ form_group.options ]]"
+            disabled$="[[ shouldDisable(form_group) ]]"
+            required>
+          </dorel-input-select>
+        </template>
+      </div>
+     </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-car-details-form',
+      properties: {
+
+        /**
+         * @attribute
+         * @name formData
+         * @description Object that is passed by parent
+         */
+        formData: {
+          type: Object
+        },
+
+        formGroups: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        }
+
+      },
+
+      listeners: {
+        'on-selectbox-change': '_processForm'
+      },
+
+      observers: [
+        '_setFormGroups(formData.*)'
+      ],
+
+      _setFormGroups(formGroups) {
+        if(formGroups && formGroups.value && formGroups.value.form_groups && formGroups.value.form_groups.length) {
+          var test = formGroups.value.form_groups;
+          this.set('formGroups', test);
+        }
+      },
+
+      _processForm: function(event) {
+        var updatedValue = event.detail.value;
+        var formGroups = this.get('formGroups');
+        var groupIndex = this._getGroupIndex(formGroups, updatedValue);
+
+        if(groupIndex > -1) {
+          // this.set('formData.form_groups.' + groupIndex + '.value', updatedValue);
+          this._resetSelectBoxes(formGroups, groupIndex);
+        }
+      },
+
+      _getGroupIndex: function(formGroups, updatedValue) {
+        return formGroups.findIndex(function(group) {
+          return group.options.find(function(option) {
+             return option.label === updatedValue.label;
+          });
+        });
+      },
+
+      _resetSelectBoxes: function(formGroups, groupIndex) {
+        var newFormGroups = formGroups.map(function(group, index) {
+          if(index > groupIndex) {
+            group.value = '';
+          }
+          if(index  === groupIndex + 1) {
+            group.disabled = false;
+          }
+          return group;
+        });
+        // formGroups.forEach()
+        this.set('formGroups', []);
+        var self = this;
+        newFormGroups.forEach(function(item) {
+          self.push('formGroups', item);
+        });
+      },
+
+      shouldDisable: function(group) {
+        console.log(group.disabled);
+        return Boolean(group.disabled);
+      }
+
+    });
+  </script>
+</dom-module>
