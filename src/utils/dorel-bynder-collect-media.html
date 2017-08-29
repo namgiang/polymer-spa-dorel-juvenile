@@ -90,12 +90,20 @@
        * @description Requests a Bynder asset
        */
       _retrieveMedia: function () {
+
+        // TODO: This should be coming from config, temporarily disabled for deployment
+        BYNDER_API_URL: 'https://dam.doreljuvenile.com/api/v4';
+        BYNDER_CONSUMER_KEY: 'CCA3E48C-184A-49C7-B322303E639A848E';
+        BYNDER_CONSUMER_KEY_SECRET: '68eeda6cc0bb999e56fe0add1539fa75';
+        BYNDER_TOKEN_KEY: '9E61BF2F-4D70-4360-B383C1053F8CAAAD';
+        BYNDER_TOKEN_KEY_SECRET: 'ca21b7af36f51922865b14263723f061';
+
         // Initialise all of the variables needed for the request
-        var consumerKey = CONFIG.BYNDER_CONSUMER_KEY;
-        var consumerSecret = CONFIG.BYNDER_CONSUMER_KEY_SECRET;
-        var tokenKey = CONFIG.BYNDER_TOKEN_KEY;
-        var tokenKeySecret = CONFIG.BYNDER_TOKEN_KEY_SECRET;
-        var requestUrl = [CONFIG.BYNDER_API_URL, 'media', this.mediaId, '?versions=1'].join('/');
+        var consumerKey = BYNDER_CONSUMER_KEY;
+        var consumerSecret = BYNDER_CONSUMER_KEY_SECRET;
+        var tokenKey = BYNDER_TOKEN_KEY;
+        var tokenKeySecret = BYNDER_TOKEN_KEY_SECRET;
+        var requestUrl = [BYNDER_API_URL, 'media', this.mediaId, '?versions=1'].join('/');
         var httpMethod = 'GET';
         var nonce = this._getRandomSequence(11);
         var timestamp = this._getTimestamp();
