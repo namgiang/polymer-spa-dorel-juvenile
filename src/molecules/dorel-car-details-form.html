@@ -28,17 +28,20 @@
     </style>
     <div class="form">
 
-      <h2 class="form_title">[[ formData.form_title ]]</h2>
+      <h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>
       <div class="form_groups">
 
-        <template is="dom-repeat"
-          items="[[ formGroups ]]"
-          as="form_group">
-          <span>[[ form_group.disabled ]]</span>
+        <template
+          is="dom-repeat"
+          id="test"
+          items="{{ formData.form_groups }}"
+          observe="disabled"
+          as="item">
+          <span>[[ item.disabled ]]</span>
           <dorel-input-select
-            label="[[ form_group.label ]]"
-            options="[[ form_group.options ]]"
-            disabled$="[[ shouldDisable(form_group) ]]"
+            label="[[ item.label ]]"
+            options="[[ item.options ]]"
+            disabled$="[[ item.disabled ]]"
             required>
           </dorel-input-select>
         </template>
@@ -57,15 +60,9 @@
          * @description Object that is passed by parent
          */
         formData: {
-          type: Object
+          type: Object,
+          notify: true
         },
-
-        formGroups: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        }
 
       },
 
@@ -73,20 +70,9 @@
         'on-selectbox-change': '_processForm'
       },
 
-      observers: [
-        '_setFormGroups(formData.*)'
-      ],
-
-      _setFormGroups(formGroups) {
-        if(formGroups && formGroups.value && formGroups.value.form_groups && formGroups.value.form_groups.length) {
-          var test = formGroups.value.form_groups;
-          this.set('formGroups', test);
-        }
-      },
-
       _processForm: function(event) {
         var updatedValue = event.detail.value;
-        var formGroups = this.get('formGroups');
+        var formGroups = this.get('formData.form_groups');
         var groupIndex = this._getGroupIndex(formGroups, updatedValue);
 
         if(groupIndex > -1) {
@@ -97,7 +83,7 @@
 
       _getGroupIndex: function(formGroups, updatedValue) {
         return formGroups.findIndex(function(group) {
-          return group.options.find(function(option) {
+          return group.options.some(function(option) {
              return option.label === updatedValue.label;
           });
         });
@@ -105,26 +91,21 @@
 
       _resetSelectBoxes: function(formGroups, groupIndex) {
         var newFormGroups = formGroups.map(function(group, index) {
+          var newObject = {};
+          Object.keys(group).forEach(function(key, index) {
+            newObject[key] = group[key];
+          });
           if(index > groupIndex) {
-            group.value = '';
+            newObject.value = '';
           }
-          if(index  === groupIndex + 1) {
-            group.disabled = false;
+          if(index === groupIndex + 1) {
+            newObject.disabled = false;
           }
-          return group;
-        });
-        // formGroups.forEach()
-        this.set('formGroups', []);
-        var self = this;
-        newFormGroups.forEach(function(item) {
-          self.push('formGroups', item);
-        });
+          return newObject;
+        }, []);
+        this.set('formData.form_groups', newFormGroups);
       },
 
-      shouldDisable: function(group) {
-        console.log(group.disabled);
-        return Boolean(group.disabled);
-      }
 
     });
   </script>
