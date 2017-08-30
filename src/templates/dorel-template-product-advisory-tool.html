@@ -1,0 +1,187 @@
+<link rel="import" href="../organisms/product-advisory/dorel-product-advisory-nav.html">
+<link rel="import" href="../organisms/product-advisory/dorel-step-car-information.html">
+
+
+<dom-module id="dorel-template-product-advisory-tool">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+        width: 100%;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+      .loader {
+        width: 100%;
+        display: block;
+        min-height: 4px;
+      }
+    </style>
+
+    <!-- <app-route
+      route="[[ route ]]"
+      query-params="[[ queryParams ]]">
+    </app-route> -->
+    <dorel-product-advisory-nav
+      load-complete="[[ loadComplete ]]"
+      page-title="[[ title ]]"
+      progress="[[ calculateProgess(carFittingData, currentFittingPage) ]]"
+      brand-name="'Maxi-Cosi'">
+    </dorel-product-advisory-nav>
+
+    <p>[[ currentFittingPage.step ]]</p>
+
+    <iron-pages
+      role="main"
+      selected="[[ currentFittingPage.step ]]"
+      attr-for-selected="name">
+      <template is="dom-if" if="[[_equals(currentFittingPage.step, 'car-information')]]" restamp="true">
+        <dorel-step-car-information
+          name="car-information"
+          data="[[ currentFittingPage ]]">
+        </dorel-step-car-information>
+      </template>
+        <div name="fitting-results">
+          <div on-click="previous">Hoi</div>
+        </div>
+    </iron-pages>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-product-advisory-tool',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
+         */
+        templateData: {
+          type: String
+        },
+
+        route: {
+          type: Object
+        },
+
+        carFittingData: {
+          type: Array,
+          value: [
+            {
+              title: 'Your car information',
+              step: 'car-information',
+              action: '',
+              main_section: {
+                section_type: 'car-details-form',
+                title: 'My car is',
+                form: {
+                  form_title: 'Choose your car details',
+                  form_groups: [
+                    { id:1, label: 'Brand', required: true, end_point: 'http://endpoint.com/brands', selected: { label: 'Choose a brand', value: ''}, options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
+                    { id:2, label: 'Model', required: true, end_point: 'http://endpoint.com/model', selected: { label: 'Choose a Model', value: ''}, options: [{ label: 'Choose a Model', value: ''}, { label: 'Modal A', value: 'a'}, { label: 'Model B', value: 'b'}], disabled: true },
+                    { id:3, label: 'Type/Year', required: true, end_point: 'http://endpoint.com/typeyear', selected: { label: 'Choose a type', value: ''},  options: [{ label: 'Choose a type', value: ''}, { label: 'Type A', value: 'a'}, { label: 'Type B', value: 'b'}], disabled: true }
+                  ],
+                  form_submit: {
+                    title: 'Next',
+                    type: 'post',
+                    end_point: 'http://endpoint.com/post'
+                  }
+                }
+              },
+              sub_section: {
+                title: '',
+                description: 'By giving us your car information we show you where you can install',
+                background_image_id: '7F84BD5F-551A-4DA5-8532AB44763439AA'
+              }
+            },
+            {
+              title: 'Your car information',
+              step: 'fitting-results',
+              action: '',
+              main_section: {
+                section_type: 'car-details-form',
+                title: 'My car is',
+                form: {
+                  form_title: 'Choose your car details',
+                  form_groups: [
+                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}] },
+                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}]},
+                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}]}
+                  ],
+                  form_submit: {
+                    title: 'Next',
+                    type: 'post',
+                    end_point: 'http://endpoint.com/post'
+                  }
+                }
+              }
+            },
+            {
+              title: 'Your car information',
+              step: 'fitting-results',
+              action: '',
+              main_section: {
+                section_type: 'car-details-form',
+                title: 'My car is',
+                form: {
+                  form_title: 'Choose your car details',
+                  form_groups: [
+                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
+                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: true },
+                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: true }
+                  ],
+                  form_submit: {
+                    title: 'Next',
+                    type: 'post',
+                    end_point: 'http://endpoint.com/post'
+                  }
+                }
+              }
+            }
+          ]
+        },
+
+        currentFittingPage: {
+          type: Object
+        }
+
+      },
+
+      listeners: {
+        'next-page': '_nextPage',
+        'previous-page': '_previousPage'
+      },
+
+      ready: function() {
+        this.set('currentFittingPage', this.carFittingData[0]);
+      },
+
+      calculateProgess: function(carFittingData, currentFittingPage) {
+        var totalAmountOfSteps = carFittingData.length;
+        var index = carFittingData.indexOf(currentFittingPage) + 1;
+        return (index * 100) / totalAmountOfSteps;
+      },
+
+      _nextPage: function() {
+        debugger;
+        this.set('currentFittingPage', this.carFittingData[1]);
+      },
+
+      previous: function() {
+        debugger;
+        this.set('currentFittingPage', this.carFittingData[0]);
+      },
+
+      _equals: function(step, stepName) {
+        debugger;
+        return step === stepName;
+      },
+
+
+    });
+  </script>
+</dom-module>

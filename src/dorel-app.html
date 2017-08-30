@@ -128,10 +128,12 @@
       category="{{ category }}">
     </dorel-product-category-manager>
 
-    <dorel-header
-      load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"
-      brand-name="[[ brand.label ]]"></dorel-header>
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+      <dorel-header
+        load-complete="[[ loadComplete ]]"
+        page="[[ page ]]"
+        brand-name="[[ brand.label ]]"></dorel-header>
+    </template>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -169,6 +171,11 @@
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
+        <dorel-template-product-advisory-tool
+          name="product-advisory-tool"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
+
         <dorel-template-component-guide
           name="component-guide"
           brand="{{ brand }}"
@@ -180,7 +187,9 @@
       </iron-pages>
     </main>
 
-    <dorel-footer></dorel-footer>
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+      <dorel-footer></dorel-footer>
+    </template>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
                         selected-brand="{{ brand }}"
@@ -440,6 +449,10 @@
 
         // return the copied object
         return copy;
+      },
+
+      shouldShow: function(currentPage) {
+        return Boolean(currentPage.template !== 'product-advisory-tool');
       }
 
     });

@@ -1,0 +1,135 @@
+<link rel="import" href="../atoms/dorel-input-select.html">
+
+<dom-module id="dorel-car-details-form">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        padding: 0 .75rem;
+        box-sizing: border-box;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--theme-color-monochrome-2);
+      }
+      .form_title {
+        padding: .75em 1.5em .75em .75em;
+        @apply(--theme-typography-4);
+        margin: 0;
+        background-color: var(--theme-color-monochrome-6);
+        color: var(--theme-color-monochrome-1);
+        border-top-left-radius: var(--theme-button-border-radius);
+        border-top-right-radius: var(--theme-button-border-radius);
+      }
+      .form_groups {
+        padding: .75em .75em .75em .75em;
+      }
+    </style>
+    <div class="form">
+
+      <h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>
+      <div class="form_groups">
+
+        <template
+          is="dom-repeat"
+          id="test"
+          items="{{ formData.form_groups }}"
+          index-as="index"
+          as="item">
+          <dorel-input-select
+            label="[[ item.label ]]"
+            selected="{{ setSelected(formData.form_groups, item.selected, index) }}"
+            options="[[ setOptions(formData.form_groups, item.options, index) ]]"
+            disabled$="[[ shouldDisable(formData.form_groups, item.options, index) ]]"
+            required>
+          </dorel-input-select>
+        </template>
+      </div>
+     </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-car-details-form',
+      properties: {
+
+        /**
+         * @attribute
+         * @name formData
+         * @description Object that is passed by parent
+         */
+        formData: {
+          type: Object,
+          notify: true
+        },
+
+      },
+
+      listeners: {
+        'on-selectbox-change': '_processForm'
+      },
+
+      _processForm: function(event) {
+        var updatedValue = event.detail.value;
+        var formGroups = this.get('formData.form_groups');
+        var groupIndex = this._getGroupIndex(formGroups, updatedValue);
+
+        if(groupIndex > -1) {
+          this._setSelectBoxes(formGroups, groupIndex, updatedValue);
+        }
+      },
+
+      _getGroupIndex: function(formGroups, updatedValue) {
+        return formGroups.findIndex(function(group) {
+          return group.options.some(function(option) {
+             return option.label === updatedValue.label;
+          });
+        });
+      },
+
+      _setSelectBoxes: function(formGroups, groupIndex, updatedValue) {
+        var self = this;
+        var newFormGroups = formGroups.map(function(group, index) {
+          var newObject = {};
+          Object.keys(group).forEach(function(key) {
+            newObject[key] = group[key];
+          });
+          if(index === groupIndex) {
+            newObject.selected = updatedValue;
+          }
+          if(index > groupIndex) {
+            // newObject = self._resetSelectBoxes(newObject, formGroups, index);
+          }
+          return newObject;
+        }, []);
+        this.set('formData.form_groups', newFormGroups);
+      },
+
+      shouldDisable: function(groups, options, index) {
+        return Boolean(groups[index - 1] && groups[index - 1].selected && groups[index - 1].selected.value && groups[index - 1].selected.value.length <= 0)
+      },
+
+      _resetSelectBoxes: function(newObject, formGroups, index) {
+        var object = {};
+        // formGroups.forEach(function(group, _index) {
+        //   if(_index < index && group[_index].selected.value) {
+        //
+        //   }
+        // });
+        // return
+      },
+
+      setSelected: function(groups, selected, index) {
+        return selected;
+      },
+
+      setOptions: function(groups, options, index) {
+        console.log(groups[index].options, options, index);
+        return groups[index].options;
+      },
+
+
+    });
+  </script>
+</dom-module>
