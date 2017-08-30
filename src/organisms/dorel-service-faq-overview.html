@@ -158,10 +158,14 @@
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="row">
         <div class="container">
-          <h2 class="title">
-            [[ templateData.section_title ]]
-          </h2>
-          <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+          <template is="dom-if" if="{{ _hasValue(templateData.section_title) }}">
+            <h2 class="title">
+              [[ templateData.section_title ]]
+            </h2>
+          </template>
+          <template is="dom-if" if="{{ _hasValue(templateData.section_description) }}">
+            <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+          </template>
         </div>
       </div>
       <div class="row">
@@ -248,7 +252,13 @@
           value: []
         },
       },
-
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      _hasValue: function (val) {
+        return (val !== '' && typeof val !== 'undefined' && val !== null);
+      },
       /**
        * @name _eventTracking
        * @description this is for example tracking only
