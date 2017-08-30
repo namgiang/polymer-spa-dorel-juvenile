@@ -11,14 +11,14 @@
       .form {
         display: flex;
         flex-direction: column;
-        background-color: #f5f5f5;
+        background-color: var(--theme-color-monochrome-2);
       }
       .form_title {
         padding: .75em 1.5em .75em .75em;
         @apply(--theme-typography-4);
         margin: 0;
-        background-color: #505050;
-        color: #fff;
+        background-color: var(--theme-color-monochrome-6);
+        color: var(--theme-color-monochrome-1);
         border-top-left-radius: var(--theme-button-border-radius);
         border-top-right-radius: var(--theme-button-border-radius);
       }
@@ -35,13 +35,13 @@
           is="dom-repeat"
           id="test"
           items="{{ formData.form_groups }}"
-          observe="disabled"
+          index-as="index"
           as="item">
-          <span>[[ item.disabled ]]</span>
           <dorel-input-select
             label="[[ item.label ]]"
+            selected="{{ setSelected(formData.form_groups, item.selected, index) }}"
             options="[[ item.options ]]"
-            disabled$="[[ item.disabled ]]"
+            disabled$="[[ shouldDisable(formData.form_groups, item.options, index) ]]"
             required>
           </dorel-input-select>
         </template>
@@ -76,8 +76,7 @@
         var groupIndex = this._getGroupIndex(formGroups, updatedValue);
 
         if(groupIndex > -1) {
-          // this.set('formData.form_groups.' + groupIndex + '.value', updatedValue);
-          this._resetSelectBoxes(formGroups, groupIndex);
+          this._setSelectBoxes(formGroups, groupIndex, updatedValue);
         }
       },
 
@@ -89,21 +88,44 @@
         });
       },
 
-      _resetSelectBoxes: function(formGroups, groupIndex) {
+      _setSelectBoxes: function(formGroups, groupIndex, updatedValue) {
+        var self = this;
         var newFormGroups = formGroups.map(function(group, index) {
           var newObject = {};
-          Object.keys(group).forEach(function(key, index) {
+          Object.keys(group).forEach(function(key) {
             newObject[key] = group[key];
           });
-          if(index > groupIndex) {
-            newObject.value = '';
+          if(index === groupIndex) {
+            newObject.selected = updatedValue;
           }
-          if(index === groupIndex + 1) {
-            newObject.disabled = false;
+          if(index > groupIndex) {
+            // newObject = self._resetSelectBoxes(newObject, formGroups, index);
           }
           return newObject;
         }, []);
         this.set('formData.form_groups', newFormGroups);
+      },
+
+      shouldDisable: function(groups, options, index) {
+        return Boolean(groups[index - 1] && groups[index - 1].selected.value.length <= 0)
+      },
+
+      _resetSelectBoxes: function(newObject, formGroups, index) {
+        var object = {};
+        // formGroups.forEach(function(group, _index) {
+        //   if(_index < index && group[_index].selected.value) {
+        //
+        //   }
+        // });
+        // return
+      },
+
+      setSelected: function(groups, selected, index) {
+        return selected;
+      },
+
+      setOptions: function(groups, selected, index) {
+
       },
 
 

@@ -1,19 +1,11 @@
+<link rel="import" href="../organisms/product-advisory/dorel-product-advisory-nav.html">
 <link rel="import" href="../organisms/product-advisory/dorel-step-car-information.html">
+
 
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
-      /* TODO: Should be refactored */
-      /*:host {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #fff;
-        z-index: 999999;
-        width:100%;
-      }*/
+      
       :host {
         display: block;
         width: 100%;
@@ -31,10 +23,13 @@
       route="[[ route ]]"
       query-params="[[ queryParams ]]">
     </app-route> -->
+    <dorel-product-advisory-nav
+      load-complete="[[ loadComplete ]]"
+      page-title="[[ title ]]"
+      progress="[[ calculateProgess(carFittingData, currentFittingPage) ]]"
+      brand-name="'Maxi-Cosi'">
+    </dorel-product-advisory-nav>
 
-    <div class="loader">
-      <dorel-progress value="[[ calculateProgess(carFittingData, currentFittingPage) ]]"></dorel-progress>
-    </div>
     <iron-pages
       role="main"
       selected="[[ currentFittingPage.step ]]"
@@ -80,9 +75,9 @@
                 form: {
                   form_title: 'Choose your car details',
                   form_groups: [
-                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
-                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Choose a Model', value: ''}, { label: 'Modal A', value: 'a'}, { label: 'Model B', value: 'b'}], disabled: true },
-                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Choose a type', value: ''}, { label: 'Type A', value: 'a'}, { label: 'Type B', value: 'b'}], disabled: true }
+                    { id:1, label: 'Brand', required: true, end_point: 'http://endpoint.com/brands', selected: { label: 'Choose a brand', value: ''}, options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
+                    { id:2, label: 'Model', required: true, end_point: 'http://endpoint.com/model', selected: { label: 'Choose a Model', value: ''}, options: [{ label: 'Choose a Model', value: ''}, { label: 'Modal A', value: 'a'}, { label: 'Model B', value: 'b'}], disabled: true },
+                    { id:3, label: 'Type/Year', required: true, end_point: 'http://endpoint.com/typeyear', selected: { label: 'Choose a type', value: ''},  options: [{ label: 'Choose a type', value: ''}, { label: 'Type A', value: 'a'}, { label: 'Type B', value: 'b'}], disabled: true }
                   ],
                   form_submit: {
                     title: 'Next',
@@ -107,9 +102,9 @@
                 form: {
                   form_title: 'Choose your car details',
                   form_groups: [
-                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
-                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: true },
-                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: true }
+                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}] },
+                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}]},
+                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}]}
                   ],
                   form_submit: {
                     title: 'Next',
