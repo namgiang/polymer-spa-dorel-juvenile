@@ -1,0 +1,124 @@
+<link rel="import" href="../organisms/dorel-section-header.html">
+<link rel="import" href="../organisms/dorel-service-faq-overview.html">
+
+<dom-module id="dorel-template-faq-overview">
+  <template>
+    <style></style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+
+      <!-- show when acf.page_builder has components -->
+      <template
+        is="dom-if"
+        if="{{ templateData.acf.faq_overview_builder.length }}">
+        <!-- iterate over page_builder components -->
+        <template
+          is="dom-repeat"
+          items="[[ templateData.acf.faq_overview_builder ]]"
+          as="component"
+          targetFramerate="1000">
+          <!-- section-hero-header -->
+          <template
+            is="dom-if"
+            if="{{ isPageComponent(component.acf_fc_layout, 'section_hero_header') }}">
+            <dorel-section-header
+              section-header-data="[[ component ]]"
+              gtm-parent="dorel-template-faq-overview"
+              gtm-parent-index="[[ index ]]"></dorel-section-header>
+          </template>
+          <!-- end section  header -->
+          <template
+            is="dom-if"
+            if="{{ isPageComponent(component.acf_fc_layout, 'section_service_faqs') }}">
+            <dorel-service-faq-overview
+              template-data="[[ component ]]"
+              faq-overview="[[ faqOverview ]]"></dorel-service-faq-overview>
+          </template>
+        </template>
+      </template>
+    </section>
+  </template>
+
+  </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-faq-overview',
+      properties: {
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+        faqOverview: {
+          value: [{
+            'title': 'Safety & Care',
+            'icon': 'dorel-icons:help-outline',
+            'questions': [
+              {'title': 'First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+              {'title': 'Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+              {'title': 'Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+              {'title': 'Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+            ]
+          }, {
+            'title': 'Warranty',
+            'icon': 'dorel-icons:help-outline',
+            'questions': [
+              {'title': 'First Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+              {'title': 'Second Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+              {'title': 'Third Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+              {'title': 'Fourth Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
+            ]
+          }, {
+            'title': 'Repairs & Replacements',
+            'icon': 'dorel-icons:help-outline',
+            'questions': [
+              {'title': 'First Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+              {'title': 'Second Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+              {'title': 'Third Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+              {'title': 'Fourth Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+            ]
+          }],
+        }
+      },
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
+    });
+
+  </script>
+
+</dom-module>

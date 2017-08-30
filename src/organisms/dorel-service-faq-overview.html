@@ -62,6 +62,12 @@
         display: inline-block;
       }
 
+      .container {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        width: 100%;
+      }
+
       .topic {
         height: 3em;
         padding: .75em;
@@ -128,6 +134,10 @@
         float: right;
       }
 
+      .title {
+        @apply(--theme-typography-5);
+      }
+
       [tablet-medium-up] {
         padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
       }
@@ -136,12 +146,24 @@
         @apply(--theme-grid-row-margins);
       }
 
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="layout horizontal center center-justified wrap"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="row">
+        <div class="container">
+          <h2 class="title">
+            [[ templateData.section_title ]]
+          </h2>
+          <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+        </div>
+      </div>
       <div class="row">
         <!-- Desktop Service Topic Listing -->
         <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
@@ -171,12 +193,12 @@
                 </div>
               </template>
             </iron-pages>
-            <dorel-cta title="Call to action"
+            <dorel-cta title="[[ templateData.view_all_text ]]"
                        type="link"
                        link=""
                        size="small"
                        icon="dorel-icons:chevron-right">
-              View all
+              [[ templateData.view_all_text ]]
             </dorel-cta>
           </div>
         </template>
@@ -199,7 +221,7 @@
                            link=""
                            size="small"
                            icon="dorel-icons:chevron-right">
-                  View all
+                  [[ templateData.view_all_text ]]
                 </dorel-cta>
               </dorel-accordion-item>
             </template>
@@ -217,6 +239,9 @@
         selectedTopic: {
           type: String,
           value: ''
+        },
+        templateData: {
+          type: Object,
         },
         faqOverview: {
           type: Array,
