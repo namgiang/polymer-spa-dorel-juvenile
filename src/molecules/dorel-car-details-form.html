@@ -40,7 +40,7 @@
           <dorel-input-select
             label="[[ item.label ]]"
             selected="{{ setSelected(formData.form_groups, item.selected, index) }}"
-            options="[[ item.options ]]"
+            options="[[ setOptions(formData.form_groups, item.options, index) ]]"
             disabled$="[[ shouldDisable(formData.form_groups, item.options, index) ]]"
             required>
           </dorel-input-select>
@@ -107,7 +107,7 @@
       },
 
       shouldDisable: function(groups, options, index) {
-        return Boolean(groups[index - 1] && groups[index - 1].selected.value.length <= 0)
+        return Boolean(groups[index - 1] && groups[index - 1].selected && groups[index - 1].selected.value && groups[index - 1].selected.value.length <= 0)
       },
 
       _resetSelectBoxes: function(newObject, formGroups, index) {
@@ -124,8 +124,9 @@
         return selected;
       },
 
-      setOptions: function(groups, selected, index) {
-
+      setOptions: function(groups, options, index) {
+        console.log(groups[index].options, options, index);
+        return groups[index].options;
       },
 
 

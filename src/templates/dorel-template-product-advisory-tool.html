@@ -5,7 +5,7 @@
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
-      
+
       :host {
         display: block;
         width: 100%;
@@ -30,14 +30,21 @@
       brand-name="'Maxi-Cosi'">
     </dorel-product-advisory-nav>
 
+    <p>[[ currentFittingPage.step ]]</p>
+
     <iron-pages
       role="main"
       selected="[[ currentFittingPage.step ]]"
       attr-for-selected="name">
+      <template is="dom-if" if="[[_equals(currentFittingPage.step, 'car-information')]]" restamp="true">
         <dorel-step-car-information
           name="car-information"
           data="[[ currentFittingPage ]]">
         </dorel-step-car-information>
+      </template>
+        <div name="fitting-results">
+          <div on-click="previous">Hoi</div>
+        </div>
     </iron-pages>
 
   </template>
@@ -56,7 +63,6 @@
         templateData: {
           type: String
         },
-
 
         route: {
           type: Object
@@ -145,6 +151,11 @@
 
       },
 
+      listeners: {
+        'next-page': '_nextPage',
+        'previous-page': '_previousPage'
+      },
+
       ready: function() {
         this.set('currentFittingPage', this.carFittingData[0]);
       },
@@ -153,7 +164,22 @@
         var totalAmountOfSteps = carFittingData.length;
         var index = carFittingData.indexOf(currentFittingPage) + 1;
         return (index * 100) / totalAmountOfSteps;
-      }
+      },
+
+      _nextPage: function() {
+        debugger;
+        this.set('currentFittingPage', this.carFittingData[1]);
+      },
+
+      previous: function() {
+        debugger;
+        this.set('currentFittingPage', this.carFittingData[0]);
+      },
+
+      _equals: function(step, stepName) {
+        debugger;
+        return step === stepName;
+      },
 
 
     });
