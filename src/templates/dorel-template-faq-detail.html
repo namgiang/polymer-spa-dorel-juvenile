@@ -1,19 +1,153 @@
+<link rel="import" href="../organisms/dorel-service-faq-detail.html">
+
 <dom-module id="dorel-template-faq-detail">
   <template>
-    <style></style>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        --button-margin-spacing: 0;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      dorel-service-faq-detail {
+        margin-top: 1.5em;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: left;
+      }
+
+      .container {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+      }
+
+      [tablet-medium-up] .container {
+        width: 66.6666666%;
+      }
+
+      [tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+    </style>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-
-    <section class="section-example-component"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-      <h1>Service Detail</h1>
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="row">
+        <div class="container">
+          <h2 class="title">
+            [[ dummyTemplateData.title ]]
+          </h2>
+          <dorel-safe-html html="[[ dummyTemplateData.description ]]"></dorel-safe-html>
+          <dorel-service-faq-detail faq-detail="[[ faqDetail ]]"></dorel-service-faq-detail>
+        </div>
+      </div>
     </section>
-
   </template>
 
   <script>
     Polymer({
       is: 'dorel-template-faq-detail',
-      properties: {},
+      properties: {
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        // TODO: This will become templateData, which is collected from Wordpress
+        dummyTemplateData: {
+          type: Object,
+          value: {
+            'title': 'Repair & Replacement FAQ',
+            'description': '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ex velit, condimentum vitae dapibus non, convallis ac lorem. Nulla quis tortor nibh. Maecenas vitae leo purus. Nullam odio lacus, pellentesque a feugiat vitae, vestibulum vel nunc. Proin vulputate purus nulla, vel sagittis leo blandit a. Vivamus vestibulum mi vitae rutrum pulvinar. Integer eget viverra elit, tincidunt bibendum nulla.</p>'
+          }
+        },
+        faqDetail: {
+          type: Array,
+          value: [
+            {
+              'title': 'Repairs',
+              'questions': [
+                {'title': 'Repairs First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Repairs Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Repairs Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Repairs Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+              ]
+            },
+            {
+              'title': 'Damaged Product',
+              'questions': [
+                {'title': 'Damaged Product First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Damaged Product Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Damaged Product Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Damaged Product Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+              ]
+            },
+            {
+              'title': 'Spare Parts',
+              'questions': [
+                {'title': 'Spare Parts First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Spare Parts Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Spare Parts Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                {'title': 'Spare Parts Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+              ]
+            },
+          ]
+        },
+      },
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
     });
 
   </script>
