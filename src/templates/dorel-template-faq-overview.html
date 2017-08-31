@@ -17,6 +17,13 @@
           items="[[ templateData.acf.faq_overview_builder ]]"
           as="component"
           targetFramerate="1000">
+          <template
+            is="dom-if"
+            if="{{ isPageComponent(component.acf_fc_layout, 'section_service_faqs') }}">
+            <dorel-service-faq-overview
+              template-data="[[ component ]]"
+              faq-overview="[[ faqOverview ]]"></dorel-service-faq-overview>
+          </template>
           <!-- section-hero-header -->
           <template
             is="dom-if"
@@ -28,13 +35,6 @@
               gtm-parent-index="[[ index ]]"></dorel-section-header>
           </template>
           <!-- end section  header -->
-          <template
-            is="dom-if"
-            if="{{ isPageComponent(component.acf_fc_layout, 'section_service_faqs') }}">
-            <dorel-service-faq-overview
-              template-data="[[ component ]]"
-              faq-overview="[[ faqOverview ]]"></dorel-service-faq-overview>
-          </template>
         </template>
       </template>
     </section>
