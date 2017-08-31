@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<dom-module id="dorel-nav-tabs">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+
+        --paper-tabs-selection-bar-color: var(--theme-brand-color-1);
+        --paper-font-common-base: var(--theme-font);
+        --paper-tab-content: {
+          margin-top: 0;
+          font-weight: 400 !important;
+        };
+
+        --paper-tabs: {
+          @apply(--theme-paragraph-text);
+          max-width: 100%;
+          margin-top: 0;
+          /* Ugly, but there's no access to the selected state */
+          font-weight: 400 !important;
+          box-shadow: inset 0 -2px 0 0 var(--theme-color-monochrome-2);
+        };
+
+        --paper-tab-content-unselected: {
+          @apply(--theme-typography-normal);
+        };
+      }
+
+      paper-tab {
+        transition: color .3s ease;
+      }
+
+      paper-tab:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <paper-tabs selected="{{ selected }}" scrollable="[[ !breakpoints.tabletMediumUp ]]">
+      <template is="dom-repeat" items="[[ tabs ]]">
+        <paper-tab noink>[[ item ]]</paper-tab>
+      </template>
+    </paper-tabs>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-nav-tabs',
+
+      properties: {
+        selected: {
+          type: Number,
+          value: 0,
+          notify: true,
+        },
+        tabs: {
+          type: Array,
+        }
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -12,9 +12,12 @@
         max-width: 100%;
         margin-top: 0;
         padding: 1.5em;
-        padding-left: 3.25em;
         transition: color .3s ease;
         color: var(--theme-color-text-link);
+      }
+
+      [icon] .accordion-heading {
+        padding-left: 3.25em;
       }
 
       .accordion-heading:focus {
@@ -28,15 +31,11 @@
       }
 
       .accordion-container {
-        box-shadow: inset 0 -1px 0 0 var(--theme-color-monochrome-2);
+        box-shadow: inset 0 -2px 0 0 var(--theme-color-monochrome-2);
         position: relative;
         float: left;
         width: 100%;
         transition: background-color .3s ease;
-      }
-
-      .accordion-container:first-child {
-        box-shadow: inset 0 -1px 0 0 var(--theme-color-monochrome-2), inset 0 1px 0 0 var(--theme-color-monochrome-2);
       }
 
       .accordion-content {
@@ -74,7 +73,7 @@
       }
 
     </style>
-    <div class="accordion-container" opened$="[[ opened ]]">
+    <div class="accordion-container" opened$="[[ opened ]]" icon$="[[ icon.length ]]">
       <template
         is="dom-if"
         if="[[ heading.length ]]">
@@ -88,7 +87,9 @@
             gtm-parent="[[ gtmParent ]]"
             gtm-parent-index="[[ gtmParentIndex ]]"
             gtm-cta-index$="[[ index ]]">
-          <iron-icon class="left-icon accordion-icon" icon="[[ icon ]]"></iron-icon>
+          <template is="dom-if" if="[[ icon.length ]]">
+            <iron-icon class="left-icon accordion-icon" icon="[[ icon ]]"></iron-icon>
+          </template>
           [[ heading ]]
         </h2>
         <iron-icon class="accordion-icon"
