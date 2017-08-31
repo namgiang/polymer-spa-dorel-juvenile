@@ -17,13 +17,7 @@
           items="[[ templateData.acf.faq_overview_builder ]]"
           as="component"
           targetFramerate="1000">
-          <template
-            is="dom-if"
-            if="{{ isPageComponent(component.acf_fc_layout, 'section_service_faqs') }}">
-            <dorel-service-faq-overview
-              template-data="[[ component ]]"
-              faq-overview="[[ faqOverview ]]"></dorel-service-faq-overview>
-          </template>
+          
           <!-- section-hero-header -->
           <template
             is="dom-if"
@@ -35,6 +29,13 @@
               gtm-parent-index="[[ index ]]"></dorel-section-header>
           </template>
           <!-- end section  header -->
+
+          <template
+            is="dom-if"
+            if="{{ isPageComponent(component.acf_fc_layout, 'section_service_faqs') }}">
+            <dorel-service-faq-overview
+              template-data="[[ component ]]"></dorel-service-faq-overview>
+          </template>
         </template>
       </template>
     </section>
@@ -57,38 +58,9 @@
           value: function () {
             return {};
           }
-        },
-        faqOverview: {
-          value: [{
-            'title': 'Safety & Care',
-            'icon': 'dorel-icons:help-outline',
-            'questions': [
-              {'title': 'First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-              {'title': 'Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-              {'title': 'Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-              {'title': 'Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-            ]
-          }, {
-            'title': 'Warranty',
-            'icon': 'dorel-icons:help-outline',
-            'questions': [
-              {'title': 'First Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-              {'title': 'Second Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-              {'title': 'Third Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-              {'title': 'Fourth Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition', opened: false},
-            ]
-          }, {
-            'title': 'Repairs & Replacements',
-            'icon': 'dorel-icons:help-outline',
-            'questions': [
-              {'title': 'First Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Second Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Third Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Fourth Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-            ]
-          }],
         }
       },
+
       /**
        * @name isPageComponent
        * @description compares to values to see if they match, for some
