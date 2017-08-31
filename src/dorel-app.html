@@ -169,6 +169,16 @@
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
+        <dorel-template-faq-overview
+          name="faq-overview"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-overview>
+
+        <dorel-template-faq-detail
+          name="faq-detail"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-detail>
+
         <dorel-template-component-guide
           name="component-guide"
           brand="{{ brand }}"
@@ -336,12 +346,12 @@
        * or retrieve it all the way.
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function(currentPage) {
+      _pageChanged: function (currentPage) {
         if (typeof currentPage === 'undefined' || currentPage === '') {
           return;
         }
 
-        if(currentPage.template === 'home') {
+        if (currentPage.template === 'home') {
           this._ensureLazyLoaded();
         } else {
           this.importHref(

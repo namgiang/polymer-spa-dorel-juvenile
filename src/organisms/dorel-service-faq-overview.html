@@ -1,0 +1,274 @@
+<link rel="import" href="../atoms/dorel-accordion-item.html">
+<dom-module id="dorel-service-faq-overview">
+  <template>
+    <!-- YOUR STYLES HERE -->
+    <style>
+      :host {
+        @apply(--max-width-host);
+        --button-margin-spacing: 0;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: center;
+      }
+
+      .topic-select {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 33.3333333%;
+        width: 33.3333333%;
+        flex-basis: 33.3333333%;
+        max-width: 33.3333333%;
+        padding: 0 0 0 .75em;
+        float: left;
+        display: inline-block;
+      }
+
+      .accordion-topics {
+        width: 100%;
+      }
+
+      paper-item {
+        height: 3em;
+      }
+
+      paper-menu {
+        padding: 0;
+      }
+
+      .topic.iron-selected {
+        background-color: var(--theme-color-monochrome-2);
+        color: var(--theme-brand-color-2) !important;
+        /* border-bottom: 1px solid var(--theme-brand-color-1); */
+      }
+
+      .topic-display {
+        @apply(--theme-grid-column);
+        background-color: var(--theme-color-monochrome-2);
+        flex-grow: 1;
+        padding: 1.5em 1.5em 1.5em 2.25em;
+        float: left;
+        display: inline-block;
+      }
+
+      .container {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        width: 100%;
+      }
+
+      .topic {
+        height: 3em;
+        padding: .75em;
+        display: flex;
+        align-items: center;
+        color: var(--theme-brand-color-2);
+        border-bottom: 1px solid var(--theme-color-monochrome-2);
+        transition: background-color .3s ease, color .3s ease;
+      }
+
+      .topic:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+      .topic-description {
+        flex-grow: 1;
+      }
+
+      .icon-left {
+        padding-right: 1em;
+      }
+
+      .icon-right {
+        float: right;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* TODO: List styles will be added when the info pages are updated, this should be replaced later */
+      li::before {
+        content: "• ";
+        padding-right: .5em;
+        color: var(--theme-brand-color-2);
+      }
+
+      li:first-child {
+        padding-top: 0;
+      }
+
+      li {
+        padding-top: 1.5em;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--theme-brand-color-2);
+        transition: .3s ease color;
+      }
+
+      a:visited {
+        text-decoration: none;
+        color: var(--theme-brand-color-2);
+      }
+
+      a:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-cta {
+        float: right;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+      }
+
+      [tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="layout horizontal center center-justified wrap"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="row">
+        <div class="container">
+          <template is="dom-if" if="{{ _hasValue(templateData.section_title) }}">
+            <h2 class="title">
+              [[ templateData.section_title ]]
+            </h2>
+          </template>
+          <template is="dom-if" if="{{ _hasValue(templateData.section_description) }}">
+            <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+          </template>
+        </div>
+      </div>
+      <div class="row">
+        <!-- Desktop Service Topic Listing -->
+        <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+          <div class="topic-select">
+            <paper-menu attr-for-selected='name'
+                        selected="{{ selectedTopic }}">
+              <template is="dom-repeat" items="[[ faqOverview ]]">
+                <div role="button" name$="[[ index ]]" class="topic">
+                  <iron-icon class="icon-left" icon="[[ item.icon ]]"></iron-icon>
+                  <span class="topic-description">[[ item.title ]]</span>
+                  <iron-icon class="icon-right" icon="dorel-icons:chevron-right"></iron-icon>
+                </div>
+              </template>
+            </paper-menu>
+          </div>
+          <div class="topic-display">
+            <iron-pages attr-for-selected="name"
+                        selected="{{ selectedTopic }}"
+                        fallback-selection="0">
+              <template is="dom-repeat" items="[[ faqOverview ]]">
+                <div class="topic-listing" name$="[[ index ]]">
+                  <ul>
+                    <template is="dom-repeat" items="[[ item.questions ]]">
+                      <li><a href="">[[ item.title ]]</a></li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+            </iron-pages>
+            <dorel-cta title="[[ templateData.view_all_text ]]"
+                       type="link"
+                       link=""
+                       size="small"
+                       icon="dorel-icons:chevron-right">
+              [[ templateData.view_all_text ]]
+            </dorel-cta>
+          </div>
+        </template>
+        <!-- End Desktop Service Topic Listing-->
+
+        <!-- Mobile Service Topic Listing -->
+        <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+          <div class="accordion-topics">
+            <template is="dom-repeat" items="[[ faqOverview ]]">
+              <dorel-accordion-item heading="[[ item.title ]]" icon="[[ item.icon ]]">
+                <div class="topic-listing">
+                  <ul>
+                    <template is="dom-repeat" items="[[ item.questions ]]">
+                      <li><a href="">[[ item.title ]]</a></li>
+                    </template>
+                  </ul>
+                </div>
+                <dorel-cta title="Call to action"
+                           type="link"
+                           link=""
+                           size="small"
+                           icon="dorel-icons:chevron-right">
+                  [[ templateData.view_all_text ]]
+                </dorel-cta>
+              </dorel-accordion-item>
+            </template>
+          </div>
+        </template>
+        <!-- End Mobile Service Topic Listing-->
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-service-faq-overview',
+      properties: {
+        selectedTopic: {
+          type: String,
+          value: ''
+        },
+        templateData: {
+          type: Object,
+        },
+        faqOverview: {
+          type: Array,
+          value: []
+        },
+      },
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      _hasValue: function (val) {
+        return (val !== '' && typeof val !== 'undefined' && val !== null);
+      },
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

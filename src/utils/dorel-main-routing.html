@@ -51,6 +51,15 @@
         // if the route is undefined
         if (typeof route === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
+        // Matches the page to the component guide template
+        if (route.path.indexOf('component-guide') === 1) {
+          this.currentPage = {
+            template: 'component-guide'
+          };
+          // break
+          return;
+        }
+
         // get the a clean last segment of the route.path
         lastSegment = route.path.match(/([^\/]*)\/*$/).pop();
 
@@ -63,45 +72,37 @@
          */
         this.page = lastSegment || 'home';
 
-        // Matches the page to the component guide template
-        if (this.page === 'component-guide') {
-          this.currentPage = {
-            template: 'component-guide'
-          };
-          // break
-          return;
-        }
 
         var url = (window.location.origin + this.route.path);
         var fullUrl = url.slice(-1) === '/' ? url : url + '/';
 
-        this.currentPage = pages.find(function(item) {
+        this.currentPage = pages.find(function (item) {
           return item.link === fullUrl || item.slug === 'home' && self.page === 'home';
         });
 
         var last = this.currentPage ? '' : lastSegment;
 
-        var parent = pages.find(function(_page) {
+        var parent = pages.find(function (_page) {
           return self._compareUrls(_page.link, route.path, last);
         });
 
-        if(!this.currentPage && route.path && route.path.length) {
-          if(!parent) {
+        if (!this.currentPage && route.path && route.path.length) {
+          if (!parent) {
             return this._setPageNotFound();
           }
 
           var productDetailTemplate = parent.acf.detail_template_selector;
 
-          if(!productDetailTemplate) {
+          if (!productDetailTemplate) {
             return this._setPageNotFound();
           }
 
           this._setCategoryPage(parent);
 
-          var productDetailPage = pages.find(function(_page) {
-             return _page.slug === productDetailTemplate || _page.template === 'product-detail-default';  //default
+          var productDetailPage = pages.find(function (_page) {
+            return _page.slug === productDetailTemplate || _page.template === 'product-detail-default';  //default
           });
-          if(!productDetailPage) {
+          if (!productDetailPage) {
             return this._setPageNotFound();
           }
           this.set('currentPage', productDetailPage);
@@ -119,7 +120,7 @@
        * @name _setPageNotFound
        * @description set the currentPage to a 404 page
        */
-      _setPageNotFound: function() {
+      _setPageNotFound: function () {
         // set the page to 404
         this.page = '404';
 
@@ -137,7 +138,7 @@
        * @name _setCategoryPage
        * @description set the categoryPage so it will be passed to the parent
        */
-      _setCategoryPage: function(categoryPage) {
+      _setCategoryPage: function (categoryPage) {
         this.set('categoryPage', categoryPage);
       },
 
@@ -145,18 +146,18 @@
        * @name _compareUrls
        * @description return a Boolean if the url + lastSegment and routePath matches;
        */
-      _compareUrls: function(url, routePath, lastSegment) {
+      _compareUrls: function (url, routePath, lastSegment) {
         url = this._cleanString(url + lastSegment);
         routePath = this._cleanString(window.location.origin + routePath);
         return Boolean(url === routePath);
       },
 
-      _cleanString: function(string) {
+      _cleanString: function (string) {
         string = this._stripQueryStringAndHashFromPath(string);
         return string.replace(/[\/\[\]\&]+|/g, '');
       },
 
-      _stripQueryStringAndHashFromPath: function(url) {
+      _stripQueryStringAndHashFromPath: function (url) {
         return url.split("?")[0].split("#")[0];
       }
     });
