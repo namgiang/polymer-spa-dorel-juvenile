@@ -1,0 +1,112 @@
+<dom-module id="dorel-service-faq-promo">
+  <template>
+    <style>
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-color-white);
+        margin-top: 0;
+      }
+
+      p {
+        @apply(--theme-paragraph-text);
+        color: var(--theme-color-white);
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        width: auto;
+        float: right;
+      }
+
+      dorel-bynder-image {
+        float: left;
+        padding-right: 1.5em;
+      }
+
+      section {
+        background-color: var(--theme-brand-color-2);
+        padding: 1.5em;
+        margin-top: 1.5em;
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      [light] {
+        background-color: var(--theme-color-monochrome-2);
+        border-top: 1px solid var(--theme-color-monochrome-3);
+      }
+
+      [light] .title {
+        color: var(--theme-brand-color-1);
+      }
+
+      [light] p {
+        color: var(--theme-color-black);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}" light$="[[ light ]]">
+      <dorel-bynder-image media-id="[[templateData.bynder_id]]"
+                          mobile-width="8em"
+                          mobile-height="8em"
+                          tablet-width="10em"
+                          tablet-height="10em"
+                          width="10em"
+                          height="10em"></dorel-bynder-image>
+      <h3 class="title">[[ templateData.title ]]</h3>
+      <p>[[templateData.description]]</p>
+
+      <template is="dom-if" if="[[ light ]]">
+        <dorel-cta title="[[ templateData.cta_text ]]"
+                   type="link"
+                   link="[[ templateData.cta_link ]]"
+                   size="small"
+                   icon="dorel-icons:chevron-right">
+          [[ templateData.cta_text ]]
+        </dorel-cta>
+      </template>
+      <template is="dom-if" if="[[ !light ]]">
+        <dorel-cta title="[[ templateData.cta_text ]]"
+                   type="primary"
+                   link="[[ templateData.cta_link ]]"
+                   size="small"
+                   icon="dorel-icons:chevron-right">
+          [[ templateData.cta_text ]]
+        </dorel-cta>
+      </template>
+    </section>
+
+  </template>
+
+
+  <script>
+    Polymer({
+      is: 'dorel-service-faq-promo',
+      properties: {
+        light: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+        templateData: {
+          type: Object,
+        }
+      },
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -64,9 +64,15 @@
         @apply(--theme-grid-column);
         background-color: var(--theme-color-monochrome-2);
         flex-grow: 1;
-        padding: 1.5em 1.5em 1.5em 2.25em;
         float: left;
         display: inline-block;
+      }
+
+      .topic-listing {
+        padding: 1.5em 1.5em 1.5em 1.5em;
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .topic {
@@ -170,8 +176,8 @@
         </div>
       </div>
       <div class="row">
-        <template 
-          is="dom-if" 
+        <template
+          is="dom-if"
           if="[[ templateData.faq_categories.length ]]">
 
           <!-- Desktop Service Topic Listing -->
@@ -181,8 +187,8 @@
               <paper-menu attr-for-selected="name"
                           selected="{{ selectedTopic }}">
 
-                <template 
-                  is="dom-repeat" 
+                <template
+                  is="dom-repeat"
                   items="[[ templateData.faq_categories ]]"
                   as="category">
                   <div role="button" name$="[[ index ]]" class="topic">
@@ -204,15 +210,15 @@
               <iron-pages attr-for-selected="name"
                           selected="{{ selectedTopic }}"
                           fallback-selection="0">
-                <template 
-                  is="dom-repeat" 
+                <template
+                  is="dom-repeat"
                   items="[[ templateData.faq_categories ]]"
                   as="category">
 
                   <div class="topic-listing" name$="[[ index ]]">
                     <ul>
-                      <template 
-                        is="dom-repeat" 
+                      <template
+                        is="dom-repeat"
                         items="[[ category.questions ]]"
                         as="question">
                         <li>
@@ -239,15 +245,15 @@
           <!-- Mobile Service Topic Listing -->
           <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
             <div class="accordion-topics">
-              <template 
-                is="dom-repeat" 
+              <template
+                is="dom-repeat"
                 items="[[ templateData.faq_categories ]]"
                 as="category">
                 <dorel-accordion-item heading="[[ category.name ]]" icon="dorel-icons:help-outline">
                   <div class="topic-listing">
                     <ul>
-                      <template 
-                        is="dom-repeat" 
+                      <template
+                        is="dom-repeat"
                         items="[[ category.questions ]]"
                         as="question">
                         <li><a href="[[ category.detail_page ]]">[[ question.title ]]</a></li>
@@ -285,12 +291,12 @@
         }
       },
 
-      ready: function() {
+      ready: function () {
         /**
          * Adds questions to wordpress faq categories
          * TODO: can be removed when we use real GMT data
          */
-        this.templateData.faq_categories.forEach(function(cat) {
+        this.templateData.faq_categories.forEach(function (cat) {
           if (cat.gmt_category === 'repairs_and_replacements') {
             cat.questions = [
               {
@@ -343,7 +349,7 @@
       _hasValue: function (val) {
         return (val !== '' && typeof val !== 'undefined' && val !== null);
       },
-      
+
       /**
        * @name _eventTracking
        * @description this is for example tracking only
