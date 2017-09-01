@@ -145,7 +145,7 @@
           <template
             is="dom-if"
             if="{{ isPageComponent(component.acf_fc_layout, 'section_product_accessories') }}">
-            
+
             <dorel-section-product-accessories
               accessory-scroll-handler="{{ accessoryScrollHandler }}"
               accessories-data="[[ component ]]"
@@ -214,7 +214,7 @@
          * @description the data coming from ACF/Wordpress which is delegated to the page builder
          */
         templateData: {
-          type: String
+          type: String,
         },
 
         /**
@@ -235,23 +235,23 @@
           value: false,
         },
       },
-
       observers: [
-        '_routeDataChanged(routeData.productName)'
+        '_dataChanged(routeData, templateData)',
       ],
+      /**
+       * @name _dataChanged
+       * @description When the routeData and templateData are changed and not undefined, this will be called.
+       * Sets the right builderData for the templating.
+       */
+      _dataChanged: function (routeData, templateData) {
+        var productName = this.routeData.productName;
 
-      _routeDataChanged: function (productName) {
         if (typeof productName === 'undefined' || typeof this.templateData.products === 'undefined' || !this.templateData.products.length) return;
-
 
         this.builderData = this.templateData.products.find(function (product) {
           return product.slug === productName;
         });
-
-        // 404 page
-        // if (typeof this.builderData === 'undefined') {}
       },
-
       /**
        * @name isPageComponent
        * @description compares to values to see if they match, for some
