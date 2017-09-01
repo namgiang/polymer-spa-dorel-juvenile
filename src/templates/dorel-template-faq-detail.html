@@ -1,4 +1,5 @@
 <link rel="import" href="../organisms/dorel-service-faq-detail.html">
+<link rel="import" href="../organisms/dorel-service-faq-promo.html">
 
 <dom-module id="dorel-template-faq-detail">
   <template>
@@ -18,7 +19,7 @@
       }
 
       dorel-service-faq-detail {
-        margin-top: 1.5em;
+        margin: 0 0 1.5em 0;
       }
 
       .row {
@@ -28,9 +29,7 @@
         justify-content: left;
       }
 
-      .container {
-        @apply(--theme-grid-column);
-        margin-top: 0;
+      .container-faq, .container-promo-contact {
         width: 100%;
       }
 
@@ -39,8 +38,30 @@
         color: var(--theme-brand-color-1);
       }
 
-      [tablet-medium-up] .container {
+      [tablet-medium-up] dorel-service-faq-detail {
+        margin: 3em 0 1.5em 0;
+      }
+
+      [tablet-medium-up] .container-faq {
         width: 66.6666666%;
+      }
+
+      [tablet-medium-up] .container-promo-contact {
+        width: calc(100% - 66.6666666%);
+      }
+
+      dorel-service-faq-promo {
+        float: left;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+
+      [tablet-medium-up] dorel-service-faq-promo  {
+        margin-top: 3em;
+      }
+
+      [tablet-medium-up] .container-faq, [tablet-medium-up] .container-promo-contact {
+        @apply(--theme-grid-column);
       }
 
       [tablet-medium-up] {
@@ -55,36 +76,48 @@
         @apply(--theme-typography-7);
       }
     </style>
-  
+
 
     <app-location route="{{ route }}"></app-location>
     <iron-query-params
-      params-string="{{query}}"
-      params-object="{{queryParams}}"></iron-query-params>
+      params-string="{{ query }}"
+      params-object="{{ queryParams }}"></iron-query-params>
     <app-route-converter
-      path="{{path}}"
-      query-params="{{queryParams}}"
-      route="{{route}}"></app-route-converter>
-    <app-route route="{{route}}"></app-route>
+      path="{{ path }}"
+      query-params="{{ queryParams }}"
+      route="{{ route }}"></app-route-converter>
+    <app-route route="{{ route }}"></app-route>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <div class="row">
-        <div class="container">
+        <div class="container-faq">
           <h2 class="title">
             [[ dummyTemplateData.title ]]
           </h2>
           <dorel-safe-html html="[[ dummyTemplateData.description ]]"></dorel-safe-html>
           <dorel-service-faq-detail faq-detail="[[ faqDetail ]]"></dorel-service-faq-detail>
         </div>
+        <div class="container-promo-contact">
+          <dorel-service-faq-promo template-data="[[ faqPromo ]]"></dorel-service-faq-promo>
+        </div>
       </div>
     </section>
   </template>
-
   <script>
     Polymer({
       is: 'dorel-template-faq-detail',
       properties: {
+        faqPromo: {
+          type: Object,
+          value: {
+            'title': 'Happy Hips',
+            'description': 'Special seat for you baby, First Lorem ipsum this.',
+            'bynder_id': '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            'cta_text': 'Read more',
+            'cta_link': '/component-guide/'
+          }
+        },
         /**
          * @attribute
          * @name templateData
