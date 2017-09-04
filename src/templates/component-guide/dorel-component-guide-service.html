@@ -1,11 +1,18 @@
 <link rel="import" href="dorel-component-guide-shared-styles.html">
 <link rel="import" href="../../organisms/dorel-service-faq-overview.html">
 <link rel="import" href="../../organisms/dorel-service-faq-detail.html">
+<link rel="import" href="../../organisms/dorel-service-faq-promo.html">
 
 <dom-module id="dorel-component-guide-service">
   <template>
     <style include="dorel-component-guide-shared-styles"></style>
-    <style></style>
+    <style>
+      dorel-service-faq-promo {
+        margin-bottom: 1.5em;
+        float: left;
+        width: 100%;
+      }
+    </style>
     <section class="content-container">
       <h1 class="class-for-h1">Service Components</h1>
       <p>
@@ -14,11 +21,17 @@
       <hr>
       <h1 class="class-for-h2">FAQ Overview</h1>
     </section>
-    <dorel-service-faq-overview faq-overview="[[ faqOverview ]]"></dorel-service-faq-overview>
+    <dorel-service-faq-overview template-data="[[ faqOverview ]]"></dorel-service-faq-overview>
     <section class="content-container">
       <hr>
       <h1 class="class-for-h2">FAQ Detail</h1>
       <dorel-service-faq-detail faq-detail="[[ faqDetail ]]"></dorel-service-faq-detail>
+      <hr>
+    </section>
+    <section class="content-container">
+      <h1 class="class-for-h2">FAQ Promo</h1>
+      <dorel-service-faq-promo template-data="[[ faqPromo ]]" light="true"></dorel-service-faq-promo>
+      <dorel-service-faq-promo template-data="[[ faqPromo ]]"></dorel-service-faq-promo>
     </section>
   </template>
 
@@ -27,6 +40,16 @@
     Polymer({
       is: 'dorel-component-guide-service',
       properties: {
+        faqPromo: {
+          type: Object,
+          value: {
+            'title': 'Happy Hips',
+            'description': 'Special seat for you baby, First Lorem ipsum this.',
+            'bynder_id': '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            'cta_text': 'Read more',
+            'cta_link': '/component-guide/'
+          }
+        },
         faqDetail: {
           type: Array,
           value: [
@@ -60,35 +83,40 @@
           ]
         },
         faqOverview: {
-          type: Array,
-          value: [{
-            'title': 'Safety & Care',
-            'icon': 'dorel-icons:help-outline',
-            'questions': [
-              {'title': 'First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+          type: Object,
+          value: {
+            cta_text: 'View more',
+            faq_categories: [
+              {
+                'name': 'Safety & Care',
+                'icon': 'dorel-icons:help-outline',
+                'questions': [
+                  {'title': 'Safety First Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Second Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Third Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Fourth Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                ]
+              }, {
+                'name': 'Warranty',
+                'icon': 'dorel-icons:help-outline',
+                'questions': [
+                  {'title': 'Warranty First Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Second Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Third Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Fourth Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                ]
+              }, {
+                'name': 'Repairs & Replacements',
+                'icon': 'dorel-icons:help-outline',
+                'questions': [
+                  {'title': 'Repairs First Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Second Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Third Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                  {'title': 'Fourth Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
+                ]
+              }
             ]
-          }, {
-            'title': 'Warranty',
-            'icon': 'dorel-icons:help-outline',
-            'questions': [
-              {'title': 'First Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Second Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Third Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Fourth Warranty Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-            ]
-          }, {
-            'title': 'Repairs & Replacements',
-            'icon': 'dorel-icons:help-outline',
-            'questions': [
-              {'title': 'First Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Second Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Third Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-              {'title': 'Fourth Repairs Lorem ipsum this?', 'description': 'Lorem ipsum descrpition'},
-            ]
-          }],
+          }
         },
       }
     });
