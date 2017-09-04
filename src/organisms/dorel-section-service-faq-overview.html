@@ -1,8 +1,7 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
 
-<dom-module id="dorel-service-faq-overview">
+<dom-module id="dorel-section-service-faq-overview">
   <template>
-    <!-- YOUR STYLES HERE -->
     <style>
       :host {
         @apply(--max-width-host);
@@ -187,11 +186,11 @@
                   as="category">
                   <div role="button" name$="[[ index ]]" class="topic">
                     <iron-icon class="icon-left" icon="dorel-icons:help-outline"></iron-icon>
-                    <template is="dom-if" if="[[ _hasValue(category.name) ]]">
-                      <span class="topic-description">[[ category.name ]]</span>
+                    <template is="dom-if" if="[[ _hasValue(category.title) ]]">
+                      <span class="topic-description">[[ category.title ]]</span>
                     </template>
-                    <template is="dom-if" if="[[ !_hasValue(category.name) ]]">
-                      <span class="topic-description">[[ category.gmt_category ]]</span>
+                    <template is="dom-if" if="[[ !_hasValue(category.title) ]]">
+                      <span class="topic-description">[[ category.gmt_service_category ]]</span>
                     </template>
                     <iron-icon class="icon-right" icon="dorel-icons:chevron-right"></iron-icon>
                   </div>
@@ -243,7 +242,7 @@
                 is="dom-repeat" 
                 items="[[ templateData.faq_categories ]]"
                 as="category">
-                <dorel-accordion-item heading="[[ category.name ]]" icon="dorel-icons:help-outline">
+                <dorel-accordion-item heading="[[ category.title ]]" icon="dorel-icons:help-outline">
                   <div class="topic-listing">
                     <ul>
                       <template 
@@ -273,7 +272,7 @@
 
   <script>
     Polymer({
-      is: 'dorel-service-faq-overview',
+      is: 'dorel-section-service-faq-overview',
       properties: {
         selectedTopic: {
           type: String,
@@ -290,43 +289,90 @@
          * Adds questions to wordpress faq categories
          * TODO: can be removed when we use real GMT data
          */
-        this.templateData.faq_categories.forEach(function(cat) {
-          if (cat.gmt_category === 'repairs_and_replacements') {
+        this.templateData.faq_categories.forEach(function(cat, index) {
+          cat.id = index;
+          if (cat.gmt_service_category === 'services') {
+
+            cat.sub_categories = [
+              {
+                id: 10,
+                title: 'Repairs'
+              },
+
+              {
+                id: 20,
+                title: 'Spare Parts'
+              },
+
+              {
+                id: 30,
+                title: 'Hip Safety Service'
+              }
+            ];
+
             cat.questions = [
               {
-                'title': 'GMT First Lorem ipsum this?',
+                id: 11,
+                sub_category_id: 10,
+                'title': 'SC - First Lorem ipsum this?',
                 'description': 'Lorem ipsum descrpition'
               },
               {
-                'title': 'GMT Second Lorem ipsum this?',
+                id: 12,
+                sub_category_id: 10,
+                'title': 'SC - Fourth Lorem ipsum this?',
                 'description': 'Lorem ipsum descrpition'
               },
               {
-                'title': 'GMT Third Lorem ipsum this?',
+                id: 21,
+                sub_category_id: 20,
+                'title': 'SC - Second Lorem ipsum this?',
                 'description': 'Lorem ipsum descrpition'
               },
               {
-                'title': 'GMT Fourth Lorem ipsum this?',
+                id: 31,
+                sub_category_id: 30,
+                'title': 'SC - Third Lorem ipsum this?',
                 'description': 'Lorem ipsum descrpition'
               },
             ];
-          } else {
+          } else if (cat.gmt_service_category === 'warranty') {
+            cat.sub_categories = [
+              {
+                id: 40,
+                title: 'Lifetime Warranty'
+              },
+
+              {
+                id: 50,
+                title: 'Standard 24-Month Warrany'
+              }
+            ];
+
             cat.questions = [
               {
-                'title': 'First Lorem ipsum this?',
-                'description': 'Lorem ipsum descrpition'
+                id: 41,
+                sub_category_id: 40,
+                'title': 'W - First Lorem ipsum this?',
+                'description': 'wLorem ipsum descrpition'
               },
               {
-                'title': 'Second Lorem ipsum this?',
-                'description': 'Lorem ipsum descrpition'
+                id: 41,
+                sub_category_id: 40,
+                'title': 'W - Second Lorem ipsum this?',
+                'description': 'W - Lorem ipsum descrpition'
               },
               {
-                'title': 'Third Lorem ipsum this?',
-                'description': 'Lorem ipsum descrpition'
+                id: 51,
+                sub_category_id: 50,
+                'title': 'W - Third Lorem ipsum this?',
+                'description': 'W - Lorem ipsum descrpition'
               },
               {
-                'title': 'Fourth Lorem ipsum this?',
-                'description': 'Lorem ipsum descrpition'
+                id: 51,
+                sub_category_id: 50,
+                'title': 'W - Fourth Lorem ipsum this?',
+                'description': 'W - Lorem ipsum descrpition'
               },
             ];
           }
@@ -334,6 +380,8 @@
 
         // needed to create an update version for dom-repeat items
         this.templateData.faq_categories = JSON.parse(JSON.stringify(this.templateData.faq_categories));
+
+        console.log(this.templateData.faq_categories);
       },
 
       /**
