@@ -1,5 +1,6 @@
 <link rel="import" href="../organisms/dorel-service-faq-detail.html">
 <link rel="import" href="../organisms/dorel-service-faq-promo.html">
+<link rel="import" href="../organisms/dorel-service-support.html">
 
 <dom-module id="dorel-template-faq-detail">
   <template>
@@ -22,6 +23,10 @@
         margin: 0 0 1.5em 0;
       }
 
+       dorel-service-support {
+         margin: 1.5em 0;
+       }
+
       .row {
         @apply(--theme-grid-row);
         @apply(--theme-grid-row-mobile-margins);
@@ -38,25 +43,25 @@
         color: var(--theme-brand-color-1);
       }
 
-      [tablet-medium-up] dorel-service-faq-detail {
-        margin: 3em 0 1.5em 0;
-      }
-
-      [tablet-medium-up] .container-faq {
-        width: 66.6666666%;
-      }
-
-      [tablet-medium-up] .container-promo-contact {
-        width: calc(100% - 66.6666666%);
-      }
-
       dorel-service-faq-promo {
         float: left;
         margin: 1.5em 0;
         width: 100%;
       }
 
-      [tablet-medium-up] dorel-service-faq-promo  {
+      [tablet-medium-up] dorel-service-faq-detail {
+        margin: 3em 0 1.5em 0;
+      }
+
+      [desktop-small-up] .container-faq {
+        width: 66.6666666%;
+      }
+
+      [desktop-small-up] .container-promo-contact {
+        width: calc(100% - 66.6666666%);
+      }
+
+      [tablet-medium-up] dorel-service-faq-promo {
         margin-top: 3em;
       }
 
@@ -75,6 +80,12 @@
       [tablet-medium-up] .title {
         @apply(--theme-typography-7);
       }
+
+      [tablet-medium-up] .container-faq {
+        box-sizing: border-box;
+        padding-right: 3em;
+      }
+
     </style>
 
 
@@ -89,7 +100,8 @@
     <app-route route="{{ route }}"></app-route>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
       <div class="row">
         <div class="container-faq">
           <h2 class="title">
@@ -100,6 +112,7 @@
         </div>
         <div class="container-promo-contact">
           <dorel-service-faq-promo template-data="[[ faqPromo ]]"></dorel-service-faq-promo>
+          <dorel-service-support class="compact" compact="true"></dorel-service-support>
         </div>
       </div>
     </section>
