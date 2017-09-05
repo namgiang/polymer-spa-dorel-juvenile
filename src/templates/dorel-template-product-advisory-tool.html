@@ -19,12 +19,14 @@
       }
     </style>
 
+    <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
+
+
     <iron-ajax
-      id="results"
+      id="getResults"
       handle-as="json"
       on-response="_resultResponse"></iron-ajax>
 
-    <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
     <dorel-product-advisory-nav
       load-complete="[[ loadComplete ]]"
       page-title="[[ title ]]"
@@ -162,12 +164,26 @@
         var values = event.detail.value;
         this.set('results', {});
         if(values.length) {
-          var resultsEl = this.$.results;
+          var resultsEl = this.$.getResults;
+          resultsEl.url = 'http://dorel-wp.dev:8009/v1/' +
+          'carseats/' + this._findValue(values, 'id') +
+          '?model_name=' + this._findValue(values, 'model_name') +
+          '&introduction_year=' + this._findValue(values, 'introduction_year') +
+          '&carseat=' + this.currentProduct;
+          resultsEl.generateRequest();
         }
       },
 
       _resultResponse: function(response) {
+        var results = response.detail.response;
+        debugger;
+      },
 
+      _findValue: function(results, filterName) {
+        var item = results.find(function(_item) {
+          return _item.filter === filterName;
+        });
+        return item.value;
       },
 
       _setProductSku: function(queryParams) {
@@ -179,7 +195,10 @@
 
       calculateProgess: function(carFittingData, currentFittingPage) {
         var totalAmountOfSteps = carFittingData.length;
-        var index = carFittingData.indexOf(currentFittingPage) + 1;
+        var index = carFittingData.findIndex(function(step) {
+          return currentFittingPage.step === step.step;
+        });
+        index = index + 1;
         var percentage = (index * 100) / totalAmountOfSteps;
         return percentage === 0 ? 100 : percentage;
       },
