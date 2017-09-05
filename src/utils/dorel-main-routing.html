@@ -79,11 +79,6 @@
           return item.link === fullUrl || item.slug === 'home' && self.page === 'home';
         });
 
-        //TODO REMOVE
-        if(currentPage.slug === 'product-advisory') {
-          currentPage.template = 'product-advisory-tool';
-        }
-
         this.set('currentPage', currentPage);
 
         var last = this.currentPage ? '' : lastSegment;
@@ -101,17 +96,22 @@
 
           if(!productDetailTemplate) {
             return this._setPageNotFound();
+          } else {
+            this.currentPage = {
+              template: productDetailTemplate
+            };
           }
 
           this._setCategoryPage(parent);
 
-          var productDetailPage = pages.find(function(_page) {
-             return _page.slug === productDetailTemplate || _page.template === 'product-detail-default';  //default
-          });
-          if(!productDetailPage) {
-            return this._setPageNotFound();
-          }
-          this.set('currentPage', productDetailPage);
+          // var productDetailPage = pages.find(function(_page) {
+          //    return _page.template === productDetailTemplate || _page.template === 'product-detail';  //default
+          // });
+          //
+          // if(!productDetailPage) {
+          //   return this._setPageNotFound();
+          // }
+          // this.set('currentPage', productDetailPage);
         } else {
           this._setCategoryPage(parent);
         }
