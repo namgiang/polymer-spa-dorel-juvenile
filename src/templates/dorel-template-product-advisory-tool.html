@@ -1,11 +1,11 @@
 <link rel="import" href="../organisms/product-advisory/dorel-product-advisory-nav.html">
 <link rel="import" href="../organisms/product-advisory/dorel-step-car-information.html">
+<link rel="import" href="../organisms/product-advisory/dorel-step-result.html">
 
 
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
-
       :host {
         display: block;
         width: 100%;
@@ -19,32 +19,43 @@
       }
     </style>
 
-    <!-- <app-route
-      route="[[ route ]]"
-      query-params="[[ queryParams ]]">
-    </app-route> -->
+    <iron-ajax
+      id="results"
+      handle-as="json"
+      on-response="_resultResponse"></iron-ajax>
+
+    <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
     <dorel-product-advisory-nav
       load-complete="[[ loadComplete ]]"
       page-title="[[ title ]]"
+      previous="[[ isNotFirstStep(currentFittingPage, carFittingData) ]]"
       progress="[[ calculateProgess(carFittingData, currentFittingPage) ]]"
-      brand-name="'Maxi-Cosi'">
+      brand-name="[[ brandName ]]'">
     </dorel-product-advisory-nav>
-
-    <p>[[ currentFittingPage.step ]]</p>
 
     <iron-pages
       role="main"
       selected="[[ currentFittingPage.step ]]"
       attr-for-selected="name">
-      <template is="dom-if" if="[[_equals(currentFittingPage.step, 'car-information')]]" restamp="true">
+      <template is="dom-if" if="[[ _equals(currentFittingPage.step, 'car-information')]]" restamp="true">
         <dorel-step-car-information
           name="car-information"
+          product="[[ currentProduct ]]"
+          next="[[ isNotLastStep(currentFittingPage, carFittingData) ]]"
+          previous="[[ isNotFirstStep(currentFittingPage, carFittingData) ]]"
           data="[[ currentFittingPage ]]">
         </dorel-step-car-information>
       </template>
-        <div name="fitting-results">
-          <div on-click="previous">Hoi</div>
-        </div>
+      <template is="dom-if" if="[[ _equals(currentFittingPage.step, 'fitting-results' ]]" restamp="true">
+        <dorel-step-result
+           name="fitting-results"
+           product="[[ currentProduct ]]"
+           data="[[ currentFittingPage ]]"
+           next="[[ isNotLastStep(currentFittingPage, carFittingData) ]]"
+           previous="[[ isNotFirstStep(currentFittingPage, carFittingData) ]]"
+           results="[[ fittingResults ]]">
+        </dorel-step-result>
+      </template>
     </iron-pages>
 
   </template>
@@ -64,7 +75,15 @@
           type: String
         },
 
-        route: {
+        brandName: {
+          type: String
+        },
+
+        queryParams: {
+          type: Object
+        },
+
+        fittingResults: {
           type: Object
         },
 
@@ -74,22 +93,20 @@
             {
               title: 'Your car information',
               step: 'car-information',
-              action: '',
+              options: {
+                next: 'Next',
+                previous: 'Previous'
+              },
               main_section: {
                 section_type: 'car-details-form',
                 title: 'My car is',
                 form: {
                   form_title: 'Choose your car details',
                   form_groups: [
-                    { id:1, label: 'Brand', required: true, end_point: 'http://endpoint.com/brands', selected: { label: 'Choose a brand', value: ''}, options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
-                    { id:2, label: 'Model', required: true, end_point: 'http://endpoint.com/model', selected: { label: 'Choose a Model', value: ''}, options: [{ label: 'Choose a Model', value: ''}, { label: 'Modal A', value: 'a'}, { label: 'Model B', value: 'b'}], disabled: true },
-                    { id:3, label: 'Type/Year', required: true, end_point: 'http://endpoint.com/typeyear', selected: { label: 'Choose a type', value: ''},  options: [{ label: 'Choose a type', value: ''}, { label: 'Type A', value: 'a'}, { label: 'Type B', value: 'b'}], disabled: true }
-                  ],
-                  form_submit: {
-                    title: 'Next',
-                    type: 'post',
-                    end_point: 'http://endpoint.com/post'
-                  }
+                    { label: 'Brand', default_option: { label: 'Choose a brand', value: ''}, options: [] },
+                    { label: 'Model', default_option: { label: 'Choose a Model', value: ''}, options: [] },
+                    { label: 'Type/Year', default_option: { label: 'Choose a type', value: ''},  options: [] }
+                  ]
                 }
               },
               sub_section: {
@@ -99,47 +116,15 @@
               }
             },
             {
-              title: 'Your car information',
+              title: 'Your car results',
               step: 'fitting-results',
-              action: '',
+              options: {
+                next: 'Next',
+                previous: 'Previous'
+              },
               main_section: {
                 section_type: 'car-details-form',
-                title: 'My car is',
-                form: {
-                  form_title: 'Choose your car details',
-                  form_groups: [
-                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}] },
-                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}]},
-                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}]}
-                  ],
-                  form_submit: {
-                    title: 'Next',
-                    type: 'post',
-                    end_point: 'http://endpoint.com/post'
-                  }
-                }
-              }
-            },
-            {
-              title: 'Your car information',
-              step: 'fitting-results',
-              action: '',
-              main_section: {
-                section_type: 'car-details-form',
-                title: 'My car is',
-                form: {
-                  form_title: 'Choose your car details',
-                  form_groups: [
-                    { id:1, label: 'Brand', value: null, required: true, end_point: 'http://endpoint.com/brands', options: [{ label: 'Choose a brand', value: ''}, { label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: false },
-                    { id:2, label: 'Model', value: null, required: true, end_point: 'http://endpoint.com/model', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: true },
-                    { id:3, label: 'Type/Year', value: null, required: true, end_point: 'http://endpoint.com/typeyear', options: [{ label: 'Mercedes', value: 'mercedes'}, { label: 'Audi', value: 'audi'}], disabled: true }
-                  ],
-                  form_submit: {
-                    title: 'Next',
-                    type: 'post',
-                    end_point: 'http://endpoint.com/post'
-                  }
-                }
+                title: 'Car Fitting'
               }
             }
           ]
@@ -147,39 +132,93 @@
 
         currentFittingPage: {
           type: Object
+        },
+
+        currentProduct: {
+          type: String
+        },
+
+        results: {
+          type: Object
         }
 
       },
 
+      observers: [
+        '_setProductSku(queryParams)'
+      ],
+
       listeners: {
-        'next-page': '_nextPage',
-        'previous-page': '_previousPage'
+        'next-step': '_nextStep',
+        'previous-step': '_previousStep',
+        'get-results': '_getResults'
       },
 
       ready: function() {
         this.set('currentFittingPage', this.carFittingData[0]);
       },
 
+      _getResults: function(event) {
+        var values = event.detail.value;
+        this.set('results', {});
+        if(values.length) {
+          var resultsEl = this.$.results;
+        }
+      },
+
+      _resultResponse: function(response) {
+
+      },
+
+      _setProductSku: function(queryParams) {
+        if(queryParams && queryParams.product) {
+          var product = queryParams.product;
+          this.set('currentProduct', queryParams.product);
+        }
+      },
+
       calculateProgess: function(carFittingData, currentFittingPage) {
         var totalAmountOfSteps = carFittingData.length;
         var index = carFittingData.indexOf(currentFittingPage) + 1;
-        return (index * 100) / totalAmountOfSteps;
+        var percentage = (index * 100) / totalAmountOfSteps;
+        return percentage === 0 ? 100 : percentage;
       },
 
-      _nextPage: function() {
-        debugger;
-        this.set('currentFittingPage', this.carFittingData[1]);
+      _nextStep: function() {
+        var self = this;
+        var index = this.carFittingData.findIndex(function(step) {
+          return self.currentFittingPage.step === step.step;
+        });
+        var nextStep = Object.assign({}, this.carFittingData[index + 1]);
+        this.set('currentFittingPage', nextStep);
       },
 
-      previous: function() {
-        debugger;
-        this.set('currentFittingPage', this.carFittingData[0]);
+      _previousStep: function() {
+        var self = this;
+        var index = this.carFittingData.findIndex(function(step) {
+          return self.currentFittingPage.step === step.step;
+        });
+        var previousStep = Object.assign({}, this.carFittingData[index - 1]);
+        this.set('currentFittingPage', previousStep);
       },
 
       _equals: function(step, stepName) {
-        debugger;
         return step === stepName;
       },
+
+      isNotLastStep: function(currentFittingPage, carFittingData) {
+         var index = carFittingData.findIndex(function(step) {
+           return currentFittingPage.step === step.step;
+         });
+         return Boolean(index !== -1 && carFittingData && (index + 1) < carFittingData.length);
+      },
+
+      isNotFirstStep: function(currentFittingPage, carFittingData) {
+        var index = carFittingData.findIndex(function(step) {
+          return currentFittingPage.step === step.step;
+        });
+        return Boolean(index !== -1 && carFittingData && index !== 0);
+      }
 
 
     });

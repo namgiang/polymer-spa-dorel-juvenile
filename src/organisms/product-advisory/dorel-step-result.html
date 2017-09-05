@@ -1,0 +1,214 @@
+<dom-module id="dorel-step-result">
+  <template>
+    <style>
+    :host {
+      display: block;
+      --iron-icon-fill-color: var(--theme-brand-color-1);
+      --iron-icon-width:	3em;
+      --iron-icon-height: 3em;
+      @apply(--max-width-container);
+    }
+    .row {
+      @apply(--theme-grid-row);
+      @apply(--layout-flex);
+      width: 100%;
+    }
+    .column {
+      @apply(--theme-grid-column);
+      @apply(--theme-grid-column-mobile);
+      -ms-flex-preferred-size: calc(var(--theme-column-width) * 12);
+      flex-basis: calc(var(--theme-column-width) * 12);
+      max-width: calc(var(--theme-column-width) * 12);
+      width: 100%;
+      margin-top: 0;
+      display: flex;
+      padding: 1.5em;
+      position: relative;
+      flex-direction: column;
+    }
+
+    [tablet-medium-up] .column {
+      padding-top: 3em;
+      -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+      flex-basis: calc(var(--theme-column-width) * 6);
+      max-width: calc(var(--theme-column-width) * 6);
+    }
+
+    [desktop-small-up] .column {
+      margin-top: 0;
+      padding: 3em;
+      flex-direction: row;
+    }
+    .column--left {
+      justify-content: flex-end;
+      position: relative;
+    }
+    .wrapper {
+      display: block;
+      width: 100%;
+    }
+    .previous-wrapper {
+      display: none;
+    }
+    [desktop-small-up] .previous-wrapper {
+      position: absolute;
+      display: block;
+      margin-top: -0.75rem;
+      left: 0;
+    }
+
+    [desktop-small-up].wrapper {
+      @apply(--max-width-container);
+    }
+    .image-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .image {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 50%;
+      display: flex;
+      flex: 1;
+    }
+    .content {
+      width: 100%;
+      position: relative;
+      border-radius: var(--theme-button-border-radius);
+    }
+    .column.initial {
+      position: initial;
+    }
+    [desktop-small-up] .content {
+      max-width: calc(var(--theme-column-width) * 8);
+    }
+    .box {
+      background-color: #fff;
+      border-radius: var(--theme-button-border-radius);
+      padding: .75em 1.5em;
+    }
+    .content-title {
+      @apply(--theme-typography-4);
+      margin: 0;
+    }
+    .cta-wrapper {
+      display: flex;
+      width: 100%;
+      justify-content: flex-end;
+    }
+    .background-complementary {
+      background-color: var(--theme-color-monochrome-2);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 50%;
+    }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div class="wrapper"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+      desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+      compact-menu$="{{ compactMenu }}">
+      <div class="container layout horizontal center center-justified wrap">
+        <div class="row">
+          <template is="dom-if" if="[[ data ]]">
+            <div class="column column--left">
+
+              <template is="dom-if" if="[[ shouldShow(previous) ]]">
+                <div class="previous-wrapper">
+                  <dorel-cta title="Previous" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+                    Previous
+                  </dorel-cta>
+                </div>
+              </template>
+
+              <div class="content">
+                <h2 class="content-title">[[ data.main_section.title ]]</h2>
+
+                <template is="dom-if" if="[[ shouldShow(next) ]]">
+                  <div class="cta-wrapper">
+                    <dorel-cta title="Next" type="primary" link="" size="medium" icon="dorel-icons:chevron-right" on-click="nextStep"
+                      id="next-button" disabled>
+                      Next
+                    </dorel-cta>
+                  </div>
+                </template>
+
+              </div>
+            </div>
+            <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]" restamp="true">
+              <div class="column initial">
+                  <div class="background-complementary">
+                  </div>
+                  <template is="dom-if" if="[[ hasBynderImage(data.sub_section.background_image_id) ]]">
+                    <dorel-bynder-image class="image"
+                                sizing="cover"
+                                width="100%"
+                                height="100%"
+                                flex
+                                fade="true"
+                                media-id$="[[ data.sub_section.background_image_id ]]"></dorel-bynder-image>
+                  </template>
+                <div class="content">
+                  <div class="box">
+                    <p>[[ data.sub_section.description ]]</p>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-step-result',
+
+      properties: {
+        data: {
+          type: Object
+        },
+
+        next: {
+          type: Boolean,
+        },
+
+        previous: {
+          type: Boolean,
+        },
+
+        product: {
+          type: String
+        }
+
+      },
+
+      nextStep: function(event) {
+        var disabled = event.currentTarget.attributes.disabled ? true : false;
+        if(disabled) {
+          return;
+        }
+        this.fire('next-step');
+      },
+
+      previousStep: function(event) {
+        var disabled = event.currentTarget.attributes.disabled ? true : false;
+        if(disabled) {
+          return;
+        }
+        this.fire('previous-step');
+      },
+
+      shouldShow: function(boolean) {
+        return Boolean(boolean === true);
+      },
+
+    });
+  </script>
+</dom-module>

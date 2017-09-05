@@ -5,7 +5,8 @@
     <style>
       :host {
         width: 100%;
-        padding: 0 .75rem;
+        display: flex;
+        margin-top: 1.5rem;
         box-sizing: border-box;
       }
       .form {
@@ -28,24 +29,42 @@
     </style>
     <div class="form">
 
-      <h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>
-      <div class="form_groups">
+      <iron-ajax
+        id="brand"
+        handle-as="json"
+        on-response="_brandResponse"></iron-ajax>
 
-        <template
-          is="dom-repeat"
-          id="test"
-          items="{{ formData.form_groups }}"
-          index-as="index"
-          as="item">
-          <dorel-input-select
-            label="[[ item.label ]]"
-            selected="{{ setSelected(formData.form_groups, item.selected, index) }}"
-            options="[[ setOptions(formData.form_groups, item.options, index) ]]"
-            disabled$="[[ shouldDisable(formData.form_groups, item.options, index) ]]"
-            required>
-          </dorel-input-select>
-        </template>
-      </div>
+      <iron-ajax
+        id="model"
+        handle-as="json"
+        on-response="_modelResponse"></iron-ajax>
+
+      <iron-ajax
+        id="typeYear"
+        handle-as="json"
+        on-response="_typeYearResponse"></iron-ajax>
+
+      <h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>
+
+      <template is="dom-if" if="[[ formData.form_groups.length ]]" restamp="true">
+        <div class="form_groups">
+          <template
+            is="dom-repeat"
+            items="{{ formData.form_groups }}"
+            index-as="index"
+            as="item">
+            <template is="dom-if" if="{{ item }}" restamp="true">
+              <dorel-input-select
+                label="[[ item.label ]]"
+                selected="[[ item.selected ]]"
+                options="[[ item.options ]]"
+                disabled$="[[ _hasOptions(item.options) ]]"
+                required>
+              </dorel-input-select>
+            </template>
+          </template>
+        </div>
+      </template>
      </div>
 
   </template>
@@ -60,14 +79,44 @@
          * @description Object that is passed by parent
          */
         formData: {
-          type: Object,
-          notify: true
+          type: Object
         },
+
 
       },
 
+      observers: [
+        '_validate(formData.form_groups.*)'
+      ],
+
       listeners: {
         'on-selectbox-change': '_processForm'
+      },
+
+      ready: function() {
+        this._getBrands();
+        this._setInitial(1);
+        this._setInitial(2);
+      },
+
+      _validate: function(formGroups) {
+        if(formGroups.value && formGroups.value && formGroups.value.length) {
+          var isValid = formGroups.value.every(function(group) {
+            return Boolean(group && group.selected && group.selected.value && group.selected.value !== '');
+          })
+          var values = [];
+          if(isValid) {
+            var group_values = formGroups.value.map(function(group) {
+              return group.selected.value;
+            });
+            group_values.forEach(function(group) {
+              group.forEach(function(item) {
+                values.push(item);
+              });
+            });
+          }
+          this.fire('submit-groups', { value: { valid : isValid, groups_values: values } });
+        }
       },
 
       _processForm: function(event) {
@@ -75,8 +124,19 @@
         var formGroups = this.get('formData.form_groups');
         var groupIndex = this._getGroupIndex(formGroups, updatedValue);
 
+        if(updatedValue.value !== '') {
+          updatedValue.value = JSON.parse(updatedValue.value);
+        }
+
         if(groupIndex > -1) {
-          this._setSelectBoxes(formGroups, groupIndex, updatedValue);
+          this._setSelected(formGroups, groupIndex, updatedValue);
+        }
+
+        if(groupIndex === 0) {
+          this.getModels(updatedValue);
+        }
+        if(groupIndex === 1) {
+          this.getTypeYear(updatedValue);
         }
       },
 
@@ -88,46 +148,110 @@
         });
       },
 
-      _setSelectBoxes: function(formGroups, groupIndex, updatedValue) {
+      _setSelected: function(formGroups, groupIndex, updatedValue) {
         var self = this;
         var newFormGroups = formGroups.map(function(group, index) {
-          var newObject = {};
-          Object.keys(group).forEach(function(key) {
-            newObject[key] = group[key];
-          });
           if(index === groupIndex) {
-            newObject.selected = updatedValue;
+            group.selected = updatedValue;
           }
-          if(index > groupIndex) {
-            // newObject = self._resetSelectBoxes(newObject, formGroups, index);
-          }
-          return newObject;
+          return Object.assign({}, group);
         }, []);
         this.set('formData.form_groups', newFormGroups);
       },
 
-      shouldDisable: function(groups, options, index) {
-        return Boolean(groups[index - 1] && groups[index - 1].selected && groups[index - 1].selected.value && groups[index - 1].selected.value.length <= 0)
+      _hasOptions: function(options) {
+        return Boolean(!options || !options.length || options.length === 1);
       },
 
-      _resetSelectBoxes: function(newObject, formGroups, index) {
-        var object = {};
-        // formGroups.forEach(function(group, _index) {
-        //   if(_index < index && group[_index].selected.value) {
-        //
-        //   }
-        // });
-        // return
+      _getBrands: function() {
+        var brandEl = this.$.brand;
+        brandEl.url = 'http://dorel-wp.dev:8009/v1/car-brands';
+        this._setInitial(0);
+        brandEl.generateRequest();
       },
 
-      setSelected: function(groups, selected, index) {
-        return selected;
+      _brandResponse: function(response) {
+        var results = response.detail.response.results;
+        var group = this.get('formData.form_groups.' + 0);
+        results = results.map(function(result) {
+          result.value = JSON.stringify(result.values);
+          return Object.assign({}, result);
+        });
+        results.unshift(group.default_option);
+        this.set('formData.form_groups.' + 0 + '.options', results);
       },
 
-      setOptions: function(groups, options, index) {
-        console.log(groups[index].options, options, index);
-        return groups[index].options;
+      getModels: function(updatedValue) {
+        this._setInitial(1);
+        if(!updatedValue || updatedValue.value === '') {
+          this._setInitial(2);
+          return;
+        } else {
+          var item = updatedValue.value.find(function(item){
+            return item.filter === 'id';
+          });
+          var modelEl = this.$.model;
+          modelEl.url = 'http://dorel-wp.dev:8009/v1/car-brands/' + item.value + '/models';
+          modelEl.generateRequest();
+        }
       },
+
+      _modelResponse: function(response) {
+        var results = response.detail.response.results;
+        var group = this.get('formData.form_groups.' + 1);
+        results = results.map(function(result) {
+          result.value = JSON.stringify(result.values);
+          return Object.assign({}, result);
+        });
+        results.unshift(group.default_option);
+        this.set('formData.form_groups.' + 1 + '.options', results);
+      },
+
+      getTypeYear: function(updatedValue) {
+        this._setInitial(2);
+        if(!updatedValue || updatedValue.value === '') {
+          return;
+        }
+        var firstSelectBox = this.get('formData.form_groups.' + 0 + '.selected');
+        var brand = firstSelectBox.value.find(function(item){
+          return item.filter === 'id';
+        });
+
+        var secondSelectBox =  this.get('formData.form_groups.' + 1 + '.selected');
+
+        var modelName = secondSelectBox.value.find(function(item) {
+          return item.filter === 'model_name';
+        });
+
+        var doors = secondSelectBox.value.find(function(item) {
+          return item.filter === 'doors';
+        });
+
+        var typeYearEl = this.$.typeYear;
+        typeYearEl.url = 'http://dorel-wp.dev:8009/v1/car-brands/' + brand.value + '/model-types?model_name=' + modelName.value + '&doors=' + doors.value;
+        typeYearEl.generateRequest();
+
+      },
+
+      _setInitial: function(index) {
+        if(!index && index !== 0) {
+          return;
+        }
+        var defaultOption = this.get('formData.form_groups.' + index + '.default_option');
+        this.set('formData.form_groups.' + index + '.selected', defaultOption);
+        this.set('formData.form_groups.' + index + '.options', [defaultOption]);
+      },
+
+      _typeYearResponse: function(response) {
+        var results = response.detail.response.results;
+        var group = this.get('formData.form_groups.' + 2);
+        results = results.map(function(result) {
+          result.value = JSON.stringify(result.values);
+          return Object.assign({}, result);
+        });
+        results.unshift(group.default_option);
+        this.set('formData.form_groups.' + 2 + '.options', results);
+      }
 
 
     });

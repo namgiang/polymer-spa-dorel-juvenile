@@ -180,6 +180,7 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div class="spacing"></div>
     <div class="header-wrapper"
          tablet-small-up$="{{  breakpoints.tabletSmallUp }}"
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
@@ -194,7 +195,9 @@
                    on-click="_logoClicked">
                   <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
                 </a>
-                <h2 class="page-title">[[ pageTitle ]]</h2>
+                <h2 class="page-title">
+                  [[ pageTitle ]]
+                </h2>
               </div>
             </div>
 
@@ -208,10 +211,13 @@
 
           <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
             <div class="flex-row">
-              <div class="header-item header-item-back">
-                <iron-icon class="header-icon icon-back"
-                           icon="dorel-icons:chevron-right"></iron-icon>
-              </div>
+              <template is="dom-if" if="{{ shouldShow(previous) }}">
+                <div class="header-item header-item-back">
+                  <iron-icon class="header-icon icon-back"
+                             on-click="previousStep"
+                             icon="dorel-icons:chevron-right"></iron-icon>
+                </div>
+              </template>
               <div class="header-item header-item-logo">
                 <div class="header-flex">
                   <a href="/" aria-label="Maxi Cosi"
@@ -273,6 +279,10 @@
           type: Boolean
         },
 
+        previous: {
+          type: Boolean
+        },
+
 
         /**
          * @exposed
@@ -319,6 +329,14 @@
             'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
           }
         });
+      },
+
+      shouldShow: function(boolean) {
+        return Boolean(boolean);
+      },
+
+      previousStep: function() {
+        this.fire('previous-step');
       },
 
 
