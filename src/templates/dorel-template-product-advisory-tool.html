@@ -30,31 +30,31 @@
     <dorel-product-advisory-nav
       load-complete="[[ loadComplete ]]"
       page-title="[[ title ]]"
-      previous="[[ isNotFirstStep(currentFittingPage, carFittingData) ]]"
-      progress="[[ calculateProgess(carFittingData, currentFittingPage) ]]"
+      previous="[[ isNotFirstStep(currentStep, carFittingSteps) ]]"
+      progress="[[ calculateProgess(carFittingSteps, currentStep) ]]"
       brand-name="[[ brandName ]]'">
     </dorel-product-advisory-nav>
 
     <iron-pages
       role="main"
-      selected="[[ currentFittingPage.step ]]"
+      selected="[[ currentStep.step ]]"
       attr-for-selected="name">
-      <template is="dom-if" if="[[ _equals(currentFittingPage.step, 'car-information')]]" restamp="true">
+      <template is="dom-if" if="[[ _equals(currentStep.step, 'car-information')]]" restamp="true">
         <dorel-step-car-information
           name="car-information"
           product="[[ currentProduct ]]"
-          next="[[ isNotLastStep(currentFittingPage, carFittingData) ]]"
-          previous="[[ isNotFirstStep(currentFittingPage, carFittingData) ]]"
-          data="[[ currentFittingPage ]]">
+          next="[[ isNotLastStep(currentStep, carFittingSteps) ]]"
+          previous="[[ isNotFirstStep(currentStep, carFittingSteps) ]]"
+          data="[[ currentStep ]]">
         </dorel-step-car-information>
       </template>
-      <template is="dom-if" if="[[ _equals(currentFittingPage.step, 'fitting-results' ]]" restamp="true">
+      <template is="dom-if" if="[[ _equals(currentStep.step, 'fitting-results' ]]" restamp="true">
         <dorel-step-result
            name="fitting-results"
            product="[[ currentProduct ]]"
-           data="[[ currentFittingPage ]]"
-           next="[[ isNotLastStep(currentFittingPage, carFittingData) ]]"
-           previous="[[ isNotFirstStep(currentFittingPage, carFittingData) ]]"
+           data="[[ currentStep ]]"
+           next="[[ isNotLastStep(currentStep, carFittingSteps) ]]"
+           previous="[[ isNotFirstStep(currentStep, carFittingSteps) ]]"
            results="[[ fittingResults ]]">
         </dorel-step-result>
       </template>
@@ -77,19 +77,40 @@
           type: String
         },
 
+        /**
+         * @attribute
+         * @name brandName
+         * @description passed by parent and used by the navigation: "dorel-product-advisory-nav"
+         */
         brandName: {
           type: String
         },
 
+        /**
+         * @attribute
+         * @name queryParams
+         * @description used for retrieving a certain product sku from the url
+         */
         queryParams: {
           type: Object
         },
 
+        /**
+         * @attribute
+         * @name fittingResults
+         * @description results of the response of the carfitting call
+         */
         fittingResults: {
           type: Object
         },
 
-        carFittingData: {
+        /**
+         * @attribute
+         * @name carFittingSteps
+         * @description initial data to create the product advisory
+         * each object in the array will represent a step
+         */
+        carFittingSteps: {
           type: Array,
           value: [
             {
@@ -132,17 +153,23 @@
           ]
         },
 
-        currentFittingPage: {
+        /**
+         * @attribute
+         * @name currentStep
+         * @description the active state of the tool, will contain the correct data for the active step
+         */
+        currentStep: {
           type: Object
         },
 
+        /**
+         * @attribute
+         * @name currentProduct
+         * @description
+         */
         currentProduct: {
           type: String
         },
-
-        results: {
-          type: Object
-        }
 
       },
 
@@ -156,13 +183,24 @@
         'get-results': '_getResults'
       },
 
+      /**
+       * @name ready
+       * @description will set the first step
+       */
       ready: function() {
-        this.set('currentFittingPage', this.carFittingData[0]);
+        this.set('currentStep', this.carFittingSteps[0]);
       },
 
+      /**
+       * listener
+       * @name _getResults
+       * @description will set the results and if the values are set generate a call based on the values array
+       * this call is to retrieve the results of the carfitting tool
+       * @param event - Object
+       */
       _getResults: function(event) {
         var values = event.detail.value;
-        this.set('results', {});
+        this.set('fittingResults', {});
         if(values.length) {
           var resultsEl = this.$.getResults;
           resultsEl.url = 'http://dorel-wp.dev:8009/v1/' +
@@ -174,11 +212,25 @@
         }
       },
 
+      /**
+       * Response
+       * @name _resultResponse
+       * @description response of the carfitting call
+       * @param response - Object
+       */
       _resultResponse: function(response) {
         var results = response.detail.response;
         debugger;
       },
 
+      /**
+       * help function
+       * @name _findValue
+       * @description will find and return correct value in array based on the params
+       * @param results - Array
+       * @param filterName - String
+       * @returns String/Number
+       */
       _findValue: function(results, filterName) {
         var item = results.find(function(_item) {
           return _item.filter === filterName;
@@ -186,6 +238,12 @@
         return item.value;
       },
 
+      /**
+       * observer
+       * @name _setProductSku
+       * @description will set currentProduct (String)
+       * @param queryParams - Object
+       */
       _setProductSku: function(queryParams) {
         if(queryParams && queryParams.product) {
           var product = queryParams.product;
@@ -193,50 +251,96 @@
         }
       },
 
-      calculateProgess: function(carFittingData, currentFittingPage) {
-        var totalAmountOfSteps = carFittingData.length;
-        var index = carFittingData.findIndex(function(step) {
-          return currentFittingPage.step === step.step;
+      /**
+       * @name calculateProgess
+       * @description a function that is used in the template to calculate the progress
+       * this will give the user an indictation on what step he currently is
+       * the progress will be calculated based on where the currentStep Object is in the carFittingSteps Array
+       * @param carFittingSteps - Array
+       * @param currentStep - Object
+       * @returns Number
+       */
+      calculateProgess: function(carFittingSteps, currentStep) {
+        var totalAmountOfSteps = carFittingSteps.length;
+        var index = carFittingSteps.findIndex(function(step) {
+          return currentStep.step === step.step;
         });
         index = index + 1;
         var percentage = (index * 100) / totalAmountOfSteps;
         return percentage === 0 ? 100 : percentage;
       },
 
+      /**
+       * listener
+       * @name _nextStep
+       * @description will listen to the 'next-step' event that will be send by a child component
+       * if the event is called this function will set a new currentStep with the previous currentStep index + 1
+       */
       _nextStep: function() {
         var self = this;
-        var index = this.carFittingData.findIndex(function(step) {
-          return self.currentFittingPage.step === step.step;
+        var index = this.carFittingSteps.findIndex(function(step) {
+          return self.currentStep.step === step.step;
         });
-        var nextStep = Object.assign({}, this.carFittingData[index + 1]);
-        this.set('currentFittingPage', nextStep);
+        var nextStep = Object.assign({}, this.carFittingSteps[index + 1]);
+        this.set('currentStep', nextStep);
       },
 
+      /**
+       * listener
+       * @name _previousStep
+       * @description will listen to the 'previous-step' event that will be send by a child component
+       * if the event is called this function will set a new currentStep with the previous currentStep index - 1
+       */
       _previousStep: function() {
         var self = this;
-        var index = this.carFittingData.findIndex(function(step) {
-          return self.currentFittingPage.step === step.step;
+        var index = this.carFittingSteps.findIndex(function(step) {
+          return self.currentStep.step === step.step;
         });
-        var previousStep = Object.assign({}, this.carFittingData[index - 1]);
-        this.set('currentFittingPage', previousStep);
+        var previousStep = Object.assign({}, this.carFittingSteps[index - 1]);
+        this.set('currentStep', previousStep);
       },
 
+      /**
+       * @name _equals
+       * @description used by dom-if conditionals in the template to either place it in the dom or remove it
+       * @param step - String
+       * @param stepName - String
+       * @returns Boolean
+       */
       _equals: function(step, stepName) {
-        return step === stepName;
+        return Boolean(step === stepName);
       },
 
-      isNotLastStep: function(currentFittingPage, carFittingData) {
-         var index = carFittingData.findIndex(function(step) {
-           return currentFittingPage.step === step.step;
+      /**
+       * @name isNotLastStep
+       * @description used in the template inside a next attribute
+       * it will return a boolean based if the currentStep is not the last step
+       * this way the child component knows if it the last step and should show a next button
+       * @param currentStep - Object
+       * @param carFittingSteps - Array
+       * @returns Boolean
+       */
+      isNotLastStep: function(currentStep, carFittingSteps) {
+         var index = carFittingSteps.findIndex(function(step) {
+           return currentStep.step === step.step;
          });
-         return Boolean(index !== -1 && carFittingData && (index + 1) < carFittingData.length);
+         return Boolean(index !== -1 && carFittingSteps && (index + 1) < carFittingSteps.length);
       },
 
-      isNotFirstStep: function(currentFittingPage, carFittingData) {
-        var index = carFittingData.findIndex(function(step) {
-          return currentFittingPage.step === step.step;
+      /**
+       * @name isNotFirstStep
+       * @description used in the template inside a previous attribute
+       * it will return a boolean based if the currentStep is not the first step
+       * this way the child component knows if it the first step and should show a previous button
+       * @param currentStep - Object
+       * @param carFittingSteps - Array
+       * @returns Boolean
+       */
+      isNotFirstStep: function(currentStep, carFittingSteps) {
+        var index = carFittingSteps.findIndex(function(step) {
+          return currentStep.step === step.step;
         });
-        return Boolean(index !== -1 && carFittingData && index !== 0);
+        return Boolean(index !== -1 && carFittingSteps && index !== 0);
       }
 
 
