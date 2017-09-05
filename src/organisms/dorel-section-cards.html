@@ -39,6 +39,20 @@
         padding: 0 .75em;
       }
 
+      [tablet-medium-up][compact] dorel-card {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+      }
+
+      [tablet-medium][compact] dorel-card {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        padding: 0 .75em;
+      }
+
       .section-cards[tablet-medium-up] {
         padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
       }
@@ -55,7 +69,10 @@
       if="[[ cardsData.cards.length ]]">
 
       <section class="section-cards layout horizontal center center-justified wrap"
-               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+               compact$="[[ compact ]]"
+               tablet-medium$="[[ breakpoints.tabletMedium ]]"
+               desktop-small$="[[ breakpoints.desktopSmall ]]"
+               tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
         <div class="row">
           <template
             is="dom-repeat"
@@ -63,6 +80,7 @@
             as="card">
             <dorel-card
               card-data="[[ card ]]"
+              cta-type="[[ ctaType ]]"
               gtm-parent="[[ gtmParent ]]"
               gtm-parent-index="[[ gtmParentIndex ]]"
               gtm-child="dorel-card"
@@ -78,7 +96,24 @@
       is: 'dorel-section-cards',
 
       properties: {
-
+        /**
+         * @attribute
+         * @name compact
+         * @description If compact, the section will show 3 cards on a row instead of 2
+         */
+        compact: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * @attribute
+         * @name ctaType
+         * @description CTA type which will appear in the card
+         */
+        ctaType: {
+          type: String,
+          value: 'primary',
+        },
         /**
          * @attribute
          * @name cardsData
