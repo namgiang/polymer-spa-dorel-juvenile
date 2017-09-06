@@ -129,6 +129,12 @@
 
               <div class="content">
                 <h2 class="content-title">[[ data.main_section.title ]]</h2>
+                <template is="dom-repeat" items="[[ results.results ]]" as="result">
+                  <div>[[ result.carseat_name ]]</div>
+                  <template is="dom-repeat" items="[[ result.carseat_positions ]]" as="position">
+                    <div>Position: [[ position.seat_position ]], Possible: [[ position.value ]], Warning: [[ position.notice ]]</div>
+                  </template>
+                </template>
 
                 <template is="dom-if" if="[[ shouldShow(next) ]]">
                   <div class="cta-wrapper">
@@ -161,6 +167,10 @@
                 </div>
               </div>
             </template>
+
+            <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]" restamp="true">
+            </template>
+
           </template>
         </div>
       </div>
