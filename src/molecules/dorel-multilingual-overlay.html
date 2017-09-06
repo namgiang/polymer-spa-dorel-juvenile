@@ -1,0 +1,178 @@
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../molecules/dorel-logo.html">
+
+<dom-module id="dorel-multilingual-overlay">
+  <template>
+    <style>
+      /* NOTE: All the !important use in this component is because paper-dialog
+      spacings can't be overwritten using the the shared styles.
+      Using the !important is ugly, but necessary in this case. */
+
+      paper-dialog {
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        max-width: none !important;
+        max-height: none !important;
+        z-index: 10000 !important;
+        position: fixed;
+        font-size: var(--theme-base-font-size);
+      }
+
+      .container {
+        position: relative;
+        padding: 0 !important;
+        margin: 0 !important;
+        float: left;
+        width: 100%;
+        height: calc( 100vh - 9em);
+      }
+
+      .header {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        background-color: var(--theme-brand-color-1);
+        color: var(--theme-color-white);
+        margin: 0 !important;
+        padding: 0 !important;
+
+        float: left;
+        width: 100%;
+      }
+
+      dorel-logo {
+        margin: 2.25em auto 2.25em auto;
+      }
+
+      p {
+        @apply(--theme-paragraph-text);
+        font-size: 16px;
+        max-width: 450px;
+      }
+
+      .close {
+        color: var(--theme-color-white);
+        position: absolute;
+        right: 1.5em;
+        top: 1.5em;
+        z-index: 10;
+        cursor: pointer;
+      }
+
+      paper-dialog-scrollable {
+        float: left;
+        width: 100%;
+        height: 100%;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section-example-component"
+             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+
+      <paper-dialog id="dialog"
+                    always-on-top="true"
+                    dynamic-align="false"
+                    exit-animation="fade-out-animation"
+                    entry-animation="fade-in-animation"
+                    on-iron-overlay-opened="_disableDocumentScrolling"
+                    on-iron-overlay-closed="_restoreDocumentScrolling">
+        <div class="header">
+          <dorel-logo use-alternative-logo="true"></dorel-logo>
+          <iron-icon dialog-dismiss
+                     class="close"
+                     role="button"
+                     icon="dorel-icons:close"></iron-icon>
+        </div>
+        <div class="container">
+          <paper-dialog-scrollable>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent consectetur dolor eu nunc dapibus, non
+              tempor enim gravida. Sed vel diam ante. Etiam nec turpis ut mauris rhoncus euismod. Nam viverra risus
+              vitae
+              pellentesque semper. Donec in nibh id mi ultrices iaculis at at lacus. Suspendisse interdum ut ligula non
+              fringilla. Donec congue aliquam condimentum. Sed convallis ante et augue porta molestie.
+
+              Cras nec odio eget ante pharetra fringilla. Curabitur convallis ante enim, id dignissim lorem dapibus nec.
+              In
+              eu tincidunt orci. Morbi ac velit et orci auctor ullamcorper. Sed ac nunc nulla. Donec vulputate ultrices
+              quam, sit amet hendrerit tellus consequat sed. Nullam elementum tempus porta. Nunc dictum lectus nec ante
+              auctor mattis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+              Etiam
+              pellentesque volutpat felis, a pharetra sapien elementum sed. Duis id convallis dui.
+
+              Duis in sem eros. Sed ac aliquam diam. Curabitur fringilla aliquam velit sed faucibus. Nullam consequat,
+              augue
+              nec egestas dignissim, neque metus volutpat ante, sed venenatis dui erat non tortor. Aliquam erat
+              volutpat.
+              Nulla facilisi. Cras varius eleifend felis, id rhoncus erat tempus et.
+
+              Nulla in mauris convallis, finibus dolor id, placerat lorem. Maecenas non augue tincidunt, pretium nunc
+              sit
+              amet, ullamcorper est. In id convallis justo. Suspendisse mi nulla, auctor eget bibendum vitae, luctus
+              molestie nisl. Proin ut tortor quis erat placerat maximus vitae vitae sapien. Vestibulum laoreet dolor ut
+              diam
+              tempus, vitae laoreet lacus fermentum. Orci varius natoque penatibus et magnis dis parturient montes,
+              nascetur
+              ridiculus mus. Suspendisse potenti. Duis hendrerit dolor commodo diam vehicula, in sollicitudin mauris
+              faucibus. Sed in neque id est semper feugiat nec nec nulla. Donec id tellus ullamcorper, interdum arcu
+              non,
+              suscipit enim. Vestibulum ultrices ante in elit molestie dictum. Nam sem velit, bibendum rhoncus tempor
+              at,
+              gravida a sem. Aenean a diam vitae nulla egestas malesuada. In hac habitasse platea dictumst.
+
+              Vestibulum est enim, vulputate vel nisi sit amet, tristique laoreet urna. Duis imperdiet metus neque,
+              vitae
+              faucibus mauris scelerisque vitae. Integer fringilla ante libero, nec vulputate lectus egestas vitae.
+              Praesent
+              ac rhoncus mauris. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed et arcu in nisi
+              bibendum
+              laoreet at ut tortor. Sed porta eros et interdum tincidunt. Integer molestie ipsum risus, et pretium nulla
+              feugiat eget Test.
+            </p>
+          </paper-dialog-scrollable>
+        </div>
+      </paper-dialog>
+
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-overlay',
+      properties: {},
+      /**
+       * @name open
+       * @description Opens the multilingual dialog
+       */
+      open: function () {
+        var dialog = this.$$('#dialog');
+        dialog.open();
+      },
+      _restoreDocumentScrolling: function () {
+        document.body.style.overflow = '';
+      },
+      _disableDocumentScrolling: function () {
+        document.body.style.overflow = 'hidden';
+      },
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>
