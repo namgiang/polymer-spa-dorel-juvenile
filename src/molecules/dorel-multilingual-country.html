@@ -1,0 +1,158 @@
+<link rel="import" href="../../bower_components/flag-icon/flag-icon.html">
+
+<dom-module id="dorel-multilingual-country">
+  <template>
+    <style>
+      :host {
+        --button-margin-spacing: 0;
+      }
+
+      section {
+        float: left;
+        width: 100%;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      li {
+        float: left;
+        width: auto;
+        display: inline-block;
+      }
+
+      li:after {
+        content: '|';
+        line-height: 3em;
+        padding: 0 .5em;
+      }
+
+      li:last-child:after {
+        content: '';
+        padding: 0;
+      }
+
+      .language-list {
+        float: left;
+      }
+
+      .language-list:before {
+        content: "(";
+        line-height: 3em;
+        float: left;
+        padding-right: .5em;
+      }
+
+      .language-list:after {
+        content: ")";
+        padding-left: .5em;
+        line-height: 3em;
+      }
+
+      flag-icon {
+        float: left;
+        width: 2em;
+        height: 1.5em;
+        border-radius: .25em;
+        overflow: hidden;
+        margin-right: .75em;
+        margin-top: .75em;
+      }
+
+      .country {
+        padding-right: .75em;
+      }
+
+      .country, dorel-cta {
+        float: left;
+        width: auto;
+        height: 3em;
+        line-height: 3em;
+      }
+
+      .country-hover-container .language-list {
+        display: none;
+      }
+
+      .country-hover-container:hover .language-list {
+        display: block;
+      }
+
+      .country-hover-container:hover .country {
+        display: none;
+      }
+
+      .country-hover-container .language-list:before, .country-hover-container .language-list:after {
+        display: none;
+      }
+
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+        <flag-icon key="aw"></flag-icon>
+        <div class="country">
+          Aruba
+        </div>
+        <ul class="language-list">
+          <li>
+            <dorel-cta title="Papiamento" type="link" link="" size="small" icon="">Papiamento</dorel-cta>
+          </li>
+          <li>
+            <dorel-cta title="Dutch" type="link" link="" size="small" icon="">Dutch</dorel-cta>
+          </li>
+          <li>
+            <dorel-cta title="English" type="link" link="" size="small" icon="">English</dorel-cta>
+          </li>
+        </ul>
+      </template>
+      <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+        <flag-icon key="aw"></flag-icon>
+        <div class="country-hover-container">
+          <dorel-cta class="country" title="Aruba" type="link" link="" size="small" icon="">Aruba</dorel-cta>
+          <ul class="language-list">
+            <li>
+              <dorel-cta title="Papiamento" type="link" link="" size="small" icon="">Papiamento</dorel-cta>
+            </li>
+            <li>
+              <dorel-cta title="Dutch" type="link" link="" size="small" icon="">Dutch</dorel-cta>
+            </li>
+            <li>
+              <dorel-cta title="English" type="link" link="" size="small" icon="">English</dorel-cta>
+            </li>
+          </ul>
+        </div>
+      </template>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-country',
+      properties: {
+        data: {
+          'countryCode': 'ad',
+          'title': 'Canada',
+          'languages': [{'language': 'French', 'id': 0}, {'language': 'English', 'id': 1}]
+        }
+      },
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>
