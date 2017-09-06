@@ -38,9 +38,13 @@
 
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <paper-tabs selected="{{ selected }}" scrollable="[[ !breakpoints.tabletMediumUp ]]">
-      <template is="dom-repeat" items="[[ tabs ]]">
-        <paper-tab noink>[[ item ]]</paper-tab>
+    <paper-tabs 
+      selected="{{ selected }}" 
+      scrollable="[[ !breakpoints.tabletMediumUp ]]">
+      <template 
+        is="dom-repeat" 
+        items="[[ tabs ]]">
+        <paper-tab noink>[[ item.title ]]</paper-tab>
       </template>
     </paper-tabs>
   </template>
@@ -54,19 +58,12 @@
           type: Number,
           value: 0,
           notify: true,
+          reflectToAttribute: true
         },
+
         tabs: {
           type: Array,
         }
-      },
-
-      /**
-       * @name _eventTracking
-       * @description this is for example tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event) {
-        /* ...TRACKING CODE FOR THIS PLUGIN... */
       }
     });
 
