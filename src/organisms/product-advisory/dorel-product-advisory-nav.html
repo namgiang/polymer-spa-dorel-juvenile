@@ -98,6 +98,7 @@
       .icon-close-page {
         --iron-icon-width:	var(--theme-scale-3);
         --iron-icon-height: var(--theme-scale-3);
+        color: var(--theme-color-text-link);
       }
 
        .icon-back {
@@ -202,7 +203,7 @@
             </div>
 
             <div class="header-item header-item-close">
-              <a>
+              <a href="[[ getPreviousStateUrl() ]]">
                 <iron-icon class="header-icon icon-close-page"
                            icon="dorel-icons:close"></iron-icon>
               </a>
@@ -228,8 +229,10 @@
               </div>
 
               <div class="header-item header-item-close">
+                <a href="[[ getPreviousStateUrl() ]]">
                 <iron-icon class="header-icon icon-close-page"
                            icon="dorel-icons:close"></iron-icon>
+                </a>
               </div>
             </div>
           </template>
@@ -270,6 +273,7 @@
         progress: {
           type: Number
         },
+
         /**
          * @exposed
          * @name submenuOpened
@@ -282,7 +286,6 @@
         previous: {
           type: Boolean
         },
-
 
         /**
          * @exposed
@@ -337,6 +340,15 @@
 
       previousStep: function() {
         this.fire('previous-step');
+      },
+
+      getPreviousStateUrl: function() {
+        var origin = window.location.origin;
+        var previousState = Polymer.globalsManager.get('Dorel.previousState');
+        if(!previousState || previousState.path === '/product-advisory') {
+          return origin;
+        }
+        return origin + previousState.path;
       },
 
 

@@ -114,7 +114,7 @@
       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
       desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
       compact-menu$="{{ compactMenu }}">
-      <div class="container layout horizontal center center-justified wrap">
+      <div>
         <div class="row">
           <template is="dom-if" if="[[ data ]]">
             <div class="column column--left">
@@ -185,8 +185,22 @@
 
         product: {
           type: String
+        },
+
+        results: {
+          type: Object
         }
 
+      },
+
+      observers: [
+        'test(results)'
+      ],
+
+      test: function(fittingResults) {
+        if(fittingResults.results ) {
+          debugger;
+        }
       },
 
       nextStep: function(event) {

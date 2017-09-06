@@ -78,6 +78,7 @@
         width: 100%;
         position: relative;
         border-radius: var(--theme-button-border-radius);
+        padding-bottom: 9rem;
       }
       .column.initial {
         position: initial;
@@ -86,9 +87,17 @@
         max-width: calc(var(--theme-column-width) * 8);
       }
       .box {
-        background-color: #fff;
+        background-color: var(--theme-color-monochrome-1);
         border-radius: var(--theme-button-border-radius);
         padding: .75em 1.5em;
+      }
+      .box--primary {
+        background-color: var(--theme-brand-color-1);
+        border-radius: 0;
+        color: var(--theme-color-monochrome-1);
+      }
+      .box--primary p {
+        margin: 0;
       }
       .content-title {
         @apply(--theme-typography-4);
@@ -99,6 +108,30 @@
         width: 100%;
         justify-content: flex-end;
       }
+      .cta-wrapper--desktop {
+        display: none;
+      }
+      .cta-wrapper--mobile {
+         display: flex;
+         margin-bottom: 1.5rem;
+         margin-left: -1.5rem;
+      }
+      [tablet-medium-up] .cta-wrapper--desktop {
+        display: flex;
+      }
+      [tablet-medium-up] .cta-wrapper--mobile {
+        display: none;
+      }
+      .fixed-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 12rem;
+      }
+      [tablet-medium-up] .fixed-container {
+        display: none;
+      }
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -106,7 +139,7 @@
       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
       desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
       compact-menu$="{{ compactMenu }}">
-      <div class="container layout horizontal center center-justified wrap">
+      <div>
         <div class="row">
           <template is="dom-if" if="[[ data ]]">
             <div class="column column--left">
@@ -124,7 +157,7 @@
                 </dorel-car-details-form>
 
                 <template is="dom-if" if="[[ shouldShow(next) ]]">
-                  <div class="cta-wrapper">
+                  <div class="cta-wrapper cta-wrapper--desktop">
                     <dorel-cta title="Next" type="primary" link="" size="medium" icon="dorel-icons:chevron-right" on-click="nextStep"
                       id="next-button" disabled>
                       Next
@@ -153,6 +186,19 @@
                 </div>
               </div>
             </template>
+
+            <div class="fixed-container">
+              <div class="cta-wrapper cta-wrapper--mobile">
+                <dorel-cta title="Next" type="primary" link="" size="medium" icon="dorel-icons:chevron-right" on-click="nextStep"
+                  id="next-button-mobile" disabled>
+                  Next
+                </dorel-cta>
+              </div>
+              <div class="box box--primary">
+                <p>[[ data.sub_section.description ]] <b>[[ product ]]</b></p>
+              </div>
+            </div>
+
           </template>
         </div>
       </div>
@@ -214,13 +260,15 @@
       },
 
       _setDisabled: function(invalid) {
-        if(!this.$$('#next-button')) {
+        if(!this.$$('#next-button') && !this.$$('#next-button-mobile')) {
           return;
         }
         if(invalid) {
           this.$$('#next-button').setAttribute('disabled', true);
+          this.$$('#next-button-mobile').setAttribute('disabled', true);
         } else {
           this.$$('#next-button').removeAttribute('disabled');
+          this.$$('#next-button-mobile').removeAttribute('disabled');
         }
       },
 

@@ -108,7 +108,7 @@
          * @attribute
          * @name carFittingSteps
          * @description initial data to create the product advisory
-         * each object in the array will represent a step
+         * each object in the carFittingSteps Array will represent a step
          */
         carFittingSteps: {
           type: Array,
@@ -116,10 +116,6 @@
             {
               title: 'Your car information',
               step: 'car-information',
-              options: {
-                next: 'Next',
-                previous: 'Previous'
-              },
               main_section: {
                 section_type: 'car-details-form',
                 title: 'My car is',
@@ -141,10 +137,6 @@
             {
               title: 'Your car results',
               step: 'fitting-results',
-              options: {
-                next: 'Next',
-                previous: 'Previous'
-              },
               main_section: {
                 section_type: 'car-details-form',
                 title: 'Car Fitting'
@@ -165,7 +157,7 @@
         /**
          * @attribute
          * @name currentProduct
-         * @description
+         * @description string of the product sku
          */
         currentProduct: {
           type: String
@@ -206,6 +198,8 @@
           resultsEl.url = 'http://dorel-wp.dev:8009/v1/' +
           'carseats/' + this._findValue(values, 'id') +
           '?model_name=' + this._findValue(values, 'model_name') +
+          '&model_type' +
+          // '?doors=' + this._findValue(values, 'doors') +
           '&introduction_year=' + this._findValue(values, 'introduction_year') +
           '&carseat=' + this.currentProduct;
           resultsEl.generateRequest();
@@ -220,7 +214,7 @@
        */
       _resultResponse: function(response) {
         var results = response.detail.response;
-        debugger;
+        this.set('fittingResults', results);
       },
 
       /**

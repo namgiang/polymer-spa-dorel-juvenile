@@ -29,12 +29,23 @@
         categoryPage: {
           type: Object,
           notify: true
+        },
+
+        /**
+         * @name previousStates
+         * @description will remember up to 5 previous states of the application
+         */
+        previousStates: {
+          type: Array,
+          notify: true,
+          value: []
         }
 
       },
 
       observers: [
-        '_routePageChanged(route, globals.Dorel.collect.pages)'
+        '_routePageChanged(route, globals.Dorel.collect.pages)',
+        '_currentRouteChanged(route)'
       ],
 
       /**
@@ -104,14 +115,6 @@
 
           this._setCategoryPage(parent);
 
-          // var productDetailPage = pages.find(function(_page) {
-          //    return _page.template === productDetailTemplate || _page.template === 'product-detail';  //default
-          // });
-          //
-          // if(!productDetailPage) {
-          //   return this._setPageNotFound();
-          // }
-          // this.set('currentPage', productDetailPage);
         } else {
           this._setCategoryPage(parent);
         }
@@ -146,6 +149,16 @@
        */
       _setCategoryPage: function(categoryPage) {
         this.set('categoryPage', categoryPage);
+      },
+
+      _currentRouteChanged: function(route) {
+        var previousStates = this.get('previousStates');
+        if(previousStates.length >= 5) {
+          this.splice('previousStates', -1 ,1);
+        }
+        this.unshift('previousStates', route);
+        var previousState = previousStates[1] || { path: '/' };
+        Polymer.globalsManager.set('Dorel.previousState', previousState)
       },
 
       /**
