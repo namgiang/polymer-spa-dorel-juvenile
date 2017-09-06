@@ -96,7 +96,7 @@
           is="dom-if"
           if="[[ _hasValue(cardData.cta_toggle) ]]">
           <dorel-cta
-            type="primary"
+            type="[[ ctaType ]]"
             title="[[ cardData.cta_text ]]"
             link="[[ cardData.cta_link ]]"
             link-target="[[ cardData.cta_link_target ]]"
@@ -113,16 +113,22 @@
         <!--// ctaToggle -->
       </div>
     </div>
-
   </template>
-
   <script>
 
     Polymer({
       is: 'dorel-card',
 
       properties: {
-
+        /**
+         * @attribute
+         * @name ctaType
+         * @description CTA type which will appear in the card
+         */
+        ctaType: {
+          type: String,
+          value: 'primary'
+        },
         /**
          * @attribute
          * @name cardData
