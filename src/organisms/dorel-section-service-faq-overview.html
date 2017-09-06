@@ -242,14 +242,18 @@
                 is="dom-repeat" 
                 items="[[ faqCategories ]]"
                 as="category">
-                <dorel-accordion-item heading="[[ category.title ]]" icon="dorel-icons:help-outline">
+                <dorel-accordion-item 
+                  heading="[[ category.title ]]" 
+                  icon="dorel-icons:help-outline">
                   <div class="topic-listing">
                     <ul>
                       <template 
                         is="dom-repeat" 
-                        items="[[ category.questions ]]"
+                        items="[[ category.featured_questions ]]"
                         as="question">
-                        <li><a href="[[ category.detail_page ]]">[[ question.title ]]</a></li>
+                        <li>
+                          <a href="[[ category.detail_page ]]?sub=[[question.sub_id]]&id=[[ question.id ]]">[[ question.title ]]</a>
+                        </li>
                       </template>
                     </ul>
                   </div>
