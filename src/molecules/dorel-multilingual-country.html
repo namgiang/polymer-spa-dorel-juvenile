@@ -1,5 +1,4 @@
-<link rel="import" href="../../bower_components/flag-icon/flag-icon.html">
-
+<link rel="import" href="../molecules/dorel-multilingual-flag.html">
 <dom-module id="dorel-multilingual-country">
   <template>
     <style>
@@ -54,12 +53,9 @@
         line-height: 3em;
       }
 
-      flag-icon {
+      dorel-multilingual-flag {
         float: left;
-        width: 1.5em;
-        height: 1.25em;
         margin-right: .5em;
-        border-radius: .25em;
         overflow: hidden;
         margin-top: .875em;
       }
@@ -104,7 +100,7 @@
 
     <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
-        <flag-icon key="[[ countryData.countryCode ]]"></flag-icon>
+        <dorel-multilingual-flag country-code="[[ countryData.countryCode ]]"></dorel-multilingual-flag>
         <div class="country">
           [[ countryData.title ]]
         </div>
@@ -119,7 +115,7 @@
       </template>
       <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
         <div class="country-hover-container">
-          <flag-icon key="[[ countryData.countryCode ]]"></flag-icon>
+          <dorel-multilingual-flag country-code="[[ countryData.countryCode ]]"></dorel-multilingual-flag>
           <dorel-cta class="country" title="[[ countryData.title ]]" type="link" link="" size="small" icon="">
             [[ countryData.title ]]
           </dorel-cta>
@@ -140,6 +136,10 @@
     Polymer({
       is: 'dorel-multilingual-country',
       properties: {
+        /**
+         * @name countryData
+         * @description Country data used to display the country, flag and languages
+         */
         countryData: {
           type: Object,
         }
