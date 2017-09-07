@@ -54,12 +54,12 @@
 
       flag-icon {
         float: left;
-        width: 2em;
-        height: 1.5em;
+        width: 1.5em;
+        height: 1.25em;
+        margin-right: .5em;
         border-radius: .25em;
         overflow: hidden;
-        margin-right: .75em;
-        margin-top: .75em;
+        margin-top: .875em;
       }
 
       .country {
@@ -71,6 +71,11 @@
         width: auto;
         height: 3em;
         line-height: 3em;
+      }
+
+      .country-hover-container {
+        float: left;
+        width: 100%;
       }
 
       .country-hover-container .language-list {
@@ -88,7 +93,6 @@
       .country-hover-container .language-list:before, .country-hover-container .language-list:after {
         display: none;
       }
-
 
     </style>
 
@@ -110,8 +114,8 @@
         </ul>
       </template>
       <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
-        <flag-icon key="[[ countryData.countryCode ]]"></flag-icon>
         <div class="country-hover-container">
+          <flag-icon key="[[ countryData.countryCode ]]"></flag-icon>
           <dorel-cta class="country" title="[[ countryData.title ]]" type="link" link="" size="small" icon="">
             [[ countryData.title ]]
           </dorel-cta>
@@ -134,15 +138,6 @@
       properties: {
         countryData: {
           type: Object,
-          value: {
-            'countryCode': 'aw',
-            'title': 'Aruba',
-            'languages': [
-              {'language': 'Papiamento', 'id': 0},
-              {'language': 'Dutch', 'id': 1},
-              {'language': 'English', 'id': 2},
-            ]
-          }
         }
       },
       /**

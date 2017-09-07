@@ -1,0 +1,109 @@
+<link rel="import" href="dorel-multilingual-country.html">
+<dom-module id="dorel-multilingual-continents">
+  <template>
+    <style>
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      section {
+        float: left;
+        width: 100%;
+        padding-top: 1.5em;
+      }
+
+      ul {
+        padding: 0;
+        list-style: none;
+        margin: .75em 0;
+      }
+
+      li {
+        float: left;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-4);
+      }
+
+      .continent-title {
+        @apply(--theme-typography-2);
+        font-weight: bold;
+      }
+
+      .continent {
+        float: left;
+        margin-bottom: 1.5em;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .container {
+        padding-top: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      [tablet-medium-up] .continent {
+        width: 16.6666667%;
+      }
+
+      [tablet-small] .continent {
+        width: 50%;
+      }
+
+      [tablet-medium] .continent {
+        width: 25%;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium$="[[ breakpoints.tabletMedium ]]"
+             desktop-small$="[[ breakpoints.desktopSmall ]]">
+      <h2 class="title">Please select your country</h2>
+      <div class="container">
+        <template is="dom-repeat" items="[[ continentsData ]]">
+          <div class="continent">
+            <h3 class="continent-title">[[ item.title ]]</h3>
+            <ul>
+              <template is="dom-repeat" items="[[ item.countries ]]">
+                <li>
+                  <dorel-multilingual-country country-data="[[ item ]]"></dorel-multilingual-country>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-continents',
+      properties: {
+        continentsData: {
+          type: Array,
+          value: []
+        }
+      },
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

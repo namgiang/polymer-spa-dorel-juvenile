@@ -30,7 +30,7 @@
         margin: 0 !important;
         float: left;
         width: 100%;
-        height: calc( 100vh - 9em);
+        height: calc(100vh - 9em);
       }
 
       .header {
@@ -70,6 +70,11 @@
         height: 100%;
       }
 
+      .content {
+        @apply(--max-width-container);
+        height: 100%;
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -92,9 +97,11 @@
                      icon="dorel-icons:close"></iron-icon>
         </div>
         <div class="container">
-          <paper-dialog-scrollable>
-            <slot></slot>
-          </paper-dialog-scrollable>
+          <div class="content">
+            <paper-dialog-scrollable>
+              <slot></slot>
+            </paper-dialog-scrollable>
+          </div>
         </div>
       </paper-dialog>
 
