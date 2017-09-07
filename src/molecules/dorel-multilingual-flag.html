@@ -1,0 +1,64 @@
+<dom-module id="dorel-multilingual-flag">
+  <style>
+    :host {
+      --flag-width: 1.5em;
+      --flag-height: 1.125em;
+      --flag-border-radius: .25em;
+    }
+
+    section {
+      background-color: var(--theme-color-monochrome-3);
+      float: left;
+      width: var(--flag-width);
+      height: var(--flag-height);
+      border-radius: var(--flag-border-radius);
+      display: block;
+      background-size: contain;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
+  </style>
+  <template>
+    <section id="flag">
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-flag',
+
+      properties: {
+        /**
+         * @name countryCode
+         * @description ISO country code used to display the flag
+         */
+        countryCode: {
+          type: String,
+          value: '',
+          observer: '_setFlag'
+        }
+      },
+      /**
+       * @name _setFlag
+       * @description Observer that sets the background image using the given country code
+       */
+      _setFlag: function () {
+        if (this.countryCode !== '') {
+          var flagSource = "url('/assets/images/flags/COUNTRY.svg')";
+          flagSource = flagSource.replace('COUNTRY', this.countryCode);
+          this.$$('#flag').style.backgroundImage = flagSource;
+        }
+      },
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

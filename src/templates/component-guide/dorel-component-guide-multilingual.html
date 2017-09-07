@@ -1,0 +1,221 @@
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+<link rel="import" href="../../molecules/dorel-multilingual-overlay.html">
+<link rel="import" href="../../molecules/dorel-multilingual-country.html">
+<link rel="import" href="../../molecules/dorel-multilingual-continents.html">
+
+<dom-module id="dorel-component-guide-multilingual">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      dorel-cta {
+        float: left;
+        width: auto;
+        clear: both;
+      }
+
+      dorel-multilingual-country {
+        margin: .75em 0;
+      }
+    </style>
+
+    <section class="content-container">
+      <h1 class="class-for-h1">Multilingual Components</h1>
+      <p>
+        This section describes components used for language and country selection purposes.
+      </p>
+      <h1 class="class-for-h2">Country &amp; Language Select</h1>
+      <p>The country select component has a hover state to select the language(s)</p>
+      <dorel-multilingual-country country-data="[[ singleCountryData ]]"></dorel-multilingual-country>
+      <hr>
+      <h1 class="class-for-h2">Continent Select</h1>
+      <dorel-multilingual-continents continents-data="[[ continentsData ]]"></dorel-multilingual-continents>
+      <hr>
+      <h1 class="class-for-h2">Country Overlay</h1>
+      <p>
+        Click on the button to open the country overlay
+      </p>
+      <dorel-cta title="Open country overlay"
+                 type="primary"
+                 link=""
+                 size="small"
+                 on-click="openOverlay"
+                 icon="dorel-icons:chevron-right">
+        Open country overlay
+      </dorel-cta>
+      <dorel-multilingual-overlay id="overlay">
+        <dorel-multilingual-continents centered="true"
+                                       continents-data="[[ continentsData ]]"></dorel-multilingual-continents>
+      </dorel-multilingual-overlay>
+    </section>
+  </template>
+  <hr>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-multilingual',
+      properties: {
+        continentsData: {
+          type: Array,
+          value: [{
+            'title': 'Europe', 'countries': [
+              {
+                'countryCode': 'at',
+                'title': 'Austria',
+                'languages': [
+                  {'language': 'German', 'id': 0},
+                ]
+              }, {
+                'countryCode': 'be',
+                'title': 'Belgium',
+                'languages': [
+                  {'language': 'Dutch', 'id': 0},
+                  {'language': 'French', 'id': 1},
+                ]
+              }, {
+                'countryCode': 'cz',
+                'title': 'Czech Republic',
+                'languages': [
+                  {'language': 'Czech', 'id': 0}
+                ]
+              }
+            ]
+          },
+            {
+              'title': 'North America', 'countries': [
+              {
+                'countryCode': 'ca',
+                'title': 'Canada',
+                'languages': [
+                  {'language': 'English', 'id': 0},
+                  {'language': 'French', 'id': 1},
+                ]
+              }, {
+                'countryCode': 'mx',
+                'title': 'Mexico',
+                'languages': [
+                  {'language': 'Spanish', 'id': 0},
+                ]
+              }, {
+                'countryCode': 'us',
+                'title': 'United States',
+                'languages': [
+                  {'language': 'English', 'id': 0},
+                ]
+              }
+            ]
+            },
+            {
+              'title': 'South America', 'countries': [
+              {
+                'countryCode': 'at',
+                'title': 'Austria',
+                'languages': [
+                  {'language': 'German', 'id': 0},
+                ]
+              }, {
+                'countryCode': 'be',
+                'title': 'Belgium',
+                'languages': [
+                  {'language': 'Dutch', 'id': 0},
+                  {'language': 'French', 'id': 1},
+                ]
+              }, {
+                'countryCode': 'cz',
+                'title': 'Czech Republic',
+                'languages': [
+                  {'language': 'Czech', 'id': 0}
+                ]
+              }
+            ]
+            },
+            {
+              'title': 'Asia Pacific', 'countries': [
+              {
+                'countryCode': 'at',
+                'title': 'Austria',
+                'languages': [
+                  {'language': 'German', 'id': 0},
+                ]
+              }, {
+                'countryCode': 'be',
+                'title': 'Belgium',
+                'languages': [
+                  {'language': 'Dutch', 'id': 0},
+                  {'language': 'French', 'id': 1},
+                ]
+              }, {
+                'countryCode': 'cz',
+                'title': 'Czech Republic',
+                'languages': [
+                  {'language': 'Czech', 'id': 0}
+                ]
+              }
+            ]
+            },
+            {
+              'title': 'Middle East', 'countries': [
+              {
+                'countryCode': 'at',
+                'title': 'Austria',
+                'languages': [
+                  {'language': 'German', 'id': 0},
+                ]
+              }, {
+                'countryCode': 'be',
+                'title': 'Belgium',
+                'languages': [
+                  {'language': 'Dutch', 'id': 0},
+                  {'language': 'French', 'id': 1},
+                ]
+              }, {
+                'countryCode': 'cz',
+                'title': 'Czech Republic',
+                'languages': [
+                  {'language': 'Czech', 'id': 0}
+                ]
+              }
+            ]
+            },
+            {
+              'title': 'Africa', 'countries': [
+              {
+                'countryCode': 'at',
+                'title': 'Austria',
+                'languages': [
+                  {'language': 'German', 'id': 0},
+                ]
+              }, {
+                'countryCode': 'be',
+                'title': 'Belgium',
+                'languages': [
+                  {'language': 'Dutch', 'id': 0},
+                  {'language': 'French', 'id': 1},
+                ]
+              }, {
+                'countryCode': 'cz',
+                'title': 'Czech Republic',
+                'languages': [
+                  {'language': 'Czech', 'id': 0}
+                ]
+              }
+            ]
+            }]
+        },
+        singleCountryData: {
+          value: {
+            'countryCode': 'aw',
+            'title': 'Aruba',
+            'languages': [
+              {'language': 'Papiamento', 'id': 0},
+              {'language': 'Dutch', 'id': 1},
+              {'language': 'English', 'id': 2},
+              {'language': 'Spanish', 'id': 2},
+            ]
+          }
+        }
+      },
+      openOverlay: function () {
+        this.$$('#overlay').open();
+      }
+    });
+  </script>
+</dom-module>
