@@ -7,6 +7,12 @@
 <dom-module id="dorel-multilingual-overlay">
   <template>
     <style>
+      :host {
+        --paper-dialog-scrollable: {
+          padding: 0;
+        };
+      }
+
       /* NOTE: All the !important use in this component is because paper-dialog
       spacings can't be overwritten using the the shared styles.
       Using the !important is ugly, but necessary in this case. */
@@ -26,11 +32,11 @@
 
       .container {
         position: relative;
-        padding: 0 !important;
         margin: 0 !important;
         float: left;
         width: 100%;
         height: calc(100vh - 9em);
+        padding: .75em !important;
       }
 
       .header {
@@ -62,6 +68,8 @@
         top: 1.5em;
         z-index: 10;
         cursor: pointer;
+        width: 2em;
+        height: 2em;
       }
 
       paper-dialog-scrollable {
@@ -73,6 +81,10 @@
       .content {
         @apply(--max-width-container);
         height: 100%;
+      }
+
+      [tablet-medium-up] .container {
+        padding: 1.5em !important;
       }
 
     </style>

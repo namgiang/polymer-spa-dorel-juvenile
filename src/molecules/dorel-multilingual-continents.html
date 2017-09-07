@@ -43,8 +43,16 @@
 
       .container {
         padding-top: 1.5em;
-        float: left;
-        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      [centered] .container {
+        @apply(--layout-center-justified);
+      }
+
+      [centered] .title {
+        text-align: center;
       }
 
       [tablet-medium-up] .continent {
@@ -63,7 +71,8 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+    <section centered$="[[ centered ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
              tablet-small$="[[ breakpoints.tabletSmall ]]"
              tablet-medium$="[[ breakpoints.tabletMedium ]]"
              desktop-small$="[[ breakpoints.desktopSmall ]]">
@@ -89,6 +98,10 @@
     Polymer({
       is: 'dorel-multilingual-continents',
       properties: {
+        centered: {
+          type: Boolean,
+          value: false,
+        },
         continentsData: {
           type: Array,
           value: []
