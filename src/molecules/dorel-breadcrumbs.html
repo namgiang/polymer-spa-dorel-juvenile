@@ -1,0 +1,145 @@
+<dom-module id="dorel-breadcrumbs">
+  <template>
+    <style>
+      :host {
+        display: inline;
+      }
+      .breadcrumb-menu {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      .breadcrumb-item {
+        @apply(--theme-typography-1);
+        display: inline;
+        margin-right: 1.5rem;
+        position: relative;
+      }
+      [tablet-medium-up] .breadcrumb-item {
+        @apply(--theme-typography-2);
+      }
+      .breadcrumb-item a {
+        color: var(--theme-color-monochrome-3);
+        transition: 0.2s;
+      }
+      .breadcrumb-item a:hover {
+        color: var(--theme-color-text-link-active);
+      }
+      .breadcrumb-item:after {
+        content: '>';
+        position: absolute;
+        margin-top: 1px;
+        transform: translate(50%, 0);
+        color: var(--theme-color-monochrome-3);
+      }
+      .breadcrumb-item:last-of-type:after {
+        display: none;
+      }
+      .breadcrumb-item:last-of-type a {
+        color: var(--theme-color-text-link);
+        cursor: default;
+        text-decoration: none;
+      }
+    </style>
+
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+    <app-route
+      route="{{ route }}"></app-route>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <ol class="breadcrumb-menu" itemscope itemtype="http://schema.org/BreadcrumbList"
+      tablet-small$="[[ breakpoints.tabletSmall ]]"
+      tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <template
+        is="dom-repeat"
+        items="[[ breadCrumbs ]]"
+        as="breadcrumb"
+        index-as="index"
+        rendered-item-count="{{ renderedCount }}">
+        <li class="breadcrumb-item"
+            itemprop="itemListElement" itemscope
+            itemtype="http://schema.org/ListItem">
+          <a itemprop="item" href="[[ breadcrumb.url ]]">
+          <span itemprop="name">[[ breadcrumb.label ]]</span></a>
+          <meta itemprop="position" content="[[ index ]]" />
+        </li>
+      </template>
+    </ol>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-breadcrumbs',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name route
+         * @description data coming from the app-route
+         */
+        route: {
+          type: Object
+        },
+
+        breadCrumbs: {
+          type: Array,
+          value: []
+        },
+
+      },
+
+      observers: [
+        'routeChanged(route)'
+      ],
+
+      routeChanged: function(route) {
+        this.set('breadCrumbs', []);
+        var pathArray = route.path.split('/').filter(function(path) {
+          return Boolean(path !== "");
+        });
+        pathArray.unshift(window.location.origin);
+        this.setBreadCrumbs(pathArray);
+      },
+
+      setBreadCrumbs: function(pathArray) {
+        var self = this;
+        array = pathArray.map(function(item, index) {
+          return { url: self._getUrl(index, pathArray), label: self._getLabel(item, index)};
+        });
+
+        array.forEach(function(item) {
+          var newItem = Object.assign({}, item);
+          self.push('breadCrumbs', newItem);
+        });
+      },
+
+      _getUrl: function(index, array) {
+        var newArray = array.filter(function(path, _index) {
+          return Boolean(_index <= index)
+        })
+        return newArray.join('/');
+      },
+
+      _getLabel: function(item, index) {
+        if(index === 0) {
+          return 'Home'
+        }
+        var label = item.split('-').join(' ');
+        return this._capitalizeFirstLetter(label);
+      },
+
+      _capitalizeFirstLetter: function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
+
+    });
+
+  </script>
+
+</dom-module>

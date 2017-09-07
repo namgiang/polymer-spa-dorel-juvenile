@@ -1,0 +1,69 @@
+<dom-module id="dorel-section-page-nav">
+  <template>
+    <style>
+      :host {
+        width 100%;
+        display: flex;
+        justify-content: center;
+      }
+      .section {
+        @apply(--max-width-container);
+        padding: 1.5em var(--theme-gutter-mobile) 1.5em var(--theme-gutter-mobile);
+        width: 100%;
+        float: left;
+        box-sizing: border-box;
+        margin: auto;
+      }
+      .column {
+        display: flex;
+        justify-content: space-between;
+        margin: 1.5rem auto 0;;
+      }
+      .amount {
+        @apply(--theme-typography-1);
+        color: var(--theme-color-monochrome-3);
+        display: inline;
+        margin-right: 1.5rem;
+        position: relative;
+        margin: 0;
+      }
+
+      [tablet-medium-up] .amount {
+        @apply(--theme-typography-2);
+        margin: 0;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section"
+             text-header$="[[ textHeader ]]"
+             info-header$="[[ infoHeader ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-large$="[[ breakpoints.desktopLarge ]]">
+     <div class="column">
+       <dorel-breadcrumbs></dorel-breadcrumbs>
+       <template is="dom-if" if="{{ shouldShowResults(renderedCount) }}">
+         <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
+       </template>
+     </div>
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-page-nav',
+
+      properties: {
+
+        renderedCount: {
+          type: Number
+        }
+
+      },
+
+      shouldShowResults: function(renderedCount) {
+        return Boolean(renderedCount !== 'undefined');
+      },
+    });
+  </script>
+</dom-module>
