@@ -1,0 +1,84 @@
+<link rel="import" href="../molecules/dorel-multilingual-flag.html">
+
+<dom-module id="dorel-multilingual-selected-language">
+  <template>
+    <style>
+
+      .country, .language {
+        float: left;
+        display: inline-block;
+        margin-top: 1em;
+        margin-left: .75em;
+        color: var(--theme-color-text-link);
+        line-height: 16px;
+        transition: color .3s ease;
+      }
+
+      .country {
+        padding-right: .75em;
+        border-right: 1px solid var(--theme-color-text-link);
+      }
+
+      dorel-multilingual-flag {
+        float: left;
+        overflow: hidden;
+        margin-top: .875em;
+      }
+
+      section {
+        cursor: pointer;
+        height: 3em;
+        float: left;
+      }
+
+      section:hover .country, section:hover .language {
+        color: var(--theme-color-text-link-active);
+      }
+
+      section:hover .country {
+        border-right: 1px solid var(--theme-color-text-link-active);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <dorel-multilingual-flag country-code="[[ currentLanguage.countryCode ]]"></dorel-multilingual-flag>
+      <div class="country">[[ currentLanguage.country ]]</div>
+      <div class="language">[[ currentLanguage.language ]]</div>
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-selected-language',
+
+      properties: {
+        /**
+         * @name currentLanguage
+         * @description For displaying the current language, country and it's flag
+         */
+        'currentLanguage': {
+          type: Object,
+          value: {
+            'country': 'Belgium',
+            'language': 'Dutch',
+            'countryCode': 'be',
+          }
+        }
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>
