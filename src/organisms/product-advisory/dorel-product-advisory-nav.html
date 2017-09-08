@@ -98,6 +98,7 @@
       .icon-close-page {
         --iron-icon-width:	var(--theme-scale-3);
         --iron-icon-height: var(--theme-scale-3);
+        color: var(--theme-color-text-link);
       }
 
        .icon-back {
@@ -180,6 +181,7 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div class="spacing"></div>
     <div class="header-wrapper"
          tablet-small-up$="{{  breakpoints.tabletSmallUp }}"
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
@@ -194,12 +196,14 @@
                    on-click="_logoClicked">
                   <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
                 </a>
-                <h2 class="page-title">[[ pageTitle ]]</h2>
+                <h2 class="page-title">
+                  [[ pageTitle ]]
+                </h2>
               </div>
             </div>
 
             <div class="header-item header-item-close">
-              <a>
+              <a href="[[ getPreviousStateUrl() ]]">
                 <iron-icon class="header-icon icon-close-page"
                            icon="dorel-icons:close"></iron-icon>
               </a>
@@ -208,10 +212,13 @@
 
           <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
             <div class="flex-row">
-              <div class="header-item header-item-back">
-                <iron-icon class="header-icon icon-back"
-                           icon="dorel-icons:chevron-right"></iron-icon>
-              </div>
+              <template is="dom-if" if="{{ shouldShow(previous) }}">
+                <div class="header-item header-item-back">
+                  <iron-icon class="header-icon icon-back"
+                             on-click="previousStep"
+                             icon="dorel-icons:chevron-right"></iron-icon>
+                </div>
+              </template>
               <div class="header-item header-item-logo">
                 <div class="header-flex">
                   <a href="/" aria-label="Maxi Cosi"
@@ -222,8 +229,10 @@
               </div>
 
               <div class="header-item header-item-close">
+                <a href="[[ getPreviousStateUrl() ]]">
                 <iron-icon class="header-icon icon-close-page"
                            icon="dorel-icons:close"></iron-icon>
+                </a>
               </div>
             </div>
           </template>
@@ -257,13 +266,24 @@
           type: Boolean
         },
 
+        /**
+         * @attribute
+         * @name pageTitle
+         * @description string with that respresents the title of a step
+         */
         pageTitle: {
           type: String
         },
 
+        /**
+         * @attribute
+         * @name progress
+         * @description Number that indicates the progress of the flow
+         */
         progress: {
           type: Number
         },
+
         /**
          * @exposed
          * @name submenuOpened
@@ -273,6 +293,14 @@
           type: Boolean
         },
 
+        /**
+         * @attribute
+         * @name previous
+         * @description Boolean that indicates if a user can route a step back
+         */
+        previous: {
+          type: Boolean
+        },
 
         /**
          * @exposed
@@ -283,25 +311,6 @@
           type: Boolean
         }
       },
-
-      /**
-       * @name attached
-       * @description Event handler for scrolling behaviour
-       * */
-      // NOTE: This was disabled in DIO-1319 until further notice
-      /*attached: function () {
-        this._scrollHandler();
-      },*/
-
-      /**
-       * @name _scrollHandler
-       * @description Handler for scrolling. Determines if the header should be compact or expanded
-       * */
-      // NOTE: This was disabled in DIO-1319 until further notice
-      /*
-      _scrollHandler: function () {
-        this.compactMenu = this._scrollTop > 50;
-      },*/
 
       /**
        * @name _logoClicked
@@ -319,6 +328,23 @@
             'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
           }
         });
+      },
+
+      shouldShow: function(boolean) {
+        return Boolean(boolean);
+      },
+
+      previousStep: function() {
+        this.fire('previous-step');
+      },
+
+      getPreviousStateUrl: function() {
+        var origin = window.location.origin;
+        var previousState = Polymer.globalsManager.get('Dorel.previousState');
+        if(!previousState || previousState.path === '/product-advisory') {
+          return origin;
+        }
+        return origin + previousState.path;
       },
 
 

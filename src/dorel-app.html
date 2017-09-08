@@ -113,6 +113,7 @@
     <dorel-main-routing
       route="[[ route ]]"
       category-page="{{ categoryPage }}"
+      previous-states="{{ previousStates }}"
       current-page="{{ currentPage }}">
     </dorel-main-routing>
 
@@ -128,7 +129,7 @@
       category="{{ category }}">
     </dorel-product-category-manager>
 
-    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+    <template is="dom-if" if="[[ shouldShowHeader(currentPage) ]]">
       <dorel-header
         load-complete="[[ loadComplete ]]"
         page="[[ page ]]"
@@ -173,7 +174,7 @@
 
         <dorel-template-product-advisory-tool
           name="product-advisory-tool"
-          route="[[ subroute ]]"
+          brand-name="[[ brand.label ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
         <dorel-template-component-guide
@@ -451,8 +452,8 @@
         return copy;
       },
 
-      shouldShow: function(currentPage) {
-        return Boolean(currentPage.template !== 'product-advisory-tool');
+      shouldShowHeader: function(currentPage) {
+        return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
     });
