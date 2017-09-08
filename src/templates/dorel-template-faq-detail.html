@@ -1,4 +1,6 @@
 <link rel="import" href="../organisms/dorel-section-service-faq-detail.html">
+<link rel="import" href="../organisms/dorel-service-faq-promo.html">
+<link rel="import" href="../organisms/dorel-service-support.html">
 
 <dom-module id="dorel-template-faq-detail">
   <template>
@@ -18,8 +20,12 @@
       }
 
       dorel-service-faq-detail {
-        margin-top: 1.5em;
+        margin: 1.5em 0;
       }
+
+       dorel-service-support {
+         margin: 1.5em 0;
+       }
 
       .row {
         @apply(--theme-grid-row);
@@ -28,9 +34,7 @@
         justify-content: left;
       }
 
-      .container {
-        @apply(--theme-grid-column);
-        margin-top: 0;
+      .container-faq, .container-promo-contact {
         width: 100%;
       }
 
@@ -39,8 +43,30 @@
         color: var(--theme-brand-color-1);
       }
 
-      [tablet-medium-up] .container {
+      dorel-service-faq-promo {
+        float: left;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+
+      [tablet-medium-up] dorel-service-faq-detail {
+        margin: 3em 0 1.5em 0;
+      }
+
+      [desktop-small-up] .container-faq {
         width: 66.6666666%;
+      }
+
+      [desktop-small-up] .container-promo-contact {
+        width: calc(100% - 66.6666666%);
+      }
+
+      [desktop-small-up] dorel-service-faq-promo {
+        margin-top: 3em;
+      }
+
+      [tablet-medium-up] .container-faq, [tablet-medium-up] .container-promo-contact {
+        @apply(--theme-grid-column);
       }
 
       [tablet-medium-up] {
@@ -54,13 +80,32 @@
       [tablet-medium-up] .title {
         @apply(--theme-typography-7);
       }
+
+      [tablet-medium-up] .container-faq {
+        box-sizing: border-box;
+        padding-right: 3em;
+      }
+
     </style>
+
+
+    <app-location route="{{ route }}"></app-location>
+    <iron-query-params
+      params-string="{{ query }}"
+      params-object="{{ queryParams }}"></iron-query-params>
+    <app-route-converter
+      path="{{ path }}"
+      query-params="{{ queryParams }}"
+      route="{{ route }}"></app-route-converter>
+    <app-route route="{{ route }}"></app-route>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+
       <div class="row">
-        <div class="container">
+        <div class="container-faq">
           <h2 class="title">
             [[ templateData.acf.category_title ]]
           </h2>
@@ -69,27 +114,50 @@
           <dorel-section-service-faq-detail 
             faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
         </div>
+
+        <div class="container-promo-contact">
+          <dorel-service-faq-promo template-data="[[ faqPromo ]]"></dorel-service-faq-promo>
+          <dorel-service-support class="compact" compact="true"></dorel-service-support>
+        </div>
       </div>
+
     </section>
   </template>
-
   <script>
     Polymer({
       is: 'dorel-template-faq-detail',
 
       properties: {
         faqDetail: {
-          type: Object
-        }
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        faqPromo: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
       },
 
       ready: function() {
+        this.set('faqPromo', {
+          'title': 'Happy Hips',
+          'description': 'Special seat for you baby, First Lorem ipsum this.',
+          'bynder_id': '7F84BD5F-551A-4DA5-8532AB44763439AA',
+          'cta_text': 'Read more',
+          'cta_link': '/component-guide/'
+        });
+
         /**
          * Adds questions to wordpress faq categories
          * TODO: can be removed when we use real GMT data
          * endpoint takes the category slug/id
          */
-        this.faqDetail = {
+        this.set('faqDetail', {
           id: 1,
           brand_id: 4,
           name: 'Services',
@@ -161,7 +229,7 @@
               ]
             }
           ]
-        };
+        });
       },
 
       /**
