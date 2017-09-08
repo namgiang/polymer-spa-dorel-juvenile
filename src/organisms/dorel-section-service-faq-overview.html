@@ -1,6 +1,6 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
 <link rel="import" href="../utils/dorel-gmt-collect-faqs.html">
-<link rel="import" href="../organisms/dorel-service-faq-promo.html">
+<link rel="import" href="../organisms/dorel-section-service-faq-promo.html">
 
 <dom-module id="dorel-section-service-faq-overview">
   <template>
@@ -239,8 +239,8 @@
                     <!-- faq promo -->
                     <template
                       is="dom-if"
-                      if="[[ templateData.component.faq_promo_toggle ]]">
-                      <dorel-service-faq-promo template-data="[[ faqPromo ]]" light="true"></dorel-service-faq-promo>
+                      if="[[ category.faq_promo_toggle ]]">
+                      <dorel-section-service-faq-promo template-data="[[ category ]]" light="true"></dorel-section-service-faq-promo>
                     </template>
                     <!--// faq promo -->
 
@@ -286,8 +286,8 @@
                   <!-- faq promo -->
                   <template
                     is="dom-if"
-                    if="[[ templateData.component.faq_promo_toggle ]]">
-                    <dorel-service-faq-promo template-data="[[ faqPromo ]]" light="true"></dorel-service-faq-promo>
+                    if="[[ category.faq_promo_toggle ]]">
+                    <dorel-section-service-faq-promo template-data="[[ category ]]" light="true"></dorel-section-service-faq-promo>
                   </template>
                   <!--// faq promo -->
 
@@ -330,7 +330,7 @@
         faqCategories: {
           type: Array,
           value: [],
-          observer: '_setFaqDetailPages'
+          observer: '_addFaqDetailData'
         }
       },
 
@@ -521,10 +521,10 @@
 
       /**
        * @observer
-       * @name _setFaqDetailPages
-       * @description adds detail page to the faqCategories
+       * @name _addFaqDetailData
+       * @description adds detail page and promo spot data to the faqCategories
        */
-      _setFaqDetailPages: function(newVal, oldVal) {
+      _addFaqDetailData: function(newVal, oldVal) {
         if (typeof newVal === 'undefined' || newVal === oldVal) return;
 
         // retrieve the faqDetailPages from Wordpress
@@ -538,7 +538,17 @@
 
             // add the detail page defined in the Wordpress detail to the faqCategory
             if (detailPage.acf.gmt_faq_category_selector === faqCat.value) {
+
+              // set the detail page defined on the detail page category selector
               faqCat.detail_page = detailPage.link;
+
+              // set the detail page faq promo on the overview category as well
+              faqCat.faq_promo_toggle = detailPage.acf.faq_promo_toggle;
+              faqCat.promo_bynder_image_id = detailPage.acf.promo_bynder_image_id;
+              faqCat.promo_title = detailPage.acf.promo_title;
+              faqCat.promo_description = detailPage.acf.promo_description;
+              faqCat.promo_cta_text = detailPage.acf.promo_cta_text;
+              faqCat.promo_cta_link = detailPage.acf.promo_cta_link;
             }
 
           }); // faqCategories foreach
