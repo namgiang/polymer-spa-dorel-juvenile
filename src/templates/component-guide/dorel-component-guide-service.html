@@ -2,7 +2,6 @@
 <link rel="import" href="../../organisms/dorel-section-service-faq-overview.html">
 <link rel="import" href="../../organisms/dorel-section-service-faq-detail.html">
 <link rel="import" href="../../organisms/dorel-service-faq-promo.html">
-<link rel="import" href="../../organisms/dorel-service-support.html">
 
 <dom-module id="dorel-component-guide-service">
   <template>
@@ -55,8 +54,11 @@
 
     <section class="content-container">
       <h1 class="class-for-h2">Service Support</h1>
-        <dorel-service-support class="compact" compact="true"></dorel-service-support>
-        <dorel-service-support></dorel-service-support>
+        <dorel-section-service-support 
+          compact="true"
+          template-data="[[ serviceSupport ]]"></dorel-service-support>
+        <dorel-section-service-support
+          template-data="[[ serviceSupport ]]"></dorel-service-support>
     </section>
   </template>
 
@@ -73,6 +75,34 @@
               section_title: 'Section Title',
               section_description: 'Section description ipsum dulum',
               cta_text: 'view all'
+            };
+          }
+        },
+
+        serviceSupport: {
+          type: Object,
+          value: function() {
+            return {
+              social_channels: [
+                {
+                  social_media_href: "#",
+                  social_media_icon: "facebook",
+                  social_media_text: "@MaxiCosi"
+                }
+              ],
+              support_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+              support_email_address: "support@test.nl",
+              support_email_sub_title: "Reply in 2 days",
+              support_email_title: "Email us",
+              support_email_toggle: true,
+              support_facebook_sub_title: "Answer in 30 minutes",
+              support_facebook_title: "Facebook",
+              support_facebook_toggle: true,
+              support_phone_number: "01284413141",
+              support_phone_title: "Call us",
+              support_phone_toggle: true,
+              support_sub_title: "Our customer service is now open until 17:00",
+              support_title: "Couldn't find your answer?"
             };
           }
         },

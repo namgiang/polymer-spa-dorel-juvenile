@@ -1,6 +1,5 @@
 <link rel="import" href="../organisms/dorel-section-service-faq-detail.html">
 <link rel="import" href="../organisms/dorel-service-faq-promo.html">
-<link rel="import" href="../organisms/dorel-service-support.html">
 
 <dom-module id="dorel-template-faq-detail">
   <template>
@@ -116,8 +115,24 @@
         </div>
 
         <div class="container-promo-contact">
-          <dorel-service-faq-promo template-data="[[ faqPromo ]]"></dorel-service-faq-promo>
-          <dorel-service-support class="compact" compact="true"></dorel-service-support>
+          
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.faq_promo_toggle ]]">
+            <dorel-service-faq-promo template-data="[[ faqPromo ]]"></dorel-service-faq-promo>
+          </template>
+          
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.customer_support_toggle ]]">
+            <dorel-section-service-support
+                  compact="true"
+                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+          </template>
+          <!--// customer support -->
+
         </div>
       </div>
 
@@ -129,10 +144,7 @@
 
       properties: {
         faqDetail: {
-          type: Object,
-          value: function() {
-            return {};
-          }
+          type: Object
         },
 
         faqPromo: {
