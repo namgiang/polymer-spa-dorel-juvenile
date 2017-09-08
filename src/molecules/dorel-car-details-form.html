@@ -208,7 +208,7 @@
        */
       _getBrands: function() {
         var brandEl = this.$.brand;
-        brandEl.url = 'http://dorel-wp.dev:8009/v1/car-brands';
+        brandEl.url = CONFIG.DIO_API_URL + '/car-brands';
         this._setInitial(0);
         brandEl.generateRequest();
       },
@@ -243,7 +243,7 @@
             return item.filter === 'id';
           });
           var modelEl = this.$.model;
-          modelEl.url = 'http://dorel-wp.dev:8009/v1/car-brands/' + item.value + '/models';
+          modelEl.url = CONFIG.DIO_API_URL + '/car-brands/' + item.value + '/models';
           modelEl.generateRequest();
         }
       },
@@ -289,7 +289,7 @@
         });
 
         var typeYearEl = this.$.typeYear;
-        typeYearEl.url = 'http://dorel-wp.dev:8009/v1/car-brands/' + brand.value + '/model-types?model_name=' + modelName.value + '&doors=' + doors.value;
+        typeYearEl.url = CONFIG.DIO_API_URL + '/car-brands/' + brand.value + '/model-types?model_name=' + modelName.value + '&doors=' + doors.value;
         typeYearEl.generateRequest();
 
       },
