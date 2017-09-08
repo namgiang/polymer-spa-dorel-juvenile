@@ -1,0 +1,57 @@
+<dom-module id="dorel-gmt-collect-faqs">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]" 
+      handle-as="json" 
+      on-response="_faqsLoaded"></iron-ajax>
+  </template>
+  
+  <script>
+    Polymer({
+      is: 'dorel-gmt-collect-faqs',
+      properties: {
+
+        /**
+         * `` this is the url to your Wordpress instance
+         */
+        apiCall: {
+          type: String
+        },
+
+        apiResponse: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * `endPoint`
+         */
+        endPoint: {
+          type: String
+        }
+      },
+
+      ready: function() {
+        if (typeof this.apiCall === 'undefined' || this.apiCall === '') {
+          console.error('no endpoint given, please provide the right endpoint url');
+          return;
+        }
+
+        this.endPoint = CONFIG.DIO_API_URL + '/' + this.apiCall;
+      },
+
+      /** 
+       * @name _faqsLoaded
+       * @description when the endpoint gives a response
+       */
+      _faqsLoaded: function(data) {
+        this.set('apiResponse', data.detail.response);
+      }
+    });
+  </script>
+</dom-module>
