@@ -176,18 +176,20 @@
      * @description Injects Select options. This is needed because Polymer's dom-repeat doesn't work
      * in the select element for IE browsers
      */
-    _setSelectionOptions: function (test, test2) {
+    _setSelectionOptions: function () {
       var select = this.$.input;
+
+      var initOptions = this.get('options');
+
+      if(!initOptions) {
+        return;
+      }
 
       while(select.firstChild) {
         select.removeChild(select.firstChild);
       }
 
-      if(!this.options) {
-        return;
-      }
-
-      var options = this.options.filter(function(item, index, self) {
+      var options = initOptions.filter(function(item, index, self) {
         return self.some(function(_item) {
           return _item.value === item.value;
         });

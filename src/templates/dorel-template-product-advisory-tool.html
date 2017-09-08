@@ -188,7 +188,8 @@
        * @description will set the first step
        */
       ready: function() {
-        this.set('currentStep', this.carFittingSteps[0]);
+        var carFittingSteps = this.get('carFittingSteps');
+        this.set('currentStep', carFittingSteps[0]);
       },
 
       /**
@@ -263,10 +264,7 @@
        */
       calculateProgess: function(carFittingSteps, currentStep) {
         var totalAmountOfSteps = carFittingSteps.length;
-        var index = carFittingSteps.findIndex(function(step) {
-          return currentStep.step === step.step;
-        });
-        index = index + 1;
+        var index = this._findIndexOfStep(currentStep, carFittingSteps) + 1;
         var percentage = (index * 100) / totalAmountOfSteps;
         return percentage === 0 ? 100 : percentage;
       },
@@ -278,12 +276,9 @@
        * if the event is called this function will set a new currentStep with the previous currentStep index + 1
        */
       _nextStep: function() {
-        var self = this;
-        var index = this.carFittingSteps.findIndex(function(step) {
-          return self.currentStep.step === step.step;
-        });
-        var nextStep = Object.assign({}, this.carFittingSteps[index + 1]);
-        this.set('currentStep', nextStep);
+        var carFittingSteps = this.get('carFittingSteps');
+        var index = this._findIndexOfStep(this.get('currentStep'), carFittingSteps) + 1;
+        this._setCurrentStep(carFittingSteps, index);
       },
 
       /**
@@ -293,12 +288,20 @@
        * if the event is called this function will set a new currentStep with the previous currentStep index - 1
        */
       _previousStep: function() {
-        var self = this;
-        var index = this.carFittingSteps.findIndex(function(step) {
-          return self.currentStep.step === step.step;
-        });
-        var previousStep = Object.assign({}, this.carFittingSteps[index - 1]);
-        this.set('currentStep', previousStep);
+        var carFittingSteps = this.get('carFittingSteps');
+        var index = this._findIndexOfStep(this.get('currentStep'), carFittingSteps) - 1;
+        this._setCurrentStep(carFittingSteps, index);
+      },
+
+      /**
+       * @name _setCurrentStep
+       * @description will set the currentStep depending of the index that is passed
+       * @param carFittingSteps - Array
+       * @param index - Number
+       */
+      _setCurrentStep: function(carFittingSteps, index) {
+        var step = Object.assign({}, carFittingSteps[index]);
+        this.set('currentStep', step);
       },
 
       /**
@@ -322,9 +325,7 @@
        * @returns Boolean
        */
       isNotLastStep: function(currentStep, carFittingSteps) {
-         var index = carFittingSteps.findIndex(function(step) {
-           return currentStep.step === step.step;
-         });
+         var index = this._findIndexOfStep(currentStep, carFittingSteps);
          return Boolean(index !== -1 && carFittingSteps && (index + 1) < carFittingSteps.length);
       },
 
@@ -338,10 +339,21 @@
        * @returns Boolean
        */
       isNotFirstStep: function(currentStep, carFittingSteps) {
-        var index = carFittingSteps.findIndex(function(step) {
+        var index = this._findIndexOfStep(currentStep, carFittingSteps);
+        return Boolean(index !== -1 && carFittingSteps && index !== 0);
+      },
+
+      /**
+       * @name _findIndex
+       * @description will find the index of step
+       * @param currentStep - Object
+       * @param carFittingSteps - Array
+       * @returns Number
+       */
+      _findIndexOfStep: function(currentStep, carFittingSteps) {
+        return carFittingSteps.findIndex(function(step) {
           return currentStep.step === step.step;
         });
-        return Boolean(index !== -1 && carFittingSteps && index !== 0);
       }
 
 
