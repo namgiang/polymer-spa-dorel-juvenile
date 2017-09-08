@@ -1,4 +1,6 @@
 <link rel="import" href="../molecules/dorel-multilingual-flag.html">
+<link rel="import" href="../molecules/dorel-multilingual-overlay.html">
+<link rel="import" href="../molecules/dorel-multilingual-continents.html">
 
 <dom-module id="dorel-multilingual-select-language">
   <template>
@@ -52,7 +54,7 @@
 
     <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
              light$="[[ light ]]"
-             on-click="openOverlay"
+             on-click="_openOverlay"
              role="button" tabindex="0">
       <dorel-multilingual-flag country-code="[[ currentLanguage.countryCode ]]"></dorel-multilingual-flag>
       <div class="country">[[ currentLanguage.country ]]</div>
@@ -85,8 +87,12 @@
           type: Object
         }
       },
-      openOverlay: function () {
-        this.$$('#overlay').open();
+        /**
+         * @name _openOverlay
+         * @description Opens an overlay for selection region and language
+         */
+      _openOverlay: function () {
+        this.$.overlay.open();
       },
 
       /**
