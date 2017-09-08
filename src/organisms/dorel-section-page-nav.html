@@ -43,7 +43,7 @@
              desktop-large$="[[ breakpoints.desktopLarge ]]">
      <div class="column">
        <dorel-breadcrumbs></dorel-breadcrumbs>
-       <template is="dom-if" if="{{ shouldShowResults(renderedCount) }}">
+       <template is="dom-if" if="[[ shouldShowResults(renderedCount) ]]">
          <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
        </template>
      </div>
@@ -55,12 +55,23 @@
 
       properties: {
 
+        /**
+         * @attribute
+         * @name renderedCount
+         * @description Number to show results of category-listing page
+         */
         renderedCount: {
           type: Number
         }
 
       },
 
+      /**
+       * @name shouldShowResults
+       * @description used by template to show renderedCount if it's not undefined
+       * @param renderedCount - Number
+       * @returns Boolean
+       */
       shouldShowResults: function(renderedCount) {
         return Boolean(renderedCount !== 'undefined');
       },

@@ -54,7 +54,7 @@
       tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <template
         is="dom-repeat"
-        items="[[ breadCrumbs ]]"
+        items="[[ breadcrumbs ]]"
         as="breadcrumb"
         index-as="index"
         rendered-item-count="{{ renderedCount }}">
@@ -86,7 +86,12 @@
           type: Object
         },
 
-        breadCrumbs: {
+        /**
+         * @attribute
+         * @name breadcrumbs
+         * @description Array of object that represent the breadcrumbs
+         */
+        breadcrumbs: {
           type: Array,
           value: []
         },
@@ -97,16 +102,30 @@
         'routeChanged(route)'
       ],
 
+      /**
+       * observer
+       * @name routeChanged
+       * @description is called if the route changes
+       * @param route - Object
+       */
       routeChanged: function(route) {
-        this.set('breadCrumbs', []);
+        this.set('breadcrumbs', []);
+        // create array of paths in array and filter out empty strings
         var pathArray = route.path.split('/').filter(function(path) {
-          return Boolean(path !== "");
+          return Boolean(path !== '');
         });
+        // Add the first part of url: https://example.com/
         pathArray.unshift(window.location.origin);
-        this.setBreadCrumbs(pathArray);
+        this._setBreadCrumbs(pathArray);
       },
 
-      setBreadCrumbs: function(pathArray) {
+      /**
+       * @name _setBreadCrumbs
+       * @description will create a new array of object from the param array
+       * and set the breadcrumbs
+       * @param pathArray - Array of strings
+       */
+      _setBreadCrumbs: function(pathArray) {
         var self = this;
         array = pathArray.map(function(item, index) {
           return { url: self._getUrl(index, pathArray), label: self._getLabel(item, index)};
@@ -114,10 +133,18 @@
 
         array.forEach(function(item) {
           var newItem = Object.assign({}, item);
-          self.push('breadCrumbs', newItem);
+          self.push('breadcrumbs', newItem);
         });
       },
 
+      /**
+       * helpermethod
+       * @name _getUrl
+       * @description will filter the array based on the index
+       * @param index - Number
+       * @param array - Array of strings
+       * @returns String - url
+       */
       _getUrl: function(index, array) {
         var newArray = array.filter(function(path, _index) {
           return Boolean(_index <= index)
@@ -125,18 +152,41 @@
         return newArray.join('/');
       },
 
+      /**
+       * helpermethod
+       * @name _getLabel
+       * @description will remove '-', replace it with a space
+       * workaround if index === 0, because we can't extract the name home from the url (http://dorel.io)
+       * @param item - String
+       * @param index - Number
+       * @returns String
+       */
       _getLabel: function(item, index) {
         if(index === 0) {
-          return 'Home'
+          return 'Home'; // TODO: Translations
         }
         var label = item.split('-').join(' ');
         return this._capitalizeFirstLetter(label);
       },
 
+      /**
+       * helpermethod
+       * @name _capitalizeFirstLetter
+       * @description will capitalize the first char
+       * @param string - String
+       * @returns String
+       */
       _capitalizeFirstLetter: function(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
       },
 
+      /**
+       * helpermethod
+       * @name setIndex
+       * @description used by the template to correct numbering that starts with 0
+       * @param index - Number
+       * @returns Number
+       */
       setIndex: function(index) {
         return index + 1;
       }
