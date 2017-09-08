@@ -51,6 +51,7 @@
       }
 
     </style>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
   
     <app-location route="{{ route }}"></app-location>
@@ -160,17 +161,18 @@
         if (typeof faqDetail === 'undefined') return;
 
         var subCategories = faqDetail.sub_categories;
-
-        // if no subCategory is selected in first instance, default to the first subCategory
-        if(typeof queryParams === 'undefined' || typeof queryParams.sub_category_id === 'undefined') {
-          this.set('queryParams.sub_category_id', subCategories[0].id);
-        }
-
-        // get the queryParams sub_category_id
         var subCatId = this.get('queryParams.sub_category_id');
+        var questionId = this.get('queryParams.question_id');
 
         // define the selectedSubTab, will trigger _selectedSubTabChanged
         this.set('selectedSubTab', this._getSelectedTab(subCategories, subCatId));
+
+        var selectedSubTab = this.get('selectedSubTab');
+
+        if(typeof selectedSubTab !== 'undefined') {
+          // set the questions model that is used in the dom-repeat
+          this._setQuestions(subCategories[selectedSubTab].items, questionId);
+        }
       },
 
       /**
@@ -190,6 +192,7 @@
           }
         }
 
+        return 0;
       },
 
       /**
@@ -210,9 +213,6 @@
         if(selectedSubCat.id !== Number(queryParams.sub_category_id)) {
           this._updateQueryParams(selectedSubCat.id, queryParams.question_id);
         }
-
-        // set the questions model that is used in the dom-repeat
-        this._setQuestions(selectedSubCat.items, queryParams.question_id);
       },
 
       /**
