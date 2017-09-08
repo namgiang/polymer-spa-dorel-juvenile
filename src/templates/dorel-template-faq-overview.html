@@ -1,6 +1,5 @@
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-section-service-faq-overview.html">
-<link rel="import" href="../organisms/dorel-section-service-support.html">
 
 <dom-module id="dorel-template-faq-overview">
   <template>
@@ -62,7 +61,8 @@
       <!-- show when acf.page_builder has components -->
       <template
         is="dom-if"
-        if="{{ templateData.acf.faq_overview_builder.length }}">
+        if="[[ templateData.acf.faq_overview_builder.length ]]">
+
         <!-- iterate over page_builder components -->
         <template
           is="dom-repeat"
@@ -73,33 +73,46 @@
           <!-- section-hero-header -->
           <template
             is="dom-if"
-            if="{{ isPageComponent(component.acf_fc_layout, 'section_hero_header') }}">
+            if="[[ isPageComponent(component.acf_fc_layout, 'section_hero_header') ]]">
             <dorel-section-header
               no-offset="true"
               section-header-data="[[ component ]]"
               gtm-parent="dorel-template-faq-overview"
               gtm-parent-index="[[ index ]]"></dorel-section-header>
           </template>
-          <!-- end section  header -->
-
+          <!--// section-hero-header -->
+  
+          <!-- section-service-faq-overview -->
           <template
             is="dom-if"
-            if="{{ isPageComponent(component.acf_fc_layout, 'section_service_faqs') }}">
+            if="[[ isPageComponent(component.acf_fc_layout, 'section_service_faqs') ]]">
             <dorel-section-service-faq-overview
               template-data="[[ component ]]"></dorel-section-service-faq-overview>
           </template>
-        </template>
-      </template>
+          <!--// section-service-faq-overview -->
 
-      <div class="host">
-        <div class="section">
-          <div class="row">
-            <div class="container">
-              <dorel-section-service-support></dorel-section-service-support>
+        </template>
+        <!--// iterate over page_builder components -->
+
+      </template>
+      <!--// show when acf.page_builder has components -->
+
+      <!-- section-service-support -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.customer_support_toggle ]]">
+        <div class="host">
+          <div class="section">
+            <div class="row">
+              <div class="container">
+                <dorel-section-service-support
+                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
+      <!--// section-service-support -->
     </section>
   </template>
 

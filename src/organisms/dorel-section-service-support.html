@@ -1,4 +1,4 @@
-<dom-module id="dorel-service-support">
+<dom-module id="dorel-section-service-support">
   <template>
     <style>
       :host {
@@ -143,7 +143,7 @@
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
 
       <template is="dom-if" if="[[ compact ]]">
-        <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
+        <dorel-bynder-image media-id$="[[ templateData.support_bynder_image_id ]]"
                             mobile-width="6em"
                             mobile-height="6em"
                             tablet-width="6em"
@@ -152,7 +152,7 @@
                             height="6em"></dorel-bynder-image>
       </template>
       <template is="dom-if" if="[[ !compact ]]">
-        <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
+        <dorel-bynder-image media-id$="[[ templateData.support_bynder_image_id ]]"
                             mobile-width="6em"
                             mobile-height="6em"
                             tablet-width="10em"
@@ -162,31 +162,53 @@
       </template>
 
       <div class="text-container">
-        <h3 class="title">Could not find your answer?</h3>
-        <p>Our customer service is <a href="">now open until 17:00</a></p>
+        <h3 class="title">[[ templateData.support_title ]]</h3>
+        <p>[[ templateData.support_sub_title ]]</p>
       </div>
       <ul class="contact-methods-container">
-        <li>
-          <span class="contact-method">
-            <iron-icon class="contact-icon" icon="dorel-icons:facebook"></iron-icon>
-            <a href="" target="_blank" class="contact-method-title">Facebook</a>
-            <span class="contact-method-description">Answer in 30 minutes</span>
-          </span>
-        </li>
-        <li>
-          <span class="contact-method">
-            <iron-icon class="contact-icon" icon="dorel-icons:mail"></iron-icon>
-            <a href="mailto:email@email.com" class="contact-method-title">Email us</a>
-            <span class="contact-method-description">Reply in 2 days</span>
-          </span>
-        </li>
-        <li>
-          <span class="contact-method">
-            <iron-icon class="contact-icon" icon="dorel-icons:phone"></iron-icon>
-            <a href="tel:01284413141" class="contact-method-title">Call Us</a>
-            <a href="tel:01284413141" class="contact-method-description">01284413141</a>
-          </span>
-        </li>
+
+        <!-- support facebook -->
+        <template 
+          is="dom-if"
+          if="[[ templateData.support_facebook_toggle ]]">
+          <li>
+            <span class="contact-method">
+              <iron-icon class="contact-icon" icon="dorel-icons:facebook"></iron-icon>
+              <a href="[[ _getFacebookLink(templateData.social_channels) ]]" target="_blank" class="contact-method-title">[[ templateData.support_facebook_title ]]</a>
+              <span class="contact-method-description">[[ templateData.support_facebook_sub_title ]]</span>
+            </span>
+          </li>
+        </template>
+        <!--// support facebook -->
+
+        <!-- support email -->
+        <template 
+          is="dom-if"
+          if="[[ templateData.support_email_toggle ]]">
+          <li>
+            <span class="contact-method">
+              <iron-icon class="contact-icon" icon="dorel-icons:mail"></iron-icon>
+              <a href="mailto:[[ templateData.support_email_address ]]" class="contact-method-title">[[ templateData.support_email_title ]]</a>
+              <span class="contact-method-description">[[ templateData.support_email_sub_title ]]</span>
+            </span>
+          </li>
+        </template>
+        <!--// support email -->
+
+        <!-- support email -->
+        <template 
+          is="dom-if"
+          if="[[ templateData.support_phone_toggle ]]">
+          <li>
+            <span class="contact-method">
+              <iron-icon class="contact-icon" icon="dorel-icons:phone"></iron-icon>
+              <a href="tel:[[ templateData.support_phone_number ]]" class="contact-method-title">[[ templateData.support_phone_title ]]</a>
+              <a href="tel:[[ templateData.support_phone_number ]]" class="contact-method-description">[[ templateData.support_phone_number ]]</a>
+            </span>
+          </li>
+        </template>
+        <!--// support email -->
+
       </ul>
     </section>
 
@@ -195,16 +217,44 @@
 
   <script>
     Polymer({
-      is: 'dorel-service-support',
+      is: 'dorel-section-service-support',
       properties: {
+
+        /**
+         * @name compact
+         * @description show the compact version of this component
+         */
         compact: {
           type: Boolean,
           value: false,
         },
+
+        /** 
+         * @attribute
+         * @name templateData
+         * @description contains the WP data needed for building this component
+         */
         templateData: {
-          type: Object,
+          type: Object
         }
       },
+
+      /** 
+       * @attribute
+       * @name _getFacebookLink
+       * @description retrieves the facebook href from the social channels options to
+       * be set on the href of the customer support social link
+       */
+      _getFacebookLink: function(socialChannels) {
+        if(typeof socialChannels === 'undefined' || !socialChannels.length) return;
+
+        var facebookChannel = socialChannels.find(function(channel) {
+          return channel.social_media_icon === 'facebook'; 
+        });
+
+        return facebookChannel.social_media_href;
+      },
+
       /**
        * @name _eventTracking
        * @description this is for example tracking only
