@@ -1,14 +1,14 @@
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
-<link rel="import" href="../molecules/dorel-logo.html">
-<link rel="import" href="../molecules/dorel-navigation-main.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+<link rel="import" href="../../molecules/dorel-logo.html">
+<link rel="import" href="../../molecules/dorel-navigation-main.html">
 
-<dom-module id="dorel-header">
+<dom-module id="dorel-product-advisory-nav">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .header-wrapper {
-        height: var(--theme-header-wrapper);
+        height: 4.5em;
         float: left;
         width: 100%;
         display: block;
@@ -55,20 +55,6 @@
         order: 1;
       }
 
-      #hamburger {
-        position: absolute;
-        top: 1.25em;
-        right: .75em;
-        z-index: 1000;
-        color: var(--theme-color-text-link);
-        cursor: pointer;
-        transition: .3s ease color, .15s ease top;
-      }
-
-      #hamburger:hover, #hamburger:focus {
-        color: var(--theme-color-text-link-active);
-      }
-
       .icon-toggle-menu {
         width: 1.25em;
         height: 1.25em;
@@ -77,22 +63,78 @@
 
       .header-item-logo {
         order: 4;
-        margin-top: var(--theme-header-logo-top);
         /* center the logo */
         @apply(--layout-horizontal);
       }
 
-      /* Compact Menu */
-      [compact-menu] .header-items {
-        padding: 0em .75em;
+      .header-flex {
+        display: flex;
+        flex-direction: row;
       }
 
-      [compact-menu][desktop-small-up] .header-items {
-        padding: 0 1.5em;
+      .page-title {
+        @apply(--theme-typography-4);
+        margin: 0 0 0 1.5em;
+        display: flex;
+        align-items: center;
       }
 
-      [compact-menu] #hamburger {
-        top: 0.5em;
+      .header-item-close {
+        order: 5;
+        display: flex;
+        align-content: center;
+      }
+
+      .header-item-close a {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-icon {
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .icon-close-page {
+        --iron-icon-width:	var(--theme-scale-3);
+        --iron-icon-height: var(--theme-scale-3);
+        color: var(--theme-color-text-link);
+      }
+
+       .icon-back {
+         --iron-icon-width:	var(--theme-scale-3);
+         --iron-icon-height: var(--theme-scale-3);
+        transform: scale(-1);
+      }
+
+      [tablet-medium-up] .icon-close-page {
+        --iron-icon-width:	var(--theme-scale-4);
+        --iron-icon-height: var(--theme-scale-4);
+      }
+
+      .header-icon:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .flex-row {
+        display: flex;
+      }
+
+      .header-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-item-logo {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+      }
+
+      [desktop-small-up] .header-item-logo {
+        flex: auto;
+        display: flex;
+        justify-content: flex-start;
       }
 
       /* Responsive Behaviour */
@@ -111,7 +153,7 @@
       }
 
       .header-wrapper[desktop-small-up] {
-        height: var(--theme-header-wrapper-small-up);
+        height: 7.5em;
       }
 
       [desktop-small-up] .header-item-logo {
@@ -122,14 +164,14 @@
       [desktop-small-up] .header-item-menu {
         @apply(--layout-wrap);
         order: 4;
-        padding: var(--theme-header-item-padding) 0;
+        padding: .75em 0;
       }
 
       [desktop-small-up] .header-items {
         /* layout horizontal header-main */
         @apply(--layout-horizontal);
         @apply(--layout-wrap);
-        padding: var(--theme-header-items-top-bottom-padding) var(--theme-gutter);
+        padding: 1.5em;
       }
 
       [desktop-small-up] .header-contain-main-elements {
@@ -139,65 +181,72 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div class="spacing"></div>
     <div class="header-wrapper"
+         tablet-small-up$="{{  breakpoints.tabletSmallUp }}"
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
          compact-menu$="{{ compactMenu }}">
       <header>
         <div class="header-items">
-          <div class="header-item header-item-logo">
-            <div>
-              <a href="/" aria-label="Maxi Cosi"
-                 on-click="_logoClicked">
-                <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
+          <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
+            <div class="header-item header-item-logo">
+              <div class="header-flex">
+                <a href="/" aria-label="Maxi Cosi"
+                   on-click="_logoClicked">
+                  <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
+                </a>
+                <h2 class="page-title">
+                  [[ pageTitle ]]
+                </h2>
+              </div>
+            </div>
+
+            <div class="header-item header-item-close">
+              <a href="[[ getPreviousStateUrl() ]]">
+                <iron-icon class="header-icon icon-close-page"
+                           icon="dorel-icons:close"></iron-icon>
               </a>
             </div>
-          </div>
-
-          <nav class="header-item header-item-menu">
-            <dorel-navigation-main
-              compact-menu="[[ compactMenu ]]"
-              sub-menu-opened="{{ subMenuOpened }}"
-              mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
-          </nav>
+          </template>
 
           <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
-            <div id="hamburger">
-              <template
-                is="dom-if"
-                if="{{ !mobileMenuOpened }}">
-                <iron-icon class="icon-toggle-menu"
-                           icon="dorel-icons:menu"
-                           on-click="_toggleMobileMenu"
-                           aria-label="menu"></iron-icon>
+            <div class="flex-row">
+              <template is="dom-if" if="{{ shouldShow(previous) }}">
+                <div class="header-item header-item-back">
+                  <iron-icon class="header-icon icon-back"
+                             on-click="previousStep"
+                             icon="dorel-icons:chevron-right"></iron-icon>
+                </div>
               </template>
-              <template
-                is="dom-if"
-                if="{{ mobileMenuOpened }}">
-                <iron-icon class="icon-toggle-menu"
-                           icon="dorel-icons:close"
-                           on-click="_toggleMobileMenu"
-                           aria-label="menu"></iron-icon>
-              </template>
+              <div class="header-item header-item-logo">
+                <div class="header-flex">
+                  <a href="/" aria-label="Maxi Cosi"
+                     on-click="_logoClicked">
+                    <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
+                  </a>
+                </div>
+              </div>
+
+              <div class="header-item header-item-close">
+                <a href="[[ getPreviousStateUrl() ]]">
+                <iron-icon class="header-icon icon-close-page"
+                           icon="dorel-icons:close"></iron-icon>
+                </a>
+              </div>
             </div>
           </template>
         </div>
+        <dorel-progress value="[[ progress ]]"></dorel-progress>
       </header>
     </div>
   </template>
   <script>
     Polymer({
-      is: 'dorel-header',
-      behaviors: [
-        // NOTE: This was disabled in DIO-1319 until further notice
-        //Polymer.IronScrollTargetBehavior
-      ],
+      is: 'dorel-product-advisory-nav',
+
       properties: {
 
-        compactMenu: {
-          type: Boolean,
-          value: false,
-        },
 
         /**
          * @attribute
@@ -219,11 +268,20 @@
 
         /**
          * @attribute
-         * @name page
-         * @description defines the current page in string format
+         * @name pageTitle
+         * @description string with that respresents the title of a step
          */
-        page: {
+        pageTitle: {
           type: String
+        },
+
+        /**
+         * @attribute
+         * @name progress
+         * @description Number that indicates the progress of the flow
+         */
+        progress: {
+          type: Number
         },
 
         /**
@@ -235,6 +293,14 @@
           type: Boolean
         },
 
+        /**
+         * @attribute
+         * @name previous
+         * @description Boolean that indicates if a user can route a step back
+         */
+        previous: {
+          type: Boolean
+        },
 
         /**
          * @exposed
@@ -245,25 +311,6 @@
           type: Boolean
         }
       },
-
-      /**
-       * @name attached
-       * @description Event handler for scrolling behaviour
-       * */
-      // NOTE: This was disabled in DIO-1319 until further notice
-      /*attached: function () {
-        this._scrollHandler();
-      },*/
-
-      /**
-       * @name _scrollHandler
-       * @description Handler for scrolling. Determines if the header should be compact or expanded
-       * */
-      // NOTE: This was disabled in DIO-1319 until further notice
-      /*
-      _scrollHandler: function () {
-        this.compactMenu = this._scrollTop > 50;
-      },*/
 
       /**
        * @name _logoClicked
@@ -281,6 +328,23 @@
             'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
           }
         });
+      },
+
+      shouldShow: function(boolean) {
+        return Boolean(boolean);
+      },
+
+      previousStep: function() {
+        this.fire('previous-step');
+      },
+
+      getPreviousStateUrl: function() {
+        var origin = window.location.origin;
+        var previousState = Polymer.globalsManager.get('Dorel.previousState');
+        if(!previousState || previousState.path === '/product-advisory') {
+          return origin;
+        }
+        return origin + previousState.path;
       },
 
 
