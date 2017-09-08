@@ -1,0 +1,564 @@
+<link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../utils/dorel-gmt-collect-faqs.html">
+
+<dom-module id="dorel-section-service-faq-overview">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        --button-margin-spacing: 0;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: center;
+      }
+
+      .container {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        width: 100%;
+      }
+
+      .topic-select {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 33.3333333%;
+        width: 33.3333333%;
+        flex-basis: 33.3333333%;
+        max-width: 33.3333333%;
+        padding: 0 0 0 .75em;
+        float: left;
+        display: inline-block;
+      }
+
+      .accordion-topics {
+        width: 100%;
+      }
+
+      paper-item {
+        height: 3em;
+      }
+
+      paper-menu {
+        padding: 0;
+      }
+
+      .topic.iron-selected {
+        background-color: var(--theme-color-monochrome-2);
+        color: var(--theme-brand-color-2) !important;
+        /* border-bottom: 1px solid var(--theme-brand-color-1); */
+      }
+
+      .topic-display {
+        @apply(--theme-grid-column);
+        background-color: var(--theme-color-monochrome-2);
+        flex-grow: 1;
+        padding: 1.5em 1.5em 1.5em 2.25em;
+        float: left;
+        display: inline-block;
+      }
+
+      .topic {
+        height: 3em;
+        padding: .75em;
+        display: flex;
+        align-items: center;
+        color: var(--theme-brand-color-2);
+        border-bottom: 1px solid var(--theme-color-monochrome-2);
+        transition: background-color .3s ease, color .3s ease;
+      }
+
+      .topic:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+      .topic-description {
+        flex-grow: 1;
+      }
+
+      .icon-left {
+        padding-right: 1em;
+      }
+
+      .icon-right {
+        float: right;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* TODO: List styles will be added when the info pages are updated, this should be replaced later */
+      li::before {
+        content: "• ";
+        padding-right: .5em;
+        color: var(--theme-brand-color-2);
+      }
+
+      li:first-child {
+        padding-top: 0;
+      }
+
+      li {
+        padding-top: 1.5em;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--theme-brand-color-2);
+        transition: .3s ease color;
+      }
+
+      a:visited {
+        text-decoration: none;
+        color: var(--theme-brand-color-2);
+      }
+
+      a:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-cta {
+        float: right;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+      }
+
+      [tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <dorel-gmt-collect-faqs
+      api-call="service-topics"
+      api-response="{{ apiResponse }}"></dorel-gmt-collect-faqs>
+
+    <section class="layout horizontal center center-justified wrap"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="row">
+        <div class="container">
+          <template is="dom-if" if="{{ _hasValue(templateData.section_title) }}">
+            <h2 class="title">
+              [[ templateData.section_title ]]
+            </h2>
+          </template>
+          <template is="dom-if" if="{{ _hasValue(templateData.section_description) }}">
+            <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+          </template>
+        </div>
+      </div>
+      <div class="row">
+        <template 
+          is="dom-if" 
+          if="[[ faqCategories.length ]]">
+
+          <!-- Desktop Service Topic Listing -->
+          <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+
+            <div class="topic-select">
+              <paper-menu attr-for-selected="name"
+                          selected="{{ selectedTopic }}">
+
+                <template 
+                  is="dom-repeat" 
+                  items="[[ faqCategories ]]"
+                  as="category">
+                  <div role="button" name$="[[ index ]]" class="topic">
+                    <iron-icon class="icon-left" icon="dorel-icons:help-outline"></iron-icon>
+                    <template is="dom-if" if="[[ _hasValue(category.name) ]]">
+                      <span class="topic-description">[[ category.name ]]</span>
+                    </template>
+                    <template is="dom-if" if="[[ !_hasValue(category.name) ]]">
+                      <span class="topic-description">no category title set</span>
+                    </template>
+                    <iron-icon class="icon-right" icon="dorel-icons:chevron-right"></iron-icon>
+                  </div>
+                </template>
+
+              </paper-menu>
+            </div>
+
+            <div class="topic-display">
+              <iron-pages attr-for-selected="name"
+                          selected="{{ selectedTopic }}"
+                          fallback-selection="0">
+                <template 
+                  is="dom-repeat" 
+                  items="[[ faqCategories ]]"
+                  as="category">
+
+                  <div class="topic-listing" name$="[[ index ]]">
+                    <ul>
+                      <template 
+                        is="dom-repeat" 
+                        items="[[ category.featured_questions ]]"
+                        as="faq">
+                        <li>
+                          <a href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[ faq.question ]]</a>
+                        </li>
+                      </template>
+                    </ul>
+
+                    <dorel-cta title="[[ templateData.cta_text ]]"
+                               type="link"
+                               link="[[ category.detail_page ]]"
+                               size="small"
+                               icon="dorel-icons:chevron-right">
+                      [[ templateData.cta_text ]]
+                    </dorel-cta>
+                  </div>
+                </template>
+
+              </iron-pages>
+            </div>
+          </template>
+          <!-- End Desktop Service Topic Listing-->
+
+          <!-- Mobile Service Topic Listing -->
+          <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+            <div class="accordion-topics">
+              <template 
+                is="dom-repeat" 
+                items="[[ faqCategories ]]"
+                as="category">
+                <dorel-accordion-item 
+                  heading="[[ category.title ]]" 
+                  icon="dorel-icons:help-outline">
+                  <div class="topic-listing">
+                    <ul>
+                      <template 
+                        is="dom-repeat" 
+                        items="[[ category.featured_questions ]]"
+                        as="faq">
+                        <li>
+                          <a href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[ faq.question ]]</a>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                  <dorel-cta title="[[ templateData.cta_text ]]"
+                             type="link"
+                             link="[[ category.detail_page ]]"
+                             size="small"
+                             icon="dorel-icons:chevron-right">
+                    [[ templateData.cta_text ]]
+                  </dorel-cta>
+                </dorel-accordion-item>
+              </template>
+            </div>
+          </template>
+          <!-- End Mobile Service Topic Listing -->
+        </template>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-service-faq-overview',
+      properties: {
+        selectedTopic: {
+          type: String,
+          value: ''
+        },
+
+        apiResponse: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_responseReceived'
+        },
+
+        templateData: {
+          type: Object
+        },
+
+        /**
+         * @async
+         * @name faqCategories
+         * @description async call to GMT data
+         */
+        faqCategories: {
+          type: Array,
+          value: [],
+          observer: '_setFaqDetailPages'
+        }
+      },
+
+      /**
+       * TODO: remove when not applicable (when real BE is in place)
+       */
+      _responseReceived: function(newVal, oldVal) {
+        if(typeof newVal === 'undefined' || newVal === oldVal) return;
+
+        // this.set('faqCategories', newVal.results);
+        
+        this.set('faqCategories', [
+
+          // SERVICES
+          {
+            id: 1,
+            brand_id: 4,
+            name: 'Services',
+            value: 'services',
+            featured_questions: [
+              {
+                id: 1,
+                service_topics_category_id: 1,
+                service_topics_sub_category_id: 10,
+                question: 'Repairs1 - First Lorem ipsum this?',
+                answer: 'Lorem ipsum descrpition'
+              },
+              {
+                id: 3,
+                service_topics_category_id: 1,
+                service_topics_sub_category_id: 20,
+                question: 'SpareParts1 - Second Lorem ipsum this?',
+                answer: 'Lorem ipsum descrpition'
+              },
+              {
+                id: 5,
+                service_topics_category_id: 1,
+                service_topics_sub_category_id: 30,
+                question: 'HipSafetyService1 - Second Lorem ipsum this?',
+                answer: 'Lorem ipsum descrpition'
+              },
+              {
+                id: 6,
+                service_topics_category_id: 1,
+                service_topics_sub_category_id: 30,
+                question: 'HipSafetyService2 - Second Lorem ipsum this?',
+                answer: 'Lorem ipsum descrpition'
+              }
+            ],
+            sub_categories: [
+              {
+                id: 10,
+                service_topics_category_id: 1,
+                name: 'Repairs',
+                items: [
+                  {
+                    id: 1,
+                    service_topics_sub_category_id: 10,
+                    featured: 1,
+                    question: 'Repairs1 - First Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  },
+
+                  {
+                    id: 2,
+                    service_topics_sub_category_id: 10,
+                    featured: 0,
+                    question: 'Repairs2 - Fourth Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  }
+                ]
+              },
+
+              {
+                id: 20,
+                service_topics_category_id: 1,
+                name: 'Spare Parts',
+                items: [
+                  {
+                    id: 3,
+                    service_topics_sub_category_id: 20,
+                    featured: true,
+                    question: 'SpareParts1 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  },
+                  {
+                    id: 4,
+                    service_topics_sub_category_id: 20,
+                    question: 'SpareParts2 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  }
+                ]
+              },
+
+              {
+                id: 30,
+                service_topics_category_id: 1,
+                name: 'Hip Safety Service',
+                items: [
+                  {
+                    id: 5,
+                    service_topics_sub_category_id: 30,
+                    featured: true,
+                    question: 'HipSafetyService1 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  },
+                  {
+                    id: 6,
+                    service_topics_sub_category_id: 30,
+                    featured: true,
+                    question: 'HipSafetyService2 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  }
+                ]
+              }
+            ]
+          },
+
+          // WARRANTY
+          {
+            id: 2,
+            service_topics_category_id: 1,
+            name: 'Warranty',
+            value: 'warranty',
+            featured_questions: [
+              {
+                id: 7,
+                service_topics_category_id: 2,
+                service_topics_sub_category_id: 40,
+                question: 'LifetimeWarranty1 - Second Lorem ipsum this?',
+                answer: 'Lorem ipsum descrpition'
+              },
+              {
+                id: 9,
+                service_topics_category_id: 2,
+                service_topics_sub_category_id: 50,
+                question: 'Standard24-MonthWarrany1 - Second Lorem ipsum this?',
+                answer: 'Lorem ipsum descrpition'
+              },
+            ],
+            sub_categories: [
+              {
+                id: 40,
+                service_topics_category_id: 2,
+                name: 'Lifetime Warranty',
+                items: [
+                  {
+                    id: 7,
+                    service_topics_sub_category_id: 40,
+                    featured: true,
+                    question: 'LifetimeWarranty1 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  },
+                  {
+                    id: 8,
+                    service_topics_sub_category_id: 40,
+                    question: 'LifetimeWarranty2 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  }
+                ]
+              },
+
+              {
+                id: 50,
+                service_topics_category_id: 2,
+                name: 'Standard 24-Month Warrany',
+                items: [
+                  {
+                    id: 9,
+                    service_topics_sub_category_id: 50,
+                    featured: true,
+                    question: 'Standard24-MonthWarrany1 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  },
+                  {
+                    id: 10,
+                    service_topics_sub_category_id: 50,
+                    question: 'Standard24-MonthWarrany2 - Second Lorem ipsum this?',
+                    answer: 'Lorem ipsum descrpition'
+                  }
+                ]
+              }
+            ]
+          }
+        ]);
+        
+      },
+
+      /**
+       * @observer
+       * @name _setFaqDetailPages
+       * @description adds detail page to the faqCategories
+       */
+      _setFaqDetailPages: function(newVal, oldVal) {
+        if (typeof newVal === 'undefined' || newVal === oldVal) return;
+
+        // retrieve the faqDetailPages from Wordpress
+        var detailPages = this._getFaqDetailPages();
+
+        // iterate over the detail pages
+        detailPages.forEach(function(detailPage) {  
+
+          // iterate over the faqCategories
+          newVal.forEach(function(faqCat) {
+
+            // add the detail page defined in the Wordpress detail to the faqCategory
+            if (detailPage.acf.gmt_faq_category_selector === faqCat.value) {
+              faqCat.detail_page = detailPage.link;
+            }
+
+          }); // faqCategories foreach
+
+        }); // detailPages foreach
+      },
+
+      /**
+       * @name _getFaqDetailPages
+       * @description return all the faq detail pages from WP
+       * @returns Array of page objects
+       */
+      _getFaqDetailPages: function() {
+        var wpPages = Polymer.globalsManager.get('Dorel.collect.pages');
+
+        // filter out the detailPages from WP
+        var faqPages = wpPages.filter(function(page) {
+          return page.template === 'faq-detail';
+        });
+
+        // return the faqDetailPages
+        return faqPages;
+      },
+
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      _hasValue: function(val) {
+        return (val !== '' && typeof val !== 'undefined' && val !== null);
+      },
+      
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function(event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

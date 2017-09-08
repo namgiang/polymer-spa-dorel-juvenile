@@ -38,9 +38,13 @@
 
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <paper-tabs selected="{{ selected }}" scrollable="[[ !breakpoints.tabletMediumUp ]]">
-      <template is="dom-repeat" items="[[ tabs ]]">
-        <paper-tab noink>[[ item ]]</paper-tab>
+    <paper-tabs 
+      selected="{{ selected }}" 
+      scrollable="[[ !breakpoints.tabletMediumUp ]]">
+      <template 
+        is="dom-repeat" 
+        items="[[ tabs ]]">
+        <paper-tab noink>[[ _getTitle(item) ]]</paper-tab>
       </template>
     </paper-tabs>
   </template>
@@ -54,19 +58,34 @@
           type: Number,
           value: 0,
           notify: true,
+          reflectToAttribute: true
         },
+
         tabs: {
           type: Array,
+        },
+
+        /**
+         * @name title
+         * @description define what key to use for the title
+         */
+        title: {
+          type: String
         }
       },
 
       /**
-       * @name _eventTracking
-       * @description this is for example tracking only
-       * more info http://bit.ly/2nb6I7G
+       * @name _getTitle
+       * @description if a title attribute is given use that as the key for the tab title
+       * @param item - String - the key name of the model title which value will be shown
+       * @returns String - the value of the key -> defaults to retrieving the 'name' key if title is not given
        */
-      _eventTracking: function (event) {
-        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      _getTitle: function(item) {
+        if(typeof item === 'undefined') return;
+        
+        var title = this.get('title');
+
+        return (typeof title === 'undefined') ? item['name'] : item[title];
       }
     });
 
