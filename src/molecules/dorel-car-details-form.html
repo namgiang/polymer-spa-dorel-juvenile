@@ -90,15 +90,25 @@
       ],
 
       listeners: {
-        'on-selectbox-change': '_processForm'
+        'on-selectbox-change': '_selectboxChanged'
       },
 
+      /**
+       * @name ready
+       * @description will get the brands and reset the other selectboxes
+       */
       ready: function() {
         this._getBrands();
         this._setInitial(1);
         this._setInitial(2);
       },
 
+      /**
+       * observer
+       * @name _validate
+       * @description when the form_groups change it will fire a event to the parent that contains the values
+       * @param formGroups - Object
+       */
       _validate: function(formGroups) {
         if(formGroups.value && formGroups.value && formGroups.value.length) {
           var isValid = formGroups.value.every(function(group) {
@@ -119,7 +129,13 @@
         }
       },
 
-      _processForm: function(event) {
+      /**
+       * listener
+       * @name _selectboxChanged
+       * @description every time the value of selectbox changes it will call a certain function
+       * @param event - Object
+       */
+      _selectboxChanged: function(event) {
         var updatedValue = event.detail.value;
         var formGroups = this.get('formData.form_groups');
         var groupIndex = this._getGroupIndex(formGroups, updatedValue);
@@ -140,6 +156,14 @@
         }
       },
 
+      /**
+       * helperMethod
+       * @name _getGroupIndex
+       * @description will find de index of the updated value in the formGroups array
+       * @param formGroups - Array
+       * @param updatedValue - Object
+       * @returns Number
+       */
       _getGroupIndex: function(formGroups, updatedValue) {
         return formGroups.findIndex(function(group) {
           return group.options.some(function(option) {
@@ -148,6 +172,14 @@
         });
       },
 
+      /**
+       * helperMethod
+       * @name _setSelected
+       * @description will create a new array with the updatedValue (dom-repeat workaround)
+       * @param formGroups - Array
+       * @param groupIndex - Number
+       * @param updatedValue - Object
+       */
       _setSelected: function(formGroups, groupIndex, updatedValue) {
         var self = this;
         var newFormGroups = formGroups.map(function(group, index) {
@@ -159,17 +191,33 @@
         this.set('formData.form_groups', newFormGroups);
       },
 
+      /**
+       * helperMethod
+       * @name _hasOptions
+       * @description will return true if a selectbox has more then 1 option
+       * @param options - Array
+       * @returns Boolean
+       */
       _hasOptions: function(options) {
         return Boolean(!options || !options.length || options.length === 1);
       },
 
+      /**
+       * @name _getBrands
+       * @description will generate a request to the brands endpoint
+       */
       _getBrands: function() {
         var brandEl = this.$.brand;
-        brandEl.url = 'http://dorel-wp.dev:8009/v1/car-brands';
+        brandEl.url = CONFIG.DIO_API_URL + '/car-brands';
         this._setInitial(0);
         brandEl.generateRequest();
       },
 
+      /**
+       * @name _brandResponse
+       * @description will set the first selectbox with options (response)
+       * @param response - Object
+       */
       _brandResponse: function(response) {
         var results = response.detail.response.results;
         var group = this.get('formData.form_groups.' + 0);
@@ -181,6 +229,10 @@
         this.set('formData.form_groups.' + 0 + '.options', results);
       },
 
+      /**
+       * @name getModels
+       * @description will generate a request to the models endpoint
+       */
       getModels: function(updatedValue) {
         this._setInitial(1);
         this._setInitial(2);
@@ -191,11 +243,16 @@
             return item.filter === 'id';
           });
           var modelEl = this.$.model;
-          modelEl.url = 'http://dorel-wp.dev:8009/v1/car-brands/' + item.value + '/models';
+          modelEl.url = CONFIG.DIO_API_URL + '/car-brands/' + item.value + '/models';
           modelEl.generateRequest();
         }
       },
 
+      /**
+       * @name _modelResponse
+       * @description will set the second selectbox with options (response)
+       * @param response - Object
+       */
       _modelResponse: function(response) {
         var results = response.detail.response.results;
         var group = this.get('formData.form_groups.' + 1);
@@ -207,6 +264,10 @@
         this.set('formData.form_groups.' + 1 + '.options', results);
       },
 
+      /**
+       * @name getTypeYear
+       * @description will generate a request to the type/year endpoint
+       */
       getTypeYear: function(updatedValue) {
         this._setInitial(2);
         if(!updatedValue || updatedValue.value === '') {
@@ -228,20 +289,16 @@
         });
 
         var typeYearEl = this.$.typeYear;
-        typeYearEl.url = 'http://dorel-wp.dev:8009/v1/car-brands/' + brand.value + '/model-types?model_name=' + modelName.value + '&doors=' + doors.value;
+        typeYearEl.url = CONFIG.DIO_API_URL + '/car-brands/' + brand.value + '/model-types?model_name=' + modelName.value + '&doors=' + doors.value;
         typeYearEl.generateRequest();
 
       },
 
-      _setInitial: function(index) {
-        if(!index && index !== 0) {
-          return;
-        }
-        var defaultOption = this.get('formData.form_groups.' + index + '.default_option');
-        this.set('formData.form_groups.' + index + '.selected', defaultOption);
-        this.set('formData.form_groups.' + index + '.options', [defaultOption]);
-      },
-
+      /**
+       * @name _typeYearResponse
+       * @description will set the third selectbox with options (response)
+       * @param response - Object
+       */
       _typeYearResponse: function(response) {
         var results = response.detail.response.results;
         var group = this.get('formData.form_groups.' + 2);
@@ -251,7 +308,22 @@
         });
         results.unshift(group.default_option);
         this.set('formData.form_groups.' + 2 + '.options', results);
-      }
+      },
+
+      /**
+       * helperMethod
+       * @name _setInitial
+       * @description will reset a selecbox, index will determine whitch selecbox
+       * @param index - Nuber
+       */
+      _setInitial: function(index) {
+        if(!index && index !== 0) {
+          return;
+        }
+        var defaultOption = this.get('formData.form_groups.' + index + '.default_option');
+        this.set('formData.form_groups.' + index + '.selected', defaultOption);
+        this.set('formData.form_groups.' + index + '.options', [defaultOption]);
+      },
 
 
     });

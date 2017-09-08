@@ -178,28 +178,58 @@
       is: 'dorel-step-result',
 
       properties: {
+        /**
+         * @attribute
+         * @name data
+         * @description the current step
+         */
         data: {
           type: Object
         },
 
+        /**
+         * @attribute
+         * @name next
+         * @description Boolean that indicates if a user can route to the next step
+         */
         next: {
-          type: Boolean,
+          type: Boolean
         },
 
+        /**
+         * @attribute
+         * @name previous
+         * @description Boolean that indicates if a user can route a step back
+         */
         previous: {
-          type: Boolean,
+          type: Boolean
         },
 
+        /**
+         * @attribute
+         * @name product
+         * @description Name (Sku) of the product
+         */
         product: {
           type: String
         },
 
+        /**
+         * @attribute
+         * @name results
+         * @description the results of the carfitting tool
+         */
         results: {
           type: Object
         }
 
       },
 
+      /**
+       * @name nextStep
+       * @description fires a event to the parent to route to the next step if the target is not disabled
+       * @param event - Object
+       */
       nextStep: function(event) {
         var disabled = event.currentTarget.attributes.disabled ? true : false;
         if(disabled) {
@@ -208,6 +238,11 @@
         this.fire('next-step');
       },
 
+      /**
+       * @name previousStep
+       * @description fires a event to the parent to route to the previous step if the target is not disabled
+       * @param event - Object
+       */
       previousStep: function(event) {
         var disabled = event.currentTarget.attributes.disabled ? true : false;
         if(disabled) {
@@ -216,6 +251,10 @@
         this.fire('previous-step');
       },
 
+      /**
+       * @name shouldShow
+       * @description used by the template to determine if it should show
+       */
       shouldShow: function(boolean) {
         return Boolean(boolean === true);
       },

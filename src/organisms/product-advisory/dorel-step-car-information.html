@@ -230,6 +230,12 @@
         'submit-groups': '_process'
       },
 
+      /**
+       * @name nextStep
+       * @description fires a event to the parent to route to the next step if the target is not disabled
+       * @param event - Object
+       *
+       */
       nextStep: function(event) {
         var disabled = event.currentTarget.attributes.disabled ? true : false;
         if(disabled) {
@@ -238,6 +244,11 @@
         this.fire('next-step');
       },
 
+      /**
+       * @name previousStep
+       * @description fires a event to the parent to route to the previous step if the target is not disabled
+       * @param event - Object
+       */
       previousStep: function(event) {
         var disabled = event.currentTarget.attributes.disabled ? true : false;
         if(disabled) {
@@ -246,6 +257,12 @@
         this.fire('previous-step');
       },
 
+      /**
+       * listener
+       * @name _process
+       * @description listens to the 'submit-groups' event, if called if will fire a new event to the parent
+       * @param event - Object
+       */
       _process: function(data) {
         var value = data.detail.value;
         if(value) {
@@ -259,6 +276,11 @@
         }
       },
 
+      /**
+       * @name _setDisabled
+       * @description will set or remove the disabled attribute on the buttons
+       * @param invalid - Boolean
+       */
       _setDisabled: function(invalid) {
         if(!this.$$('#next-button') && !this.$$('#next-button-mobile')) {
           return;
@@ -272,10 +294,18 @@
         }
       },
 
+      /**
+       * @name shouldShow
+       * @description used by the template to determine if it should show
+       */
       shouldShow: function(boolean) {
         return Boolean(boolean === true);
       },
 
+      /**
+       * @name hasBynderImage
+       * @description used by the template to determine if should show bynder image
+       */
       hasBynderImage: function(id) {
         return Boolean(id && id.length);
       }
