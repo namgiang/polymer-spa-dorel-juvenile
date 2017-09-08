@@ -65,20 +65,21 @@
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="row">
         <dorel-nav-tabs 
-          selected="{{ selectedTab }}"
-          tabs="[[ faqDetail.sub_categories ]]"></dorel-nav-tabs>
+          selected="{{ selectedSubTab }}"
+          tabs="[[ faqDetail.sub_categories ]]"
+          title="name"></dorel-nav-tabs>
       </div>
       <div class="row">
         <template 
           is="dom-repeat" 
           items="[[ questions ]]"
-          as="question">
+          as="faq">
           <dorel-accordion-item 
-            heading="[[ question.title ]]" 
-            opened$="[[ question.opened ]]"
-            question-id$="[[ question.id ]]"
+            heading="[[ faq.question ]]" 
+            opened$="[[ faq.opened ]]"
+            question-id$="[[ faq.id ]]"
             on-click="_addToQueryParams">
-            <p>[[ question.description ]]</p>
+            <p>[[ faq.answer ]]</p>
           </dorel-accordion-item>
         </template>
       </div>
@@ -126,8 +127,9 @@
          * @name selectedSubTab
          * @description the array number of the selected sub category in subCategories
          */
-        selectedTab: {
-          type: Number
+        selectedSubTab: {
+          type: Number,
+          value: null // needs to be null, otherwise change will not be detected
         },
 
         /**
@@ -142,7 +144,7 @@
 
       observers: [
         '_initFaqState(faqDetail, queryParams)',
-        '_selectedTabChanged(selectedTab)'
+        '_selectedSubTabChanged(selectedSubTab)'
       ],
 
       /**
@@ -151,27 +153,38 @@
        * @description checks if the values needed are set
        */
       _initFaqState: function(faqDetail, queryParams) {
+
         // if no faqDetail is defined or no queryParams sub is given
-        if (typeof faqDetail === 'undefined' || typeof queryParams.sub === 'undefined') return;
+        if (typeof faqDetail === 'undefined') return;
 
         var subCategories = faqDetail.sub_categories;
-        var subId = queryParams.sub;
 
-        this._setSelectedTab(subCategories, subId);
+        // if no subCategory is selected in first instance, default to the first subCategory
+        if(typeof queryParams === 'undefined' || typeof queryParams.sub_category_id === 'undefined') {
+          this.set('queryParams.sub_category_id', subCategories[0].id);
+        }
+
+        // get the queryParams sub_category_id
+        var subCatId = this.get('queryParams.sub_category_id');
+
+        // define the selectedSubTab, will trigger _selectedSubTabChanged
+        this.set('selectedSubTab', this._getSelectedTab(subCategories, subCatId));
       },
 
       /**
-       * @name _setSelectedTab
+       * @name _getSelectedTab
        * @description takes the faqDetail and route to check if the queryParams subId is set
        * and match it with a sub category id to make that tab selected
+       * @params subCategories - Array - array of objects containing all subCategories
+       * @params subCatId - String - subCategoryId of the queryParams
+       * @returns Number - array number of the tab that is selected
        */
-      _setSelectedTab: function(subCategories, subId) {
+      _getSelectedTab: function(subCategories, subCatId) {
 
         // go over each sub category and match the subCategoryID with the queryParams subID
         for (var i = 0; i < subCategories.length; i++) {
-          if (subCategories[i].id === Number(subId)) {
-            this.set('selectedTab', i);
-            return;
+          if (subCategories[i].id === Number(subCatId)) {
+            return i;
           }
         }
 
@@ -179,63 +192,70 @@
 
       /**
        * @observer
-       * @name _subTabChanged
-       * @description when a user changes a tab the queryParams.sub should change to
+       * @name _selectedSubTabChanged
+       * @description when a user changes a tab the queryParams.sub_category_id should change to
+       * while changing the subCategoryId also change the questionId and set the questions
+       * @params selectedSubTab - Number - number of the array category
        */
-      _selectedTabChanged: function(selectedTab) {
-        if (typeof this.faqDetail === 'undefined' || typeof selectedTab === 'undefined') return;
+      _selectedSubTabChanged: function(selectedSubTab) {
+        if (typeof this.faqDetail === 'undefined' || typeof selectedSubTab === 'undefined') return;
 
         // get the currently selected subCategory
-        var selectedCat = this.faqDetail.sub_categories[selectedTab];
+        var selectedSubCat = this.faqDetail.sub_categories[selectedSubTab];
+        var queryParams = this.get('queryParams');
 
         // update the queryParams with the right tab id
-        this._updateQueryParams(selectedCat.id, this.get('queryParams.id'));
+        if(selectedSubCat.id !== Number(queryParams.sub_category_id)) {
+          this._updateQueryParams(selectedSubCat.id, queryParams.question_id);
+        }
 
         // set the questions model that is used in the dom-repeat
-        this._setQuestions(selectedCat.questions, this.get('queryParams.id'));
+        this._setQuestions(selectedSubCat.items, queryParams.question_id);
       },
 
       /**
        * @name _setQuestions
        * @description sets the questions model that is used by the dom-repeat
-       * @param questions - Array of objects
-       * @param qId - String id of the queryParam
+       * @param subCatQuestions - Array of objects
+       * @param questionId - String id of the queryParam
        */
-      _setQuestions: function(questions, qId) {
-
+      _setQuestions: function(subCatQuestions, questionId) {
         // set the opened property for each question of the subCategory
-        questions.forEach(function(question) {
-          question.opened = (question.id === Number(qId));
+        subCatQuestions.forEach(function(question) {
+          question.opened = (question.id === Number(questionId));
         });
 
         // set the questions model
-        this.questions = JSON.parse(JSON.stringify(questions));
+        this.set('questions', JSON.parse(JSON.stringify(subCatQuestions)));
 
       },
 
       /**
        * @name _updateQueryParams
        * @description update the url queryParams accordingly
+       * @param subCategoryId - String - the id of the subCategory
+       * @param questionId - String - the id of the question
        */
-      _updateQueryParams: function(tabId, qId) {
+      _updateQueryParams: function(subCategoryId, questionId) {
 
         // create empty object to set queryParams later
         var queryParams = {};
-        var questions = this.faqDetail.sub_categories[this.selectedTab].questions;
+        var selectedSubTab = this.get('selectedSubTab');
+        var questions = this.faqDetail.sub_categories[selectedSubTab].items;
 
         // find match in questions of the selected subCategory
-        var hasMatch = questions.find(function(question) {
-          return question.id === Number(qId);
+        var hasQuestionMatch = questions.find(function(question) {
+          return question.id === Number(questionId);
         });
 
         // if tabId is set
-        if (typeof tabId !== 'undefined' || tabId !== '') {
-          queryParams.sub = tabId;
+        if (typeof subCategoryId !== 'undefined' || subCategoryId !== '') {
+          queryParams.sub_category_id = subCategoryId;
         }
 
         // if questionId is set and a match has been found, otherwise clear the queryParams
-        if (typeof qId !== 'undefined' && typeof hasMatch !== 'undefined') {
-          queryParams.id = qId;
+        if (typeof questionId !== 'undefined' && typeof hasQuestionMatch !== 'undefined') {
+          queryParams.question_id = questionId;
         }
 
         // set the defined queryParams
@@ -243,21 +263,24 @@
       },
 
       /**
+       * @onClick
        * @name _addToQueryParams
        * @description update the queryParams when an accordion is clicked
        */
       _addToQueryParams: function(e) {
-        var qId = e.target.getAttribute('question-id');
-        if (typeof qId === 'undefined') return;
+        var questionId = e.target.getAttribute('question-id');
 
-        var questions = this.faqDetail.sub_categories[this.selectedTab].questions;
+        if (typeof questionId === 'undefined') return;
 
-        if (qId === this.get('queryParams.id')) {
-          this._updateQueryParams(this.get('queryParams.sub'));
+        var selectedSubTab = this.get('selectedSubTab');
+        var questions = this.faqDetail.sub_categories[selectedSubTab].items;
+
+        if (questionId === this.get('queryParams.question_id')) {
+          this._updateQueryParams(this.get('queryParams.sub_category_id'));
           this._setQuestions(questions);
         } else {
-          this._updateQueryParams(this.get('queryParams.sub'), qId);
-          this._setQuestions(questions, qId);
+          this._updateQueryParams(this.get('queryParams.sub_category_id'), questionId);
+          this._setQuestions(questions, questionId);
         }
       }
     });
