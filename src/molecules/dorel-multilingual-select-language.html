@@ -1,6 +1,6 @@
 <link rel="import" href="../molecules/dorel-multilingual-flag.html">
 
-<dom-module id="dorel-multilingual-selected-language">
+<dom-module id="dorel-multilingual-select-language">
   <template>
     <style>
 
@@ -31,6 +31,14 @@
         float: left;
       }
 
+      section[light] .country, section[light] .language {
+        color: var(--theme-color-white);
+      }
+
+      section[light] .country {
+        border-right: 1px solid var(--theme-color-white);
+      }
+
       section:hover .country, section:hover .language {
         color: var(--theme-color-text-link-active);
       }
@@ -42,31 +50,43 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             light$="[[ light ]]"
+             on-click="openOverlay"
+             role="button" tabindex="0">
       <dorel-multilingual-flag country-code="[[ currentLanguage.countryCode ]]"></dorel-multilingual-flag>
       <div class="country">[[ currentLanguage.country ]]</div>
       <div class="language">[[ currentLanguage.language ]]</div>
     </section>
 
+    <dorel-multilingual-overlay id="overlay">
+      <dorel-multilingual-continents centered="true"
+                                     continents-data="[[ continentsData ]]"></dorel-multilingual-continents>
+    </dorel-multilingual-overlay>
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-multilingual-selected-language',
+      is: 'dorel-multilingual-select-language',
 
       properties: {
+        light: {
+          type: Boolean,
+          value: false
+        },
+        continentsData: {
+          type: Object
+        },
         /**
          * @name currentLanguage
          * @description For displaying the current language, country and it's flag
          */
         'currentLanguage': {
-          type: Object,
-          value: {
-            'country': 'Belgium',
-            'language': 'Dutch',
-            'countryCode': 'be',
-          }
+          type: Object
         }
+      },
+      openOverlay: function () {
+        this.$$('#overlay').open();
       },
 
       /**
