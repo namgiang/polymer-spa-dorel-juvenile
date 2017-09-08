@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
 <link rel="import" href="../utils/dorel-gmt-collect-faqs.html">
+<link rel="import" href="../organisms/dorel-service-faq-promo.html">
 
 <dom-module id="dorel-section-service-faq-overview">
   <template>
@@ -208,6 +209,8 @@
               <iron-pages attr-for-selected="name"
                           selected="{{ selectedTopic }}"
                           fallback-selection="0">
+
+                <!-- dom-repeat faqCategories -->
                 <template 
                   is="dom-repeat" 
                   items="[[ faqCategories ]]"
@@ -232,8 +235,18 @@
                                icon="dorel-icons:chevron-right">
                       [[ templateData.cta_text ]]
                     </dorel-cta>
+                  
+                    <!-- faq promo -->
+                    <template
+                      is="dom-if"
+                      if="[[ templateData.component.faq_promo_toggle ]]">
+                      <dorel-service-faq-promo template-data="[[ faqPromo ]]" light="true"></dorel-service-faq-promo>
+                    </template>
+                    <!--// faq promo -->
+
                   </div>
                 </template>
+                <!--// dom-repeat faqCategories -->
 
               </iron-pages>
             </div>
@@ -269,6 +282,15 @@
                              icon="dorel-icons:chevron-right">
                     [[ templateData.cta_text ]]
                   </dorel-cta>
+                  
+                  <!-- faq promo -->
+                  <template
+                    is="dom-if"
+                    if="[[ templateData.component.faq_promo_toggle ]]">
+                    <dorel-service-faq-promo template-data="[[ faqPromo ]]" light="true"></dorel-service-faq-promo>
+                  </template>
+                  <!--// faq promo -->
+
                 </dorel-accordion-item>
               </template>
             </div>
