@@ -44,7 +44,7 @@
       <template 
         is="dom-repeat" 
         items="[[ tabs ]]">
-        <paper-tab noink>[[ item.title ]]</paper-tab>
+        <paper-tab noink>[[ _getTitle(item) ]]</paper-tab>
       </template>
     </paper-tabs>
   </template>
@@ -63,7 +63,29 @@
 
         tabs: {
           type: Array,
+        },
+
+        /**
+         * @name title
+         * @description define what key to use for the title
+         */
+        title: {
+          type: String
         }
+      },
+
+      /**
+       * @name _getTitle
+       * @description if a title attribute is given use that as the key for the tab title
+       * @param item - String - the key name of the model title which value will be shown
+       * @returns String - the value of the key -> defaults to retrieving the 'name' key if title is not given
+       */
+      _getTitle: function(item) {
+        if(typeof item === 'undefined') return;
+        
+        var title = this.get('title');
+
+        return (typeof title === 'undefined') ? item['name'] : item[title];
       }
     });
 
