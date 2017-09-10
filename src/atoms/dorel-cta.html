@@ -31,6 +31,10 @@
         @apply(--theme-button-link);
       }
 
+      .theme-cta--inverted {
+        @apply(--theme-button-inverted);
+      }
+
       .theme-cta--link .theme-cta__content {
         padding: 0;
       }
@@ -74,11 +78,28 @@
         @apply(--theme-button-icon);
       }
 
+      .theme-cta--small .theme-cta__icon {
+        @apply(--theme-button-icon-small);
+      }
+
       .theme-cta__icon--left {
         width: 3em;
         height: 2.5em;
         margin: 0;
 
+      }
+
+      :host([no-margin]) a {
+        margin-top: 0 !important;
+      }
+
+      :host([rotate]) a {
+        transform: scaleX(-1);
+      }
+
+      :host([rotate]) span {
+        transform: scaleX(-1);
+        padding: 0 0.75em 0 0;
       }
 
       :host([disabled]) a {
@@ -88,6 +109,14 @@
 
       :host([disabled]) {
         cursor: not-allowed;
+      }
+
+      :host([type="link"][active]) a {
+        @apply(--theme-button-link-active);
+      }
+
+      :host([type="primary"][active]) a {
+        @apply(--theme-button-active);
       }
 
       /* Responsive Behaviour */
@@ -180,7 +209,7 @@
         /**
          * @attribute
          * @name type
-         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary' and 'tertiary' are supported.
+         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary', 'tertiary' and 'link' are supported. Per type, certain css applies to differentiate beteen one another.
          */
         type: {
           type: String,
@@ -215,6 +244,10 @@
          */
         extraIcon: {
           type: String,
+        },
+
+        disabled: {
+          type: Boolean
         }
       },
 
