@@ -24,8 +24,11 @@
     .category-listing-item {
       float: left;
       width: 100%;
-      margin-top: 1.5em;
       margin-bottom: 1.5em;
+    }
+
+    .category-listing-item[tablet-medium-up] {
+      margin-top: 1.5em;
     }
 
     .image-wrapper {
@@ -69,7 +72,9 @@
     }
   </style>
   <template>
-    <section class="category-listing-item" fade$="[[ fade ]]">
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="category-listing-item" fade$="[[ fade ]]" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="image-wrapper horizontal layout center">
         <iron-image class="image"
                     sizing="contain"

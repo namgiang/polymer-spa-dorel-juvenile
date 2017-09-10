@@ -2,7 +2,7 @@
 <!--  Shared style brand naming conventions:
       Name strings can only contain lower-case, alphabetic values and dashes to separate words:
       maxi-cosi, dorel, quinny, safety-first -->
-<dom-module id="theme-dorel-shared-styles">
+<dom-module id="theme-quinny-shared-styles">
   <template>
     <style is="custom-style">
 
@@ -14,13 +14,13 @@
 
         /* Brand colors */
         /* http://www.colourco.de/monochrome/5/%230381a7 */
-        --theme-brand-color-1: #0072CE;
-        --theme-brand-color-2: #0072CE;
-        --theme-brand-color-3: #0072CE;
+        --theme-brand-color-1: #000;
+        --theme-brand-color-2: #32B7BB;
+        --theme-brand-color-3: #f1f1f1;
 
-        --theme-brand-complementary-color-1: #0072CE;
-        --theme-brand-complementary-color-2: #ED8B00;
-        --theme-brand-complementary-color-3: #B1B3B3;
+        --theme-brand-complementary-color-1: #165C7D;
+        --theme-brand-complementary-color-2: #F6BE00;
+        --theme-brand-complementary-color-3: #8A1538;
 
         /* Brand proximity colors
          * the lighter the background, the more important
@@ -37,9 +37,9 @@
 
         --theme-color-white: var(--theme-color-monochrome-1);
         --theme-color-black: var(--theme-color-monochrome-7);
-        --theme-color-error: red;
+        --theme-color-error: var(--theme-brand-complementary-color-3);
 
-        --theme-color-active: var(--theme-brand-complementary-color-1);
+        --theme-color-active: var(--theme-brand-color-1);
 
         /* ------------------------------------------------
          * Modular scale
@@ -56,10 +56,10 @@
         --theme-scale-9: calc(var(--theme-scale-1) * 24);
 
         --theme-header-wrapper: 4.5em;
-        --theme-header-wrapper-small-up: 7.5em;
-        --theme-header-items-top-bottom-padding: 1.5em;
-        --theme-header-item-padding: .75em;
-        --theme-header-logo-top: 0;
+        --theme-header-wrapper-small-up: 4.5em;
+        --theme-header-items-top-bottom-padding: .5em;
+        --theme-header-item-padding: .5em;
+        --theme-header-logo-top: .125em;
 
         /* ------------------------------------------------
          * Grid
@@ -68,7 +68,7 @@
         --theme-column-width: 8.33333333%;
 
         /* Spacing between columns */
-        --theme-gutter: 1.5em;
+        --theme-gutter: var(--theme-scale-3);
         --theme-gutter-mobile: 1em;
 
         /* A cointainer in the grid should have some inner spacing */
@@ -150,10 +150,10 @@
          */
         --theme-base-font-size: 16px;
         --theme-base-paragraph-width: 640px; /*560px; */
-        --theme-font-weight: 400;
+        --theme-font-weight: 300;
         --theme-font-weight-light: 300;
 
-        --theme-font: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+        --theme-font: 'precioussanstwo', arial, helvetica, sans-serif;
 
         --theme-typography-normal: {
           font-weight: var(--theme-font-weight);
@@ -253,7 +253,7 @@
         /*
           * Typography colors
           */
-        --theme-color-text-link: var(--theme-brand-complementary-color-2);
+        --theme-color-text-link: var(--theme-brand-color-2);
         --theme-color-text-link-active: var(--theme-color-active);
 
         --theme-text-link: {
@@ -264,20 +264,20 @@
         };
 
         --theme-text-link-active: {
-          color: var(--theme-color-text-link-active);
-          border-bottom: 1px solid var(--theme-color-text-link-active);
+          color: var(--theme-color-active);
+          border-bottom: 1px solid var(--theme-color-active);
         };
 
         /* Rounded Edges */
-        --theme-border-radius-0: 0;
-        --theme-border-radius-1: 0;
-        --theme-border-radius-2: 0;
-        --theme-border-radius-3: 0;
+        --theme-border-radius-0: .25em;
+        --theme-border-radius-1: .5em;
+        --theme-border-radius-2: 1em;
+        --theme-border-radius-3: 1.5em;
 
         /* Buttons & CTA's */
         --theme-primary-button-color: var(--theme-brand-complementary-color-2);
         --theme-secondary-button-color: var(--theme-color-white);
-        --theme-tertiary-button-color: var(--theme-brand-complementary-color-3);
+        --theme-tertiary-button-color: var(--theme-color-monochrome-4);
 
         --theme-button-border-radius: var(--theme-border-radius-1);
 
@@ -294,7 +294,6 @@
           display: -o-flex;
           display: flex;
           align-items: center;
-          padding: .625em 0;
           border-radius: var(--theme-button-border-radius);
           border: 2px solid transparent;
           transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, opacity .3s ease;
@@ -305,11 +304,12 @@
 
         --theme-button-small: {
           @apply(--theme-typography-2);
+          padding: .188em 0;
         };
 
         --theme-button-medium: {
-          @apply(--theme-typography-3);
-          padding: .325em 0;
+          @apply(--theme-typography-2);
+          padding: .625em 0;
         };
 
         --theme-button-large: {
@@ -319,9 +319,9 @@
         };
 
         --theme-button-primary: {
-          color: var(--theme-color-white);
-          fill: var(--theme-color-white);
-          background-color: var(--theme-brand-complementary-color-2);
+          color: var(--theme-brand-color-2);
+          fill: var(--theme-brand-color-2);
+          background-color: var(--theme-brand-complementary-color-2)
         };
 
         --theme-button-inverted: {
@@ -331,7 +331,7 @@
         --theme-button-secondary: {
           color: var(--theme-brand-color-2);
           fill: var(--theme-brand-color-2);
-          border: 2px solid var(--theme-brand-color-2);
+          border: 2px solid var(--theme-brand-complementary-color-1);
           background-color: var(--theme-color-white);
         };
 
@@ -349,16 +349,20 @@
           border-right: 0;
         };
 
+        --theme-button-movie-play: {
+          background-color: var(--theme-color-monochrome-1);
+        };
+
         --theme-button-link-active: {
           background-color: transparent;
           border-color: transparent;
-          color: var(--theme-color-text-link-active);
-          fill: var(--theme-color-text-link-active);
+          color: var(--theme-color-active);
+          fill: var(--theme-color-active);
         };
 
         --theme-button-active: {
-          background-color: var(--theme-active-color);
-          border-color: var(--theme-active-color);
+          background-color: var(--theme-color-active);
+          border-color: var(--theme-color-active);
           color: var(--theme-color-white);
         };
 
@@ -377,7 +381,6 @@
         /*
         * Form inputs
         */
-
         --theme-form-input-radius: var(--theme-border-radius-1);
         --theme-form-input: {
           @apply(--theme-paragraph-text);
@@ -396,7 +399,7 @@
         };
 
         --theme-form-input-active: {
-          border-color: var(--theme-color-text-link-active);
+          border-color: var(--theme-color-active);
         };
 
         --theme-form-input-disabled: {
@@ -449,8 +452,8 @@
         };
 
         --theme-form-select-active: {
-          border-color: var(--theme-color-text-link-active);
-          color: var(--theme-color-text-link-active);
+          border-color: var(--theme-color-active);
+          color: var(--theme-color-active);
         };
 
         --theme-form-textarea: {
@@ -470,21 +473,21 @@
         /*
         * Footer variables
         */
-        --theme-footer-background-color: var(--theme-brand-color-1);
-        --theme-footer-header-color: var(--theme-color-white);
+        --theme-footer-background-color: var(--theme-brand-color-2);
+        --theme-footer-header-color: var(--theme-brand-color-1);
         --theme-footer-header-weight: 600;
         --theme-footer-text-color: var(--theme-color-white);
-        --theme-footer-icon-color: var(--theme-color-monochrome-3);
+        --theme-footer-icon-color: var(--theme-brand-color-1);
 
         /*
         * Logo variables
         */
 
-        --theme-logo-width: 18.5em;
-        --theme-logo-height: 4.5em;
+        --theme-logo-width: 10.5em;
+        --theme-logo-height: 2.5em;
         --theme-logo-mobile-width: 14em;
         --theme-logo-mobile-height: 3em;
-        --theme-logo: url('/assets/images/logos/logo-dorel.svg') no-repeat center center;
+        --theme-logo: url('/assets/images/logos/logo-quinny.svg') no-repeat center center;
 
         --max-width-limit: 1280px;
 
@@ -506,7 +509,7 @@
         * Image placeholder
         */
         --image-placeholder: {
-          background: linear-gradient(to right, var(--theme-color-monochrome-1) 0%, var(--theme-brand-complementary-color-3) 100%);
+          background: linear-gradient(to right, var(--theme-brand-color-1) 0%, var(--theme-brand-color-2) 100%);
         };
 
         /*
@@ -534,3 +537,79 @@
     </style>
   </template>
 </dom-module>
+
+
+<style>
+  /* ------------------------------------------------
+  * Font Faces
+    * Placing the @font-faceo definitions outside your dom-module.
+    * There seem to be issue with scoping these in a shadow root.
+    * For more information/progress on this issue visit: https://github.com/Polymer/polymer/issues/2386
+    */
+
+  /* Vendor Licensing information
+        This CSS resource incorporates links to font software which is the valuable copyrighted
+        property of Monotype Imaging and/or its suppliers. You may not attempt to copy, install,
+        redistribute, convert, modify or reverse engineer this font software. Please contact Monotype
+        Imaging with any questions regarding Web Fonts:  http://www.fonts.com
+    */
+
+  /* Light */
+  @font-face {
+    font-family: "precioussanstwo";
+    src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
+    src: 
+      url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix") format("eot"), 
+      url("/assets/fonts/quinny/precioussanstwo-light-webfont.woff2") format("woff2"), 
+      url("/assets/fonts/quinny/precioussanstwo-light-webfont.woff") format("woff"), 
+      url("/assets/fonts/quinny/precioussanstwo-light-webfont.ttf") format("truetype"), 
+      url("/assets/fonts/quinny/precioussanstwo-light-webfont.svg") format("svg");
+    font-weight: 300;
+    font-style: normal;
+
+  }
+
+  /* Medium */
+  @font-face {
+    font-family: "precioussanstwo";
+    src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
+    src: 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
+    font-weight: 400;
+    font-style: normal;
+  }
+
+    /* Demibold */
+  @font-face {
+    font-family: "precioussanstwo";
+    src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
+    src: 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
+    font-weight: 500;
+    font-style: normal;
+  }
+
+    /* Bold */
+  @font-face {
+    font-family: "precioussanstwo";
+    src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
+    src: 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"), 
+      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
+    font-weight: 800;
+    font-style: normal;
+  }
+
+
+</style>
