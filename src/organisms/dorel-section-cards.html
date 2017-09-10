@@ -1,4 +1,5 @@
 <link rel="import" href="../molecules/dorel-card.html">
+
 <dom-module id="dorel-section-cards">
   <template>
     <style include="iron-flex iron-flex-alignment">
@@ -8,7 +9,6 @@
         margin: 1.5em 0 0 0;
         @apply(--max-width-host);
       }
-
       .section-cards {
         @apply(--max-width-container);
         width: 100%;
@@ -63,7 +63,26 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-
+    
+    <!-- section title -->
+    <template
+      is="dom-if"
+      if="[[ cardsData.section_title ]]">
+      <h2>[[ cardsData.section_title ]]</h2>
+    </template>
+    <!--// section title -->
+    
+    <!-- section description -->
+    <template
+      is="dom-if"
+      if="[[ cardsData.section_description]]">
+      <div class="description">
+        <dorel-safe-html html="[[ cardsData.section_description ]]"></dorel-safe-html>
+      </div>
+    </template>
+    <!--// section description -->
+  
+    <!-- dom-repeat cards -->
     <template
       is="dom-if"
       if="[[ cardsData.cards.length ]]">
@@ -88,7 +107,10 @@
           </template>
         </div>
       </section>
+
     </template>
+    <!-- dom-repeat cards -->
+
   </template>
 
   <script>

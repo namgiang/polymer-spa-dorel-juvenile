@@ -1,0 +1,85 @@
+<link rel="import" href="../molecules/dorel-category-sub.html">
+
+<dom-module id="dorel-section-category-about-sub-categories">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .content-container {
+        float: left;
+        margin-top: 3em;
+        max-width: 1280px;
+          margin-left: auto;
+          margin-right: auto;
+        padding: 0 calc(0.25000em * 6);
+        box-sizing: border-box;
+        width: 100%;
+      }
+      .content-container .text {
+        text-align: center;
+        width: 100%;
+      }
+      .content-container h2 {}
+      .content-container .description {}
+
+      dorel-category-sub {
+        margin-top: 3em;
+        float: left;
+        width: 100%;
+      }
+    </style>
+
+    <section class="content-container">
+      <h2 class="text">[[ templateData.section_title ]]</h2>
+      <div class="description text">
+        <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+      </div>
+
+      <template
+        is="dom-if"
+        if="[[ templateData.sub_categories.length ]]">
+
+        <template
+          is="dom-repeat"
+          items="[[ templateData.sub_categories]]"
+          as="subCategory">
+          <dorel-category-sub
+            sub-category-data="[[ subCategory ]]"></dorel-category-sub>
+        </template>
+
+      </template>
+      
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-category-about-sub-categories',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed for this component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>
