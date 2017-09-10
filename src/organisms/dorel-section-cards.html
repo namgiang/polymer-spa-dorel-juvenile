@@ -8,7 +8,9 @@
         /* Note: The negative margin is a correction so that there is no whitespace between the cards and the footer */
         margin: 1.5em 0 0 0;
         @apply(--max-width-host);
+        flex-wrap: wrap;
       }
+
       .section-cards {
         @apply(--max-width-container);
         width: 100%;
@@ -21,6 +23,28 @@
         @apply(--theme-grid-row);
         @apply(--layout-flex);
         @apply(--theme-grid-row-mobile-margins);
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+
+      .description {
+        text-align: center;
+        display: flex;
+      }
+
+      .description dorel-safe-html {
+        margin: auto;
+      }
+
+      .titling-section {
+        float: left;
+        width: 100%;
+        padding: var(--theme-gutter-mobile);
       }
 
       dorel-card {
@@ -54,34 +78,44 @@
       }
 
       .section-cards[tablet-medium-up] {
-        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+        padding: 0 var(--theme-gutter) 3em var(--theme-gutter);;
       }
 
       [tablet-medium-up] .row {
         @apply(--theme-grid-row-margins);
       }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+      .titling-section[tablet-medium-up] {
+        padding: var(--theme-gutter);
+      }
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    
-    <!-- section title -->
-    <template
-      is="dom-if"
-      if="[[ cardsData.section_title ]]">
-      <h2>[[ cardsData.section_title ]]</h2>
-    </template>
-    <!--// section title -->
-    
-    <!-- section description -->
-    <template
-      is="dom-if"
-      if="[[ cardsData.section_description]]">
-      <div class="description">
-        <dorel-safe-html html="[[ cardsData.section_description ]]"></dorel-safe-html>
-      </div>
-    </template>
-    <!--// section description -->
-  
+
+    <section class="titling-section" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <!-- section title -->
+      <template
+        is="dom-if"
+        if="[[ cardsData.section_title ]]">
+        <h2 class="title">[[ cardsData.section_title ]]</h2>
+      </template>
+      <!--// section title -->
+
+      <!-- section description -->
+      <template
+        is="dom-if"
+        if="[[ cardsData.section_description]]">
+        <div class="description">
+          <dorel-safe-html html="[[ cardsData.section_description ]]"></dorel-safe-html>
+        </div>
+      </template>
+      <!--// section description -->
+    </section>
+
     <!-- dom-repeat cards -->
     <template
       is="dom-if"
