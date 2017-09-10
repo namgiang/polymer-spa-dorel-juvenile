@@ -13,7 +13,6 @@
         margin-top: 0;
       }
 
-
       dorel-cta {
         width: auto;
         float: right;
@@ -32,6 +31,10 @@
         box-sizing: border-box;
       }
 
+      section[no-padding] {
+        padding: 1.5em 0 0 0;
+      }
+
       [light] {
         background-color: var(--theme-color-monochrome-2);
         border-top: 1px solid var(--theme-color-monochrome-3);
@@ -48,7 +51,9 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}" light$="[[ light ]]">
+    <section no-padding$="[[ noPadding ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             light$="[[ light ]]">
       <dorel-bynder-image media-id="[[ templateData.promo_bynder_image_id ]]"
                           mobile-width="6em"
                           mobile-height="6em"
@@ -65,7 +70,7 @@
         <dorel-cta title="[[ templateData.promo_cta_text ]]"
                    type="link"
                    link="[[ templateData.promo_cta_link ]]"
-                   size="small"
+                   size="medium"
                    icon="dorel-icons:chevron-right">
           [[ templateData.promo_cta_text ]]
         </dorel-cta>
@@ -74,7 +79,7 @@
         <dorel-cta title="[[ templateData.promo_cta_text ]]"
                    type="primary"
                    link="[[ templateData.promo_cta_link ]]"
-                   size="small"
+                   size="medium"
                    icon="dorel-icons:chevron-right">
           [[ templateData.promo_cta_text ]]
         </dorel-cta>
@@ -88,6 +93,16 @@
     Polymer({
       is: 'dorel-section-service-faq-promo',
       properties: {
+
+        /**
+         * @name noPadding
+         * @description No padding for the element (usually false when it's within another container)
+         */
+        noPadding: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
 
         /**
          * @name light
