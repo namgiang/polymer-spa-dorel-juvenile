@@ -11,9 +11,10 @@
 <!-- used by store locator -->
 <link rel="import" href="atoms/dorel-safe-html.html">
 
-<!-- TODO: These should only be included conditionally, based on the config.js -->
+<!-- TODO: These should only be included conditionally, based on the app-config.js AVAILABLE_BRANDS -->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
+<link rel="import" href="themes/theme-quinny-shared-styles.html">
 
 <!-- Header has priority for perceived initial load -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -113,6 +114,7 @@
     <dorel-main-routing
       route="[[ route ]]"
       category-page="{{ categoryPage }}"
+      previous-states="{{ previousStates }}"
       current-page="{{ currentPage }}">
     </dorel-main-routing>
 
@@ -128,10 +130,12 @@
       category="{{ category }}">
     </dorel-product-category-manager>
 
-    <dorel-header
-      load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"
-      brand-name="[[ brand.label ]]"></dorel-header>
+    <template is="dom-if" if="[[ shouldShowHeader(currentPage) ]]">
+      <dorel-header
+        load-complete="[[ loadComplete ]]"
+        page="[[ page ]]"
+        brand-name="[[ brand.label ]]"></dorel-header>
+    </template>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -169,6 +173,11 @@
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
+        <dorel-template-product-advisory-tool
+          name="product-advisory-tool"
+          brand-name="[[ brand.label ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
+
         <dorel-template-component-guide
           name="component-guide"
           brand="{{ brand }}"
@@ -180,7 +189,9 @@
       </iron-pages>
     </main>
 
-    <dorel-footer></dorel-footer>
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+      <dorel-footer></dorel-footer>
+    </template>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
                         selected-brand="{{ brand }}"
@@ -440,6 +451,10 @@
 
         // return the copied object
         return copy;
+      },
+
+      shouldShowHeader: function(currentPage) {
+        return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
     });
