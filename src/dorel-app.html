@@ -130,7 +130,7 @@
       category="{{ category }}">
     </dorel-product-category-manager>
 
-    <template is="dom-if" if="[[ shouldShowHeader(currentPage) ]]">
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
       <dorel-header
         load-complete="[[ loadComplete ]]"
         page="[[ page ]]"
@@ -193,7 +193,9 @@
       </iron-pages>
     </main>
 
-    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+    <template 
+      is="dom-if" 
+      if="[[ shouldShow(currentPage) ]]">
       <dorel-footer></dorel-footer>
     </template>
 
@@ -457,7 +459,7 @@
         return copy;
       },
 
-      shouldShowHeader: function(currentPage) {
+      shouldShow: function(currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
