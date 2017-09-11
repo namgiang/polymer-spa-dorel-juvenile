@@ -114,6 +114,7 @@
     <dorel-main-routing
       route="[[ route ]]"
       category-page="{{ categoryPage }}"
+      previous-states="{{ previousStates }}"
       current-page="{{ currentPage }}">
     </dorel-main-routing>
 
@@ -129,10 +130,12 @@
       category="{{ category }}">
     </dorel-product-category-manager>
 
-    <dorel-header
-      load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"
-      brand-name="[[ brand.label ]]"></dorel-header>
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+      <dorel-header
+        load-complete="[[ loadComplete ]]"
+        page="[[ page ]]"
+        brand-name="[[ brand.label ]]"></dorel-header>
+    </template>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -140,6 +143,10 @@
       <iron-pages role="main"
                   selected="[[ currentPage.template ]]"
                   attr-for-selected="name">
+
+        <dorel-template-product-category-about
+          name="product-category-about"
+          template-data="[[ currentPage ]]"></dorel-template-product-category-about>
 
         <dorel-template-home
           name="home"
@@ -170,6 +177,21 @@
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
+        <dorel-template-faq-overview
+          name="faq-overview"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-overview>
+
+        <dorel-template-faq-detail
+          name="faq-detail"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-detail>
+
+        <dorel-template-product-advisory-tool
+          name="product-advisory-tool"
+          brand-name="[[ brand.label ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
+
         <dorel-template-component-guide
           name="component-guide"
           brand="{{ brand }}"
@@ -181,7 +203,11 @@
       </iron-pages>
     </main>
 
-    <dorel-footer></dorel-footer>
+    <template 
+      is="dom-if" 
+      if="[[ shouldShow(currentPage) ]]">
+      <dorel-footer></dorel-footer>
+    </template>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
                         selected-brand="{{ brand }}"
@@ -337,12 +363,12 @@
        * or retrieve it all the way.
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function(currentPage) {
+      _pageChanged: function (currentPage) {
         if (typeof currentPage === 'undefined' || currentPage === '') {
           return;
         }
 
-        if(currentPage.template === 'home') {
+        if (currentPage.template === 'home') {
           this._ensureLazyLoaded();
         } else {
           this.importHref(
@@ -441,6 +467,10 @@
 
         // return the copied object
         return copy;
+      },
+
+      shouldShow: function(currentPage) {
+        return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
     });
