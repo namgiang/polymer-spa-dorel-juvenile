@@ -1,0 +1,177 @@
+<link rel="import" href="../organisms/dorel-section-header.html">
+<link rel="import" href="../organisms/dorel-section-service-faq-overview.html">
+
+<dom-module id="dorel-template-faq-overview">
+  <template>
+    <style>
+      .host {
+        @apply(--max-width-host);
+      }
+
+      .section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: center;
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      dorel-section-service-support {
+        padding-top: 3em;
+
+      }
+
+      dorel-service-support {
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
+      }
+
+      [tablet-medium-up] dorel-service-support {
+        margin-top: 0;
+
+      }
+
+      [tablet-medium-up] .container {
+        @apply(--theme-grid-column);
+      }
+
+      [tablet-medium-up] .section {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+
+      <!-- show when acf.page_builder has components -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.faq_overview_builder.length ]]">
+
+        <!-- iterate over page_builder components -->
+        <template
+          is="dom-repeat"
+          items="[[ templateData.acf.faq_overview_builder ]]"
+          as="component"
+          targetFramerate="1000">
+
+          <!-- section-hero-header -->
+          <template
+            is="dom-if"
+            if="[[ isPageComponent(component.acf_fc_layout, 'section_hero_header') ]]">
+            <dorel-section-header
+              no-offset="true"
+              section-header-data="[[ component ]]"
+              gtm-parent="dorel-template-faq-overview"
+              gtm-parent-index="[[ index ]]"></dorel-section-header>
+          </template>
+          <!--// section-hero-header -->
+  
+          <!-- section-service-faq-overview -->
+          <template
+            is="dom-if"
+            if="[[ isPageComponent(component.acf_fc_layout, 'section_service_faqs') ]]">
+            <dorel-section-service-faq-overview
+              template-data="[[ component ]]"></dorel-section-service-faq-overview>
+          </template>
+          <!--// section-service-faq-overview -->
+
+        </template>
+        <!--// iterate over page_builder components -->
+
+      </template>
+      <!--// show when acf.page_builder has components -->
+
+      <!-- section-service-support -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.customer_support_toggle ]]">
+        <div class="host">
+          <div class="section">
+            <div class="row">
+              <div class="container">
+                <dorel-section-service-support
+                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <!--// section-service-support -->
+    </section>
+  </template>
+
+  </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-faq-overview',
+      properties: {
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
+    });
+
+  </script>
+
+</dom-module>
