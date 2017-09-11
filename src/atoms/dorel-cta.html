@@ -15,6 +15,10 @@
         cursor: pointer;
       }
 
+      .theme-cta:hover .theme-cta__icon, .theme-cta:focus .theme-cta__icon {
+        @apply(--theme-button-icon-active);
+      }
+
       .theme-cta--primary {
         @apply(--theme-button-primary);
       }
@@ -35,16 +39,25 @@
         @apply(--theme-button-inverted);
       }
 
+      .theme-cta--inverted .theme-cta__icon {
+        @apply(--theme-button-link-icon);
+      }
+
       .theme-cta--link .theme-cta__content {
         padding: 0;
       }
 
       .theme-cta--link .theme-cta__icon {
         padding-right: 0;
+        @apply(--theme-button-link-icon);
       }
 
       .theme-cta--link:hover, .theme-cta--link:focus {
-        @apply(--theme-button-link-active);
+        @apply(--theme-button-link-hover);
+      }
+
+      .theme-cta--link:hover .theme-cta__icon, .theme-cta--link:focus .theme-cta__icon {
+        @apply(--theme-button-link-icon-active);
       }
 
       .theme-cta--small {
@@ -78,6 +91,18 @@
         @apply(--theme-button-icon);
       }
 
+      .theme-cta--primary .theme-cta__icon {
+        @apply(--theme-button-primary-icon);
+      }
+
+      .theme-cta--secondary .theme-cta__icon {
+        @apply(--theme-button-secondary-icon);
+      }
+
+      .theme-cta--tertiary .theme-cta__icon {
+        @apply(--theme-button-tertiary-icon);
+      }
+
       .theme-cta--small .theme-cta__icon {
         @apply(--theme-button-icon-small);
       }
@@ -86,7 +111,6 @@
         width: 3em;
         height: 2.5em;
         margin: 0;
-
       }
 
       :host([disabled]) a {
@@ -104,6 +128,10 @@
 
       :host([type="primary"][active]) a {
         @apply(--theme-button-active);
+      }
+
+      :host([type="link"][active]) .theme-cta__icon {
+        @apply(--theme-button-link-icon-active);
       }
 
       /* Responsive Behaviour */
