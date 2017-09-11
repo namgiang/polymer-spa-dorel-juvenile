@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../atoms/dorel-bynder-image.html">
+
 <dom-module id="dorel-category-sub">
   <template>
     <style include="iron-flex">
@@ -116,7 +117,6 @@
         padding-left: 1.5em;
         margin-top: 0;
       }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -125,7 +125,7 @@
              tablet-medium$="{{ breakpoints.tabletMedium }}">
       <div class="row">
         <div class="image-container">
-          <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
+          <dorel-bynder-image media-id="[[ subCategoryData.bynder_image_id ]]"
                               width="100%"
                               height="18em"
                               tablet-width="100%"
@@ -134,20 +134,25 @@
                               mobile-height="15em"></dorel-bynder-image>
         </div>
         <div class="info-container">
-          <h2 class="title">Baby car sets</h2>
-          <p class="age-range">0 to 1 year</p>
-          <p class="description">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.
-            Cum
-            sociis natoque penatibus et magnis dis parturient montes
-          </p>
-          <dorel-cta title="View all Baby Car Seats"
-                     type="secondary"
-                     link=""
-                     size="small"
-                     icon="dorel-icons:chevron-right">
-            View all Baby Car Seats
-          </dorel-cta>
+          <h2 class="title">[[ subCategoryData.title ]]</h2>
+          <p class="age-range">[[ subCategoryData.age_category ]]</p>
+          <div class="description">
+            <dorel-safe-html html="[[ subCategoryData.description ]]"></dorel-safe-html>
+          </div>
+          
+          <template
+            is="dom-if"
+            if="[[ subCategoryData.cta_toggle ]]">
+
+            <dorel-cta title="[[ subCategoryData.cta_text ]]"
+                       type="secondary"
+                       link="[[ subCategoryData.cta_link ]]"
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              [[ subCategoryData.cta_text ]]
+            </dorel-cta>
+          </template>
+
         </div>
       </div>
     </section>
@@ -157,7 +162,19 @@
 
     Polymer({
       is: 'dorel-category-sub',
-      properties: {},
+      properties: {
+        /** 
+         * @attribute
+         * @name subCategoryData
+         * @description all data for this sub category
+         */
+        subCategoryData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+      },
     });
 
   </script>
