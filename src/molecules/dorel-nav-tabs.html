@@ -1,0 +1,94 @@
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<dom-module id="dorel-nav-tabs">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100%;
+
+        --paper-tabs-selection-bar-color: var(--theme-brand-color-1);
+        --paper-font-common-base: var(--theme-font);
+        --paper-tab-content: {
+          margin-top: 0;
+          font-weight: 400 !important;
+        };
+
+        --paper-tabs: {
+          @apply(--theme-paragraph-text);
+          max-width: 100%;
+          margin-top: 0;
+          /* Ugly, but there's no access to the selected state */
+          font-weight: 400 !important;
+          box-shadow: inset 0 -2px 0 0 var(--theme-color-monochrome-2);
+        };
+
+        --paper-tab-content-unselected: {
+          @apply(--theme-typography-normal);
+        };
+      }
+
+      paper-tab {
+        transition: color .3s ease;
+      }
+
+      paper-tab:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <paper-tabs 
+      selected="{{ selected }}" 
+      scrollable="[[ !breakpoints.tabletMediumUp ]]">
+      <template 
+        is="dom-repeat" 
+        items="[[ tabs ]]">
+        <paper-tab noink>[[ _getTitle(item) ]]</paper-tab>
+      </template>
+    </paper-tabs>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-nav-tabs',
+
+      properties: {
+        selected: {
+          type: Number,
+          value: 0,
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        tabs: {
+          type: Array,
+        },
+
+        /**
+         * @name title
+         * @description define what key to use for the title
+         */
+        title: {
+          type: String
+        }
+      },
+
+      /**
+       * @name _getTitle
+       * @description if a title attribute is given use that as the key for the tab title
+       * @param item - String - the key name of the model title which value will be shown
+       * @returns String - the value of the key -> defaults to retrieving the 'name' key if title is not given
+       */
+      _getTitle: function(item) {
+        if(typeof item === 'undefined') return;
+        
+        var title = this.get('title');
+
+        return (typeof title === 'undefined') ? item['name'] : item[title];
+      }
+    });
+
+  </script>
+
+</dom-module>
