@@ -4,6 +4,9 @@
 <dom-module id="dorel-template-product-category-about">
   <template>
     <style>
+      dorel-section-page-nav {
+        width: 100%;
+      }
     </style>
 
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
@@ -27,6 +30,16 @@
             if="{{ isPageComponent(component.acf_fc_layout, 'section_hero_header') }}"> 
             <dorel-section-category-about-header
               template-data="[[ component ]]"></dorel-section-category-about-header>
+              
+              <!-- page-nav -->
+              <template
+                is="dom-if"
+                if="[[ templateData.acf.breadcrumbs_toggle ]]">
+                <dorel-section-page-nav
+                  breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+              </template>
+              <!--// page-nav -->
+
           </template>
           <!--// category-about-header -->
 
