@@ -235,16 +235,36 @@
 
                   <div class="topic-listing" name$="[[ index ]]">
                     <ul>
+
+                      <!-- dom-repeat sub_categories -->
                       <template
                         is="dom-repeat"
-                        items="[[ category.featured_questions ]]"
-                        as="faq">
-                        <li>
-                          <a
-                            href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
-                            faq.question ]]</a>
-                        </li>
+                        items="[[ category.sub_categories ]]"
+                        as="subCategory">
+
+                        <!-- dom-repeat questions -->
+                        <template
+                          is="dom-repeat"
+                          items="[[ subCategory.items ]]"
+                          as="faq">
+
+                          <!-- faq featured -->
+                          <template
+                            is="dom-if"
+                            if="[[ faq.featured ]]">
+                            <li>
+                              <a
+                                href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
+                                faq.question ]]</a>
+                            </li>
+                          </template>
+                          <!--// faq featured -->
+
+                        </template>
+                        <!--// dom-repeat questions -->
+
                       </template>
+                      <!--// dom-repeat sub_categories -->
                     </ul>
 
                     <dorel-cta title="[[ templateData.services_cta_text ]]"
@@ -289,16 +309,37 @@
                   icon="dorel-icons:help-outline">
                   <div class="topic-listing">
                     <ul>
+
+                      <!-- dom-repeat sub_categories -->
                       <template
                         is="dom-repeat"
-                        items="[[ category.featured_questions ]]"
-                        as="faq">
-                        <li>
-                          <a
-                            href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
-                            faq.question ]]</a>
-                        </li>
+                        items="[[ category.sub_categories ]]"
+                        as="subCategory">
+
+                        <!-- dom-repeat questions -->
+                        <template
+                          is="dom-repeat"
+                          items="[[ subCategory.items ]]"
+                          as="faq">
+
+                          <!-- faq featured -->
+                          <template
+                            is="dom-if"
+                            if="[[ faq.featured ]]">
+                            <li>
+                              <a
+                                href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
+                                faq.question ]]</a>
+                            </li>
+                          </template>
+                          <!--// faq featured -->
+
+                        </template>
+                        <!--// dom-repeat questions -->
+
                       </template>
+                      <!-- dom-repeat sub_categories -->
+                      
                     </ul>
                   </div>
                   <dorel-cta title="[[ templateData.services_cta_text ]]"
@@ -368,8 +409,9 @@
       _responseReceived: function (newVal, oldVal) {
         if (typeof newVal === 'undefined' || newVal === oldVal) return;
 
-        // this.set('faqCategories', newVal.results);
+        this.set('faqCategories', newVal.results);
 
+        /*
         this.set('faqCategories', [
 
           // SERVICES
@@ -544,6 +586,7 @@
             ]
           }
         ]);
+        */
 
       },
 
