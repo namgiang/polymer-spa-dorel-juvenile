@@ -551,6 +551,8 @@
        * @observer
        * @name _addFaqDetailData
        * @description adds detail page and promo spot data to the faqCategories
+       * @param newVal - Array - new faq categories
+       * @param oldVal - Array - previous set categories
        */
       _addFaqDetailData: function (newVal, oldVal) {
         if (typeof newVal === 'undefined' || newVal === oldVal) return;
@@ -558,10 +560,16 @@
         // retrieve the faqDetailPages from Wordpress
         var detailPages = this._getFaqDetailPages();
 
-        // iterate over the detail pages
+        /**
+         * TLDR: Add detail page data to the faq category (detail link/promo data)
+         * -----
+         * first iterate over the detail pages in wordpress,
+         * then iteratate over the newly defined categories and find
+         * a match between the faq category defined in the gmt on the detail page
+         * and the category to add detail page data to the category
+         */
         detailPages.forEach(function (detailPage) {
 
-          // iterate over the faqCategories
           newVal.forEach(function (faqCat) {
 
             // add the detail page defined in the Wordpress detail to the faqCategory
@@ -604,18 +612,10 @@
       /**
        * @name hasValue
        * @description checks to see if a value is not empty, undefined or null
+       * @param val - String - is the string defined or set
        */
       _hasValue: function (val) {
         return (val !== '' && typeof val !== 'undefined' && val !== null);
-      },
-
-      /**
-       * @name _eventTracking
-       * @description this is for example tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event) {
-        /* ...TRACKING CODE FOR THIS PLUGIN... */
       }
     });
 
