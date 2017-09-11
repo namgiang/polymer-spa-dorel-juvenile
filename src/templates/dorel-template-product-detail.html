@@ -97,7 +97,6 @@
       </div>
     </template>
 
-
     <div class="wrapper">
 
       <template is="dom-if"
@@ -117,8 +116,13 @@
             gtm-parent="dorel-section-header"
             gtm-parent-index="0"></dorel-section-header>
         </template>
-
-        <dorel-section-page-nav></dorel-section-page-nav>
+        
+        <template
+          is="dom-if"
+          if="[[ templateData.acf.breadcrumbs_toggle ]]">
+          <dorel-section-page-nav
+            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+        </template>
 
         <dorel-section-product-showcase
           accessory-scroll-handler="{{ accessoryScrollHandler }}"

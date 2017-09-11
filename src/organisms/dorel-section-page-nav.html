@@ -41,11 +41,23 @@
              info-header$="[[ infoHeader ]]"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
              desktop-large$="[[ breakpoints.desktopLarge ]]">
-     <div class="column">
-       <dorel-breadcrumbs></dorel-breadcrumbs>
-       <template is="dom-if" if="[[ shouldShowResults(renderedCount) ]]">
-         <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
-       </template>
+      <div class="column">
+        
+        <!-- breadcrumbs -->
+        <template 
+          is="dom-if" 
+          if="[[ breadcrumbsToggle ]]">
+          <dorel-breadcrumbs></dorel-breadcrumbs>
+        </template>
+        <!--// breadcrumbs -->
+        
+        <!-- result count -->
+        <template 
+          is="dom-if" 
+          if="[[ shouldShowResults(renderedCount) ]]">
+          <p class="amount"><b>[[ renderedCount ]]</b> Results</p>
+        </template>
+        <!--// result count -->
      </div>
     </section>
   </template>
@@ -62,6 +74,16 @@
          */
         renderedCount: {
           type: Number
+        },
+
+        /**
+         * @attribute
+         * @name breadcrumbsToggle
+         * @description check if the breadcrumbs are on or off
+         */
+        breadcrumbsToggle: {
+          type: Boolean,
+          value: false
         }
 
       },
