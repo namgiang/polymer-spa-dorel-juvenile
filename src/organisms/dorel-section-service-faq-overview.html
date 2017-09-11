@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
 <link rel="import" href="../utils/dorel-gmt-collect-faqs.html">
+<link rel="import" href="../organisms/dorel-section-service-faq-promo.html">
 
 <dom-module id="dorel-section-service-faq-overview">
   <template>
@@ -29,6 +30,7 @@
         @apply(--theme-grid-column);
         margin-top: 0;
         width: 100%;
+        padding: 0;
       }
 
       .topic-select {
@@ -44,6 +46,7 @@
 
       .accordion-topics {
         width: 100%;
+        margin-top: 1.5em;
       }
 
       paper-item {
@@ -131,6 +134,12 @@
         color: var(--theme-brand-color-1);
       }
 
+      dorel-section-service-faq-promo {
+        padding-top: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
       dorel-cta {
         float: right;
       }
@@ -144,6 +153,10 @@
         padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
       }
 
+      [tablet-medium-up] .container {
+        padding: 0 .75em;
+      }
+
       [tablet-medium-up] .row {
         @apply(--theme-grid-row-margins);
       }
@@ -151,6 +164,11 @@
       [tablet-medium-up] .title {
         @apply(--theme-typography-7);
       }
+
+      [tablet-medium-up] .desktop-topics-row {
+        margin-right: 0;
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -173,9 +191,9 @@
           </template>
         </div>
       </div>
-      <div class="row">
-        <template 
-          is="dom-if" 
+      <div class="row desktop-topics-row">
+        <template
+          is="dom-if"
           if="[[ faqCategories.length ]]">
 
           <!-- Desktop Service Topic Listing -->
@@ -185,8 +203,8 @@
               <paper-menu attr-for-selected="name"
                           selected="{{ selectedTopic }}">
 
-                <template 
-                  is="dom-repeat" 
+                <template
+                  is="dom-repeat"
                   items="[[ faqCategories ]]"
                   as="category">
                   <div role="button" name$="[[ index ]]" class="topic">
@@ -208,19 +226,23 @@
               <iron-pages attr-for-selected="name"
                           selected="{{ selectedTopic }}"
                           fallback-selection="0">
-                <template 
-                  is="dom-repeat" 
+
+                <!-- dom-repeat faqCategories -->
+                <template
+                  is="dom-repeat"
                   items="[[ faqCategories ]]"
                   as="category">
 
                   <div class="topic-listing" name$="[[ index ]]">
                     <ul>
-                      <template 
-                        is="dom-repeat" 
+                      <template
+                        is="dom-repeat"
                         items="[[ category.featured_questions ]]"
                         as="faq">
                         <li>
-                          <a href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[ faq.question ]]</a>
+                          <a
+                            href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
+                            faq.question ]]</a>
                         </li>
                       </template>
                     </ul>
@@ -228,12 +250,25 @@
                     <dorel-cta title="[[ templateData.cta_text ]]"
                                type="link"
                                link="[[ category.detail_page ]]"
-                               size="small"
+                               size="medium"
                                icon="dorel-icons:chevron-right">
                       [[ templateData.cta_text ]]
                     </dorel-cta>
+
+                    <!-- faq promo -->
+                    <template
+                      is="dom-if"
+                      if="[[ category.faq_promo_toggle ]]">
+                      <dorel-section-service-faq-promo
+                        template-data="[[ category ]]"
+                        no-padding="true"
+                        light="true"></dorel-section-service-faq-promo>
+                    </template>
+                    <!--// faq promo -->
+
                   </div>
                 </template>
+                <!--// dom-repeat faqCategories -->
 
               </iron-pages>
             </div>
@@ -243,21 +278,25 @@
           <!-- Mobile Service Topic Listing -->
           <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
             <div class="accordion-topics">
-              <template 
-                is="dom-repeat" 
+              <template
+                is="dom-repeat"
                 items="[[ faqCategories ]]"
                 as="category">
-                <dorel-accordion-item 
-                  heading="[[ category.title ]]" 
+
+
+                <dorel-accordion-item
+                  heading="[[ category.name ]]"
                   icon="dorel-icons:help-outline">
                   <div class="topic-listing">
                     <ul>
-                      <template 
-                        is="dom-repeat" 
+                      <template
+                        is="dom-repeat"
                         items="[[ category.featured_questions ]]"
                         as="faq">
                         <li>
-                          <a href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[ faq.question ]]</a>
+                          <a
+                            href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
+                            faq.question ]]</a>
                         </li>
                       </template>
                     </ul>
@@ -265,10 +304,20 @@
                   <dorel-cta title="[[ templateData.cta_text ]]"
                              type="link"
                              link="[[ category.detail_page ]]"
-                             size="small"
+                             size="medium"
                              icon="dorel-icons:chevron-right">
                     [[ templateData.cta_text ]]
                   </dorel-cta>
+
+                  <!-- faq promo -->
+                  <template
+                    is="dom-if"
+                    if="[[ category.faq_promo_toggle ]]">
+                    <dorel-section-service-faq-promo template-data="[[ category ]]"
+                                                     light="true"></dorel-section-service-faq-promo>
+                  </template>
+                  <!--// faq promo -->
+
                 </dorel-accordion-item>
               </template>
             </div>
@@ -290,7 +339,7 @@
 
         apiResponse: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: '_responseReceived'
@@ -308,18 +357,18 @@
         faqCategories: {
           type: Array,
           value: [],
-          observer: '_setFaqDetailPages'
+          observer: '_addFaqDetailData'
         }
       },
 
       /**
        * TODO: remove when not applicable (when real BE is in place)
        */
-      _responseReceived: function(newVal, oldVal) {
-        if(typeof newVal === 'undefined' || newVal === oldVal) return;
+      _responseReceived: function (newVal, oldVal) {
+        if (typeof newVal === 'undefined' || newVal === oldVal) return;
 
         // this.set('faqCategories', newVal.results);
-        
+
         this.set('faqCategories', [
 
           // SERVICES
@@ -494,29 +543,39 @@
             ]
           }
         ]);
-        
+
       },
 
       /**
        * @observer
-       * @name _setFaqDetailPages
-       * @description adds detail page to the faqCategories
+       * @name _addFaqDetailData
+       * @description adds detail page and promo spot data to the faqCategories
        */
-      _setFaqDetailPages: function(newVal, oldVal) {
+      _addFaqDetailData: function (newVal, oldVal) {
         if (typeof newVal === 'undefined' || newVal === oldVal) return;
 
         // retrieve the faqDetailPages from Wordpress
         var detailPages = this._getFaqDetailPages();
 
         // iterate over the detail pages
-        detailPages.forEach(function(detailPage) {  
+        detailPages.forEach(function (detailPage) {
 
           // iterate over the faqCategories
-          newVal.forEach(function(faqCat) {
+          newVal.forEach(function (faqCat) {
 
             // add the detail page defined in the Wordpress detail to the faqCategory
             if (detailPage.acf.gmt_faq_category_selector === faqCat.value) {
+
+              // set the detail page defined on the detail page category selector
               faqCat.detail_page = detailPage.link;
+
+              // set the detail page faq promo on the overview category as well
+              faqCat.faq_promo_toggle = detailPage.acf.faq_promo_toggle;
+              faqCat.promo_bynder_image_id = detailPage.acf.promo_bynder_image_id;
+              faqCat.promo_title = detailPage.acf.promo_title;
+              faqCat.promo_description = detailPage.acf.promo_description;
+              faqCat.promo_cta_text = detailPage.acf.promo_cta_text;
+              faqCat.promo_cta_link = detailPage.acf.promo_cta_link;
             }
 
           }); // faqCategories foreach
@@ -529,11 +588,11 @@
        * @description return all the faq detail pages from WP
        * @returns Array of page objects
        */
-      _getFaqDetailPages: function() {
+      _getFaqDetailPages: function () {
         var wpPages = Polymer.globalsManager.get('Dorel.collect.pages');
 
         // filter out the detailPages from WP
-        var faqPages = wpPages.filter(function(page) {
+        var faqPages = wpPages.filter(function (page) {
           return page.template === 'faq-detail';
         });
 
@@ -545,16 +604,16 @@
        * @name hasValue
        * @description checks to see if a value is not empty, undefined or null
        */
-      _hasValue: function(val) {
+      _hasValue: function (val) {
         return (val !== '' && typeof val !== 'undefined' && val !== null);
       },
-      
+
       /**
        * @name _eventTracking
        * @description this is for example tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function(event) {
+      _eventTracking: function (event) {
         /* ...TRACKING CODE FOR THIS PLUGIN... */
       }
     });
