@@ -1,0 +1,118 @@
+<link rel="import" href="../molecules/dorel-category-sub.html">
+
+<dom-module id="dorel-section-category-about-sub-categories">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply(--max-width-host);
+        flex-wrap: wrap;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+
+      }
+
+      .content-container {
+        @apply(--max-width-container);
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+        box-sizing: border-box;
+      }
+
+      .content-container .text {
+        text-align: center;
+        width: 100%;
+      }
+
+      .content-container .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+      }
+
+      .content-container .description {
+        float: left;
+        display: flex;
+      }
+
+      .description dorel-safe-html  {
+        margin: auto;
+      }
+
+      dorel-category-sub {
+        margin-top: 3em;
+        float: left;
+        width: 100%;
+      }
+
+      .content-container[tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
+      }
+
+      .content-container[tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="content-container" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="">
+        <h2 class="title text">[[ templateData.section_title ]]</h2>
+        <div class="description text">
+          <dorel-safe-html html="[[ templateData.section_description ]]"></dorel-safe-html>
+        </div>
+
+        <template
+          is="dom-if"
+          if="[[ templateData.sub_categories.length ]]">
+
+          <template
+            is="dom-repeat"
+            items="[[ templateData.sub_categories]]"
+            as="subCategory">
+            <dorel-category-sub
+              sub-category-data="[[ subCategory ]]"></dorel-category-sub>
+          </template>
+
+        </template>
+      </div>
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-category-about-sub-categories',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed for this component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>
