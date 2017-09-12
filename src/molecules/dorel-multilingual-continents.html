@@ -71,6 +71,18 @@
         padding-top: 1.5em;
       }
 
+      .cta-wrapper {
+        margin-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+      }
+
+      .cta-wrapper dorel-cta {
+        width: auto;
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -82,7 +94,7 @@
              desktop-small$="[[ breakpoints.desktopSmall ]]">
       <h2 class="title">Please select your country</h2>
       <div class="container">
-        <template is="dom-repeat" items="[[ continentsData ]]">
+        <template is="dom-repeat" items="[[ continentsData ]]" filter="[[ _filterContinents() ]]" sort="_sortContinents">
           <div class="continent">
             <h3 class="continent-title">[[ item.title ]]</h3>
             <ul>
@@ -96,6 +108,15 @@
         </template>
       </div>
     </section>
+    <div class="cta-wrapper" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <dorel-cta title="Link to the international website (English)"
+                  type="link"
+                  link="[[ _getInternationalContinentLink(continentsData) ]]"
+                  icon=""
+                  size="medium">
+         International website (English)
+       </dorel-cta>
+    <div>
   </template>
 
   <script>
@@ -119,6 +140,55 @@
           value: []
         }
       },
+
+      /**
+       * @name _filterContinents
+       * @description filters out the international continent
+       */
+      _filterContinents: function() {
+        var self = this;
+        return function(continent) {
+          // if there is no product return false
+          if (!continent) {
+            return false;
+          }
+          return !self._isInternationalContinent(continent);
+        };
+      },
+
+      /**
+       * @name _sortContinents
+       * @description sorts continents based on most countries
+       */
+      _sortContinents: function(a, b) {
+        if(b.countries.length === a.countries.length) {
+          return 0;
+        }
+        return a.countries.length > b.countries.length ? -1 : 1;
+      },
+
+      /**
+       * @name _isInternationalContinent
+       * @description check if the title of a continent is equal to International
+       * @returns Boolean
+       */
+      _isInternationalContinent: function(continent) {
+        return Boolean(continent.title === 'International');
+      },
+
+      /**
+       * @name _getInternationalContinentLink
+       * @description gets the International continent from the data and uses the first country link
+       * @returns String
+       */
+      _getInternationalContinentLink: function(continentsData) {
+        var self = this;
+        var international = continentsData.find(function(continent) {
+          return self._isInternationalContinent(continent);
+        });
+        return international.countries[0].website;
+      },
+
       /**
        * @name _eventTracking
        * @description this is for example tracking only

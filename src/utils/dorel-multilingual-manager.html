@@ -1,0 +1,46 @@
+<link rel="import" href="dorel-country-collect.html">
+
+<dom-module id="dorel-multilingual-manager">
+  <template>
+
+    <dorel-country-collect
+      continents-data="{{ continentsData }}">
+    </dorel-country-collect>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-manager',
+
+      properties: {
+
+        /**
+         * @name continentsData
+         * @description will contain data that includes domain countries and languages
+         */
+        continentsData: {
+          type: Array,
+          notify: true
+        },
+
+        /**
+         * @name currentLanguage
+         * @description current state (language and country) of the application
+         * TODO: Need be connected to the route in the mutlilingual epic
+         */
+        currentLanguage: {
+          type: Object,
+          value: {
+            country: 'Belgium',
+            language: 'Dutch',
+            countryCode: 'be'
+          },
+          notify: true
+        }
+
+      },
+
+    });
+  </script>
+</dom-module>
