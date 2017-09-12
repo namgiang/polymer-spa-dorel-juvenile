@@ -2,12 +2,15 @@
   <template>
     <style include="iron-flex">
 
+      section {
+        margin-top: var(--button-margin-spacing, 0);
+      }
+
       .theme-cta {
         @apply(--theme-button);
         @apply(--theme-button-primary);
         @apply(--theme-button-small);
         width: 100%;
-        margin-top: var(--button-margin-spacing, 1.5em) !important;
       }
 
       .theme-cta:hover, .theme-cta:focus {
@@ -162,36 +165,37 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <section>
+      <a href$="[[ link ]]"
+         title$="[[ title ]]"
+         target$="[[ target ]]"
+         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         target$="[[ _isExternal(linkTarget) ]]"
+         gtm-action$="[[ gtmAction ]]"
+         gtm-parent$="[[ gtmParent ]]"
+         gtm-parent-index$="[[ gtmParentIndex ]]"
+         gtm-child$="[[ gtmChild ]]"
+         gtm-child-index$="[[ gtmChildIndex ]]"
+         gtm-cta-index$="[[ gtmCtaIndex ]]"
+         on-click="_clickCTA">
 
-    <a href$="[[ link ]]"
-       title$="[[ title ]]"
-       target$="[[ target ]]"
-       class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
-       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-       target$="[[ _isExternal(linkTarget) ]]"
-       gtm-action$="[[ gtmAction ]]"
-       gtm-parent$="[[ gtmParent ]]"
-       gtm-parent-index$="[[ gtmParentIndex ]]"
-       gtm-child$="[[ gtmChild ]]"
-       gtm-child-index$="[[ gtmChildIndex ]]"
-       gtm-cta-index$="[[ gtmCtaIndex ]]"
-       on-click="_clickCTA">
+        <template
+          is="dom-if"
+          if="[[ extraIcon ]]">
+          <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
+        </template>
 
-      <template
-        is="dom-if"
-        if="[[ extraIcon ]]">
-        <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
-      </template>
+        <span class="theme-cta__content"><content id="content"></content></span>
 
-      <span class="theme-cta__content"><content id="content"></content></span>
+        <template
+          is="dom-if"
+          if="[[ icon ]]">
+          <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
+        </template>
 
-      <template
-        is="dom-if"
-        if="[[ icon ]]">
-        <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
-      </template>
-
-    </a>
+      </a>
+    </section>
   </template>
 
   <script>
