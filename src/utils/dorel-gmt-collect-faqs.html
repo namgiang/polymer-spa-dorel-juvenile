@@ -19,6 +19,14 @@
           type: String
         },
 
+        /** 
+         * `featureQuaestions` adds the queryParam to the endpoint call, the
+         * response will add a featured_questions array to each main category
+         */
+        featuredQuestions: {
+          type: Boolean
+        },
+
         /**
          * `apiResponse` will be used to update the attribute up the tree,
          * hence the reflectToAttribute. This way the response will be used
@@ -42,20 +50,25 @@
         }
       },
 
+      observers: [
+        '_defineEndpoint(apiCall, featuredQuestions)'
+      ],
+
       /**
        * @name ready
        * @description will check if the apiCall isset and then sets the endpoint which
        * will initiate the call in the iron-ajax
        */
-      ready: function() {
-        var apiCall = this.get('apiCall');
-
+      _defineEndpoint: function(apiCall, featuredQuestions) {
         if (typeof apiCall === 'undefined' || apiCall === '') {
-          console.error('no endpoint given, please provide the right endpoint url');
+          console.error('no apiCall attribute defined, please provide the right apiCall as an attribute');
           return;
         }
 
-        this.set('endPoint', CONFIG.DIO_API_URL + '/' + apiCall);
+        var featured = (typeof featuredQuestions === 'undefined'|| !featuredQuestions) ?
+         '' : '&featured_questions=1';
+
+        this.set('endPoint', CONFIG.DIO_API_URL + '/' + apiCall + featured);
       },
 
       /** 
