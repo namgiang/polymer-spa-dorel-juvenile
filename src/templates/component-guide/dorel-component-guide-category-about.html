@@ -5,11 +5,11 @@
 <dom-module id="dorel-component-guide-category-about">
   <template>
     <style include="dorel-component-guide-shared-styles">
-      dorel-category-sub-header {
+      dorel-section-category-about-header {
         margin-top: 1.5em;
       }
 
-      dorel-category-sub {
+      dorel-section-category-about-sub-categories {
         margin-top: 3em;
         float: left;
         width: 100%;
@@ -26,24 +26,17 @@
     <section class="content-container">
       <div class="class-for-h2">Category About Header</div>
     </section>
-    <dorel-section-category-about-header></dorel-section-category-about-header>
-
+    <dorel-section-category-about-header template-data="[[ subcategoryHeader ]]"></dorel-section-category-about-header>
+    <hr>
     <section class="content-container">
       <div class="class-for-h2">Subcategory section</div>
-      <template
-        is="dom-repeat"
-        items="[[ subCategories]]"
-        as="subCategory">
-        <dorel-section-category-about-sub-categories
-          sub-category-data="[[ subCategory ]]"></dorel-section-category-about-sub-categories>
-      </template>
+      <dorel-section-category-about-sub-categories
+        template-data="[[ subCategories ]]"></dorel-section-category-about-sub-categories>
     </section>
     <hr>
-
     <section class="content-container">
       <div class="class-for-h2">Cards section</div>
     </section>
-
     <dorel-section-cards cards-data="[[ cardsData ]]" cta-type="secondary" compact="true"></dorel-section-cards>
 
     <hr>
@@ -53,49 +46,66 @@
     Polymer({
       is: 'dorel-component-guide-category-about',
       properties: {
-
-        subCategories: {
-          type: Array,
-          value: [
-            {
-              age_category: "Lorem ipsum dolor sit amet",
-              bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
-              cta_text: "View All",
+        subcategoryHeader: {
+          type: Object,
+          value: function() {
+            return {
+              bynder_background_image: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+              cta_link: "/car-seats/",
+              cta_text: "View all Car Seats",
               cta_toggle: true,
-              description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
-              title: "Convertible Car Seats"
-            },
-            {
-              age_category: "Lorem ipsum dolor sit amet",
-              bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
-              cta_text: "View All",
-              cta_toggle: true,
-              description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
-              title: "Convertible Car Seats"
-            },
-            {
-              age_category: "Lorem ipsum dolor sit amet",
-              bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
-              cta_text: "View All",
-              cta_toggle: true,
-              description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
-              title: "Convertible Car Seats"
-            },
-            {
-              age_category: "Lorem ipsum dolor sit amet",
-              bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
-              cta_text: "View All",
-              cta_toggle: true,
-              description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
-              title: "Convertible Car Seats"
-            }
-          ]
+              description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus.</p>",
+              title: "Lorem Ipsum"
+            };
+          }
         },
-
+        subCategories: {
+          type: Object,
+          value: function () {
+            return {
+              section_description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
+              section_title: "Lorem ipsum",
+              sub_categories: [
+                {
+                  age_category: "Lorem ipsum dolor sit amet",
+                  bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+                  cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
+                  cta_text: "View All",
+                  cta_toggle: true,
+                  description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
+                  title: "Convertible Car Seats"
+                },
+                {
+                  age_category: "Lorem ipsum dolor sit amet",
+                  bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+                  cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
+                  cta_text: "View All",
+                  cta_toggle: true,
+                  description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
+                  title: "Convertible Car Seats"
+                },
+                {
+                  age_category: "Lorem ipsum dolor sit amet",
+                  bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+                  cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
+                  cta_text: "View All",
+                  cta_toggle: true,
+                  description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
+                  title: "Convertible Car Seats"
+                },
+                {
+                  age_category: "Lorem ipsum dolor sit amet",
+                  bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+                  cta_link: "http://localhost:8080/car-seats/convertible-car-seats/",
+                  cta_text: "View All",
+                  cta_toggle: true,
+                  description: "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut risus neque, imperdiet quis neque vitae, tempus venenatis tellus. Quisque euismod lacinia tortor non blandit.</p>",
+                  title: "Convertible Car Seats"
+                }
+              ]
+            }
+          }
+        },
         cardsData: {
           type: Object,
           value: {
