@@ -2,17 +2,24 @@
   <template>
     <style include="iron-flex">
 
+      section {
+        margin-top: var(--button-margin-spacing, 0);
+      }
+
       .theme-cta {
         @apply(--theme-button);
         @apply(--theme-button-primary);
         @apply(--theme-button-small);
         width: 100%;
-        margin-top: var(--button-margin-spacing, 1.5em) !important;
       }
 
       .theme-cta:hover, .theme-cta:focus {
         @apply(--theme-button-active);
         cursor: pointer;
+      }
+
+      .theme-cta:hover .theme-cta__icon, .theme-cta:focus .theme-cta__icon {
+        @apply(--theme-button-icon-active);
       }
 
       .theme-cta--primary {
@@ -31,16 +38,29 @@
         @apply(--theme-button-link);
       }
 
+      .theme-cta--inverted {
+        @apply(--theme-button-inverted);
+      }
+
+      .theme-cta--inverted .theme-cta__icon {
+        @apply(--theme-button-link-icon);
+      }
+
       .theme-cta--link .theme-cta__content {
         padding: 0;
       }
 
       .theme-cta--link .theme-cta__icon {
         padding-right: 0;
+        @apply(--theme-button-link-icon);
       }
 
       .theme-cta--link:hover, .theme-cta--link:focus {
-        @apply(--theme-button-link-active);
+        @apply(--theme-button-link-hover);
+      }
+
+      .theme-cta--link:hover .theme-cta__icon, .theme-cta--link:focus .theme-cta__icon {
+        @apply(--theme-button-link-icon-active);
       }
 
       .theme-cta--small {
@@ -74,11 +94,39 @@
         @apply(--theme-button-icon);
       }
 
+      .theme-cta--primary .theme-cta__icon {
+        @apply(--theme-button-primary-icon);
+      }
+
+      .theme-cta--secondary .theme-cta__icon {
+        @apply(--theme-button-secondary-icon);
+      }
+
+      .theme-cta--tertiary .theme-cta__icon {
+        @apply(--theme-button-tertiary-icon);
+      }
+
+      .theme-cta--small .theme-cta__icon {
+        @apply(--theme-button-icon-small);
+      }
+
       .theme-cta__icon--left {
         width: 3em;
         height: 2.5em;
         margin: 0;
+      }
 
+      :host([no-margin]) a {
+        margin-top: 0 !important;
+      }
+
+      :host([rotate]) a {
+        transform: scaleX(-1);
+      }
+
+      :host([rotate]) span {
+        transform: scaleX(-1);
+        padding: 0 0.75em 0 0;
       }
 
       :host([disabled]) a {
@@ -88,6 +136,18 @@
 
       :host([disabled]) {
         cursor: not-allowed;
+      }
+
+      :host([type="link"][active]) a {
+        @apply(--theme-button-link-active);
+      }
+
+      :host([type="primary"][active]) a {
+        @apply(--theme-button-active);
+      }
+
+      :host([type="link"][active]) .theme-cta__icon {
+        @apply(--theme-button-link-icon-active);
       }
 
       /* Responsive Behaviour */
@@ -105,36 +165,37 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <section>
+      <a href$="[[ link ]]"
+         title$="[[ title ]]"
+         target$="[[ target ]]"
+         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         target$="[[ _isExternal(linkTarget) ]]"
+         gtm-action$="[[ gtmAction ]]"
+         gtm-parent$="[[ gtmParent ]]"
+         gtm-parent-index$="[[ gtmParentIndex ]]"
+         gtm-child$="[[ gtmChild ]]"
+         gtm-child-index$="[[ gtmChildIndex ]]"
+         gtm-cta-index$="[[ gtmCtaIndex ]]"
+         on-click="_clickCTA">
 
-    <a href$="[[ link ]]"
-       title$="[[ title ]]"
-       target$="[[ target ]]"
-       class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
-       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-       target$="[[ _isExternal(linkTarget) ]]"
-       gtm-action$="[[ gtmAction ]]"
-       gtm-parent$="[[ gtmParent ]]"
-       gtm-parent-index$="[[ gtmParentIndex ]]"
-       gtm-child$="[[ gtmChild ]]"
-       gtm-child-index$="[[ gtmChildIndex ]]"
-       gtm-cta-index$="[[ gtmCtaIndex ]]"
-       on-click="_clickCTA">
+        <template
+          is="dom-if"
+          if="[[ extraIcon ]]">
+          <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
+        </template>
 
-      <template
-        is="dom-if"
-        if="[[ extraIcon ]]">
-        <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
-      </template>
+        <span class="theme-cta__content"><content id="content"></content></span>
 
-      <span class="theme-cta__content"><content id="content"></content></span>
+        <template
+          is="dom-if"
+          if="[[ icon ]]">
+          <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
+        </template>
 
-      <template
-        is="dom-if"
-        if="[[ icon ]]">
-        <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
-      </template>
-
-    </a>
+      </a>
+    </section>
   </template>
 
   <script>
@@ -180,7 +241,7 @@
         /**
          * @attribute
          * @name type
-         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary' and 'tertiary' are supported.
+         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary', 'tertiary' and 'link' are supported. Per type, certain css applies to differentiate beteen one another.
          */
         type: {
           type: String,
@@ -215,6 +276,10 @@
          */
         extraIcon: {
           type: String,
+        },
+
+        disabled: {
+          type: Boolean
         }
       },
 

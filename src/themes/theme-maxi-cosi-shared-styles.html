@@ -39,6 +39,8 @@
         --theme-color-black: var(--theme-color-monochrome-7);
         --theme-color-error: var(--theme-brand-complementary-color-3);
 
+        --theme-color-active: var(--theme-brand-color-1);
+
         /* ------------------------------------------------
          * Modular scale
          */
@@ -52,6 +54,12 @@
         --theme-scale-7: calc(var(--theme-scale-1) * 18);
         --theme-scale-8: calc(var(--theme-scale-1) * 21);
         --theme-scale-9: calc(var(--theme-scale-1) * 24);
+
+        --theme-header-wrapper: 4.5em;
+        --theme-header-wrapper-small-up: 7.5em;
+        --theme-header-items-top-bottom-padding: 1.5em;
+        --theme-header-item-padding: .75em;
+        --theme-header-logo-top: 0;
 
         /* ------------------------------------------------
          * Grid
@@ -246,7 +254,7 @@
           * Typography colors
           */
         --theme-color-text-link: var(--theme-brand-color-2);
-        --theme-color-text-link-active: var(--theme-brand-color-1);
+        --theme-color-text-link-active: var(--theme-color-active);
 
         --theme-text-link: {
           color: var(--theme-color-text-link);
@@ -256,8 +264,8 @@
         };
 
         --theme-text-link-active: {
-          color: var(--theme-color-text-link-active);
-          border-bottom: 1px solid var(--theme-color-text-link-active);
+          color: var(--theme-color-active);
+          border-bottom: 1px solid var(--theme-color-active);
         };
 
         /* Rounded Edges */
@@ -286,7 +294,6 @@
           display: -o-flex;
           display: flex;
           align-items: center;
-          padding: .625em 0;
           border-radius: var(--theme-button-border-radius);
           border: 2px solid transparent;
           transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, opacity .3s ease;
@@ -297,11 +304,12 @@
 
         --theme-button-small: {
           @apply(--theme-typography-2);
+          padding: .188em 0;
         };
 
         --theme-button-medium: {
-          @apply(--theme-typography-3);
-          padding: .325em 0;
+          @apply(--theme-typography-2);
+          padding: .625em 0;
         };
 
         --theme-button-large: {
@@ -316,10 +324,14 @@
           background-color: var(--theme-brand-complementary-color-2)
         };
 
+        --theme-button-inverted: {
+          background-color: var(--theme-color-white);
+        };
+
         --theme-button-secondary: {
           color: var(--theme-brand-color-2);
           fill: var(--theme-brand-color-2);
-          border: 2px solid var(--theme-color-monochrome-2);
+          border: 2px solid var(--theme-brand-complementary-color-1);
           background-color: var(--theme-color-white);
         };
 
@@ -340,14 +352,18 @@
         --theme-button-link-active: {
           background-color: transparent;
           border-color: transparent;
-          color: var(--theme-color-text-link-active);
-          fill: var(--theme-color-text-link-active);
+          color: var(--theme-color-active);
+          fill: var(--theme-color-active);
         };
 
         --theme-button-active: {
-          background-color: var(--theme-brand-complementary-color-1);
-          border-color: var(--theme-brand-complementary-color-1);
+          background-color: var(--theme-color-active);
+          border-color: var(--theme-color-active);
           color: var(--theme-color-white);
+        };
+
+        --theme-button-movie-play: {
+          background-color: var(--theme-color-monochrome-1);
         };
 
         --theme-button-icon: {
@@ -355,6 +371,21 @@
           width: var(--theme-scale-3);
           padding: 0 .5em;
         };
+
+        /* Not used, but necessary to reset icon style */
+        --theme-button-primary-icon: {};
+        --theme-button-secondary-icon: {};
+        --theme-button-tertiary-icon: {};
+        --theme-button-link-icon: {};
+
+        --theme-button-icon-small: {
+          height: var(--theme-scale-3);
+          width: var(--theme-scale-3);
+          padding: 0 .188em;
+        };
+
+        --theme-button-icon-active: {};
+        --theme-button-link-icon-active: {};
 
         /*
         * Form inputs
@@ -377,7 +408,7 @@
         };
 
         --theme-form-input-active: {
-          border-color: var(--theme-color-text-link-active);
+          border-color: var(--theme-color-active);
         };
 
         --theme-form-input-disabled: {
@@ -430,8 +461,8 @@
         };
 
         --theme-form-select-active: {
-          border-color: var(--theme-color-text-link-active);
-          color: var(--theme-color-text-link-active);
+          border-color: var(--theme-color-active);
+          color: var(--theme-color-active);
         };
 
         --theme-form-textarea: {
@@ -513,6 +544,15 @@
           background-color: var(--theme-color-monochrome-2);
           font-weight: var(--theme-font-weight);
         }
+
+       /*
+        * Maxi-Cosi styled icons
+        */
+
+        --theme-svg-icon-chevron: {
+          d: path("M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z");
+        };
+
       }
     </style>
   </template>

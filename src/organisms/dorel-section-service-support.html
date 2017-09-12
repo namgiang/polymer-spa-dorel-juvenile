@@ -1,0 +1,271 @@
+<dom-module id="dorel-section-service-support">
+  <template>
+    <style>
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-3);
+        margin-top: 0;
+        color: var(--theme-brand-color-1);
+      }
+
+      p {
+        @apply(--theme-paragraph-text);
+        margin: 0 0 1.5em 0;
+      }
+
+      a {
+        color: var(--theme-color-text-link);
+        text-decoration: none;
+        transition: .3s ease color;
+      }
+
+      a:hover, a:focus {
+        color: var(--theme-brand-color-1);
+        border-bottom: none;
+        text-decoration: none;
+      }
+
+      .contact-methods-container {
+        list-style: none;
+        padding: 0 0 0 4.5em;
+        margin: 0 0 1.5em 0;
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .contact-methods-container li {
+        float: left;
+        display: inline-block;
+        padding-right: 1.5em;
+      }
+
+      .contact-methods-container iron-icon {
+        color: var(--theme-brand-color-1);
+        height: 2.5em;
+        width: 2.5em;
+        padding: .25em .5em .25em 0;
+      }
+
+      .text-container {
+        float: left;
+      }
+
+      .text-container {
+        width: calc(100% - 10em);
+      }
+
+      .contact-method, .contact-icon {
+        float: left;
+        display: inline-block;
+      }
+
+      .contact-method {
+        padding: .75em 0;
+      }
+
+      .contact-method-title {
+        width: calc(100% - 48px);
+        float: left;
+        display: block;
+      }
+
+      section {
+        border: 1px solid var(--theme-color-monochrome-3);
+        margin-bottom: -2px;
+        box-sizing: border-box;
+        padding: 1.5em .75em 0 .75em;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-cta {
+        width: auto;
+        float: right;
+      }
+
+      dorel-bynder-image {
+        float: left;
+        margin: 0 1.5em 1.5em 0;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      [tablet-small]  .contact-methods-container,
+      [tablet-medium-up ] .contact-methods-container {
+        padding: 0;
+      }
+
+      [tablet-small] .contact-methods-container {
+        padding-left: 0;
+        width: 100%;
+      }
+
+      [tablet-medium-up] .text-container,
+      [tablet-small] .text-container,
+      [tablet-medium-up] .contact-methods-container,
+      [tablet-small] .contact-methods-container {
+        width: calc(100% - 11.5em);
+      }
+
+      [tablet-medium-up] .title, [tablet-small] .title {
+        @apply(--theme-typography-5);
+        margin-top: 0;
+      }
+
+      section[tablet-medium-up] {
+        padding: 1.5em 1.5em 0 1.5em;
+      }
+
+      [compact] .contact-methods-container {
+        padding-left: 4.5em;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      [compact] .text-container {
+        width: calc(100% - 10em)
+      }
+
+      [compact] .title {
+        @apply(--theme-typography-3);
+        margin-top: 0;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section compact$="[[ compact ]]"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <template is="dom-if" if="[[ compact ]]">
+        <dorel-bynder-image media-id$="[[ templateData.support_bynder_image_id ]]"
+                            mobile-width="6em"
+                            mobile-height="6em"
+                            tablet-width="6em"
+                            tablet-height="6em"
+                            width="6em"
+                            height="6em"></dorel-bynder-image>
+      </template>
+      <template is="dom-if" if="[[ !compact ]]">
+        <dorel-bynder-image media-id$="[[ templateData.support_bynder_image_id ]]"
+                            mobile-width="6em"
+                            mobile-height="6em"
+                            tablet-width="10em"
+                            tablet-height="10em"
+                            width="10em"
+                            height="10em"></dorel-bynder-image>
+      </template>
+
+      <div class="text-container">
+        <h3 class="title">[[ templateData.support_title ]]</h3>
+        <p>[[ templateData.support_sub_title ]]</p>
+      </div>
+      <ul class="contact-methods-container">
+
+        <!-- support facebook -->
+        <template 
+          is="dom-if"
+          if="[[ templateData.support_facebook_toggle ]]">
+          <li>
+            <span class="contact-method">
+              <iron-icon class="contact-icon" icon="dorel-icons:facebook"></iron-icon>
+              <a href="[[ _getFacebookLink(templateData.social_channels) ]]" target="_blank" class="contact-method-title">[[ templateData.support_facebook_title ]]</a>
+              <span class="contact-method-description">[[ templateData.support_facebook_sub_title ]]</span>
+            </span>
+          </li>
+        </template>
+        <!--// support facebook -->
+
+        <!-- support email -->
+        <template 
+          is="dom-if"
+          if="[[ templateData.support_email_toggle ]]">
+          <li>
+            <span class="contact-method">
+              <iron-icon class="contact-icon" icon="dorel-icons:mail"></iron-icon>
+              <a href="mailto:[[ templateData.support_email_address ]]" class="contact-method-title">[[ templateData.support_email_title ]]</a>
+              <span class="contact-method-description">[[ templateData.support_email_sub_title ]]</span>
+            </span>
+          </li>
+        </template>
+        <!--// support email -->
+
+        <!-- support email -->
+        <template 
+          is="dom-if"
+          if="[[ templateData.support_phone_toggle ]]">
+          <li>
+            <span class="contact-method">
+              <iron-icon class="contact-icon" icon="dorel-icons:phone"></iron-icon>
+              <a href="tel:[[ templateData.support_phone_number ]]" class="contact-method-title">[[ templateData.support_phone_title ]]</a>
+              <a href="tel:[[ templateData.support_phone_number ]]" class="contact-method-description">[[ templateData.support_phone_number ]]</a>
+            </span>
+          </li>
+        </template>
+        <!--// support email -->
+
+      </ul>
+    </section>
+
+  </template>
+
+
+  <script>
+    Polymer({
+      is: 'dorel-section-service-support',
+      properties: {
+
+        /**
+         * @name compact
+         * @description show the compact version of this component
+         */
+        compact: {
+          type: Boolean,
+          value: false,
+        },
+
+        /** 
+         * @attribute
+         * @name templateData
+         * @description contains the WP data needed for building this component
+         */
+        templateData: {
+          type: Object
+        }
+      },
+
+      /** 
+       * @attribute
+       * @name _getFacebookLink
+       * @description retrieves the facebook href from the social channels options to
+       * be set on the href of the customer support social link
+       */
+      _getFacebookLink: function(socialChannels) {
+        if(typeof socialChannels === 'undefined' || !socialChannels.length) return;
+
+        var facebookChannel = socialChannels.find(function(channel) {
+          return channel.social_media_icon === 'facebook'; 
+        });
+
+        return facebookChannel.social_media_href;
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

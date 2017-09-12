@@ -1,0 +1,359 @@
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+<link rel="import" href="../../organisms/dorel-section-service-faq-overview.html">
+<link rel="import" href="../../organisms/dorel-section-service-faq-detail.html">
+<link rel="import" href="../../organisms/dorel-section-service-faq-promo.html">
+
+<dom-module id="dorel-component-guide-service">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      dorel-service-faq-promo {
+        margin-top: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-section-service-support {
+        margin-top: 1.5em;
+      }
+
+      dorel-section-service-support.compact {
+        max-width: 400px;
+        width: 100%;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="content-container" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <h1 class="class-for-h1">Service Components</h1>
+      <p>
+        Components used for the service pages
+      </p>
+      <hr>
+      <h1 class="class-for-h2">FAQ Overview</h1>
+    </section>
+
+    <dorel-section-service-faq-overview
+      template-data="[[ templateData ]]"
+      faq-overview="[[ faqOverview ]]"></dorel-section-service-faq-overview>
+    
+    <section class="content-container">
+      <hr>
+      <h1 class="class-for-h2">FAQ Detail</h1>
+      <dorel-section-service-faq-detail 
+        faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
+      <hr>
+    </section>
+
+    <section class="content-container">
+      <h1 class="class-for-h2">FAQ Promo</h1>
+      <dorel-section-service-faq-promo
+        template-data="[[ faqPromo ]]" 
+        light="true"></dorel-section-service-faq-promo>
+      <dorel-section-service-faq-promo 
+        compact="true"
+        template-data="[[ faqPromo ]]"></dorel-section-service-faq-promo>
+    </section>
+
+    <section class="content-container">
+      <h1 class="class-for-h2">Service Support</h1>
+        <dorel-section-service-support 
+          class="compact"
+          compact="true"
+          template-data="[[ serviceSupport ]]"></dorel-section-service-support>
+        <dorel-section-service-support
+          template-data="[[ serviceSupport ]]"></dorel-section-service-support>
+    </section>
+  </template>
+
+  <hr>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-service',
+      properties: {
+
+        templateData: {
+          type: Object,
+          value: function() {
+            return {
+              section_title: 'Section Title',
+              section_description: 'Section description ipsum dulum',
+              cta_text: 'view all'
+            };
+          }
+        },
+
+        serviceSupport: {
+          type: Object,
+          value: function() {
+            return {
+              social_channels: [
+                {
+                  social_media_href: "#",
+                  social_media_icon: "facebook",
+                  social_media_text: "@MaxiCosi"
+                }
+              ],
+              support_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+              support_email_address: "support@test.nl",
+              support_email_sub_title: "Reply in 2 days",
+              support_email_title: "Email us",
+              support_email_toggle: true,
+              support_facebook_sub_title: "Answer in 30 minutes",
+              support_facebook_title: "Facebook",
+              support_facebook_toggle: true,
+              support_phone_number: "01284413141",
+              support_phone_title: "Call us",
+              support_phone_toggle: true,
+              support_sub_title: "Our customer service is now open until 17:00",
+              support_title: "Couldn't find your answer?"
+            };
+          }
+        },
+
+        faqPromo: {
+          type: Object,
+          value: function() {
+            return {
+              promo_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
+              promo_cta_link: "http://localhost:8080/newsletter/",
+              promo_cta_text: "Read All",
+              promo_description: "Special seat for you baby, First Lorem ipsum this.",
+              promo_title: "Happy Hips"
+            };
+          }
+        },
+
+        faqDetail: {
+          type: Object,
+          value: function() {
+            return {
+              id: 1,
+              brand_id: 4,
+              name: 'Services',
+              value: 'services',
+              sub_categories: [
+                {
+                  id: 10,
+                  service_topics_category_id: 1,
+                  name: 'Repairs',
+                  items: [
+                    {
+                      id: 1,
+                      service_topics_sub_category_id: 10,
+                      featured: 1,
+                      question: 'Repairs1 - First Lorem ipsum this?',
+                      answer: 'Lorem ipsum descrpition'
+                    },
+
+                    {
+                      id: 2,
+                      service_topics_sub_category_id: 10,
+                      featured: 0,
+                      question: 'Repairs2 - Fourth Lorem ipsum this?',
+                      answer: 'Lorem ipsum descrpition'
+                    }
+                  ]
+                },
+
+                {
+                  id: 20,
+                  service_topics_category_id: 1,
+                  name: 'Spare Parts',
+                  items: [
+                    {
+                      id: 3,
+                      service_topics_sub_category_id: 20,
+                      featured: true,
+                      question: 'SpareParts1 - Second Lorem ipsum this?',
+                      answer: 'Lorem ipsum descrpition'
+                    },
+                    {
+                      id: 4,
+                      service_topics_sub_category_id: 20,
+                      question: 'SpareParts2 - Second Lorem ipsum this?',
+                      answer: 'Lorem ipsum descrpition'
+                    }
+                  ]
+                },
+
+                {
+                  id: 30,
+                  service_topics_category_id: 1,
+                  name: 'Hip Safety Service',
+                  items: [
+                    {
+                      id: 5,
+                      service_topics_sub_category_id: 30,
+                      featured: true,
+                      question: 'HipSafetyService1 - Second Lorem ipsum this?',
+                      answer: 'Lorem ipsum descrpition'
+                    },
+                    {
+                      id: 6,
+                      service_topics_sub_category_id: 30,
+                      featured: true,
+                      question: 'HipSafetyService2 - Second Lorem ipsum this?',
+                      answer: 'Lorem ipsum descrpition'
+                    }
+                  ]
+                }
+              ]
+            };
+          }
+        },
+
+        faqOverview: {
+          type: Array,
+          value: [
+            {
+              id: 1,
+              title: 'Services',
+              slug: 'services',
+              featured_questions: [
+                {
+                  id: 1,
+                  sub_id: 10,
+                  'title': 'Repairs1 - First Lorem ipsum this?',
+                  'description': 'Lorem ipsum descrpition'
+                },
+                {
+                  id: 3,
+                  sub_id: 20,
+                  'title': 'SpareParts1 - Second Lorem ipsum this?',
+                  'description': 'Lorem ipsum descrpition'
+                },
+                {
+                  id: 5,
+                  sub_id: 30,
+                  'title': 'HipSafetyService1 - Second Lorem ipsum this?',
+                  'description': 'Lorem ipsum descrpition'
+                },
+                {
+                  id: 6,
+                  sub_id: 30,
+                  'title': 'HipSafetyService2 - Second Lorem ipsum this?',
+                  'description': 'Lorem ipsum descrpition'
+                }
+              ],
+              sub_categories: [
+                {
+                  id: 10,
+                  title: 'Repairs',
+                  questions: [
+                    {
+                      id: 1,
+                      featured: true,
+                      'title': 'Repairs1 - First Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    },
+
+                    {
+                      id: 2,
+                      'title': 'Repairs2 - Fourth Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    }
+                  ]
+                },
+
+                {
+                  id: 20,
+                  title: 'Spare Parts',
+                  questions: [
+                    {
+                      id: 3,
+                      featured: true,
+                      'title': 'SpareParts1 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    },
+                    {
+                      id: 4,
+                      'title': 'SpareParts2 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    }
+                  ]
+                },
+
+                {
+                  id: 30,
+                  title: 'Hip Safety Service',
+                  questions: [
+                    {
+                      id: 5,
+                      featured: true,
+                      'title': 'HipSafetyService1 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    },
+                    {
+                      id: 6,
+                      featured: true,
+                      'title': 'HipSafetyService2 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 2,
+              title: 'Warranty',
+              slug: 'warranty',
+              featured_questions: [
+                {
+                  id: 7,
+                  sub_id: 40,
+                  'title': 'LifetimeWarranty1 - Second Lorem ipsum this?',
+                  'description': 'Lorem ipsum descrpition'
+                },
+                {
+                  id: 9,
+                  sub_id: 50,
+                  'title': 'Standard24-MonthWarrany1 - Second Lorem ipsum this?',
+                  'description': 'Lorem ipsum descrpition'
+                },
+              ],
+              sub_categories: [
+                {
+                  id: 40,
+                  title: 'Lifetime Warranty',
+                  questions: [
+                    {
+                      id: 7,
+                      featured: true,
+                      'title': 'LifetimeWarranty1 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    },
+                    {
+                      id: 8,
+                      'title': 'LifetimeWarranty2 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    }
+                  ]
+                },
+
+                {
+                  id: 50,
+                  title: 'Standard 24-Month Warrany',
+                  questions: [
+                    {
+                      id: 9,
+                      featured: true,
+                      'title': 'Standard24-MonthWarrany1 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    },
+                    {
+                      id: 10,
+                      'title': 'Standard24-MonthWarrany2 - Second Lorem ipsum this?',
+                      'description': 'Lorem ipsum descrpition'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    });
+  </script>
+</dom-module>

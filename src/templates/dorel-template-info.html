@@ -9,6 +9,12 @@
         width: 100%;
         padding-bottom: 1.5em;
       }
+      .max-width-container {
+        @apply(--max-width-container);
+        max-width: var(--theme-base-paragraph-width);
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
     </style>
 
     <!-- TODO: Replace dummy content with ACF Stuff-->
@@ -38,15 +44,24 @@
                   <!-- section-info-header -->
                   <template
                     is="dom-if"
-                    if="{{ isPageComponent(component.acf_fc_layout, 'section_info_header') }}">
-                    <dorel-section-header section-header-data="[[ component ]]" info-header="true"></dorel-section-header>
+                    if="[[ isPageComponent(component.acf_fc_layout, 'section_info_header') ]]">
+                    <dorel-section-header 
+                      section-header-data="[[ component ]]" 
+                      info-header="true"></dorel-section-header>
+
+                    <template
+                      is="dom-if"
+                      if="[[ templateData.acf.breadcrumbs_toggle ]]">
+                      <dorel-section-page-nav
+                        breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+                    </template>
                   </template>
                   <!--// section-info-header -->
 
                   <!-- section-content-wrap -->
                   <template
                     is="dom-if"
-                    if="{{ isPageComponent(component.acf_fc_layout, 'section_content_wrap') }}">
+                    if="[[ isPageComponent(component.acf_fc_layout, 'section_content_wrap') ]]">
 
                     <dorel-section-content-wrap
                       content-wrappers="[[ component ]]"></dorel-section-content-wrap>
@@ -57,7 +72,7 @@
                   <!-- dorel section hubspot -->
                   <template
                     is="dom-if"
-                    if="{{ isPageComponent(component.acf_fc_layout, 'section_hubspot') }}">
+                    if="[[ isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
 
                     <dorel-hubspot
                       hubspot-loaded="[[ globals.Dorel.collect.options.hubspot_loaded ]]"
