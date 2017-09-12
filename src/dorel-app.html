@@ -31,6 +31,7 @@
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
 <link rel="import" href="utils/dorel-main-routing.html">
@@ -122,6 +123,11 @@
       id="metaManager">
     </dorel-meta-manager>
 
+    <dorel-multilingual-manager
+      current-language="{{ currentLanguage }}"
+      continents-data="{{ continentsData }}">
+    </dorel-multilingual-manager>
+
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"
       sort="{{ sort }}"
@@ -130,6 +136,8 @@
 
     <dorel-header
       load-complete="[[ loadComplete ]]"
+      continents-data="[[ continentsData ]]"
+      current-language="[[ currentLanguage ]]"
       page="[[ page ]]"
       brand-name="[[ brand.label ]]"></dorel-header>
 
@@ -180,7 +188,10 @@
       </iron-pages>
     </main>
 
-    <dorel-footer></dorel-footer>
+    <dorel-footer
+      continents-data="[[ continentsData ]]"
+      current-language="[[ currentLanguage ]]">
+    </dorel-footer>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
                         selected-brand="{{ brand }}"

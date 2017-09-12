@@ -1,0 +1,203 @@
+<dom-module id="dorel-country-collect">
+  <template>
+
+    <iron-ajax
+      id="country_collect"
+      content-type="application/json"
+      method="post"
+      handle-as="json"
+      on-response="_countryCollectResponse"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-country-collect',
+
+      properties: {
+
+        continentsData: {
+          type: Array,
+          notify: true
+        },
+
+        testData: {
+          type: Array,
+          value: [
+            {
+              title: 'Europe', countries: [
+                {
+                  countryCode: 'at',
+                  title: 'Austria',
+                  languages: [
+                    {language: 'German', id: 0},
+                  ]
+                }, {
+                  countryCode: 'be',
+                  title: 'Belgium',
+                  languages: [
+                    {language: 'Dutch', id: 0},
+                    {language: 'French', id: 1},
+                  ]
+                }, {
+                  countryCode: 'cz',
+                  title: 'Czech Republic',
+                  languages: [
+                    {language: 'Czech', id: 0}
+                  ]
+                }
+              ]
+            },
+              {
+                title: 'North America', countries: [
+                {
+                  countryCode: 'ca',
+                  title: 'Canada',
+                  languages: [
+                    {language: 'English', id: 0},
+                    {language: 'French', id: 1},
+                  ]
+                }, {
+                  countryCode: 'mx',
+                  title: 'Mexico',
+                  languages: [
+                    {language: 'Spanish', id: 0},
+                  ]
+                }, {
+                  countryCode: 'us',
+                  title: 'United States',
+                  languages: [
+                    {language: 'English', id: 0},
+                  ]
+                }
+              ]
+              },
+              {
+                title: 'South America', countries: [
+                {
+                  countryCode: 'at',
+                  title: 'Austria',
+                  languages: [
+                    {language: 'German', id: 0},
+                  ]
+                }, {
+                  countryCode: 'be',
+                  title: 'Belgium',
+                  languages: [
+                    {language: 'Dutch', id: 0},
+                    {language: 'French', id: 1},
+                  ]
+                }, {
+                  countryCode: 'cz',
+                  title: 'Czech Republic',
+                  languages: [
+                    {language: 'Czech', id: 0}
+                  ]
+                }
+              ]
+              },
+              {
+                title: 'Asia Pacific', countries: [
+                {
+                  countryCode: 'at',
+                  title: 'Austria',
+                  languages: [
+                    {language: 'German', id: 0},
+                  ]
+                }, {
+                  countryCode: 'be',
+                  title: 'Belgium',
+                  languages: [
+                    {language: 'Dutch', id: 0},
+                    {language: 'French', id: 1},
+                  ]
+                }, {
+                  countryCode: 'cz',
+                  title: 'Czech Republic',
+                  languages: [
+                    {language: 'Czech', id: 0}
+                  ]
+                }
+              ]
+              },
+              {
+                title: 'Middle East', countries: [
+                {
+                  countryCode: 'at',
+                  title: 'Austria',
+                  languages: [
+                    {language: 'German', id: 0},
+                  ]
+                }, {
+                  countryCode: 'be',
+                  title: 'Belgium',
+                  languages: [
+                    {language: 'Dutch', id: 0},
+                    {language: 'French', id: 1},
+                  ]
+                }, {
+                  countryCode: 'cz',
+                  title: 'Czech Republic',
+                  languages: [
+                    {language: 'Czech', id: 0}
+                  ]
+                }
+              ]
+              },
+              {
+                title: 'Africa', countries: [
+                {
+                  countryCode: 'at',
+                  title: 'Austria',
+                  languages: [
+                    {language: 'German', id: 0},
+                  ]
+                }, {
+                  countryCode: 'be',
+                  title: 'Belgium',
+                  languages: [
+                    {language: 'Dutch', id: 0},
+                    {language: 'French', id: 1},
+                  ]
+                }, {
+                  countryCode: 'cz',
+                  title: 'Czech Republic',
+                  languages: [
+                    {language: 'Czech', id: 0}
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+
+      },
+
+      ready: function() {
+        var testData = this.get('testData');
+        this.set('continentsData', testData);
+      },
+
+      /**
+       * @name _getCountries
+       * @description set the url and generate the request
+       */
+      _getCountries: function() {
+
+        return;
+        var countryCollectEl = this.$.country_collect;
+        countryCollectEl.url = CONFIG.ECOM_URL + '/rest/V1/integration/admin/token';
+        countryCollectEl.generateRequest();
+      },
+
+      /**
+       * @name _countryCollectResponse
+       * @description response of the countries
+       * @param response
+       */
+      _countryCollectResponse: function(response) {
+        var countries = response.detail.response;
+      }
+    });
+  </script>
+</dom-module>
