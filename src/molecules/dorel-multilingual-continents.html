@@ -108,15 +108,17 @@
         </template>
       </div>
     </section>
-    <div class="cta-wrapper" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      <dorel-cta title="Link to the international website (English)"
-                  type="link"
-                  link="[[ _getInternationalContinentLink(continentsData) ]]"
-                  icon=""
-                  size="medium">
-         International website (English)
-       </dorel-cta>
-    <div>
+    <template is="dom-if" if="[[ _isInternationalContinentAvailable(continentsData) ]]">
+      <div class="cta-wrapper" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <dorel-cta title="Link to the international website (English)"
+                    type="link"
+                    link="[[ _getInternationalContinentLink(continentsData) ]]"
+                    icon=""
+                    size="medium">
+           International website (English)
+         </dorel-cta>
+      <div>
+    </template>
   </template>
 
   <script>
@@ -186,7 +188,19 @@
         var international = continentsData.find(function(continent) {
           return self._isInternationalContinent(continent);
         });
-        return international.countries[0].website;
+        return international && international.countries && international.countries.length ? international.countries[0].website : '';
+      },
+
+      /**
+       * @name _getInternationalContinentLink
+       * @description check if there is a continent with the title International
+       * @returns Boolean
+       */
+      _isInternationalContinentAvailable: function(continentsData) {
+        var self = this;
+        return continentsData.some(function(continent) {
+          return self._isInternationalContinent(continent);
+        });
       },
 
       /**
