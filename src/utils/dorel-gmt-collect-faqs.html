@@ -1,0 +1,71 @@
+<dom-module id="dorel-gmt-collect-faqs">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]" 
+      handle-as="json" 
+      on-response="_faqsLoaded"></iron-ajax>
+  </template>
+  
+  <script>
+    Polymer({
+      is: 'dorel-gmt-collect-faqs',
+      properties: {
+
+        /**
+         * `apiCall` the last segment of the api call
+         */
+        apiCall: {
+          type: String
+        },
+
+        /**
+         * `apiResponse` will be used to update the attribute up the tree,
+         * hence the reflectToAttribute. This way the response will be used
+         * in the code where this component is placed
+         */
+        apiResponse: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * `endPoint` complete url and segment for the endpoint call to make by
+         * the iron-ajax
+         */
+        endPoint: {
+          type: String
+        }
+      },
+
+      /**
+       * @name ready
+       * @description will check if the apiCall isset and then sets the endpoint which
+       * will initiate the call in the iron-ajax
+       */
+      ready: function() {
+        var apiCall = this.get('apiCall');
+
+        if (typeof apiCall === 'undefined' || apiCall === '') {
+          console.error('no endpoint given, please provide the right endpoint url');
+          return;
+        }
+
+        this.set('endPoint', CONFIG.DIO_API_URL + '/' + apiCall);
+      },
+
+      /** 
+       * @name _faqsLoaded
+       * @description when the endpoint gives a response we set the apiResponse,
+       * which will reflect to the attribute
+       */
+      _faqsLoaded: function(data) {
+        this.set('apiResponse', data.detail.response);
+      }
+    });
+  </script>
+</dom-module>

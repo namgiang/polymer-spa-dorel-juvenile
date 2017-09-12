@@ -1,0 +1,276 @@
+<link rel="import" href="../organisms/dorel-section-service-faq-detail.html">
+<link rel="import" href="../organisms/dorel-section-service-faq-promo.html">
+
+<dom-module id="dorel-template-faq-detail">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        margin-top: 1.5em;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+      
+      dorel-section-page-nav {
+        width: 100%;
+      }
+      dorel-section-service-faq-detail {
+        margin: 1.5em 0;
+      }
+
+       dorel-section-service-support {
+         margin: 1.5em 0;
+       }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: left;
+      }
+
+      .container-faq, .container-promo-contact {
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-section-service-faq-promo {
+        float: left;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+
+      [tablet-medium-up] dorel-section-service-faq-detail {
+        margin: 3em 0 1.5em 0;
+      }
+
+      [desktop-small-up] .container-faq {
+        width: 66.6666666%;
+      }
+
+      [desktop-small-up] .container-promo-contact {
+        width: calc(100% - 66.6666666%);
+      }
+
+      [desktop-small-up] dorel-section-service-faq-promo {
+        margin-top: 3em;
+      }
+
+      [tablet-medium-up] .container-faq, [tablet-medium-up] .container-promo-contact {
+        @apply(--theme-grid-column);
+      }
+
+      [tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+      [tablet-medium-up] .container-faq {
+        box-sizing: border-box;
+        padding-right: 3em;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+
+      <div class="row">
+
+        <!-- page-nav -->
+        <template
+          is="dom-if"
+          if="[[ templateData.acf.breadcrumbs_toggle ]]">
+          <dorel-section-page-nav
+            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+        </template>
+        <!--// page-nav -->
+
+        <div class="container-faq">
+          <h2 class="title">
+            [[ templateData.acf.category_title ]]
+          </h2>
+          <dorel-safe-html html="[[ templateData.acf.category_description ]]"></dorel-safe-html>
+
+          <dorel-section-service-faq-detail 
+            faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
+        </div>
+
+        <div class="container-promo-contact">
+          
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.faq_promo_toggle ]]">
+            <dorel-section-service-faq-promo
+              template-data="[[ templateData.acf ]]"></dorel-section-service-faq-promo>
+          </template>
+          
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.customer_support_toggle ]]">
+            <dorel-section-service-support
+                  compact="true"
+                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+          </template>
+          <!--// customer support -->
+
+        </div>
+      </div>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-template-faq-detail',
+
+      properties: {
+        faqDetail: {
+          type: Object
+        },
+
+        faqPromo: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+      },
+
+      ready: function() {
+
+        /**
+         * Adds questions to wordpress faq categories
+         * TODO: can be removed when we use real GMT data
+         * endpoint takes the category slug/id
+         */
+        this.set('faqDetail', {
+          id: 1,
+          brand_id: 4,
+          name: 'Services',
+          value: 'services',
+          sub_categories: [
+            {
+              id: 10,
+              service_topics_category_id: 1,
+              name: 'Repairs',
+              items: [
+                {
+                  id: 1,
+                  service_topics_sub_category_id: 10,
+                  featured: 1,
+                  question: 'Repairs1 - First Lorem ipsum this?',
+                  answer: 'Lorem ipsum descrpition'
+                },
+
+                {
+                  id: 2,
+                  service_topics_sub_category_id: 10,
+                  featured: 0,
+                  question: 'Repairs2 - Fourth Lorem ipsum this?',
+                  answer: 'Lorem ipsum descrpition'
+                }
+              ]
+            },
+
+            {
+              id: 20,
+              service_topics_category_id: 1,
+              name: 'Spare Parts',
+              items: [
+                {
+                  id: 3,
+                  service_topics_sub_category_id: 20,
+                  featured: true,
+                  question: 'SpareParts1 - Second Lorem ipsum this?',
+                  answer: 'Lorem ipsum descrpition'
+                },
+                {
+                  id: 4,
+                  service_topics_sub_category_id: 20,
+                  question: 'SpareParts2 - Second Lorem ipsum this?',
+                  answer: 'Lorem ipsum descrpition'
+                }
+              ]
+            },
+
+            {
+              id: 30,
+              service_topics_category_id: 1,
+              name: 'Hip Safety Service',
+              items: [
+                {
+                  id: 5,
+                  service_topics_sub_category_id: 30,
+                  featured: true,
+                  question: 'HipSafetyService1 - Second Lorem ipsum this?',
+                  answer: 'Lorem ipsum descrpition'
+                },
+                {
+                  id: 6,
+                  service_topics_sub_category_id: 30,
+                  featured: true,
+                  question: 'HipSafetyService2 - Second Lorem ipsum this?',
+                  answer: 'Lorem ipsum descrpition'
+                }
+              ]
+            }
+          ]
+        });
+      },
+
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -109,8 +109,11 @@
       }
 
       [tablet-medium-up] .content {
-        margin-left: var(--theme-column-width);
         bottom: 4.5em;
+      }
+
+      [noffset] {
+        margin-left: var(--theme-column-width);
       }
 
       [info-header][tablet-medium-up] .content {
@@ -127,11 +130,13 @@
       [tablet-medium-up] .image {
         height: 25.5em;
       }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="section-header"
+             offset$="[[ offset ]]"
              text-header$="[[ textHeader ]]"
              info-header$="[[ infoHeader ]]"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
@@ -161,6 +166,15 @@
       is: 'dorel-section-header',
 
       properties: {
+        /**
+         * @attribute
+         * @name offset
+         * @description Offset for the title in the header
+         **/
+        offset: {
+          type: Boolean,
+          value: false
+        },
         /**
          * @attribute
          * @name textHeader
