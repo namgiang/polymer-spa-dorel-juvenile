@@ -1,4 +1,3 @@
-<link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-section-service-faq-overview.html">
 
 <dom-module id="dorel-template-faq-overview">
@@ -63,56 +62,51 @@
       }
     </style>
 
+    <dorel-gmt-collect-faqs
+      endpoint-segments="categories?featured_questions=1"></dorel-gmt-collect-faqs>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
     <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
 
-      <!-- show when acf.page_builder has components -->
+      <!-- section-hero-header -->
       <template
         is="dom-if"
-        if="[[ templateData.acf.faq_overview_builder.length ]]">
-
-        <!-- iterate over page_builder components -->
-        <template
-          is="dom-repeat"
-          items="[[ templateData.acf.faq_overview_builder ]]"
-          as="component"
-          targetFramerate="1000">
-
-          <!-- section-hero-header -->
-          <template
-            is="dom-if"
-            if="[[ isPageComponent(component.acf_fc_layout, 'section_hero_header') ]]">
-            <dorel-section-header
-              no-offset="true"
-              section-header-data="[[ component ]]"
-              gtm-parent="dorel-template-faq-overview"
-              gtm-parent-index="[[ index ]]"></dorel-section-header>
-
-            <!-- page-nav -->
-            <template
-              is="dom-if"
-              if="[[ templateData.acf.breadcrumbs_toggle ]]">
-              <dorel-section-page-nav
-                breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
-            </template>
-            <!--// page-nav -->
-          </template>
-          <!--// section-hero-header -->
-  
-          <!-- section-service-faq-overview -->
-          <template
-            is="dom-if"
-            if="[[ isPageComponent(component.acf_fc_layout, 'section_service_faqs') ]]">
-            <dorel-section-service-faq-overview
-              template-data="[[ component ]]"></dorel-section-service-faq-overview>
-          </template>
-          <!--// section-service-faq-overview -->
-
-        </template>
-        <!--// iterate over page_builder components -->
-
+        if="[[ templateData.acf.bynder_background_image ]]">
+        <dorel-section-header
+          no-offset="true"
+          section-header-data="[[ templateData.acf ]]"
+          gtm-parent="dorel-template-faq-overview"
+          gtm-parent-index="[[ index ]]"></dorel-section-header>
       </template>
-      <!--// show when acf.page_builder has components -->
+      <!--// section-hero-header -->
+
+      <!-- breadcrumbs (page-nav) -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.breadcrumbs_toggle ]]">
+        <dorel-section-page-nav
+          breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+      </template>
+      <!--// breadcrumbs (page-nav) -->
+
+      <!-- section-products-overview -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.products_overview_toggle ]]">
+        --- products-overview-placeholder ---
+      </template>
+      <!--// section-products-support -->
+
+      <!-- section-service-overview -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.services_overview_toggle ]]">
+        <dorel-section-service-faq-overview
+          template-data="[[ templateData.acf ]]"
+          faq-categories="[[ globals.Dorel.faqs ]]"></dorel-section-service-faq-overview>
+      </template>
+      <!--// section-service-support -->
 
       <!-- section-service-support -->
       <template
