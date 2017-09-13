@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+<link rel="import" href="../molecules/dorel-multilingual-select-language.html">
 <link rel="import" href="../molecules/dorel-logo.html">
 <link rel="import" href="../molecules/dorel-navigation-main.html">
 
@@ -15,6 +16,7 @@
       }
 
       header {
+        transition: transform .3s ease;
         position: relative;
         float: left;
         width: 100%;
@@ -49,10 +51,51 @@
         box-sizing: border-box;
         transition: .15s ease padding;
         padding: .75em;
+        position: relative;
       }
 
       .header-item-menu {
         order: 1;
+      }
+
+      .header-toolbar {
+        float: left;
+        width: 100%;
+        height: 3em;
+        background-color: var(--theme-color-monochrome-2);
+      }
+
+      .header-toolbar-container {
+        @apply(--max-width-container);
+        padding: 0 var(--theme-gutter);
+        box-sizing: border-box;
+      }
+
+      .header-toolbar-container dorel-multilingual-select-language {
+        float: right;
+      }
+
+      .mobile-multi-language {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1001;
+      }
+
+      .mobile-multi-language-container {
+        float: left;
+        width: 100%;
+        height: 3em;
+        background-color: var(--theme-color-monochrome-2);
+        position: absolute;
+        bottom: 0;
+        padding: 0 var(--theme-gutter-mobile);
+        box-sizing: border-box;
+      }
+
+      .mobile-multi-language-container dorel-multilingual-select-language {
+        float: right;
       }
 
       #hamburger {
@@ -83,7 +126,7 @@
       }
 
       /* Compact Menu */
-      [compact-menu] .header-items {
+      /*[compact-menu] .header-items {
         padding: 0em .75em;
       }
 
@@ -93,6 +136,10 @@
 
       [compact-menu] #hamburger {
         top: 0.5em;
+      } */
+
+      [desktop-small-up][compact-menu] header {
+        transform: translateY(-3em);
       }
 
       /* Responsive Behaviour */
@@ -106,9 +153,9 @@
         right: 1.25em;
       }
 
-      [compact-menu][tablet-medium-up] #hamburger {
+      /*[compact-menu][tablet-medium-up] #hamburger {
         top: 1.25em;
-      }
+      }*/
 
       .header-wrapper[desktop-small-up] {
         height: var(--theme-header-wrapper-small-up);
@@ -140,47 +187,66 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <div class="header-wrapper"
-         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-         desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
-         compact-menu$="{{ compactMenu }}">
+         tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+         desktop-small-up$="[[ breakpoints.desktopSmallUp ]]"
+         compact-menu$="[[ compactMenu ]]">
       <header>
-        <div class="header-items">
-          <div class="header-item header-item-logo">
-            <div>
-              <a href="/" aria-label="Maxi Cosi"
-                 on-click="_logoClicked">
-                <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
-              </a>
-            </div>
-          </div>
-
-          <nav class="header-item header-item-menu">
-            <dorel-navigation-main
-              compact-menu="[[ compactMenu ]]"
-              sub-menu-opened="{{ subMenuOpened }}"
-              mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
-          </nav>
-
-          <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
-            <div id="hamburger">
-              <template
-                is="dom-if"
-                if="{{ !mobileMenuOpened }}">
-                <iron-icon class="icon-toggle-menu"
-                           icon="dorel-icons:menu"
-                           on-click="_toggleMobileMenu"
-                           aria-label="menu"></iron-icon>
-              </template>
-              <template
-                is="dom-if"
-                if="{{ mobileMenuOpened }}">
-                <iron-icon class="icon-toggle-menu"
-                           icon="dorel-icons:close"
-                           on-click="_toggleMobileMenu"
-                           aria-label="menu"></iron-icon>
-              </template>
+        <div class="desktop-header">
+          <template is="dom-if" if="[[ breakpoints.desktopSmallUp ]]">
+            <div class="header-toolbar">
+              <div class="header-toolbar-container">
+                <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
+                                                    continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+              </div>
             </div>
           </template>
+
+          <div class="header-items">
+            <div class="header-item header-item-logo">
+              <div>
+                <a href="/" aria-label="Maxi Cosi"
+                   on-click="_logoClicked">
+                  <dorel-logo brand-name="[[ brandName ]]"></dorel-logo>
+                </a>
+              </div>
+            </div>
+
+            <nav class="header-item header-item-menu">
+              <dorel-navigation-main
+                compact-menu="[[ compactMenu ]]"
+                sub-menu-opened="{{ subMenuOpened }}"
+                mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
+            </nav>
+
+            <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
+              <template is="dom-if" if="{{ mobileMenuOpened }}">
+                <div class="mobile-multi-language">
+                  <div class="mobile-multi-language-container">
+                    <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
+                                                        continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+                  </div>
+                </div>
+              </template>
+              <div id="hamburger">
+                <template
+                  is="dom-if"
+                  if="{{ !mobileMenuOpened }}">
+                  <iron-icon class="icon-toggle-menu"
+                             icon="dorel-icons:menu"
+                             on-click="_toggleMobileMenu"
+                             aria-label="menu"></iron-icon>
+                </template>
+                <template
+                  is="dom-if"
+                  if="{{ mobileMenuOpened }}">
+                  <iron-icon class="icon-toggle-menu"
+                             icon="dorel-icons:close"
+                             on-click="_toggleMobileMenu"
+                             aria-label="menu"></iron-icon>
+                </template>
+              </div>
+            </template>
+          </div>
         </div>
       </header>
     </div>
@@ -189,16 +255,34 @@
     Polymer({
       is: 'dorel-header',
       behaviors: [
-        // NOTE: This was disabled in DIO-1319 until further notice
-        //Polymer.IronScrollTargetBehavior
+        Polymer.IronScrollTargetBehavior
       ],
       properties: {
-
+        /**
+         * @name currentLanguage
+         * @description Object containing currently selected country and language
+         * TODO: This is temporarily filled with  dummy data, connect to API later
+         */
+        currentLanguage: {
+          type: Object
+        },
+        /**
+         * @name continentsData
+         * @description Object containing the continents (and country, language data)
+         * TODO: This is temporarily filled with  dummy data, connect to API later
+         */
+        continentsData: {
+          type: Array,
+        },
+        /**
+         * @attribute
+         * @name compactMenu
+         * @description Makes the menu compact
+         */
         compactMenu: {
           type: Boolean,
           value: false,
         },
-
         /**
          * @attribute
          * @name brandName
@@ -250,21 +334,16 @@
        * @name attached
        * @description Event handler for scrolling behaviour
        * */
-      // NOTE: This was disabled in DIO-1319 until further notice
-      /*attached: function () {
+      attached: function () {
         this._scrollHandler();
-      },*/
-
+      },
       /**
        * @name _scrollHandler
        * @description Handler for scrolling. Determines if the header should be compact or expanded
        * */
-      // NOTE: This was disabled in DIO-1319 until further notice
-      /*
       _scrollHandler: function () {
         this.compactMenu = this._scrollTop > 50;
-      },*/
-
+      },
       /**
        * @name _logoClicked
        * @description handle the clicks on the logo
