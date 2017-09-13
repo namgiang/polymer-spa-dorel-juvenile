@@ -1,5 +1,4 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
-<link rel="import" href="../utils/dorel-gmt-collect-faqs.html">
 <link rel="import" href="../organisms/dorel-section-service-faq-promo.html">
 
 <dom-module id="dorel-section-service-faq-overview">
@@ -173,11 +172,6 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <dorel-gmt-collect-faqs
-      api-call="service-topics"
-      api-response="{{ apiResponse }}"
-      featured-questions="true"></dorel-gmt-collect-faqs>
-
     <section class="layout horizontal center center-justified wrap"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="row">
@@ -234,60 +228,53 @@
                   items="[[ faqCategories ]]"
                   as="category">
 
-                  <div class="topic-listing" name$="[[ index ]]">
-                    <ul>
+                  <!--// dom-if featured -->
+                  <template
+                    is="dom-if"
+                    if="[[ category.featured_questions.length ]]">
+                    <div class="topic-listing" name$="[[ index ]]">
+                      <ul>
 
-                      <!-- dom-repeat sub_categories -->
-                      <template
-                        is="dom-repeat"
-                        items="[[ category.sub_categories ]]"
-                        as="subCategory">
-
-                        <!-- dom-repeat questions -->
+                        <!-- dom-repeat featured -->
                         <template
                           is="dom-repeat"
-                          items="[[ subCategory.items ]]"
-                          as="faq">
+                          items="[[ category.featured_questions ]]"
+                          as="featured">
 
-                          <!-- faq featured -->
-                          <template
-                            is="dom-if"
-                            if="[[ faq.featured ]]">
-                            <li>
-                              <a
-                                href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
-                                faq.question ]]</a>
-                            </li>
-                          </template>
-                          <!--// faq featured -->
+                          <li>
+                            <a
+                              href="[[ category.detail_page ]]?sub_category_id=[[ featured.service_topics_sub_category_id ]]&question_id=[[ featured.id ]]">[[
+                              featured.question ]]</a>
+                          </li>
 
                         </template>
-                        <!--// dom-repeat questions -->
+                        <!--// dom-repeat featured -->
 
+                      </ul>
+
+                      <dorel-cta title="[[ templateData.services_cta_text ]]"
+                                 type="link"
+                                 link="[[ category.detail_page ]]"
+                                 size="medium"
+                                 icon="dorel-icons:chevron-right">
+                        [[ templateData.services_cta_text ]]
+                      </dorel-cta>
+
+                      <!-- faq promo -->
+                      <template
+                        is="dom-if"
+                        if="[[ category.faq_promo_toggle ]]">
+                        <dorel-section-service-faq-promo
+                          template-data="[[ category ]]"
+                          no-padding="true"
+                          light="true"></dorel-section-service-faq-promo>
                       </template>
-                      <!--// dom-repeat sub_categories -->
-                    </ul>
+                      <!--// faq promo -->
 
-                    <dorel-cta title="[[ templateData.services_cta_text ]]"
-                               type="link"
-                               link="[[ category.detail_page ]]"
-                               size="medium"
-                               icon="dorel-icons:chevron-right">
-                      [[ templateData.services_cta_text ]]
-                    </dorel-cta>
+                    </div>
+                  </template>
+                  <!--// dom-if featured -->
 
-                    <!-- faq promo -->
-                    <template
-                      is="dom-if"
-                      if="[[ category.faq_promo_toggle ]]">
-                      <dorel-section-service-faq-promo
-                        template-data="[[ category ]]"
-                        no-padding="true"
-                        light="true"></dorel-section-service-faq-promo>
-                    </template>
-                    <!--// faq promo -->
-
-                  </div>
                 </template>
                 <!--// dom-repeat faqCategories -->
 
@@ -380,215 +367,19 @@
           value: ''
         },
 
-        apiResponse: {
-          type: Object,
-          value: function () {
-            return {};
-          },
-          observer: '_responseReceived'
-        },
-
         templateData: {
           type: Object
         },
 
         /**
-         * @async
+         * @attribute
          * @name faqCategories
-         * @description async call to GMT data
+         * @description the faqCategories retrieved from the GMT
          */
         faqCategories: {
           type: Array,
-          value: [],
           observer: '_addFaqDetailData'
         }
-      },
-
-      /**
-       * TODO: remove when not applicable (when real BE is in place)
-       */
-      _responseReceived: function (newVal, oldVal) {
-        if (typeof newVal === 'undefined' || newVal === oldVal) return;
-
-        this.set('faqCategories', newVal.results);
-
-        /*
-        this.set('faqCategories', [
-
-          // SERVICES
-          {
-            id: 1,
-            brand_id: 4,
-            name: 'Services',
-            value: 'services',
-            featured_questions: [
-              {
-                id: 1,
-                service_topics_category_id: 1,
-                service_topics_sub_category_id: 10,
-                question: 'Repairs1 - First Lorem ipsum this?',
-                answer: 'Lorem ipsum descrpition'
-              },
-              {
-                id: 3,
-                service_topics_category_id: 1,
-                service_topics_sub_category_id: 20,
-                question: 'SpareParts1 - Second Lorem ipsum this?',
-                answer: 'Lorem ipsum descrpition'
-              },
-              {
-                id: 5,
-                service_topics_category_id: 1,
-                service_topics_sub_category_id: 30,
-                question: 'HipSafetyService1 - Second Lorem ipsum this?',
-                answer: 'Lorem ipsum descrpition'
-              },
-              {
-                id: 6,
-                service_topics_category_id: 1,
-                service_topics_sub_category_id: 30,
-                question: 'HipSafetyService2 - Second Lorem ipsum this?',
-                answer: 'Lorem ipsum descrpition'
-              }
-            ],
-            sub_categories: [
-              {
-                id: 10,
-                service_topics_category_id: 1,
-                name: 'Repairs',
-                items: [
-                  {
-                    id: 1,
-                    service_topics_sub_category_id: 10,
-                    featured: 1,
-                    question: 'Repairs1 - First Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  },
-
-                  {
-                    id: 2,
-                    service_topics_sub_category_id: 10,
-                    featured: 0,
-                    question: 'Repairs2 - Fourth Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  }
-                ]
-              },
-
-              {
-                id: 20,
-                service_topics_category_id: 1,
-                name: 'Spare Parts',
-                items: [
-                  {
-                    id: 3,
-                    service_topics_sub_category_id: 20,
-                    featured: true,
-                    question: 'SpareParts1 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  },
-                  {
-                    id: 4,
-                    service_topics_sub_category_id: 20,
-                    question: 'SpareParts2 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  }
-                ]
-              },
-
-              {
-                id: 30,
-                service_topics_category_id: 1,
-                name: 'Hip Safety Service',
-                items: [
-                  {
-                    id: 5,
-                    service_topics_sub_category_id: 30,
-                    featured: true,
-                    question: 'HipSafetyService1 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  },
-                  {
-                    id: 6,
-                    service_topics_sub_category_id: 30,
-                    featured: true,
-                    question: 'HipSafetyService2 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  }
-                ]
-              }
-            ]
-          },
-
-          // WARRANTY
-          {
-            id: 2,
-            service_topics_category_id: 1,
-            name: 'Warranty',
-            value: 'warranty',
-            featured_questions: [
-              {
-                id: 7,
-                service_topics_category_id: 2,
-                service_topics_sub_category_id: 40,
-                question: 'LifetimeWarranty1 - Second Lorem ipsum this?',
-                answer: 'Lorem ipsum descrpition'
-              },
-              {
-                id: 9,
-                service_topics_category_id: 2,
-                service_topics_sub_category_id: 50,
-                question: 'Standard24-MonthWarrany1 - Second Lorem ipsum this?',
-                answer: 'Lorem ipsum descrpition'
-              },
-            ],
-            sub_categories: [
-              {
-                id: 40,
-                service_topics_category_id: 2,
-                name: 'Lifetime Warranty',
-                items: [
-                  {
-                    id: 7,
-                    service_topics_sub_category_id: 40,
-                    featured: true,
-                    question: 'LifetimeWarranty1 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  },
-                  {
-                    id: 8,
-                    service_topics_sub_category_id: 40,
-                    question: 'LifetimeWarranty2 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  }
-                ]
-              },
-
-              {
-                id: 50,
-                service_topics_category_id: 2,
-                name: 'Standard 24-Month Warrany',
-                items: [
-                  {
-                    id: 9,
-                    service_topics_sub_category_id: 50,
-                    featured: true,
-                    question: 'Standard24-MonthWarrany1 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  },
-                  {
-                    id: 10,
-                    service_topics_sub_category_id: 50,
-                    question: 'Standard24-MonthWarrany2 - Second Lorem ipsum this?',
-                    answer: 'Lorem ipsum descrpition'
-                  }
-                ]
-              }
-            ]
-          }
-        ]);
-        */
-
       },
 
       /**
@@ -617,7 +408,7 @@
           newVal.forEach(function (faqCat) {
 
             // add the detail page defined in the Wordpress detail to the faqCategory
-            if (detailPage.acf.gmt_faq_category_selector === faqCat.value) {
+            if (Number(detailPage.acf.gmt_faq_category_selector) === faqCat.id) {
 
               // set the detail page defined on the detail page category selector
               faqCat.detail_page = detailPage.link;
