@@ -1,0 +1,75 @@
+<dom-module id="dorel-gmt-collect-faqs">
+  <template>
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]" 
+      handle-as="json" 
+      on-response="_faqsLoaded"></iron-ajax>
+  </template>
+  
+  <script>
+    Polymer({
+      is: 'dorel-gmt-collect-faqs',
+      properties: {
+
+        /**
+         * @attribute
+         * @name endpointSegments
+         * @description the segments that are added behind the GMT url, separate
+         * multiple segments with '/'
+         */
+        endpointSegments: {
+          type: String,
+          observer: '_defineEndpoint'
+        },
+
+        /**
+         * @name endPoint
+         * @description the full endpoint url that iron-ajax uses to do the call
+         * to the GMT
+         */
+        endPoint: {
+          type: String
+        }
+      },
+
+      /**
+       * @observer
+       * @name _defineEndpoint
+       * @description will check if the endpointSegments are changed and creates an
+       * endpoint url, which will do the api call automatically
+       */
+      _defineEndpoint: function(newSegment, oldSegment) {
+        if (typeof newSegment === 'undefined' || newSegment === '' || newSegment === oldSegment) {
+          console.error('no segments attribute defined, please provide the right apiCall as an attribute');
+          return;
+        }
+        
+        // set the endPoint variable which will kick off the iron-ajax
+        this.set('endPoint', CONFIG.DIO_API_URL + '/service-topics/' + newSegment);
+      },
+
+      /** 
+       * @name _faqsLoaded
+       * @description when the endpoint gives a response we set the apiResponse,
+       * which will reflect to the attribute
+       */
+      _faqsLoaded: function(data) {
+        var response = data.detail.response;
+
+        if(typeof response.results !== 'undefined') {
+          var faqsGlobals = Polymer.globalsManager.get('Dorel.faqs') || [];
+          
+          Polymer.globalsManager.set('Dorel.faqs', response.results);
+        }
+        
+        if(typeof response.result !== 'undefined') {
+          var faqsGlobals = Polymer.globalsManager.get('Dorel.faqs') || [];
+
+          faqsGlobals.push(response.result);
+          Polymer.globalsManager.set('Dorel.faqs', faqsGlobals);
+        }
+      }
+    });
+  </script>
+</dom-module>

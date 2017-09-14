@@ -1,0 +1,135 @@
+<dom-module id="dorel-section-category-about-header">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      .image-container {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        float: left;
+        display: inline-block;
+      }
+
+      .info-container {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        background-color: var(--theme-color-monochrome-2);
+        box-sizing: border-box;
+        float: left;
+        display: inline-block;
+        padding: 1.5em;
+      }
+
+      dorel-bynder-image {
+        height: 100%;
+        width: 100%;
+        float: left;
+      }
+
+      .title {
+        @apply(--theme-typography-6);
+        margin-top: 0;
+        color: var(--theme-brand-color-1);
+      }
+
+      .description {
+        @apply(--theme-paragraph-text);
+      }
+
+      dorel-cta {
+        float: left;
+        width: auto;
+      }
+
+      [tablet-medium-up] .image-container {
+        -ms-flex-preferred-size: 66.6666667%;
+        flex-basis: 66.6666667%;
+        max-width: 66.6666667%;
+      }
+
+      [tablet-medium-up] .info-container {
+        -ms-flex-preferred-size: calc(100% - 66.6666667%);
+        flex-basis: calc(100% - 66.6666667%);
+        max-width: calc(100% - 66.6666667%);
+        padding: 3em;
+      }
+
+      [tablet-medium] .info-container {
+        padding: 1.5em;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="layout horizontal wrap"
+             tablet-medium$="[[ breakpoints.tabletMedium ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="image-container">
+        <dorel-bynder-image media-id="[[ templateData.bynder_background_image ]]"
+                            width="100%"
+                            height="100%"
+                            tablet-width="100%"
+                            tablet-height="18em"
+                            mobile-width="100%"
+                            mobile-height="15em"></dorel-bynder-image>
+      </div>
+      <div class="info-container">
+        <h1 class="title">[[ templateData.title ]]</h1>
+        <div class="description">
+          <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
+        </div>
+
+        <template
+          is="dom-if"
+          if="[[ templateData.cta_toggle ]]">
+          <dorel-cta title="[[ templateData.cta_text ]]"
+                     type="primary"
+                     link="[[ templateData.cta_link ]]"
+                     size="medium"
+                     icon="dorel-icons:chevron-right">
+            [[ templateData.cta_text ]]
+          </dorel-cta>
+        </template>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-category-about-header',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed for this component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

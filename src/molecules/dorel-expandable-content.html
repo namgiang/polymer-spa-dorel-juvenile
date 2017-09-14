@@ -4,7 +4,7 @@
   <template>
     <style>
       :host {
-        --button-margin-spacing: 0;
+        --button-margin-spacing: -1.5em;
       }
 
       dorel-cta {
@@ -41,7 +41,7 @@
                        on-click="_toggle"
                        type="link"
                        link=""
-                       size="small"
+                       size="medium"
                        icon="dorel-icons:expand-more">
               Read more
             </dorel-cta>
@@ -51,7 +51,7 @@
                        on-click="_toggle"
                        type="link"
                        link=""
-                       size="small"
+                       size="medium"
                        icon="dorel-icons:expand-less">
               Read less
             </dorel-cta>
@@ -109,12 +109,15 @@
        * @description Shortens the content if it's larger then character limit
        * **/
       _computeInitialContent: function (content) {
+        if(!content) {
+          return;
+        }
         // Split the paragraphs in the content using a regular expression
         var re = new RegExp('(<p>.*<\/p>)', 'g');
         var splitContent = content.match(re);
 
         // Return a shortened version of the content (only the first paragraph)
-        if (splitContent.length > 1) {
+        if (splitContent && splitContent.length > 1) {
           return splitContent[0];
         }
 
@@ -127,12 +130,16 @@
        * @description The rest of the content
        * **/
       _computeRestContent: function (content) {
+
+        if(!content) {
+          return;
+        }
         // Split the paragraphs in the content using a regular expression
         var re = new RegExp('(<p>.*<\/p>)', 'g');
         var splitContent = content.match(re);
 
         // Content is only split when there are more paragraphs
-        if (splitContent.length > 1) {
+        if (splitContent && splitContent.length > 1) {
           // Remove first element in split content
           splitContent.shift();
           // Concatenate entries and return on string of rest content

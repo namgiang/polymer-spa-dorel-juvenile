@@ -1,0 +1,291 @@
+<link rel="import" href="../organisms/dorel-section-service-faq-detail.html">
+
+<dom-module id="dorel-template-faq-detail">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        margin-top: 1.5em;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+      
+      dorel-section-page-nav {
+        width: 100%;
+      }
+      dorel-section-service-faq-detail {
+        margin: 1.5em 0;
+      }
+
+       dorel-section-service-support {
+         margin: 1.5em 0;
+       }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: left;
+      }
+
+      .container-faq, .container-promo-contact {
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-section-service-faq-promo {
+        float: left;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+
+      [tablet-medium-up] dorel-section-service-faq-detail {
+        margin: 3em 0 1.5em 0;
+      }
+
+      [desktop-small-up] .container-faq {
+        width: 66.6666666%;
+      }
+
+      [desktop-small-up] .container-promo-contact {
+        width: calc(100% - 66.6666666%);
+      }
+
+      [desktop-small-up] dorel-section-service-faq-promo {
+        margin-top: 3em;
+      }
+
+      [tablet-medium-up] .container-faq, [tablet-medium-up] .container-promo-contact {
+        @apply(--theme-grid-column);
+      }
+
+      [tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+      [tablet-medium-up] .container-faq {
+        box-sizing: border-box;
+        padding-right: 3em;
+      }
+    </style>
+    
+    <!-- retrieving the faq detail if we haven't retrieved it yet -->
+    <dorel-gmt-collect-faqs
+      endpoint-segments="[[ gmtEndpointSegment ]]"></dorel-gmt-collect-faqs>
+
+    <app-route
+      route="{{ route }}"
+      pattern="/:faqCategory"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+
+      <div class="row">
+
+        <!-- page-nav -->
+        <template
+          is="dom-if"
+          if="[[ templateData.acf.breadcrumbs_toggle ]]">
+          <dorel-section-page-nav
+            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+        </template>
+        <!--// page-nav -->
+
+        <div class="container-faq">
+          <h2 class="title">
+            [[ templateData.acf.category_title ]]
+          </h2>
+          <dorel-safe-html html="[[ templateData.acf.category_description ]]"></dorel-safe-html>
+
+          <dorel-section-service-faq-detail 
+            faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
+        </div>
+
+        <div class="container-promo-contact">
+          
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.faq_promo_toggle ]]">
+            <dorel-section-service-faq-promo
+              template-data="[[ templateData.acf ]]"></dorel-section-service-faq-promo>
+          </template>
+          
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.customer_support_toggle ]]">
+            <dorel-section-service-support
+                  compact="true"
+                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+          </template>
+          <!--// customer support -->
+
+        </div>
+      </div>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-template-faq-detail',
+
+      properties: {
+        
+        /**
+         * @name routeData
+         * @description the route data contains the faq category slug
+         * that is after faq in the url ([domain]/faq/:category-slug).
+         * This is used to check if the application retrieved this category
+         * already in the cache, otherwise it will retrieve the information
+         */
+        routeData: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the template data coming from WP for this page
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        /**
+         * @name faqDetail
+         * @description faqDetail contains the information for the faq detail
+         * component to show its sub categories and all questions/answers
+         */
+        faqDetail: {
+          type: Object
+        },
+
+        /**
+         * @name faqPromo
+         * @description faqPromo contains the information for the promo section
+         * that is part of the right sidebar when enabled in WP
+         */
+        faqPromo: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        }
+      },
+
+      observers: [
+        '_setFaqDetail(globals.Dorel.faqs, routeData, templateData.acf.gmt_faq_category_selector)'
+      ],
+
+      /**
+       * @observer
+       * @name _faqCategorySlugChanged
+       * @description when the routeData changes it contains the faqCategorySlug,
+       * the application checks if it can find it in cache. If it finds a match in cache
+       * the matched category will be shown, otherwise it will be retrieved by the gmt collect
+       *
+       * @param newSlug - string - the category slug
+       */ 
+      _setFaqDetail: function(faqGlobals, routeData, categoryId) {
+        if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
+
+        var categoryId = Number(categoryId);
+        var inCache = this._findInCache(categoryId);
+
+        if (typeof inCache === 'undefined' || !inCache) {
+          // initiate a new gmt collect
+          this._setEndpointSegments(categoryId);
+        } else {
+          // set the faqDetail retrieved from the cache
+          this.set('faqDetail', inCache);
+        }
+
+      },
+
+      /**
+       * @helper
+       * @name _findInCache
+       * @description find a provided detail slug in the cached faqs
+       */ 
+      _findInCache: function(detailCategory) {
+        var faqCache = Polymer.globalsManager.get('Dorel.faqs');
+        // if no length, return false (no match can be found either way)
+        if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
+
+        return faqCache.find(function(category) {
+          return category.id === detailCategory;
+        });
+      },
+
+      /**
+       * @helper
+       * @name _retrieveCategoryById
+       * @description set the endpoint-segments for the gmt-collect
+       */ 
+      _setEndpointSegments: function(catId) {
+        if(typeof catId === 'undefined') return;
+        
+        this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
+      },
+
+      /**
+       * @name isPageComponent
+       * @description compares to values to see if they match, for some
+       * components they can be doubled. They will always be suffixed with
+       * their number like section_multi and section_multi_2. In those
+       * cases we need to treat them as section_multi's.
+       *
+       * @returns Boolean if the two values match or not (true/false)
+       */
+      isPageComponent: function (response, cname) {
+
+        // get last char
+        var lastChar = response.substr(response.length - 1);
+
+        // find out if it is a number
+        var isNumber = !isNaN(Number(lastChar));
+
+        // if it is a number treat it accordingly
+        if (isNumber) {
+          var keyArr = response.split('_');
+          keyArr.pop();
+          strippedResponse = keyArr.join('_');
+
+          return strippedResponse === cname;
+        }
+
+        // all other cases just compare them
+        return response === cname;
+      }
+    });
+
+  </script>
+
+</dom-module>

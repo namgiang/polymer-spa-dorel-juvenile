@@ -1,0 +1,121 @@
+<link rel="import" href="../molecules/dorel-multilingual-flag.html">
+<link rel="import" href="../molecules/dorel-multilingual-overlay.html">
+<link rel="import" href="../molecules/dorel-multilingual-continents.html">
+
+<dom-module id="dorel-multilingual-select-language">
+  <template>
+    <style>
+
+      .country, .language {
+        float: left;
+        display: inline-block;
+        margin-top: 1em;
+        margin-left: .75em;
+        color: var(--theme-color-text-link);
+        line-height: 16px;
+        transition: color .3s ease;
+      }
+
+      .country {
+        padding-right: .75em;
+        border-right: 1px solid var(--theme-color-text-link);
+      }
+
+      dorel-multilingual-flag {
+        float: left;
+        overflow: hidden;
+        margin-top: .875em;
+      }
+
+      section {
+        cursor: pointer;
+        height: 3em;
+        float: left;
+      }
+
+      section[light] .country, section[light] .language {
+        color: var(--theme-color-white);
+      }
+
+      section[light] .country {
+        border-right: 1px solid var(--theme-color-white);
+      }
+
+      section:hover .country, section:hover .language {
+        color: var(--theme-color-text-link-active);
+      }
+
+      section:hover .country {
+        border-right: 1px solid var(--theme-color-text-link-active);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             light$="[[ light ]]"
+             on-click="_openOverlay"
+             role="button" tabindex="0">
+      <dorel-multilingual-flag country-code="[[ currentLanguage.countryCode ]]"></dorel-multilingual-flag>
+      <div class="country">[[ currentLanguage.country ]]</div>
+      <div class="language">[[ currentLanguage.language ]]</div>
+    </section>
+
+    <dorel-multilingual-overlay id="overlay">
+      <dorel-multilingual-continents centered="true"
+                                     continents-data="[[ continentsData ]]"></dorel-multilingual-continents>
+    </dorel-multilingual-overlay>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-select-language',
+
+      properties: {
+        /**
+         * @name light
+         * @description Set to true to show component on a dark background
+         */
+        light: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * @name continentsData
+         * @description Data used for the continent overlay component
+         */
+        continentsData: {
+          type: Object
+        },
+
+        /**
+         * @name currentLanguage
+         * @description For displaying the current language, country and it's flag
+         */
+        'currentLanguage': {
+          type: Object
+        }
+      },
+
+      /**
+       * @name _openOverlay
+       * @description Opens an overlay for selection region and language
+       */
+      _openOverlay: function () {
+        this.$.overlay.open();
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

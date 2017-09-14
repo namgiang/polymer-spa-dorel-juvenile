@@ -11,9 +11,10 @@
 <!-- used by store locator -->
 <link rel="import" href="atoms/dorel-safe-html.html">
 
-<!-- TODO: These should only be included conditionally, based on the config.js -->
+<!-- TODO: These should only be included conditionally, based on the app-config.js AVAILABLE_BRANDS -->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 <link rel="import" href="themes/theme-dorel-shared-styles.html">
+<link rel="import" href="themes/theme-quinny-shared-styles.html">
 
 <!-- Header has priority for perceived initial load -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -27,12 +28,18 @@
 <!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
 
+<link rel="import" href="utils/dorel-gmt-collect-faqs.html">
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
+<link rel="import" href="utils/dorel-main-routing.html">
+<link rel="import" href="utils/dorel-product-category-manager.html">
+<link rel="import" href="utils/dorel-brand-manager.html">
+
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <dom-module id="dorel-app">
@@ -67,6 +74,7 @@
 
       iron-pages {
         margin: 0 auto;
+        min-height: 100vh;
       }
 
     </style>
@@ -104,16 +112,47 @@
       route="{{ route }}"
       pattern="/:page"
       data="{{ routeData }}"
+      query-params="{{ queryParams }}"
       tail="{{ subroute }}"></app-route>
+
+    <dorel-brand-manager
+      query-params="[[ queryParams ]]"
+      brandNames="{{ brandNames }}"
+      brand="{{ brand }}">
+    </dorel-brand-manager>
+
+    <dorel-main-routing
+      route="[[ route ]]"
+      category-page="{{ categoryPage }}"
+      previous-states="{{ previousStates }}"
+      current-page="{{ currentPage }}">
+    </dorel-main-routing>
 
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
-      id="metaManager"></dorel-meta-manager>
+      current-page="[[ currentPage ]]"
+      id="metaManager">
+    </dorel-meta-manager>
 
-    <dorel-header
-      load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"
-      brand-name="[[ brand.label ]]"></dorel-header>
+    <dorel-multilingual-manager
+      current-language="{{ currentLanguage }}"
+      continents-data="{{ continentsData }}">
+    </dorel-multilingual-manager>
+
+    <dorel-product-category-manager
+      category-page="[[ categoryPage ]]"
+      sort="{{ sort }}"
+      category="{{ category }}">
+    </dorel-product-category-manager>
+
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+      <dorel-header
+        load-complete="[[ loadComplete ]]"
+        continents-data="[[ continentsData ]]"
+        current-language="[[ currentLanguage ]]"
+        page="[[ page ]]"
+        brand-name="[[ brand.label ]]"></dorel-header>
+    </template>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -121,6 +160,10 @@
       <iron-pages role="main"
                   selected="[[ currentPage.template ]]"
                   attr-for-selected="name">
+
+        <dorel-template-product-category-about
+          name="product-category-about"
+          template-data="[[ currentPage ]]"></dorel-template-product-category-about>
 
         <dorel-template-home
           name="home"
@@ -147,9 +190,24 @@
 
         <dorel-template-product-category
           name="product-category"
+          route="[[ subroute ]]"
           category="[[ category ]]"
-          sort="[[ sort ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
+
+        <dorel-template-faq-overview
+          name="faq-overview"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-overview>
+
+        <dorel-template-faq-detail
+          name="faq-detail"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-detail>
+
+        <dorel-template-product-advisory-tool
+          name="product-advisory-tool"
+          brand-name="[[ brand.label ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
         <dorel-template-component-guide
           name="component-guide"
@@ -162,7 +220,14 @@
       </iron-pages>
     </main>
 
-    <dorel-footer></dorel-footer>
+    <template
+      is="dom-if"
+      if="[[ shouldShow(currentPage) ]]">
+      <dorel-footer
+        continents-data="[[ continentsData ]]"
+        current-language="[[ currentLanguage ]]">
+      </dorel-footer>
+    </template>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
                         selected-brand="{{ brand }}"
@@ -206,7 +271,9 @@
          */
         brandNames: {
           type: Array,
-          value: []
+          value: function() {
+            return CONFIG.AVAILABLE_BRANDS;
+          }
         },
 
         /**
@@ -217,13 +284,13 @@
           type: Object
         },
 
-        category: {
-          type: Number
-        },
-
-        sort: {
+        categoryPage: {
           type: Object
         },
+
+        category: {
+          type: Number
+        }
 
       },
 
@@ -232,10 +299,7 @@
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(route, globals.Dorel.collect.pages)',
-        '_pageChanged(page, currentPage)',
-        '_setCurrentPage(currentPage)',
-        '_brandChanged(brand)'
+        '_pageChanged(currentPage)'
       ],
 
       created: function () {
@@ -264,6 +328,7 @@
             },
             colorMap: []
           },
+          faqs: [],
           events: {},
           grid: {
             horizontal: false,
@@ -283,125 +348,6 @@
         // Define the custom api in the globals (obj becomes string)
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
-
-        this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
-        Polymer.globalsManager.set('Dorel.current.brandName', this.brand);
-      },
-
-
-      /**
-       * @observer
-       * @name _brandChanged
-       * @description the brand was changed, triggers a change in shared styles
-       *
-       * @param page - String - the string of the current active brand
-       */
-      _brandChanged: function (brand) {
-        //Removed the current shared style from the dom, if it exists.
-        var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
-        if (currentSharedStyle != undefined) {
-          currentSharedStyle.remove();
-        }
-
-        // Checks the apps config, and sets the according brand theme
-        var brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
-        var domModule = document.createElement('style', 'custom-style');
-        domModule.setAttribute('include', brandTheme);
-        domModule.setAttribute('id', 'brand-shared-style');
-        Polymer.dom(this.root).appendChild(domModule);
-        Polymer.updateStyles();
-      },
-
-      /**
-       * @observer
-       * @name _routePageChanged
-       * @description on url/route change get the first segment of the url
-       * then set it as the page. With those settings start the setCurrentPage
-       * which will change the iron-pages selected
-       *
-       * @param page - String - the route page string
-       * @param pages - Array - all the retrieved pages from WP
-       */
-      _routePageChanged: function (page, pages) {
-        // if the route is undefined
-        if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
-
-        //get first segment of url;
-        firstSegment = page.path.split( '/' )[1];
-
-        // get the a clean last segment of the route.path
-        page = page.path.match(/([^\/]*)\/*$/).pop();
-
-        // refer to this for find function
-        var self = this;
-
-        /**
-         * if last segment is undefined or empty string set to home,
-         * all others to segment
-         */
-        this.page = page || 'home';
-
-        // Matches the page to the component guide template
-        if (this.page === 'component-guide') {
-          this.currentPage = {
-            template: 'component-guide'
-          };
-          // break
-          return;
-        }
-
-        /** map the page variable and check if it contains products
-          * if true - match the slug of the product page with the route.path
-          * if false - match the slug of the page with the route.path
-          * return the the item that matches
-        */
-
-        this.currentPage = pages.find(function (item) {
-          return item.slug === self.page;
-        });
-
-        if(!this.currentPage && firstSegment.length) {
-          var parent = pages.find(function(item) {
-            return item.slug === firstSegment;
-          });
-
-          if(!parent) {
-            return this._setPageNotFound();
-          }
-          var options = parent.acf.page_builder.find(function(_item) {
-            return _item.acf_fc_layout === 'section_detail_page_template_selector';
-          });
-          if(!options) {
-            return this._setPageNotFound();
-          }
-
-          this.currentPage = pages.find(function(_page) {
-             return _page.template === options.select_detail_template || _page.template === 'product-detail';  //default
-          });
-
-        }
-
-        // when the page cannot be matched, it is always the 404
-        if (typeof this.currentPage === 'undefined') {
-          this._setPageNotFound();
-        } else {
-          this._setProductCategory(pages, firstSegment);
-        }
-      },
-
-      _setPageNotFound: function() {
-        // set the page to 404
-        this.page = '404';
-
-        // set the currentPage to 404
-        this.currentPage = {
-          template: '404',
-          acf: {
-            meta_title: '404',
-            meta_description: '404 - This page does not exist'
-          }
-        };
       },
 
       /**
@@ -409,54 +355,23 @@
        * @name _pageChanged
        * @description when the page variable changes lazyload the page
        * or retrieve it all the way.
-       * @param page - string - the page we need to transition to
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function (page, currentPage) {
-        if (typeof page === 'undefined' || page === '' ||
-          typeof currentPage === 'undefined' || currentPage === '') return;
+      _pageChanged: function (currentPage) {
+        if (typeof currentPage === 'undefined' || currentPage === '') {
+          return;
+        }
 
-        // home route is eagerly loaded
-        if (page === 'home') {
-
+        if (currentPage.template === 'home') {
           this._ensureLazyLoaded();
-
-          // other routes are lazy loaded
         } else {
-          // don't include the home template twice (its loaded eagerly)
-          if (currentPage.template === 'home' ||
-            typeof currentPage.template === 'undefined') return;
-
-          // import the template on demand
           this.importHref(
             this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
             function () {
               this._ensureLazyLoaded();
             }, null, false);
-
         }
 
-      },
-
-      /**
-       * @observer
-       * @name _setCurrentPage
-       * @description set the current page in the globals
-       */
-      _setCurrentPage: function (currentPage) {
-
-        // set the global currentPage
-        Polymer.globalsManager.set('Dorel.current.page', currentPage);
-
-        if (currentPage !== undefined &&
-            currentPage.acf &&
-            currentPage.acf.meta_title &&
-            currentPage.acf.meta_description) {
-          this.$.metaManager.addMetaData({
-            metaTitle: currentPage.acf.meta_title,
-            metaDescription: currentPage.acf.meta_description
-          });
-        }
         // tracking of the pageload
         this._eventTracking();
       },
@@ -489,24 +404,6 @@
             });
           });
         }
-      },
-
-      _setProductCategory: function(pages, categoryName) {
-        var mainCategoryPage = pages.find(function(item) {
-          return item.slug === categoryName;
-        });
-        if(!mainCategoryPage || !mainCategoryPage.acf || !mainCategoryPage.acf.page_builder || mainCategoryPage.template !== 'product-category') {
-          return;
-        }
-        var magentoSection = mainCategoryPage.acf.page_builder.find(function(item) {
-          return item.acf_fc_layout === 'section_magento';
-        });
-        var category = magentoSection.magento_category_picker;
-        this.category = typeof category === 'string' ? parseInt(category) : category;
-        this.sort = {
-          type: magentoSection.magento_product_sorting,
-          order: magentoSection.magento_sort_order
-        };
       },
 
       /**
@@ -564,6 +461,10 @@
 
         // return the copied object
         return copy;
+      },
+
+      shouldShow: function(currentPage) {
+        return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
     });

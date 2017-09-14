@@ -1,8 +1,11 @@
+<link rel="import" href="../atoms/dorel-expandable-panel.html">
 <link rel="import" href="../organisms/dorel-category-listing.html">
-<link rel="import" href="../organisms/dorel-section-category-header.html">
+<link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-section-category-sidebar.html">
-
 <link rel="import" href="../utils/dorel-magento-collect-products.html">
+<link rel="import" href="../organisms/dorel-category-submenu.html">
+<link rel="import" href="../organisms/dorel-category-filter.html">
+<link rel="import" href="../utils/dorel-magento-collect-products-by-category.html">
 
 <dom-module id="dorel-template-product-category">
   <template>
@@ -28,41 +31,26 @@
         @apply(--layout-flex);
       }
 
-      dorel-section-category-header {
+      dorel-section-page-nav {
+        width: 100%;
         @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        order: 0;
+        margin: 0;
+      }
+
+      .content {
+        width: 100%;
+        @apply(--theme-grid-column);
         margin-top: 0;
       }
 
-      dorel-section-category-sidebar {
+      .sidebar {
+        width: 100%;
         @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        order: 1;
-        margin-top: 1.5em;
       }
 
       dorel-layout-section dorel-page-builder {
         width: 100%;
         display: flex;
-      }
-
-      [desktop-small-up] dorel-section-category-header {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
-        flex-basis: calc(var(--theme-column-width) * 9);
-        max-width: calc(var(--theme-column-width) * 9);
-        order: 1;
-      }
-
-      [desktop-small-up] dorel-section-category-sidebar {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
-        flex-basis: calc(var(--theme-column-width) * 3);
-        max-width: calc(var(--theme-column-width) * 3);
-        order: 0;
       }
 
       [tablet-medium-up] .container {
@@ -72,12 +60,29 @@
       [tablet-medium-up] .row {
         @apply(--theme-grid-row-margins);
       }
+
+      [desktop-small-up] .main-content {
+        display: flex;
+      }
+
+      [desktop-small-up] .content {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
+        flex-basis: calc(var(--theme-column-width) * 9);
+        max-width: calc(var(--theme-column-width) * 9);
+      }
+
+      [desktop-small-up] .sidebar {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
+      }
     </style>
 
-    <dorel-magento-collect-products
+    <dorel-magento-collect-products-by-category
       category="[[ category ]]"
       retrieving-products="{{ retrievingProducts }}"
-      products="{{ products }}"></dorel-magento-collect-products>
+      products="{{ products }}"></dorel-magento-collect-products-by-category>
+
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -89,48 +94,72 @@
         is="dom-if"
         if="{{ templateData.acf.page_builder.length }}">
 
+
+        <!-- iterate over page_builder components -->
+        <template
+          is="dom-if"
+          if="{{ shouldShowComponent(templateData, 'section_category_header') }}">
+          <dorel-section-header 
+            section-header-data="[[ getComponent(templateData, 'section_category_header') ]]" gtm-parent="dorel-section--header"
+            gtm-parent-index="[[ index ]]"></dorel-section-header>
+        </template>
+
         <div class="container layout horizontal center center-justified wrap">
           <div class="row">
-            <!-- iterate over page_builder components -->
-            <template
-              is="dom-repeat"
-              items="[[ templateData.acf.page_builder ]]"
-              as="component"
-              targetFramerate="1000">
+            <dorel-section-page-nav 
+              breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"
+              rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
 
-              <!-- section-category-header -->
+            <div class="sidebar">
               <template
                 is="dom-if"
-                if="{{ isPageComponent(component.acf_fc_layout, 'section_category_header') }}">
-                <dorel-section-category-header
-                  category-header-data="[[ component ]]"
-                  gtm-parent="dorel-section-category-header"
-                  gtm-parent-index="[[ index ]]"></dorel-section-category-header>
+                if="{{ shouldShowComponent(templateData, 'section_sub_categories', 'sub_menu') }}">
+                <dorel-expandable-panel header="Subcategories" opened>
+                  <dorel-category-submenu
+                    items="[[ getComponent(templateData, 'section_sub_categories', 'sub_menu') ]]">
+                  </dorel-category-submenu>
+                </dorel-expandable-panel>
               </template>
-              <!--// section-category-header -->
-
-              <!-- section-category-sidebar -->
               <template
                 is="dom-if"
-                if="{{ isPageComponent(component.acf_fc_layout, 'section_category_sidebar') }}">
-                <dorel-section-category-sidebar
-                  category-sidebar-data="[[ component ]]"
-                  gtm-parent="dorel-section-category-sidebar"
-                  gtm-parent-index="[[ index ]]"></dorel-section-product-sidebar>
+                if="{{ shouldShowComponent(templateData, 'section_magento_filtering', 'filter_groups') }}">
+                <dorel-expandable-panel header="Filters" opened>
+                  <dorel-category-filter
+                    filter-data="[[ getComponent(templateData, 'section_magento_filtering', 'filter_groups') ]]"
+                    retrieving-products="[[ retrievingProducts ]]"
+                    product-data="[[ products ]]">
+                  </dorel-category-filter>
+                </dorel-expandable-panel>
               </template>
-              <!--// section-category-sidebar -->
-            </template>
-          </div>
-        </div>
+            </div>
+
+            <div class="content">
+              <template
+                is="dom-if"
+                if="{{ shouldShowComponent(templateData, 'section_magento') }}">
+                <dorel-category-listing
+                  products-data="[[ products ]]"
+                  retrieving-products="[[ retrievingProducts ]]"
+                  sort="[[ sort ]]"
+                  rendered-count="{{ renderedCount }}"
+                  gtm-parent="dorel-category-listing"
+                  gtm-parent-index="2"></dorel-category-listing>
+              </template>
+            </div>
+
       </template>
-
-      <dorel-category-listing
-        products-data="[[ products ]]"
-        retrieving-products="[[ retrievingProducts ]]"
-        sort="[[ sort ]]"
-        gtm-parent="dorel-category-listing"
-        gtm-parent-index="2"></dorel-category-listing>
+      <template
+        is="dom-if"
+        if="{{ templateData.acf.title }}">
+        <dorel-section-seo
+          meta-title="[[ templateData.acf.title ]]"
+          meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
+      </template>
     </div>
+    </div>
+    </div>
+
+
   </template>
   <script>
     Polymer({
@@ -153,7 +182,7 @@
         /**
          * @attribute
          * @name products
-         * @description the data coming from the globals
+         * @description the data coming from the collect-products component
          */
         products: {
           type: Array,
@@ -170,46 +199,84 @@
           value: 0
         },
 
-        products: {
-          type: Array
-        },
-
+        /**
+         * @attribute
+         * @name category
+         * @description a loading indicator from the collect-products component
+         * if products are retrieved it will set Boolean to false
+         * if products are being retrieved it will set Boolean to true
+         * initial value is true because component does not have products initially
+         */
         retrievingProducts: {
           type: Boolean,
           value: true
+        },
+
+        renderedCount: {
+          type: Number
         }
 
       },
 
+      observers: [
+        '_templateDataChanged(templateData)'
+      ],
+      /**
+       * observer
+       * @name _setInitialProductSorting
+       * @description will call functions
+       * @param templateData - Object
+       */
+      _templateDataChanged: function (templateData) {
+        this._setInitialProductSorting(templateData);
+        if (!templateData) {
+          return;
+        }
+      },
 
       /**
-       * @name isPageComponent
-       * @description compares to values to see if they match, for some
-       * components they can be doubled. They will always be suffixed with
-       * their number like section_multi and section_multi_2. In those
-       * cases we need to treat them as section_multi's.
-       *
-       * @returns Boolean if the two values match or not (true/false)
+       * @name getComponent
+       * @description will be used to select the correct component from the page builder
+       * @param templateData - Object
+       * @param selector - String
+       * @param key - Optional
+       * @returns returns a Object that will be used by the template
        */
-      isPageComponent: function (response, cname) {
-
-        // get last char
-        var lastChar = response.substr(response.length - 1);
-
-        // find out if it is a number
-        var isNumber = !isNaN(Number(lastChar));
-
-        // if it is a number treat it accordingly
-        if (isNumber) {
-          var keyArr = response.split('_');
-          keyArr.pop();
-          strippedResponse = keyArr.join('_');
-
-          return strippedResponse === cname;
+      getComponent: function (templateData, selector, key) {
+        if (!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return [];
         }
+        var pageBuilderComponent = templateData.acf.page_builder.find(function (section) {
+          return section.acf_fc_layout === selector;
+        });
+        if (!pageBuilderComponent) {
+          return null;
+        }
+        return key ? pageBuilderComponent[key] : pageBuilderComponent;
+      },
 
-        // all other cases just compare them
-        return response === cname;
+      shouldShowComponent: function (templateData, selector, key) {
+        var data = this.getComponent(templateData, selector, key);
+        // if a key is provided check if it has items in the array otherwise only check if defined
+        var check = key ? data && data.length : data;
+        return Boolean(data);
+      },
+
+      /**
+       * @name _setInitialProductSorting
+       * @description will set the sort Object that will be used by the category-listing component
+       * @param templateData - Object
+       */
+      _setInitialProductSorting: function (templateData) {
+        if (!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
+          return;
+        }
+        var magentoSection = this.getComponent(templateData, 'section_magento');
+        var sort = {
+          type: magentoSection ? magentoSection.magento_product_sorting : 'name',
+          order: magentoSection ? magentoSection.magento_sort_order : 'asc'
+        };
+        this.set('sort', sort);
       }
     });
   </script>

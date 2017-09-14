@@ -1,7 +1,7 @@
 <dom-module id="dorel-category-listing-item">
   <style is="custom-style" include="iron-flex iron-flex-alignment">
     :root {
-      --button-margin-spacing: 0;
+      --button-margin-spacing: -1.5em;
     }
 
     :host {
@@ -24,7 +24,11 @@
     .category-listing-item {
       float: left;
       width: 100%;
-      margin-top: 3em;
+      margin-bottom: 1.5em;
+    }
+
+    .category-listing-item[tablet-medium-up] {
+      margin-top: 1.5em;
     }
 
     .image-wrapper {
@@ -68,7 +72,9 @@
     }
   </style>
   <template>
-    <section class="category-listing-item" fade$="[[ fade ]]">
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="category-listing-item" fade$="[[ fade ]]" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="image-wrapper horizontal layout center">
         <iron-image class="image"
                     sizing="contain"
@@ -79,6 +85,7 @@
         <dorel-color-switcher
           current-image="{{ currentProductImage }}"
           colors-data="[[ colorsData ]]"
+          filters="[[ filters ]]"
           gtm-action="color-switch"
           gtm-parent="[[ gtmParent ]]"
           gtm-parent-index="[[ gtmParentIndex ]]"
@@ -87,8 +94,8 @@
         <h2 class="title">[[ productName ]]</h2>
         <dorel-cta
           type="link"
-          link="[[ linkUrl ]]"
-          size="small"
+          link="[[ _setDynamicProductUrl(linkUrl) ]]"
+          size="medium"
           icon="dorel-icons:play-circle-outline"
           gtm-action="click"
           gtm-parent="[[ gtmParent ]]"
@@ -111,6 +118,12 @@
           type: Boolean,
           value: false,
         },
+
+
+        filters: {
+          type: Array
+        },
+
         /**
          * @attribute
          * @name colorsData
@@ -150,6 +163,13 @@
           type: String,
           value: ''
         }
+      },
+
+      _setDynamicProductUrl: function(linkUrl) {
+
+        var windowLocation = window.location.origin + '/' + window.location.pathname.split('/')[1] + '/';
+
+        return windowLocation + linkUrl;
       }
     });
   </script>

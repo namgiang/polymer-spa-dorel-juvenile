@@ -1,0 +1,331 @@
+<link rel="import" href="../atoms/dorel-input-select.html">
+
+<dom-module id="dorel-car-details-form">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        display: flex;
+        margin-top: 1.5rem;
+        box-sizing: border-box;
+      }
+      .form {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--theme-color-monochrome-2);
+      }
+      .form_title {
+        padding: .75em 1.5em .75em .75em;
+        @apply(--theme-typography-4);
+        margin: 0;
+        background-color: var(--theme-color-monochrome-6);
+        color: var(--theme-color-monochrome-1);
+        border-top-left-radius: var(--theme-button-border-radius);
+        border-top-right-radius: var(--theme-button-border-radius);
+      }
+      .form_groups {
+        padding: .75em .75em .75em .75em;
+      }
+    </style>
+    <div class="form">
+
+      <iron-ajax
+        id="brand"
+        handle-as="json"
+        on-response="_brandResponse"></iron-ajax>
+
+      <iron-ajax
+        id="model"
+        handle-as="json"
+        on-response="_modelResponse"></iron-ajax>
+
+      <iron-ajax
+        id="typeYear"
+        handle-as="json"
+        on-response="_typeYearResponse"></iron-ajax>
+
+      <h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>
+
+      <template is="dom-if" if="[[ formData.form_groups.length ]]" restamp="true">
+        <div class="form_groups">
+          <template
+            is="dom-repeat"
+            items="{{ formData.form_groups }}"
+            index-as="index"
+            as="item">
+            <template is="dom-if" if="{{ item }}" restamp="true">
+              <dorel-input-select
+                label="[[ item.label ]]"
+                selected="[[ item.selected ]]"
+                options="[[ item.options ]]"
+                disabled$="[[ _hasOptions(item.options) ]]"
+                required>
+              </dorel-input-select>
+            </template>
+          </template>
+        </div>
+      </template>
+     </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-car-details-form',
+      properties: {
+
+        /**
+         * @attribute
+         * @name formData
+         * @description Object that is passed by parent
+         */
+        formData: {
+          type: Object
+        },
+
+
+      },
+
+      observers: [
+        '_validate(formData.form_groups.*)'
+      ],
+
+      listeners: {
+        'on-selectbox-change': '_selectboxChanged'
+      },
+
+      /**
+       * @name ready
+       * @description will get the brands and reset the other selectboxes
+       */
+      ready: function() {
+        this._getBrands();
+        this._setInitial(1);
+        this._setInitial(2);
+      },
+
+      /**
+       * observer
+       * @name _validate
+       * @description when the form_groups change it will fire a event to the parent that contains the values
+       * @param formGroups - Object
+       */
+      _validate: function(formGroups) {
+        if(formGroups.value && formGroups.value && formGroups.value.length) {
+          var isValid = formGroups.value.every(function(group) {
+            return Boolean(group && group.selected && group.selected.value && group.selected.value !== '');
+          })
+          var values = [];
+          if(isValid) {
+            var group_values = formGroups.value.map(function(group) {
+              return group.selected.value;
+            });
+            group_values.forEach(function(group) {
+              group.forEach(function(item) {
+                values.push(item);
+              });
+            });
+          }
+          this.fire('submit-groups', { value: { valid : isValid, groups_values: values } });
+        }
+      },
+
+      /**
+       * listener
+       * @name _selectboxChanged
+       * @description every time the value of selectbox changes it will call a certain function
+       * @param event - Object
+       */
+      _selectboxChanged: function(event) {
+        var updatedValue = event.detail.value;
+        var formGroups = this.get('formData.form_groups');
+        var groupIndex = this._getGroupIndex(formGroups, updatedValue);
+
+        if(updatedValue.value !== '') {
+          updatedValue.value = JSON.parse(updatedValue.value);
+        }
+
+        if(groupIndex > -1) {
+          this._setSelected(formGroups, groupIndex, updatedValue);
+        }
+
+        if(groupIndex === 0) {
+          this.getModels(updatedValue);
+        }
+        if(groupIndex === 1) {
+          this.getTypeYear(updatedValue);
+        }
+      },
+
+      /**
+       * helperMethod
+       * @name _getGroupIndex
+       * @description will find de index of the updated value in the formGroups array
+       * @param formGroups - Array
+       * @param updatedValue - Object
+       * @returns Number
+       */
+      _getGroupIndex: function(formGroups, updatedValue) {
+        return formGroups.findIndex(function(group) {
+          return group.options.some(function(option) {
+             return option.label === updatedValue.label;
+          });
+        });
+      },
+
+      /**
+       * helperMethod
+       * @name _setSelected
+       * @description will create a new array with the updatedValue (dom-repeat workaround)
+       * @param formGroups - Array
+       * @param groupIndex - Number
+       * @param updatedValue - Object
+       */
+      _setSelected: function(formGroups, groupIndex, updatedValue) {
+        var self = this;
+        var newFormGroups = formGroups.map(function(group, index) {
+          if(index === groupIndex) {
+            group.selected = updatedValue;
+          }
+          return Object.assign({}, group);
+        }, []);
+        this.set('formData.form_groups', newFormGroups);
+      },
+
+      /**
+       * helperMethod
+       * @name _hasOptions
+       * @description will return true if a selectbox has more then 1 option
+       * @param options - Array
+       * @returns Boolean
+       */
+      _hasOptions: function(options) {
+        return Boolean(!options || !options.length || options.length === 1);
+      },
+
+      /**
+       * @name _getBrands
+       * @description will generate a request to the brands endpoint
+       */
+      _getBrands: function() {
+        var brandEl = this.$.brand;
+        brandEl.url = CONFIG.DIO_API_URL + '/car-brands';
+        this._setInitial(0);
+        brandEl.generateRequest();
+      },
+
+      /**
+       * @name _brandResponse
+       * @description will set the first selectbox with options (response)
+       * @param response - Object
+       */
+      _brandResponse: function(response) {
+        var results = response.detail.response.results;
+        var group = this.get('formData.form_groups.' + 0);
+        results = results.map(function(result) {
+          result.value = JSON.stringify(result.values);
+          return Object.assign({}, result);
+        });
+        results.unshift(group.default_option);
+        this.set('formData.form_groups.' + 0 + '.options', results);
+      },
+
+      /**
+       * @name getModels
+       * @description will generate a request to the models endpoint
+       */
+      getModels: function(updatedValue) {
+        this._setInitial(1);
+        this._setInitial(2);
+        if(!updatedValue || updatedValue.value === '') {
+          return;
+        } else {
+          var item = updatedValue.value.find(function(item){
+            return item.filter === 'id';
+          });
+          var modelEl = this.$.model;
+          modelEl.url = CONFIG.DIO_API_URL + '/car-brands/' + item.value + '/models';
+          modelEl.generateRequest();
+        }
+      },
+
+      /**
+       * @name _modelResponse
+       * @description will set the second selectbox with options (response)
+       * @param response - Object
+       */
+      _modelResponse: function(response) {
+        var results = response.detail.response.results;
+        var group = this.get('formData.form_groups.' + 1);
+        results = results.map(function(result) {
+          result.value = JSON.stringify(result.values);
+          return Object.assign({}, result);
+        });
+        results.unshift(group.default_option);
+        this.set('formData.form_groups.' + 1 + '.options', results);
+      },
+
+      /**
+       * @name getTypeYear
+       * @description will generate a request to the type/year endpoint
+       */
+      getTypeYear: function(updatedValue) {
+        this._setInitial(2);
+        if(!updatedValue || updatedValue.value === '') {
+          return;
+        }
+        var firstSelectBox = this.get('formData.form_groups.' + 0 + '.selected');
+        var brand = firstSelectBox.value.find(function(item){
+          return item.filter === 'id';
+        });
+
+        var secondSelectBox =  this.get('formData.form_groups.' + 1 + '.selected');
+
+        var modelName = secondSelectBox.value.find(function(item) {
+          return item.filter === 'model_name';
+        });
+
+        var doors = secondSelectBox.value.find(function(item) {
+          return item.filter === 'doors';
+        });
+
+        var typeYearEl = this.$.typeYear;
+        typeYearEl.url = CONFIG.DIO_API_URL + '/car-brands/' + brand.value + '/model-types?model_name=' + modelName.value + '&doors=' + doors.value;
+        typeYearEl.generateRequest();
+
+      },
+
+      /**
+       * @name _typeYearResponse
+       * @description will set the third selectbox with options (response)
+       * @param response - Object
+       */
+      _typeYearResponse: function(response) {
+        var results = response.detail.response.results;
+        var group = this.get('formData.form_groups.' + 2);
+        results = results.map(function(result) {
+          result.value = JSON.stringify(result.values);
+          return Object.assign({}, result);
+        });
+        results.unshift(group.default_option);
+        this.set('formData.form_groups.' + 2 + '.options', results);
+      },
+
+      /**
+       * helperMethod
+       * @name _setInitial
+       * @description will reset a selecbox, index will determine whitch selecbox
+       * @param index - Nuber
+       */
+      _setInitial: function(index) {
+        if(!index && index !== 0) {
+          return;
+        }
+        var defaultOption = this.get('formData.form_groups.' + index + '.default_option');
+        this.set('formData.form_groups.' + index + '.selected', defaultOption);
+        this.set('formData.form_groups.' + index + '.options', [defaultOption]);
+      },
+
+
+    });
+  </script>
+</dom-module>

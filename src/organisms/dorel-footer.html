@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-back-to-top.html">
 <link rel="import" href="../atoms/dorel-icons-social.html">
+<link rel="import" href="../molecules/dorel-multilingual-select-language.html">
 
 <dom-module id="dorel-footer">
   <template>
@@ -16,6 +17,7 @@
         width: 100%;
         height: 100%;
         box-sizing: border-box;
+        position: relative;
       }
 
       /**
@@ -146,7 +148,6 @@
       /* Layout */
       .footer-info {
         @apply(--theme-grid-row);
-        margin-top: 1.5em;
         padding: 0;
       }
 
@@ -188,6 +189,24 @@
         height: auto;
       }
 
+      .footer-disclaimer,
+      .footer-info,
+      .footer-back-to-top {
+        float: left;
+        width: 100%;
+      }
+
+      [tablet-medium-up] .footer-disclaimer,
+      [tablet-medium-up] .footer-info,
+      [tablet-medium-up] .footer-back-to-top {
+        float: none;
+        width: auto;
+      }
+
+      [tablet-medium-up] .footer-info {
+        margin-top: 1.5em;
+      }
+
       [tablet-medium-up] ul {
         margin: .75em 0;
       }
@@ -198,6 +217,15 @@
 
       [tablet-medium-up] .footer-menu .footer-heading::before {
         display: none;
+      }
+
+      [tablet-medium-up] dorel-multilingual-select-language {
+        position: absolute;
+        right: 1.5em;
+        top: 2.25em;
+        float: right;
+        height: 3em;
+        display: block;
       }
 
 
@@ -213,30 +241,27 @@
         if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
 
         <section class="footer-media-links layout horizontal center center-justified wrap">
+          
+          <!-- dom-repeat social channels -->
           <template
-            is="dom-if"
-            if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
-
-            <template
-              is="dom-repeat"
-              items="[[ globals.Dorel.collect.options.footer_social_links ]]"
-              as="social_link">
-              <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
-                 on-click="_socialClick">
-                <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"></iron-icon>
-                <span>[[ social_link.social_media_text ]]</span>
-              </a>
-            </template>
-
+            is="dom-repeat"
+            items="[[ globals.Dorel.collect.options.social_channels ]]"
+            as="socialChannel">
+            <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
+               on-click="_socialClick">
+              <iron-icon icon="social-iconset:[[ socialChannel.social_media_icon ]]"></iron-icon>
+              <span>[[ socialChannel.social_media_text ]]</span>
+            </a>
           </template>
-          <template
-            is="dom-if"
-            if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
-            <span class="footer-text">Please define your footer social links in the admin area</span>
-          </template>
+          <!--// dom-repeat social channels -->
+
         </section>
-
       </template>
+
+      <!-- TOOD: Add conditional dom-if template -->
+      <dorel-multilingual-select-language light="true"
+                                          current-language="{{ currentLanguage }}"
+                                          continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
 
       <section id="footer-widget-area" class="footer-info">
         <!-- widget areas are inserted here -->
@@ -262,7 +287,173 @@
     Polymer({
       is: 'dorel-footer',
 
-      properties: {},
+      properties: {
+        /**
+         * @name currentLanguage
+         * @description Object containing currently selected country and language
+         * TODO: This is temporarily filled with  dummy data, connect to API later
+         */
+        'currentLanguage': {
+          type: Object,
+          value: {
+            'country': 'Belgium',
+            'language': 'Dutch',
+            'countryCode': 'be',
+          }
+        },
+        /**
+         * @name continentsData
+         * @description Object containing the continents (and country, language data)
+         * TODO: This is temporarily filled with  dummy data, connect to API later
+         */
+        continentsData: {
+          type: Array,
+          value: [{
+            title: 'Europe', countries: [
+              {
+                countryCode: 'at',
+                title: 'Austria',
+                languages: [
+                  {language: 'German', id: 0},
+                ]
+              }, {
+                countryCode: 'be',
+                title: 'Belgium',
+                languages: [
+                  {language: 'Dutch', id: 0},
+                  {language: 'French', id: 1},
+                ]
+              }, {
+                countryCode: 'cz',
+                title: 'Czech Republic',
+                languages: [
+                  {language: 'Czech', id: 0}
+                ]
+              }
+            ]
+          },
+            {
+              title: 'North America', countries: [
+              {
+                countryCode: 'ca',
+                title: 'Canada',
+                languages: [
+                  {language: 'English', id: 0},
+                  {language: 'French', id: 1},
+                ]
+              }, {
+                countryCode: 'mx',
+                title: 'Mexico',
+                languages: [
+                  {language: 'Spanish', id: 0},
+                ]
+              }, {
+                countryCode: 'us',
+                title: 'United States',
+                languages: [
+                  {language: 'English', id: 0},
+                ]
+              }
+            ]
+            },
+            {
+              title: 'South America', countries: [
+              {
+                countryCode: 'at',
+                title: 'Austria',
+                languages: [
+                  {language: 'German', id: 0},
+                ]
+              }, {
+                countryCode: 'be',
+                title: 'Belgium',
+                languages: [
+                  {language: 'Dutch', id: 0},
+                  {language: 'French', id: 1},
+                ]
+              }, {
+                countryCode: 'cz',
+                title: 'Czech Republic',
+                languages: [
+                  {language: 'Czech', id: 0}
+                ]
+              }
+            ]
+            },
+            {
+              title: 'Asia Pacific', countries: [
+              {
+                countryCode: 'at',
+                title: 'Austria',
+                languages: [
+                  {language: 'German', id: 0},
+                ]
+              }, {
+                countryCode: 'be',
+                title: 'Belgium',
+                languages: [
+                  {language: 'Dutch', id: 0},
+                  {language: 'French', id: 1},
+                ]
+              }, {
+                countryCode: 'cz',
+                title: 'Czech Republic',
+                languages: [
+                  {language: 'Czech', id: 0}
+                ]
+              }
+            ]
+            },
+            {
+              title: 'Middle East', countries: [
+              {
+                countryCode: 'at',
+                title: 'Austria',
+                languages: [
+                  {language: 'German', id: 0},
+                ]
+              }, {
+                countryCode: 'be',
+                title: 'Belgium',
+                languages: [
+                  {language: 'Dutch', id: 0},
+                  {language: 'French', id: 1},
+                ]
+              }, {
+                countryCode: 'cz',
+                title: 'Czech Republic',
+                languages: [
+                  {language: 'Czech', id: 0}
+                ]
+              }
+            ]
+            },
+            {
+              title: 'Africa', countries: [
+              {
+                countryCode: 'at',
+                title: 'Austria',
+                languages: [
+                  {language: 'German', id: 0},
+                ]
+              }, {
+                countryCode: 'be',
+                title: 'Belgium',
+                languages: [
+                  {language: 'Dutch', id: 0},
+                  {language: 'French', id: 1},
+                ]
+              }, {
+                countryCode: 'cz',
+                title: 'Czech Republic',
+                languages: [
+                  {language: 'Czech', id: 0}
+                ]
+              }
+            ]
+            }]
+        },
+      },
 
       /**
        * Check if one of theses globals are changed. These are needed to build

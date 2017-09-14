@@ -97,7 +97,6 @@
       </div>
     </template>
 
-
     <div class="wrapper">
 
       <template is="dom-if"
@@ -112,9 +111,17 @@
           is="dom-if"
           if="[[ product.header_section ]]">
           <dorel-section-header
+            offset="true"
             section-header-data="[[ product.header_section ]]"
             gtm-parent="dorel-section-header"
             gtm-parent-index="0"></dorel-section-header>
+        </template>
+        
+        <template
+          is="dom-if"
+          if="[[ templateData.acf.breadcrumbs_toggle ]]">
+          <dorel-section-page-nav
+            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
         </template>
 
         <dorel-section-product-showcase
@@ -144,8 +151,8 @@
 
         <dorel-section-product-accessories
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
-          category="[[ product.category ]]"
-          related-products="[[ product.relatedProducts ]]"
+          category="[[ category ]]"
+          related-products="[[ product.related_products ]]"
           accessories-options="[[ product.related_product_section ]]"
           gtm-parent="dorel-section-product-accessories"
           gtm-parent-index="5"></dorel-section-product-accessories>

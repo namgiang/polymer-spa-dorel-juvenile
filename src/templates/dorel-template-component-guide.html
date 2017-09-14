@@ -8,13 +8,16 @@
 <link rel="import" href="component-guide/dorel-component-guide-home.html">
 <link rel="import" href="component-guide/dorel-component-guide-product-widgets.html">
 <link rel="import" href="component-guide/dorel-component-guide-breakpoints.html">
+<link rel="import" href="component-guide/dorel-component-guide-images.html">
+<link rel="import" href="component-guide/dorel-component-guide-multilingual.html">
+<link rel="import" href="component-guide/dorel-component-guide-category-about.html">
+<link rel="import" href="component-guide/dorel-component-guide-service.html">
 <link rel="import" href="component-guide/dorel-component-toolbar.html">
-
+<link rel="import" href="../molecules/dorel-nav-tabs.html">
 
 <dom-module id="dorel-template-component-guide">
   <template>
     <style is="custom-style">
-
       paper-item:after, paper-item:before {
         background-color: var(--theme-color-white) !important;
       }
@@ -75,49 +78,55 @@
         width: 100%;
       }
     </style>
-
-    <!-- define routing for products -->
     <app-route
       route="{{ route }}"
       pattern="/:componentName"
-      data="{{ routeData }}"
-      tail="{{ subroute }}"></app-route>
+      data="{{ subrouteData }}"></app-route>
+
     <dorel-component-toolbar brand="{{ brand }}"
                              available-brands="{{ availableBrands }}">
     </dorel-component-toolbar>
     <div class="component-guide-container">
       <div class="component-guide__navigation">
-        <paper-menu selected="{{ routeData.componentName }}"
-                    attr-for-selected='name'>
-          <paper-item name="introduction">Introduction</paper-item>
-          <paper-item name="typography">Typography</paper-item>
-          <paper-item name="layout-sizes">Layout & Sizes</paper-item>
-          <paper-item name="colors">Colors</paper-item>
-          <paper-item name="buttons">Buttons</paper-item>
-          <paper-item name="forms">Forms</paper-item>
-          <paper-item name="home">Home</paper-item>
-          <paper-item name="product-widgets">Product Widgets</paper-item>
-          <paper-item name="breakpoints">Breakpoints</paper-item>
+        <paper-menu id="topics"
+                    selected="{{ subrouteData.componentName }}"
+                    attr-for-selected="topic">
+          <paper-item topic="introduction">Introduction</paper-item>
+          <paper-item topic="typography">Typography</paper-item>
+          <paper-item topic="layout-sizes">Layout & Sizes</paper-item>
+          <paper-item topic="colors">Colors</paper-item>
+          <paper-item topic="buttons">Buttons</paper-item>
+          <paper-item topic="forms">Forms</paper-item>
+          <paper-item topic="home">Home</paper-item>
+          <paper-item topic="product-widgets">Product Widgets</paper-item>
+          <paper-item topic="breakpoints">Breakpoints</paper-item>
+          <paper-item topic="images">Images</paper-item>
+          <paper-item topic="multilingual">Multilingual</paper-item>
+          <paper-item topic="category-about">Category About</paper-item>
+          <paper-item topic="service">Service</paper-item>
         </paper-menu>
       </div>
     </div>
     <div class="component-guide-container">
       <iron-pages class="component-guide__content"
-                  selected="{{ routeData.componentName }}"
-                  fallback-selection="introduction"
-                  attr-for-selected="name">
+                  selected="[[ subrouteData.componentName ]]"
+                  attr-for-selected="topic">
         <dorel-component-guide-introduction brand="{{ brand }}"
-                                            name="introduction"></dorel-component-guide-introduction>
-        <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
-        <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
-        <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
-        <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
-        <dorel-component-guide-forms name="forms"></dorel-component-guide-forms>
-        <dorel-component-guide-home name="home"></dorel-component-guide-home>
-        <dorel-component-guide-product-widgets name="product-widgets"></dorel-component-guide-product-widgets>
-        <dorel-component-guide-breakpoints name="breakpoints"></dorel-component-guide-breakpoints>
+                                            subroute="[[ subrouteData.componentName ]]"
+                                            topic="introduction"></dorel-component-guide-introduction>
+        <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>
+        <dorel-component-guide-layout topic="layout-sizes"></dorel-component-guide-layout>
+        <dorel-component-guide-colors topic="colors"></dorel-component-guide-colors>
+        <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>
+        <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>
+        <dorel-component-guide-home topic="home"></dorel-component-guide-home>
+        <dorel-component-guide-product-widgets topic="product-widgets"></dorel-component-guide-product-widgets>
+        <dorel-component-guide-breakpoints topic="breakpoints"></dorel-component-guide-breakpoints>
+        <dorel-component-guide-images topic="images"></dorel-component-guide-images>
+        <dorel-component-guide-multilingual topic="multilingual"></dorel-component-guide-multilingual>
+        <dorel-component-guide-category-about topic="category-about"></dorel-component-guide-category-about>
+        <dorel-component-guide-service topic="service"></dorel-component-guide-service>
       </iron-pages>
-    </div>
     </div>
   </template>
 
