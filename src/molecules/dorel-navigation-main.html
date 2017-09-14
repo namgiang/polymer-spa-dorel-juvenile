@@ -81,14 +81,14 @@
       <div class="menu-spacer-top"></div>
       <template
         is="dom-if"
-        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        if="[[ appCache.collect.menus.main_menu.items.length ]]">
         <iron-selector role="navigation" class="drawer-list"
                        selected="[[ page ]]"
                        attr-for-selected="name">
           <paper-menu>
             <template
               is="dom-repeat"
-              items="[[ globals.Dorel.collect.menus.main_menu.items ]]"
+              items="[[ appCache.collect.menus.main_menu.items ]]"
               as="menuItem"
               initial-count="4">
 
@@ -139,7 +139,7 @@
       <!-- only show if menu contains items -->
       <template
         is="dom-if"
-        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        if="[[ appCache.collect.menus.main_menu.items.length ]]">
         <nav
           role="navigation">
           <dorel-tabs
@@ -149,7 +149,7 @@
               <!-- loop through the menu items -->
               <template
                 is="dom-repeat"
-                items="[[ globals.Dorel.collect.menus.main_menu.items ]]"
+                items="[[ appCache.collect.menus.main_menu.items ]]"
                 as="menuItem">
 
                 <!-- if menu doesn't have children just show the menu item -->
@@ -203,13 +203,19 @@
 
       is: 'dorel-navigation-main',
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
 
         /**
          * @name currentLanguage
          * @description Object containing the currently selected region and language
          * TODO: This is temporarily filled with  dummy data, connect to API later
          */
-        'currentLanguage': {
+        currentLanguage: {
           type: Object,
           value: function () {
             return {
