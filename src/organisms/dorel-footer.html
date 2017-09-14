@@ -241,26 +241,20 @@
         if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
 
         <section class="footer-media-links layout horizontal center center-justified wrap">
+          
+          <!-- dom-repeat social channels -->
           <template
-            is="dom-if"
-            if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
+            is="dom-repeat"
+            items="[[ globals.Dorel.collect.options.social_channels ]]"
+            as="socialChannel">
+            <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
+               on-click="_socialClick">
+              <iron-icon icon="social-iconset:[[ socialChannel.social_media_icon ]]"></iron-icon>
+              <span>[[ socialChannel.social_media_text ]]</span>
+            </a>
+          </template>
+          <!--// dom-repeat social channels -->
 
-            <template
-              is="dom-repeat"
-              items="[[ globals.Dorel.collect.options.footer_social_links ]]"
-              as="social_link">
-              <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
-                 on-click="_socialClick">
-                <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"></iron-icon>
-                <span>[[ social_link.social_media_text ]]</span>
-              </a>
-            </template>
-          </template>
-          <template
-            is="dom-if"
-            if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
-            <span class="footer-text">Please define your footer social links in the admin area</span>
-          </template>
         </section>
       </template>
 
