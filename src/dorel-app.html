@@ -94,7 +94,7 @@
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
     <dorel-gtm-events
-      gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
+      gtm-data="[[ appCache ]]"></dorel-gtm-events>
 
     <dorel-third-party
       hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
@@ -394,7 +394,7 @@
             colorMap: [] // aron | DONE
           },
           faqs: [], // aron | DONE
-          events: {}, // marnix
+          events: {}, // DONE
           grid: { // DONE
             horizontal: false,
             vertical: false
@@ -487,7 +487,7 @@
         /**
          * Tracking on pageload
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'loaded',
           component: 'page',
           element: this,
@@ -497,7 +497,9 @@
               document.URL : globalsCopy.current.page,
             'globals': globalsCopy
           }
-        });
+        };
+
+        this.fire('setAppCache', { value: event, path: 'events' });
       },
 
       /**

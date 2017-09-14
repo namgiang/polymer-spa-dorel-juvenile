@@ -427,8 +427,7 @@
 
         var element = Polymer.dom(event).localTarget;
 
-        // send event data to tracking function
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'click',
           component: 'navigation',
           structure: {
@@ -441,7 +440,10 @@
             'currentPage': document.URL,
             'targetPage': element.href
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
+
       },
 
       /**

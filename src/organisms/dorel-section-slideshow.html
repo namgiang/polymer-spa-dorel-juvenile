@@ -151,12 +151,14 @@
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: type,
           component: 'slideshow',
           element: Polymer.dom(event).localTarget,
           event: 'polymer_event'
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>

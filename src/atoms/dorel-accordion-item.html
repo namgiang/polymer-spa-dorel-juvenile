@@ -185,7 +185,7 @@
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var events = {
           action: 'toggle-accordion',
           component: 'accordion',
           structure: {
@@ -203,7 +203,9 @@
             'currentState': (accordionState) ? 'open' : 'closed',
             'targetState': (accordionState) ? 'closed' : 'open'
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>
