@@ -19,6 +19,16 @@
         token: {
           type: String,
           notify: true
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
         }
 
       },
@@ -30,8 +40,8 @@
       _checkTimestamp: function() {
 
         // get timestamp from globals
-        var timestamp = Polymer.globalsManager.get('Dorel.product.auth.timestamp');
-        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
+        var timestamp = this.get('appCache.product.auth.timestamp');
+        var token = this.get('appCache.product.auth.token');
 
         // check if timestamp and token are set
         if(timestamp && token) {
@@ -80,9 +90,9 @@
       _authResponse: function(response) {
         var token = response.detail.response;
         var newTimestamp = Date.now();
-        Polymer.globalsManager.set('Dorel.product.auth.token', token);
-        Polymer.globalsManager.set('Dorel.product.auth.timestamp', newTimestamp);
-        this.token = token;
+        this.fire('setAppCache', { value: token, path: 'product.auth.token' });
+        this.fire('setAppCache', { value: newTimestamp, path: 'product.auth.timestamp' });
+        this.set('token', token);
       }
     });
   </script>

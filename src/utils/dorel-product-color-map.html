@@ -21,6 +21,16 @@
 
         token: {
           type: String
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
         }
 
       },
@@ -33,7 +43,8 @@
         if(!token) {
           return;
         }
-        var colorMap =  Polymer.globalsManager.get('Dorel.product.colorMap');
+        var colorMap =  this.get('appCache.product.colorMap');
+
         if(colorMap && colorMap.length) {
           this.colorMap = colorMap;
         } else {
@@ -45,8 +56,9 @@
       },
 
       _colorMapResponse: function(response) {
-        this.colorMap = response.detail.response;
-        Polymer.globalsManager.set('Dorel.product.colorMap', this.colorMap);
+        var colorMap = response.detail.response;
+        this.set('colorMap', colorMap);
+        this.fire('setAppCache', { value: colorMap, path: 'product.colorMap' });
       }
     });
   </script>
