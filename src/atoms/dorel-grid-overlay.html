@@ -81,9 +81,9 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-      <div class="vertical-rhythm" shown$="[[ globals.Dorel.grid.vertical ]]"></div>
-      <div class="horizontal-grid" shown$="[[ globals.Dorel.grid.horizontal ]]">
+    <div tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="vertical-rhythm" shown$="[[ appCache.grid.vertical ]]"></div>
+      <div class="horizontal-grid" shown$="[[ appCache.grid.horizontal ]]">
         <div class="row">
           <div class="column">
             <div class="column-content"></div>
@@ -138,11 +138,20 @@
             return document.body;
           }
         },
+
         pageRoutePath: {
           type: Object,
           notify: true,
           readOnly: false,
         },
+
+        appCache: {
+          type: Object,
+          value: function () {
+            return {}
+          }
+        },
+
         /**
          * @name availableBrands
          * @description Available brands to switch between
@@ -183,16 +192,18 @@
        * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
        */
       _setVerticalRhythm: function () {
-        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
-        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
+        var vertical = this.appCache.grid.vertical;
+        console.log('first app Cache' + vertical);
+        this.fire('setAppCache', {value: !vertical, path: 'grid.vertical'});
       },
       /**
        * @name _setHorizontalGrid
        * @description Toggles the horizontal grid global variable (and it's connected overlay component)
        */
       _setHorizontalGrid: function () {
-        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
-        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+        var horizontal = this.appCache.grid.horizontal;
+        console.log('first app Cache' + horizontal);
+        this.fire('setAppCache', {value: !horizontal, path: 'grid.horizontal'});
       },
     });
   </script>

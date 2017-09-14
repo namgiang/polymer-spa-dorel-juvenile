@@ -81,7 +81,7 @@
 
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations
-      wp-url="{{ globals.Dorel.wpUrl }}"></dorel-wp-collect-menu-locations>
+      app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages></dorel-wp-collect-pages>
@@ -212,6 +212,7 @@
 
         <dorel-template-component-guide
           name="component-guide"
+          app-cache="[[ appCache ]]"
           brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
@@ -230,9 +231,11 @@
       </dorel-footer>
     </template>
 
-    <dorel-grid-overlay available-brands="{{ brandNames }}"
-                        selected-brand="{{ brand }}"
-                        page-route-path="{{ route.path }}"></dorel-grid-overlay>
+    <dorel-grid-overlay
+      app-cache="[[ appCache ]]"
+      available-brands="{{ brandNames }}"
+      selected-brand="{{ brand }}"
+      page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
   <script>
@@ -272,7 +275,7 @@
          */
         brandNames: {
           type: Array,
-          value: function() {
+          value: function () {
             return CONFIG.AVAILABLE_BRANDS;
           }
         },
@@ -349,11 +352,11 @@
         'setAppCache': '_setAppCache'
       },
 
-      _setAppCache: function(event) {
+      _setAppCache: function (event) {
         var data = event.detail;
         var path = data.path;
         var value = data.value;
-        if(data && value && path) {
+        if (data && path) {
           this.set('appCache.' + path, value);
         }
       },
@@ -384,7 +387,7 @@
           },
           faqs: [], // marnix
           events: {}, // marnix
-          grid: { // peter
+          grid: { // DONE
             horizontal: false,
             vertical: false
           }
@@ -516,7 +519,7 @@
         return copy;
       },
 
-      shouldShow: function(currentPage) {
+      shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
