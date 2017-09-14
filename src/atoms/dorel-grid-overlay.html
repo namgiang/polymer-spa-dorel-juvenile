@@ -167,8 +167,6 @@
       keyBindings: {
         'shift+backspace': '_setVerticalRhythm',
         'shift+enter': '_setHorizontalGrid',
-        'shift+right': '_setNextBrand',
-        'shift+left': '_setPreviousBrand',
         //'shift+space': '_setPageToComponents'
       },
       /**
@@ -178,40 +176,6 @@
       _setPageToComponents: function () {
         //TODO: This is a bit buggy but works (somehow fires of many events)
         this.pageRoutePath = 'component-guide/introduction/';
-      },
-      /**
-       * @name _getIndexCurrentBrand
-       * @description Returns the index of the currently selected brand
-       */
-      _getIndexCurrentBrand: function () {
-        // Get the current index of the brand
-        for (var i = 0; i < this.availableBrands.length; i++) {
-          if (this.selectedBrand === this.availableBrands[i]) {
-            return i;
-          }
-        }
-
-        return -1;
-      },
-
-      /**
-       * @name _setNextBrand
-       * @description Selects and shows next brand in the list
-       */
-      _setNextBrand: function () {
-        var indexBrand = this._getIndexCurrentBrand();
-        var newIndexBrand = (indexBrand + 1) % this.availableBrands.length;
-        this.selectedBrand = this.availableBrands[newIndexBrand];
-      },
-
-      /**
-       * @name _setPreviousBrand
-       * @description Selects and show previous brand in the list
-       */
-      _setPreviousBrand: function () {
-        var indexBrand = this._getIndexCurrentBrand();
-        var newIndexBrand = Math.abs((indexBrand - 1) % this.availableBrands.length);
-        this.selectedBrand = this.availableBrands[newIndexBrand];
       },
 
       /**

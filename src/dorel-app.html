@@ -38,6 +38,7 @@
 <link rel="import" href="utils/dorel-meta-manager.html">
 <link rel="import" href="utils/dorel-main-routing.html">
 <link rel="import" href="utils/dorel-product-category-manager.html">
+<link rel="import" href="utils/dorel-brand-manager.html">
 
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
@@ -111,7 +112,14 @@
       route="{{ route }}"
       pattern="/:page"
       data="{{ routeData }}"
+      query-params="{{ queryParams }}"
       tail="{{ subroute }}"></app-route>
+
+    <dorel-brand-manager
+      query-params="[[ queryParams ]]"
+      brandNames="{{ brandNames }}"
+      brand="{{ brand }}">
+    </dorel-brand-manager>
 
     <dorel-main-routing
       route="[[ route ]]"
@@ -263,7 +271,9 @@
          */
         brandNames: {
           type: Array,
-          value: []
+          value: function() {
+            return CONFIG.AVAILABLE_BRANDS;
+          }
         },
 
         /**
@@ -289,8 +299,7 @@
        * @description observe if a function is called
        */
       observers: [
-        '_pageChanged(currentPage)',
-        '_brandChanged(brand)'
+        '_pageChanged(currentPage)'
       ],
 
       created: function () {
@@ -339,34 +348,6 @@
         // Define the custom api in the globals (obj becomes string)
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
-
-        this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
-        Polymer.globalsManager.set('Dorel.current.brandName', this.brand);
-      },
-
-
-      /**
-       * @observer
-       * @name _brandChanged
-       * @description the brand was changed, triggers a change in shared styles
-       *
-       * @param page - String - the string of the current active brand
-       */
-      _brandChanged: function (brand) {
-        //Removed the current shared style from the dom, if it exists.
-        var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
-        if (currentSharedStyle != undefined) {
-          currentSharedStyle.remove();
-        }
-
-        // Checks the apps config, and sets the according brand theme
-        var brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
-        var domModule = document.createElement('style', 'custom-style');
-        domModule.setAttribute('include', brandTheme);
-        domModule.setAttribute('id', 'brand-shared-style');
-        Polymer.dom(this.root).appendChild(domModule);
-        Polymer.updateStyles();
       },
 
       /**
