@@ -307,13 +307,9 @@
         '_pageChanged(currentPage)'
       ],
 
-      attached: function() {
-        debugger;
-      },
-
       created: function () {
         window.performance && performance.mark && performance.mark('dorel-app.created');
-        debugger;
+
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
         Polymer.globalsManager.set('Dorel', {
           wpUrl: {}, // will be a string later (bug inside globalsManager)
@@ -364,12 +360,47 @@
 
       ready: function () {
 
+        var appCache = {
+          wpUrl: {},
+          dioApiUrl: {},
+          locale: {},
+          collect: {},
+          current: {
+            brandName: ''
+          },
+          product: {
+            products: [],
+            attributes: {
+              accordions: [],
+              features: [],
+              usps: []
+            },
+            retrievedCategories: [],
+            auth: {
+              token: '',
+              timestamp: ''
+            },
+            colorMap: []
+          },
+          faqs: [],
+          events: {},
+          grid: {
+            horizontal: false,
+            vertical: false
+          }
+        };
+        this.set('appCache', appCache);
+
         // Define the wpUrl in the globals (object becomes string)
         Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
 
         // Define the custom api in the globals (obj becomes string)
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
+
+        this.brandNames = CONFIG.AVAILABLE_BRANDS;
+        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
+        Polymer.globalsManager.set('Dorel.current.brandName', this.brand);
       },
 
       /**
