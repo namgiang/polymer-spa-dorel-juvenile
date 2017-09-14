@@ -186,6 +186,7 @@
        * @returns Number - array number of the tab that is selected
        */
       _getSelectedTab: function(subCategories, subCatId) {
+        if(typeof subCategories === 'undefined') return;
         
         // go over each sub category and match the subCategoryID with the queryParams subID
         for (var i = 0; i < subCategories.length; i++) {
@@ -224,6 +225,7 @@
        * @param questionId - String id of the queryParam
        */
       _setQuestions: function(subCatQuestions, questionId) {
+
         // set the opened property for each question of the subCategory
         subCatQuestions.forEach(function(question) {
           question.opened = (question.id === Number(questionId));
