@@ -70,39 +70,11 @@
         padding: 0 .75em;
       }
 
-      /*[tablet-medium-up] dorel-product-accessory {
-        @apply(--theme-grid-column);
-        float: left;
-        margin-top: 3em;
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
-        flex-basis: calc(var(--theme-column-width) * 4);
-        width: calc(var(--theme-column-width) * 4);
-      }*/
-
-      /* TODO: this should be coupled still */
-      /*[tablet-small] dorel-product-accessory,
-      [tablet-medium] dorel-product-accessory,
-      [mobile-medium] dorel-product-accessory {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        width: calc(var(--theme-column-width) * 6);
-      } */
-
-      /*[mobile-small] .row {
-        margin-right: -0.25em;
-        margin-left: -0.25em;
-      }
-
-      [mobile-medium] .row {
-        margin-right: -0.5em;
-        margin-left: -0.5em;
-      } */
-
-
     </style>
 
     <dorel-magento-collect-related-product
       category="[[ category ]]"
+      app-cache="[[ appCache ]]"
       product-names="[[ relatedProducts ]]"
       retrieving-related-products="{{ retrievingRelatedProducts }}"
       related-products="{{ accessoriesData }}">
@@ -306,6 +278,16 @@
           type: String,
           computed: '_computeRestContent(accessoriesData)'
         },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        }
       },
 
       observers: [
