@@ -183,6 +183,7 @@
         <dorel-template-product-category
           name="product-category"
           route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
@@ -280,6 +281,10 @@
 
         category: {
           type: Number
+        },
+
+        appCache: {
+          type: Object
         }
 
       },
@@ -293,9 +298,13 @@
         '_brandChanged(brand)'
       ],
 
+      attached: function() {
+        debugger;
+      },
+
       created: function () {
         window.performance && performance.mark && performance.mark('dorel-app.created');
-
+        debugger;
         // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
         Polymer.globalsManager.set('Dorel', {
           wpUrl: {}, // will be a string later (bug inside globalsManager)
@@ -329,6 +338,19 @@
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
+      },
+
+      listeners: {
+        'setAppCache': '_setAppCache'
+      },
+
+      _setAppCache: function(event) {
+        var data = event.detail;
+        var path = data.path;
+        var value = data.value;
+        if(data && value && path) {
+          this.set('appCache.' + path, value);
+        }
       },
 
       ready: function () {

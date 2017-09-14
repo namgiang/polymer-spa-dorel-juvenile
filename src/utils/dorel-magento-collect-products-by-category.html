@@ -35,7 +35,17 @@
         retrievingProducts: {
           type: Boolean,
           notify: true
+        },
+
+        cachedProducts: {
+          type: Array
+        },
+
+        retrievedCategories: {
+          type: Array
         }
+
+
       },
 
       observers: [
@@ -131,6 +141,7 @@
 
         // set new array of products in the global saved products
         Polymer.globalsManager.set('Dorel.product.products', products);
+        this.fire('setAppCache', { value: products, path: 'product.products' });
       },
 
       /**
