@@ -12,20 +12,36 @@
       is: 'dorel-wp-collect-categories',
       
       properties: {
+
         /**
+         * @attribute
+         * @name appCache
+         * @description the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
+        /**
+         * @attribute
          * @name endPoint
          * @description the endpoint or url of the api
          */
         endPoint: {
           type: String
-        },
+        }
 
       },
 
       observers: [
-        '_retrieveCategories(globals.Dorel.wpUrl)'
+        '_retrieveCategories(appCache.wpUrl)'
       ],
 
+      /**
+       * @observer
+       * @name _retrieveCategories
+       * @description retrieve the categories from Wordpress
+       */
       _retrieveCategories: function(wpUrl) {
         if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
 
@@ -37,14 +53,19 @@
         categoriesEl.generateRequest();
       },
 
+      /**
+       * @helper
+       * @name _categoriesLoaded
+       * @description handle of the iron-ajax response and set the 
+       */
       _categoriesLoaded: function(data) {
         var categories = data.detail.response;
-
-        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
-        Polymer.globalsManager.set('Dorel.collect.categories', categories);
+        
+        this.fire('setAppCache', { value: categories, path: 'collect.categories' });
       },
 
       /**
+       * @helper
        * @name _hasProps
        * @description check if the observed data model has properties
        */
