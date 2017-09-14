@@ -84,7 +84,7 @@
       wp-url="{{ globals.Dorel.wpUrl }}"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
 
     <!-- collect the options pages -->
     <dorel-wp-collect-options
@@ -270,6 +270,17 @@
         },
 
         /**
+         * @name brand
+         * @description The currently selected brand
+         */
+        brand: {
+          type: Object,
+          value: function() {
+            return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+          }
+        },
+
+        /**
          * @name brandNames
          * @description available brand names (from config), used for switching between brands
          */
@@ -368,9 +379,7 @@
           dioApiUrl: {}, // marnix
           locale: {}, // peter
           collect: {}, // marnix
-          current: {  // peter
-            brandName: '' // peter
-          },
+          current: {}, // DONE
           product: {
             products: [], // aron | DONE
             attributes: {
@@ -400,10 +409,6 @@
         // Define the custom api in the globals (obj becomes string)
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
         Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
-
-        this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
-        Polymer.globalsManager.set('Dorel.current.brandName', this.brand);
       },
 
       /**
