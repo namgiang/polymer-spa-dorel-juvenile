@@ -93,7 +93,8 @@
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-    <dorel-gtm-events gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
+
+    <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
 
     <dorel-third-party
       hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
@@ -201,6 +202,7 @@
 
         <dorel-template-faq-detail
           name="faq-detail"
+          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-detail>
 
@@ -389,13 +391,13 @@
             },
             retrievedCategories: [], // aron | DONE
             auth: {
-              token: '', // aron
-              timestamp: '' // // aron
+              token: '', // aron | DONE
+              timestamp: '' // // aron | DONE
             },
-            colorMap: [] // aron
+            colorMap: [] // aron | DONE
           },
-          faqs: [], // marnix
-          events: {}, // marnix
+          faqs: [], // aron | DONE
+          events: {}, // DONE
           grid: { // DONE
             horizontal: false,
             vertical: false
@@ -492,7 +494,7 @@
         /**
          * Tracking on pageload
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'loaded',
           component: 'page',
           element: this,
@@ -502,7 +504,9 @@
               document.URL : globalsCopy.current.page,
             'globals': globalsCopy
           }
-        });
+        };
+
+        this.fire('setAppCache', { value: event, path: 'events' });
       },
 
       /**

@@ -2,11 +2,11 @@
   <template>
     <iron-ajax
       auto
-      url="[[ endPoint ]]" 
-      handle-as="json" 
+      url="[[ endPoint ]]"
+      handle-as="json"
       on-response="_faqsLoaded"></iron-ajax>
   </template>
-  
+
   <script>
     Polymer({
       is: 'dorel-gmt-collect-faqs',
@@ -44,12 +44,12 @@
           console.error('no segments attribute defined, please provide the right apiCall as an attribute');
           return;
         }
-        
+
         // set the endPoint variable which will kick off the iron-ajax
         this.set('endPoint', CONFIG.DIO_API_URL + '/service-topics/' + newSegment);
       },
 
-      /** 
+      /**
        * @name _faqsLoaded
        * @description when the endpoint gives a response we set the apiResponse,
        * which will reflect to the attribute
@@ -58,16 +58,16 @@
         var response = data.detail.response;
 
         if(typeof response.results !== 'undefined') {
-          var faqsGlobals = Polymer.globalsManager.get('Dorel.faqs') || [];
-          
-          Polymer.globalsManager.set('Dorel.faqs', response.results);
+          var faqsGlobals = this.get('appCache.faqs') || [];
+
+          this.fire('setAppCache', { value: response.results, path: 'faqs' });
         }
-        
+
         if(typeof response.result !== 'undefined') {
-          var faqsGlobals = Polymer.globalsManager.get('Dorel.faqs') || [];
+          var faqsGlobals = this.get('appCache.faqs') || [];
 
           faqsGlobals.push(response.result);
-          Polymer.globalsManager.set('Dorel.faqs', faqsGlobals);
+          this.fire('setAppCache', { value: faqsGlobals, path: 'faqs' });
         }
       }
     });

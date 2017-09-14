@@ -324,7 +324,7 @@
        */
       _logoClicked: function (event) {
         // track this event
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'switch',
           component: 'logo',
           element: Polymer.dom(event).localTarget.parentNode, // needs to be parentNode!!!!!
@@ -333,7 +333,9 @@
             'currentPage': document.URL,
             'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       },
 
       shouldShow: function(boolean) {
@@ -369,7 +371,7 @@
         this.mobileMenuOpened = !this.mobileMenuOpened;
 
         // send event to tracking
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: this.mobileMenuOpened ? 'open' : 'close',
           component: 'hamburger',
           element: Polymer.dom(event).localTarget.parentNode,
@@ -378,7 +380,9 @@
             'currentState': this.mobileMenuOpened ? 'close' : 'open',
             'toState': this.mobileMenuOpened ? 'open' : 'close'
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>
