@@ -43,11 +43,11 @@
        * @description retrieve the categories from Wordpress
        */
       _retrieveCategories: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+        if (typeof wpUrl === 'undefined' || wpUrl === '') return;
 
 
         var categoriesEl = this.$.categories;
-        categoriesEl.url = this.globals.Dorel.wpUrl + '/wp/v2/categories';
+        categoriesEl.url = wpUrl + '/wp/v2/categories';
 
          // do the products call
         categoriesEl.generateRequest();
@@ -60,25 +60,8 @@
        */
       _categoriesLoaded: function(data) {
         var categories = data.detail.response;
-        
+
         this.fire('setAppCache', { value: categories, path: 'collect.categories' });
-      },
-
-      /**
-       * @helper
-       * @name _hasProps
-       * @description check if the observed data model has properties
-       */
-      _hasProps: function(dataObj) {
-        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
-        var hasProps = false;
-
-        // check for properties in the dorelEvt object
-        for (var prop in dataObj) {
-          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
-        }
-
-        return hasProps;
       }
     });
   </script>
