@@ -93,8 +93,6 @@
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
     <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
 
-    <dorel-wp-collect-categories></dorel-wp-collect-categories>
-
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
     <dorel-gtm-events
@@ -131,6 +129,7 @@
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
       current-page="[[ currentPage ]]"
+      app-cache="[[ appCache ]]"
       id="metaManager">
     </dorel-meta-manager>
 
@@ -185,6 +184,7 @@
         <dorel-template-product-detail
           name="product-detail"
           route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-detail>
 
@@ -364,7 +364,7 @@
       ready: function () {
 
         var appCache = {
-          wpUrl: {}, // marnix
+          wpUrl: CONFIG.CMS_URL, // marnix
           dioApiUrl: {}, // marnix
           locale: {}, // peter
           collect: {}, // marnix
@@ -372,7 +372,7 @@
             brandName: '' // peter
           },
           product: {
-            products: [], // aron
+            products: [], // aron | DONE
             attributes: {
               accordions: [], // aron
               features: [], // aron
