@@ -80,16 +80,13 @@
     </style>
 
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations
-      app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
+    <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages
-      app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
+    <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
 
     <!-- collect the options pages -->
-    <dorel-wp-collect-options
-      app-cache="[[ appCache ]]"></dorel-wp-collect-options>
+    <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
     <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
@@ -272,6 +269,17 @@
         },
 
         /**
+         * @name brand
+         * @description The currently selected brand
+         */
+        brand: {
+          type: Object,
+          value: function () {
+            return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+          }
+        },
+
+        /**
          * @name brandNames
          * @description available brand names (from config), used for switching between brands
          */
@@ -368,19 +376,16 @@
         var appCache = {
           wpUrl: CONFIG.CMS_URL, // marnix
           dioApiUrl: {}, // marnix
-          locale: {}, // peter
           collect: {}, // marnix
-          current: {  // peter
-            brandName: '' // peter
-          },
+          current: {}, // DONE
           product: {
             products: [], // aron | DONE
             attributes: {
-              accordions: [], // aron
-              features: [], // aron
-              usps: [] // aron
+              accordions: [], // aron | DONE
+              features: [], // aron | DONE
+              usps: [] // aron | DONE
             },
-            retrievedCategories: [], // aron
+            retrievedCategories: [], // aron | DONE
             auth: {
               token: '', // aron
               timestamp: '' // // aron
@@ -394,6 +399,7 @@
             vertical: false
           }
         };
+
         this.set('appCache', appCache);
 
         // Define the wpUrl in the globals (object becomes string)
@@ -401,11 +407,6 @@
 
         // Define the custom api in the globals (obj becomes string)
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
-        Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
-
-        this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brand = this.brandNames[CONFIG.SELECTED_BRAND];
-        Polymer.globalsManager.set('Dorel.current.brandName', this.brand);
       },
 
       /**
