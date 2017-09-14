@@ -103,10 +103,11 @@
         is="dom-if"
         if="[[ templateData.acf.services_overview_toggle ]]">
         <dorel-section-service-faq-overview
+          app-cache="[[ appCache ]]"
           template-data="[[ templateData.acf ]]"
-          faq-categories="[[ globals.Dorel.faqs ]]"></dorel-section-service-faq-overview>
+          faq-categories="[[ appCache.faqs ]]"></dorel-section-service-faq-overview>
       </template>
-      <!--// section-service-support -->
+      <!--// section-service-overview -->
 
       <!-- section-service-support -->
       <template
@@ -117,7 +118,7 @@
             <div class="row">
               <div class="container">
                 <dorel-section-service-support
-                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
               </div>
             </div>
           </div>
@@ -134,6 +135,13 @@
     Polymer({
       is: 'dorel-template-faq-overview',
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
         /**
          * @attribute
          * @name templateData

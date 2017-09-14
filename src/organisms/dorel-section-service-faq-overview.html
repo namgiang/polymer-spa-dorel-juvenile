@@ -361,6 +361,13 @@
     Polymer({
       is: 'dorel-section-service-faq-overview',
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
         selectedTopic: {
           type: String,
           value: ''
@@ -432,7 +439,9 @@
        * @returns Array of page objects
        */
       _getFaqDetailPages: function () {
-        var wpPages = Polymer.globalsManager.get('Dorel.collect.pages');
+        var wpPages = this.get('appCache.collect.pages');
+
+        if(typeof wpPages === 'undefined') return [];
 
         // filter out the detailPages from WP
         var faqPages = wpPages.filter(function (page) {
