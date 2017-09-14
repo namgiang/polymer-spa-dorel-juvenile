@@ -4,6 +4,12 @@
       is: 'dorel-main-routing',
 
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
 
         /**
          * @name route
@@ -44,7 +50,7 @@
       },
 
       observers: [
-        '_routePageChanged(route, globals.Dorel.collect.pages)',
+        '_routePageChanged(route, appCache.collect.pages)',
         '_currentRouteChanged(route)'
       ],
 
@@ -159,7 +165,11 @@
         }
         this.unshift('previousStates', route);
         var previousState = previousStates[1] || { path: '/' };
-        Polymer.globalsManager.set('Dorel.previousState', previousState)
+
+        this.fire('appCache', {
+          path: 'previousState',
+          value: previousState
+        });
       },
 
       /**

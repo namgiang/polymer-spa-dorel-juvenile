@@ -247,6 +247,12 @@
 
       properties: {
 
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
 
         /**
          * @attribute
@@ -340,10 +346,12 @@
 
       getPreviousStateUrl: function() {
         var origin = window.location.origin;
-        var previousState = Polymer.globalsManager.get('Dorel.previousState');
+        var previousState = this.get('appCache.previousState');
+
         if(!previousState || previousState.path === '/product-advisory') {
           return origin;
         }
+        
         return origin + previousState.path;
       },
 

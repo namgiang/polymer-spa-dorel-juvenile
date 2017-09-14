@@ -89,12 +89,11 @@
     <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
+    <dorel-wp-collect-widgets app-cache="[[ appCache ]]"></dorel-wp-collect-widgets>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-    <dorel-gtm-events
-      gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
+    <dorel-gtm-events gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
 
     <dorel-third-party
       hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
@@ -118,6 +117,7 @@
     </dorel-brand-manager>
 
     <dorel-main-routing
+      app-cache="[[ appCache ]]"
       route="[[ route ]]"
       category-page="{{ categoryPage }}"
       previous-states="{{ previousStates }}"
@@ -206,6 +206,7 @@
 
         <dorel-template-product-advisory-tool
           name="product-advisory-tool"
+          app-cache="[[ appCache ]]"
           brand-name="[[ brand.label ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
@@ -225,6 +226,7 @@
       is="dom-if"
       if="[[ shouldShow(currentPage) ]]">
       <dorel-footer
+        app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
         current-language="[[ currentLanguage ]]">
       </dorel-footer>
@@ -374,7 +376,7 @@
       ready: function () {
 
         var appCache = {
-          wpUrl: CONFIG.CMS_URL, // marnix
+          wpUrl: '', // DONE
           dioApiUrl: {}, // marnix
           collect: {}, // marnix
           current: {}, // DONE
@@ -397,13 +399,17 @@
           grid: { // DONE
             horizontal: false,
             vertical: false
-          }
+          },
+          previousState: {}
         };
 
         this.set('appCache', appCache);
 
         // Define the wpUrl in the globals (object becomes string)
-        Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
+        this.fire('setAppCache', {
+          path: 'wpUrl',
+          value: CONFIG.CMS_URL
+        });
 
         // Define the custom api in the globals (obj becomes string)
         Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);

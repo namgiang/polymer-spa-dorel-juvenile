@@ -227,8 +227,6 @@
         height: 3em;
         display: block;
       }
-
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -238,29 +236,21 @@
       <!-- check if we need to show the social links -->
       <template
         is="dom-if"
-        if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
+        if="[[ appCache.collect.options.footer_social_toggle ]]">
 
         <section class="footer-media-links layout horizontal center center-justified wrap">
-          <template
-            is="dom-if"
-            if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
 
-            <template
-              is="dom-repeat"
-              items="[[ globals.Dorel.collect.options.footer_social_links ]]"
-              as="social_link">
-              <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
-                 on-click="_socialClick">
-                <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"></iron-icon>
-                <span>[[ social_link.social_media_text ]]</span>
-              </a>
-            </template>
-          </template>
           <template
-            is="dom-if"
-            if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
-            <span class="footer-text">Please define your footer social links in the admin area</span>
+            is="dom-repeat"
+            items="[[ appCache.collect.options.social_channels ]]"
+            as="social_link">
+            <a class="footer-media-link" href="[[ social_link.social_media_href ]]"
+               on-click="_socialClick">
+              <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"></iron-icon>
+              <span>[[ social_link.social_media_text ]]</span>
+            </a>
           </template>
+          
         </section>
       </template>
 
@@ -276,8 +266,8 @@
       <div class="footer-disclaimer">
           <span class="footer-copyright">
             Copyright &#9400;
-            {{ _getCopyrightYearRange(globals.Dorel.collect.options.footer_year) }}
-            [[ globals.Dorel.collect.options.footer_copyright ]]
+            {{ _getCopyrightYearRange(appCache.collect.options.footer_year) }}
+            [[ appCache.collect.options.footer_copyright ]]
           </span>
       </div>
 
@@ -294,6 +284,13 @@
       is: 'dorel-footer',
 
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
         /**
          * @name currentLanguage
          * @description Object containing currently selected country and language
@@ -466,7 +463,7 @@
        * up the footer widgets and copyright
        */
       observers: [
-        '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)',
+        '_areasChanged(appCache.collect.widgetAreas.footer-widget-area)',
       ],
 
       /**
@@ -499,6 +496,7 @@
 
         // return when not clicked on the footer-heading
         if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined'
+          || typeof Polymer.dom(event).rootTarget.parentNode.classList === 'undefined'
           || !Polymer.dom(event).rootTarget.parentNode.classList.contains('footer-menu')) return;
 
         // if a click on the footer-heading was done
