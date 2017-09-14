@@ -82,6 +82,7 @@
       category="[[ category ]]"
       product-name="[[ routeData.productName ]]"
       current-product="{{ product }}"
+      app-cache="[[ appCache ]]"
       retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product>
 
     <!-- define routing for products -->
@@ -116,7 +117,7 @@
             gtm-parent="dorel-section-header"
             gtm-parent-index="0"></dorel-section-header>
         </template>
-        
+
         <template
           is="dom-if"
           if="[[ templateData.acf.breadcrumbs_toggle ]]">
@@ -152,6 +153,7 @@
         <dorel-section-product-accessories
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
           category="[[ category ]]"
+          app-cache="[[ appCache ]]"
           related-products="[[ product.related_products ]]"
           accessories-options="[[ product.related_product_section ]]"
           gtm-parent="dorel-section-product-accessories"
@@ -239,10 +241,25 @@
           value: true
         },
 
+        /**
+         * @attribute
+         * @name product
+         * @description the current product
+         */
         product: {
           type: Object,
           value: {}
-        }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
 
       },
 

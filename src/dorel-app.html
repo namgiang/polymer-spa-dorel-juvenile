@@ -129,6 +129,7 @@
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
       current-page="[[ currentPage ]]"
+      app-cache="[[ appCache ]]"
       id="metaManager">
     </dorel-meta-manager>
 
@@ -183,6 +184,7 @@
         <dorel-template-product-detail
           name="product-detail"
           route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-detail>
 
@@ -210,6 +212,7 @@
 
         <dorel-template-component-guide
           name="component-guide"
+          app-cache="[[ appCache ]]"
           brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
@@ -228,9 +231,11 @@
       </dorel-footer>
     </template>
 
-    <dorel-grid-overlay available-brands="{{ brandNames }}"
-                        selected-brand="{{ brand }}"
-                        page-route-path="{{ route.path }}"></dorel-grid-overlay>
+    <dorel-grid-overlay
+      app-cache="[[ appCache ]]"
+      available-brands="{{ brandNames }}"
+      selected-brand="{{ brand }}"
+      page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
   <script>
@@ -270,7 +275,7 @@
          */
         brandNames: {
           type: Array,
-          value: function() {
+          value: function () {
             return CONFIG.AVAILABLE_BRANDS;
           }
         },
@@ -347,11 +352,11 @@
         'setAppCache': '_setAppCache'
       },
 
-      _setAppCache: function(event) {
+      _setAppCache: function (event) {
         var data = event.detail;
         var path = data.path;
         var value = data.value;
-        if(data && value && path) {
+        if (data && path) {
           this.set('appCache.' + path, value);
         }
       },
@@ -367,7 +372,7 @@
             brandName: '' // peter
           },
           product: {
-            products: [], // aron
+            products: [], // aron | DONE
             attributes: {
               accordions: [], // aron
               features: [], // aron
@@ -382,7 +387,7 @@
           },
           faqs: [], // marnix
           events: {}, // marnix
-          grid: { // peter
+          grid: { // DONE
             horizontal: false,
             vertical: false
           }
@@ -514,7 +519,7 @@
         return copy;
       },
 
-      shouldShow: function(currentPage) {
+      shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
