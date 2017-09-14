@@ -28,10 +28,12 @@
 <!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
 
+<link rel="import" href="utils/dorel-gmt-collect-faqs.html">
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
 <link rel="import" href="utils/dorel-main-routing.html">
@@ -132,6 +134,11 @@
       id="metaManager">
     </dorel-meta-manager>
 
+    <dorel-multilingual-manager
+      current-language="{{ currentLanguage }}"
+      continents-data="{{ continentsData }}">
+    </dorel-multilingual-manager>
+
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"
       sort="{{ sort }}"
@@ -141,6 +148,8 @@
     <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
       <dorel-header
         load-complete="[[ loadComplete ]]"
+        continents-data="[[ continentsData ]]"
+        current-language="[[ currentLanguage ]]"
         page="[[ page ]]"
         brand-name="[[ brand.label ]]"></dorel-header>
     </template>
@@ -214,7 +223,10 @@
     <template
       is="dom-if"
       if="[[ shouldShow(currentPage) ]]">
-      <dorel-footer></dorel-footer>
+      <dorel-footer
+        continents-data="[[ continentsData ]]"
+        current-language="[[ currentLanguage ]]">
+      </dorel-footer>
     </template>
 
     <dorel-grid-overlay available-brands="{{ brandNames }}"
@@ -316,6 +328,7 @@
             },
             colorMap: []
           },
+          faqs: [],
           events: {},
           grid: {
             horizontal: false,

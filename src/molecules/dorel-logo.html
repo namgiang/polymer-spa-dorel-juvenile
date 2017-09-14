@@ -37,14 +37,20 @@
         -webkit-transform: scale(.75);
         transform: scale(.75);
       }
+
+      .logo[alternative-logo] {
+        background: var(--theme-logo-alternative);
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <h1 class="title">[[ brandName ]]</h1>
     <div class="logo"
-         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-         compact-menu$="{{ compactMenu }}"></div>
+         alternative-logo$="[[ useAlternativeLogo ]]"
+         tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+         compact-menu$="[[ compactMenu ]]"></div>
   </template>
 
   <script>
@@ -58,6 +64,15 @@
          */
         brandName: {
           type: String
+        },
+        /**
+         * @attribute
+         * @name useAlternativeLogo
+         * @description Use the alternative logo (defined in the shared styles)
+         */
+        useAlternativeLogo: {
+          type: Boolean,
+          value: false
         },
       }
     });
