@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="utils/dorel-global-variables.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
@@ -332,37 +331,6 @@
       created: function () {
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
-        // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
-        Polymer.globalsManager.set('Dorel', {
-          wpUrl: {}, // will be a string later (bug inside globalsManager)
-          dioApiUrl: {},
-          locale: {},
-          collect: {},
-          current: {
-            brandName: ''
-          },
-          product: {
-            products: [],
-            attributes: {
-              accordions: [],
-              features: [],
-              usps: []
-            },
-            retrievedCategories: [],
-            auth: {
-              token: '',
-              timestamp: ''
-            },
-            colorMap: []
-          },
-          faqs: [],
-          events: {},
-          grid: {
-            horizontal: false,
-            vertical: false
-          }
-        });
-
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
       },
@@ -383,8 +351,8 @@
       ready: function () {
 
         var appCache = {
-          wpUrl: '', // DONE
-          dioApiUrl: {}, // marnix
+          wpUrl: CONFIG.CMS_URL, // DONE
+          dioApiUrl: CONFIG.DIO_API_URL, // marnix
           collect: {}, // marnix
           current: {}, // DONE
           product: {
@@ -411,15 +379,6 @@
         };
 
         this.set('appCache', appCache);
-
-        // Define the wpUrl in the globals (object becomes string)
-        this.fire('setAppCache', {
-          path: 'wpUrl',
-          value: CONFIG.CMS_URL
-        });
-
-        // Define the custom api in the globals (obj becomes string)
-        Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
       },
 
       /**
@@ -493,8 +452,9 @@
        * more info http://bit.ly/2nb6I7G
        */
       _eventTracking: function () {
-        var globalsObj = Polymer.globalsManager.get('Dorel');
-        var globalsCopy = this._cloneObj(globalsObj);
+        var globalsObj = this.get('appCache');
+        var globalsCopy = Object.assign({}, globalsObj);
+
 
         /**
          * Tracking on pageload
@@ -514,28 +474,6 @@
         this.fire('setAppCache', { value: event, path: 'events' });
       },
 
-      /**
-       * @name _cloneObj
-       * @description creates a clone of an object
-       *
-       * @parameter Object - object to clone
-       */
-      _cloneObj: function (obj) {
-
-        // if object is not defined or not an object, jump out
-        if (null == obj || "object" != typeof obj) return obj;
-
-        // make a reference to the object's constructor
-        var copy = obj.constructor();
-
-        // iterate over every attribute in the object and make a copy
-        for (var attr in obj) {
-          if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-        }
-
-        // return the copied object
-        return copy;
-      },
 
       shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
