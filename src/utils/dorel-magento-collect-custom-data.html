@@ -1,7 +1,7 @@
 <dom-module id="dorel-magento-collect-custom-data">
   <template>
 
-    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+    <dorel-magento-auth id="auth" token="{{ token }}" app-cache="[[ appCache ]]"></dorel-magento-auth>
 
     <iron-ajax
       id="collect"
@@ -55,7 +55,17 @@
          */
         type: {
           type: String
-        }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
 
       },
 
@@ -81,7 +91,7 @@
           return;
         }
 
-        var existing = Polymer.globalsManager.get('Dorel.product.attributes.' + type) || [];
+        var existing = this.get('appCache.product.attributes.' + type) || [];
 
         if(existing.length) {
           var item = existing.find(function(_item) {
@@ -143,10 +153,10 @@
        * @param newData - Object
       */
       _setData: function(newData) {
-        var existingData = Polymer.globalsManager.get('Dorel.product.attributes.' + this.type ) || [];
+        var existingData = this.get('appCache.product.attributes.' + this.type) || [];
         var data = this._mergeArrays(existingData, [newData]);
 
-        Polymer.globalsManager.set('Dorel.product.attributes.' + this.type, data);
+        this.fire('setAppCache', { value: data, path: 'product.attributes.' + this.type });
       },
 
       /**

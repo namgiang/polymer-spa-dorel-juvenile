@@ -16,7 +16,7 @@
         position: relative;
         padding: 0 var(--theme-gutter-mobile);
       }
-      
+
       dorel-section-page-nav {
         width: 100%;
       }
@@ -87,9 +87,10 @@
         padding-right: 3em;
       }
     </style>
-    
+
     <!-- retrieving the faq detail if we haven't retrieved it yet -->
     <dorel-gmt-collect-faqs
+      app-cache="[[ appCache ]]"
       endpoint-segments="[[ gmtEndpointSegment ]]"></dorel-gmt-collect-faqs>
 
     <app-route
@@ -120,12 +121,12 @@
           </h2>
           <dorel-safe-html html="[[ templateData.acf.category_description ]]"></dorel-safe-html>
 
-          <dorel-section-service-faq-detail 
+          <dorel-section-service-faq-detail
             faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
         </div>
 
         <div class="container-promo-contact">
-          
+
           <!-- customer support -->
           <template
             is="dom-if"
@@ -133,14 +134,14 @@
             <dorel-section-service-faq-promo
               template-data="[[ templateData.acf ]]"></dorel-section-service-faq-promo>
           </template>
-          
+
           <!-- customer support -->
           <template
             is="dom-if"
             if="[[ templateData.acf.customer_support_toggle ]]">
             <dorel-section-service-support
                   compact="true"
-                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
           </template>
           <!--// customer support -->
 
@@ -154,7 +155,7 @@
       is: 'dorel-template-faq-detail',
 
       properties: {
-        
+
         /**
          * @name routeData
          * @description the route data contains the faq category slug
@@ -197,11 +198,21 @@
           value: function() {
             return {};
           }
-        }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
       },
 
       observers: [
-        '_setFaqDetail(globals.Dorel.faqs, routeData, templateData.acf.gmt_faq_category_selector)'
+        '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_faq_category_selector)'
       ],
 
       /**
@@ -212,7 +223,7 @@
        * the matched category will be shown, otherwise it will be retrieved by the gmt collect
        *
        * @param newSlug - string - the category slug
-       */ 
+       */
       _setFaqDetail: function(faqGlobals, routeData, categoryId) {
         if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
 
@@ -233,9 +244,9 @@
        * @helper
        * @name _findInCache
        * @description find a provided detail slug in the cached faqs
-       */ 
+       */
       _findInCache: function(detailCategory) {
-        var faqCache = Polymer.globalsManager.get('Dorel.faqs');
+        var faqCache = this.get('appCache.faqs');
         // if no length, return false (no match can be found either way)
         if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
 
@@ -248,10 +259,10 @@
        * @helper
        * @name _retrieveCategoryById
        * @description set the endpoint-segments for the gmt-collect
-       */ 
+       */
       _setEndpointSegments: function(catId) {
         if(typeof catId === 'undefined') return;
-        
+
         this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
       },
 

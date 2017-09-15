@@ -355,7 +355,7 @@
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: this.gtmAction ? this.gtmAction : 'click',
           component: 'call-to-action',
           structure: structure,
@@ -365,7 +365,9 @@
             'currentPage': document.URL,
             'targetPage': element.href
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       },
 
       /**

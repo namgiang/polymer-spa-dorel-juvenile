@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="utils/dorel-global-variables.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
@@ -80,31 +79,23 @@
     </style>
 
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations
-      wp-url="{{ globals.Dorel.wpUrl }}"></dorel-wp-collect-menu-locations>
+    <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
 
     <!-- collect the options pages -->
-    <dorel-wp-collect-options
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+    <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
-
-    <dorel-wp-collect-categories></dorel-wp-collect-categories>
+    <dorel-wp-collect-widgets app-cache="[[ appCache ]]"></dorel-wp-collect-widgets>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-    <dorel-gtm-events
-      gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
 
-    <dorel-third-party
-      hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
-      hubspot-portal-id="{{ globals.Dorel.collect.options.hubspot_portal_id }}"
-      zendesk-toggle="[[ globals.Dorel.collect.options.zendesk_toggle ]]"
-      zendesk-host="[[ globals.Dorel.collect.options.zendesk_host ]]"></dorel-third-party>
+    <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
+
+    <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
 
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -122,6 +113,7 @@
     </dorel-brand-manager>
 
     <dorel-main-routing
+      app-cache="[[ appCache ]]"
       route="[[ route ]]"
       category-page="{{ categoryPage }}"
       previous-states="{{ previousStates }}"
@@ -131,6 +123,7 @@
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
       current-page="[[ currentPage ]]"
+      app-cache="[[ appCache ]]"
       id="metaManager">
     </dorel-meta-manager>
 
@@ -147,6 +140,7 @@
 
     <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
       <dorel-header
+        app-cache="[[ appCache ]]"
         load-complete="[[ loadComplete ]]"
         continents-data="[[ continentsData ]]"
         current-language="[[ currentLanguage ]]"
@@ -171,10 +165,12 @@
 
         <dorel-template-info
           name="info"
+          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-info>
 
         <dorel-template-store-locator
           name="store-locator"
+          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
         <dorel-template-products
@@ -185,32 +181,38 @@
         <dorel-template-product-detail
           name="product-detail"
           route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-detail>
 
         <dorel-template-product-category
           name="product-category"
           route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
 
         <dorel-template-faq-overview
           name="faq-overview"
+          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-overview>
 
         <dorel-template-faq-detail
           name="faq-detail"
+          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-detail>
 
         <dorel-template-product-advisory-tool
           name="product-advisory-tool"
+          app-cache="[[ appCache ]]"
           brand-name="[[ brand.label ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
         <dorel-template-component-guide
           name="component-guide"
+          app-cache="[[ appCache ]]"
           brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
@@ -224,14 +226,17 @@
       is="dom-if"
       if="[[ shouldShow(currentPage) ]]">
       <dorel-footer
+        app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
         current-language="[[ currentLanguage ]]">
       </dorel-footer>
     </template>
 
-    <dorel-grid-overlay available-brands="{{ brandNames }}"
-                        selected-brand="{{ brand }}"
-                        page-route-path="{{ route.path }}"></dorel-grid-overlay>
+    <dorel-grid-overlay
+      app-cache="[[ appCache ]]"
+      available-brands="{{ brandNames }}"
+      selected-brand="{{ brand }}"
+      page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
   <script>
@@ -266,12 +271,23 @@
         },
 
         /**
+         * @name brand
+         * @description The currently selected brand
+         */
+        brand: {
+          type: Object,
+          value: function () {
+            return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+          }
+        },
+
+        /**
          * @name brandNames
          * @description available brand names (from config), used for switching between brands
          */
         brandNames: {
           type: Array,
-          value: function() {
+          value: function () {
             return CONFIG.AVAILABLE_BRANDS;
           }
         },
@@ -290,7 +306,17 @@
 
         category: {
           type: Number
-        }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
 
       },
 
@@ -305,49 +331,54 @@
       created: function () {
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
-        // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
-        Polymer.globalsManager.set('Dorel', {
-          wpUrl: {}, // will be a string later (bug inside globalsManager)
-          dioApiUrl: {},
-          locale: {},
-          collect: {},
-          current: {
-            brandName: ''
-          },
-          product: {
-            products: [],
-            attributes: {
-              accordions: [],
-              features: [],
-              usps: []
-            },
-            retrievedCategories: [],
-            auth: {
-              token: '',
-              timestamp: ''
-            },
-            colorMap: []
-          },
-          faqs: [],
-          events: {},
-          grid: {
-            horizontal: false,
-            vertical: false
-          }
-        });
-
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
       },
 
+      listeners: {
+        'setAppCache': '_setAppCache'
+      },
+
+      _setAppCache: function (event) {
+        var data = event.detail;
+        var path = data.path;
+        var value = data.value;
+        if (data && path) {
+          this.set('appCache.' + path, value);
+        }
+      },
+
       ready: function () {
 
-        // Define the wpUrl in the globals (object becomes string)
-        Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
+        var appCache = {
+          wpUrl: CONFIG.CMS_URL, // DONE
+          dioApiUrl: CONFIG.DIO_API_URL, // marnix
+          collect: {}, // marnix
+          current: {}, // DONE
+          product: {
+            products: [], // aron | DONE
+            attributes: {
+              accordions: [], // aron | DONE
+              features: [], // aron | DONE
+              usps: [] // aron | DONE
+            },
+            retrievedCategories: [], // aron | DONE
+            auth: {
+              token: '', // aron | DONE
+              timestamp: '' // // aron | DONE
+            },
+            colorMap: [] // aron | DONE
+          },
+          faqs: [], // aron | DONE
+          events: {}, // DONE
+          grid: { // DONE
+            horizontal: false,
+            vertical: false
+          },
+          previousState: {}
+        };
 
-        // Define the custom api in the globals (obj becomes string)
-        Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
-        Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
+        this.set('appCache', appCache);
       },
 
       /**
@@ -421,13 +452,14 @@
        * more info http://bit.ly/2nb6I7G
        */
       _eventTracking: function () {
-        var globalsObj = Polymer.globalsManager.get('Dorel');
-        var globalsCopy = this._cloneObj(globalsObj);
+        var globalsObj = this.get('appCache');
+        var globalsCopy = Object.assign({}, globalsObj);
+
 
         /**
          * Tracking on pageload
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'loaded',
           component: 'page',
           element: this,
@@ -437,33 +469,13 @@
               document.URL : globalsCopy.current.page,
             'globals': globalsCopy
           }
-        });
+        };
+
+        this.fire('setAppCache', { value: event, path: 'events' });
       },
 
-      /**
-       * @name _cloneObj
-       * @description creates a clone of an object
-       *
-       * @parameter Object - object to clone
-       */
-      _cloneObj: function (obj) {
 
-        // if object is not defined or not an object, jump out
-        if (null == obj || "object" != typeof obj) return obj;
-
-        // make a reference to the object's constructor
-        var copy = obj.constructor();
-
-        // iterate over every attribute in the object and make a copy
-        for (var attr in obj) {
-          if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-        }
-
-        // return the copied object
-        return copy;
-      },
-
-      shouldShow: function(currentPage) {
+      shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 

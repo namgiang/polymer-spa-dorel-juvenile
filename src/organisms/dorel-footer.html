@@ -227,8 +227,6 @@
         height: 3em;
         display: block;
       }
-
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -238,14 +236,14 @@
       <!-- check if we need to show the social links -->
       <template
         is="dom-if"
-        if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
+        if="[[ appCache.collect.options.footer_social_toggle ]]">
 
         <section class="footer-media-links layout horizontal center center-justified wrap">
-          
+
           <!-- dom-repeat social channels -->
           <template
             is="dom-repeat"
-            items="[[ globals.Dorel.collect.options.social_channels ]]"
+            items="[[ appCache.collect.options.social_channels ]]"
             as="socialChannel">
             <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
                on-click="_socialClick">
@@ -270,8 +268,8 @@
       <div class="footer-disclaimer">
           <span class="footer-copyright">
             Copyright &#9400;
-            {{ _getCopyrightYearRange(globals.Dorel.collect.options.footer_year) }}
-            [[ globals.Dorel.collect.options.footer_copyright ]]
+            {{ _getCopyrightYearRange(appCache.collect.options.footer_year) }}
+            [[ appCache.collect.options.footer_copyright ]]
           </span>
       </div>
 
@@ -288,6 +286,13 @@
       is: 'dorel-footer',
 
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
         /**
          * @name currentLanguage
          * @description Object containing currently selected country and language
@@ -460,7 +465,7 @@
        * up the footer widgets and copyright
        */
       observers: [
-        '_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)',
+        '_areasChanged(appCache.collect.widgetAreas.footer-widget-area)',
       ],
 
       /**
@@ -493,6 +498,7 @@
 
         // return when not clicked on the footer-heading
         if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined'
+          || typeof Polymer.dom(event).rootTarget.parentNode.classList === 'undefined'
           || !Polymer.dom(event).rootTarget.parentNode.classList.contains('footer-menu')) return;
 
         // if a click on the footer-heading was done
@@ -659,8 +665,8 @@
             break;
         }
 
-        // set the tracking data, this will trigger dorel-gtm-events
-        Polymer.globalsManager.set('Dorel.events', eventData);
+        // send event data to tracking function
+        this.fire('setAppCache', {value: eventData, path: 'events'});
       }
     });
   </script>

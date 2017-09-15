@@ -102,8 +102,7 @@
       _menuItemTap: function (event) {
         var element = Polymer.dom(event).localTarget;
 
-        // send event data to tracking function
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'click',
           component: 'dorel-category-submenu',
           structure: {
@@ -116,7 +115,10 @@
             'currentPage': document.URL,
             'targetPage': element.href
           }
-        });
+        };
+
+        // send event data to tracking function
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>

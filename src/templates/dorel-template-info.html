@@ -75,8 +75,8 @@
                     if="[[ isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
 
                     <dorel-hubspot
-                      hubspot-loaded="[[ globals.Dorel.collect.options.hubspot_loaded ]]"
-                      portal-id="[[ globals.Dorel.collect.options.hubspot_portal_id ]]"
+                      hubspot-loaded="[[ appCache.collect.options.hubspot_loaded ]]"
+                      portal-id="[[ appCache.collect.options.hubspot_portal_id ]]"
                       form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
 
                   </template>
@@ -95,6 +95,13 @@
       is: 'dorel-template-info',
 
       properties: {
+
+        appCache: {
+          type: Object,
+          value: function(){
+            return {};
+          }
+        },
 
         /**
          * @attribute
