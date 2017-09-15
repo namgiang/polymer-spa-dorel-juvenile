@@ -347,7 +347,24 @@
 
                 <template
                   is="dom-if"
-                  if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
+                  if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
+                  <dorel-cta
+                    title="Find a Store"
+                    type="primary"
+                    link="[[ storeLocatorPage.link ]]"
+                    size="medium"
+                    icon="dorel-icons:chevron-right"
+                    gtm-action="click"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="1">
+                    Find a Store
+                  </dorel-cta>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasAccessories(showcaseData) ]]">
                   <dorel-cta
                     type="link"
                     title="View Accessories"
@@ -360,23 +377,6 @@
                     gtm-parent-index="[[ gtmParentIndex ]]"
                     gtm-cta-index="0">
                     View Accessories
-                  </dorel-cta>
-                </template>
-
-                <template
-                  is="dom-if"
-                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
-                  <dorel-cta
-                    title="Find a Store"
-                    type="primary"
-                    link="[[ storeLocatorPage.link ]]"
-                    size="medium"
-                    icon="dorel-icons:chevron-right"
-                    gtm-action="click"
-                    gtm-parent="[[ gtmParent ]]"
-                    gtm-parent-index="[[ gtmParentIndex ]]"
-                    gtm-cta-index="1">
-                    Find a Store
                   </dorel-cta>
                 </template>
               </div>
@@ -470,9 +470,8 @@
        *
        * @return Boolean
        */
-      _hasAccessories: function (val) {
-        var toggle = (typeof val !== 'undefined' && val !== '' && val);
-        return (toggle && this.showcaseData && this.showcaseData.relatedProducts && this.showcaseData.relatedProducts.length);
+      _hasAccessories: function (showcaseData) {
+        return Boolean(showcaseData && showcaseData.related_products && showcaseData.related_products.length);
       },
 
       /**
@@ -482,11 +481,9 @@
        *
        * @return Boolean
        */
-      _hasStoreLocator: function (toggle, page) {
-        toggle = (typeof toggle !== 'undefined' && toggle !== '' && toggle);
+      _hasStoreLocator: function (page) {
         page = (typeof page !== 'undefined' && page !== '');
-
-        return (toggle && page);
+        return (page);
       },
 
       /**
