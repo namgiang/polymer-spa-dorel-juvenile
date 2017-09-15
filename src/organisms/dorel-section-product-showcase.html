@@ -49,7 +49,6 @@
 
       .showcase-title {
         @apply(--theme-typography-8);
-        color: var(--theme-brand-color-1);
         float: left;
         width: 100%;
       }
@@ -90,6 +89,21 @@
         width: 100%;
         height: 24em;
         margin: 1.5em auto 0 auto;
+      }
+
+      .award-section {
+        width: 100%;
+        display: flex;
+      }
+
+      .award-section-mobile {
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .award {
+        margin-top: 1.5rem;
+        margin-right: 0.75rem;
       }
 
       /* Responsive Behaviour */
@@ -164,23 +178,23 @@
             <ul class="showcase-product-specs">
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.age_category) ]]">
+                if="[[ _hasValue(showcaseData.age.value) ]]">
                 <li>
-                  Age: [[ showcaseData.age_category ]]
+                  <b>Age:</b><br> [[ showcaseData.age.value ]]
                 </li>
               </template>
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.max_weight.value) ]]">
                 <li>
-                  Weight: [[ showcaseData.max_weight.value ]]
+                  <b>Weight:</b><br> [[ showcaseData.max_weight.value ]]
                 </li>
               </template>
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.size) ]]">
                 <li>
-                  Size: [[ showcaseData.size ]] cm
+                  <b>Size:</b><br> [[ showcaseData.size.value ]] cm
                 </li>
               </template>
             </ul>
@@ -191,7 +205,7 @@
                           sizing="contain"
                           fade="true"
                           preload
-                          src$="{{ currentImage }}"></iron-image>
+                          src$="[[ currentImage ]]"></iron-image>
             </div>
 
             <!-- color switcher -->
@@ -213,9 +227,27 @@
 
             <!-- Actions -->
             <div class="actions layout horizontal center center-justified wrap">
+
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.accesoires_button) ]]">
+                if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
+                <dorel-cta
+                  type="primary"
+                  title="Find a Store"
+                  link="[[ storeLocatorPage.link ]]"
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="click"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="1">
+                  Find a Store
+                </dorel-cta>
+              </template>
+              
+              <template
+                is="dom-if"
+                if="[[ _hasAccessories(showcaseData) ]]">
                 <dorel-cta
                   type="link"
                   title="View Accessories"
@@ -229,22 +261,18 @@
                   View Accessories
                 </dorel-cta>
               </template>
+            </div>
 
-              <template
-                is="dom-if"
-                if="[[ _hasValue(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
-                <dorel-cta
-                  type="primary"
-                  title="Find a Store"
-                  link="[[ storeLocatorPage.link ]]"
-                  size="medium"
-                  icon="dorel-icons:chevron-right"
-                  gtm-action="click"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-cta-index="1">
-                  Find a Store
-                </dorel-cta>
+            <div class="award-section-mobile">
+              <template is="dom-repeat" items="[[ showcaseData.award_list ]]" as="awardImageUrl">
+                <div class="award">
+                  <iron-image class="award__image"
+                              fade="true"
+                              style="height: 3rem; width: 5rem;"
+                              sizing="contain"
+                              preload
+                              src$="[[ awardImageUrl ]]"></iron-image>
+                </div>
               </template>
             </div>
             <!--// Actions -->
@@ -259,7 +287,7 @@
                           sizing="cover"
                           fade="true"
                           preload
-                          src$="{{ currentImage }}"></iron-image>
+                          src$="[[ currentImage ]]"></iron-image>
             </div>
             <!-- Title, usp's and extra info -->
             <div class="showcase-description">
@@ -274,21 +302,21 @@
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.age.value) ]]">
                   <li>
-                    Age: [[ showcaseData.age.value ]]
+                    <b>Age:</b><br> [[ showcaseData.age.value ]]
                   </li>
                 </template>
                 <template
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.max_weight.value) ]]">
                   <li>
-                    Weight: [[ showcaseData.max_weight.value ]]
+                    <b>Weight:</b><br> [[ showcaseData.max_weight.value ]]
                   </li>
                 </template>
                 <template
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.size) ]]">
                   <li>
-                    Size: [[ showcaseData.size ]] cm
+                    <b>Size:</b><br> [[ showcaseData.size.value ]] cm
                   </li>
                 </template>
               </ul>
@@ -320,7 +348,24 @@
 
                 <template
                   is="dom-if"
-                  if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
+                  if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
+                  <dorel-cta
+                    title="Find a Store"
+                    type="primary"
+                    link="[[ storeLocatorPage.link ]]"
+                    size="medium"
+                    icon="dorel-icons:chevron-right"
+                    gtm-action="click"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="1">
+                    Find a Store
+                  </dorel-cta>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasAccessories(showcaseData) ]]">
                   <dorel-cta
                     type="link"
                     title="View Accessories"
@@ -335,24 +380,21 @@
                     View Accessories
                   </dorel-cta>
                 </template>
+              </div>
 
-                <template
-                  is="dom-if"
-                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
-                  <dorel-cta
-                    title="Find a Store"
-                    type="primary"
-                    link="[[ storeLocatorPage.link ]]"
-                    size="medium"
-                    icon="dorel-icons:chevron-right"
-                    gtm-action="click"
-                    gtm-parent="[[ gtmParent ]]"
-                    gtm-parent-index="[[ gtmParentIndex ]]"
-                    gtm-cta-index="1">
-                    Find a Store
-                  </dorel-cta>
+              <div class="award-section">
+                <template is="dom-repeat" items="[[ showcaseData.award_list ]]" as="awardImageUrl">
+                  <div class="award">
+                    <iron-image class="award__image"
+                                fade="true"
+                                style="height: 5rem; width: 8rem;"
+                                sizing="contain"
+                                preload
+                                src$="[[ awardImageUrl ]]"></iron-image>
+                  </div>
                 </template>
               </div>
+
             </div>
           </template>
           <!--// Desktop Showcase -->
@@ -405,19 +447,16 @@
         },
       },
 
-      observers: [
-        '_hasRelatedProducts(showcaseData)'
-      ],
-
       ready: function() {
          //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = this.get('appCache.collect.pages');
 
-         this.storeLocatorPage = pages.find(function(page) {
+         var storeLocatorPage = pages.find(function(page) {
            return page.template === 'store-locator';
          });
-         if(this.storeLocatorPage) {
-           this.showcaseData.store_locator_button = true;
+         this.set('storeLocatorPage', storeLocatorPage);
+         if(storeLocatorPage) {
+           this.set('storeLocatorPage.store_locator_button', true);
          }
       },
 
@@ -428,9 +467,8 @@
        *
        * @return Boolean
        */
-      _hasAccessories: function (val) {
-        var toggle = (typeof val !== 'undefined' && val !== '' && val);
-        return (toggle && this.showcaseData && this.showcaseData.relatedProducts && this.showcaseData.relatedProducts.length);
+      _hasAccessories: function (showcaseData) {
+        return Boolean(showcaseData && showcaseData.related_products && showcaseData.related_products.length);
       },
 
       /**
@@ -440,11 +478,9 @@
        *
        * @return Boolean
        */
-      _hasStoreLocator: function (toggle, page) {
-        toggle = (typeof toggle !== 'undefined' && toggle !== '' && toggle);
+      _hasStoreLocator: function (page) {
         page = (typeof page !== 'undefined' && page !== '');
-
-        return (toggle && page);
+        return Boolean(page);
       },
 
       /**
@@ -453,17 +489,6 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '' && val);
-      },
-
-      _hasRelatedProducts: function(showcaseData) {
-        if(!showcaseData || !Object.keys(showcaseData).length) {
-          return;
-        }
-        if(showcaseData.relatedProducts && showcaseData.relatedProducts.length) {
-          this.showcaseData.accesoires_button = true;
-        } else {
-          this.showcaseData.accesoires_button = false;
-        }
       },
 
       /**
