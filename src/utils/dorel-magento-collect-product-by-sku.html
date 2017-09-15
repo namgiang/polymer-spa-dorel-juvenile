@@ -1,5 +1,5 @@
 
-<dom-module id="dorel-magento-collect-product">
+<dom-module id="dorel-magento-collect-product-by-sku">
   <template>
 
     <dorel-magento-auth
@@ -34,7 +34,7 @@
 
   <script>
     Polymer({
-      is: 'dorel-magento-collect-product',
+      is: 'dorel-magento-collect-product-by-sku',
 
       properties: {
 
@@ -48,6 +48,11 @@
           value: 0
         },
 
+        /**
+         * @name category
+         * @description this category is inherit by the parent and
+         * will be used in the filter for the call to the magento end-point
+         */
         productName: {
           type: String
         },
@@ -86,7 +91,7 @@
       },
 
       observers: [
-        '_init(category, productName, token, colorMap)'
+        '_init(productName)'
       ],
 
       /**
@@ -97,22 +102,14 @@
        * @param token - String
        * @param colorMap - Array
        */
-      _init: function(category, productName, token, colorMap) {
+      _init: function(productName) {
         // if category or productName is empty we can't make the call return
-        if(!category || !productName) {
-          return;
-        }
-        // if token is empty retreive the token _init will be triggered if token is retrieved
-        if(!token) {
-          return this.$.auth.retrieveToken();
-        }
-        // if colorMap is empty return _init will be triggered if colorMap is changed
-        if(!colorMap || !colorMap.length) {
+        if(!productName) {
           return;
         }
 
         //set retrievingProduct to true so parent will know that product is being retrieved
-        this.retrievingProduct = true;
+        this.set('retrievingProduct', true);
 
         // get all the products that are saved in the global
         var products = this.get('appCache.product.products') || [];
@@ -126,7 +123,7 @@
         if(existingProduct) {
           return this._setCurrentProduct(existingProduct);
         } else {
-          return this._getProduct(category, productName, token);
+          return this._getProduct(productName);
         }
       },
 
@@ -135,17 +132,9 @@
        * @description make call to end-point to retreive product
        * @param category - Number
        */
-      _getProduct: function(category, productName, token) {
+      _getProduct: function(productName) {
         var productsEl = this.$.product;
-        productsEl.headers = {Authorization: 'Bearer ' + token};
-        productsEl.url = CONFIG.ECOM_URL + '/rest/V1/products?' +
-        '&searchCriteria[filter_groups][1][filters][0][field]=visibility' +
-        '&searchCriteria[filter_groups][1][filters][0][value]=4' +
-        '&searchCriteria[filter_groups][2][filters][0][field]=sku' +
-        '&searchCriteria[filter_groups][2][filters][0][value]=' + productName +
-        '&searchCriteria[filter_groups][3][filters][0][field]=category_id' +
-        '&searchCriteria[filter_groups][3][filters][0][value]=' + category;
-
+        productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/product/' + productName;
         productsEl.generateRequest();
       },
 
@@ -155,31 +144,17 @@
        * @param response
        */
       _productResponse: function(response) {
-
         //set newProducts Array from response
-        var newProducts = response.detail.response.items;
+        var newProducts = response.detail.response;
         var category = this.category;
 
         //if there are no products in Array
         if(!newProducts.length) {
           //set the currentProduct with a empty Object so parent will know it should show a 404
           return this._setCurrentProduct({});
+        } else {
+          return this._setProducts(newProducts)
         }
-
-        // refer to this
-        var self = this;
-
-        // Map the newProducts the childProducts can be retrieved and added to the product
-        Promise.all(newProducts.map(function(product) {
-          // every product will return function with a new promise from iron-ajax
-          return self._getChildProducts(product.sku).then(function(data) {
-            // create new data model for product and return this to array
-            return self.$.transform.createDataModelProduct(product, category, data.response);
-          });
-        })).then(function(mergedProducts) {
-            // if promise.all is resolved call the setProducts
-            self._setProducts(mergedProducts);
-        });
       },
 
       /**
@@ -198,20 +173,6 @@
         var products = this._mergeArrays(oldProducts, newProducts);
         // set new array of products in the global saved products
         this.fire('setAppCache', { value: products, path: 'product.products' });
-      },
-
-      /**
-       * @name _getChildProducts
-       * @description this method call the magento end-point to retreive all the child products of the main product with the given `Id`
-       * @param id - String
-       */
-      _getChildProducts: function(id) {
-        var childProductsEl = this.$.childProducts;
-        childProductsEl.headers = {Authorization: 'Bearer ' + this.token};
-        childProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/configurable-products/' +
-        id + '/children';
-        //return the promise from iron-ajax
-        return childProductsEl.generateRequest().completes;
       },
 
       /**
@@ -245,7 +206,7 @@
         this.fire('setAppCache', { value: product, path: 'current.product' });
 
         //set current product so it will be available for parent
-        this.currentProduct = product;
+        this.set('currentProduct', product);
         //set retrievingProduct to false so parent will know that product is retrieved
         this.retrievingProduct = false;
       }
