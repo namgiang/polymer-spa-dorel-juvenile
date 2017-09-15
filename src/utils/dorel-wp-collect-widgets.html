@@ -19,6 +19,13 @@
 
       properties: {
         /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
+        /**
          * @name endPoint
          * @description the endpoint or url of the api
          */
@@ -28,7 +35,7 @@
       },
 
       observers: [
-        '_initWidgets(globals.Dorel.wpUrl)'
+        '_initWidgets(appCache.wpUrl)'
       ],
 
       /**
@@ -36,9 +43,9 @@
        * @description Observer function which defines the endpoint when it's available as a global variable
        */
       _initWidgets: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+        if (typeof wpUrl === 'undefined' || wpUrl === '') return;
 
-        this.endPoint = this.globals.Dorel.wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
+        this.endPoint = wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
       },
 
       /** 
@@ -51,14 +58,19 @@
         var widgetEl = this.$.widget;
         var endPoint = this.endPoint;
 
-        // prepare the global collect object
-        Polymer.globalsManager.set('Dorel.collect.widgetAreas', {});
+        // prepare the appCache collect object
+        this.fire('setAppCache', {
+          path: 'collect.widgetAreas',
+          value: {}
+        });
 
         // iterate over the keys of the response
         for (var i = 0, len = response.length; i < len; i++) {
-          // first put the response in the globals to use it later
-          Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + response[i].id,
-            response[i]);
+          // first put the response in the appCache to use it later
+          this.fire('setAppCache', {
+            path: 'collect.widgetAreas.' + response[i].id,
+            value: response[i]
+          });
 
           // for every key retrieve its menuItems
           widgetEl.url = endPoint + '/' + response[i].id;
@@ -73,7 +85,7 @@
        */
       _widgetsLoaded: function(data) {
         var response = data.detail.response;
-        var widgetsCollect = this.globals.Dorel.collect.widgetAreas;
+        var widgetsCollect = this.get('appCache.collect.widgetAreas');
 
         // retrieve the widgetArea id from the url call
         var urlArr = data.detail.url.split('/');
@@ -82,31 +94,14 @@
         // iterate over the keys in the response
         for (var key in widgetsCollect) {
           if (key === areaId) {
-            // update the global collecto object
-            Polymer.globalsManager.set('Dorel.collect.widgetAreas.' + key, response);
+            // update the application cache collect object
+            this.fire('setAppCache', {
+              path: 'collect.widgetAreas.' + key, 
+              value: response
+            });
           }
         }
-
-        // update the reflected attribute
-        this.widgetsData = this.globals.Dorel.collect.widgetAreas;
-      },
-
-      /**
-       * @name _hasProps
-       * @description check if the observed data model has properties
-       */
-      _hasProps: function(dataObj) {
-        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
-        var hasProps = false;
-
-        // check for properties in the dorelEvt object
-        for (var prop in dataObj) {
-          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
-        }
-
-        return hasProps;
       }
-
     });
   </script>
 </dom-module>

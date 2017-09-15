@@ -15,13 +15,23 @@
 
         currentPage: {
           type: Object
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
         }
 
       },
 
       observers: [
         '_setPageMetaData(currentPage)',
-        '_productMetaData(globals.Dorel.current.product)'
+        '_productMetaData(appCache.current.product)'
       ],
 
       _setPageMetaData: function(currentPage) {
@@ -85,7 +95,7 @@
        * @param String | null
        */
       _defineMetaTitle: function (titleSuffix) {
-        var configBrand = this.brandName || Polymer.globalsManager.get('Dorel.current.brandName');
+        var configBrand = this.brandName;
 
         // replace every dash with a space
         var titlePrefix = configBrand.replace(/-/g, ' ');

@@ -366,6 +366,14 @@
       is: 'dorel-section-product-showcase',
 
       properties: {
+
+        appCache: {
+          type: Object,
+          value: function(){
+            return {};
+          }
+        },
+
         /**
          * @attribute
          * @name accessoryScrollHandler
@@ -402,8 +410,9 @@
       ],
 
       ready: function() {
-         //TODO //TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
-         var pages = Polymer.globalsManager.get('Dorel.collect.pages');
+         //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
+         var pages = this.get('appCache.collect.pages');
+
          this.storeLocatorPage = pages.find(function(page) {
            return page.template === 'store-locator';
          });

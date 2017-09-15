@@ -4,10 +4,12 @@
 
     <dorel-magento-auth
       id="auth"
+      app-cache="[[ appCache ]]"
       token="{{ token }}"></dorel-magento-auth>
 
     <dorel-product-color-map
       color-map="{{ colorMap }}"
+      app-cache="[[ appCache ]]"
       token="[[ token ]]"></dorel-product-color-map>
 
     <dorel-product-data-model
@@ -69,6 +71,16 @@
           type: Boolean,
           notify: true,
           value: false
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
         }
 
       },
@@ -103,7 +115,7 @@
         this.retrievingProduct = true;
 
         // get all the products that are saved in the global
-        var products = Polymer.globalsManager.get('Dorel.product.products') || [];
+        var products = this.get('appCache.product.products') || [];
 
         // check if the productName (potential new current product) is already in the saved products
         var existingProduct = products.find(function(product) {
@@ -180,12 +192,12 @@
         this._setCurrentProduct(newProducts[0]);
 
         //get all the "cached" products
-        var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
+        var oldProducts = this.get('appCache.product.products') || [];
 
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
         var products = this._mergeArrays(oldProducts, newProducts);
         // set new array of products in the global saved products
-        Polymer.globalsManager.set('Dorel.product.products', products);
+        this.fire('setAppCache', { value: products, path: 'product.products' });
       },
 
       /**
@@ -229,8 +241,9 @@
        * @param product - Object
        */
       _setCurrentProduct: function(product) {
-        //set current product in global so meta-data will be set
-        Polymer.globalsManager.set('Dorel.current.product', product);
+        //set current product in appCache so meta-data will be set
+        this.fire('setAppCache', { value: product, path: 'current.product' });
+
         //set current product so it will be available for parent
         this.currentProduct = product;
         //set retrievingProduct to false so parent will know that product is retrieved

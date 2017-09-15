@@ -5,10 +5,11 @@
       id="transform"
       color-map="[[ colorMap ]]"></dorel-product-data-model>
 
-    <dorel-magento-auth id="auth" token="{{ token }}"></dorel-magento-auth>
+    <dorel-magento-auth id="auth" token="{{ token }}" app-cache="[[ appCache ]]"></dorel-magento-auth>
 
     <dorel-product-color-map
       color-map="{{ colorMap }}"
+      app-cache="[[ appCache ]]"
       token="[[ token ]]"></dorel-product-color-map>
 
     <iron-ajax
@@ -102,6 +103,16 @@
         existingProducts: {
           type: Array,
           value: []
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
         }
 
       },
@@ -133,7 +144,7 @@
         }
 
         // get the current products
-        var products = Polymer.globalsManager.get('Dorel.product.products') || [];
+        var products = this.get('appCache.product.products') || [];
 
         // set category that will be used in _productResponse
         this.category = category;
@@ -261,13 +272,13 @@
        */
       _setProducts: function(newProducts) {
         //get all the "cached" products
-        var oldProducts = Polymer.globalsManager.get('Dorel.product.products') || [];
+        var oldProducts = this.get('appCache.product.products') || [];
 
         // merge the oldProducts and the new products
         var products = this._mergeArrays(oldProducts, newProducts);
 
-        // set the globalsManager with the merged products
-        Polymer.globalsManager.set('Dorel.product.products', products);
+        // set the appCache with the merged products
+        this.fire('setAppCache', { value: products, path: 'product.products' });
       },
 
       /**
@@ -276,7 +287,7 @@
        * @param id - String
        */
       _getChildProducts: function(id) {
-        var token = Polymer.globalsManager.get('Dorel.product.auth.token');
+        var token = this.get('appCache.product.auth.token');
         var childProductsEl = this.$.childProducts;
         childProductsEl.headers = {Authorization: 'Bearer ' + token};
         childProductsEl.url = CONFIG.ECOM_URL + '/rest/V1/configurable-products/' +

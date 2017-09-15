@@ -392,6 +392,16 @@
               stylers: [{visibility: 'off'}]
             }
           ]
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
         }
       },
 
@@ -436,7 +446,7 @@
         this.autocomplete = new google.maps.places.AutocompleteService();
 
         // build up the countries arr for the countries dropdown
-        this.countriesEndPoint = this.globals.Dorel.dioApiUrl + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.language;
+        this.countriesEndPoint = this.get('appCache.dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.language;
       },
 
       /**
@@ -523,7 +533,7 @@
         // if no results are retrieved, handle error handling
         if (!data.detail.response.results.length) {
           this._handleErrors('ZERO_RESULTS');
-        } 
+        }
 
         this.storesResponse = data.detail.response;
 
@@ -595,7 +605,7 @@
             storeParams += '&radius=' + 5;
 
             // set the endpoint, when set the api call will automatically commence
-            self.storesEndPoint = self.globals.Dorel.dioApiUrl + '/retailers?brandName=maxi_cosi' + storeParams;
+            self.storesEndPoint = self.get('appCache.dioApiUrl') + '/retailers?brandName=maxi_cosi' + storeParams;
 
           }, function (error) {
 
@@ -704,7 +714,7 @@
       _defineStoreType: function (vip) {
         var markerUrl = '/assets/images/markers/';
 
-        return (typeof vip === 'undefined' || !vip) ? markerUrl + 'shop-marker.png' : markerUrl + 'vip-marker.png'; 
+        return (typeof vip === 'undefined' || !vip) ? markerUrl + 'shop-marker.png' : markerUrl + 'vip-marker.png';
       },
 
       /**
