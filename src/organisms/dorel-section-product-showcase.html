@@ -205,7 +205,7 @@
                           sizing="contain"
                           fade="true"
                           preload
-                          src$="{{ currentImage }}"></iron-image>
+                          src$="[[ currentImage ]]"></iron-image>
             </div>
 
             <!-- color switcher -->
@@ -270,7 +270,7 @@
                               style="height: 3rem; width: 5rem;"
                               sizing="contain"
                               preload
-                              src$="{{ awardImageUrl }}"></iron-image>
+                              src$="[[ awardImageUrl ]]"></iron-image>
                 </div>
               </template>
             </div>
@@ -286,7 +286,7 @@
                           sizing="cover"
                           fade="true"
                           preload
-                          src$="{{ currentImage }}"></iron-image>
+                          src$="[[ currentImage ]]"></iron-image>
             </div>
             <!-- Title, usp's and extra info -->
             <div class="showcase-description">
@@ -389,7 +389,7 @@
                                 style="height: 5rem; width: 8rem;"
                                 sizing="contain"
                                 preload
-                                src$="{{ awardImageUrl }}"></iron-image>
+                                src$="[[ awardImageUrl ]]"></iron-image>
                   </div>
                 </template>
               </div>
@@ -454,11 +454,12 @@
          //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = this.get('appCache.collect.pages');
 
-         this.storeLocatorPage = pages.find(function(page) {
+         var storeLocatorPage = pages.find(function(page) {
            return page.template === 'store-locator';
          });
-         if(this.storeLocatorPage) {
-           this.showcaseData.store_locator_button = true;
+         this.set('storeLocatorPage', storeLocatorPage);
+         if(storeLocatorPage) {
+           this.set('storeLocatorPage.store_locator_button', true);
          }
       },
 

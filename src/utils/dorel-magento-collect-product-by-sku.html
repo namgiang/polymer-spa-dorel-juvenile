@@ -2,33 +2,12 @@
 <dom-module id="dorel-magento-collect-product-by-sku">
   <template>
 
-    <dorel-magento-auth
-      id="auth"
-      app-cache="[[ appCache ]]"
-      token="{{ token }}"></dorel-magento-auth>
-
-    <dorel-product-color-map
-      color-map="{{ colorMap }}"
-      app-cache="[[ appCache ]]"
-      token="[[ token ]]"></dorel-product-color-map>
-
-    <dorel-product-data-model
-      id="transform"
-      color-map="[[ colorMap ]]"></dorel-product-data-model>
-
     <iron-ajax
       id="product"
       content-type="application/json"
       method="get"
       handle-as="json"
       on-response="_productResponse"></iron-ajax>
-
-    <iron-ajax
-      id="childProducts"
-      content-type="application/json"
-      method="get"
-      input="1"
-      handle-as="json"></iron-ajax>
 
   </template>
 
@@ -49,29 +28,26 @@
         },
 
         /**
-         * @name category
-         * @description this category is inherit by the parent and
-         * will be used in the filter for the call to the magento end-point
+         * @name productName
+         * @description productName represents the id (sku) of a product
          */
         productName: {
           type: String
         },
 
-        token: {
-          type: String,
-          value: ''
-        },
-
-        colorMap: {
-          type: Array,
-          value: []
-        },
-
+        /**
+         * @name currentProduct
+         * @description currentProduct will be used to send the correct data to the parent
+         */
         currentProduct: {
           type: Object,
           notify: true
         },
 
+        /**
+         * @name retrievingProduct
+         * @description loading indicator true if it is loading
+         */
         retrievingProduct: {
           type: Boolean,
           notify: true,
@@ -146,7 +122,6 @@
       _productResponse: function(response) {
         //set newProducts Array from response
         var newProducts = response.detail.response;
-        var category = this.category;
 
         //if there are no products in Array
         if(!newProducts.length) {
@@ -183,16 +158,10 @@
        */
       _mergeArrays: function(array1, array2) {
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
-        return array1.concat(array2.filter(function (item, index) {
-            var exists = false;
-            array1.forEach(function (oldItem) {
-              if (oldItem.id === item.id) {
-                exists = true;
-                // add new category to oldItem
-                oldItem.categories.push(item.categories[0]);
-              }
+        return array1.concat(array2.filter(function(item, index) {
+            return array1.some(function(oldItem) {
+              return oldItem.id === item.id;
             });
-            return !exists;
         }));
       },
 
@@ -204,11 +173,10 @@
       _setCurrentProduct: function(product) {
         //set current product in appCache so meta-data will be set
         this.fire('setAppCache', { value: product, path: 'current.product' });
-
         //set current product so it will be available for parent
         this.set('currentProduct', product);
         //set retrievingProduct to false so parent will know that product is retrieved
-        this.retrievingProduct = false;
+        this.set('retrievingProduct', false);
       }
 
     });
