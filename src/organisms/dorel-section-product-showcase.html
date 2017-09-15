@@ -227,26 +227,10 @@
 
             <!-- Actions -->
             <div class="actions layout horizontal center center-justified wrap">
-              <template
-                is="dom-if"
-                if="[[ _hasValue(showcaseData.accesoires_button) ]]">
-                <dorel-cta
-                  type="link"
-                  title="View Accessories"
-                  on-click="_viewAccessories"
-                  size="medium"
-                  icon="dorel-icons:expand-more"
-                  gtm-action="scroll-to-accessories"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-cta-index="0">
-                  View Accessories
-                </dorel-cta>
-              </template>
 
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
+                if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
                 <dorel-cta
                   type="primary"
                   title="Find a Store"
@@ -258,6 +242,23 @@
                   gtm-parent-index="[[ gtmParentIndex ]]"
                   gtm-cta-index="1">
                   Find a Store
+                </dorel-cta>
+              </template>
+              
+              <template
+                is="dom-if"
+                if="[[ _hasAccessories(showcaseData) ]]">
+                <dorel-cta
+                  type="link"
+                  title="View Accessories"
+                  on-click="_viewAccessories"
+                  size="medium"
+                  icon="dorel-icons:expand-more"
+                  gtm-action="scroll-to-accessories"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  View Accessories
                 </dorel-cta>
               </template>
             </div>
@@ -347,7 +348,24 @@
 
                 <template
                   is="dom-if"
-                  if="[[ _hasAccessories(showcaseData.accesoires_button) ]]">
+                  if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
+                  <dorel-cta
+                    title="Find a Store"
+                    type="primary"
+                    link="[[ storeLocatorPage.link ]]"
+                    size="medium"
+                    icon="dorel-icons:chevron-right"
+                    gtm-action="click"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-cta-index="1">
+                    Find a Store
+                  </dorel-cta>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="[[ _hasAccessories(showcaseData) ]]">
                   <dorel-cta
                     type="link"
                     title="View Accessories"
@@ -360,23 +378,6 @@
                     gtm-parent-index="[[ gtmParentIndex ]]"
                     gtm-cta-index="0">
                     View Accessories
-                  </dorel-cta>
-                </template>
-
-                <template
-                  is="dom-if"
-                  if="[[ _hasStoreLocator(showcaseData.store_locator_button, storeLocatorPage.link) ]]">
-                  <dorel-cta
-                    title="Find a Store"
-                    type="primary"
-                    link="[[ storeLocatorPage.link ]]"
-                    size="medium"
-                    icon="dorel-icons:chevron-right"
-                    gtm-action="click"
-                    gtm-parent="[[ gtmParent ]]"
-                    gtm-parent-index="[[ gtmParentIndex ]]"
-                    gtm-cta-index="1">
-                    Find a Store
                   </dorel-cta>
                 </template>
               </div>
@@ -446,10 +447,6 @@
         },
       },
 
-      observers: [
-        '_hasRelatedProducts(showcaseData)'
-      ],
-
       ready: function() {
          //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = this.get('appCache.collect.pages');
@@ -470,9 +467,8 @@
        *
        * @return Boolean
        */
-      _hasAccessories: function (val) {
-        var toggle = (typeof val !== 'undefined' && val !== '' && val);
-        return (toggle && this.showcaseData && this.showcaseData.relatedProducts && this.showcaseData.relatedProducts.length);
+      _hasAccessories: function (showcaseData) {
+        return Boolean(showcaseData && showcaseData.related_products && showcaseData.related_products.length);
       },
 
       /**
@@ -482,11 +478,9 @@
        *
        * @return Boolean
        */
-      _hasStoreLocator: function (toggle, page) {
-        toggle = (typeof toggle !== 'undefined' && toggle !== '' && toggle);
+      _hasStoreLocator: function (page) {
         page = (typeof page !== 'undefined' && page !== '');
-
-        return (toggle && page);
+        return Boolean(page);
       },
 
       /**
@@ -495,17 +489,6 @@
        */
       _hasValue: function (val) {
         return (typeof val !== 'undefined' && val !== '' && val);
-      },
-
-      _hasRelatedProducts: function(showcaseData) {
-        if(!showcaseData || !Object.keys(showcaseData).length) {
-          return;
-        }
-        if(showcaseData.relatedProducts && showcaseData.relatedProducts.length) {
-          this.showcaseData.accesoires_button = true;
-        } else {
-          this.showcaseData.accesoires_button = false;
-        }
       },
 
       /**
