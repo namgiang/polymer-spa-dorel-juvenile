@@ -49,7 +49,6 @@
 
       .showcase-title {
         @apply(--theme-typography-8);
-        color: var(--theme-brand-color-1);
         float: left;
         width: 100%;
       }
@@ -90,6 +89,21 @@
         width: 100%;
         height: 24em;
         margin: 1.5em auto 0 auto;
+      }
+
+      .award-section {
+        width: 100%;
+        display: flex;
+      }
+
+      .award-section-mobile {
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .award {
+        margin-top: 1.5rem;
+        margin-right: 0.75rem;
       }
 
       /* Responsive Behaviour */
@@ -164,23 +178,23 @@
             <ul class="showcase-product-specs">
               <template
                 is="dom-if"
-                if="[[ _hasValue(showcaseData.age_category) ]]">
+                if="[[ _hasValue(showcaseData.age.value) ]]">
                 <li>
-                  Age: [[ showcaseData.age_category ]]
+                  <b>Age:</b><br> [[ showcaseData.age.value ]]
                 </li>
               </template>
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.max_weight.value) ]]">
                 <li>
-                  Weight: [[ showcaseData.max_weight.value ]]
+                  <b>Weight:</b><br> [[ showcaseData.max_weight.value ]]
                 </li>
               </template>
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.size) ]]">
                 <li>
-                  Size: [[ showcaseData.size ]] cm
+                  <b>Size:</b><br> [[ showcaseData.size.value ]] cm
                 </li>
               </template>
             </ul>
@@ -191,7 +205,7 @@
                           sizing="contain"
                           fade="true"
                           preload
-                          src$="{{ currentImage }}"></iron-image>
+                          src$="[[ currentImage ]]"></iron-image>
             </div>
 
             <!-- color switcher -->
@@ -247,6 +261,19 @@
                 </dorel-cta>
               </template>
             </div>
+
+            <div class="award-section-mobile">
+              <template is="dom-repeat" items="[[ showcaseData.award_list ]]" as="awardImageUrl">
+                <div class="award">
+                  <iron-image class="award__image"
+                              fade="true"
+                              style="height: 3rem; width: 5rem;"
+                              sizing="contain"
+                              preload
+                              src$="[[ awardImageUrl ]]"></iron-image>
+                </div>
+              </template>
+            </div>
             <!--// Actions -->
           </template>
           <!--// Mobile Showcase -->
@@ -259,7 +286,7 @@
                           sizing="cover"
                           fade="true"
                           preload
-                          src$="{{ currentImage }}"></iron-image>
+                          src$="[[ currentImage ]]"></iron-image>
             </div>
             <!-- Title, usp's and extra info -->
             <div class="showcase-description">
@@ -274,21 +301,21 @@
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.age.value) ]]">
                   <li>
-                    Age: [[ showcaseData.age.value ]]
+                    <b>Age:</b><br> [[ showcaseData.age.value ]]
                   </li>
                 </template>
                 <template
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.max_weight.value) ]]">
                   <li>
-                    Weight: [[ showcaseData.max_weight.value ]]
+                    <b>Weight:</b><br> [[ showcaseData.max_weight.value ]]
                   </li>
                 </template>
                 <template
                   is="dom-if"
                   if="[[ _hasValue(showcaseData.size) ]]">
                   <li>
-                    Size: [[ showcaseData.size ]] cm
+                    <b>Size:</b><br> [[ showcaseData.size.value ]] cm
                   </li>
                 </template>
               </ul>
@@ -353,6 +380,20 @@
                   </dorel-cta>
                 </template>
               </div>
+
+              <div class="award-section">
+                <template is="dom-repeat" items="[[ showcaseData.award_list ]]" as="awardImageUrl">
+                  <div class="award">
+                    <iron-image class="award__image"
+                                fade="true"
+                                style="height: 5rem; width: 8rem;"
+                                sizing="contain"
+                                preload
+                                src$="[[ awardImageUrl ]]"></iron-image>
+                  </div>
+                </template>
+              </div>
+
             </div>
           </template>
           <!--// Desktop Showcase -->
@@ -413,11 +454,12 @@
          //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = this.get('appCache.collect.pages');
 
-         this.storeLocatorPage = pages.find(function(page) {
+         var storeLocatorPage = pages.find(function(page) {
            return page.template === 'store-locator';
          });
-         if(this.storeLocatorPage) {
-           this.showcaseData.store_locator_button = true;
+         this.set('storeLocatorPage', storeLocatorPage);
+         if(storeLocatorPage) {
+           this.set('storeLocatorPage.store_locator_button', true);
          }
       },
 
