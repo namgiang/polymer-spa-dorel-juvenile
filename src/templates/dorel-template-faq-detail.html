@@ -1,5 +1,4 @@
 <link rel="import" href="../organisms/dorel-section-service-faq-detail.html">
-<link rel="import" href="../organisms/dorel-section-service-faq-promo.html">
 
 <dom-module id="dorel-template-faq-detail">
   <template>
@@ -17,7 +16,7 @@
         position: relative;
         padding: 0 var(--theme-gutter-mobile);
       }
-      
+
       dorel-section-page-nav {
         width: 100%;
       }
@@ -87,8 +86,18 @@
         box-sizing: border-box;
         padding-right: 3em;
       }
-
     </style>
+
+    <!-- retrieving the faq detail if we haven't retrieved it yet -->
+    <dorel-gmt-collect-faqs
+      app-cache="[[ appCache ]]"
+      endpoint-segments="[[ gmtEndpointSegment ]]"></dorel-gmt-collect-faqs>
+
+    <app-route
+      route="{{ route }}"
+      pattern="/:faqCategory"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -112,12 +121,12 @@
           </h2>
           <dorel-safe-html html="[[ templateData.acf.category_description ]]"></dorel-safe-html>
 
-          <dorel-section-service-faq-detail 
+          <dorel-section-service-faq-detail
             faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
         </div>
 
         <div class="container-promo-contact">
-          
+
           <!-- customer support -->
           <template
             is="dom-if"
@@ -125,14 +134,14 @@
             <dorel-section-service-faq-promo
               template-data="[[ templateData.acf ]]"></dorel-section-service-faq-promo>
           </template>
-          
+
           <!-- customer support -->
           <template
             is="dom-if"
             if="[[ templateData.acf.customer_support_toggle ]]">
             <dorel-section-service-support
                   compact="true"
-                  template-data="[[ globals.Dorel.collect.options ]]"></dorel-section-service-support>
+                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
           </template>
           <!--// customer support -->
 
@@ -146,98 +155,115 @@
       is: 'dorel-template-faq-detail',
 
       properties: {
+
+        /**
+         * @name routeData
+         * @description the route data contains the faq category slug
+         * that is after faq in the url ([domain]/faq/:category-slug).
+         * This is used to check if the application retrieved this category
+         * already in the cache, otherwise it will retrieve the information
+         */
+        routeData: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the template data coming from WP for this page
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        /**
+         * @name faqDetail
+         * @description faqDetail contains the information for the faq detail
+         * component to show its sub categories and all questions/answers
+         */
         faqDetail: {
           type: Object
         },
 
+        /**
+         * @name faqPromo
+         * @description faqPromo contains the information for the promo section
+         * that is part of the right sidebar when enabled in WP
+         */
         faqPromo: {
           type: Object,
           value: function() {
             return {};
           }
         },
-      },
-
-      ready: function() {
 
         /**
-         * Adds questions to wordpress faq categories
-         * TODO: can be removed when we use real GMT data
-         * endpoint takes the category slug/id
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
          */
-        this.set('faqDetail', {
-          id: 1,
-          brand_id: 4,
-          name: 'Services',
-          value: 'services',
-          sub_categories: [
-            {
-              id: 10,
-              service_topics_category_id: 1,
-              name: 'Repairs',
-              items: [
-                {
-                  id: 1,
-                  service_topics_sub_category_id: 10,
-                  featured: 1,
-                  question: 'Repairs1 - First Lorem ipsum this?',
-                  answer: 'Lorem ipsum descrpition'
-                },
+        appCache: {
+          type: Object
+        },
+      },
 
-                {
-                  id: 2,
-                  service_topics_sub_category_id: 10,
-                  featured: 0,
-                  question: 'Repairs2 - Fourth Lorem ipsum this?',
-                  answer: 'Lorem ipsum descrpition'
-                }
-              ]
-            },
+      observers: [
+        '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_faq_category_selector)'
+      ],
 
-            {
-              id: 20,
-              service_topics_category_id: 1,
-              name: 'Spare Parts',
-              items: [
-                {
-                  id: 3,
-                  service_topics_sub_category_id: 20,
-                  featured: true,
-                  question: 'SpareParts1 - Second Lorem ipsum this?',
-                  answer: 'Lorem ipsum descrpition'
-                },
-                {
-                  id: 4,
-                  service_topics_sub_category_id: 20,
-                  question: 'SpareParts2 - Second Lorem ipsum this?',
-                  answer: 'Lorem ipsum descrpition'
-                }
-              ]
-            },
+      /**
+       * @observer
+       * @name _faqCategorySlugChanged
+       * @description when the routeData changes it contains the faqCategorySlug,
+       * the application checks if it can find it in cache. If it finds a match in cache
+       * the matched category will be shown, otherwise it will be retrieved by the gmt collect
+       *
+       * @param newSlug - string - the category slug
+       */
+      _setFaqDetail: function(faqGlobals, routeData, categoryId) {
+        if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
 
-            {
-              id: 30,
-              service_topics_category_id: 1,
-              name: 'Hip Safety Service',
-              items: [
-                {
-                  id: 5,
-                  service_topics_sub_category_id: 30,
-                  featured: true,
-                  question: 'HipSafetyService1 - Second Lorem ipsum this?',
-                  answer: 'Lorem ipsum descrpition'
-                },
-                {
-                  id: 6,
-                  service_topics_sub_category_id: 30,
-                  featured: true,
-                  question: 'HipSafetyService2 - Second Lorem ipsum this?',
-                  answer: 'Lorem ipsum descrpition'
-                }
-              ]
-            }
-          ]
+        var categoryId = Number(categoryId);
+        var inCache = this._findInCache(categoryId);
+
+        if (typeof inCache === 'undefined' || !inCache) {
+          // initiate a new gmt collect
+          this._setEndpointSegments(categoryId);
+        } else {
+          // set the faqDetail retrieved from the cache
+          this.set('faqDetail', inCache);
+        }
+
+      },
+
+      /**
+       * @helper
+       * @name _findInCache
+       * @description find a provided detail slug in the cached faqs
+       */
+      _findInCache: function(detailCategory) {
+        var faqCache = this.get('appCache.faqs');
+        // if no length, return false (no match can be found either way)
+        if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
+
+        return faqCache.find(function(category) {
+          return category.id === detailCategory;
         });
+      },
+
+      /**
+       * @helper
+       * @name _retrieveCategoryById
+       * @description set the endpoint-segments for the gmt-collect
+       */
+      _setEndpointSegments: function(catId) {
+        if(typeof catId === 'undefined') return;
+
+        this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
       },
 
       /**

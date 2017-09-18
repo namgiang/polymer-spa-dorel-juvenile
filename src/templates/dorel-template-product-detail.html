@@ -5,7 +5,7 @@
 <link rel="import" href="../organisms/dorel-section-product-showcase.html">
 <link rel="import" href="../organisms/dorel-section-product-video.html">
 <link rel="import" href="../organisms/dorel-section-product-usps.html">
-<link rel="import" href="../utils/dorel-magento-collect-product.html">
+<link rel="import" href="../utils/dorel-magento-collect-product-by-sku.html">
 
 <link rel="import" href="dorel-template-404.html">
 
@@ -78,11 +78,11 @@
       }
     </style>
 
-    <dorel-magento-collect-product
-      category="[[ category ]]"
+    <dorel-magento-collect-product-by-sku
       product-name="[[ routeData.productName ]]"
       current-product="{{ product }}"
-      retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product>
+      app-cache="[[ appCache ]]"
+      retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product-by-sku>
 
     <!-- define routing for products -->
     <app-route
@@ -116,7 +116,7 @@
             gtm-parent="dorel-section-header"
             gtm-parent-index="0"></dorel-section-header>
         </template>
-        
+
         <template
           is="dom-if"
           if="[[ templateData.acf.breadcrumbs_toggle ]]">
@@ -126,12 +126,14 @@
 
         <dorel-section-product-showcase
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
+          app-cache="[[ appCache ]]"
           showcase-data="[[ product ]]"
           gtm-parent="dorel-section-product-showcase"
           gtm-parent-index="1"></dorel-section-product-showcase>
 
         <dorel-section-product-usps
           product-id="[[ product.id ]]"
+          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-usps"
           gtm-parent-index="2"></dorel-section-product-usps>
 
@@ -146,12 +148,14 @@
 
         <dorel-section-product-features
           product-id="[[ product.id ]]"
+          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-features"
           gtm-parent-index="4"></dorel-section-product-features>
 
         <dorel-section-product-accessories
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
           category="[[ category ]]"
+          app-cache="[[ appCache ]]"
           related-products="[[ product.related_products ]]"
           accessories-options="[[ product.related_product_section ]]"
           gtm-parent="dorel-section-product-accessories"
@@ -159,6 +163,7 @@
 
         <dorel-section-product-accordions
           product-id="[[ product.id ]]"
+          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-accordions"
           gtm-parent-index="6"></dorel-section-product-accordions>
 
@@ -221,16 +226,6 @@
 
         /**
          * @attribute
-         * @name relatedProducts
-         * @description Array of strings with the relatedProducts
-           will be used by the collect-related-product
-         */
-        relatedProducts: {
-          type: Array
-        },
-
-        /**
-         * @attribute
          * @name loaded
          * @description a Boolean that will be used to show or hide the page
          */
@@ -239,10 +234,25 @@
           value: true
         },
 
+        /**
+         * @attribute
+         * @name product
+         * @description the current product
+         */
         product: {
           type: Object,
           value: {}
-        }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
 
       },
 

@@ -6,7 +6,7 @@
     <style>
       :host {
         @apply(--max-width-host);
-        --button-margin-spacing: 0;
+        --button-margin-spacing: -1.5em;
       }
 
       section {
@@ -66,12 +66,14 @@
 
     <section class="layout horizontal center center-justified wrap"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      
       <div class="row">
         <dorel-nav-tabs 
           selected="{{ selectedSubTab }}"
           tabs="[[ faqDetail.sub_categories ]]"
           title="name"></dorel-nav-tabs>
       </div>
+
       <div class="row">
         <template 
           is="dom-repeat" 
@@ -156,7 +158,7 @@
        * @description checks if the values needed are set
        */
       _initFaqState: function(faqDetail, queryParams) {
-
+        
         // if no faqDetail is defined or no queryParams sub is given
         if (typeof faqDetail === 'undefined') return;
 
@@ -184,7 +186,8 @@
        * @returns Number - array number of the tab that is selected
        */
       _getSelectedTab: function(subCategories, subCatId) {
-
+        if(typeof subCategories === 'undefined') return;
+        
         // go over each sub category and match the subCategoryID with the queryParams subID
         for (var i = 0; i < subCategories.length; i++) {
           if (subCategories[i].id === Number(subCatId)) {
@@ -222,6 +225,7 @@
        * @param questionId - String id of the queryParam
        */
       _setQuestions: function(subCatQuestions, questionId) {
+
         // set the opened property for each question of the subCategory
         subCatQuestions.forEach(function(question) {
           question.opened = (question.id === Number(questionId));

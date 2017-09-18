@@ -39,7 +39,7 @@
         --theme-color-black: var(--theme-color-monochrome-7);
         --theme-color-error: var(--theme-brand-complementary-color-3);
 
-        --theme-color-active: var(--theme-brand-color-1);
+        --theme-color-active: var(--theme-brand-color-2);
 
         /* ------------------------------------------------
          * Modular scale
@@ -56,7 +56,7 @@
         --theme-scale-9: calc(var(--theme-scale-1) * 24);
 
         --theme-header-wrapper: 4.5em;
-        --theme-header-wrapper-small-up: 4.5em;
+        --theme-header-wrapper-small-up: 7.5em;
         --theme-header-items-top-bottom-padding: .5em;
         --theme-header-item-padding: .5em;
         --theme-header-logo-top: .125em;
@@ -150,6 +150,7 @@
          */
         --theme-base-font-size: 16px;
         --theme-base-paragraph-width: 640px; /*560px; */
+        --theme-font-weight-bold: 500;
         --theme-font-weight: 300;
         --theme-font-weight-light: 300;
 
@@ -250,6 +251,16 @@
           max-width: var(--theme-base-paragraph-width);
         };
 
+        --theme-typography-ui: {
+          font-size: 0.8750em; /* 14px */
+          margin-top: 1.714em; /* 24px */
+          min-height: 3.428em; /* 48px */
+          margin-bottom: 0.0000em;
+          text-transform: uppercase;
+          font-weight: var(--theme-font-weight-bold);
+          font-family: var(--theme-font);
+        };
+
         /*
           * Typography colors
           */
@@ -279,7 +290,7 @@
         --theme-secondary-button-color: var(--theme-color-white);
         --theme-tertiary-button-color: var(--theme-color-monochrome-4);
 
-        --theme-button-border-radius: var(--theme-border-radius-1);
+        --theme-button-border-radius: 0;
 
         --theme-button: {
           line-height: var(--theme-scale-3);
@@ -303,35 +314,37 @@
         };
 
         --theme-button-small: {
-          @apply(--theme-typography-2);
+          @apply(--theme-typography-ui);
           padding: .188em 0;
         };
 
         --theme-button-medium: {
-          @apply(--theme-typography-2);
+          @apply(--theme-typography-ui);
           padding: .625em 0;
+          margin-top: 1.714em; /* 24px */
         };
 
         --theme-button-large: {
-          @apply(--theme-typography-3);
+          @apply(--theme-typography-ui);
           padding: .325em 0;
           text-align: center;
         };
 
         --theme-button-primary: {
-          color: var(--theme-brand-color-2);
-          fill: var(--theme-brand-color-2);
-          background-color: var(--theme-brand-complementary-color-2)
+          color: var(--theme-color-white);
+          fill: var(--theme-color-white);
+          background-color: var(--theme-brand-color-1)
         };
 
         --theme-button-inverted: {
+          color: var(--theme-brand-color-1);
           background-color: var(--theme-color-white);
         };
 
         --theme-button-secondary: {
-          color: var(--theme-brand-color-2);
-          fill: var(--theme-brand-color-2);
-          border: 2px solid var(--theme-brand-complementary-color-1);
+          color: var(--theme-brand-color-1);
+          fill: var(--theme-brand-color-1);
+          border: 2px solid var(--theme-brand-color-1);
           background-color: var(--theme-color-white);
         };
 
@@ -343,14 +356,17 @@
 
         --theme-button-link: {
           background-color: transparent;
-          color: var(--theme-color-text-link);
-          fill: var(--theme-color-text-link);
+          color: var(--theme-brand-color-1);
+          fill: var(--theme-brand-color-1);
           border-left: 0;
           border-right: 0;
         };
 
-        --theme-button-movie-play: {
-          background-color: var(--theme-color-monochrome-1);
+        --theme-button-link-hover: {
+          background-color: transparent;
+          border-color: transparent;
+          color: var(--theme-color-active);
+          fill: var(--theme-color-active);
         };
 
         --theme-button-link-active: {
@@ -366,16 +382,53 @@
           color: var(--theme-color-white);
         };
 
+        --theme-button-movie-play: {
+          background-color: var(--theme-color-monochrome-1);
+        };
+
         --theme-button-icon: {
           height: var(--theme-scale-3);
           width: var(--theme-scale-3);
+          border-left: 1px solid var(--theme-color-white);
           padding: 0 .5em;
+          margin-left: 1em;
+          margin-left: 1em;
+        };
+
+        --theme-button-primary-icon: {
+          transition: border-color .3s ease; /* smooth hover to normal state animation */
+          border-left: 1px solid var(--theme-color-white);
+        };
+
+        --theme-button-secondary-icon: {
+          transition: border-color .3s ease; /* smooth hover to normal state animation */
+          border-left: 1px solid var(--theme-brand-color-1);
+        };
+
+        --theme-button-tertiary-icon: {
+          transition: border-color .3s ease; /* smooth hover to normal state animation */
+          border-left: 1px solid var(--theme-brand-color-1);
+        };
+
+        --theme-button-link-icon: {
+          transition: border-color .3s ease; /* smooth hover to normal state animation */
+          border-left: 1px solid var(--theme-brand-color-1);
         };
 
         --theme-button-icon-small: {
           height: var(--theme-scale-3);
           width: var(--theme-scale-3);
           padding: 0 .188em;
+        };
+
+        --theme-button-icon-active: {
+          transition: border-color .3s ease;
+          border-left-color: var(--theme-color-white);
+        };
+
+        --theme-button-link-icon-active: {
+          transition: border-color .3s ease;
+          border-left-color: var(--theme-color-active);
         };
 
         /*
@@ -533,7 +586,17 @@
           background-color: var(--theme-color-monochrome-2);
           font-weight: var(--theme-font-weight);
         }
+
+       /*
+        * Quinny styled Icons
+        */
+
+        --theme-svg-icon-chevron: {
+          d: path("M0 13.18l6.59-6.59L0 0v13.18");
+        };
+
       }
+
     </style>
   </template>
 </dom-module>

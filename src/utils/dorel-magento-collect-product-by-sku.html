@@ -1,0 +1,184 @@
+
+<dom-module id="dorel-magento-collect-product-by-sku">
+  <template>
+
+    <iron-ajax
+      id="product"
+      content-type="application/json"
+      method="get"
+      handle-as="json"
+      on-response="_productResponse"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-magento-collect-product-by-sku',
+
+      properties: {
+
+        /**
+         * @name category
+         * @description this category is inherit by the parent and
+         * will be used in the filter for the call to the magento end-point
+         */
+        category: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * @name productName
+         * @description productName represents the id (sku) of a product
+         */
+        productName: {
+          type: String
+        },
+
+        /**
+         * @name currentProduct
+         * @description currentProduct will be used to send the correct data to the parent
+         */
+        currentProduct: {
+          type: Object,
+          notify: true
+        },
+
+        /**
+         * @name retrievingProduct
+         * @description loading indicator true if it is loading
+         */
+        retrievingProduct: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        }
+
+      },
+
+      observers: [
+        '_init(productName)'
+      ],
+
+      /**
+       * @name _init
+       * @description will be called by the observer
+       * @param category - Number
+       * @param productName - String
+       * @param token - String
+       * @param colorMap - Array
+       */
+      _init: function(productName) {
+        // if category or productName is empty we can't make the call return
+        if(!productName) {
+          return;
+        }
+
+        //set retrievingProduct to true so parent will know that product is being retrieved
+        this.set('retrievingProduct', true);
+
+        // get all the products that are saved in the global
+        var products = this.get('appCache.product.products') || [];
+
+        // check if the productName (potential new current product) is already in the saved products
+        var existingProduct = products.find(function(product) {
+          return product.url === productName;
+        });
+
+        // if the product already exists set this product else retrieve product from api
+        if(existingProduct) {
+          return this._setCurrentProduct(existingProduct);
+        } else {
+          return this._getProduct(productName);
+        }
+      },
+
+      /**
+       * @name _getProduct
+       * @description make call to end-point to retreive product
+       * @param category - Number
+       */
+      _getProduct: function(productName) {
+        var productsEl = this.$.product;
+        productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/product/' + productName;
+        productsEl.generateRequest();
+      },
+
+      /**
+       * @name _productResponse
+       * @description response of the _getProduct call;
+       * @param response
+       */
+      _productResponse: function(response) {
+        //set newProducts Array from response
+        var newProducts = response.detail.response;
+
+        //if there are no products in Array
+        if(!newProducts.length) {
+          //set the currentProduct with a empty Object so parent will know it should show a 404
+          return this._setCurrentProduct({});
+        } else {
+          return this._setProducts(newProducts)
+        }
+      },
+
+      /**
+       * @name _setProducts
+       * @description will merge the old and new products and remove the duplicates and set the global products
+       * @param newProducts - Array
+       */
+      _setProducts: function(newProducts) {
+        //set the current product with the first Object from Array
+        this._setCurrentProduct(newProducts[0]);
+
+        //get all the "cached" products
+        var oldProducts = this.get('appCache.product.products') || [];
+
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        var products = this._mergeArrays(oldProducts, newProducts);
+        // set new array of products in the global saved products
+        this.fire('setAppCache', { value: products, path: 'product.products' });
+      },
+
+      /**
+       * @name _mergeArrays
+       * @description this method will merge 2 arrays of products
+       * @param array1 - Array
+       * @param array2 - Array
+       */
+      _mergeArrays: function(array1, array2) {
+        //check if item exists else filter it before merging arrays (oldProducts / newProducts)
+        return array1.concat(array2.filter(function(item, index) {
+            return array1.some(function(oldItem) {
+              return oldItem.id === item.id;
+            });
+        }));
+      },
+
+      /**
+       * @name _setCurrentProduct
+       * @description this method will set global current product;
+       * @param product - Object
+       */
+      _setCurrentProduct: function(product) {
+        //set current product in appCache so meta-data will be set
+        this.fire('setAppCache', { value: product, path: 'current.product' });
+        //set current product so it will be available for parent
+        this.set('currentProduct', product);
+        //set retrievingProduct to false so parent will know that product is retrieved
+        this.set('retrievingProduct', false);
+      }
+
+    });
+  </script>
+</dom-module>

@@ -2,40 +2,31 @@
   <template>
     <iron-ajax
       auto
-      url="[[ endPoint ]]" 
-      handle-as="json" 
+      url="[[ endPoint ]]"
+      handle-as="json"
       on-response="_faqsLoaded"></iron-ajax>
   </template>
-  
+
   <script>
     Polymer({
       is: 'dorel-gmt-collect-faqs',
       properties: {
 
         /**
-         * `apiCall` the last segment of the api call
+         * @attribute
+         * @name endpointSegments
+         * @description the segments that are added behind the GMT url, separate
+         * multiple segments with '/'
          */
-        apiCall: {
-          type: String
+        endpointSegments: {
+          type: String,
+          observer: '_defineEndpoint'
         },
 
         /**
-         * `apiResponse` will be used to update the attribute up the tree,
-         * hence the reflectToAttribute. This way the response will be used
-         * in the code where this component is placed
-         */
-        apiResponse: {
-          type: Object,
-          value: function() {
-            return {};
-          },
-          notify: true,
-          reflectToAttribute: true
-        },
-
-        /**
-         * `endPoint` complete url and segment for the endpoint call to make by
-         * the iron-ajax
+         * @name endPoint
+         * @description the full endpoint url that iron-ajax uses to do the call
+         * to the GMT
          */
         endPoint: {
           type: String
@@ -43,28 +34,41 @@
       },
 
       /**
-       * @name ready
-       * @description will check if the apiCall isset and then sets the endpoint which
-       * will initiate the call in the iron-ajax
+       * @observer
+       * @name _defineEndpoint
+       * @description will check if the endpointSegments are changed and creates an
+       * endpoint url, which will do the api call automatically
        */
-      ready: function() {
-        var apiCall = this.get('apiCall');
-
-        if (typeof apiCall === 'undefined' || apiCall === '') {
-          console.error('no endpoint given, please provide the right endpoint url');
+      _defineEndpoint: function(newSegment, oldSegment) {
+        if (typeof newSegment === 'undefined' || newSegment === '' || newSegment === oldSegment) {
+          console.error('no segments attribute defined, please provide the right apiCall as an attribute');
           return;
         }
 
-        this.set('endPoint', CONFIG.DIO_API_URL + '/' + apiCall);
+        // set the endPoint variable which will kick off the iron-ajax
+        this.set('endPoint', CONFIG.DIO_API_URL + '/service-topics/' + newSegment);
       },
 
-      /** 
+      /**
        * @name _faqsLoaded
        * @description when the endpoint gives a response we set the apiResponse,
        * which will reflect to the attribute
        */
       _faqsLoaded: function(data) {
-        this.set('apiResponse', data.detail.response);
+        var response = data.detail.response;
+
+        if(typeof response.results !== 'undefined') {
+          var faqsGlobals = this.get('appCache.faqs') || [];
+
+          this.fire('setAppCache', { value: response.results, path: 'faqs' });
+        }
+
+        if(typeof response.result !== 'undefined') {
+          var faqsGlobals = this.get('appCache.faqs') || [];
+
+          faqsGlobals.push(response.result);
+          this.fire('setAppCache', { value: faqsGlobals, path: 'faqs' });
+        }
       }
     });
   </script>

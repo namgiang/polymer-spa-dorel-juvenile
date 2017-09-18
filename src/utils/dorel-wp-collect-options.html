@@ -11,9 +11,19 @@
     Polymer({
       is: 'dorel-wp-collect-options',
 
-      properties: {},
+      properties: {
+
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        }
+
+      },
+
       observers: [
-        '_initOptions(globals.Dorel.wpUrl)'
+        '_initOptions(appCache.wpUrl)'
       ],
 
       /**
@@ -21,9 +31,9 @@
        * @description Observer function which defines the endpoint when it's available as a global variable
        */
       _initOptions: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+        if (typeof wpUrl === 'undefined' || wpUrl === '') return;
 
-        this.endPoint = this.globals.Dorel.wpUrl + '/acf/v2/options';
+        this.endPoint = wpUrl + '/acf/v2/options';
       },
 
       /** 
@@ -34,31 +44,18 @@
         var options = data.detail.response;
 
         // prepare collect object for options
-        Polymer.globalsManager.set('Dorel.collect.options', {});
+        this.fire('setAppCache', { path: 'collect.options', value: {} });
 
         // iterate over the keys of the response
         for (var key in options.acf) {
 
-          // first put the response in the globals to use it later
-          Polymer.globalsManager.set('Dorel.collect.options.' + key,
-            options.acf[key]);
+          // first put the response in the application cache to use it later
+          this.fire('setAppCache', { 
+            path: 'collect.options.' + key,
+            value: options.acf[key]
+          });
+
         };
-      },
-
-      /**
-       * @name _hasProps
-       * @description check if the observed data model has properties
-       */
-      _hasProps: function(dataObj) {
-        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
-        var hasProps = false;
-
-        // check for properties in the dorelEvt object
-        for (var prop in dataObj) {
-          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
-        }
-
-        return hasProps;
       }
     });
   </script>

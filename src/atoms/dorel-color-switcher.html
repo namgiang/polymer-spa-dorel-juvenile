@@ -132,12 +132,12 @@
        * to select a color that is included in the filtered colors
        * @param filters - Array - filters inerited by parent => from the queryParams
        */
-      _filterChildProducts: function(filters) {
+      _filterChildProducts: function (filters) {
         var self = this;
         var currentColorSelected = false;
-        return function(color) {
+        return function (color) {
           // if no filters are applied return true
-          if(!filters || !filters.base || !filters.base.length) {
+          if (!filters || !filters.base || !filters.base.length) {
             self._setCurrentColor(self.colorsData[0]);
             return true;
           }
@@ -146,11 +146,11 @@
             return false;
           }
           var showProduct = self.$.categoryManager.shouldShowProduct(color, filters);
-          if(showProduct === true && currentColorSelected === false) {
-            var selectedColor = self.colorsData.find(function(_color) {
+          if (showProduct === true && currentColorSelected === false) {
+            var selectedColor = self.colorsData.find(function (_color) {
               return _color.sku === color.sku;
             });
-            if(selectedColor) {
+            if (selectedColor) {
               self._setCurrentColor(selectedColor);
               currentColorSelected = true;
             }
@@ -159,8 +159,8 @@
         };
       },
 
-      _setCurrentColor: function(newColor) {
-        if(!newColor) {
+      _setCurrentColor: function (newColor) {
+        if (!newColor) {
           return;
         }
         this.set('currentImage', newColor.images.image);
@@ -199,7 +199,7 @@
           }
         };
 
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: this.gtmAction ? this.gtmAction : 'click',
           component: 'color-switcher',
           structure: structure,
@@ -209,7 +209,9 @@
             currentColor: this.currentName,
             targetColor: this.newColorName
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
 
         this.currentImage = this.newColorImage;
         this.currentName = this.newColorName;

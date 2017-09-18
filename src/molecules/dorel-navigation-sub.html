@@ -78,7 +78,7 @@
       }
 
       dorel-tab {
-        padding: 0 var(--theme-scale-3);
+        padding: .75em 0 .75em 2em;
         text-transform: capitalize;
         height: 1.5rem;
         cursor: pointer;
@@ -315,7 +315,7 @@
           var gtmIndex = Number(element.getAttribute('gtm-index')) + increment;
 
           // send event data to tracking function
-          Polymer.globalsManager.set('Dorel.events', {
+          var event = {
             action: 'click',
             component: 'navigation',
             structure: {
@@ -332,13 +332,15 @@
             },
             element: element,
             event: 'polymer_event'
-          });
+          };
+
+          this.fire('setAppCache', {value: event, path: 'events'});
+
         } else {
           // retarget to right element
           var element = Polymer.dom(event).localTarget;
 
-          // send event data to tracking function
-          Polymer.globalsManager.set('Dorel.events', {
+          var event = {
             action: (this.subMenuOpened) ? 'open' : 'close',
             component: 'navigation',
             structure: {
@@ -352,7 +354,10 @@
             },
             element: element,
             event: 'polymer_event'
-          });
+          };
+
+          // send event data to tracking function
+          this.fire('setAppCache', {value: event, path: 'events'});
         }
       },
 
