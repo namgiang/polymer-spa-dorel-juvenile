@@ -150,8 +150,8 @@
       _filterContinents: function() {
         var self = this;
         return function(continent) {
-          // if there is no product return false
-          if (!continent) {
+          // if there is no continent return false
+          if(!continent || !continent.countries || !continent.countries.length) {
             return false;
           }
           return !self._isInternationalContinent(continent);
@@ -199,7 +199,7 @@
       _isInternationalContinentAvailable: function(continentsData) {
         var self = this;
         return continentsData.some(function(continent) {
-          return self._isInternationalContinent(continent);
+          return self._isInternationalContinent(continent) && continent.countries && continent.countries.length;
         });
       },
 
