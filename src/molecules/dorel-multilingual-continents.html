@@ -115,7 +115,7 @@
                     link="[[ _getInternationalContinentLink(continentsData) ]]"
                     icon=""
                     size="medium">
-           International website (English)
+           International website ([[ _getInternationalContinentLanguage(continentsData) ]])
          </dorel-cta>
       <div>
     </template>
@@ -189,6 +189,21 @@
           return self._isInternationalContinent(continent);
         });
         return international && international.countries && international.countries.length ? international.countries[0].website_url : '';
+      },
+
+      /**
+       * @name _getInternationalContinentLink
+       * @description gets the International continent from the data and uses the first country link
+       * @returns String
+       */
+      _getInternationalContinentLanguage: function(continentsData) {
+        var self = this;
+        
+        var international = continentsData.find(function(continent) {
+          return self._isInternationalContinent(continent);
+        });
+
+        return international.countries[0].languages[0].name;
       },
 
       /**
