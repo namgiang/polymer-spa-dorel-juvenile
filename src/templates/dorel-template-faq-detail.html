@@ -113,12 +113,8 @@
       <div class="row">
 
         <!-- page-nav -->
-        <template
-          is="dom-if"
-          if="[[ templateData.acf.breadcrumbs_toggle ]]">
-          <dorel-section-page-nav
-            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
-        </template>
+        <dorel-section-page-nav
+          breadcrumbs-toggle="true"></dorel-section-page-nav>
         <!--// page-nav -->
         
         <div class="container-faq">
@@ -145,9 +141,9 @@
           <template
             is="dom-if"
             if="[[ templateData.acf.customer_support_toggle ]]">
-            <dorel-section-service-support
+            <dorel-customer-support
                   compact="true"
-                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
+                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
           </template>
           <!--// customer support -->
 
@@ -180,7 +176,11 @@
          * contains data that used to be contained by the globalsManager
          */
         appCache: {
-          type: Object
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineOptionModels'
         },
 
         /**
@@ -208,7 +208,13 @@
          * @description faqDetail contains the information for the faq detail
          * component to show its sub categories and all questions/answers
          */
-        faqDetail: Object
+        faqDetail: Object,
+
+        /**
+         * @name customerSupportOptions
+         * @description all customer support settings extracted from collect.options
+         */
+        customerSupportOptions: Object
       },
 
       observers: [
@@ -229,7 +235,23 @@
 
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.faq_promo !== 'undefined') {
-          this.faqPromo = templateData.acf.faq_promo[0];
+          this.set('faqPromo', templateData.acf.faq_promo[0]);
+        }
+      },
+
+      /**
+       * @name _defineOptionModels
+       * @description similiar to _defineComponentModels but for options page settings
+       *
+       * @param Object
+       */
+      _defineOptionModels: function(appCache) {
+        // check if the templateData has content
+        if(!this._hasProperty(appCache) || typeof appCache.collect === 'undefined' || typeof appCache.collect.options === 'undefined') return;
+        
+        // set the homeHeaderData for the heroHeader component
+        if(typeof appCache.collect.options.customer_support !== 'undefined') {
+          this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
         }
       },
 

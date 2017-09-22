@@ -82,12 +82,8 @@
       <!--// section-hero-header -->
 
       <!-- breadcrumbs (page-nav) -->
-      <template
-        is="dom-if"
-        if="[[ templateData.acf.breadcrumbs_toggle ]]">
-        <dorel-section-page-nav
-          breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
-      </template>
+      <dorel-section-page-nav
+        breadcrumbs-toggle="true"></dorel-section-page-nav>
       <!--// breadcrumbs (page-nav) -->
 
       <!-- section-products-overview -->
@@ -117,8 +113,8 @@
           <div class="section">
             <div class="row">
               <div class="container">
-                <dorel-section-service-support
-                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
+                <dorel-customer-support
+                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
               </div>
             </div>
           </div>
@@ -139,7 +135,11 @@
          * `appCache` the application cache
          */
         appCache: {
-          type: Object
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineOptionModels'
         },
 
         /**
@@ -171,7 +171,13 @@
          * @name servicesOverviewFaq
          * @description the data model used for the services overview faq component
          */
-        servicesOverviewFaq: Array
+        servicesOverviewFaq: Array,
+
+        /**
+         * @name customerSupportOptions
+         * @description the data model used for the customer support component
+         */
+        customerSupportOptions: Object
       },
 
       /**
@@ -188,17 +194,33 @@
 
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.hero_header !== 'undefined') {
-          this.heroHeaderData = templateData.acf.hero_header[0];
+          this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
 
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.products_overview_faq !== 'undefined') {
-          this.productsOverviewFaq = templateData.acf.products_overview_faq[0];
+          this.set('productsOverviewFaq', templateData.acf.products_overview_faq[0]);
         }
 
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.services_overview_faq !== 'undefined') {
-          this.servicesOverviewFaq = templateData.acf.services_overview_faq[0];
+          this.set('servicesOverviewFaq', templateData.acf.services_overview_faq[0]);
+        }
+      },
+
+      /**
+       * @name _defineOptionModels
+       * @description similiar to _defineComponentModels but for options page settings
+       *
+       * @param Object
+       */
+      _defineOptionModels: function(appCache) {
+        // check if the templateData has content
+        if(!this._hasProperty(appCache) || typeof appCache.collect === 'undefined' || typeof appCache.collect.options === 'undefined') return;
+        
+        // set the homeHeaderData for the heroHeader component
+        if(typeof appCache.collect.options.customer_support !== 'undefined') {
+          this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
         }
       },
 

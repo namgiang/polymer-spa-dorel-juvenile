@@ -1,4 +1,4 @@
-<dom-module id="dorel-section-service-support">
+<dom-module id="dorel-customer-support">
   <template>
     <style>
       :host {
@@ -144,7 +144,7 @@
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
 
       <template is="dom-if" if="[[ compact ]]">
-        <dorel-bynder-image media-id$="[[ templateData.support_bynder_image_id ]]"
+        <dorel-bynder-image media-id$="[[ templateData.bynder_image_id ]]"
                             derivative-identifier="Fullscreen Small portrait"
                             mobile-width="6em"
                             mobile-height="6em"
@@ -154,7 +154,7 @@
                             height="6em"></dorel-bynder-image>
       </template>
       <template is="dom-if" if="[[ !compact ]]">
-        <dorel-bynder-image media-id$="[[ templateData.support_bynder_image_id ]]"
+        <dorel-bynder-image media-id$="[[ templateData.bynder_image_id ]]"
                             derivative-identifier="Fullscreen Small portrait"
                             mobile-width="6em"
                             mobile-height="6em"
@@ -165,20 +165,20 @@
       </template>
 
       <div class="text-container">
-        <h3 class="title">[[ templateData.support_title ]]</h3>
-        <p>[[ templateData.support_sub_title ]]</p>
+        <h3 class="title">[[ templateData.title ]]</h3>
+        <p>[[ templateData.sub_title ]]</p>
       </div>
       <ul class="contact-methods-container">
 
         <!-- support facebook -->
         <template 
           is="dom-if"
-          if="[[ templateData.support_facebook_toggle ]]">
+          if="[[ socialSupport.social_toggle ]]">
           <li>
             <span class="contact-method">
               <iron-icon class="contact-icon" icon="dorel-icons:facebook"></iron-icon>
-              <a href="[[ _getFacebookLink(templateData.social_channels) ]]" target="_blank" class="contact-method-title">[[ templateData.support_facebook_title ]]</a>
-              <span class="contact-method-description">[[ templateData.support_facebook_sub_title ]]</span>
+              <a href="[[ _getFacebookLink(templateData.social_channels) ]]" target="_blank" class="contact-method-title">[[ socialSupport.title ]]</a>
+              <span class="contact-method-description">[[ socialSupport.sub_title ]]</span>
             </span>
           </li>
         </template>
@@ -187,12 +187,12 @@
         <!-- support email -->
         <template 
           is="dom-if"
-          if="[[ templateData.support_email_toggle ]]">
+          if="[[ emailSupport.email_toggle ]]">
           <li>
             <span class="contact-method">
               <iron-icon class="contact-icon" icon="dorel-icons:mail"></iron-icon>
-              <a href="mailto:[[ templateData.support_email_address ]]" class="contact-method-title">[[ templateData.support_email_title ]]</a>
-              <span class="contact-method-description">[[ templateData.support_email_sub_title ]]</span>
+              <a href="mailto:[[ emailSupport.email_address ]]" class="contact-method-title">[[ emailSupport.title ]]</a>
+              <span class="contact-method-description">[[ emailSupport.sub_title ]]</span>
             </span>
           </li>
         </template>
@@ -201,12 +201,12 @@
         <!-- support email -->
         <template 
           is="dom-if"
-          if="[[ templateData.support_phone_toggle ]]">
+          if="[[ callCenterSupport.phone_toggle ]]">
           <li>
             <span class="contact-method">
               <iron-icon class="contact-icon" icon="dorel-icons:phone"></iron-icon>
-              <a href="tel:[[ templateData.support_phone_number ]]" class="contact-method-title">[[ templateData.support_phone_title ]]</a>
-              <a href="tel:[[ templateData.support_phone_number ]]" class="contact-method-description">[[ templateData.support_phone_number ]]</a>
+              <a href="tel:[[ callCenterSupport.phone_number ]]" class="contact-method-title">[[ callCenterSupport.title ]]</a>
+              <a href="tel:[[ callCenterSupport.phone_number ]]" class="contact-method-description">[[ callCenterSupport.phone_number ]]</a>
             </span>
           </li>
         </template>
@@ -220,7 +220,7 @@
 
   <script>
     Polymer({
-      is: 'dorel-section-service-support',
+      is: 'dorel-customer-support',
       properties: {
 
         /**
@@ -238,7 +238,57 @@
          * @description contains the WP data needed for building this component
          */
         templateData: {
-          type: Object
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name socialSupport
+         * @description the data model used for the social support
+         */
+        socialSupport: Object,
+
+        /**
+         * @name emailSupport
+         * @description the data model used for the email support
+         */
+        emailSupport: Object,
+
+        /**
+         * @name callCenterSupport
+         * @description the data model used for the call center support
+         */
+        callCenterSupport: Object
+      },
+
+      /**
+       * @name _defineComponentModels
+       * @description Fixed WP/ACF data is defined by an array (workaround). For components
+       * that always have one item in the array a new data model is created to be set on
+       * component attribute level. Binding with [0] array item selector doesn't work.
+       *
+       * @param Object
+       */
+      _defineComponentModels: function(templateData) {
+        // check if the templateData has content
+        if(!this._hasProperty(templateData) || typeof templateData === 'undefined') return;
+        
+        // set the homeHeaderData for the callCenterSupport
+        if(typeof templateData.call_center_support !== 'undefined') {
+          this.set('callCenterSupport', templateData.call_center_support[0]);
+        }
+
+        // set the homeHeaderData for the socialSupport
+        if(typeof templateData.social_support !== 'undefined') {
+          this.set('socialSupport', templateData.social_support[0]);
+        }
+
+        // set the homeHeaderData for the emailSupport
+        if(typeof templateData.email_support !== 'undefined') {
+          this.set('emailSupport', templateData.email_support[0]);
         }
       },
 
@@ -256,6 +306,23 @@
         });
 
         return facebookChannel.social_media_href;
+      },
+
+      /** 
+       * @name _hasProperty
+       * @description check if an Object has properties
+       *
+       * @param Object
+       * @returns Boolean
+       */
+      _hasProperty: function(obj) {
+        var hasProp = false;
+
+        for(var prop in obj) {
+          var hasProp = (obj.hasOwnProperty(prop));
+        }
+
+        return hasProp;
       },
 
       /**
