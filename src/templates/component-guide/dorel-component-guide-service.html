@@ -1,3 +1,5 @@
+<script src="mocks/faqs/customer-support.json"></script>
+<script src="mocks/faqs/promo.json"></script>
 <script src="mocks/faqs/service-faqs.json"></script>
 
 <link rel="import" href="dorel-component-guide-shared-styles.html">
@@ -15,11 +17,11 @@
         width: 100%;
       }
 
-      dorel-section-service-support {
+      dorel-customer-support {
         margin-top: 1.5em;
       }
 
-      dorel-section-service-support.compact {
+      dorel-customer-support.compact {
         max-width: 400px;
         width: 100%;
       }
@@ -33,7 +35,7 @@
       <hr>
       <h1 class="class-for-h2">FAQ Overview</h1>
     </section>
-
+    
     <dorel-section-service-faq-overview
       template-data="[[ templateData ]]"
       faq-categories="[[ faqOverview ]]"></dorel-section-service-faq-overview>
@@ -58,12 +60,12 @@
 
     <section class="content-container">
       <h1 class="class-for-h2">Service Support</h1>
-        <dorel-section-service-support 
+        <dorel-customer-support
           class="compact"
           compact="true"
-          template-data="[[ serviceSupport ]]"></dorel-section-service-support>
-        <dorel-section-service-support
-          template-data="[[ serviceSupport ]]"></dorel-section-service-support>
+          template-data="[[ customerSupport ]]"></dorel-customer-support>
+        <dorel-customer-support
+          template-data="[[ customerSupport ]]"></dorel-customer-support>
     </section>
   </template>
 
@@ -77,51 +79,24 @@
           type: Object,
           value: function() {
             return {
-              services_section_title: 'Section Title',
-              services_section_description: 'Section description ipsum dulum',
-              services_cta_text: 'view all'
+              title: 'Section Title',
+              description: 'Section description ipsum dulum',
+              cta_text: 'view all'
             };
           }
         },
 
-        serviceSupport: {
+        customerSupport: {
           type: Object,
           value: function() {
-            return {
-              social_channels: [
-                {
-                  social_media_href: "#",
-                  social_media_icon: "facebook",
-                  social_media_text: "@MaxiCosi"
-                }
-              ],
-              support_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              support_email_address: "support@test.nl",
-              support_email_sub_title: "Reply in 2 days",
-              support_email_title: "Email us",
-              support_email_toggle: true,
-              support_facebook_sub_title: "Answer in 30 minutes",
-              support_facebook_title: "Facebook",
-              support_facebook_toggle: true,
-              support_phone_number: "01284413141",
-              support_phone_title: "Call us",
-              support_phone_toggle: true,
-              support_sub_title: "Our customer service is now open until 17:00",
-              support_title: "Couldn't find your answer?"
-            };
+            return customerSupportMock;
           }
         },
 
         faqPromo: {
           type: Object,
           value: function() {
-            return {
-              promo_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              promo_cta_link: "http://localhost:8080/newsletter/",
-              promo_cta_text: "Read All",
-              promo_description: "Special seat for you baby, First Lorem ipsum this.",
-              promo_title: "Happy Hips"
-            };
+            return promoMock;
           }
         },
 
@@ -134,7 +109,7 @@
 
         faqOverview: {
           type: Array,
-          value: 
+          value: serviceFaqsOverview
         }
       }
     });
