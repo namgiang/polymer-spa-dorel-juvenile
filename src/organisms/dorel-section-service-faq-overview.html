@@ -175,15 +175,14 @@
       <div class="row">
         <div class="container">
           <template is="dom-if" if="{{ _hasValue(templateData.title) }}">
-            <h2 class="title">
-              [[ templateData.title ]]
-            </h2>
+            <h2 class="title">[[ templateData.title ]]</h2>
           </template>
           <template is="dom-if" if="{{ _hasValue(templateData.description) }}">
             <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
           </template>
         </div>
       </div>
+      
       <div class="row desktop-topics-row">
         <template
           is="dom-if"
@@ -413,8 +412,7 @@
           newVal.forEach(function (faqCat) {
 
             // add the detail page defined in the Wordpress detail to the faqCategory
-            if (Number(detailPage.acf.gmt_faq_category_selector) === faqCat.id) {
-
+            if (Number(detailPage.acf.gmt_category_selector) === faqCat.id) {
               // set the detail page defined on the detail page category selector
               faqCat.detail_page = detailPage.link;
 
