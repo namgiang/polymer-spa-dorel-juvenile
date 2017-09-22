@@ -27,7 +27,6 @@
       .accordion-heading:hover {
         cursor: pointer;
         color: var(--theme-color-text-link-active);
-
       }
 
       .accordion-container {
@@ -51,6 +50,7 @@
         right: 1em;
         color: var(--theme-color-text-link);
         transition: .3s ease color, .3s ease transform;
+        pointer-events: none;
       }
 
       .left-icon {
@@ -70,6 +70,18 @@
 
       [tablet-medium-up] .accordion-content {
         padding: 0 1.5em 1.5em 1.5em;
+      }
+
+      :host-context([small]) .accordion-heading {
+        padding: 0.75rem;
+      }
+
+      :host-context([small]) .accordion-content {
+        padding: 0 .75rem;
+      }
+
+      :host-context([small]) .accordion-icon {
+        top: .75rem;
       }
 
     </style>
@@ -129,6 +141,11 @@
         opened: {
           type: Boolean,
           value: false,
+          reflectToAttribute: true
+        },
+
+        small: {
+          type: Boolean,
           reflectToAttribute: true
         }
       },

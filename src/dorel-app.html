@@ -42,7 +42,7 @@
 
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
-<dom-module id="dorel-app">
+<dom-module id="dorel-app" mobile-menu-opened$="{{ mobileMenuOpened }}">
   <template>
     <style>
       /*
@@ -58,6 +58,21 @@
         color: var(--theme-color-black);
         display: block;
         min-height: 100vh;
+        min-width: 100vw;
+      }
+
+      #main, #footer {
+        transition: transform 0.20s ease;
+      }
+
+      :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
+        transform: translate(-256px, 0);
+      }
+
+      @media screen and (min-width: 1025px) {
+        :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
+          transform: translate(0, 0);
+        }
       }
 
       :root {
@@ -100,6 +115,8 @@
     <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
 
     <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
@@ -148,6 +165,7 @@
         load-complete="[[ loadComplete ]]"
         continents-data="[[ continentsData ]]"
         current-language="[[ currentLanguage ]]"
+        mobile-menu-opened="{{ mobileMenuOpened }}"
         page="[[ page ]]"
         brand-name="[[ brand.label ]]"></dorel-header>
     </template>
@@ -230,6 +248,7 @@
       is="dom-if"
       if="[[ shouldShow(currentPage) ]]">
       <dorel-footer
+        id="footer"
         app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
         current-language="[[ currentLanguage ]]">
@@ -272,6 +291,12 @@
           type: String,
           notify: true,
           readOnly: false,
+        },
+
+        mobileMenuOpened: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
         },
 
         /**
@@ -481,6 +506,11 @@
 
       shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
+      },
+
+      shouldOpenMobileMenu: function(mobileMenuOpened, breakPoints) {
+        debugger;
+        return Boolean(mobileMenuOpened, breakPoints);
       }
 
     });
