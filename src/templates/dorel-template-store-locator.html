@@ -10,13 +10,9 @@
         section-header-data="[[heroHeaderData]]"
         info-header="true"
         text-header="true"></dorel-section-header>
-
-      <template
-        is="dom-if"
-        if="[[templateData.acf.breadcrumbs_toggle]]">
-        <dorel-section-page-nav
-          breadcrumbs-toggle="[[templateData.acf.breadcrumbs_toggle]]"></dorel-section-page-nav>
-      </template>
+        
+      <dorel-section-page-nav
+        breadcrumbs-toggle="true"></dorel-section-page-nav>
     </template>
 
     <dorel-section-store-locator
@@ -59,7 +55,7 @@
          * @name homeHeaderData
          * @description the data model used for the hero header component
          */
-        heroHeaderData: Array
+        heroHeaderData: Object
       },
 
       /**
@@ -76,7 +72,7 @@
 
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.hero_header !== 'undefined') {
-          this.heroHeaderData = templateData.acf.hero_header[0];
+          this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
       },
 
