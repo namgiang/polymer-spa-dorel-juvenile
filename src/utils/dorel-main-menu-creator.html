@@ -1,0 +1,120 @@
+<dom-module id="dorel-main-menu-creator">
+  <template>
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-main-menu-creator',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
+
+      },
+
+      observers: [
+        '_createMenuDataModel(appCache.collect.options, appCache.collect.pages)'
+      ],
+
+      _createMenuDataModel: function(options, pages) {
+        if(!options || !options.main_menu || !pages) {
+          return;
+        }
+        var mainMenu = this._createLinks(options.main_menu, pages);
+        this.fire('setAppCache', { value: mainMenu, path: 'main_menu'});
+      },
+
+      _createLinks: function(menuItems, pages) {
+        var self = this;
+        return menuItems.map(function(item) {
+          var page = self._getPage(pages, item['Page Object'].ID);
+          if(!page) {
+            return false;
+          }
+          return self._createMenuItem(item, page, pages);
+        })
+      },
+
+      _getPage: function(pages, id) {
+        return pages.find(function(page) {
+          return page.id === id;
+        });
+      },
+
+      _createMenuItem: function(item, page, pages) {
+        delete item['Page Object'];
+        item.id = page.id;
+        item.link = page.link;
+        item.title = page.title.rendered;
+        if(item.dropdown_type === 'category') {
+          item.category_id = this._getMagentoCategoryId(page);
+          item.sub_category_items = this._getSubCategoryItems(page, pages);
+        }
+        if(item.dropdown_items && item.dropdown_items.length) {
+          var self = this;
+          item.dropdown_items = item.dropdown_items.map(function(_item) {
+            var page = self._getPage(pages, _item['link'].ID);
+            if(!page) {
+              return false;
+            }
+            return self._createMenuItem(_item, page, pages);
+          });
+        }
+        return Object.assign({}, item);
+      },
+
+      _getSubCategoryItems: function(page, pages) {
+        var childPages = this._getChildPages(page, pages);
+        var self = this;
+        return childPages.map(function(page) {
+          return self._getCategorySubMenuItems(page);
+        });
+      },
+
+      _getCategorySubMenuItems: function(page) {
+        var section = this._findInPageBuilder(page, 'section_category_header');
+        return {
+          id: page.id,
+          link: page.link,
+          thumbnail: section ? section.bynder_background_image : null,
+          title: page.title.rendered,
+        };
+      },
+
+      _getChildPages: function(page, pages) {
+        return pages.filter(function(_page) {
+          return _page.parent === page.id;
+        });
+      },
+
+      _getMagentoCategoryId: function(page) {
+        var magentoSection = this._findInPageBuilder(page, 'section_magento');
+        return magentoSection && magentoSection.magento_category_picker ?
+          parseInt(magentoSection.magento_category_picker) : 0;
+      },
+
+      _findInPageBuilder: function(page, section) {
+        return page.acf.page_builder.find(function(block) {
+          return block.acf_fc_layout === section;
+        });
+      },
+
+      _pageObjectConverter: function(page) {
+
+      },
+
+
+
+    });
+  </script>
+</dom-module>
