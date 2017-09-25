@@ -92,6 +92,8 @@
         float: left;
         margin: 0 1.5em 1.5em 0;
         border-radius: 50%;
+        /* NOTE: This forces GPU rendering, hack for delayed rounded corners rendering*/
+        will-change: transform;
         overflow: hidden;
       }
 
@@ -171,7 +173,7 @@
       <ul class="contact-methods-container">
 
         <!-- support facebook -->
-        <template 
+        <template
           is="dom-if"
           if="[[ socialSupport.social_toggle ]]">
           <li>
@@ -185,7 +187,7 @@
         <!--// support facebook -->
 
         <!-- support email -->
-        <template 
+        <template
           is="dom-if"
           if="[[ emailSupport.email_toggle ]]">
           <li>
@@ -199,7 +201,7 @@
         <!--// support email -->
 
         <!-- support email -->
-        <template 
+        <template
           is="dom-if"
           if="[[ callCenterSupport.phone_toggle ]]">
           <li>
@@ -232,7 +234,7 @@
           value: false,
         },
 
-        /** 
+        /**
          * @attribute
          * @name templateData
          * @description contains the WP data needed for building this component
@@ -292,7 +294,7 @@
         }
       },
 
-      /** 
+      /**
        * @attribute
        * @name _getFacebookLink
        * @description retrieves the facebook href from the social channels options to
@@ -302,7 +304,7 @@
         if(typeof socialChannels === 'undefined' || !socialChannels.length) return;
 
         var facebookChannel = socialChannels.find(function(channel) {
-          return channel.social_media_icon === 'facebook'; 
+          return channel.social_media_icon === 'facebook';
         });
 
         return facebookChannel.social_media_href;
