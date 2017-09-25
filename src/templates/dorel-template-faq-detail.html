@@ -113,19 +113,15 @@
       <div class="row">
 
         <!-- page-nav -->
-        <template
-          is="dom-if"
-          if="[[ templateData.acf.breadcrumbs_toggle ]]">
-          <dorel-section-page-nav
-            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
-        </template>
+        <dorel-section-page-nav
+          breadcrumbs-toggle="true"></dorel-section-page-nav>
         <!--// page-nav -->
-
+        
         <div class="container-faq">
-          <h2 class="title">
-            [[ templateData.acf.category_title ]]
-          </h2>
-          <dorel-safe-html html="[[ templateData.acf.category_description ]]"></dorel-safe-html>
+          <!-- title & description -->
+          <h2 class="title">[[ templateData.acf.title ]]</h2>
+          <dorel-safe-html html="[[ templateData.acf.description ]]"></dorel-safe-html>
+          <!--// title & description -->
 
           <dorel-section-service-faq-detail
             faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
@@ -136,18 +132,18 @@
           <!-- customer support -->
           <template
             is="dom-if"
-            if="[[ templateData.acf.faq_promo_toggle ]]">
+            if="[[faqPromo.promo_toggle]]">
             <dorel-section-service-faq-promo
-              template-data="[[ templateData.acf ]]"></dorel-section-service-faq-promo>
+              template-data="[[faqPromo]]"></dorel-section-service-faq-promo>
           </template>
 
           <!-- customer support -->
           <template
             is="dom-if"
             if="[[ templateData.acf.customer_support_toggle ]]">
-            <dorel-section-service-support
+            <dorel-customer-support
                   compact="true"
-                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
+                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
           </template>
           <!--// customer support -->
 
@@ -175,23 +171,29 @@
 
         /**
          * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineOptionModels'
+        },
+
+        /**
+         * @attribute
          * @name templateData
-         * @description the template data coming from WP for this page
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
          */
         templateData: {
           type: Object,
           value: function() {
             return {};
-          }
-        },
-
-        /**
-         * @name faqDetail
-         * @description faqDetail contains the information for the faq detail
-         * component to show its sub categories and all questions/answers
-         */
-        faqDetail: {
-          type: Object
+          },
+          observer: '_defineComponentModels'
         },
 
         /**
@@ -199,27 +201,59 @@
          * @description faqPromo contains the information for the promo section
          * that is part of the right sidebar when enabled in WP
          */
-        faqPromo: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
+        faqPromo: Object,
 
         /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
+         * @name faqDetail
+         * @description faqDetail contains the information for the faq detail
+         * component to show its sub categories and all questions/answers
          */
-        appCache: {
-          type: Object
-        },
+        faqDetail: Object,
+
+        /**
+         * @name customerSupportOptions
+         * @description all customer support settings extracted from collect.options
+         */
+        customerSupportOptions: Object
       },
 
       observers: [
-        '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_faq_category_selector)'
+        '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
       ],
+
+      /**
+       * @name _defineComponentModels
+       * @description Fixed WP/ACF data is defined by an array (workaround). For components
+       * that always have one item in the array a new data model is created to be set on
+       * component attribute level. Binding with [0] array item selector doesn't work.
+       *
+       * @param Object
+       */
+      _defineComponentModels: function(templateData) {
+        // check if the templateData has content
+        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.faq_promo !== 'undefined') {
+          this.set('faqPromo', templateData.acf.faq_promo[0]);
+        }
+      },
+
+      /**
+       * @name _defineOptionModels
+       * @description similiar to _defineComponentModels but for options page settings
+       *
+       * @param Object
+       */
+      _defineOptionModels: function(appCache) {
+        // check if the templateData has content
+        if(!this._hasProperty(appCache) || typeof appCache.collect === 'undefined' || typeof appCache.collect.options === 'undefined') return;
+        
+        // set the homeHeaderData for the heroHeader component
+        if(typeof appCache.collect.options.customer_support !== 'undefined') {
+          this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+        }
+      },
 
       /**
        * @observer
@@ -232,7 +266,7 @@
        */
       _setFaqDetail: function(faqGlobals, routeData, categoryId) {
         if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
-
+        
         var categoryId = Number(categoryId);
         var inCache = this._findInCache(categoryId);
 
@@ -272,34 +306,21 @@
         this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
       },
 
-      /**
-       * @name isPageComponent
-       * @description compares to values to see if they match, for some
-       * components they can be doubled. They will always be suffixed with
-       * their number like section_multi and section_multi_2. In those
-       * cases we need to treat them as section_multi's.
+      /** 
+       * @name _hasProperty
+       * @description check if an Object has properties
        *
-       * @returns Boolean if the two values match or not (true/false)
+       * @param Object
+       * @returns Boolean
        */
-      isPageComponent: function (response, cname) {
+      _hasProperty: function(obj) {
+        var hasProp = false;
 
-        // get last char
-        var lastChar = response.substr(response.length - 1);
-
-        // find out if it is a number
-        var isNumber = !isNaN(Number(lastChar));
-
-        // if it is a number treat it accordingly
-        if (isNumber) {
-          var keyArr = response.split('_');
-          keyArr.pop();
-          strippedResponse = keyArr.join('_');
-
-          return strippedResponse === cname;
+        for(var prop in obj) {
+          var hasProp = (obj.hasOwnProperty(prop));
         }
 
-        // all other cases just compare them
-        return response === cname;
+        return hasProp;
       }
     });
 
