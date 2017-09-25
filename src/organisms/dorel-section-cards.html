@@ -96,30 +96,10 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section class="titling-section" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      <!-- section title -->
-      <template
-        is="dom-if"
-        if="[[ cardsData.section_title ]]">
-        <h2 class="title">[[ cardsData.section_title ]]</h2>
-      </template>
-      <!--// section title -->
-
-      <!-- section description -->
-      <template
-        is="dom-if"
-        if="[[ cardsData.section_description]]">
-        <div class="description">
-          <dorel-safe-html html="[[ cardsData.section_description ]]"></dorel-safe-html>
-        </div>
-      </template>
-      <!--// section description -->
-    </section>
-
     <!-- dom-repeat cards -->
     <template
       is="dom-if"
-      if="[[ cardsData.cards.length ]]">
+      if="[[ cardsData.length ]]">
 
       <section class="section-cards layout horizontal center center-justified wrap"
                compact$="[[ compact ]]"
@@ -129,7 +109,7 @@
         <div class="row">
           <template
             is="dom-repeat"
-            items="[[ cardsData.cards ]]"
+            items="[[ cardsData ]]"
             as="card">
             <dorel-card
               card-data="[[ card ]]"

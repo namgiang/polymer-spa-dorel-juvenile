@@ -72,28 +72,24 @@
       <!-- section-hero-header -->
       <template
         is="dom-if"
-        if="[[ templateData.acf.bynder_background_image ]]">
+        if="[[ templateData.acf.hero_header.length ]]">
         <dorel-section-header
           no-offset="true"
-          section-header-data="[[ templateData.acf ]]"
+          section-header-data="[[heroHeaderData]]"
           gtm-parent="dorel-template-faq-overview"
           gtm-parent-index="[[ index ]]"></dorel-section-header>
       </template>
       <!--// section-hero-header -->
 
       <!-- breadcrumbs (page-nav) -->
-      <template
-        is="dom-if"
-        if="[[ templateData.acf.breadcrumbs_toggle ]]">
-        <dorel-section-page-nav
-          breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
-      </template>
+      <dorel-section-page-nav
+        breadcrumbs-toggle="true"></dorel-section-page-nav>
       <!--// breadcrumbs (page-nav) -->
 
       <!-- section-products-overview -->
       <template
         is="dom-if"
-        if="[[ templateData.acf.products_overview_toggle ]]">
+        if="[[productsOverviewFaq.products_faq]]">
         --- products-overview-placeholder ---
       </template>
       <!--// section-products-support -->
@@ -101,11 +97,11 @@
       <!-- section-service-overview -->
       <template
         is="dom-if"
-        if="[[ templateData.acf.services_overview_toggle ]]">
+        if="[[servicesOverviewFaq.services_faq]]">
         <dorel-section-service-faq-overview
-          app-cache="[[ appCache ]]"
-          template-data="[[ templateData.acf ]]"
-          faq-categories="[[ appCache.faqs ]]"></dorel-section-service-faq-overview>
+          app-cache="[[appCache]]"
+          template-data="[[servicesOverviewFaq]]"
+          faq-categories="[[appCache.faqs]]"></dorel-section-service-faq-overview>
       </template>
       <!--// section-service-overview -->
 
@@ -117,8 +113,8 @@
           <div class="section">
             <div class="row">
               <div class="container">
-                <dorel-section-service-support
-                  template-data="[[ appCache.collect.options ]]"></dorel-section-service-support>
+                <dorel-customer-support
+                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
               </div>
             </div>
           </div>
@@ -139,7 +135,11 @@
          * `appCache` the application cache
          */
         appCache: {
-          type: Object
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineOptionModels'
         },
 
         /**
@@ -151,38 +151,94 @@
           type: Object,
           value: function () {
             return {};
-          }
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name homeHeaderData
+         * @description the data model used for the hero header component
+         */
+        heroHeaderData: Array,
+
+        /**
+         * @name productsOverviewFaq
+         * @description the data model used for the products overview faq component
+         */
+        productsOverviewFaq: Array,
+
+        /**
+         * @name servicesOverviewFaq
+         * @description the data model used for the services overview faq component
+         */
+        servicesOverviewFaq: Array,
+
+        /**
+         * @name customerSupportOptions
+         * @description the data model used for the customer support component
+         */
+        customerSupportOptions: Object
+      },
+
+      /**
+       * @name _defineComponentModels
+       * @description Fixed WP/ACF data is defined by an array (workaround). For components
+       * that always have one item in the array a new data model is created to be set on
+       * component attribute level. Binding with [0] array item selector doesn't work.
+       *
+       * @param Object
+       */
+      _defineComponentModels: function(templateData) {
+        // check if the templateData has content
+        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.hero_header !== 'undefined') {
+          this.set('heroHeaderData', templateData.acf.hero_header[0]);
+        }
+
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.products_overview_faq !== 'undefined') {
+          this.set('productsOverviewFaq', templateData.acf.products_overview_faq[0]);
+        }
+
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.services_overview_faq !== 'undefined') {
+          this.set('servicesOverviewFaq', templateData.acf.services_overview_faq[0]);
         }
       },
 
       /**
-       * @name isPageComponent
-       * @description compares to values to see if they match, for some
-       * components they can be doubled. They will always be suffixed with
-       * their number like section_multi and section_multi_2. In those
-       * cases we need to treat them as section_multi's.
+       * @name _defineOptionModels
+       * @description similiar to _defineComponentModels but for options page settings
        *
-       * @returns Boolean if the two values match or not (true/false)
+       * @param Object
        */
-      isPageComponent: function (response, cname) {
+      _defineOptionModels: function(appCache) {
+        // check if the templateData has content
+        if(!this._hasProperty(appCache) || typeof appCache.collect === 'undefined' || typeof appCache.collect.options === 'undefined') return;
+        
+        // set the homeHeaderData for the heroHeader component
+        if(typeof appCache.collect.options.customer_support !== 'undefined') {
+          this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+        }
+      },
 
-        // get last char
-        var lastChar = response.substr(response.length - 1);
+      /** 
+       * @name _hasProperty
+       * @description check if an Object has properties
+       *
+       * @param Object
+       * @returns Boolean
+       */
+      _hasProperty: function(obj) {
+        var hasProp = false;
 
-        // find out if it is a number
-        var isNumber = !isNaN(Number(lastChar));
-
-        // if it is a number treat it accordingly
-        if (isNumber) {
-          var keyArr = response.split('_');
-          keyArr.pop();
-          strippedResponse = keyArr.join('_');
-
-          return strippedResponse === cname;
+        for(var prop in obj) {
+          var hasProp = (obj.hasOwnProperty(prop));
         }
 
-        // all other cases just compare them
-        return response === cname;
+        return hasProp;
       }
     });
 
