@@ -177,7 +177,7 @@
               <!-- Normal link -->
               <template is="dom-if" if="[[ !mainItem.dropdown ]]">
                 <li class="main-menu--item">
-                  <a on-click="closeMenu"
+                  <a on-click="clickMenuItem"
                     class="main-menu--link link"
                     active$="[[ checkIfActive(mainItem.link, route) ]]"
                     href="[[ mainItem.link ]]">
@@ -190,8 +190,8 @@
                 <li class="main-menu--item">
                   <dorel-accordion-item
                     small="true"
-                    opened$="[[ mainItem.opened ]]"
-                    item-id$="[[ mainItem.id ]]"
+                    opened="[[ mainItem.opened ]]"
+                    id$="[[ mainItem.id ]]"
                     on-click="_openAccordion"
                     heading="[[ mainItem.title ]]">
 
@@ -199,7 +199,7 @@
                       <ul class="sub-menu">
                         <template is="dom-repeat" items="[[ getItems(mainItem, 'sub_category_items') ]]" as="dropdownItem">
                           <li class="sub-menu__item">
-                              <a on-click="closeMenu"
+                              <a on-click="clickMenuItem"
                                 class="link"
                                 gtm-parent="dorel-navigation-main"
                                 gtm-parent-index="[[ index ]]"
@@ -212,24 +212,22 @@
                       </ul>
                     </template>
 
-                    <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
-                      <dorel-cta
-                        gtm-parent="dorel-navigation-main"
-                        gtm-parent-index="1"
-                        type="tertiary"
-                        on-click="closeMenu"
-                        no-margin
-                        class="cta"
-                        link="[[ mainItem.link ]]"
-                        title="[[ mainItem.title ]]">
-                        <span>All [[ mainItem.title ]]</span>
-                      </dorel-cta>
-                    </template>
+                    <dorel-cta
+                      gtm-parent="dorel-navigation-main"
+                      gtm-parent-index="1"
+                      type="tertiary"
+                      on-click="clickMenuItem"
+                      no-margin
+                      class="cta"
+                      link="[[ mainItem.link ]]"
+                      title="[[ mainItem.title ]]">
+                      <span>All [[ mainItem.title ]]</span>
+                    </dorel-cta>
 
                     <ul class="sub-menu">
                       <template is="dom-repeat" items="[[ getItems(mainItem, 'dropdown_items') ]]" as="dropdownItem" filter="[[ filterDropdownItems(mainItem) ]]">
                         <li class="sub-menu__item">
-                            <a on-click="closeMenu"
+                            <a on-click="clickMenuItem"
                               class="link"
                               gtm-parent="dorel-navigation-main"
                               gtm-parent-index="[[ index ]]"
@@ -240,7 +238,6 @@
                         </li>
                       </template>
                     </ul>
-
 
                   </dorel-accordion-item>
                 </li>
@@ -267,6 +264,10 @@
       is: 'dorel-navigation-main-mobile',
       properties: {
 
+        /**
+         * @name menuItems
+         * @description Array of menu items (Objects) that are used in the template repeat
+         */
         menuItems: {
           type: Array,
           value: function() {
@@ -274,6 +275,10 @@
           }
         },
 
+        /**
+         * @name mobileMenuOpened
+         * @description Boolean that indicates if the menu is open or closed
+         */
         mobileMenuOpened: {
           type: Boolean,
           reflectToAttribute: true,
@@ -282,42 +287,59 @@
 
       },
 
+      /**
+       * @name _openAccordion
+       * @description handles a accordion click
+       * @param event - Object
+       */
       _openAccordion: function(event) {
-        var accordionId = parseInt(event.target.getAttribute('item-id'));
-        //close previous opened
-        var shouldCloseIndex = this._findOpenedItemIndex(this.get('menuItems'));
-        var shouldOpenIndex =  this._findItemIndex(this.get('menuItems'), accordionId);
-        if(shouldOpenIndex === shouldCloseIndex) {
-          return;
-        }
-        this.set('menuItems.' + shouldCloseIndex + '.opened', false);
-        this.set('menuItems.' + shouldOpenIndex + '.opened', true);
-      },
-
-      _findItemIndex: function(items, id) {
-        return items.findIndex(function(item) {
-          return item.id === id;
+        var accordionId = Number(Polymer.dom(event).localTarget.id);
+        var newMenuItems = this.get('menuItems').map(function(menuItem) {
+          menuItem.opened = menuItem.id === accordionId && !menuItem.opened ? true : false;
+          return Object.assign({}, menuItem);
         });
+        this.set('menuItems', newMenuItems);
       },
 
-      _findOpenedItemIndex: function(items) {
-        return items.findIndex(function(item) {
-          return item.opened === true;
-        });
-      },
-
+      /**
+       * @name getItems
+       * @description helper method for the dom-repeat to retrieve deep arrays
+       * @param item - Object
+       * @param path - string
+       * @returns Array
+       */
       getItems: function(item, path) {
         return item && item[path] ? item[path] : [];
       },
 
+      /**
+       * @name checkIfCategoryItems
+       * @description check if the mainItem has sub_category_items
+       * @param mainItem - Object
+       * @returns Boolean
+       */
       checkIfCategoryItems: function(mainItem) {
         return Boolean(this.isDropdownTypeCategory(mainItem) && mainItem.sub_category_items && mainItem.sub_category_items.length);
       },
 
+      /**
+       * @name isDropdownTypeCategory
+       * @description check if the mainItem has dropdown_type of category
+       * @param mainItem - Object
+       * @returns Boolean
+       */
       isDropdownTypeCategory: function(mainItem) {
         return Boolean(mainItem && mainItem.dropdown_type === 'category');
       },
 
+      /**
+       * @name filterDropdownItems
+       * @description filterMethod used by the dom-repeat to filter the dropdown arrays
+       * if dropdown_type === 'category' it should only show the first object of the dropdown_items
+       * @param mainItem - Object
+       * @param index - Number
+       * @returns Boolean
+       */
       filterDropdownItems: function(mainItem, index) {
         var self = this;
         return function(item) {
@@ -330,21 +352,31 @@
         };
       },
 
-      closeMenu: function(event) {
+      /**
+       * @name clickMenuItem
+       * @description closes the mobile menu and calls _emitGtmEvent
+       * @param event - Object
+       */
+      clickMenuItem: function(event) {
         this.set('mobileMenuOpened', false);
-        this._menuItemTap(event);
+        this._emitGtmEvent(event);
       },
 
+      /**
+       * @name checkIfActive
+       * @description helper method that compares link and the route to determine wich link is active
+       * @param link - Object
+       * @param route - Object
+       */
       checkIfActive: function(link, route) {
         return Boolean(link && link.split('/').join('') === (window.location.origin + route.path).split('/').join(''));
       },
 
       /**
-       * @name _menuItemTap
+       * @name _emitGtmEvent
        * @description handles all menu item clicks
        */
-      _menuItemTap: function (event) {
-
+      _emitGtmEvent: function (event) {
         var element = Polymer.dom(event).localTarget;
         var event = {
           action: 'click',
