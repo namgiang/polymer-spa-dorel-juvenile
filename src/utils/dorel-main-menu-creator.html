@@ -97,11 +97,10 @@
       },
 
       _getCategorySubMenuItems: function(page) {
-        var section = this._findInPageBuilder(page, 'section_category_header');
         return {
           id: page.id,
           link: page.link,
-          thumbnail: section ? section.bynder_background_image : null,
+          thumbnail: page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
           title: page.title.rendered,
         };
       },
@@ -113,15 +112,7 @@
       },
 
       _getMagentoCategoryId: function(page) {
-        var magentoSection = this._findInPageBuilder(page, 'section_magento');
-        return magentoSection && magentoSection.magento_category_picker ?
-          parseInt(magentoSection.magento_category_picker) : 0;
-      },
-
-      _findInPageBuilder: function(page, section) {
-        return page.acf.page_builder.find(function(block) {
-          return block.acf_fc_layout === section;
-        });
+        return Number(page.acf.magento_category_picker);
       },
 
       _setMenuProducts: function(value) {
