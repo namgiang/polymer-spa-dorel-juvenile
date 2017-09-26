@@ -64,6 +64,7 @@
         item.id = page.id;
         item.link = page.link;
         item.title = page.title.rendered;
+        item.opened = false;
         if(item.dropdown_type === 'category') {
           item.category_id = this._getMagentoCategoryId(page);
           item.sub_category_items = this._getSubCategoryItems(page, pages);
@@ -88,7 +89,7 @@
           return self._getCategorySubMenuItems(page);
         });
         //TODO change to false
-        if(!childPages || childPages.length) {
+        if(!childPages || childPages.length < 2) {
           var category = this._getMagentoCategoryId(page);
           this.$.products.getProducts(category);
         } else {
@@ -101,7 +102,7 @@
           id: page.id,
           link: page.link,
           thumbnail: page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
-          title: page.title.rendered,
+          title: page.title.rendered
         };
       },
 
