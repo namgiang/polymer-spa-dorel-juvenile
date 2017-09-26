@@ -159,10 +159,11 @@
        */
       _pageSelected: function (event) {
         var selectedPage = this.$.topics.selected;
-        var selectedPageTemplate = 'component-guide/dorel-component-guide-' + selectedPage + '.html';
-        this.importHref(this.resolveUrl(selectedPageTemplate), function () {
-        });
-      }
-    });
+
+        if (typeof selectedPage !== 'undefined' || selectedPage.length > 0) {
+          var selectedPageTemplate = 'component-guide/dorel-component-guide-' + selectedPage + '.html';
+          this.importHref(this.resolveUrl(selectedPageTemplate), function () {});
+        }
+      });
   </script>
 </dom-module>
