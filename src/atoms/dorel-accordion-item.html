@@ -64,6 +64,10 @@
         color: var(--theme-color-text-link-active);
       }
 
+      .accordion-container[opened] .accordion-heading {
+        font-weight: 500;
+      }
+
       .accordion-container[opened] .accordion-heading + .accordion-icon {
         transform: rotate(180deg);
       }
@@ -109,7 +113,7 @@
                    icon="dorel-icons:expand-more"></iron-icon>
       </template>
       <iron-collapse id$="collapse[[ index ]]" opened="{{ opened }}">
-        <div class="accordion-content">
+        <div class="accordion-content" id="accordion">
           <content></content>
         </div>
       </iron-collapse>
@@ -135,6 +139,12 @@
           type: String,
           value: ''
         },
+
+        small: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+        
         /**
          * @name opened
          * @description State of the accordion
@@ -142,17 +152,81 @@
         opened: {
           type: Boolean,
           value: false,
-          reflectToAttribute: true
+          reflectToAttribute: true,
+          observer: '_openedStateChanged'
         },
 
-        small: {
+        /**
+         * @name autoScroll
+         * @description If set to true, the window will scroll accordion is opened outside of the viewport
+         */
+        autoScroll: {
           type: Boolean,
-          reflectToAttribute: true
+          value: false,
         }
       },
 
       _getIconState: function (selector) {
         return opened;
+      },
+      /**
+       * @name _isInViewport
+       * @description Checks if the accordion item is visible in the viewport
+       **/
+      _isInViewport: function (domElement) {
+        // Retrieve the bounding box and position of the DOM element
+        var boundingBox = domElement.getBoundingClientRect();
+        var boundingBoxTop = boundingBox.top;
+        var boundingBoxBottom = boundingBox.bottom;
+
+        // Retrieve the viewport height
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        // Check if the boundingBox falls within the viewport
+        var isInViewport = boundingBoxTop > 0 && boundingBoxTop < viewportHeight;
+
+        return isInViewport;
+      },
+
+      /**
+       * @name _openedStateChanged
+       * @description Observer for the opened state
+       **/
+      _openedStateChanged: function () {
+        var self = this;
+        setTimeout(function () {
+          var accordionDomElement = self.$.accordion;
+          //this._scrollToItem(accordionDomElement);
+
+          var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordionDomElement);
+
+
+          // If the item is opened, and it's not in the viewport
+          if (shouldScroll) {
+            // Make sure the item is visible by scrolling/jumping to it
+
+            var elementRect = accordionDomElement.getBoundingClientRect();
+            var absoluteElementTop = elementRect.top + window.pageYOffset;
+            var middle = absoluteElementTop - (window.innerHeight / 2);
+
+            self.middle = middle;
+
+            //Parameters for animating the scroll
+            var scrollTime = 500;
+            var scrollTimeout = 5;
+            var iterations = scrollTime / scrollTimeout;
+            self.scrollDistance = middle / iterations;
+
+            //Scroll animation
+            var timerID = setInterval(function () {
+              window.scrollBy(0, self.scrollDistance);
+
+              if (window.pageYOffset >= self.middle)
+                clearInterval(timerID);
+            }, scrollTimeout);
+          }
+        }, 1000);
+
       },
 
       /**
@@ -178,6 +252,7 @@
         // event tracking
         this._eventTracking(e, e.target, state);
       },
+
 
       /**
        * @name _hasValue

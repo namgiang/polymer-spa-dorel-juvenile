@@ -2,6 +2,19 @@
 
 <dom-module id="dorel-template-store-locator">
   <template>
+    
+    <template 
+      is="dom-if"
+      if="[[templateData.acf.hero_header.length]]">
+      <dorel-section-header 
+        section-header-data="[[heroHeaderData]]"
+        info-header="true"
+        text-header="true"></dorel-section-header>
+        
+      <dorel-section-page-nav
+        breadcrumbs-toggle="true"></dorel-section-page-nav>
+    </template>
+
     <dorel-section-store-locator
       template-data="[[ templateData ]]"
       app-cache="[[ appCache ]]"
@@ -14,17 +27,6 @@
       is: 'dorel-template-store-locator',
 
       properties: {
-        /**
-         * @attribute
-         * @name templateData
-         * @description all data needed to build up a certain component
-         */
-        templateData: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
 
         /**
          * @attribute
@@ -34,7 +36,61 @@
          */
         appCache: {
           type: Object
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name homeHeaderData
+         * @description the data model used for the hero header component
+         */
+        heroHeaderData: Object
+      },
+
+      /**
+       * @name _defineComponentModels
+       * @description Fixed WP/ACF data is defined by an array (workaround). For components
+       * that always have one item in the array a new data model is created to be set on
+       * component attribute level. Binding with [0] array item selector doesn't work.
+       *
+       * @param Object
+       */
+      _defineComponentModels: function(templateData) {
+        // check if the templateData has content
+        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.hero_header !== 'undefined') {
+          this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
+      },
+
+      /** 
+       * @name _hasProperty
+       * @description check if an Object has properties
+       *
+       * @param Object
+       * @returns Boolean
+       */
+      _hasProperty: function(obj) {
+        var hasProp = false;
+
+        for(var prop in obj) {
+          var hasProp = (obj.hasOwnProperty(prop));
+        }
+
+        return hasProp;
       }
     });
   </script>

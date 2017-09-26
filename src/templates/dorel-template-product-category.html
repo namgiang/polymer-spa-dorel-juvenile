@@ -78,7 +78,7 @@
     </style>
 
     <dorel-magento-collect-products-by-category
-      category="[[ category ]]"
+      category="[[ templateData.acf.magento_category_picker ]]"
       app-cache="[[ appCache ]]"
       retrieving-products="{{ retrievingProducts }}"
       products="{{ products }}"></dorel-magento-collect-products-by-category>
@@ -89,76 +89,72 @@
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
-      <!-- show when acf.page_builder has components -->
+      <!-- section-header -->
       <template
         is="dom-if"
-        if="{{ templateData.acf.page_builder.length }}">
+        if="[[templateData.acf.hero_header.length]]">
+        <dorel-section-header
+          section-header-data="[[heroHeaderData]]"
+          gtm-parent="dorel-section-header"
+          gtm-parent-index="[[ index ]]"></dorel-section-header>
+      </template>
+      <!--// section-header -->
 
+      <div class="container layout horizontal center center-justified wrap">
+        <div class="row">
 
-        <!-- iterate over page_builder components -->
-        <template
-          is="dom-if"
-          if="{{ shouldShowComponent(templateData, 'section_category_header') }}">
-          <dorel-section-header
-            section-header-data="[[ getComponent(templateData, 'section_category_header') ]]" gtm-parent="dorel-section--header"
-            gtm-parent-index="[[ index ]]"></dorel-section-header>
-        </template>
+          <dorel-section-page-nav
+            breadcrumbs-toggle="true"
+            rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
 
-        <div class="container layout horizontal center center-justified wrap">
-          <div class="row">
-            <dorel-section-page-nav
-              breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"
-              rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
+          <div class="sidebar">
+            <template
+              is="dom-if"
+              if="[[leftSidebar.productSubCategories.toggle]]">
+              <dorel-expandable-panel header="Subcategories" opened>
+                <dorel-category-submenu
+                  items="[[leftSidebar.productSubCategories.sub_categories]]">
+                </dorel-category-submenu>
+              </dorel-expandable-panel>
+            </template>
 
-            <div class="sidebar">
-              <template
-                is="dom-if"
-                if="{{ shouldShowComponent(templateData, 'section_sub_categories', 'sub_menu') }}">
-                <dorel-expandable-panel header="Subcategories" opened>
-                  <dorel-category-submenu
-                    items="[[ getComponent(templateData, 'section_sub_categories', 'sub_menu') ]]">
-                  </dorel-category-submenu>
-                </dorel-expandable-panel>
-              </template>
-              <template
-                is="dom-if"
-                if="{{ shouldShowComponent(templateData, 'section_magento_filtering', 'filter_groups') }}">
-                <dorel-expandable-panel header="Filters" opened>
-                  <dorel-category-filter
-                    filter-data="[[ getComponent(templateData, 'section_magento_filtering', 'filter_groups') ]]"
-                    retrieving-products="[[ retrievingProducts ]]"
-                    product-data="[[ products ]]">
-                  </dorel-category-filter>
-                </dorel-expandable-panel>
-              </template>
-            </div>
-
-            <div class="content">
-              <template
-                is="dom-if"
-                if="{{ shouldShowComponent(templateData, 'section_magento') }}">
-                <dorel-category-listing
-                  products-data="[[ products ]]"
+            <template
+              is="dom-if"
+              if="[[leftSidebar.filters.toggle]]">
+              <dorel-expandable-panel header="Filters" opened>
+                <dorel-category-filter
+                  filter-data="[[leftSidebar.filters.filter_groups]]"
                   retrieving-products="[[ retrievingProducts ]]"
-                  sort="[[ sort ]]"
-                  rendered-count="{{ renderedCount }}"
-                  gtm-parent="dorel-category-listing"
-                  gtm-parent-index="2"></dorel-category-listing>
-              </template>
-            </div>
+                  product-data="[[ products ]]">
+                </dorel-category-filter>
+              </dorel-expandable-panel>
+            </template>
+          </div>
 
-      </template>
-      <template
-        is="dom-if"
-        if="{{ templateData.acf.title }}">
-        <dorel-section-seo
-          meta-title="[[ templateData.acf.title ]]"
-          meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
-      </template>
-    </div>
-    </div>
-    </div>
+          <div class="content">
+            <dorel-category-listing
+              products-data="[[ products ]]"
+              retrieving-products="[[ retrievingProducts ]]"
+              sort="[[ sort ]]"
+              rendered-count="{{ renderedCount }}"
+              gtm-parent="dorel-category-listing"
+              gtm-parent-index="2"></dorel-category-listing>
+          </div>
 
+          <template
+            is="dom-if"
+            if="{{ templateData.acf.title }}">
+            <dorel-section-seo
+              meta-title="[[ templateData.acf.title ]]"
+              meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
+          </template>
+
+        </div>
+      </div>
+      <!--// container -->
+
+    </div>
+    <!--// tablet div -->
 
   </template>
   <script>
@@ -169,6 +165,15 @@
 
         /**
          * @attribute
+         * @name appCache
+         * @description the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
+        /**
+         * @attribute
          * @name templateData
          * @description the data coming from ACF/Wordpress which is delegated to the page builder
          */
@@ -176,7 +181,8 @@
           type: Object,
           value: function () {
             return {};
-          }
+          },
+          observer: '_defineComponentModels'
         },
 
         /**
@@ -212,75 +218,81 @@
           value: true
         },
 
-        renderedCount: {
-          type: Number
-        },
+        renderedCount: Number,
 
-        appCache: {
-          type: Object
-        }
+        heroHeaderData: Object,
+
+        leftSidebar: Object
 
       },
 
-      observers: [
-        '_templateDataChanged(templateData)'
-      ],
       /**
-       * observer
-       * @name _setInitialProductSorting
-       * @description will call functions
-       * @param templateData - Object
+       * @name _defineComponentModels
+       * @description Fixed WP/ACF data is defined by an array (workaround). For components
+       * that always have one item in the array a new data model is created to be set on
+       * component attribute level. Binding with [0] array item selector doesn't work.
+       *
+       * @param Object
        */
-      _templateDataChanged: function (templateData) {
+      _defineComponentModels: function(templateData) {
+        // check if the templateData has content
+        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+
         this._setInitialProductSorting(templateData);
-        if (!templateData) {
-          return;
+        
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.hero_header !== 'undefined') {
+          this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
-      },
 
-      /**
-       * @name getComponent
-       * @description will be used to select the correct component from the page builder
-       * @param templateData - Object
-       * @param selector - String
-       * @param key - Optional
-       * @returns returns a Object that will be used by the template
-       */
-      getComponent: function (templateData, selector, key) {
-        if (!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
-          return [];
-        }
-        var pageBuilderComponent = templateData.acf.page_builder.find(function (section) {
-          return section.acf_fc_layout === selector;
-        });
-        if (!pageBuilderComponent) {
-          return null;
-        }
-        return key ? pageBuilderComponent[key] : pageBuilderComponent;
-      },
+        if(typeof templateData.acf.left_sidebar !== 'undefined') {
+          var leftSidebar = {};
 
-      shouldShowComponent: function (templateData, selector, key) {
-        var data = this.getComponent(templateData, selector, key);
-        // if a key is provided check if it has items in the array otherwise only check if defined
-        var check = key ? data && data.length : data;
-        return Boolean(data);
+          if(typeof templateData.acf.left_sidebar[0].filters[0] !== 'undefined') {
+            leftSidebar.filters = templateData.acf.left_sidebar[0].filters[0];
+          }
+
+          if(typeof templateData.acf.left_sidebar[0].filters[0] !== 'undefined') {
+            leftSidebar.productSubCategories = templateData.acf.left_sidebar[0].product_sub_categories[0];
+          }
+
+          this.set('leftSidebar', leftSidebar);
+        }
       },
 
       /**
        * @name _setInitialProductSorting
-       * @description will set the sort Object that will be used by the category-listing component
+       * @description will set the sort Object that will be used by the
+       * category-listing component
+       *
        * @param templateData - Object
        */
       _setInitialProductSorting: function (templateData) {
-        if (!templateData || !templateData.acf || !templateData.acf.page_builder || !templateData.acf.page_builder.length) {
-          return;
-        }
-        var magentoSection = this.getComponent(templateData, 'section_magento');
+        if (!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+
         var sort = {
-          type: magentoSection ? magentoSection.magento_product_sorting : 'name',
-          order: magentoSection ? magentoSection.magento_sort_order : 'asc'
+          type: templateData.acf.product_listing_sorting || 'name',
+          order: templateData.acf.product_listing_order || 'asc'
         };
+
         this.set('sort', sort);
+      },
+
+      /** 
+       * @name _hasProperty
+       * @description check if an Object has properties
+       *
+       * @param Object
+       * @returns Boolean
+       */
+      _hasProperty: function(obj) {
+        var hasProp = false;
+
+        for(var prop in obj) {
+          var hasProp = (obj.hasOwnProperty(prop));
+        }
+
+        return hasProp;
       }
     });
   </script>
