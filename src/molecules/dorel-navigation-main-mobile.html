@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <dom-module id="dorel-navigation-main-mobile">
   <template>
@@ -61,7 +63,6 @@
         margin: 0;
       }
 
-
       .main-menu--item {
         background-color: var(--theme-color-monochrome-1);
         border-radius: 5px;
@@ -70,14 +71,17 @@
         min-height: min-content;
       }
 
-
       .link {
-        @apply(--theme-typography-1);
+        @apply(--theme-typography-2);
         margin: 0;
         color: var(--theme-color-text-link);
         transition: color 0.2s;
         text-decoration: none;
         display: block;
+      }
+
+      .sub-menu .link::before {
+        content: '-';
       }
 
       .link:visited {
@@ -100,15 +104,15 @@
       }
 
       .sub-menu {
-        border-top: 1px solid var(--theme-color-monochrome-2);
         list-style-type: none;
         margin: 0;
         padding: .75rem 0 .75rem  0;
       }
 
       .cta {
-        display: flex;
         width: 100%;
+        min-height: 2.1rem;
+        display: block;
       }
 
       .sub-menu__item {
@@ -151,9 +155,16 @@
         float: right;
       }
 
-
-
     </style>
+
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+    <app-route
+      route="{{ route }}"
+      pattern="/:page"
+      data="{{ routeData }}"
+      query-params="{{ queryParams }}"
+      tail="{{ subroute }}"></app-route>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -168,7 +179,7 @@
                 <li class="main-menu--item">
                   <a on-click="closeMenu"
                     class="main-menu--link link"
-                    active$="[[ checkIfActive(mainItem.link) ]]"
+                    active$="[[ checkIfActive(mainItem.link, route) ]]"
                     href="[[ mainItem.link ]]">
                     [[ mainItem.title ]]
                   </a>
@@ -184,12 +195,45 @@
                     on-click="_openAccordion"
                     heading="[[ mainItem.title ]]">
 
+                    <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
+                      <ul class="sub-menu">
+                        <template is="dom-repeat" items="[[ getItems(mainItem, 'sub_category_items') ]]" as="dropdownItem">
+                          <li class="sub-menu__item">
+                              <a on-click="closeMenu"
+                                class="link"
+                                gtm-parent="dorel-navigation-main"
+                                gtm-parent-index="[[ index ]]"
+                                active$="[[ checkIfActive(dropdownItem.link, route) ]]"
+                                href="[[ dropdownItem.link ]]">
+                                [[ dropdownItem.title ]]
+                              </a>
+                          </li>
+                        </template>
+                      </ul>
+                    </template>
+
+                    <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
+                      <dorel-cta
+                        gtm-parent="dorel-navigation-main"
+                        gtm-parent-index="1"
+                        type="tertiary"
+                        on-click="closeMenu"
+                        no-margin
+                        class="cta"
+                        link="[[ mainItem.link ]]"
+                        title="[[ mainItem.title ]]">
+                        <span>All [[ mainItem.title ]]</span>
+                      </dorel-cta>
+                    </template>
+
                     <ul class="sub-menu">
                       <template is="dom-repeat" items="[[ getItems(mainItem, 'dropdown_items') ]]" as="dropdownItem" filter="[[ filterDropdownItems(mainItem) ]]">
                         <li class="sub-menu__item">
                             <a on-click="closeMenu"
                               class="link"
-                              active$="[[ checkIfActive(dropdownItem.link) ]]"
+                              gtm-parent="dorel-navigation-main"
+                              gtm-parent-index="[[ index ]]"
+                              active$="[[ checkIfActive(dropdownItem.link, route) ]]"
                               href="[[ dropdownItem.link ]]">
                               [[ dropdownItem.title ]]
                             </a>
@@ -197,23 +241,6 @@
                       </template>
                     </ul>
 
-                    <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
-                      <ul class="sub-menu">
-                        <template is="dom-repeat" items="[[ getItems(mainItem, 'sub_category_items') ]]" as="dropdownItem">
-                          <li class="sub-menu__item">
-                              <a on-click="closeMenu"
-                                class="link"
-                                active$="[[ checkIfActive(dropdownItem.link) ]]"
-                                href="[[ dropdownItem.link ]]">
-                                [[ dropdownItem.title ]]
-                              </a>
-                          </li>
-                        </template>
-                        <li class="sub-menu__item">
-                          <dorel-cta on-click="closeMenu" no-margin class="cta" link="[[ mainItem.link ]]" title="[[ mainItem.title ]]"><span>All [[ mainItem.title ]]</span></dorel-cta>
-                        </li>
-                      </ul>
-                    </template>
 
                   </dorel-accordion-item>
                 </li>
@@ -225,8 +252,10 @@
 
     <div class="mobile-multi-language" mobile-opened$="[[ mobileMenuOpened ]]">
       <div class="mobile-multi-language-container">
-        <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
-                                            continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+        <dorel-multilingual-select-language
+            current-language="{{ currentLanguage }}"
+            continents-data="[[ continentsData ]]">
+        </dorel-multilingual-select-language>
       </div>
     </div>
 
@@ -292,11 +321,6 @@
       filterDropdownItems: function(mainItem, index) {
         var self = this;
         return function(item) {
-
-          // if there is no product return false
-          if (!item) {
-            return false;
-          }
           // if dropdownType is category we should only show the first item
           if(self.isDropdownTypeCategory(mainItem)) {
             return mainItem.dropdown_items[0].id === item.id ? true : false;
@@ -306,14 +330,39 @@
         };
       },
 
-      closeMenu: function() {
-        this.set('mobileMenuOpened', false)
+      closeMenu: function(event) {
+        this.set('mobileMenuOpened', false);
+        this._menuItemTap(event);
       },
 
-      checkIfActive: function(link) {
-        debugger;
-        return Boolean(link && link === window.location.href);
+      checkIfActive: function(link, route) {
+        return Boolean(link && link.split('/').join('') === (window.location.origin + route.path).split('/').join(''));
       },
+
+      /**
+       * @name _menuItemTap
+       * @description handles all menu item clicks
+       */
+      _menuItemTap: function (event) {
+
+        var element = Polymer.dom(event).localTarget;
+        var event = {
+          action: 'click',
+          component: 'navigation',
+          structure: {
+            name: 'dorel-navigation-main',
+            index: Number(element.gtmParentIndex) + 1
+          },
+          element: element,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': element.href
+          }
+        };
+        this.fire('setAppCache', {value: event, path: 'events'});
+      }
+
     });
 
   </script>

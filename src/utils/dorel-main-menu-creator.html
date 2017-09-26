@@ -1,6 +1,10 @@
+<link rel="import" href="dorel-magento-collect-products-by-category.html">
+
 <dom-module id="dorel-main-menu-creator">
   <template>
-
+    <dorel-magento-collect-products-by-category
+      id="products">
+    </dorel-magento-collect-products-by-category>
 
   </template>
 
@@ -25,6 +29,10 @@
       observers: [
         '_createMenuDataModel(appCache.collect.options, appCache.collect.pages)'
       ],
+
+      listeners: {
+        'newProducts': '_setMenuProducts'
+      },
 
       _createMenuDataModel: function(options, pages) {
         if(!options || !options.main_menu || !pages) {
@@ -76,9 +84,16 @@
       _getSubCategoryItems: function(page, pages) {
         var childPages = this._getChildPages(page, pages);
         var self = this;
-        return childPages.map(function(page) {
+        var childPages = childPages.map(function(page) {
           return self._getCategorySubMenuItems(page);
         });
+        //TODO change to false
+        if(!childPages || childPages.length) {
+          var category = this._getMagentoCategoryId(page);
+          this.$.products.getProducts(category);
+        } else {
+          return childPages;
+        }
       },
 
       _getCategorySubMenuItems: function(page) {
@@ -107,7 +122,38 @@
         return page.acf.page_builder.find(function(block) {
           return block.acf_fc_layout === section;
         });
-      }
+      },
+
+      _setMenuProducts: function(value) {
+        var products = value.detail.products;
+        if(!products.length) {
+          return;
+        }
+
+        // limit products in menu to 5
+        products = products.filter(function(product, index) {
+          return index <= 4;
+        });
+
+        var category = value.detail.category;
+        // create a new mainMenu and append
+        var mainMenu = this.get('appCache.mainMenu').map(function(menuItem) {
+          if(menuItem.category_id === category) {
+            menuItem.sub_category_items = products.map(function(product) {
+              var newItem = {
+                id: Number(product.id),
+                link: menuItem.link + product.url,
+                thumbnail: product.images.thumbnail,
+                title: product.name.value
+              }
+              return newItem;
+            });
+          }
+          return Object.assign({}, menuItem);
+        });
+
+        this.fire('setAppCache', {value: mainMenu, path: 'mainMenu'});
+      },
     });
   </script>
 </dom-module>
