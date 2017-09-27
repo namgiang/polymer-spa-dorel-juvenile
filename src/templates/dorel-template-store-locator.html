@@ -58,6 +58,8 @@
         heroHeaderData: Object
       },
 
+      behaviors: [DorelObjectHasPropertiesBehavior],
+
       /**
        * @name _defineComponentModels
        * @description Fixed WP/ACF data is defined by an array (workaround). For components
@@ -74,23 +76,6 @@
         if(typeof templateData.acf.hero_header !== 'undefined') {
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
-      },
-
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
-        }
-
-        return hasProp;
       }
     });
   </script>

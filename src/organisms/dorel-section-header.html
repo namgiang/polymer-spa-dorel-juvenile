@@ -147,13 +147,13 @@
       </template>
       <div class="content-wrapper">
         <div class="content">
-          <template is="dom-if" if="{{ _hasValue(sectionHeaderData.title) }}">
+          <template is="dom-if" if="[[ _hasValue(sectionHeaderData.title) ]]">
             <h1 class="title">[[ sectionHeaderData.title ]]</h1>
           </template>
-          <template is="dom-if" if="{{ _hasValue(sectionHeaderData.sub_title) }}">
+          <template is="dom-if" if="[[ _hasValue(sectionHeaderData.sub_title) ]]">
             <h3 class="subtitle">[[ sectionHeaderData.sub_title ]]</h3>
           </template>
-          <template is="dom-if" if="{{ _hasValue(sectionHeaderData.text) }}">
+          <template is="dom-if" if="[[ _hasValue(sectionHeaderData.text) ]]">
             <dorel-safe-html html="[[ sectionHeaderData.text ]]"></dorel-safe-html>
           </template>
           <!-- TODO: Potentially we will also need to support a CTA here-->
@@ -207,15 +207,7 @@
 
       },
 
-      /**
-       * @name _hasValue
-       * @description checks to see if a value is set
-       *
-       * @returns Boolean
-       */
-      _hasValue: function (val) {
-        return (typeof val !== undefined || val !== '');
-      }
+      behaviors: [DorelHasValueBehavior]
     });
   </script>
 </dom-module>

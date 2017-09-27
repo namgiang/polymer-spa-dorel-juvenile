@@ -1,9 +1,18 @@
-<dom-module id="dorel-template-home">
+<link rel="import" href="../organisms/dorel-section-header.html">
+
+<dom-module id="dorel-template-info-overview">
   <template>
     <style>
       .wrapper {
         float: left;
         width: 100%;
+        padding-bottom: 1.5em;
+      }
+      .max-width-container {
+        @apply(--max-width-container);
+        max-width: var(--theme-base-paragraph-width);
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
       }
     </style>
 
@@ -16,67 +25,55 @@
           <template 
             is="dom-if" 
             if="[[templateData.acf.hero_header.length]]">
-            <dorel-section-hero-header
-              hero-header-data="[[heroHeaderData]]"
-              gtm-parent="dorel-section-hero-header"
-              gtm-parent-index="[[index]]"></dorel-section-hero-header>
+            <dorel-section-header 
+              section-header-data="[[heroHeaderData]]" 
+              info-header="true"></dorel-section-header>
+
+            <template
+              is="dom-if"
+              if="[[ templateData.acf.breadcrumbs_toggle ]]">
+              <dorel-section-page-nav
+                breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+            </template>
           </template>
           <!--// section-hero-header -->
-
-          <!-- section-cta -->
+          
           <template 
             is="dom-if" 
-            if="[[templateData.acf.ctas.length]]">
-
-            <dorel-section-cta
-              cta-data="[[templateData.acf.ctas]]"
-              gtm-parent="dorel-section-cta"
-              gtm-parent-index="[[index]]"></dorel-section-cta>
-
+            if="[[ _hasValue(templateData.acf.description) ]]">
+            <div>
+                centered description:
+                <dorel-safe-html html="[[templateData.acf.description]]"></dorel-safe-html>
+            </div>
           </template>
-          <!--// section-cta -->
 
-          <!-- dorel-section-heroes -->
           <template 
             is="dom-if" 
-            if="[[templateData.acf.heroes.length]]">
-            
-            <dorel-section-heroes 
-              heroes-data="[[templateData.acf.heroes]]"
-              gtm-parent="dorel-section-heroes"
-              gtm-parent-index="[[index]]"></dorel-section-heroes>
-
-          </template>
-          <!--// dorel-section-heroes -->
-
-          <!-- section-cards -->
-          <template 
-            is="dom-if" 
-            if="[[templateData.acf.cards.length]]">
+            if="[[parentCardsData.length]]">
 
             <dorel-section-cards
-              cards-data="[[templateData.acf.cards]]"
-              gtm-parent="dorel-section-cards"
-              gtm-parent-index="[[index]]"></dorel-section-cards>
+              cards-data="[[parentCardsData]]"></dorel-section-cards>
 
           </template>
-          <!--// section-cards -->
 
         </div>
       </div>
-      <!--// container -->
-
     </div>
-    <!--// wrapper -->
-    
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-template-home',
+      is: 'dorel-template-info-overview',
 
       properties: {
-          
+
+        appCache: {
+          type: Object,
+          value: function(){
+            return {};
+          }
+        },
+
         /**
          * @attribute
          * @name templateData
@@ -94,11 +91,17 @@
          * @name homeHeaderData
          * @description the data model used for the hero header component
          */
-        heroHeaderData: Object
+        heroHeaderData: Object,
+
+        /**
+         * @name parentCardsData
+         * @description the data model used for the cards component
+         */
+        parentCardsData: Array
 
       },
 
-      behaviors: [DorelObjectHasPropertiesBehavior],
+      behaviors: [DorelObjectHasPropertiesBehavior, DorelHasValueBehavior],
 
       /** 
        * @name _defineComponentModels
@@ -115,6 +118,11 @@
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.hero_header !== 'undefined') {
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
+        }
+
+        // set the homeHeaderData for the heroHeader component
+        if(typeof templateData.acf.parent_cards !== 'undefined') {
+          this.set('parentCardsData', templateData.acf.parent_cards);
         }
       }
     });
