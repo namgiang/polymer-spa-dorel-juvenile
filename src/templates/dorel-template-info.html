@@ -4,6 +4,13 @@
 <dom-module id="dorel-template-info">
   <template>
     <style>
+
+      section {
+        padding-bottom: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
       .container {
         @apply(--max-width-container);
         width: 100%;
@@ -13,14 +20,52 @@
         box-sizing: border-box;
       }
 
-      [tablet-medium-up] .container {
-        padding: 0 var(--theme-gutter);
-      }
-
       .max-width-container {
         width: 100%;
         max-width: var(--theme-base-paragraph-width);
         margin: auto;
+        clear: both;
+      }
+
+      .image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2.25em 0 .75em 0;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-bynder-image {
+        width: 100%;
+      }
+
+      .video-container {
+        display: flex;
+        clear: both;
+      }
+
+      dorel-video-wrap {
+        width: 100%;
+        max-width: 56em;
+        margin: 1.5em auto 1.5em auto;
+
+      }
+
+      [tablet-medium-up] .container {
+        padding: 0 var(--theme-gutter);
+      }
+
+      [tablet-medium-up] .image-container {
+        margin: 3em 0 1.5em 0;
+      }
+
+      section[tablet-medium-up] {
+        padding-bottom: 3em;
+      }
+
+      [tablet-medium-up] dorel-video-wrap {
+        margin: 3em auto 1.5em auto;
       }
 
     </style>
@@ -57,12 +102,38 @@
             as="component"
             targetFramerate="1000">
 
-            <!-- dorel section hubspot -->
+            <!-- dorel wysiwyg content-->
             <template
               is="dom-if"
               if="[[ isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
               <div class="max-width-container">
                 <dorel-wysiwyg-html html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
+              </div>
+            </template>
+
+            <!-- dorel bynder image -->
+            <template
+              is="dom-if"
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_image') ]]">
+              <div class="image-container">
+                <dorel-bynder-image media-id="[[ component.bynder_image ]]"
+                                    derivative-identifier="Fullscreen Retina landscape"
+                                    mobile-derivative-identifier="Fullscreen Small landscape"
+                                    alt="[[ component.image_alt ]]"
+                                    mobile-width="100%"
+                                    mobile-height="18em"
+                                    tablet-width="100%"
+                                    tablet-height="27em"
+                                    width="56em"
+                                    height="31.5em"></dorel-bynder-image>
+              </div>
+            </template>
+
+            <template
+              is="dom-if"
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
+              <div class="video-container">
+                <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
               </div>
             </template>
 

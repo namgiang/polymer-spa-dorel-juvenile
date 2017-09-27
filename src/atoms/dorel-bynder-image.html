@@ -11,7 +11,7 @@
         --image-width: 16em;
         --image-height: 9em;
       }
-      
+
       :host([flex]) {
         display: flex;
         width: 100%;
@@ -22,6 +22,9 @@
         width: 100%;
         display: flex;
         flex: 1;
+      }
+      section {
+        margin: auto;
       }
 
       iron-image, section {
@@ -47,21 +50,41 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-small$="[[ breakpoints.tabletSmall ]]"
-             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      <iron-image sizing="[[ sizing ]]"
-                  fade="true"
-                  preload
-                  title$="[[ alt ]]"
-                  alt$="[[ alt ]]"
-                  placeholder$="[[ imagePlaceholder ]]"
-                  src$="[[ imageSource ]]"></iron-image>
+    <section tablet-small$="[[ breakpoints.tabletMediumUp ]]"
+             tablet-medium-up$="[[ breakpoints.desktopSmallUp ]]">
+
+      <!-- Desktop Image -->
+      <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+        <iron-image sizing="[[ sizing ]]"
+                    fade="true"
+                    preload
+                    title$="[[ alt ]]"
+                    alt$="[[ alt ]]"
+                    placeholder$="[[ imagePlaceholder ]]"
+                    src$="[[ imageSource ]]"></iron-image>
+      </template>
+
+      <!-- Mobile Image -->
+      <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+        <iron-image sizing="[[ sizing ]]"
+                    fade="true"
+                    preload
+                    title$="[[ alt ]]"
+                    alt$="[[ alt ]]"
+                    placeholder$="[[ imagePlaceholder ]]"
+                    src$="[[ mobileImageSource ]]"></iron-image>
+      </template>
+
     </section>
   </template>
   <script>
     Polymer({
       is: 'dorel-bynder-image',
       properties: {
+        /**
+         * @name sizing
+         * @description Sizing of the image. Defaults to cover, can be set to contain
+         */
         sizing: {
           type: String,
           value: 'cover'
@@ -138,11 +161,29 @@
           type: String,
           value: ''
         },
+
+        /**
+         * @name mobileDerivativeIdentifier
+         * @description The identifier to retrieve the correct derivative for mobile screens
+         */
+        mobileDerivativeIdentifier: {
+          type: String,
+          value: ''
+        },
+
         /**
          * @name imageSource
          * @description The source of the image to be displayed
          */
         imageSource: {
+          type: String,
+        },
+
+        /**
+         * @name mobileImagesource
+         * @description The source of the image to be displayed on mobile
+         */
+        mobileImageSource: {
           type: String,
         },
         /**
@@ -167,24 +208,31 @@
        */
       _onMediaContentChanged: function () {
         if (typeof this.mediaContent !== 'undefined' && this.mediaContent.hasOwnProperty('thumbnails')) {
-          // Set the Bynder description to this component's alt properties
-          this.alt = this.mediaContent.description;
-
-          // Default to the root media thumbnail and webimage
-          if (this.derivativeIdentifier === '') {
-            this.imagePlaceholder = this.mediaContent.thumbnails.mini;
-            this.imageSource = this.mediaContent.thumbnails.webimage;
+          // Set the Bynder description to this component's alt properties, if no alt is given
+          if(this.alt === '')
+          {
+            this.alt = this.mediaContent.description;
           }
-          // Retrieve the derivative if one is specified
-          else {
-            var bynderDerivatives = this.mediaContent.thumbnails;
-            this.imagePlaceholder = bynderDerivatives.mini;
-            // Checks if the derivative exists
-            if (bynderDerivatives.hasOwnProperty(this.derivativeIdentifier)) {
-              this.imageSource = bynderDerivatives[this.derivativeIdentifier];
 
+          var bynderDerivatives = this.mediaContent.thumbnails;
+          this.imagePlaceholder = bynderDerivatives.mini;
+
+          self = this;
+
+          // Generic identifier to set the derivative identifier sources
+          var setDerivative = function (identifier, source, derivatives) {
+            //Default the source to the webimage
+            self.set(source, derivatives.webimage);
+
+            //If the derivative contains the identifier, set the source
+            if (derivatives.hasOwnProperty(identifier)) {
+              self.set(source, derivatives[identifier]);
             }
-          }
+          };
+
+          // Set the desktop and mobile derivatives
+          setDerivative(this.derivativeIdentifier, 'imageSource', bynderDerivatives);
+          setDerivative(this.mobileDerivativeIdentifier, 'mobileImageSource', bynderDerivatives);
         }
       },
       /**
@@ -207,7 +255,7 @@
           '--image-tablet-height': this.tabletHeight,
           '--image-width': this.width,
           '--image-height': this.height,
-          '--image-background-color': backgroundColor,
+          '--image-background-color': backgroundColor
         });
       },
       /**
