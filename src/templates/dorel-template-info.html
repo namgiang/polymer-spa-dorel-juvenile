@@ -40,6 +40,18 @@
         width: 100%;
       }
 
+      .video-container {
+        display: flex;
+        clear: both;
+      }
+
+      dorel-video-wrap {
+        width: 100%;
+        max-width: 56em;
+        margin: 1.5em auto 1.5em auto;
+
+      }
+
       [tablet-medium-up] .container {
         padding: 0 var(--theme-gutter);
       }
@@ -50,6 +62,10 @@
 
       section[tablet-medium-up] {
         padding-bottom: 3em;
+      }
+
+      [tablet-medium-up] dorel-video-wrap {
+        margin: 3em auto 1.5em auto;
       }
 
     </style>
@@ -109,7 +125,15 @@
                                     tablet-width="100%"
                                     tablet-height="27em"
                                     width="56em"
-                                    height="27em"></dorel-bynder-image>
+                                    height="31.5em"></dorel-bynder-image>
+              </div>
+            </template>
+
+            <template
+              is="dom-if"
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
+              <div class="video-container">
+                <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
               </div>
             </template>
 
