@@ -6,7 +6,6 @@
       .wrapper {
         float: left;
         width: 100%;
-        padding-bottom: 1.5em;
       }
       .max-width-container {
         @apply(--max-width-container);
@@ -26,8 +25,7 @@
             is="dom-if" 
             if="[[templateData.acf.hero_header.length]]">
             <dorel-section-header 
-              section-header-data="[[heroHeaderData]]" 
-              info-header="true"></dorel-section-header>
+              section-header-data="[[heroHeaderData]]"></dorel-section-header>
 
             <template
               is="dom-if"
@@ -37,9 +35,9 @@
             </template>
           </template>
           <!--// section-hero-header -->
-          
-          <template 
-            is="dom-if" 
+
+          <template
+            is="dom-if"
             if="[[ _hasValue(templateData.acf.description) ]]">
             <div>
                 centered description:
@@ -47,14 +45,15 @@
             </div>
           </template>
 
+          <!-- Section cards -->
           <template 
             is="dom-if" 
             if="[[parentCardsData.length]]">
-
             <dorel-section-cards
-              cards-data="[[parentCardsData]]"></dorel-section-cards>
-
+              compact="true"
+              cards-data="[[ _cardsFilter(parentCardsData) ]]"></dorel-section-cards>
           </template>
+          <!--// Section cards -->
 
         </div>
       </div>
@@ -97,11 +96,23 @@
          * @name parentCardsData
          * @description the data model used for the cards component
          */
-        parentCardsData: Array
+        parentCardsData: Array,
+        /**
+         * @name filteredParentCardsData
+         * @description Adjusts the cards data model to be used for the dorel-section-card
+         */
+        filteredParentCardsData: {
+          type: Object,
+          computed: '_cardsFilter(parentCardsData, templateData)'
+        }
 
       },
 
       behaviors: [DorelObjectHasPropertiesBehavior, DorelHasValueBehavior],
+
+      _cardsFilter: function(parentCardsData) {
+        return {'cards': parentCardsData};
+      },
 
       /** 
        * @name _defineComponentModels

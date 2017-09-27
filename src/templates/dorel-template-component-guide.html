@@ -1,18 +1,3 @@
-<link rel="import" href="component-guide/dorel-component-guide-buttons.html">
-<link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="component-guide/dorel-component-guide-forms.html">
-<link rel="import" href="component-guide/dorel-component-guide-introduction.html">
-<link rel="import" href="component-guide/dorel-component-guide-layout.html">
-<link rel="import" href="component-guide/dorel-component-guide-typography.html">
-<link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="component-guide/dorel-component-guide-home.html">
-<link rel="import" href="component-guide/dorel-component-guide-product-widgets.html">
-<link rel="import" href="component-guide/dorel-component-guide-breakpoints.html">
-<link rel="import" href="component-guide/dorel-component-guide-images.html">
-<link rel="import" href="component-guide/dorel-component-guide-multilingual.html">
-<link rel="import" href="component-guide/dorel-component-guide-category-about.html">
-<link rel="import" href="component-guide/dorel-component-guide-service.html">
-<link rel="import" href="component-guide/dorel-component-guide-cards.html">
 <link rel="import" href="component-guide/dorel-component-toolbar.html">
 <link rel="import" href="../molecules/dorel-nav-tabs.html">
 
@@ -90,12 +75,14 @@
     </dorel-component-toolbar>
     <div class="component-guide-container">
       <div class="component-guide__navigation">
+        <!-- Important! The topic attribut should correspond with the template.-->
+        <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
         <paper-menu id="topics"
                     selected="{{ subrouteData.componentName }}"
                     attr-for-selected="topic">
           <paper-item topic="introduction">Introduction</paper-item>
           <paper-item topic="typography">Typography</paper-item>
-          <paper-item topic="layout-sizes">Layout & Sizes</paper-item>
+          <paper-item topic="layout">Layout & Sizes</paper-item>
           <paper-item topic="colors">Colors</paper-item>
           <paper-item topic="buttons">Buttons</paper-item>
           <paper-item topic="forms">Forms</paper-item>
@@ -113,12 +100,15 @@
     <div class="component-guide-container">
       <iron-pages class="component-guide__content"
                   selected="[[ subrouteData.componentName ]]"
+                  on-selected-changed="_pageSelected"
                   attr-for-selected="topic">
+        <!-- Important! The topic attribut should correspond with the template.-->
+        <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
         <dorel-component-guide-introduction brand="{{ brand }}"
                                             subroute="[[ subrouteData.componentName ]]"
                                             topic="introduction"></dorel-component-guide-introduction>
         <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>
-        <dorel-component-guide-layout topic="layout-sizes"></dorel-component-guide-layout>
+        <dorel-component-guide-layout topic="layout"></dorel-component-guide-layout>
         <dorel-component-guide-colors topic="colors"></dorel-component-guide-colors>
         <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>
         <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>
@@ -162,6 +152,20 @@
           value: []
         }
       },
+
+      /**
+       * @name _pageSelected
+       * @description Imports the correct component guide template when it is shown
+       */
+      _pageSelected: function (event) {
+        var selectedPage = this.$.topics.selected;
+
+        if (typeof selectedPage !== 'undefined' || selectedPage.length > 0) {
+          var selectedPageTemplate = 'component-guide/dorel-component-guide-' + selectedPage + '.html';
+          this.importHref(this.resolveUrl(selectedPageTemplate), function () {
+          });
+        }
+      }
     });
   </script>
 </dom-module>
