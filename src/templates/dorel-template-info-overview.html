@@ -7,24 +7,49 @@
         float: left;
         width: 100%;
       }
+      
+      .row {
+        width: 100%;
+      }
+
       .max-width-container {
         @apply(--max-width-container);
         max-width: var(--theme-base-paragraph-width);
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
       }
+
+      .content-description {
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+        width: 100%;
+        text-align: center;
+        float: left;
+        display: flex;
+        box-sizing: border-box;
+      }
+
+      .content-description dorel-safe-html {
+        margin: auto;
+        float: none;
+      }
+
+      dorel-section-cards {
+        margin-top: 0;
+      }
+
     </style>
 
     <div class="wrapper">
 
       <div class="container layout horizontal center center-justified wrap">
         <div class="row">
-          
+
           <!-- section-hero-header -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="[[templateData.acf.hero_header.length]]">
-            <dorel-section-header 
+            <dorel-section-header
+              text-header="true"
               section-header-data="[[heroHeaderData]]"></dorel-section-header>
 
             <template
@@ -39,15 +64,14 @@
           <template
             is="dom-if"
             if="[[ _hasValue(templateData.acf.description) ]]">
-            <div>
-                centered description:
-                <dorel-safe-html html="[[templateData.acf.description]]"></dorel-safe-html>
+            <div class="content-description">
+              <dorel-safe-html html="[[templateData.acf.description]]"></dorel-safe-html>
             </div>
           </template>
 
           <!-- Section cards -->
-          <template 
-            is="dom-if" 
+          <template
+            is="dom-if"
             if="[[parentCardsData.length]]">
             <dorel-section-cards
               compact="true"
@@ -68,7 +92,7 @@
 
         appCache: {
           type: Object,
-          value: function(){
+          value: function () {
             return {};
           }
         },
@@ -80,7 +104,7 @@
          */
         templateData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: '_defineComponentModels'
@@ -110,11 +134,11 @@
 
       behaviors: [DorelObjectHasPropertiesBehavior, DorelHasValueBehavior],
 
-      _cardsFilter: function(parentCardsData) {
+      _cardsFilter: function (parentCardsData) {
         return {'cards': parentCardsData};
       },
 
-      /** 
+      /**
        * @name _defineComponentModels
        * @description Fixed WP/ACF data is defined by an array (workaround). For components
        * that always have one item in the array a new data model is created to be set on
@@ -122,17 +146,17 @@
        *
        * @param Object
        */
-      _defineComponentModels: function(templateData) {
+      _defineComponentModels: function (templateData) {
         // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+        if (!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
 
         // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.hero_header !== 'undefined') {
+        if (typeof templateData.acf.hero_header !== 'undefined') {
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
 
         // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.parent_cards !== 'undefined') {
+        if (typeof templateData.acf.parent_cards !== 'undefined') {
           this.set('parentCardsData', templateData.acf.parent_cards);
         }
       }
