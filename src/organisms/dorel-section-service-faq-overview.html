@@ -174,10 +174,10 @@
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="row">
         <div class="container">
-          <template is="dom-if" if="{{ _hasValue(templateData.title) }}">
+          <template is="dom-if" if="[[ _hasValue(templateData.title) ]]">
             <h2 class="title">[[ templateData.title ]]</h2>
           </template>
-          <template is="dom-if" if="{{ _hasValue(templateData.description) }}">
+          <template is="dom-if" if="[[ _hasValue(templateData.description) ]]">
             <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
           </template>
         </div>
@@ -386,6 +386,8 @@
         }
       },
 
+      behaviors: [DorelHasValueBehavior],
+
       /**
        * @observer
        * @name _addFaqDetailData
@@ -447,15 +449,6 @@
 
         // return the faqDetailPages
         return faqPages;
-      },
-
-      /**
-       * @name hasValue
-       * @description checks to see if a value is not empty, undefined or null
-       * @param val - String - is the string defined or set
-       */
-      _hasValue: function (val) {
-        return (val !== '' && typeof val !== 'undefined' && val !== null);
       }
     });
 

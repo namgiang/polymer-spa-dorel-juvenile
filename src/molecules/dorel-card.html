@@ -97,7 +97,7 @@
         <!-- ctaToggle -->
         <template
           is="dom-if"
-          if="[[ _hasValue(cardData.cta_toggle) ]]">
+          if="[[ cardData.cta_toggle ]]">
           <dorel-cta
             type="[[ ctaType ]]"
             title="[[ cardData.cta_text ]]"
@@ -143,13 +143,7 @@
 
       },
 
-      /**
-       * @name hasValue
-       * @description checks to see if a value is not empty, undefined or null
-       */
-      _hasValue: function (val) {
-        return (val !== '' && typeof val !== 'undefined' && val !== null && val);
-      }
+      behaviors: [DorelHasValueBehavior]
     });
 
   </script>
