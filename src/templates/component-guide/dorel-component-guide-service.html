@@ -1,3 +1,7 @@
+<script src="mocks/faqs/customer-support.json"></script>
+<script src="mocks/faqs/promo.json"></script>
+<script src="mocks/faqs/service-faqs.json"></script>
+
 <link rel="import" href="dorel-component-guide-shared-styles.html">
 <link rel="import" href="../../organisms/dorel-section-service-faq-overview.html">
 <link rel="import" href="../../organisms/dorel-section-service-faq-detail.html">
@@ -13,11 +17,11 @@
         width: 100%;
       }
 
-      dorel-section-service-support {
+      dorel-customer-support {
         margin-top: 1.5em;
       }
 
-      dorel-section-service-support.compact {
+      dorel-customer-support.compact {
         max-width: 400px;
         width: 100%;
       }
@@ -27,13 +31,11 @@
 
     <section class="content-container" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <h1 class="class-for-h1">Service Components</h1>
-      <p>
-        Components used for the service pages
-      </p>
+      <p>Components used for the service pages</p>
       <hr>
       <h1 class="class-for-h2">FAQ Overview</h1>
     </section>
-
+    
     <dorel-section-service-faq-overview
       template-data="[[ templateData ]]"
       faq-categories="[[ faqOverview ]]"></dorel-section-service-faq-overview>
@@ -58,12 +60,12 @@
 
     <section class="content-container">
       <h1 class="class-for-h2">Service Support</h1>
-        <dorel-section-service-support 
+        <dorel-customer-support
           class="compact"
           compact="true"
-          template-data="[[ serviceSupport ]]"></dorel-section-service-support>
-        <dorel-section-service-support
-          template-data="[[ serviceSupport ]]"></dorel-section-service-support>
+          template-data="[[ customerSupport ]]"></dorel-customer-support>
+        <dorel-customer-support
+          template-data="[[ customerSupport ]]"></dorel-customer-support>
     </section>
   </template>
 
@@ -77,231 +79,37 @@
           type: Object,
           value: function() {
             return {
-              services_section_title: 'Section Title',
-              services_section_description: 'Section description ipsum dulum',
-              services_cta_text: 'view all'
+              title: 'Section Title',
+              description: 'Section description ipsum dulum',
+              cta_text: 'view all'
             };
           }
         },
 
-        serviceSupport: {
+        customerSupport: {
           type: Object,
           value: function() {
-            return {
-              social_channels: [
-                {
-                  social_media_href: "#",
-                  social_media_icon: "facebook",
-                  social_media_text: "@MaxiCosi"
-                }
-              ],
-              support_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              support_email_address: "support@test.nl",
-              support_email_sub_title: "Reply in 2 days",
-              support_email_title: "Email us",
-              support_email_toggle: true,
-              support_facebook_sub_title: "Answer in 30 minutes",
-              support_facebook_title: "Facebook",
-              support_facebook_toggle: true,
-              support_phone_number: "01284413141",
-              support_phone_title: "Call us",
-              support_phone_toggle: true,
-              support_sub_title: "Our customer service is now open until 17:00",
-              support_title: "Couldn't find your answer?"
-            };
+            return customerSupportMock;
           }
         },
 
         faqPromo: {
           type: Object,
           value: function() {
-            return {
-              promo_bynder_image_id: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-              promo_cta_link: "http://localhost:8080/newsletter/",
-              promo_cta_text: "Read All",
-              promo_description: "Special seat for you baby, First Lorem ipsum this.",
-              promo_title: "Happy Hips"
-            };
+            return promoMock;
           }
         },
 
         faqDetail: {
           type: Object,
           value: function() {
-            return {
-              id: 1,
-              brand_id: 4,
-              name: 'Services',
-              value: 'services',
-              sub_categories: [
-                {
-                  id: 10,
-                  service_topics_category_id: 1,
-                  name: 'Repairs',
-                  items: [
-                    {
-                      id: 1,
-                      service_topics_sub_category_id: 10,
-                      featured: 1,
-                      question: 'Repairs1 - First Lorem ipsum this?',
-                      answer: 'Lorem ipsum descrpition'
-                    },
-
-                    {
-                      id: 2,
-                      service_topics_sub_category_id: 10,
-                      featured: 0,
-                      question: 'Repairs2 - Fourth Lorem ipsum this?',
-                      answer: 'Lorem ipsum descrpition'
-                    }
-                  ]
-                },
-
-                {
-                  id: 20,
-                  service_topics_category_id: 1,
-                  name: 'Spare Parts',
-                  items: [
-                    {
-                      id: 3,
-                      service_topics_sub_category_id: 20,
-                      featured: true,
-                      question: 'SpareParts1 - Second Lorem ipsum this?',
-                      answer: 'Lorem ipsum descrpition'
-                    },
-                    {
-                      id: 4,
-                      service_topics_sub_category_id: 20,
-                      question: 'SpareParts2 - Second Lorem ipsum this?',
-                      answer: 'Lorem ipsum descrpition'
-                    }
-                  ]
-                },
-
-                {
-                  id: 30,
-                  service_topics_category_id: 1,
-                  name: 'Hip Safety Service',
-                  items: [
-                    {
-                      id: 5,
-                      service_topics_sub_category_id: 30,
-                      featured: true,
-                      question: 'HipSafetyService1 - Second Lorem ipsum this?',
-                      answer: 'Lorem ipsum descrpition'
-                    },
-                    {
-                      id: 6,
-                      service_topics_sub_category_id: 30,
-                      featured: true,
-                      question: 'HipSafetyService2 - Second Lorem ipsum this?',
-                      answer: 'Lorem ipsum descrpition'
-                    }
-                  ]
-                }
-              ]
-            };
+            return serviceFaqsMock;
           }
         },
 
         faqOverview: {
           type: Array,
-          value: [
-            {
-              brand_id: 4,
-              created_at: "2017-09-07 10:28:39",
-              detail_page: "http://localhost:8080/faq/warranty/",
-              faq_promo_toggle: false,
-              featured_questions: [
-                {
-                  answer: "Our Lifetime Warranty applies if you are the first user and only when you registered your purchase (car seat,          pushchair/stroller or carrycot) within 3 months of your purchase. For all requests under this Warranty regarding defects in materials and workmanship, you must present original proof of purchase accompanied with the Lifetime Warranty certificate you receive after registration.",
-                  created_at: "2017-09-07 10:28:39",
-                  featured: 1,
-                  id: 1,
-                  question: "I hear Maxi-Cosi has a Lifetime Warranty. What do I need to do to get it?",
-                  service_topics_category_id: 1,
-                  service_topics_sub_category_id: 1,
-                  updated_at: "2017-09-07 10:28:39"
-                }
-              ],
-              id: 1,
-              name: "Warranty",
-              updated_at: "2017-09-11 14:59:19",
-              value: "warranty",
-              promo_bynder_image_id: undefined,
-              promo_cta_link: undefined,
-              promo_cta_text: undefined,
-              promo_description: undefined,
-              promo_title: undefined,
-              sub_categories: [
-                {
-                  created_at: "2017-09-07 10:28:39",
-                  id: 1,
-                  items: [
-                    {
-                      answer: "Our Lifetime Warranty applies if you are the first user and only when you registered your purchase (car seat, pushchair/stroller or carrycot) within 3 months of your purchase. For all requests under this Warranty regarding defects in materials and workmanship, you must present original proof of purchase accompanied with the Lifetime Warranty certificate you receive after registration.",
-                      created_at: "2017-09-07 10:28:39",
-                      featured: 1,
-                      id: 1,
-                      question: "I hear Maxi-Cosi has a Lifetime Warranty. What do I need to do to get it?",
-                      service_topics_sub_category_id: 1,
-                      updated_at: "2017-09-07 10:28:39",
-                    }
-                  ],
-                  name: "Lifetime Warranty",
-                  service_topics_category_id: 1,
-                  updated_at: "2017-09-07 10:28:39"
-                }
-              ],
-            },
-            {
-              brand_id: 4,
-              created_at: "2017-09-07 10:28:39",
-              detail_page: "http://localhost:8080/faq/services/",
-              faq_promo_toggle: false,
-              featured_questions: [
-                {
-                  answer: "Lorem ipsum dulum",
-                  created_at: "2017-09-07 10:28:39",
-                  featured: 1,
-                  id: 1,
-                  question: "Lorem ipsum dulum",
-                  service_topics_category_id: 1,
-                  service_topics_sub_category_id: 1,
-                  updated_at: "2017-09-07 10:28:39"
-                }
-              ],
-              id: 2,
-              name: "Services",
-              updated_at: "2017-09-11 14:59:19",
-              value: "services",
-              promo_bynder_image_id: undefined,
-              promo_cta_link: undefined,
-              promo_cta_text: undefined,
-              promo_description: undefined,
-              promo_title: undefined,
-              sub_categories: [
-                {
-                  created_at: "2017-09-07 10:28:39",
-                  id: 1,
-                  items: [
-                    {
-                      answer: "Lorem ipsum dulum",
-                      created_at: "2017-09-07 10:28:39",
-                      featured: 1,
-                      id: 1,
-                      question: "I hear Maxi-Cosi has a Lifetime Warranty. What do I need to do to get it?",
-                      service_topics_sub_category_id: 1,
-                      updated_at: "2017-09-07 10:28:39",
-                    }
-                  ],
-                  name: "Lifetime Warranty",
-                  service_topics_category_id: 1,
-                  updated_at: "2017-09-07 10:28:39"
-                }
-              ]
-            }
-          ]
+          value: serviceFaqsOverview
         }
       }
     });
