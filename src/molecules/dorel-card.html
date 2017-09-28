@@ -5,6 +5,7 @@
     <style include="iron-flex">
       :host {
         @apply(--layout-horizontal);
+        --button-margin-spacing: -1.5em;
       }
 
       .card {
@@ -36,6 +37,18 @@
 
       dorel-cta {
         float: left;
+        clear: both;
+        margin-top: 1.5em;
+      }
+
+      dorel-cta.link-list-cta {
+        margin-top: 0;
+      }
+
+      .link-container {
+        margin-top: 1.5em;
+        float: left;
+        width: 100%;
       }
 
       .card-image {
@@ -94,6 +107,32 @@
         </template>
         <!--// cardContent -->
 
+        <!-- Link list -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.links) ]]">
+          <div class="link-container">
+            <template is="dom-repeat" items="[[ cardData.links ]]" as="link">
+              <dorel-cta
+                class="link-list-cta"
+                type="link"
+                title="[[ link.text ]]"
+                link="[[ link.link ]]"
+                link-target="[[ link.target ]]"
+                size="medium"
+                icon="dorel-icons:chevron-right"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="[[ gtmChild ]]"
+                gtm-child-index="[[ gtmChildIndex ]]"
+                gtm-cta-index="[[ index ]]">
+                [[ link.text ]]
+              </dorel-cta>
+            </template>
+          </div>
+        </template>
+        <!--//Link list -->
+
         <!-- ctaToggle -->
         <template
           is="dom-if"
@@ -151,7 +190,6 @@
         return (val !== '' && typeof val !== 'undefined' && val !== null && val);
       }
     });
-
   </script>
-
 </dom-module>
+

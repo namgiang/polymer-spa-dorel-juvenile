@@ -99,7 +99,28 @@
     <!-- dom-repeat cards -->
     <template
       is="dom-if"
-      if="[[ cardsData.length ]]">
+      if="[[ cardsData.cards.length ]]">
+
+      <section class="titling-section" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <!-- section title -->
+        <template
+          is="dom-if"
+          if="[[ cardsData.title ]]">
+          <h2 class="title">[[ cardsData.title ]]</h2>
+        </template>
+        <!--// section title -->
+
+        <!-- section description -->
+        <template
+          is="dom-if"
+          if="[[ cardsData.description]]">
+          <div class="description">
+            <dorel-safe-html html="[[ cardsData.description ]]"></dorel-safe-html>
+          </div>
+        </template>
+        <!--// section description -->
+      </section>
+
 
       <section class="section-cards layout horizontal center center-justified wrap"
                compact$="[[ compact ]]"
@@ -109,7 +130,7 @@
         <div class="row">
           <template
             is="dom-repeat"
-            items="[[ cardsData ]]"
+            items="[[ cardsData.cards ]]"
             as="card">
             <dorel-card
               card-data="[[ card ]]"
