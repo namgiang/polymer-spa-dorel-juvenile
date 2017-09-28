@@ -33,6 +33,7 @@
         @apply(--theme-grid-row-mobile-margins);
         @apply(--layout-flex);
         justify-content: left;
+        flex: 0 0 100%;
       }
 
       .container-faq, .container-promo-contact {
@@ -217,6 +218,8 @@
         customerSupportOptions: Object
       },
 
+      behaviors: [DorelObjectHasPropertiesBehavior],
+
       observers: [
         '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
       ],
@@ -304,23 +307,6 @@
         if(typeof catId === 'undefined') return;
 
         this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
-      },
-
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
-        }
-
-        return hasProp;
       }
     });
 
