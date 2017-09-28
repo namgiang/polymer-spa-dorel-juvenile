@@ -9,7 +9,7 @@
 <dom-module id="dorel-template-product-category">
   <template>
     <style>
-      :root {
+      :host {
         /* Override the default background-color for the multi sections */
         --theme-multi-background-color: var(--theme-color-background-tertiary);
         --theme-multi-no-background-color: transparent;
@@ -21,19 +21,13 @@
 
       .container {
         @apply(--max-width-container);
-        padding-top: 1.5em;
         box-sizing: border-box;
+        padding-top: 0;
       }
 
       .row {
         @apply(--theme-grid-row);
         @apply(--layout-flex);
-      }
-
-      dorel-section-page-nav {
-        width: 100%;
-        @apply(--theme-grid-column);
-        margin: 0;
       }
 
       .content {
@@ -45,10 +39,11 @@
       .sidebar {
         width: 100%;
         @apply(--theme-grid-column);
+        margin-top: 0;
       }
 
       [tablet-medium-up] .container {
-        padding: 1.5em var(--theme-gutter) 0 var(--theme-gutter);
+        padding: 0 var(--theme-gutter);
       }
 
       [tablet-medium-up] .row {
@@ -95,13 +90,12 @@
       </template>
       <!--// section-header -->
 
+      <dorel-section-page-nav
+        breadcrumbs-toggle="true"
+        rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
+
       <div class="container layout horizontal center center-justified wrap">
         <div class="row">
-
-          <dorel-section-page-nav
-            breadcrumbs-toggle="true"
-            rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
-
           <div class="sidebar">
             <template
               is="dom-if"
@@ -221,6 +215,8 @@
 
       },
 
+      behaviors: [DorelObjectHasPropertiesBehavior],
+
       /**
        * @name _defineComponentModels
        * @description Fixed WP/ACF data is defined by an array (workaround). For components
@@ -271,23 +267,6 @@
         };
 
         this.set('sort', sort);
-      },
-
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
-        }
-
-        return hasProp;
       }
     });
   </script>

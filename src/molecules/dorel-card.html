@@ -110,13 +110,13 @@
         <!-- Link list -->
         <template
           is="dom-if"
-          if="[[ _hasValue(cardData.links) ]]">
+          if="[[ _hasValue(cardData.child_ctas) ]]">
           <div class="link-container">
-            <template is="dom-repeat" items="[[ cardData.links ]]" as="link">
+            <template is="dom-repeat" items="[[ cardData.child_ctas ]]" as="link">
               <dorel-cta
                 class="link-list-cta"
                 type="link"
-                title="[[ link.text ]]"
+                title="[[ link.title ]]"
                 link="[[ link.link ]]"
                 link-target="[[ link.target ]]"
                 size="medium"
@@ -126,7 +126,7 @@
                 gtm-child="[[ gtmChild ]]"
                 gtm-child-index="[[ gtmChildIndex ]]"
                 gtm-cta-index="[[ index ]]">
-                [[ link.text ]]
+                [[ link.title ]]
               </dorel-cta>
             </template>
           </div>
@@ -136,7 +136,7 @@
         <!-- ctaToggle -->
         <template
           is="dom-if"
-          if="[[ _hasValue(cardData.cta_toggle) ]]">
+          if="[[ cardData.cta_toggle ]]">
           <dorel-cta
             type="[[ ctaType ]]"
             title="[[ cardData.cta_text ]]"
@@ -153,6 +153,7 @@
           </dorel-cta>
         </template>
         <!--// ctaToggle -->
+
       </div>
     </div>
   </template>
@@ -182,13 +183,7 @@
 
       },
 
-      /**
-       * @name hasValue
-       * @description checks to see if a value is not empty, undefined or null
-       */
-      _hasValue: function (val) {
-        return (val !== '' && typeof val !== 'undefined' && val !== null && val);
-      }
+      behaviors: [DorelHasValueBehavior]
     });
   </script>
 </dom-module>
