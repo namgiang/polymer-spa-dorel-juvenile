@@ -37,17 +37,17 @@
 
     <div class="content-wrapper" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <div class="content">
-        <template is="dom-if" if="{{ _hasValue(contentTitle) }}">
-          <template is="dom-if" if="{{ _isMainHeader(contentIndex) }}">
+        <template is="dom-if" if="[[ _hasValue(contentTitle) ]]">
+          <template is="dom-if" if="[[ _isMainHeader(contentIndex) ]]">
             <h1 class="title">[[ contentTitle ]]</h1>
           </template>
 
-          <template is="dom-if" if="{{ !_isMainHeader(contentIndex) }}">
+          <template is="dom-if" if="[[ !_isMainHeader(contentIndex) ]]">
             <h2 class="title">[[ contentTitle ]]</h2>
           </template>
         </template>
 
-        <template is="dom-if" if="{{ _hasValue(contentText) }}">
+        <template is="dom-if" if="[[ _hasValue(contentText) ]]">
           <div class="text">
             <dorel-safe-html html="[[ contentText ]]"></dorel-safe-html>
           </div>
@@ -84,15 +84,7 @@
 
       },
 
-      /**
-       * @name _hasValue
-       * @description checks to see if a value is set
-       *
-       * @returns Boolean
-       */
-      _hasValue: function (val) {
-        return (typeof val !== 'undefined' && val !== '');
-      },
+      behaviors: [DorelHasValueBehavior],
 
       /**
        * @name _isMainHeader
