@@ -1,97 +1,159 @@
 <link rel="import" href="../organisms/dorel-section-header.html">
-<link rel="import" href="../organisms/dorel-section-content-wrap.html">
+<link rel="import" href="../atoms/dorel-wysiwyg-html.html">
 
 <dom-module id="dorel-template-info">
   <template>
     <style>
-      .wrapper {
+
+      section {
+        padding-bottom: 1.5em;
         float: left;
         width: 100%;
-        padding-bottom: 1.5em;
       }
-      .max-width-container {
+
+      .container {
         @apply(--max-width-container);
-        max-width: var(--theme-base-paragraph-width);
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        width: 100%;
+        margin: auto;
+        float: none;
+        padding: 0 var(--theme-gutter-mobile);
+        box-sizing: border-box;
       }
+
+      .max-width-container {
+        width: 100%;
+        max-width: var(--theme-base-paragraph-width);
+        margin: auto;
+        clear: both;
+      }
+
+      .image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2.25em 0 .75em 0;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-bynder-image {
+        width: 100%;
+      }
+
+      .video-container {
+        display: flex;
+        clear: both;
+      }
+
+      dorel-video-wrap {
+        width: 100%;
+        max-width: 56em;
+        margin: 1.5em auto 1.5em auto;
+
+      }
+
+      [tablet-medium-up] .container {
+        padding: 0 var(--theme-gutter);
+      }
+
+      [tablet-medium-up] .image-container {
+        margin: 3em 0 1.5em 0;
+      }
+
+      section[tablet-medium-up] {
+        padding-bottom: 3em;
+      }
+
+      [tablet-medium-up] dorel-video-wrap {
+        margin: 3em auto 1.5em auto;
+      }
+
     </style>
 
-    <div class="wrapper">
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <!-- section-hero-header -->
+      <template
+        is="dom-if"
+        if="[[templateData.acf.hero_header.length]]">
+        <dorel-section-header
+          section-header-data="[[heroHeaderData]]"
+          info-header="true"></dorel-section-header>
+        <template
+          is="dom-if"
+          if="[[ templateData.acf.breadcrumbs_toggle ]]">
+          <dorel-section-page-nav
+            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+        </template>
+      </template>
 
       <div class="container layout horizontal center center-justified wrap">
-        <div class="row">
-          
-          <!-- section-hero-header -->
-          <template 
-            is="dom-if" 
-            if="[[templateData.acf.hero_header.length]]">
-            <dorel-section-header 
-              section-header-data="[[heroHeaderData]]" 
-              info-header="true"></dorel-section-header>
+        <!-- show when acf.page_builder has components -->
+        <template
+          is="dom-if"
+          if="{{ templateData.acf.page_builder.length }}">
+
+
+          <!-- iterate over page_builder components -->
+          <template
+            is="dom-repeat"
+            items="[[ templateData.acf.page_builder ]]"
+            as="component"
+            targetFramerate="1000">
+
+            <!-- dorel wysiwyg content-->
+            <template
+              is="dom-if"
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
+              <div class="max-width-container">
+                <dorel-wysiwyg-html html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
+              </div>
+            </template>
+
+            <!-- dorel bynder image -->
+            <template
+              is="dom-if"
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_image') ]]">
+              <div class="image-container">
+                <dorel-bynder-image media-id="[[ component.bynder_image ]]"
+                                    derivative-identifier="Fullscreen Retina landscape"
+                                    mobile-derivative-identifier="Fullscreen Small landscape"
+                                    alt="[[ component.image_alt ]]"
+                                    mobile-width="100%"
+                                    mobile-height="18em"
+                                    tablet-width="100%"
+                                    tablet-height="27em"
+                                    width="56em"
+                                    height="31.5em"></dorel-bynder-image>
+              </div>
+            </template>
 
             <template
               is="dom-if"
-              if="[[ templateData.acf.breadcrumbs_toggle ]]">
-              <dorel-section-page-nav
-                breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
+              <div class="video-container">
+                <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
+              </div>
             </template>
-          </template>
-          <!--// section-hero-header -->
 
-          <!-- show when acf.page_builder has components -->
-          <template
-            is="dom-if"
-            if="{{ templateData.acf.page_builder.length }}">
-
-
-            <!-- iterate over page_builder components -->
+            <!-- dorel section hubspot -->
             <template
-              is="dom-repeat"
-              items="[[ templateData.acf.page_builder ]]"
-              as="component"
-              targetFramerate="1000">
+              is="dom-if"
+              if="[[ isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
 
-                  <!-- section-info-header -->
-                  <template
-                    is="dom-if"
-                    if="[[ isPageComponent(component.acf_fc_layout, 'section_info_header') ]]">
-                    <dorel-section-header 
-                      section-header-data="[[ component ]]" 
-                      info-header="true"></dorel-section-header>
-                  </template>
-                  <!--// section-info-header -->
-
-                  <!-- section-content-wrap -->
-                  <template
-                    is="dom-if"
-                    if="[[ isPageComponent(component.acf_fc_layout, 'section_content_wrap') ]]">
-
-                    <dorel-section-content-wrap
-                      content-wrappers="[[ component ]]"></dorel-section-content-wrap>
-
-                  </template>
-                  <!--// section-content-wrap -->
-
-                  <!-- dorel section hubspot -->
-                  <template
-                    is="dom-if"
-                    if="[[ isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
-
-                    <dorel-hubspot
-                      hubspot-loaded="[[ appCache.collect.options.hubspot_loaded ]]"
-                      portal-id="[[ appCache.collect.options.hubspot_portal_id ]]"
-                      form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
-
-                  </template>
-                  <!--// dorel section hubspot -->
+              <dorel-hubspot
+                hubspot-loaded="[[ appCache.collect.options.hubspot_loaded ]]"
+                portal-id="[[ appCache.collect.options.hubspot_portal_id ]]"
+                form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
 
             </template>
-          </template>
+            <!--// dorel section hubspot -->
 
-        </div>
+          </template>
+        </template>
       </div>
-    </div>
+    </section>
   </template>
 
   <script>
@@ -102,7 +164,7 @@
 
         appCache: {
           type: Object,
-          value: function(){
+          value: function () {
             return {};
           }
         },
@@ -114,7 +176,7 @@
          */
         templateData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: '_defineComponentModels'
@@ -128,7 +190,7 @@
 
       },
 
-      /** 
+      /**
        * @name _defineComponentModels
        * @description Fixed WP/ACF data is defined by an array (workaround). For components
        * that always have one item in the array a new data model is created to be set on
@@ -136,27 +198,27 @@
        *
        * @param Object
        */
-      _defineComponentModels: function(templateData) {
+      _defineComponentModels: function (templateData) {
         // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
+        if (!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
 
         // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.hero_header !== 'undefined') {
+        if (typeof templateData.acf.hero_header !== 'undefined') {
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
       },
 
-      /** 
+      /**
        * @name _hasProperty
        * @description check if an Object has properties
        *
        * @param Object
        * @returns Boolean
        */
-      _hasProperty: function(obj) {
+      _hasProperty: function (obj) {
         var hasProp = false;
 
-        for(var prop in obj) {
+        for (var prop in obj) {
           var hasProp = (obj.hasOwnProperty(prop));
         }
 
