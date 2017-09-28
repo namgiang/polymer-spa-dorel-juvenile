@@ -1,0 +1,249 @@
+<link rel="import" href="../dropdown-items/dorel-dropdown-card.html">
+<dom-module id="dorel-menu-dropdown-category" opened$="[[ opened]]">
+  <template>
+    <style>
+      :host {
+        position: absolute;
+        background-color: var(--theme-color-monochrome-2);
+        left: 0;
+        right: 0;
+        display: flex;
+        transform: translate(0, 0) scaleY(0);
+        min-width: 100vw;
+        top: 1.5rem;
+        z-index: -5;
+        -webkit-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+        -moz-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+        box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+        opacity: 1;
+        visibility: hidden;
+        transition: all 0.25s;
+        transform-origin: top;
+        max-height: 80vh;
+        overflow: auto;
+        cursor: default;
+      }
+
+      :host-context([opened])  {
+        transform: translate(0, 0) scaleY(1);
+        top: 10.5rem;
+        opacity: 1;
+        visibility: visible;
+        transition: all 0.25s;
+      }
+
+      .content {
+        @apply(--max-width-container);
+        @apply(--layout-vertical);
+        box-sizing: border-box;
+        transition: .15s ease padding;
+        padding: 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+        @apply(--theme-grid-row-margins);
+        position: relative;
+      }
+      .dropdown-menu {
+        list-style-type: none;
+        margin: 0;
+        padding: 0.75rem 0;
+      }
+
+      .dropdown-menu__title {
+        @apply(--theme-typography-3);
+        color: var(--theme-brand-color-2);
+        margin: 0;
+      }
+      .dropdown-menu-item {
+        margin-top: .75rem;
+      }
+      .dropdown-menu-item:first-child {
+        margin-top: 0;
+      }
+      .link {
+        @apply(--theme-typography-2);
+        margin: 0;
+        transition: color 0.2s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        color: var(--theme-color-monochrome-7);
+      }
+
+      .link::selection {
+        background-color: transparent;
+      }
+
+      .dropdown-menu-item .link::before {
+        content: '- ';
+        white-space: pre;
+      }
+
+      .link:visited {
+        color: var(--theme-color-monochrome-7);
+      }
+      .link:hover {
+        color: var(--theme-color-text-link-active);
+      }
+      .featured {
+        display: flex;
+      }
+
+      .featured__column {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        display: flex;
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
+        flex-basis: calc(var(--theme-column-width) * 2);
+        max-width: calc(var(--theme-column-width) * 2);
+      }
+
+      dorel-card {
+        flex: 1;
+      }
+
+      .dropdown-menu {
+        flex: 1;
+      }
+
+    </style>
+    <div class="content">
+      <div class="featured">
+        <div class="row">
+          <template
+            is="dom-repeat"
+            items="[[ featuredItems ]]"
+            as="card">
+            <div class="featured__column">
+              <dorel-dropdown-card
+                card-data="[[ _transformToCartData(card) ]]"
+                cta-type="[[ ctaType ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="dorel-card"
+                cta-type="link"
+                gtm-child-index="[[ index ]]"></dorel-dropdown-card>
+            </div>
+          </template>
+          <div class="featured__column">
+            <ul class="dropdown-menu" id="dropdownMenu">
+              <li class="dropdown-menu-item">
+                <h3 class="dropdown-menu__title">[[ mainItem.title ]]</h3>
+              </li>
+              <template is="dom-repeat" items="[[ dropdownItems ]]" as="menuItem">
+                <li class="dropdown-menu-item">
+                  <a on-click="clickMenuItem"
+                    class="link"
+                    gtm-parent="dorel-navigation-main"
+                    gtm-parent-index="[[ index ]]"
+                    href="[[ menuItem.link ]]">
+                    [[ menuItem.title ]]
+                  </a>
+                </li>
+              </template>
+              <li class="dropdown-menu-item">
+                <dorel-cta title="[[ mainItem.title ]]"
+                           type="primary"
+                           link="[[ mainItem.link ]]"
+                           size="small"
+                           no-margin
+                           icon="dorel-icons:chevron-right"
+                           gtm-action="plan-route-retailer"
+                           gtm-parent="[[ gtmParent ]]"
+                           gtm-parent-index="[[ gtmParentIndex ]]"
+                           gtm-child="[[ gtmChild ]]"
+                           gtm-child-index="[[ gtmChildIndex ]]"
+                           gtm-cta-index="0">
+                           View all
+                 </dorel-cta>
+              </li>
+            </ul>
+        </dov>
+        </div>
+      <div>
+    </div>
+  </template>
+  <script>
+
+    Polymer({
+      is: 'dorel-menu-dropdown-category',
+      properties: {
+
+        /**
+         * @name dropdownItems
+         * @description array of links
+         */
+        dropdownItems: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        /**
+         * @name featuredItems
+         * @description array of featurd links (subcategories or products)
+         */
+        featuredItems: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        /**
+         * @name mainItem
+         * @description the main link
+         */
+        mainItem: {
+          type: Object
+        },
+
+        /**
+         * @name index
+         * @description index of the item
+         */
+        index: {
+          type: Number
+        }
+
+      },
+
+      behaviors: [MainMenuBehavior],
+
+      /**
+       * @name clickMenuItem
+       * @description closes the mobile menu and calls _emitGtmEvent
+       * @param event - Object
+       */
+      clickMenuItem: function(event) {
+        this._emitGtmEvent(event);
+      },
+
+      setDropdownId: function(mainItem) {
+        return 'dropdown' + mainItem.id;
+      },
+
+      _transformToCartData: function(item) {
+        var card = {
+          card_title: item.title,
+          link: item.link
+        };
+
+        if(item.thumbnail_url) {
+          card.image_url = item.thumbnail_url;
+        } else {
+          card.bynder_card_image = item.thumbnail;
+        }
+        return card;
+      }
+
+
+    });
+
+  </script>
+</dom-module>
