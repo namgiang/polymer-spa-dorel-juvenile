@@ -1,6 +1,6 @@
 <link rel="import" href="../../../atoms/dorel-cta.html">
 <link rel="import" href="../../../atoms/dorel-bynder-image.html">
-<dom-module id="dorel-dropdown-card">
+<dom-module id="dorel-dropdown-card" is-active="[[ isActive ]]">
   <template>
     <style include="iron-flex">
       :host {
@@ -20,6 +20,19 @@
         -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        transition: 0.2s;
+      }
+
+      .card:hover {
+        -webkit-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+      }
+
+      :host-context([is-active]) .card {
+        -webkit-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
       }
 
       .description {
@@ -45,6 +58,15 @@
         float: left;
         width: 100%;
         margin-top: .75rem;
+        transition: 0.2s;
+      }
+
+      .card:hover .title {
+        color: var(--theme-color-text-link-active);
+      }
+
+      :host-context([is-active]) .card .title {
+        color: var(--theme-color-text-link-active);
       }
 
       dorel-bynder-image {
@@ -156,6 +178,11 @@
          */
         cardData: {
           type: Object
+        },
+
+        isActive: {
+          type: Boolean,
+          reflectToAttribute: true
         }
 
       },

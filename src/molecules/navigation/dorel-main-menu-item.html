@@ -82,6 +82,33 @@
       .menu-item__icon[opened] {
         transform: scaleY(-1);
       }
+
+      .category-container {
+        @apply(--max-width-container);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+      }
+      .category-container::after {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        min-height: 120vh;
+        z-index: -10;
+        background-color: rgba(0,0,0,0);
+        pointer-events: none;
+        content: '';
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.2s;
+      }
+      .category-container[opened]::after {
+        background-color: rgba(0,0,0,0.32);
+        visibility: visible;
+        opacity: 1;
+      }
     </style>
 
     <div class="menu-item" class$="{{ getClasses(mainItem) }}">
@@ -110,18 +137,22 @@
             index="[[ index ]]"
             main-item="[[ mainItem ]]"
             opened$="[[ opened ]]"
+            route="[[ route ]]"
             dropdown-items="[[ mainItem.dropdown_items ]]">
           </dorel-menu-dropdown-default>
         </template>
 
         <template is="dom-if" if="[[ checkDropdownType(mainItem, 'category') ]]">
-          <dorel-menu-dropdown-category
-            index="[[ index ]]"
-            main-item="[[ mainItem ]]"
-            opened$="[[ opened ]]"
-            featured-items="[[ mainItem.sub_category_items ]]"
-            dropdown-items="[[ mainItem.dropdown_items ]]">
-          </dorel-menu-dropdown-category>
+          <div class="category-container" opened$="[[ opened ]]">
+            <dorel-menu-dropdown-category
+              index="[[ index ]]"
+              main-item="[[ mainItem ]]"
+              opened$="[[ opened ]]"
+              route="[[ route ]]"
+              featured-items="[[ mainItem.sub_category_items ]]"
+              dropdown-items="[[ mainItem.dropdown_items ]]">
+            </dorel-menu-dropdown-category>
+          </div>
         </template>
 
       </template>
@@ -167,6 +198,14 @@
         isActive: {
           type: Boolean,
           reflectToAttribute: true
+        },
+
+        /**
+         * @name route
+         * @description current route / url of the application
+         */
+        route: {
+          type: Object
         }
 
       },
@@ -180,6 +219,11 @@
        */
       clickMainItem: function(event) {
         this._emitGtmEvent(event);
+        this.clickOutsideListen();
+      },
+
+      onClickOutside: function() {
+        this.openDropdown();
       },
 
       openDropdown: function(event) {
