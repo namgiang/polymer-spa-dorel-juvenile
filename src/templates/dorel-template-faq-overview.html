@@ -3,17 +3,18 @@
 <dom-module id="dorel-template-faq-overview">
   <template>
     <style>
-      .host {
+      :host {
         @apply(--max-width-host);
       }
 
       .section {
         @apply(--max-width-container);
-        float: left;
         width: 100%;
         box-sizing: border-box;
         position: relative;
         padding: 0 var(--theme-gutter-mobile);
+        float: none;
+        margin: auto;
       }
 
       .row {
@@ -25,6 +26,10 @@
 
       .container {
         width: 100%;
+      }
+
+      section {
+        padding-top: 0;
       }
 
       dorel-section-page-nav {
@@ -42,7 +47,6 @@
 
       [tablet-medium-up] dorel-service-support {
         margin-top: 0;
-
       }
 
       [tablet-medium-up] .container {
@@ -180,6 +184,8 @@
         customerSupportOptions: Object
       },
 
+      behaviors: [DorelObjectHasPropertiesBehavior],
+
       /**
        * @name _defineComponentModels
        * @description Fixed WP/ACF data is defined by an array (workaround). For components
@@ -222,23 +228,6 @@
         if(typeof appCache.collect.options.customer_support !== 'undefined') {
           this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
         }
-      },
-
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
-        }
-
-        return hasProp;
       }
     });
 

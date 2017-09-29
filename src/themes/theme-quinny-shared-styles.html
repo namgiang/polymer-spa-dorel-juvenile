@@ -61,6 +61,8 @@
         --theme-header-item-padding: .5em;
         --theme-header-logo-top: .125em;
 
+        --theme-menu-offset: 7.5rem;
+
         /* ------------------------------------------------
          * Grid
          */
@@ -279,11 +281,123 @@
           border-bottom: 1px solid var(--theme-color-active);
         };
 
+        /*
+         * Textual elements
+         */
+        --theme-blockquotes-mobile: {
+          @apply(--theme-typography-3);
+          color: var(--theme-brand-color-1);
+          border-left: .125em solid var(--theme-brand-color-1);
+          max-width: var(--theme-base-paragraph-width);
+          font-style: italic;
+          margin-left: 0;
+          padding-left: 0.5em;
+        };
+
+        --theme-blockquotes-desktop: {
+          @apply(--theme-blockquotes-mobile);
+          @apply(--theme-typography-5);
+        };
+
+        --theme-list: {
+          @apply(--theme-paragraph-text);
+          max-width: var(--theme-base-paragraph-width);
+          padding-left: 0;
+          list-style: none;
+          counter-reset: item;
+        };
+
+        --theme-list-item: {
+          margin-top: .25em;
+          padding-left: 1.5em;
+          position: relative;
+        };
+
+        --theme-ordered-list-bullet: {
+          @apply(--theme-typography-3);
+          color: var(--theme-brand-color-1);
+          content: counter(item);
+          counter-increment: item;
+          margin-right: .5em;
+          margin-top: 0;
+          float: left;
+          position: absolute;
+          left: 0;
+        };
+
+        --theme-unordered-list-bullet: {
+          content: '';
+          float: left;
+          display: inline-block;
+          margin-right: 1em;
+          width: .375em;
+          height: .375em;
+          margin-top: .6em;
+          border-radius: .5em;
+          background-color: var(--theme-brand-color-1);
+          position: absolute;
+          left: 0;
+        };
+
+        --theme-code: {
+          max-width: var(--theme-base-paragraph-width);
+          background-color: var(--theme-color-monochrome-2);
+          border: 1px solid var(--theme-color-monochrome-3);
+          width: 100%;
+          float: left;
+          overflow-x: scroll;
+          overflow-y: hidden;
+          display: block;
+          word-wrap: normal;
+          padding: 1.5rem;
+          margin: 1.5em 0 0 0;
+          box-sizing: border-box;
+          white-space: normal;
+        };
+
+        --theme-code-pre: {
+          white-space: pre-line;
+          font-family: monospace, monospace;
+          margin: 0;
+          float: left;
+        };
+
+        --theme-figcaption: {
+          @apply(--theme-typography-1);
+          width: 100%;
+          text-align: center;
+          font-style: italic;
+          margin: 0.85715em 0;
+        };
+
+        /* Tables */
+        --theme-table: {
+          @apply(--theme-typography-1);
+          background-color: var(--theme-color-monochrome-2);
+          margin-top: 1.75em;
+          line-height: calc(var(--theme-scale-3));
+          padding: calc(var(--theme-scale-1) * 7);
+          clear: both;
+          float: left;
+        };
+
+        --theme-table-row: {
+          box-shadow: inset 0 -1px 0 0 var(--theme-color-monochrome-3);
+        };
+
+        --theme-table-elements: {
+          line-height: var(--theme-scale-3);
+          height: var(--theme-scale-3);
+          padding: 0 var(--theme-scale-3) 0 0;
+          text-align: left;
+          font-weight: normal;
+        };
+
         /* Rounded Edges */
-        --theme-border-radius-0: .25em;
-        --theme-border-radius-1: .5em;
-        --theme-border-radius-2: 1em;
-        --theme-border-radius-3: 1.5em;
+        --theme-border-radius-0: 0;
+        --theme-border-radius-1: 0;
+        --theme-border-radius-2: 0;
+        --theme-border-radius-3: 0;
 
         /* Buttons & CTA's */
         --theme-primary-button-color: var(--theme-brand-complementary-color-2);
@@ -578,9 +692,7 @@
         --paper-menu-focused-item-after: {
           background-color: var(--theme-color-monochrome-2);
           font-weight: var(--theme-font-weight);
-        }
-
-       /*
+        } /*
         * Quinny styled Icons
         */
 
@@ -614,12 +726,11 @@
   @font-face {
     font-family: "precioussanstwo";
     src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
-    src:
-      url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix") format("eot"),
-      url("/assets/fonts/quinny/precioussanstwo-light-webfont.woff2") format("woff2"),
-      url("/assets/fonts/quinny/precioussanstwo-light-webfont.woff") format("woff"),
-      url("/assets/fonts/quinny/precioussanstwo-light-webfont.ttf") format("truetype"),
-      url("/assets/fonts/quinny/precioussanstwo-light-webfont.svg") format("svg");
+    src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix") format("eot"),
+    url("/assets/fonts/quinny/precioussanstwo-light-webfont.woff2") format("woff2"),
+    url("/assets/fonts/quinny/precioussanstwo-light-webfont.woff") format("woff"),
+    url("/assets/fonts/quinny/precioussanstwo-light-webfont.ttf") format("truetype"),
+    url("/assets/fonts/quinny/precioussanstwo-light-webfont.svg") format("svg");
     font-weight: 300;
     font-style: normal;
 
@@ -629,40 +740,37 @@
   @font-face {
     font-family: "precioussanstwo";
     src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
-    src:
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
+    src: url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
     font-weight: 400;
     font-style: normal;
   }
 
-    /* Demibold */
+  /* Demibold */
   @font-face {
     font-family: "precioussanstwo";
     src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
-    src:
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
+    src: url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
     font-weight: 500;
     font-style: normal;
   }
 
-    /* Bold */
+  /* Bold */
   @font-face {
     font-family: "precioussanstwo";
     src: url("/assets/fonts/quinny/precioussanstwo-light-webfont.eot?#iefix");
-    src:
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"),
-      url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
+    src: url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.eot?#iefix") format("eot"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff2") format("woff2"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.woff") format("woff"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.ttf") format("truetype"),
+    url("/assets/fonts/quinny/precioussanstwo-demibold-webfont.svg") format("svg");
     font-weight: 800;
     font-style: normal;
   }

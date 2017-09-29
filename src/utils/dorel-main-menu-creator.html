@@ -45,7 +45,7 @@
       _createLinks: function(menuItems, pages) {
         var self = this;
         return menuItems.map(function(item) {
-          var page = self._getPage(pages, item['Page Object'].ID);
+          var page = self._getPage(pages, item.page_object.ID);
           if(!page) {
             return false;
           }
@@ -60,7 +60,6 @@
       },
 
       _createMenuItem: function(item, page, pages) {
-        delete item['Page Object'];
         item.id = page.id;
         item.link = page.link;
         item.title = page.title.rendered;
@@ -72,7 +71,7 @@
         if(item.dropdown_items && item.dropdown_items.length) {
           var self = this;
           item.dropdown_items = item.dropdown_items.map(function(_item) {
-            var page = self._getPage(pages, _item['link'].ID);
+            var page = self._getPage(pages, _item.page_object.ID);
             if(!page) {
               return false;
             }
@@ -135,7 +134,7 @@
               var newItem = {
                 id: Number(product.id),
                 link: menuItem.link + product.url,
-                thumbnail: product.images.thumbnail,
+                thumbnail_url: product.child_products[0].images.image,
                 title: product.name.value
               }
               return newItem;
