@@ -21,13 +21,7 @@ Clone this repository:
     
     git clone git@github.com:dorel/polymer-spa-dorel-juvenile.git
 
-Open src/dorel-app.html and replace the following line
-    
-    value: [((wpurl))]
-
-by the following
-
-    value: '//wppolymer.dev'
+Open app-config.js and set the right config values for your local environments. This would normally be done by our docker setup, which automates this process.
 
 ### Start the development server
 
@@ -56,7 +50,7 @@ H2/push-compatible servers or to clients that do not support H2/Push.
 This command serves the minified version of the app at `http://localhost:8080`
 in an unbundled state, as it would be served by a push-compatible server:
 
-    polymer serve build/unbundled
+    `polymer serve build/unbundled`
 
 This command serves the minified version of the app at `http://localhost:8080`
 generated using fragment bundling:
