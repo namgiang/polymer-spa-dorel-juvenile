@@ -35,9 +35,9 @@
       <!-- about cards -->
       <template
         is="dom-if"
-        if="[[templateData.acf.section_cards.length]]">
+        if="[[sectionCards.cards.length]]">
         <dorel-section-cards 
-          cards-data="[[aboutCards]]"
+          cards-data="[[sectionCards]]"
           cta-type="secondary" 
           compact="true"></dorel-section-cards>
       </template>
@@ -86,10 +86,10 @@
         aboutSubCategories: Object,
 
         /**
-         * @name aboutCards
+         * @name sectionCards
          * @description the data model used for the cards component
          */
-        aboutCards: Object
+        sectionCards: Object
       },
 
       behaviors: [DorelObjectHasPropertiesBehavior],
@@ -116,9 +116,9 @@
           this.set('aboutSubCategories', templateData.acf.about_sub_categories[0]);
         }
 
-        // set the aboutSubCategories for the aboutSubCategories component
-        if(typeof templateData.acf.section_cards !== 'undefined') {
-          this.set('aboutCards', templateData.acf.section_cards[0]);
+        // set the homeHeaderData for the heroHeader component
+        if (typeof templateData.acf.section_cards !== 'undefined') {
+          this.set('sectionCards', templateData.acf.section_cards[0]);
         }
       }
     });

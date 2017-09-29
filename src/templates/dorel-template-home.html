@@ -52,10 +52,10 @@
           <!-- section-cards -->
           <template 
             is="dom-if" 
-            if="[[homeCards.cards.length]]">
+            if="[[sectionCards.cards.length]]">
 
             <dorel-section-cards
-              cards-data="[[homeCards]]"
+              cards-data="[[sectionCards]]"
               gtm-parent="dorel-section-cards"
               gtm-parent-index="[[index]]"></dorel-section-cards>
 
@@ -96,12 +96,11 @@
          */
         heroHeaderData: Object,
 
-
         /**
-         * @name home
+         * @name sectionCards
          * @description the data model used for the cards component
          */
-        homeCardsData: Object
+        sectionCards: Object
 
       },
 
@@ -124,9 +123,9 @@
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
 
-        // set the aboutSubCategories for the aboutSubCategories component
-        if(typeof templateData.acf.section_cards !== 'undefined') {
-          this.set('homeCards', templateData.acf.section_cards[0]);
+        // set the homeHeaderData for the heroHeader component
+        if (typeof templateData.acf.section_cards !== 'undefined') {
+          this.set('sectionCards', templateData.acf.section_cards[0]);
         }
       }
     });
