@@ -4,7 +4,7 @@ var cardsMock = {
     cards: [
         {
           "card_title": "Torquate, haec dicit Epicurus?",
-          "card_text": "Quae cum magnifice primo dici viderentur, considerata minus probabantur.",
+          "card_text": "Quae cum magnifice primo dici viderentur, considerata minus probabantur. Quae cum magnifice primo dici viderentur, considerata minus probabantur.",
           "bynder_card_image": "5434B2DC-5260-4D13-B2771C7F45C08A55",
           "cta_toggle": true,
           "cta_text": "Read more"
