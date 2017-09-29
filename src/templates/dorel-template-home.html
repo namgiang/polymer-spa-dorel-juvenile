@@ -52,10 +52,10 @@
           <!-- section-cards -->
           <template 
             is="dom-if" 
-            if="[[templateData.acf.cards.length]]">
+            if="[[sectionCards.cards.length]]">
 
             <dorel-section-cards
-              cards-data="[[templateData.acf.cards]]"
+              cards-data="[[sectionCards]]"
               gtm-parent="dorel-section-cards"
               gtm-parent-index="[[index]]"></dorel-section-cards>
 
@@ -94,9 +94,17 @@
          * @name homeHeaderData
          * @description the data model used for the hero header component
          */
-        heroHeaderData: Object
+        heroHeaderData: Object,
+
+        /**
+         * @name sectionCards
+         * @description the data model used for the cards component
+         */
+        sectionCards: Object
 
       },
+
+      behaviors: [DorelObjectHasPropertiesBehavior],
 
       /** 
        * @name _defineComponentModels
@@ -114,23 +122,11 @@
         if(typeof templateData.acf.hero_header !== 'undefined') {
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
         }
-      },
 
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
+        // set the homeHeaderData for the heroHeader component
+        if (typeof templateData.acf.section_cards !== 'undefined') {
+          this.set('sectionCards', templateData.acf.section_cards[0]);
         }
-
-        return hasProp;
       }
     });
   </script>

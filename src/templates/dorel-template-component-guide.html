@@ -12,6 +12,7 @@
 <link rel="import" href="component-guide/dorel-component-guide-multilingual.html">
 <link rel="import" href="component-guide/dorel-component-guide-category-about.html">
 <link rel="import" href="component-guide/dorel-component-guide-service.html">
+<link rel="import" href="component-guide/dorel-component-guide-info-pages.html">
 <link rel="import" href="component-guide/dorel-component-toolbar.html">
 <link rel="import" href="../molecules/dorel-nav-tabs.html">
 
@@ -89,12 +90,14 @@
     </dorel-component-toolbar>
     <div class="component-guide-container">
       <div class="component-guide__navigation">
+        <!-- Important! The topic attribut should correspond with the template.-->
+        <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
         <paper-menu id="topics"
                     selected="{{ subrouteData.componentName }}"
                     attr-for-selected="topic">
           <paper-item topic="introduction">Introduction</paper-item>
           <paper-item topic="typography">Typography</paper-item>
-          <paper-item topic="layout-sizes">Layout & Sizes</paper-item>
+          <paper-item topic="layout">Layout & Sizes</paper-item>
           <paper-item topic="colors">Colors</paper-item>
           <paper-item topic="buttons">Buttons</paper-item>
           <paper-item topic="forms">Forms</paper-item>
@@ -105,18 +108,23 @@
           <paper-item topic="multilingual">Multilingual</paper-item>
           <paper-item topic="category-about">Category About</paper-item>
           <paper-item topic="service">Service</paper-item>
+          <paper-item topic="info-pages">Info Pages</paper-item>
+          <paper-item topic="cards">Cards</paper-item>
         </paper-menu>
       </div>
     </div>
     <div class="component-guide-container">
       <iron-pages class="component-guide__content"
                   selected="[[ subrouteData.componentName ]]"
+                  on-selected-changed="_pageSelected"
                   attr-for-selected="topic">
+        <!-- Important! The topic attribut should correspond with the template.-->
+        <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
         <dorel-component-guide-introduction brand="{{ brand }}"
                                             subroute="[[ subrouteData.componentName ]]"
                                             topic="introduction"></dorel-component-guide-introduction>
         <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>
-        <dorel-component-guide-layout topic="layout-sizes"></dorel-component-guide-layout>
+        <dorel-component-guide-layout topic="layout"></dorel-component-guide-layout>
         <dorel-component-guide-colors topic="colors"></dorel-component-guide-colors>
         <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>
         <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>
@@ -127,6 +135,8 @@
         <dorel-component-guide-multilingual topic="multilingual"></dorel-component-guide-multilingual>
         <dorel-component-guide-category-about topic="category-about"></dorel-component-guide-category-about>
         <dorel-component-guide-service topic="service"></dorel-component-guide-service>
+        <dorel-component-guide-info-pages topic="info-pages"></dorel-component-guide-info-pages>
+        <dorel-component-guide-cards topic="cards"></dorel-component-guide-cards>
       </iron-pages>
     </div>
   </template>
@@ -159,6 +169,20 @@
           value: []
         }
       },
+
+      /**
+       * @name _pageSelected
+       * @description Imports the correct component guide template when it is shown
+       */
+      _pageSelected: function (event) {
+        var selectedPage = this.$.topics.selected;
+
+        if (typeof selectedPage !== 'undefined' || selectedPage.length > 0) {
+          var selectedPageTemplate = 'component-guide/dorel-component-guide-' + selectedPage + '.html';
+          this.importHref(this.resolveUrl(selectedPageTemplate), function () {
+          });
+        }
+      }
     });
   </script>
 </dom-module>

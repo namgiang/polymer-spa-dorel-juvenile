@@ -7,6 +7,11 @@
       dorel-section-page-nav {
         width: 100%;
       }
+
+      dorel-section-cards {
+        margin-top: 0;
+      }
+
     </style>
 
     <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
@@ -30,9 +35,9 @@
       <!-- about cards -->
       <template
         is="dom-if"
-        if="[[templateData.acf.about_cards.length]]">
+        if="[[sectionCards.cards.length]]">
         <dorel-section-cards 
-          cards-data="[[aboutCards.cards]]" 
+          cards-data="[[sectionCards]]"
           cta-type="secondary" 
           compact="true"></dorel-section-cards>
       </template>
@@ -76,16 +81,18 @@
 
         /**
          * @name aboutSubCategories
-         * @description the data model used for the about sub categories component
+         * @description the data model used for the sub categories component
          */
         aboutSubCategories: Object,
 
         /**
-         * @name aboutCards
-         * @description the data model used for the about cards component
+         * @name sectionCards
+         * @description the data model used for the cards component
          */
-        aboutCards: Object
+        sectionCards: Object
       },
+
+      behaviors: [DorelObjectHasPropertiesBehavior],
 
       /**
        * @name _defineComponentModels
@@ -109,27 +116,10 @@
           this.set('aboutSubCategories', templateData.acf.about_sub_categories[0]);
         }
 
-        // set the aboutSubCategories for the aboutSubCategories component
-        if(typeof templateData.acf.about_cards !== 'undefined') {
-          this.set('aboutCards', templateData.acf.about_cards[0]);
+        // set the homeHeaderData for the heroHeader component
+        if (typeof templateData.acf.section_cards !== 'undefined') {
+          this.set('sectionCards', templateData.acf.section_cards[0]);
         }
-      },
-
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
-        }
-
-        return hasProp;
       }
     });
   </script>
