@@ -72,10 +72,10 @@
           <!-- Section cards -->
           <template
             is="dom-if"
-            if="[[parentCardsData.length]]">
+            if="[[sectionCards.cards.length]]">
             <dorel-section-cards
               compact="true"
-              cards-data="[[ _cardsFilter(parentCardsData) ]]"></dorel-section-cards>
+              cards-data="[[sectionCards]]"></dorel-section-cards>
           </template>
           <!--// Section cards -->
 
@@ -120,23 +120,11 @@
          * @name parentCardsData
          * @description the data model used for the cards component
          */
-        parentCardsData: Array,
-        /**
-         * @name filteredParentCardsData
-         * @description Adjusts the cards data model to be used for the dorel-section-card
-         */
-        filteredParentCardsData: {
-          type: Object,
-          computed: '_cardsFilter(parentCardsData, templateData)'
-        }
+        sectionCards: Object
 
       },
 
       behaviors: [DorelObjectHasPropertiesBehavior, DorelHasValueBehavior],
-
-      _cardsFilter: function (parentCardsData) {
-        return {'cards': parentCardsData};
-      },
 
       /**
        * @name _defineComponentModels
@@ -156,8 +144,8 @@
         }
 
         // set the homeHeaderData for the heroHeader component
-        if (typeof templateData.acf.parent_cards !== 'undefined') {
-          this.set('parentCardsData', templateData.acf.parent_cards);
+        if (typeof templateData.acf.section_cards !== 'undefined') {
+          this.set('sectionCards', templateData.acf.section_cards[0]);
         }
       }
     });
