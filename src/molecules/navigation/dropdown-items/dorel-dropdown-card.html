@@ -5,6 +5,8 @@
     <style include="iron-flex">
       :host {
         @apply(--layout-horizontal);
+        -ms-flex: 1;
+        -webkit-flex: 1;
         flex: 1;
       }
 
@@ -16,11 +18,14 @@
         float: left;
         margin-top: 0;
         overflow: hidden;
+        -ms-flex: 1;
+        -webkit-flex: 1;
         flex: 1;
         -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         transition: 0.2s;
+        padding: .75em;
       }
 
       .card:hover {
@@ -42,22 +47,17 @@
       }
 
       .card-content {
-        padding: 0 .75em .75em;
         float: left;
         width: 100%;
         box-sizing: border-box;
       }
 
-      dorel-cta {
-        float: left;
-      }
 
       .title {
         @apply(--theme-typography-2);
         color: var(--theme-brand-color-2);
         float: left;
         width: 100%;
-        margin-top: .75rem;
         transition: 0.2s;
       }
 
@@ -74,15 +74,17 @@
       }
 
       .card-image {
-        width: 100%;
-        height: 12vw;
-        max-height: 150px;
+        display: -ms-flexbox;
+        display: -webkit-flex;
         display: flex;
-        margin-top: 0.75rem;
+        width: 100%;
+        height: 10.5em;
         box-sizing: border-box;
       }
 
       .card-image__background {
+        -ms-flex: 1;
+        -webkit-flex: 1;
         flex: 1;
         max-width: 100%;
       }
@@ -91,7 +93,8 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <a class="card" href="[[ cardData.link ]]" on-click="closeMenu" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+    <a class="card" href="[[ cardData.link ]]" on-click="closeMenu"
+       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <!-- cardImage -->
       <template
         is="dom-if"
@@ -108,8 +111,8 @@
         if="[[ _hasValue(cardData.image_url) ]]">
         <div class="card-image">
           <iron-image src="[[ cardData.image_url ]]"
-            class="card-image__background"
-            position="center" sizing="contain"></dorel-iron-image>
+                      class="card-image__background"
+                      position="center" sizing="contain"></dorel-iron-image>
         </div>
       </template>
       <!--// cardImage -->
@@ -154,7 +157,7 @@
         </template>
         <!--// ctaToggle -->
       </div>
-    </div>
+      </div>
   </template>
   <script>
 
