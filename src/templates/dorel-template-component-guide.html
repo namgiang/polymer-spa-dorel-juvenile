@@ -12,18 +12,22 @@
       tail="{{ subroute }}"
       data="{{ subrouteData }}"></app-route>
 
-    <dorel-component-toolbar app-cache="[[ appCache ]]"
-                             brand="{{ brand }}"
-                             available-brands="{{ availableBrands }}">
-    </dorel-component-toolbar>
+    <!-- Only show toolbar when subpages are shown -->
+    <template is="dom-if" if="[[ subrouteData.pageName ]]">
+      <dorel-component-toolbar app-cache="[[ appCache ]]"
+                               brand="{{ brand }}"
+                               available-brands="{{ availableBrands }}">
+      </dorel-component-toolbar>
+    </template>
 
+    <!-- Only show overview when no subpages are shown -->
     <template is="dom-if" if="[[ !subrouteData.pageName ]]">
-      <dorel-component-guide-overview></dorel-component-guide-overview>
+      <dorel-component-guide-overview available-brands="[[ availableBrands ]]"></dorel-component-guide-overview>
     </template>
 
     <iron-pages selected="[[ subrouteData.pageName ]]"
                 attr-for-selected="page">
-      <dorel-component-guide-basic route="{{ subroute }}" page="basic"></dorel-component-guide-basic>
+      <dorel-component-guide-basic route="{{ subroute }}" brand="{{ brand }}" page="basic"></dorel-component-guide-basic>
       <dorel-component-guide-complex route="{{ subroute }}" page="complex"></dorel-component-guide-complex>
     </iron-pages>
   </template>
