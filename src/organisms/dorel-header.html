@@ -1,11 +1,13 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+
 <link rel="import" href="../molecules/dorel-multilingual-select-language.html">
 <link rel="import" href="../molecules/dorel-logo.html">
-<link rel="import" href="../molecules/dorel-navigation-main.html">
+<link rel="import" href="../molecules/navigation/dorel-main-menu-mobile.html">
+<link rel="import" href="../molecules/navigation/dorel-main-menu-desktop.html">
 
-<dom-module id="dorel-header">
+<dom-module id="dorel-header" mobile-menu-opened$="{{ mobileMenuOpened }}">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .header-wrapper {
@@ -17,7 +19,6 @@
 
       header {
         transition: transform .3s ease;
-        position: relative;
         float: left;
         width: 100%;
         position: fixed;
@@ -28,7 +29,11 @@
         background-color: white;
       }
 
-      header::before {
+      .desktop-header {
+        background-color: var(--theme-color-monochrome-1);
+      }
+
+      header::after {
         content: "";
         position: absolute;
         bottom: -.75em;
@@ -36,6 +41,7 @@
         height: .75em;
         z-index: 2;
         width: 100%;
+        transition: transform 0.20s ease;
 
         /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.13+0,0+100 */
         background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6-15 */
@@ -51,7 +57,6 @@
         box-sizing: border-box;
         transition: .15s ease padding;
         padding: .75em;
-        position: relative;
       }
 
       .header-item-menu {
@@ -75,29 +80,6 @@
         float: right;
       }
 
-      .mobile-multi-language {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 1001;
-      }
-
-      .mobile-multi-language-container {
-        float: left;
-        width: 100%;
-        height: 3em;
-        background-color: var(--theme-color-monochrome-2);
-        position: absolute;
-        bottom: 0;
-        padding: 0 var(--theme-gutter-mobile);
-        box-sizing: border-box;
-      }
-
-      .mobile-multi-language-container dorel-multilingual-select-language {
-        float: right;
-      }
-
       #hamburger {
         position: absolute;
         top: 1.25em;
@@ -105,7 +87,7 @@
         z-index: 1000;
         color: var(--theme-color-text-link);
         cursor: pointer;
-        transition: .3s ease color, .15s ease top;
+        transition: .25s ease color, .15s ease top;
       }
 
       #hamburger:hover, #hamburger:focus {
@@ -123,20 +105,16 @@
         margin-top: var(--theme-header-logo-top);
         /* center the logo */
         @apply(--layout-horizontal);
+        transition: transform 0.20s ease;
       }
 
-      /* Compact Menu */
-      /*[compact-menu] .header-items {
-        padding: 0em .75em;
+      :host-context([mobile-menu-opened]) .header-item-logo {
+        transform: translate(-256px, 0);
       }
 
-      [compact-menu][desktop-small-up] .header-items {
-        padding: 0 1.5em;
+      :host-context([mobile-menu-opened]) [desktop-small-up] .header-item-logo {
+        transform: translate(0, 0);
       }
-
-      [compact-menu] #hamburger {
-        top: 0.5em;
-      } */
 
       [desktop-small-up][compact-menu] header {
         transform: translateY(-3em);
@@ -153,10 +131,6 @@
         right: 1.25em;
       }
 
-      /*[compact-menu][tablet-medium-up] #hamburger {
-        top: 1.25em;
-      }*/
-
       .header-wrapper[desktop-small-up] {
         height: var(--theme-header-wrapper-small-up);
       }
@@ -169,6 +143,7 @@
       [desktop-small-up] .header-item-menu {
         @apply(--layout-wrap);
         order: 4;
+        display: flex;
         padding: var(--theme-header-item-padding) 0;
       }
 
@@ -212,22 +187,27 @@
             </div>
 
             <nav class="header-item header-item-menu">
-              <dorel-navigation-main
-                app-cache="[[ appCache ]]"
-                compact-menu="[[ compactMenu ]]"
-                sub-menu-opened="{{ subMenuOpened }}"
-                mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-navigation-main>
+              <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
+                <dorel-main-menu-desktop
+                  menu-items="[[ appCache.mainMenu ]]"
+                  route="[[ route ]]"
+                  mobile-menu-opened="{{ mobileMenuOpened }}"
+                  compact-menu="[[ compactMenu ]]"
+                  sub-menu-opened="{{ subMenuOpened }}"></dorel-main-menu-desktop>
+              </template>
+
+              <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
+                <dorel-main-menu-mobile
+                  menu-items="[[ appCache.mainMenu ]]"
+                  route="[[ route ]]"
+                  continents-data="[[ continentsData ]]"
+                  current-language="[[ currentLanguage ]]"
+                  mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-main-menu-mobile>
+              </template>
             </nav>
 
             <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
-              <template is="dom-if" if="{{ mobileMenuOpened }}">
-                <div class="mobile-multi-language">
-                  <div class="mobile-multi-language-container">
-                    <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
-                                                        continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
-                  </div>
-                </div>
-              </template>
+
               <div id="hamburger">
                 <template
                   is="dom-if"
@@ -262,15 +242,13 @@
         /**
          * @name currentLanguage
          * @description Object containing currently selected country and language
-         * TODO: This is temporarily filled with  dummy data, connect to API later
          */
         currentLanguage: {
           type: Object
         },
         /**
          * @name continentsData
-         * @description Object containing the continents (and country, language data)
-         * TODO: This is temporarily filled with  dummy data, connect to API later
+         * @description Array containing the continents (and country, language data)
          */
         continentsData: {
           type: Array,
@@ -284,6 +262,7 @@
           type: Boolean,
           value: false,
         },
+
         /**
          * @attribute
          * @name brandName
@@ -291,6 +270,15 @@
          */
         brandName: {
           type: String
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description defines the brand of the page
+         */
+        appCache: {
+          type: Object
         },
 
         /**
@@ -320,6 +308,14 @@
           type: Boolean
         },
 
+        /**
+         * @name route
+         * @description the route of the application
+         */
+        route: {
+          type: Object
+        },
+
 
         /**
          * @exposed
@@ -327,7 +323,9 @@
          * @description defines if the mobile menu (drawer) should be opened or closed
          */
         mobileMenuOpened: {
-          type: Boolean
+          type: Boolean,
+          reflectToAttribute: true,
+          notify: true
         }
       },
 
@@ -365,7 +363,6 @@
         this.fire('setAppCache', {value: event, path: 'events'});
       },
 
-
       /**
        * @name _toggleMobileMenu
        * @description handler for toggling the mobile menu
@@ -392,6 +389,7 @@
         // send event to tracking
         this.fire('setAppCache', {value: event, path: 'events'});
       }
+
     });
   </script>
 </dom-module>

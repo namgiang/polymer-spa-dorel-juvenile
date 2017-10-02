@@ -1,0 +1,112 @@
+<link rel="import" href="../single/dorel-match-url-behavior.html">
+<link rel="import" href="../single/dorel-get-deep-array-items-behavior.html">
+<link rel="import" href="../single/dorel-click-outside-element-behavior.html">
+<link rel="import" href="../single/dorel-window-scroll-behavior.html">
+
+<script>
+  // Implement the extended behavior
+  NewBehaviorImpl = {
+
+    properties: {
+      /**
+       * @name menuItems
+       * @description Array of menu items (Objects) that are used in the template repeat
+       */
+      menuItems: {
+        type: Array,
+        value: function() {
+          return [];
+        }
+      },
+      /**
+       * @name route
+       * @description the current route of the application
+       */
+      route: {
+        type: Object
+      },
+
+      /**
+       * @name opened
+       * @description determines if the dropdown is opened
+       */
+      opened: {
+        type: Boolean,
+        reflectToAttribute: true
+      }
+    },
+
+    /**
+     * @name checkIfCategoryItems
+     * @description check if the mainItem has sub_category_items
+     * @param mainItem - Object
+     * @returns Boolean
+     */
+    checkIfCategoryItems: function(mainItem) {
+      return Boolean(this.isDropdownTypeCategory(mainItem) && mainItem.sub_category_items && mainItem.sub_category_items.length);
+    },
+
+    /**
+     * @name checkDropdownType
+     * @description check if the mainItem has a certain dropdown_type
+     * @param mainItem - Object
+     * @param type - String
+     * @returns Boolean
+     */
+    checkDropdownType: function(mainItem, type) {
+      return Boolean(mainItem && mainItem.dropdown_type === type);
+    },
+
+    /**
+     * @name isDropdownTypeCategory
+     * @description check if the mainItem has dropdown_type of category
+     * @param mainItem - Object
+     * @returns Boolean
+     */
+    isDropdownTypeCategory: function(mainItem) {
+      return Boolean(mainItem && mainItem.dropdown_type === 'category');
+    },
+
+    /**
+     * @name isDropdownTypeCategory
+     * @description check if the mainItem has dropdown
+     * @param mainItem - Object
+     * @returns Boolean
+     */
+    hasDropdown: function(mainItem) {
+      return Boolean(mainItem && mainItem.dropdown === true);
+    },
+
+    /**
+     * @name _emitGtmEvent
+     * @description handles all menu item clicks
+     */
+    _emitGtmEvent: function (event) {
+      var element = Polymer.dom(event).localTarget;
+      var event = {
+        action: 'click',
+        component: 'navigation',
+        structure: {
+          name: 'dorel-navigation-main',
+          index: Number(element.gtmParentIndex) + 1
+        },
+        element: element,
+        event: 'polymer_event',
+        things: {
+          'currentPage': document.URL,
+          'targetPage': element.href
+        }
+      };
+      this.fire('setAppCache', {value: event, path: 'events'});
+    },
+  }
+
+  // Define the behavior
+  MainMenuBehavior = [
+    MatchUrlBehavior,
+    getDeepArrayItemsBehavior,
+    clickOutsideBehavior,
+    windowOnScrollBehavior,
+    NewBehaviorImpl
+  ]
+</script>

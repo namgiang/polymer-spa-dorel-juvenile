@@ -27,7 +27,6 @@
       .accordion-heading:hover {
         cursor: pointer;
         color: var(--theme-color-text-link-active);
-
       }
 
       .accordion-container {
@@ -51,6 +50,7 @@
         right: 1em;
         color: var(--theme-color-text-link);
         transition: .3s ease color, .3s ease transform;
+        pointer-events: none;
       }
 
       .left-icon {
@@ -74,6 +74,23 @@
 
       [tablet-medium-up] .accordion-content {
         padding: 0 1.5em 1.5em 1.5em;
+      }
+
+      :host-context([small]) .accordion-heading {
+        padding: 0.75rem;
+      }
+
+      :host-context([small]) .accordion-content {
+        padding: 0 .75rem;
+      }
+
+      :host-context([small]) .accordion-container[opened] .accordion-heading {
+        font-weight: var(--theme-font-weight);
+      }
+
+      :host-context([small]) .accordion-icon {
+        top: .75rem;
+        right: 0.5rem;
       }
 
     </style>
@@ -126,6 +143,12 @@
           type: String,
           value: ''
         },
+
+        small: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
         /**
          * @name opened
          * @description State of the accordion
