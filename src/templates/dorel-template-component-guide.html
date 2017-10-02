@@ -42,6 +42,7 @@
   <script>
     Polymer({
       is: 'dorel-template-component-guide',
+      observers: ['_routeChanged(route)'],
       properties: {
         appCache: {
           type: Object,
@@ -67,6 +68,17 @@
           value: []
         }
       },
+      /**
+       * @name _routeChanged
+       * @description Observer callback for the route. This will ensure the route always ends with a trailing slash.
+       * This is needed for correct routing to the component guide subsections.
+       * Users will enter this overview by url, and it's possible they will omit the trailing slash. Hence this fallback.
+       */
+      _routeChanged: function (changedRoute) {
+        if (changedRoute.path === '') {
+          this.set('route.path', '/');
+        }
+      }
     });
   </script>
 </dom-module>
