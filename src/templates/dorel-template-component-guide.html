@@ -1,144 +1,31 @@
-<link rel="import" href="component-guide/dorel-component-guide-buttons.html">
-<link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="component-guide/dorel-component-guide-forms.html">
-<link rel="import" href="component-guide/dorel-component-guide-introduction.html">
-<link rel="import" href="component-guide/dorel-component-guide-layout.html">
-<link rel="import" href="component-guide/dorel-component-guide-typography.html">
-<link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="component-guide/dorel-component-guide-home.html">
-<link rel="import" href="component-guide/dorel-component-guide-product-widgets.html">
-<link rel="import" href="component-guide/dorel-component-guide-breakpoints.html">
-<link rel="import" href="component-guide/dorel-component-guide-images.html">
-<link rel="import" href="component-guide/dorel-component-guide-multilingual.html">
-<link rel="import" href="component-guide/dorel-component-guide-category-about.html">
-<link rel="import" href="component-guide/dorel-component-guide-service.html">
-<link rel="import" href="component-guide/dorel-component-guide-info-pages.html">
 <link rel="import" href="component-guide/dorel-component-toolbar.html">
 <link rel="import" href="../molecules/dorel-nav-tabs.html">
+<link rel="import" href="component-guide/pages/dorel-component-guide-overview.html">
+<link rel="import" href="component-guide/pages/dorel-component-guide-basic.html">
+<link rel="import" href="component-guide/pages/dorel-component-guide-complex.html">
 
 <dom-module id="dorel-template-component-guide">
   <template>
-    <style is="custom-style">
-      paper-item:after, paper-item:before {
-        background-color: var(--theme-color-white) !important;
-      }
-
-      paper-item:hover {
-        color: var(--theme-brand-color);
-      }
-
-      paper-item {
-        @apply(--theme-typography-2);
-        float: left;
-        width: auto;
-        cursor: pointer;
-        padding: 0 1em;
-        margin-top: 0;
-        margin-bottom: -1px;
-        border-bottom: 1px solid var(--theme-color-monochrome-2);
-        box-sizing: border-box;
-        transition: color .3s ease, border-bottom .3s ease;
-
-        --paper-item-selected: {
-          background: transparent;
-          font-weight: normal;
-          border-bottom: 1px solid var(--theme-brand-color-1);
-          font-weight: normal !important;
-          color: var(--theme-brand-color-1);
-        };
-      }
-
-      paper-menu {
-        background-color: transparent;
-        padding: 0;
-        border-bottom: 1px solid var(--theme-color-monochrome-2);
-        width: 100%;
-        box-sizing: border-box;
-        float: left;
-      }
-
-      .component-guide-container {
-        @apply(--max-width-host);
-        position: relative;
-        float: left;
-        width: 100%;
-        background-color: var(--theme-color-white);
-      }
-
-      .component-guide__navigation {
-        @apply(--max-width-container);
-        padding: 0 var(--theme-gutter);
-        box-sizing: border-box;
-        background-color: transparent;
-        width: 100%;
-      }
-
-      .component-guide__content {
-        min-height: calc(100vh - 112px);
-        padding: 1.5em 0 3em 0;
-        width: 100%;
-      }
-    </style>
     <app-route
       route="{{ route }}"
-      pattern="/:componentName"
+      pattern="/:pageName"
+      tail="{{ subroute }}"
       data="{{ subrouteData }}"></app-route>
 
     <dorel-component-toolbar app-cache="[[ appCache ]]"
                              brand="{{ brand }}"
                              available-brands="{{ availableBrands }}">
     </dorel-component-toolbar>
-    <div class="component-guide-container">
-      <div class="component-guide__navigation">
-        <!-- Important! The topic attribut should correspond with the template.-->
-        <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
-        <paper-menu id="topics"
-                    selected="{{ subrouteData.componentName }}"
-                    attr-for-selected="topic">
-          <paper-item topic="introduction">Introduction</paper-item>
-          <paper-item topic="typography">Typography</paper-item>
-          <paper-item topic="layout">Layout & Sizes</paper-item>
-          <paper-item topic="colors">Colors</paper-item>
-          <paper-item topic="buttons">Buttons</paper-item>
-          <paper-item topic="forms">Forms</paper-item>
-          <paper-item topic="home">Home</paper-item>
-          <paper-item topic="product-widgets">Product Widgets</paper-item>
-          <paper-item topic="breakpoints">Breakpoints</paper-item>
-          <paper-item topic="images">Images</paper-item>
-          <paper-item topic="multilingual">Multilingual</paper-item>
-          <paper-item topic="category-about">Category About</paper-item>
-          <paper-item topic="service">Service</paper-item>
-          <paper-item topic="info-pages">Info Pages</paper-item>
-          <paper-item topic="cards">Cards</paper-item>
-        </paper-menu>
-      </div>
-    </div>
-    <div class="component-guide-container">
-      <iron-pages class="component-guide__content"
-                  selected="[[ subrouteData.componentName ]]"
-                  on-selected-changed="_pageSelected"
-                  attr-for-selected="topic">
-        <!-- Important! The topic attribut should correspond with the template.-->
-        <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
-        <dorel-component-guide-introduction brand="{{ brand }}"
-                                            subroute="[[ subrouteData.componentName ]]"
-                                            topic="introduction"></dorel-component-guide-introduction>
-        <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>
-        <dorel-component-guide-layout topic="layout"></dorel-component-guide-layout>
-        <dorel-component-guide-colors topic="colors"></dorel-component-guide-colors>
-        <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>
-        <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>
-        <dorel-component-guide-home topic="home"></dorel-component-guide-home>
-        <dorel-component-guide-product-widgets topic="product-widgets"></dorel-component-guide-product-widgets>
-        <dorel-component-guide-breakpoints topic="breakpoints"></dorel-component-guide-breakpoints>
-        <dorel-component-guide-images topic="images"></dorel-component-guide-images>
-        <dorel-component-guide-multilingual topic="multilingual"></dorel-component-guide-multilingual>
-        <dorel-component-guide-category-about topic="category-about"></dorel-component-guide-category-about>
-        <dorel-component-guide-service topic="service"></dorel-component-guide-service>
-        <dorel-component-guide-info-pages topic="info-pages"></dorel-component-guide-info-pages>
-        <dorel-component-guide-cards topic="cards"></dorel-component-guide-cards>
-      </iron-pages>
-    </div>
+
+    <template is="dom-if" if="[[ !subrouteData.pageName ]]">
+      <dorel-component-guide-overview></dorel-component-guide-overview>
+    </template>
+
+    <iron-pages selected="[[ subrouteData.pageName ]]"
+                attr-for-selected="page">
+      <dorel-component-guide-basic route="{{ subroute }}" page="basic"></dorel-component-guide-basic>
+      <dorel-component-guide-complex route="{{ subroute }}" page="complex"></dorel-component-guide-complex>
+    </iron-pages>
   </template>
 
   <script>
@@ -149,7 +36,7 @@
           type: Object,
           value: function () {
             return {};
-          },
+          }
         },
         /**
          * @name brand
@@ -169,20 +56,6 @@
           value: []
         }
       },
-
-      /**
-       * @name _pageSelected
-       * @description Imports the correct component guide template when it is shown
-       */
-      _pageSelected: function (event) {
-        var selectedPage = this.$.topics.selected;
-
-        if (typeof selectedPage !== 'undefined' || selectedPage.length > 0) {
-          var selectedPageTemplate = 'component-guide/dorel-component-guide-' + selectedPage + '.html';
-          this.importHref(this.resolveUrl(selectedPageTemplate), function () {
-          });
-        }
-      }
     });
   </script>
 </dom-module>

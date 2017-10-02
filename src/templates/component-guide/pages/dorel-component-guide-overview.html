@@ -1,0 +1,90 @@
+<link rel="import" href="../dorel-component-guide-shared-styles.html">
+
+<dom-module id="dorel-component-guide-overview">
+  <template>
+    <style include="dorel-component-guide-shared-styles">
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      dorel-section-cards {
+        margin-top: 0;
+      }
+
+    </style>
+    <section>
+      <dorel-section-cards
+        cards-data="[[ overviewSection ]]"
+        cta-type="primary"></dorel-section-cards>
+      <dorel-section-cards
+        light-background="true"
+        cards-data="[[ switchBrandSection ]]"
+        cta-type="primary"
+        compact="true"></dorel-section-cards>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-overview',
+      properties: {
+        brand: {
+          type: String
+        },
+        switchBrandSection: {
+          type: Object,
+          value: function () {
+            return {
+              title: 'Switching between brands',
+              description: "<p>Switching between brands is possible through the toolbar at the top of the component guide’s pages, or in the section below:</p>",
+              cards: [
+                {
+                  card_title: 'Maxi Cosi',
+                  cta_text: 'Switch to Maxi Cosi',
+                  cta_link: '?brand=Maxi-Cosi',
+                  cta_toggle: 'true'
+                },
+                {
+                  card_title: 'Quinny',
+                  cta_text: 'Switch to Quinny',
+                  cta_link: '?brand=Quinny',
+                  cta_toggle: 'true'
+                },
+                {
+                  card_title: 'Dorel',
+                  cta_text: 'Switch to Dorel',
+                  cta_link: '?brand=Dorel',
+                  cta_toggle: 'true'
+                }]
+            };
+          }
+        },
+        overviewSection: {
+          type: Object,
+          value: function () {
+            return {
+              title: 'Welcome to the component guide!',
+              description: '<p>This is the component guide description</p>',
+              cards: [
+                {
+                  card_title: 'Basics Components',
+                  card_description: '<p>Card description</p>',
+                  cta_text: 'Read more',
+                  cta_link: 'basic/introduction/',
+                  cta_toggle: true
+                },
+                {
+                  card_title: 'Complex Components',
+                  card_description: '<p>Card description</p>',
+                  cta_text: 'Read more',
+                  cta_link: 'complex/home/',
+                  cta_toggle: true
+                }]
+            };
+          }
+        }
+      },
+    });
+  </script>
+</dom-module>
