@@ -1,0 +1,205 @@
+<link rel="import" href="../../../atoms/dorel-cta.html">
+<link rel="import" href="../../../atoms/dorel-bynder-image.html">
+<dom-module id="dorel-dropdown-card" is-active="[[ isActive ]]">
+  <template>
+    <style include="iron-flex">
+      :host {
+        @apply(--layout-horizontal);
+        -ms-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+      }
+
+      .card {
+        background-color: var(--theme-color-white);
+        border-radius: var(--theme-border-radius-1);
+        /* NOTE: This forces GPU rendering, hack for delayed rounded corners rendering*/
+        will-change: transform;
+        float: left;
+        margin-top: 0;
+        overflow: hidden;
+        -ms-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+        -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        transition: 0.2s;
+      }
+
+      .card:hover {
+        -webkit-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+      }
+
+      :host-context([is-active]) .card {
+        -webkit-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+        box-shadow: 15px 15px 15px -12px var(--theme-color-monochrome-3);
+      }
+
+      .description {
+        @apply(--theme-typography-2);
+        float: left;
+        width: 100%;
+      }
+
+      .card-content {
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 1em 1.5em 1em;
+      }
+
+      .title {
+        @apply(--theme-typography-2);
+        color: var(--theme-brand-color-2);
+        float: left;
+        width: 100%;
+        transition: 0.2s;
+      }
+
+      .card:hover .title {
+        color: var(--theme-color-text-link-active);
+      }
+
+      :host-context([is-active]) .card .title {
+        color: var(--theme-color-text-link-active);
+      }
+
+      dorel-bynder-image {
+        max-width: 150px;
+      }
+
+      .card-image {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        width: 100%;
+        height: 10.5em;
+        box-sizing: border-box;
+        padding: .75em .75em 0 .75em;
+      }
+
+      .card-image__background {
+        -ms-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+        max-width: 100%;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <a class="card" href="[[ cardData.link ]]" on-click="closeMenu"
+       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <!-- cardImage -->
+      <template
+        is="dom-if"
+        if="[[ _hasValue(cardData.bynder_card_image) ]]">
+        <dorel-bynder-image media-id="[[ cardData.bynder_card_image ]]"
+                            derivative-identifier="Widescreen Small landscape"
+                            width="100%"
+                            height="9em"></dorel-bynder-image>
+      </template>
+
+      <!-- cardImage -->
+      <template
+        is="dom-if"
+        if="[[ _hasValue(cardData.image_url) ]]">
+        <div class="card-image">
+          <iron-image src="[[ cardData.image_url ]]"
+                      class="card-image__background"
+                      position="center" sizing="contain"></iron-image>
+        </div>
+      </template>
+      <!--// cardImage -->
+
+      <div class="card-content">
+        <!-- cardTitle -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.card_title) ]]">
+          <h3 class="title">[[ cardData.card_title ]]</h3>
+        </template>
+        <!--// cardTitle -->
+
+        <!-- cardContent -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.card_text) ]]">
+          <p class="description">
+            <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
+          </p>
+        </template>
+        <!--// cardContent -->
+
+        <!-- ctaToggle -->
+        <template
+          is="dom-if"
+          if="[[ _hasValue(cardData.cta_toggle) ]]">
+          <dorel-cta
+            type="[[ ctaType ]]"
+            title="[[ cardData.cta_text ]]"
+            link="[[ cardData.cta_link ]]"
+            link-target="[[ cardData.cta_link_target ]]"
+            size="medium"
+            icon="dorel-icons:chevron-right"
+            gtm-parent="[[ gtmParent ]]"
+            gtm-parent-index="[[ gtmParentIndex ]]"
+            gtm-child="[[ gtmChild ]]"
+            gtm-child-index="[[ gtmChildIndex ]]"
+            gtm-cta-index="0">
+            [[ cardData.cta_text ]]
+          </dorel-cta>
+        </template>
+        <!--// ctaToggle -->
+      </div>
+      </div>
+    </a>
+  </template>
+  <script>
+
+    Polymer({
+      is: 'dorel-dropdown-card',
+
+      properties: {
+        /**
+         * @attribute
+         * @name ctaType
+         * @description CTA type which will appear in the card
+         */
+        ctaType: {
+          type: String,
+          value: 'primary'
+        },
+        /**
+         * @attribute
+         * @name cardData
+         * @description data coming from ACF/Wordpress needed to build up this component
+         */
+        cardData: {
+          type: Object
+        },
+
+        isActive: {
+          type: Boolean,
+          reflectToAttribute: true
+        }
+
+      },
+
+      /**
+       * @name hasValue
+       * @description checks to see if a value is not empty, undefined or null
+       */
+      _hasValue: function (val) {
+        return (val !== '' && typeof val !== 'undefined' && val !== null && val);
+      }
+    });
+
+  </script>
+
+</dom-module>

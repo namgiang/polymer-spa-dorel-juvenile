@@ -1,0 +1,402 @@
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<dom-module id="dorel-navigation-main-mobile">
+  <template>
+    <style>
+
+      #drawer {
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .menu-spacer-top {
+        height: 4.5rem;
+        position: relative;
+      }
+
+      [tablet-medium-up] .menu-spacer-top {
+        height: 6rem;
+      }
+
+      .menu-spacer-top::before {
+        content: "";
+        position: absolute;
+        bottom: -.75em;
+        left: 0;
+        height: .75em;
+        z-index: 2;
+        width: 100%;
+
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.13+0,0+100 */
+        background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
+      }
+
+
+      .mobile-nav {
+        background-color: var(--theme-color-monochrome-2);
+        overflow: auto;
+        height: calc(100vh - 7.5rem);
+        overflow: auto;
+        flex: 1;
+        display: flex;
+        width: 100%;
+        margin-bottom: 4.5rem;
+      }
+
+      [tablet-medium-up] .mobile-nav {
+        height: calc(100vh - 9rem);
+      }
+
+      .main-menu {
+        padding: .75rem .75rem;
+        width: 100%;
+        flex-direction: column;
+        list-style-type: none;
+        margin: 0;
+      }
+
+      .main-menu--item {
+        background-color: var(--theme-color-monochrome-1);
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: .75rem;
+        min-height: min-content;
+      }
+
+      .link {
+        @apply(--theme-typography-2);
+        margin: 0;
+        color: var(--theme-color-text-link);
+        transition: color 0.2s;
+        text-decoration: none;
+        display: block;
+      }
+
+      .sub-menu .link::before {
+        content: '-';
+      }
+
+      .link:visited {
+        color: var(--theme-color-text-link);
+      }
+
+      .link:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .link[active] {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .main-menu--link {
+        @apply(--theme-typography-2);
+        margin: 0;
+        padding: .75rem;
+        display: block;
+      }
+
+      .sub-menu {
+        list-style-type: none;
+        margin: 0;
+        padding: .75rem 0 .75rem  0;
+      }
+
+      .cta {
+        width: 100%;
+        min-height: 2.1rem;
+        display: block;
+      }
+
+      .sub-menu__item {
+        margin-top: .75rem;
+        min-height: 1.5rem;
+        line-height: 1.5rem;
+      }
+
+      .sub-menu__item:first-child {
+        margin-top: 0;
+      }
+
+      .mobile-multi-language {
+        position: fixed;
+        z-index: 99999;
+        right: 0;
+        width: 256px;
+        bottom: 0;
+      }
+
+      .mobile-multi-language-container {
+        float: left;
+        width: 100%;
+        height: 3em;
+        position: absolute;
+        bottom: -50px;
+        padding: 0 var(--theme-gutter-mobile);
+        box-sizing: border-box;
+        opacity: 0;
+        transition: 0.1s 0s ease;
+      }
+
+      [mobile-opened] .mobile-multi-language-container {
+        bottom: 0;
+        opacity: 1;
+        transition: 0.15s 0.2s ease;
+      }
+
+      .mobile-multi-language-container dorel-multilingual-select-language {
+        float: right;
+      }
+
+    </style>
+
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+    <app-route
+      route="{{ route }}"
+      pattern="/:page"
+      data="{{ routeData }}"
+      query-params="{{ queryParams }}"
+      tail="{{ subroute }}"></app-route>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <app-drawer id="drawer" opened="{{ mobileMenuOpened }}" align="right" swipe-open tabindex="0" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="menu-spacer-top"></div>
+      <nav class="mobile-nav">
+        <ul class="main-menu">
+            <template is="dom-repeat" items="[[ menuItems ]]" as="mainItem">
+
+              <!-- Normal link -->
+              <template is="dom-if" if="[[ !mainItem.dropdown ]]">
+                <li class="main-menu--item">
+                  <a on-click="clickMenuItem"
+                    class="main-menu--link link"
+                    active$="[[ checkIfActive(mainItem.link, route) ]]"
+                    href="[[ mainItem.link ]]">
+                    [[ mainItem.title ]]
+                  </a>
+                </li>
+              </template>
+
+              <template is="dom-if" if="[[ mainItem.dropdown ]]">
+                <li class="main-menu--item">
+                  <dorel-accordion-item
+                    small="true"
+                    opened="[[ mainItem.opened ]]"
+                    id$="[[ mainItem.id ]]"
+                    on-click="_openAccordion"
+                    heading="[[ mainItem.title ]]">
+
+                    <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
+                      <ul class="sub-menu">
+                        <template is="dom-repeat" items="[[ getItems(mainItem, 'sub_category_items') ]]" as="dropdownItem">
+                          <li class="sub-menu__item">
+                              <a on-click="clickMenuItem"
+                                class="link"
+                                gtm-parent="dorel-navigation-main"
+                                gtm-parent-index="[[ index ]]"
+                                active$="[[ checkIfActive(dropdownItem.link, route) ]]"
+                                href="[[ dropdownItem.link ]]">
+                                [[ dropdownItem.title ]]
+                              </a>
+                          </li>
+                        </template>
+                      </ul>
+                    </template>
+
+                    <dorel-cta
+                      gtm-parent="dorel-navigation-main"
+                      gtm-parent-index="1"
+                      type="tertiary"
+                      on-click="clickMenuItem"
+                      no-margin
+                      class="cta"
+                      link="[[ mainItem.link ]]"
+                      title="[[ mainItem.title ]]">
+                      <span>All [[ mainItem.title ]]</span>
+                    </dorel-cta>
+
+                    <ul class="sub-menu">
+                      <template is="dom-repeat" items="[[ getItems(mainItem, 'dropdown_items') ]]" as="dropdownItem" filter="[[ filterDropdownItems(mainItem) ]]">
+                        <li class="sub-menu__item">
+                            <a on-click="clickMenuItem"
+                              class="link"
+                              gtm-parent="dorel-navigation-main"
+                              gtm-parent-index="[[ index ]]"
+                              active$="[[ checkIfActive(dropdownItem.link, route) ]]"
+                              href="[[ dropdownItem.link ]]">
+                              [[ dropdownItem.title ]]
+                            </a>
+                        </li>
+                      </template>
+                    </ul>
+
+                  </dorel-accordion-item>
+                </li>
+              </template>
+            </template>
+        </ul>
+      </nav>
+    </app-drawer>
+
+    <div class="mobile-multi-language" mobile-opened$="[[ mobileMenuOpened ]]">
+      <div class="mobile-multi-language-container">
+        <dorel-multilingual-select-language
+            current-language="{{ currentLanguage }}"
+            continents-data="[[ continentsData ]]">
+        </dorel-multilingual-select-language>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-navigation-main-mobile',
+      properties: {
+
+        /**
+         * @name menuItems
+         * @description Array of menu items (Objects) that are used in the template repeat
+         */
+        menuItems: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        /**
+         * @name mobileMenuOpened
+         * @description Boolean that indicates if the menu is open or closed
+         */
+        mobileMenuOpened: {
+          type: Boolean,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+      },
+
+      /**
+       * @name _openAccordion
+       * @description handles a accordion click
+       * @param event - Object
+       */
+      _openAccordion: function(event) {
+        var accordionId = Number(Polymer.dom(event).localTarget.id);
+        var newMenuItems = this.get('menuItems').map(function(menuItem) {
+          menuItem.opened = menuItem.id === accordionId && !menuItem.opened ? true : false;
+          return Object.assign({}, menuItem);
+        });
+        this.set('menuItems', newMenuItems);
+      },
+
+      /**
+       * @name getItems
+       * @description helper method for the dom-repeat to retrieve deep arrays
+       * @param item - Object
+       * @param path - string
+       * @returns Array
+       */
+      getItems: function(item, path) {
+        return item && item[path] ? item[path] : [];
+      },
+
+      /**
+       * @name checkIfCategoryItems
+       * @description check if the mainItem has sub_category_items
+       * @param mainItem - Object
+       * @returns Boolean
+       */
+      checkIfCategoryItems: function(mainItem) {
+        return Boolean(this.isDropdownTypeCategory(mainItem) && mainItem.sub_category_items && mainItem.sub_category_items.length);
+      },
+
+      /**
+       * @name isDropdownTypeCategory
+       * @description check if the mainItem has dropdown_type of category
+       * @param mainItem - Object
+       * @returns Boolean
+       */
+      isDropdownTypeCategory: function(mainItem) {
+        return Boolean(mainItem && mainItem.dropdown_type === 'category');
+      },
+
+      /**
+       * @name filterDropdownItems
+       * @description filterMethod used by the dom-repeat to filter the dropdown arrays
+       * if dropdown_type === 'category' it should only show the first object of the dropdown_items
+       * @param mainItem - Object
+       * @param index - Number
+       * @returns Boolean
+       */
+      filterDropdownItems: function(mainItem, index) {
+        var self = this;
+        return function(item) {
+          // if dropdownType is category we should only show the first item
+          if(self.isDropdownTypeCategory(mainItem)) {
+            return mainItem.dropdown_items[0].id === item.id ? true : false;
+          } else {
+            return true;
+          }
+        };
+      },
+
+      /**
+       * @name clickMenuItem
+       * @description closes the mobile menu and calls _emitGtmEvent
+       * @param event - Object
+       */
+      clickMenuItem: function(event) {
+        this.set('mobileMenuOpened', false);
+        this._emitGtmEvent(event);
+      },
+
+      /**
+       * @name checkIfActive
+       * @description helper method that compares link and the route to determine wich link is active
+       * @param link - Object
+       * @param route - Object
+       */
+      checkIfActive: function(link, route) {
+        return Boolean(link && link.split('/').join('') === (window.location.origin + route.path).split('/').join(''));
+      },
+
+      /**
+       * @name _emitGtmEvent
+       * @description handles all menu item clicks
+       */
+      _emitGtmEvent: function (event) {
+        var element = Polymer.dom(event).localTarget;
+        var event = {
+          action: 'click',
+          component: 'navigation',
+          structure: {
+            name: 'dorel-navigation-main',
+            index: Number(element.gtmParentIndex) + 1
+          },
+          element: element,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': element.href
+          }
+        };
+        this.fire('setAppCache', {value: event, path: 'events'});
+      }
+
+    });
+
+  </script>
+
+</dom-module>

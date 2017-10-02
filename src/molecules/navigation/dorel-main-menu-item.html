@@ -1,0 +1,242 @@
+<link rel="import" href="dropdowns/dorel-menu-dropdown-default.html">
+<link rel="import" href="dropdowns/dorel-menu-dropdown-category.html">
+
+<dom-module id="dorel-main-menu-item" is-dropdown$="[[ isDropdown ]]" is-active$="[[ isActive ]]">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex: 1;
+        color: var(--theme-color-monochrome-7);
+      }
+
+      :host:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
+      :host-context([is-active]) {
+        color: var(--theme-brand-color-2);
+      }
+
+      .menu-item {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5rem 0.25rem;
+        cursor: pointer;
+      }
+
+      .menu-item.category {
+        position: static;
+      }
+
+      .link {
+        @apply(--theme-typography-2);
+        margin: 0;
+        transition: color 0.2s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        color: var(--theme-color-monochrome-7);
+      }
+
+      .link::selection {
+        background-color: transparent;
+      }
+
+      .link:visited {
+        color: var(--theme-color-monochrome-7);
+      }
+
+      .menu-item:hover .link {
+        color: var(--theme-color-text-link-active);
+      }
+
+      :host-context([is-active]) .link {
+        color: var(--theme-color-text-link-active);
+        cursor: default;
+      }
+
+      :host-context([is-active]) .menu-item:hover .link {
+        color: var(--theme-color-text-link-active);
+        cursor: default;
+      }
+
+      .menu-item__icon {
+        display: none;
+        margin-left: 0.2rem;
+        --iron-icon: transition: opacity 0.15s;
+      }
+
+      .menu-item:hover .menu-item__icon {
+        color: var(--theme-color-text-link-active);
+      }
+
+      :host-context([is-dropdown]) .menu-item__icon {
+        display: flex;
+        flex: 1;
+      }
+      .menu-item__icon[opened] {
+        transform: scaleY(-1);
+      }
+
+      .category-container {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+      }
+      .category-container::after {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        min-height: 120vh;
+        z-index: -10;
+        background-color: rgba(0,0,0,0);
+        pointer-events: none;
+        content: '';
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.2s;
+      }
+      .category-container[opened]::after {
+        background-color: rgba(0,0,0,0.32);
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+
+    <div class="menu-item" class$="{{ getClasses(mainItem) }}">
+      <template is="dom-if" if="[[ !mainItem.dropdown ]]">
+        <a on-click="clickmainItem"
+          class="link"
+          gtm-parent="dorel-navigation-main"
+          gtm-parent-index="[[ index ]]"
+          href="[[ mainItem.link ]]">
+          [[ mainItem.title ]]
+        </a>
+      </template>
+
+      <template is="dom-if" if="[[ mainItem.dropdown ]]">
+        <div on-click="openDropdown"
+          class="link"
+          gtm-parent="dorel-navigation-main"
+          gtm-parent-index="[[ index ]]">
+          [[ mainItem.title ]]
+
+          <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
+        </div>
+
+        <template is="dom-if" if="[[ checkDropdownType(mainItem, 'default') ]]">
+          <dorel-menu-dropdown-default
+            index="[[ index ]]"
+            main-item="[[ mainItem ]]"
+            opened$="[[ opened ]]"
+            route="[[ route ]]"
+            dropdown-items="[[ mainItem.dropdown_items ]]">
+          </dorel-menu-dropdown-default>
+        </template>
+
+        <template is="dom-if" if="[[ checkDropdownType(mainItem, 'category') ]]">
+          <div class="category-container" opened$="[[ opened ]]">
+            <dorel-menu-dropdown-category
+              index="[[ index ]]"
+              main-item="[[ mainItem ]]"
+              opened$="[[ opened ]]"
+              route="[[ route ]]"
+              featured-items="[[ mainItem.sub_category_items ]]"
+              dropdown-items="[[ mainItem.dropdown_items ]]">
+            </dorel-menu-dropdown-category>
+          </div>
+        </template>
+
+      </template>
+    </div>
+
+
+  </template>
+  <script>
+
+    Polymer({
+      is: 'dorel-main-menu-item',
+      properties: {
+
+        /**
+         * @name mainItem
+         * @description
+         */
+        mainItem: {
+          type: Object
+        },
+
+        /**
+         * @name index
+         * @description index of the dom-repeat used for the gtm
+         */
+        index: {
+          type: Number
+        },
+
+        /**
+         * @name isDropdown
+         * @description determines if menu item is a dropdown
+         */
+        isDropdown: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        /**
+         * @name isActive
+         * @description determines if menu item is active
+         */
+        isActive: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        /**
+         * @name route
+         * @description current route / url of the application
+         */
+        route: {
+          type: Object
+        }
+
+      },
+
+      behaviors: [MainMenuBehavior],
+
+      /**
+       * @name clickmainItem
+       * @description closes the mobile menu and calls _emitGtmEvent
+       * @param event - Object
+       */
+      clickMainItem: function(event) {
+        this._emitGtmEvent(event);
+        this.clickOutsideListen();
+      },
+
+      onClickOutside: function() {
+        this.openDropdown();
+      },
+
+      openDropdown: function(event) {
+        this.fire('toggleDropdown', { value: this.get('index') });
+      },
+
+      getClasses: function(mainItem) {
+        if(this.checkDropdownType(mainItem, 'category')) {
+          return 'menu-item category';
+        }
+        return 'menu-item';
+      },
+
+    });
+
+  </script>
+</dom-module>
