@@ -78,6 +78,22 @@
 
     </style>
 
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+    <app-route
+      route="{{ route }}"
+      pattern="/:page"
+      data="{{ routeData }}"
+      query-params="{{ queryParams }}"
+      tail="{{ subroute }}"></app-route>
+
+    <dorel-multilingual-manager
+      route="[[ route ]]"
+      current-language="[[ appCache.currentLanguage ]]"
+      continents-data="{{ continentsData }}">
+    </dorel-multilingual-manager>
+
+
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
 
@@ -96,15 +112,6 @@
     <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
 
     <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
-
-    <!-- define routing -->
-    <app-location route="{{ route }}"></app-location>
-    <app-route
-      route="{{ route }}"
-      pattern="/:page"
-      data="{{ routeData }}"
-      query-params="{{ queryParams }}"
-      tail="{{ subroute }}"></app-route>
 
     <dorel-brand-manager
       query-params="[[ queryParams ]]"
@@ -127,11 +134,6 @@
       id="metaManager">
     </dorel-meta-manager>
 
-    <dorel-multilingual-manager
-      current-language="{{ currentLanguage }}"
-      continents-data="{{ continentsData }}">
-    </dorel-multilingual-manager>
-
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"
       sort="{{ sort }}"
@@ -143,7 +145,7 @@
         app-cache="[[ appCache ]]"
         load-complete="[[ loadComplete ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ currentLanguage ]]"
+        current-language="[[ appCache.currentLanguage ]]"
         page="[[ page ]]"
         brand-name="[[ brand.label ]]"></dorel-header>
     </template>
@@ -228,7 +230,7 @@
       <dorel-footer
         app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ currentLanguage ]]">
+        current-language="[[ appCache.currentLanguage ]]">
       </dorel-footer>
     </template>
 
@@ -340,6 +342,9 @@
       },
 
       _setAppCache: function (event) {
+        if(!this.get('appCache')) {
+          this._setInitialAppCache();
+        }
         var data = event.detail;
         var path = data.path;
         var value = data.value;
@@ -348,8 +353,10 @@
         }
       },
 
-      ready: function () {
-
+      _setInitialAppCache: function() {
+        if(this.get('appCache')) {
+          return
+        }
         var appCache = {
           wpUrl: CONFIG.CMS_URL, // DONE
           dioApiUrl: CONFIG.DIO_API_URL, // marnix
@@ -379,6 +386,10 @@
         };
 
         this.set('appCache', appCache);
+      },
+
+      ready: function () {
+        this._setInitialAppCache();
       },
 
       /**

@@ -77,8 +77,14 @@
           return;
         }
 
+        var pathArray = route.path.split('/').filter(function(item) {
+          return item && item.length;
+        });
+
+
         // get the a clean last segment of the route.path
         lastSegment = route.path.match(/([^\/]*)\/*$/).pop();
+
 
         // refer to this for find function
         var self = this;
@@ -87,8 +93,11 @@
          * if last segment is undefined or empty string set to home,
          * all others to segment
          */
-        this.page = lastSegment || 'home';
-
+        if(pathArray.length === 1) {
+         this.set('page', 'home');
+        } else {
+         this.set('page', lastSegment || 'home');
+        }
 
         var url = (window.location.origin + this.route.path);
         var fullUrl = url.slice(-1) === '/' ? url : url + '/';

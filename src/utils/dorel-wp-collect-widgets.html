@@ -1,8 +1,8 @@
 <dom-module id="dorel-wp-collect-widgets">
   <template>
-    <iron-ajax 
-      auto 
-      url="[[ endPoint ]]" 
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]"
       handle-as="json"
       on-response="_widgetAreasLoaded"></iron-ajax>
 
@@ -45,10 +45,10 @@
       _initWidgets: function(wpUrl) {
         if (typeof wpUrl === 'undefined' || wpUrl === '') return;
 
-        this.endPoint = wpUrl + '/wp-rest-api-sidebars/v1/sidebars';
+        this.endPoint = wpUrl + 'wp-json/wp-rest-api-sidebars/v1/sidebars';
       },
 
-      /** 
+      /**
        * @name _widgetAreasLoaded
        * @description retrieve all the widget areas and then trigger
        * the rest call to retrieve the widgets
@@ -78,7 +78,7 @@
         }
       },
 
-      /** 
+      /**
        * @name _widgetsLoaded
        * @description retrieve all widgets per widget area and place them
        * accordingly
@@ -96,7 +96,7 @@
           if (key === areaId) {
             // update the application cache collect object
             this.fire('setAppCache', {
-              path: 'collect.widgetAreas.' + key, 
+              path: 'collect.widgetAreas.' + key,
               value: response
             });
           }

@@ -1,8 +1,8 @@
 <dom-module id="dorel-wp-collect-options">
   <template>
-    <iron-ajax 
-      auto 
-      url="[[ endPoint ]]" 
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]"
       handle-as="json"
       on-response="_optionsLoaded"></iron-ajax>
   </template>
@@ -33,10 +33,10 @@
       _initOptions: function(wpUrl) {
         if (typeof wpUrl === 'undefined' || wpUrl === '') return;
 
-        this.endPoint = wpUrl + '/acf/v2/options';
+        this.endPoint = wpUrl + 'wp-json/acf/v2/options';
       },
 
-      /** 
+      /**
        * @name _optionsLoaded
        * @description retrieve all the options
        */
@@ -50,7 +50,7 @@
         for (var key in options.acf) {
 
           // first put the response in the application cache to use it later
-          this.fire('setAppCache', { 
+          this.fire('setAppCache', {
             path: 'collect.options.' + key,
             value: options.acf[key]
           });
