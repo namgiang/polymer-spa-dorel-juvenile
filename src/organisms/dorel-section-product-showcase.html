@@ -193,14 +193,14 @@
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.max_weight.value) ]]">
                 <li>
-                  <div class="label">[[ showcaseData.max_weight.label ]]:</div><br> [[ showcaseData.max_weight.value ]]
+                  <div class="label">[[ showcaseData.max_weight.label ]]:</div> [[ showcaseData.max_weight.value ]]
                 </li>
               </template>
               <template
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.size.value) ]]">
                 <li>
-                  <div class="label">[[ showcaseData.size.label ]]:</div><br> [[ showcaseData.size.value ]]
+                  <div class="label">[[ showcaseData.size.label ]]:</div> [[ showcaseData.size.value ]]
                 </li>
               </template>
             </ul>
@@ -456,6 +456,8 @@
         },
       },
 
+      behaviors: [DorelHasValueBehavior],
+
       ready: function() {
          //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
          var pages = this.get('appCache.collect.pages');
@@ -490,14 +492,6 @@
       _hasStoreLocator: function (page) {
         page = (typeof page !== 'undefined' && page !== '');
         return Boolean(page);
-      },
-
-      /**
-       * @name _hasValue
-       * @description check if a value is set
-       */
-      _hasValue: function (val) {
-        return (typeof val !== 'undefined' && val !== '' && val);
       },
 
       /**

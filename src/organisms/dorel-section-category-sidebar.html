@@ -37,7 +37,7 @@
 
           <div class="content-wrapper">
             <div class="content">
-              <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
+              <template is="dom-if" if="[[ _hasValue(contentWrap.title) ]]">
                 <template is="dom-if" if="{{ _isMainHeader(index) }}">
                   <h1 class="title">[[ contentWrap.title ]]</h1>
                 </template>
@@ -47,7 +47,7 @@
                 </template>
               </template>
 
-              <template is="dom-if" if="{{ _hasValue(contentWrap.title) }}">
+              <template is="dom-if" if="[[ _hasValue(contentWrap.title) ]]">
                 <div class="text">
                   <dorel-safe-html html="[[ contentWrap.text ]]"></dorel-safe-html>
                 </div>
@@ -79,6 +79,8 @@
 
       },
 
+      behaviors: [DorelHasValueBehavior],
+
       ready: function () {
         this.contentWrappers = this.categorySidebarData.sidebar[0].content_wrappers;
       },
@@ -94,16 +96,6 @@
           return false;
         }
         return (typeof sidebar !== 'undefined' || sidebar.length && sidebar[0].content_wrap.length);
-      },
-
-      /**
-       * @name _hasValue
-       * @description checks to see if a value is set
-       *
-       * @returns Boolean
-       */
-      _hasValue: function (val) {
-        return (typeof val !== 'undefined' && val !== '');
       },
 
       /**

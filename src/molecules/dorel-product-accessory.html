@@ -4,7 +4,7 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
 
-      :root {
+      :host {
         --button-margin-spacing: -1.5em;
       }
 
@@ -113,7 +113,7 @@
 
           <template
             is="dom-if"
-            if="{{ _hasValue(accessoryData.child_products.0.images.image) }}">
+            if="[[ _hasValue(accessoryData.child_products.0.images.image) ]]">
             <div class="accessory-image-container">
               <iron-image class="accessory-image"
                           sizing="contain"
@@ -126,13 +126,13 @@
           <div class="accessory-content">
             <template
               is="dom-if"
-              if="{{ _hasValue(accessoryData.name) }}">
+              if="[[ _hasValue(accessoryData.name) ]]">
               <h3 class="accessory-title">[[ accessoryData.name.value ]]</h3>
             </template>
 
             <template
               is="dom-if"
-              if="{{ _hasValue(accessoryData.excerpt) }}">
+              if="[[ _hasValue(accessoryData.excerpt) ]]">
               <div class="accessory-description">
                 <dorel-safe-html html="[[ accessoryData.excerpt.value ]]"></dorel-safe-html>
               </div>
@@ -140,7 +140,7 @@
 
             <template
               is="dom-if"
-              if="{{ _hasValue(accessoryData.permalink) }}">
+              if="[[ _hasValue(accessoryData.permalink) ]]">
               <dorel-cta
                 type="link"
                 title="View Accessories"
@@ -189,6 +189,8 @@
         }
       },
 
+      behaviors: [DorelHasValueBehavior],
+
       /**
        * @name _openLightbox
        * @description handle of the click on the details links
@@ -196,16 +198,6 @@
       _openLightbox: function (event) {
         var lightbox = this.$$('dorel-product-accessory-lightbox');
         lightbox.open();
-      },
-
-      /**
-       * @name _hasValue
-       * @description checks to see if a value is set
-       *
-       * @returns Boolean
-       */
-      _hasValue: function (val) {
-        return (typeof val !== 'undefined' || val !== '');
       }
     });
 

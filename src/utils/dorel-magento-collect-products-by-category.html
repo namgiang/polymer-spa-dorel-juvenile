@@ -27,6 +27,10 @@
           value: 0
         },
 
+        productCategory: {
+          type: Number
+        },
+
         products: {
           type: Array,
           notify: true
@@ -45,19 +49,35 @@
       },
 
       observers: [
-        '_init(category)'
+        '_categoryChanged(category)'
       ],
 
       /**
        * @name _categoryChanged
-       * @description will be called by observert;
+       * @description will be called by observer;
        * @param category - Number
        */
-      _init: function(category) {
+      _categoryChanged: function(category) {
         // if category is empty we can't make the call return
         if(!category) {
           return;
         }
+        this.getProducts(category);
+      },
+
+      /**
+       * @name getProducts
+       * @description will be called by observert;
+       * @param category - Number
+       */
+      getProducts: function(category) {
+        // if category is empty we can't make the call return
+
+        if(!category) {
+          return;
+        }
+
+        this.set('productCategory', category);
 
         this.set('retrievingProducts', true);
 
@@ -68,16 +88,16 @@
         var retrievedCategories = this.get('appCache.product.retrievedCategories') || [];
 
         //if category is already in the retrieved categories
-        if(retrievedCategories.indexOf(category) > -1){
+        if(retrievedCategories.indexOf(parseInt(category)) > -1){
           // filter out products that have a other category
           var currentProducts = products.filter(function(item) {
-              return item.categories.indexOf(category) > -1;
+              return item.categories.indexOf(parseInt(category)) > -1;
           });
           // set current products
           return this._setCurrentProducts(currentProducts);
         } else {
           // else retreive the products by category that is not in the saved retrieved categories
-          return this._getProductsByCategory(this.get('category'));
+          return this._getProductsByCategory(category);
         }
       },
       /**
@@ -87,7 +107,6 @@
        */
       _getProductsByCategory: function(category) {
         var productsEl = this.$.products;
-          productsEl.headers = {Authorization: 'Bearer ' + this.token}
           productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/category/' +
           category + '/product/'
           productsEl.generateRequest();
@@ -101,7 +120,7 @@
       _productResponse: function(response) {
 
         // set category variable
-        var category = this.category;
+        var category = this.get('productCategory');
 
         //add category to list to keep count of what categories are retrieved
         this._addCategoryToretrievedCategories(category);
@@ -147,6 +166,7 @@
       _setCurrentProducts: function(products) {
         this.set('products', products);
         this.set('retrievingProducts', false);
+        this.fire('newProducts', { products: products, category: this.get('productCategory') });
       },
 
       /**
@@ -177,7 +197,7 @@
        */
       _addCategoryToretrievedCategories: function(category) {
         //get retrieved categories
-        var retrievedCategories = this.get('appCache.product.retrievedCategories');
+        var retrievedCategories = this.get('appCache.product.retrievedCategories') || [];
 
         //check if it does not exists
         if(retrievedCategories.indexOf(category) < 0) {
