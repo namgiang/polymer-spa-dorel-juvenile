@@ -23,14 +23,14 @@
       }
 
       .usp-title {
-        @apply(--theme-typography-4);
+        @apply(--theme-typography-3);
         float: left;
         width: 100%;
       }
 
       .usp-description {
         float: left;
-        margin-top: 1.5em;
+        margin: .75em 0;
       }
 
       .row {
@@ -50,17 +50,11 @@
         margin-top: 1.5em;
       }
 
-      .usp:first-child {
-        margin-top: 1.5em;
-      }
-
       .usp-image {
         width: 100%;
         float: left;
         height: 12em;
       }
-
-
 
       /* Responsive behaviour */
       .section-product-usps[tablet-medium-up] {
@@ -72,10 +66,6 @@
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
         flex-basis: calc(var(--theme-column-width) * 4);
         max-width: calc(var(--theme-column-width) * 4);
-      }
-
-      [tablet-medium-up] .usp:first-child {
-        margin-top: 1.5em;
       }
 
       [tablet-medium] .usp {
@@ -92,6 +82,10 @@
         @apply(--theme-typography-7);
       }
 
+      [tablet-medium-up] .usp-description {
+        padding-right: 1.5em;
+      }
+
     </style>
 
     <dorel-magento-collect-custom-data
@@ -101,7 +95,7 @@
       type="usps"></dorel-magento-collect-custom-data>
 
     <template is="dom-if"
-      if="[[ uspsData.usps.length ]]">
+              if="[[ uspsData.usps.length ]]">
 
       <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
