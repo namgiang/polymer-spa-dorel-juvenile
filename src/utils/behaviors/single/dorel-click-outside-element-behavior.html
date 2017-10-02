@@ -2,27 +2,27 @@
 clickOutsideBehavior = {
   ready: function () {
     // bind listener method
-    this.clickOutsideListenerBinded = this._clickOutsideListener.bind(this)
+    this.clickOutsideListenerBinded = this._clickOutsideListener.bind(this);
   },
   detached: function () {
     this._clickOutsideUnlisten()
   },
   clickOutsideListen: function () {
     // run this method to start listening
-    this._clickOutsideUnlisten()
-    window.addEventListener('click', this.clickOutsideListenerBinded, false)
+    this._clickOutsideUnlisten();
+    window.addEventListener('click', this.clickOutsideListenerBinded, false);
   },
   _clickOutsideUnlisten: function () {
-    window.removeEventListener('click', this.clickOutsideListenerBinded, false)
+    window.removeEventListener('click', this.clickOutsideListenerBinded, false);
   },
   _clickOutsideListener: function (ev) {
     // check if the user has clicked on my component or on my children
     var isOutside = !ev.path.find(function (path) {
-      return path === this
+      return path === this;
     }.bind(this))
     if (isOutside) {
-      this.onClickOutside()
-      this._clickOutsideUnlisten()
+      this.onClickOutside();
+      this._clickOutsideUnlisten();
     }
   },
   onClickOutside: function () {
