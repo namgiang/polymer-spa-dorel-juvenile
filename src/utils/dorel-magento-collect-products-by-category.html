@@ -42,14 +42,18 @@
         },
 
         appCache: {
-          type: Object
+          type: Object,
         },
+
+        currentLanguage: {
+          type: Object,
+        }
 
 
       },
 
       observers: [
-        '_categoryChanged(category)'
+        '_categoryChanged(category, appCache.currentLanguage)'
       ],
 
       /**
@@ -57,9 +61,9 @@
        * @description will be called by observer;
        * @param category - Number
        */
-      _categoryChanged: function(category) {
+      _categoryChanged: function(category, currentLanguage) {
         // if category is empty we can't make the call return
-        if(!category) {
+        if(!category || !currentLanguage) {
           return;
         }
         this.getProducts(category);
@@ -107,9 +111,10 @@
        */
       _getProductsByCategory: function(category) {
         var productsEl = this.$.products;
-          productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/category/' +
-          category + '/product/'
-          productsEl.generateRequest();
+        var currentLanguageCode = this.get('appCache.currentLanguage.languageCode');
+        productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/category/' +
+        category + '/product' + '?language=' + currentLanguageCode;
+        productsEl.generateRequest();
       },
 
       /**
