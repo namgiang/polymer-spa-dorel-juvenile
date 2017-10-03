@@ -1,6 +1,11 @@
 <link rel="import" href="dorel-component-guide-shared-styles.html">
 <link rel="import" href="../../organisms/dorel-section-product-usps.html">
+<link rel="import" href="../../organisms/dorel-section-product-accessories.html">
+<link rel="import" href="../../organisms/dorel-section-product-features.html">
+
 <script src="mocks/product-detail/usps.js"></script>
+<script src="mocks/product-detail/features.js"></script>
+<script src="mocks/product-detail/accessories.js"></script>
 
 <dom-module id="dorel-component-guide-product-detail">
   <template>
@@ -13,6 +18,11 @@
         The following section documents components used on the product detail page
       </p>
       <hr>
+      <h2 class="class-for-h2">Product Features</h2>
+      <dorel-section-product-features features-data="[[ featuresData]]"></dorel-section-product-features>
+      <!--<h2 class="class-for-h2">Product Accessories</h2>
+      <dorel-section-product-accessories accessories-data="[[ accessoriesData ]]"></dorel-section-product-accessories>-->
+      <hr>
       <h2 class="class-for-h2">Product USPS</h2>
     </section>
     <dorel-section-product-usps usps-data="[[ uspsData ]]"></dorel-section-product-usps>
@@ -24,9 +34,17 @@
         brand: {
           type: String
         },
+        featuresData: {
+          type: Object,
+          value: featuresMock
+        },
         uspsData: {
           type: Object,
           value: uspsMock
+        },
+        accessoriesData: {
+          type: Object,
+          value: accessoriesMock
         }
       }
     });
