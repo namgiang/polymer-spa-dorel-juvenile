@@ -96,10 +96,13 @@
       },
 
       _getCategorySubMenuItems: function(page) {
+        if(!page) {
+          return {};
+        }
         return {
           id: page.id,
           link: page.link,
-          thumbnail: page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
+          thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
           title: page.title.rendered
         };
       },

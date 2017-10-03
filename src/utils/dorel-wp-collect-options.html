@@ -23,17 +23,17 @@
       },
 
       observers: [
-        '_initOptions(appCache.wpUrl)'
+        '_initOptions(appCache.wpUrl, appCache.currentLanguage)'
       ],
 
       /**
        * @name _initOptions
        * @description Observer function which defines the endpoint when it's available as a global variable
        */
-      _initOptions: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '') return;
+      _initOptions: function(wpUrl, currentLanguage) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !currentLanguage) return;
 
-        this.endPoint = wpUrl + 'wp-json/acf/v2/options';
+        this.endPoint = wpUrl + currentLanguage.path + '/wp-json/acf/v2/options';
       },
 
       /**
