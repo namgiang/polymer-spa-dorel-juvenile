@@ -75,7 +75,7 @@
     </style>
 
     <dorel-magento-collect-product-by-sku
-      product-name="[[ routeData.productName ]]"
+      product-name="[[ getCleanProductName(productName) ]]"
       current-product="{{ product }}"
       app-cache="[[ appCache ]]"
       retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product-by-sku>
@@ -85,7 +85,7 @@
       route="{{ route }}"
       pattern="/:productName"
       data="{{ routeData }}"
-      tail="{{ subroute }}"></app-route>
+      tail="{{ productName }}"></app-route>
 
     <template is="dom-if" if="[[ retrievingProduct ]]">
       <div class="loading-wrapper">
@@ -265,7 +265,13 @@
           var isObjectEmpty = (Object.keys(product).length === 0 &&
             product.constructor === Object);
           return (isObjectEmpty && !loading);
-      }
+      },
+
+      getCleanProductName: function(product) {
+        return product.path.split('/').filter(function(char) {
+          return char && char.length;
+        }).join('');
+      },
 
     });
   </script>

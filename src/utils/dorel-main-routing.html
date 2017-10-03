@@ -68,6 +68,11 @@
         // if the route is undefined
         if (typeof route === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
+        // if url is only root add default language in url segment
+        if(!route.path.length || !route.path.split('/').join('').length) {
+          return window.location.href = window.location + CONFIG.LOCALE.CODE;
+        }
+
         // Matches the page to the component guide template
         if (route.path.indexOf('component-guide') === 1) {
           this.currentPage = {
@@ -196,7 +201,7 @@
         return string.replace(/[\/\[\]\&]+|/g, '');
       },
 
-      _stripQueryStringAndHashFromPath: function (url) {
+      _stripQueryStringAndHashFromPath: function(url) {
         return url.split("?")[0].split("#")[0];
       }
     });
