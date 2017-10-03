@@ -43,25 +43,21 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <div class="error" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <div>
-        <h1 class="error__title">Sorry, something went wrong</h1>
-        <p class="error__content">
-          We are sorry! Something went wrong. Please use the menu to go back to the page you were looking for.
-        </p>
-        <p class="error__content">
-          A message was send to the person responsible for the website to look what went wrong and to fix the issue.
-        </p>
-        <!-- TODO: This shouldn't be hardcoded -->
-        <p class="error__content">
-          Best,<br>
-          The Maxi-Cosi team
-        </p>
+        <h1 class="error__title">{{ localize('404_error_title') }}</h1>
+        <p class="error__content">{{ localize('404_error_content_1') }}</p>
+        <p class="error__content">{{ localize('404_error_content_2') }}</p>
+        <p class="error__content">{{ localize('404_regards') }}<br>{{ localize('maxi_cosi_team') }}</p>
       </div>
     </div>
   </template>
 
   <script>
     Polymer({
-      is: 'dorel-template-404'
+      is: 'dorel-template-404',
+      
+      behaviors: [
+        DorelMultilingualBehavior
+      ]
     });
   </script>
 </dom-module>
