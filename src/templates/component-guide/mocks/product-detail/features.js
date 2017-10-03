@@ -1,5 +1,5 @@
 var featuresMock = {
-  title: 'This is a Feature title',
+  title: 'This is a feature title',
   features: [
     {
       image: 'https://d2csxpduxe849s.cloudfront.net/media/2A82AC0B-80EE-4791-AE41EE17E21FC96A/7A6E1176-C622-4D7B-98EA3FF1638F6E0A/webimage-87C4A5B5-8C2D-4943-A8627D7504EE278C.png',
