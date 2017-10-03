@@ -66,7 +66,7 @@
         if(!category || !currentLanguage) {
           return;
         }
-        this.getProducts(category);
+        this.getProducts(category, currentLanguage);
       },
 
       /**
@@ -74,10 +74,10 @@
        * @description will be called by observert;
        * @param category - Number
        */
-      getProducts: function(category) {
+      getProducts: function(category, currentLanguage) {
         // if category is empty we can't make the call return
 
-        if(!category) {
+        if(!category || !currentLanguage) {
           return;
         }
 
@@ -101,7 +101,7 @@
           return this._setCurrentProducts(currentProducts);
         } else {
           // else retreive the products by category that is not in the saved retrieved categories
-          return this._getProductsByCategory(category);
+          return this._getProductsByCategory(category, currentLanguage);
         }
       },
       /**
@@ -109,11 +109,11 @@
        * @description set correct end-point and make call to end-point to retreive products by category
        * @param category - Number
        */
-      _getProductsByCategory: function(category) {
+      _getProductsByCategory: function(category, currentLanguage) {
+        debugger;
         var productsEl = this.$.products;
-        var currentLanguageCode = this.get('appCache.currentLanguage.languageCode');
         productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/category/' +
-        category + '/product' + '?language=' + currentLanguageCode;
+        category + '/product' + '?language=' + currentLanguage.languageCode;
         productsEl.generateRequest();
       },
 
