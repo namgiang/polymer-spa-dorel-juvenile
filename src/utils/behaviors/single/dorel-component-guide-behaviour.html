@@ -1,0 +1,17 @@
+<script>
+  componentGuideBehavior = {
+    /**
+     * @name _pageSelected
+     * @description Imports the correct component guide template when it is shown
+     */
+    _pageSelected: function (event) {
+      var selectedPage = this.$.topics.selected;
+
+      if (typeof selectedPage !== 'undefined' || selectedPage.length > 0) {
+        var selectedPageTemplate = '../../component-guide/dorel-component-guide-' + selectedPage + '.html';
+        this.importHref(this.resolveUrl(selectedPageTemplate), function () {
+        });
+      }
+    }
+  }
+</script>

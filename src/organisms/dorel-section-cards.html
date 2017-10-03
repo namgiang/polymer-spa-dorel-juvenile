@@ -1,6 +1,6 @@
 <link rel="import" href="../molecules/dorel-card.html">
 
-<dom-module id="dorel-section-cards">
+<dom-module id="dorel-section-cards" light-background$="[[ lightBackground ]]">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -9,6 +9,10 @@
         margin: 1.5em 0 0 0;
         @apply(--max-width-host);
         flex-wrap: wrap;
+      }
+
+      :host-context( [light-background]) {
+        background-color: var(--theme-color-monochrome-1);
       }
 
       .section-cards {
@@ -154,6 +158,15 @@
       is: 'dorel-section-cards',
 
       properties: {
+        /**
+         * @attribute
+         * @name lightBackground
+         * @description Light background for the section
+         */
+        lightBackground: {
+          type: Boolean,
+          value: false
+        },
         /**
          * @attribute
          * @name compact

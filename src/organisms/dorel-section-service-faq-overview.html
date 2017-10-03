@@ -24,6 +24,8 @@
         @apply(--layout-flex);
         justify-content: center;
         flex: 0 0 100%;
+        float: left;
+        width: 100%;
       }
 
       .container {
@@ -264,9 +266,9 @@
                       <!-- faq promo -->
                       <template
                         is="dom-if"
-                        if="[[ category.faq_promo_toggle ]]">
+                        if="[[ category.faq_promo.promo_toggle ]]">
                         <dorel-section-service-faq-promo
-                          template-data="[[ category ]]"
+                          template-data="[[ category.faq_promo ]]"
                           no-padding="true"
                           light="true"></dorel-section-service-faq-promo>
                       </template>
@@ -342,9 +344,9 @@
                   <!-- faq promo -->
                   <template
                     is="dom-if"
-                    if="[[ category.faq_promo_toggle ]]">
+                    if="[[ category.faq_promo.promo_toggle ]]">
                     <dorel-section-service-faq-promo 
-                      template-data="[[ category ]]"
+                      template-data="[[ category.faq_promo ]]"
                       light="true"></dorel-section-service-faq-promo>
                   </template>
                   <!--// faq promo -->
@@ -423,12 +425,9 @@
               faqCat.detail_page = detailPage.link;
 
               // set the detail page faq promo on the overview category as well
-              faqCat.faq_promo_toggle = detailPage.acf.faq_promo_toggle;
-              faqCat.promo_bynder_image_id = detailPage.acf.promo_bynder_image_id;
-              faqCat.promo_title = detailPage.acf.promo_title;
-              faqCat.promo_description = detailPage.acf.promo_description;
-              faqCat.promo_cta_text = detailPage.acf.promo_cta_text;
-              faqCat.promo_cta_link = detailPage.acf.promo_cta_link;
+              if (typeof detailPage.acf !== 'undefined' && typeof detailPage.acf.faq_promo !== 'undefined' && detailPage.acf.faq_promo.length) {
+                faqCat.faq_promo = detailPage.acf.faq_promo[0];
+              }
             }
 
           }); // faqCategories foreach
