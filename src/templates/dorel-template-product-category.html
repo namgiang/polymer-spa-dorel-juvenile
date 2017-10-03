@@ -217,6 +217,10 @@
 
       behaviors: [DorelObjectHasPropertiesBehavior],
 
+      listeners: {
+        'newProducts' : '_setProducts'
+      },
+
       /**
        * @name _defineComponentModels
        * @description Fixed WP/ACF data is defined by an array (workaround). For components
@@ -230,7 +234,7 @@
         if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
 
         this._setInitialProductSorting(templateData);
-        
+
         // set the homeHeaderData for the heroHeader component
         if(typeof templateData.acf.hero_header !== 'undefined') {
           this.set('heroHeaderData', templateData.acf.hero_header[0]);
@@ -267,7 +271,13 @@
         };
 
         this.set('sort', sort);
-      }
+      },
+
+
+      _setProducts: function(event) {
+        this.set('products', event.detail.products);
+        this.set('retrievingProducts', false);
+      },
     });
   </script>
 </dom-module>
