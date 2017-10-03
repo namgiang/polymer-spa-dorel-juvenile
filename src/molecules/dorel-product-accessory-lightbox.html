@@ -1,10 +1,36 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
 
 <dom-module id="dorel-product-accessory-lightbox">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      :host {
+        --paper-dialog-scrollable: {
+          padding: 0;
+        };
+      }
+
+      paper-dialog {
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        max-width: none !important;
+        max-height: none !important;
+        z-index: 10000 !important;
+        position: fixed;
+        font-size: var(--theme-base-font-size);
+      }
+
+      paper-dialog-scrollable {
+        float: left;
+        width: 100%;
+        height: 100%;
+      }
 
       .accessory-title {
         @apply(--theme-typography-5);
@@ -25,7 +51,7 @@
 
       paper-dialog {
         margin: 0;
-        padding: 1.5em;
+        padding: 3em 1.5em 1.5em 1.5em;
         font-size: 1rem;
         border-radius: var(--theme-border-radius-2);
         -ms-flex-preferred-size: 100%;
@@ -39,6 +65,7 @@
         position: relative;
         float: left;
         width: 100%;
+        height: 100%;
         padding: 0 !important;
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -49,13 +76,13 @@
         position: absolute;
         padding: 0;
         margin: 0;
-        top: -1em;
+        top: -3em;
         right: 0;
+        z-index: 1;
       }
 
       .lightbox-description {
         min-width: 100%;
-        padding-top: 1.5em;
         box-sizing: border-box;
       }
 
@@ -88,38 +115,31 @@
       }
 
       dorel-color-switcher {
-        width: 100%;
-        min-width: 100%;
+        width: auto;
+        min-width: auto;
+        float: left;
       }
 
       /*
       * Responsive behaviour
       */
-      [tablet-medium-up] paper-dialog {
+      [desktop-small-up] paper-dialog {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
         flex-basis: calc(var(--theme-column-width) * 9);
         width: calc(var(--theme-column-width) * 9);
         max-width: calc(var(--theme-column-width) * 9);
+        top: 12.5%;
+        left: 12.5%;
+        height: 75vh;
+
       }
 
-      [desktop-small-up] paper-dialog {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        width: calc(var(--theme-column-width) * 6);
-        max-width: calc(var(--theme-column-width) * 6);
-      }
-
-      [tablet-medium-up] .lightbox-image {
+      [desktop-small-up] .lightbox-image {
         padding-right: 1.5em;
         margin-top: 0;
       }
 
-      [tablet-medium-up] dorel-color-switcher {
-        width: auto;
-        min-width: auto;
-      }
-
-      [tablet-medium-up] .lightbox-description {
+      [desktop-small-up] .lightbox-description {
         min-width: auto;
       }
     </style>
@@ -127,13 +147,15 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="section-product-accessory-lightbox"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-             desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+             desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
 
       <paper-dialog id="lightbox"
                     with-backdrop="true"
                     exit-animation="fade-out-animation"
-                    entry-animation="fade-in-animation">
+                    entry-animation="fade-in-animation"
+                    on-iron-overlay-opened="_disableDocumentScrolling"
+                    on-iron-overlay-closed="_restoreDocumentScrolling">
 
         <!-- Small mobile templating-->
         <template is="dom-if" if="{{ !breakpoints.tabletMediumUp  }}">
@@ -147,44 +169,56 @@
               dialog-confirm autofocus>
               Close
             </dorel-cta>
-            <div class="lightbox-image">
-              <template is="dom-if" if="[[ accessoryLightboxData.included ]]">
+            <paper-dialog-scrollable>
+              <div class="lightbox-image">
+                <template is="dom-if" if="[[ accessoryLightboxData.included ]]">
                 <span class="accessory-included-badge">
                   Included
                 </span>
-              </template>
-              <iron-image class="accessory-image"
-                          sizing="contain"
-                          fade="true"
-                          preload
-                          src$="{{ currentAccessoryImage }}"></iron-image>
-            </div>
+                </template>
+                <iron-image class="accessory-image"
+                            sizing="contain"
+                            fade="true"
+                            preload
+                            src$="{{ currentAccessoryImage }}"></iron-image>
+              </div>
 
-            <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
-              <dorel-color-switcher
-                current-image="{{ currentAccessoryImage }}"
-                colors-data="[[ accessoryLightboxData.child_products ]]"></dorel-color-switcher>
-            </template>
-
-            <div class="lightbox-description">
-              <template is="dom-if" if="[[ accessoryLightboxData.name.value ]]">
-                <h4 class="accessory-title">[[ accessoryLightboxData.name.value ]]</h4>
+              <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
+                <dorel-color-switcher
+                  current-image="{{ currentAccessoryImage }}"
+                  colors-data="[[ accessoryLightboxData.child_products ]]"></dorel-color-switcher>
               </template>
 
-              <template
-                is="dom-if"
-                if="[[ _hasValue(accessoryLightboxData.excerpt.value) ]]">
-                <div class="accessory-description accessory-excerpt">
-                  <dorel-safe-html html="[[ accessoryLightboxData.excerpt.value ]]"></dorel-safe-html>
-                </div>
-              </template>
+              <div class="lightbox-description">
+                <template is="dom-if" if="[[ accessoryLightboxData.name.value ]]">
+                  <h4 class="accessory-title">[[ accessoryLightboxData.name.value ]]</h4>
+                </template>
 
-              <template is="dom-if" if="[[ accessoryLightboxData.description.value ]]">
-                <div class="accessory-description">
-                  <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
-                </div>
-              </template>
-            </div>
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(accessoryLightboxData.excerpt.value) ]]">
+                  <div class="accessory-description accessory-excerpt">
+                    <dorel-safe-html html="[[ accessoryLightboxData.excerpt.value ]]"></dorel-safe-html>
+                  </div>
+                </template>
+
+                <template is="dom-if" if="[[ accessoryLightboxData.description.value ]]">
+                  <div class="accessory-description">
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent laoreet condimentum purus a
+                      fermentum. Etiam iaculis diam in tortor congue, sit amet imperdiet felis feugiat. Integer et
+                      tellus
+                      sed massa ultrices placerat in at augue. Proin vitae magna arcu. Praesent vel finibus nunc, et
+                      fringilla turpis. Sed rutrum lectus eu diam ultricies, vel tempus est aliquam. Proin commodo
+                      pharetra lacus, ac lacinia risus cursus ut. Quisque non diam malesuada nisl commodo blandit. Sed
+                      rhoncus nec purus sit amet tempus. Pellentesque in venenatis neque.
+                    </p>
+
+                    <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
+                  </div>
+                </template>
+              </div>
+            </paper-dialog-scrollable>
           </div>
         </template>
 
@@ -206,50 +240,52 @@
               gtm-cta-index="0">
               Close
             </dorel-cta>
-            <div class="lightbox-image">
 
-              <template is="dom-if" if="[[ accessoryLightboxData.included ]]">
+            <paper-dialog-scrollable>
+              <div class="lightbox-image">
+                <template is="dom-if" if="[[ accessoryLightboxData.included ]]">
                 <span class="accessory-included-badge">
                   Included
                 </span>
-              </template>
+                </template>
 
-              <iron-image class="accessory-image"
-                          sizing="contain"
-                          fade="true"
-                          preload
-                          src$="{{ currentAccessoryImage }}"></iron-image>
-            </div>
-            <div class="lightbox-description">
-              <template is="dom-if" if="[[ accessoryLightboxData.name.value ]]">
-                <h4 class="accessory-title">[[ accessoryLightboxData.name.value ]]</h4>
-              </template>
+                <iron-image class="accessory-image"
+                            sizing="contain"
+                            fade="true"
+                            preload
+                            src$="{{ currentAccessoryImage }}"></iron-image>
+              </div>
+              <div class="lightbox-description">
+                <template is="dom-if" if="[[ accessoryLightboxData.name.value ]]">
+                  <h4 class="accessory-title">[[ accessoryLightboxData.name.value ]]</h4>
+                </template>
 
-              <template
-                is="dom-if"
-                if="[[ _hasValue(accessoryLightboxData.excerpt.value) ]]">
-                <div class="accessory-description accessory-excerpt">
-                  <dorel-safe-html html="[[ accessoryLightboxData.excerpt.value ]]"></dorel-safe-html>
-                </div>
-              </template>
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(accessoryLightboxData.excerpt.value) ]]">
+                  <div class="accessory-description accessory-excerpt">
+                    <dorel-safe-html html="[[ accessoryLightboxData.excerpt.value ]]"></dorel-safe-html>
+                  </div>
+                </template>
 
-              <template is="dom-if" if="[[ accessoryLightboxData.description.value ]]">
-                <div class="accessory-description">
-                  <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
-                </div>
-              </template>
+                <template is="dom-if" if="[[ accessoryLightboxData.description.value ]]">
+                  <div class="accessory-description">
+                    <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
+                  </div>
+                </template>
 
-              <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
-                <dorel-color-switcher
-                  current-image="{{ currentAccessoryImage }}"
-                  colors-data="[[ accessoryLightboxData.child_products ]]"
-                  gtm-action="switch-color"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-child="dorel-color-switcher"
-                  gtm-child-index="0"></dorel-color-switcher>
-              </template>
-            </div>
+                <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
+                  <dorel-color-switcher
+                    current-image="{{ currentAccessoryImage }}"
+                    colors-data="[[ accessoryLightboxData.child_products ]]"
+                    gtm-action="switch-color"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-child="dorel-color-switcher"
+                    gtm-child-index="0"></dorel-color-switcher>
+                </template>
+              </div>
+            </paper-dialog-scrollable>
         </template>
       </paper-dialog>
     </section>
@@ -277,7 +313,7 @@
         },
       },
 
-      behaviors: [DorelHasValueBehavior],
+      behaviors: [DorelHasValueBehavior, OverlayBehavior],
 
       /**
        * @name open
