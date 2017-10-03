@@ -15,6 +15,11 @@ var uspsMock = {
       image: 'https://d2csxpduxe849s.cloudfront.net/media/2A82AC0B-80EE-4791-AE41EE17E21FC96A/305816CF-2B2E-4BB4-ADA9D751CC1DBAFC/BA2A1849-B031-4CB2-A5B14A2075A59A0D/Widescreen Retina landscape-MC_2017_maxicosi_general_lifestyle_outdoor_motherwithchild_feetinwater_landscape.jpg',
       title: 'Duis arcu tortor',
       description: 'Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris'
+    },
+    {
+      image: 'https://d2csxpduxe849s.cloudfront.net/media/2A82AC0B-80EE-4791-AE41EE17E21FC96A/305816CF-2B2E-4BB4-ADA9D751CC1DBAFC/BA2A1849-B031-4CB2-A5B14A2075A59A0D/Widescreen Retina landscape-MC_2017_maxicosi_general_lifestyle_outdoor_motherwithchild_feetinwater_landscape.jpg',
+      title: 'Duis arcu tortor',
+      description: 'Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris'
     }
 
   ]
