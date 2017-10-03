@@ -1,25 +1,10 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
 
 <dom-module id="dorel-product-accessory-lightbox">
   <template>
     <style include="iron-flex iron-flex-alignment">
-      .lightbox-backdrop {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        background-color: rgba(0, 0, 0, .4);
-        opacity: 0;
-        display: none;
-        z-index: 100;
-        transition: opacity .3s ease;
-      }
-
-      .lightbox-backdrop[opened] {
-        opacity: 1;
-        display: block;
-      }
 
       .accessory-title {
         @apply(--theme-typography-5);
@@ -145,8 +130,10 @@
              tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
              desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
-      <div class="lightbox-backdrop" opened$="{{ opened }}"></div>
-      <paper-dialog id="lightbox">
+      <paper-dialog id="lightbox"
+                    with-backdrop="true"
+                    exit-animation="fade-out-animation"
+                    entry-animation="fade-in-animation">
 
         <!-- Small mobile templating-->
         <template is="dom-if" if="{{ !breakpoints.tabletMediumUp  }}">
@@ -288,45 +275,9 @@
             return {};
           }
         },
-
-        /**
-         * @attribute
-         * @name opened
-         * @description attribute that for opened/closed dialogs
-         */
-        opened: {
-          type: Boolean,
-          value: false,
-        }
       },
 
       behaviors: [DorelHasValueBehavior],
-
-      /**
-       * @name _showLargeDialog
-       * @description checks to see if we use a large or small dialog
-       *
-       * @returns Boolean
-       */
-      _showLargeDialog: function (mobileSmall, mobileMedium) {
-        return !mobileSmall || !mobileMedium;
-      },
-
-      /**
-       * @name _onOverlayOpened
-       * @description event handler for when the dialog is opened
-       */
-      _onOverlayOpened: function (event) {
-        this.opened = true;
-      },
-
-      /**
-       * @name _onOverlayClosed
-       * @description event handler for when the dialog is closed
-       */
-      _onOverlayClosed: function (event) {
-        this.opened = false;
-      },
 
       /**
        * @name open
