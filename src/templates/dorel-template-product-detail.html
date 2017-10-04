@@ -95,14 +95,17 @@
 
     <div class="wrapper">
 
-      <template is="dom-if"
+      <template 
+        is="dom-if"
         if="[[ _isProductNotFound(product, retrievingProduct) ]]">
         <dorel-template-404 name="404"></dorel-template-404>
       </template>
 
 
-      <template is="dom-if"
+      <template 
+        is="dom-if"
         if="[[ _isProductSet(product, retrievingProduct) ]]">
+
         <template
           is="dom-if"
           if="[[ product.header_section ]]">
@@ -248,25 +251,7 @@
 
       },
 
-      /**
-       * @name _isProductSet
-       * @description will be used by the template
-       * returns a Boolean that either hide or shows the page
-       * @param product - Object
-       * @param loaded - Boolean
-       */
-      _isProductSet: function(product, loading) {
-          var isObjectEmpty = (Object.keys(product).length === 0 &&
-            product.constructor === Object);
-          return Boolean(!isObjectEmpty && !loading);
-      },
-
-      _isProductNotFound: function(product, loading) {
-          var isObjectEmpty = (Object.keys(product).length === 0 &&
-            product.constructor === Object);
-          return (isObjectEmpty && !loading);
-      }
-
+      behaviors: [TemplateBehaviors]
     });
   </script>
 </dom-module>

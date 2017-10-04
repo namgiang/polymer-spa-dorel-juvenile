@@ -17,7 +17,7 @@
             is="dom-if" 
             if="[[templateData.acf.hero_header.length]]">
             <dorel-section-hero-header
-              hero-header-data="[[heroHeaderData]]"
+              hero-header-data="[[heroHeader]]"
               gtm-parent="dorel-section-hero-header"
               gtm-parent-index="[[index]]"></dorel-section-hero-header>
           </template>
@@ -104,30 +104,7 @@
 
       },
 
-      behaviors: [DorelObjectHasPropertiesBehavior],
-
-      /** 
-       * @name _defineComponentModels
-       * @description Fixed WP/ACF data is defined by an array (workaround). For components
-       * that always have one item in the array a new data model is created to be set on
-       * component attribute level. Binding with [0] array item selector doesn't work.
-       *
-       * @param Object
-       */
-      _defineComponentModels: function(templateData) {
-        // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
-
-        // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.hero_header !== 'undefined') {
-          this.set('heroHeaderData', templateData.acf.hero_header[0]);
-        }
-
-        // set the homeHeaderData for the heroHeader component
-        if (typeof templateData.acf.section_cards !== 'undefined') {
-          this.set('sectionCards', templateData.acf.section_cards[0]);
-        }
-      }
+      behaviors: [TemplateBehaviors]
     });
   </script>
 </dom-module>
