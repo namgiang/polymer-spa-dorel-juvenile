@@ -78,7 +78,7 @@
         is="dom-if"
         if="[[templateData.acf.hero_header.length]]">
         <dorel-section-header
-          section-header-data="[[heroHeaderData]]"
+          section-header-data="[[heroHeader]]"
           info-header="true"></dorel-section-header>
         <template
           is="dom-if"
@@ -105,7 +105,7 @@
             <!-- dorel wysiwyg content-->
             <template
               is="dom-if"
-              if="[[ isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
               <div class="max-width-container">
                 <dorel-wysiwyg-html html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
               </div>
@@ -114,7 +114,7 @@
             <!-- dorel bynder image -->
             <template
               is="dom-if"
-              if="[[ isPageComponent(component.acf_fc_layout, 'section_image') ]]">
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_image') ]]">
               <div class="image-container">
                 <dorel-bynder-image media-id="[[ component.bynder_image ]]"
                                     derivative-identifier="Fullscreen Retina landscape"
@@ -131,7 +131,7 @@
 
             <template
               is="dom-if"
-              if="[[ isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
               <div class="video-container">
                 <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
               </div>
@@ -140,7 +140,7 @@
             <!-- dorel section hubspot -->
             <template
               is="dom-if"
-              if="[[ isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
 
               <dorel-hubspot
                 hubspot-loaded="[[ appCache.collect.options.hubspot_loaded ]]"
@@ -190,55 +190,7 @@
 
       },
 
-      behaviors: [DorelObjectHasPropertiesBehavior],
-
-      /** 
-       * @name _defineComponentModels
-       * @description Fixed WP/ACF data is defined by an array (workaround). For components
-       * that always have one item in the array a new data model is created to be set on
-       * component attribute level. Binding with [0] array item selector doesn't work.
-       *
-       * @param Object
-       */
-      _defineComponentModels: function (templateData) {
-        // check if the templateData has content
-        if (!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
-
-        // set the homeHeaderData for the heroHeader component
-        if (typeof templateData.acf.hero_header !== 'undefined') {
-          this.set('heroHeaderData', templateData.acf.hero_header[0]);
-        }
-      },
-      
-      /**
-       * @name isPageComponent
-       * @description compares to values to see if they match, for some
-       * components they can be doubled. They will always be suffixed with
-       * their number like section_multi and section_multi_2. In those
-       * cases we need to treat them as section_multi's.
-       *
-       * @returns Boolean if the two values match or not (true/false)
-       */
-      isPageComponent: function (response, cname) {
-
-        // get last char
-        var lastChar = response.substr(response.length - 1);
-
-        // find out if it is a number
-        var isNumber = !isNaN(Number(lastChar));
-
-        // if it is a number treat it accordingly
-        if (isNumber) {
-          var keyArr = response.split('_');
-          keyArr.pop();
-          strippedResponse = keyArr.join('_');
-
-          return strippedResponse === cname;
-        }
-
-        // all other cases just compare them
-        return response === cname;
-      }
+      behaviors: [TemplateBehaviors]
     });
   </script>
 </dom-module>

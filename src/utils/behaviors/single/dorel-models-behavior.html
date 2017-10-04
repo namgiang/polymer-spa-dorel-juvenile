@@ -1,0 +1,98 @@
+<script>
+  ModelsBehavior = {
+    /**
+     * @name _defineComponentModels
+     * @description since our ACF is set to define fixed fields for our Content Editors
+     * this comes back in our data model as an Array. Template bindings in Polymer cannot
+     * refer to the first item of an array (i.e. [[ template.binding[0] ]]). For retrieving
+     * component models that use the 'repeater' field on the highest level we redefine the
+     * models in this function.
+     *
+     * @param Object
+     */
+    _defineComponentModels: function (templateData) {
+      // check if the templateData has content
+      if (!this._hasProperties(templateData)) return;
+
+      // ACF DEFINITIONS
+      if (typeof templateData.acf !== 'undefined') {
+        // HERO HEADER
+        if (typeof templateData.acf.hero_header !== 'undefined') {
+          this.set('heroHeader', templateData.acf.hero_header[0]);
+        }
+
+        // SECTION CARDS
+        if (typeof templateData.acf.section_cards !== 'undefined') {
+          this.set('sectionCards', templateData.acf.section_cards[0]);
+        }
+
+        // ABOUT SUB CATEGORIES
+        if(typeof templateData.acf.about_sub_categories !== 'undefined') {
+          this.set('aboutSubCategories', templateData.acf.about_sub_categories[0]);
+        }
+
+        // PRODUCTS OVERVIEW FAQ
+        if(typeof templateData.acf.products_overview_faq !== 'undefined') {
+          this.set('productsOverviewFaq', templateData.acf.products_overview_faq[0]);
+        }
+
+        // SERVICE OVERVIEW FAQ
+        if(typeof templateData.acf.services_overview_faq !== 'undefined') {
+          this.set('servicesOverviewFaq', templateData.acf.services_overview_faq[0]);
+        }
+
+        // LEFT SIDEBAR
+        if(typeof templateData.acf.left_sidebar !== 'undefined') {
+          var leftSidebar = {};
+
+          // set the model for the filters and productSubCategories
+          if(typeof templateData.acf.left_sidebar[0].filters[0] !== 'undefined') {
+            leftSidebar.filters = templateData.acf.left_sidebar[0].filters[0];
+            leftSidebar.productSubCategories = templateData.acf.left_sidebar[0].product_sub_categories[0];
+          }
+
+          this.set('leftSidebar', leftSidebar);
+        }
+
+        // PRODUCT LISTING SORTING
+        if(typeof templateData.acf.product_listing_sorting !== 'undefined') {
+          this.set('sort.type', templateData.acf.product_listing_sorting);
+        }
+
+        // PRODUCT LISTING ORDERING
+        if(typeof templateData.acf.product_listing_order !== 'undefined') {
+          this.set('sort.order', templateData.acf.product_listing_order);
+        }
+
+        // FAQ PROMO
+        if(typeof templateData.acf.faq_promo !== 'undefined') {
+          this.set('faqPromo', templateData.acf.faq_promo[0]);
+        }
+      }
+
+      // CALL CENTER OPTIONS
+      if(typeof templateData.call_center_support !== 'undefined') {
+        this.set('callCenterSupport', templateData.call_center_support[0]);
+      }
+
+      // SOCIAL SUPPORT OPTIONS
+      if(typeof templateData.social_support !== 'undefined') {
+        this.set('socialSupport', templateData.social_support[0]);
+      }
+
+      // EMAIL SUPPORT OPTIONS
+      if(typeof templateData.email_support !== 'undefined') {
+        this.set('emailSupport', templateData.email_support[0]);
+      }
+    },
+
+    _defineOptionModels: function(appCache) {
+      if (!this._hasProperties(appCache) 
+        || !this._hasProperties(appCache.collect)
+        || !this._hasProperties(appCache.collect.options)
+        || !this._hasProperties(appCache.collect.options.customer_support)) return;
+
+      this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+    }
+  };
+</script>
