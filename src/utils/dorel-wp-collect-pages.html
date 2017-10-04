@@ -20,16 +20,6 @@
         },
 
         /**
-         * @name collect
-         * @description this array will hold all the pages collected from the
-         * async requests (pages, posts)
-         */
-        collect: {
-          type: Array,
-          value: []
-        },
-
-        /**
          * @name perPage
          * @description this variable indicates how many pages are retrieved
          * per request
@@ -64,8 +54,6 @@
       _pagesLoaded: function(data) {
         var pages = data.detail.response;
 
-        if (!pages.length) return;
-
         // iterate over all pages items, alter its template
         for (var i = 0, len = pages.length; i < len; i++) {
 
@@ -77,13 +65,12 @@
           pages[i].template = pageName;
         }
 
-        // extend the collect pages object with the new page
-        this.collect = this.collect.concat(pages);
+        pages = pages && pages.length ? pages : [{ template: '404'}]
 
         // set the application cache
         this.fire('setAppCache', {
           path: 'collect.pages',
-          value: this.collect
+          value: pages
         });
       }
     });

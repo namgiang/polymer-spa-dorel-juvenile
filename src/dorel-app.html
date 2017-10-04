@@ -100,11 +100,16 @@
 
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
+
     <app-route
       route="{{ route }}"
-      pattern="/:page"
-      data="{{ routeData }}"
+      pattern="/:language"
       query-params="{{ queryParams }}"
+      tail="{{ tail }}"></app-route>
+
+    <app-route
+      route="{{ tail }}"
+      pattern="/:page"
       tail="{{ subroute }}"></app-route>
 
     <dorel-multilingual-manager
@@ -142,6 +147,13 @@
       brand="{{ brand }}">
     </dorel-brand-manager>
 
+    <dorel-meta-manager
+      brand-name="[[ brand.label ]]"
+      current-page="[[ currentPage ]]"
+      app-cache="[[ appCache ]]"
+      id="metaManager">
+    </dorel-meta-manager>
+
     <dorel-main-routing
       app-cache="[[ appCache ]]"
       route="[[ route ]]"
@@ -149,13 +161,6 @@
       previous-states="{{ previousStates }}"
       current-page="{{ currentPage }}">
     </dorel-main-routing>
-
-    <dorel-meta-manager
-      brand-name="[[ brand.label ]]"
-      current-page="[[ currentPage ]]"
-      app-cache="[[ appCache ]]"
-      id="metaManager">
-    </dorel-meta-manager>
 
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"

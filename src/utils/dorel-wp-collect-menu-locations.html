@@ -35,7 +35,7 @@
     },
 
     observers: [
-      '_initMenuLocations(appCache.wpUrl)'
+      '_initMenuLocations(appCache.wpUrl, appCache.currentLanguage)'
     ],
 
     /**
@@ -43,10 +43,10 @@
      * @name _initMenuLocations
      * @description when the wpUrl changes it sets the endPoint which will fire the iron-ajax
      */
-    _initMenuLocations: function(wpUrl) {
-      if (typeof wpUrl === 'undefined' || wpUrl === '') return;
+    _initMenuLocations: function(wpUrl, currentLanguage) {
+      if (typeof wpUrl === 'undefined' || wpUrl === '' || !currentLanguage) return;
 
-      this.endPoint = wpUrl + 'wp-json/wp-api-menus/v2/menu-locations';
+      this.endPoint = wpUrl + currentLanguage.path + '/wp-json/wp-api-menus/v2/menu-locations';
     },
 
     /**
