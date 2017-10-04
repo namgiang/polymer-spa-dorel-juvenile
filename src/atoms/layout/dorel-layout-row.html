@@ -1,4 +1,4 @@
-<dom-module id="dorel-layout-row">
+<dom-module id="dorel-layout-row" left-aligned$="[[ leftAligned ]]">
   <template>
     <style>
       :host {
@@ -9,11 +9,23 @@
         width: auto;
         clear: both;
       }
+
+      :host-context([left-aligned]) {
+        justify-content: left;
+      }
     </style>
     <slot></slot>
   </template>
 
   <script>
-    Polymer({is: 'dorel-layout-row'});
+    Polymer({
+      is: 'dorel-layout-row',
+      properties: {
+        leftAligned: {
+          type: Boolean,
+          value: false
+        }
+      }
+    });
   </script>
 </dom-module>
