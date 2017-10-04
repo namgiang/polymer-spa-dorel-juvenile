@@ -31,12 +31,12 @@
       </div>
       <template is="dom-if" if="[[ isSet(sliderValue, 'true') ]]">
         <div class="price-indicator">
-          Max: &euro;[[ sliderValue ]],-
+          {{ localize('Max:') }} &euro;[[ sliderValue ]],-
         </div>
       </template>
       <template is="dom-if" if="[[ isSet(sliderValue, 'false') ]]">
         <div class="price-indicator">
-          Filter not active
+          {{ localize('Filter_not_active') }}
         </div>
       </template>
       <dorel-slider class="slider"
@@ -52,6 +52,11 @@
   <script>
     Polymer({
       is: 'dorel-category-filter-slider',
+      
+      behaviors: [
+        DorelMultilingualBehavior
+      ],      
+      
       properties: {
 
 
