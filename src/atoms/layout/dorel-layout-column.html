@@ -1,0 +1,67 @@
+<dom-module id="dorel-layout-column">
+  <template>
+    <style>
+      :host {
+        @apply(--theme-grid-column);
+        --mobile-column-width: calc(var(--theme-column-width) * 12);
+        --tablet-column-width: calc(var(--theme-column-width) * 6);
+        --desktop-column-width: calc(var(--theme-column-width) * 4);
+        -ms-flex-preferred-size: var(--mobile-column-width);
+        flex-basis: var(--mobile-column-width);
+        max-width: var(--mobile-column-width);
+        padding: 0 var(--theme-grid-gutter);
+      }
+
+      :host-context([tablet-medium-up]) {
+        -ms-flex-preferred-size: var(--desktop-column-width);
+        flex-basis: var(--desktop-column-width);
+        max-width: var(--desktop-column-width);
+      }
+
+      :host-context([tablet-medium]) {
+        -ms-flex-preferred-size: var(--tablet-column-width);
+        flex-basis: var(--tablet-column-width);
+        max-width: var(--tablet-column-width);
+      }
+    </style>
+    <slot></slot>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-layout-column',
+      properties: {
+        mobileColumnSpan: {
+          type: Number,
+          value: 12
+        },
+        tabletColumnSpan: {
+          type: Number,
+          value: 6
+        },
+        desktopColumnSpan: {
+          type: Number,
+          value: 4
+        }
+      },
+      observers: [
+        '_updateColumns(mobileColumnSpan, tabletColumnSpan, desktopColumnSpan)'
+      ],
+      /**
+       * @name attached
+       * @description Updates the column width based on the column span properties
+       */
+      _updateColumns: function (mobileColumnSpan, tabletColumnSpan, desktopColumnSpan) {
+        var singleColumnWidth = 100 / this.getComputedStyleValue('--theme-columns');
+        var mobileColumnWidth = singleColumnWidth * mobileColumnSpan;
+        var tabletColumnWidth = singleColumnWidth * tabletColumnSpan;
+        var desktopColumnWidth = singleColumnWidth * desktopColumnSpan;
+
+        this.updateStyles({
+          '--mobile-column-width': mobileColumnWidth + '%',
+          '--tablet-column-width': tabletColumnWidth + '%',
+          '--desktop-column-width': desktopColumnWidth + '%'
+        });
+      },
+    });
+  </script>
+</dom-module>
