@@ -59,7 +59,7 @@
     </style>
 
     <dorel-magento-collect-product-by-sku
-      product-name="[[ getCleanProductName(productName) ]]"
+      product-name="[[ routeData.productName ]]"
       current-product="{{ product }}"
       app-cache="[[ appCache ]]"
       retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product-by-sku>
@@ -69,7 +69,7 @@
       route="{{ route }}"
       pattern="/:productName"
       data="{{ routeData }}"
-      tail="{{ productName }}"></app-route>
+      tail="{{ subroute }}"></app-route>
 
     <template is="dom-if" if="[[ retrievingProduct ]]">
       <div class="loading-wrapper">
@@ -79,14 +79,17 @@
 
     <div class="wrapper">
 
-      <template is="dom-if"
-        if="[[ _isProductNotFound(product, retrievingProduct) ]]">
+      <template 
+        is="dom-if"
+        if="[[ !_isProductSet(product, retrievingProduct) ]]">
         <dorel-template-404 name="404"></dorel-template-404>
       </template>
 
 
-      <template is="dom-if"
+      <template 
+        is="dom-if"
         if="[[ _isProductSet(product, retrievingProduct) ]]">
+
         <template
           is="dom-if"
           if="[[ product.header_section ]]">
@@ -232,31 +235,7 @@
 
       },
 
-      /**
-       * @name _isProductSet
-       * @description will be used by the template
-       * returns a Boolean that either hide or shows the page
-       * @param product - Object
-       * @param loaded - Boolean
-       */
-      _isProductSet: function(product, loading) {
-          var isObjectEmpty = (Object.keys(product).length === 0 &&
-            product.constructor === Object);
-          return Boolean(!isObjectEmpty && !loading);
-      },
-
-      _isProductNotFound: function(product, loading) {
-          var isObjectEmpty = (Object.keys(product).length === 0 &&
-            product.constructor === Object);
-          return (isObjectEmpty && !loading);
-      },
-
-      getCleanProductName: function(product) {
-        return product.path.split('/').filter(function(char) {
-          return char && char.length;
-        }).join('');
-      },
-
+      behaviors: [TemplateBehaviors]
     });
   </script>
 </dom-module>

@@ -1,0 +1,32 @@
+<dom-module id="dorel-layout-container">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        flex-wrap: wrap;
+      }
+
+      section {
+        @apply(--max-width-container);
+        padding: 0 var(--theme-grid-margin-mobile);
+        width: 100%;
+        float: left;
+        box-sizing: border-box;
+      }
+
+      section[tablet-medium-up] {
+        padding: 0 var(--theme-grid-margin);
+      }
+
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]" tablet-medium$="[[ breakpoints.tabletMedium]]">
+      <slot></slot>
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({is: 'dorel-layout-container'});
+  </script>
+</dom-module>

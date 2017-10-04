@@ -4,7 +4,7 @@
   <template>
     <style>
       :host {
-        @apply(--max-width-host);
+       
       }
 
       .section {
@@ -22,6 +22,8 @@
         @apply(--theme-grid-row-mobile-margins);
         @apply(--layout-flex);
         justify-content: center;
+        float: left;
+        width: 100%;
       }
 
       .container {
@@ -79,7 +81,7 @@
         if="[[ templateData.acf.hero_header.length ]]">
         <dorel-section-header
           no-offset="true"
-          section-header-data="[[heroHeaderData]]"
+          section-header-data="[[heroHeader]]"
           gtm-parent="dorel-template-faq-overview"
           gtm-parent-index="[[ index ]]"></dorel-section-header>
       </template>
@@ -112,8 +114,8 @@
       <!-- section-service-support -->
       <template
         is="dom-if"
-        if="[[ templateData.acf.customer_support_toggle ]]">
-        <div class="host">
+        if="[[_toggleObject(templateData.acf.customer_support_toggle, customerSupportOptions)]]">
+        <div class="">
           <div class="section">
             <div class="row">
               <div class="container">
@@ -163,7 +165,7 @@
          * @name homeHeaderData
          * @description the data model used for the hero header component
          */
-        heroHeaderData: Array,
+        heroHeader: Array,
 
         /**
          * @name productsOverviewFaq
@@ -184,51 +186,7 @@
         customerSupportOptions: Object
       },
 
-      behaviors: [DorelObjectHasPropertiesBehavior],
-
-      /**
-       * @name _defineComponentModels
-       * @description Fixed WP/ACF data is defined by an array (workaround). For components
-       * that always have one item in the array a new data model is created to be set on
-       * component attribute level. Binding with [0] array item selector doesn't work.
-       *
-       * @param Object
-       */
-      _defineComponentModels: function(templateData) {
-        // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
-
-        // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.hero_header !== 'undefined') {
-          this.set('heroHeaderData', templateData.acf.hero_header[0]);
-        }
-
-        // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.products_overview_faq !== 'undefined') {
-          this.set('productsOverviewFaq', templateData.acf.products_overview_faq[0]);
-        }
-
-        // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.services_overview_faq !== 'undefined') {
-          this.set('servicesOverviewFaq', templateData.acf.services_overview_faq[0]);
-        }
-      },
-
-      /**
-       * @name _defineOptionModels
-       * @description similiar to _defineComponentModels but for options page settings
-       *
-       * @param Object
-       */
-      _defineOptionModels: function(appCache) {
-        // check if the templateData has content
-        if(!this._hasProperty(appCache) || typeof appCache.collect === 'undefined' || typeof appCache.collect.options === 'undefined') return;
-        
-        // set the homeHeaderData for the heroHeader component
-        if(typeof appCache.collect.options.customer_support !== 'undefined') {
-          this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
-        }
-      }
+      behaviors: [TemplateBehaviors]
     });
 
   </script>

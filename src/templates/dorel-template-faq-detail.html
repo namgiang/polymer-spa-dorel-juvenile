@@ -218,45 +218,11 @@
         customerSupportOptions: Object
       },
 
-      behaviors: [DorelObjectHasPropertiesBehavior],
+      behaviors: [TemplateBehaviors],
 
       observers: [
         '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
       ],
-
-      /**
-       * @name _defineComponentModels
-       * @description Fixed WP/ACF data is defined by an array (workaround). For components
-       * that always have one item in the array a new data model is created to be set on
-       * component attribute level. Binding with [0] array item selector doesn't work.
-       *
-       * @param Object
-       */
-      _defineComponentModels: function(templateData) {
-        // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
-
-        // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.faq_promo !== 'undefined') {
-          this.set('faqPromo', templateData.acf.faq_promo[0]);
-        }
-      },
-
-      /**
-       * @name _defineOptionModels
-       * @description similiar to _defineComponentModels but for options page settings
-       *
-       * @param Object
-       */
-      _defineOptionModels: function(appCache) {
-        // check if the templateData has content
-        if(!this._hasProperty(appCache) || typeof appCache.collect === 'undefined' || typeof appCache.collect.options === 'undefined') return;
-        
-        // set the homeHeaderData for the heroHeader component
-        if(typeof appCache.collect.options.customer_support !== 'undefined') {
-          this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
-        }
-      },
 
       /**
        * @observer

@@ -266,33 +266,7 @@
         callCenterSupport: Object
       },
 
-      /**
-       * @name _defineComponentModels
-       * @description Fixed WP/ACF data is defined by an array (workaround). For components
-       * that always have one item in the array a new data model is created to be set on
-       * component attribute level. Binding with [0] array item selector doesn't work.
-       *
-       * @param Object
-       */
-      _defineComponentModels: function(templateData) {
-        // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData === 'undefined') return;
-        
-        // set the homeHeaderData for the callCenterSupport
-        if(typeof templateData.call_center_support !== 'undefined') {
-          this.set('callCenterSupport', templateData.call_center_support[0]);
-        }
-
-        // set the homeHeaderData for the socialSupport
-        if(typeof templateData.social_support !== 'undefined') {
-          this.set('socialSupport', templateData.social_support[0]);
-        }
-
-        // set the homeHeaderData for the emailSupport
-        if(typeof templateData.email_support !== 'undefined') {
-          this.set('emailSupport', templateData.email_support[0]);
-        }
-      },
+      behaviors: [TemplateBehaviors],
 
       /**
        * @attribute
@@ -308,32 +282,6 @@
         });
 
         return facebookChannel.social_media_href;
-      },
-
-      /** 
-       * @name _hasProperty
-       * @description check if an Object has properties
-       *
-       * @param Object
-       * @returns Boolean
-       */
-      _hasProperty: function(obj) {
-        var hasProp = false;
-
-        for(var prop in obj) {
-          var hasProp = (obj.hasOwnProperty(prop));
-        }
-
-        return hasProp;
-      },
-
-      /**
-       * @name _eventTracking
-       * @description this is for example tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event) {
-        /* ...TRACKING CODE FOR THIS PLUGIN... */
       }
     });
 
