@@ -104,7 +104,7 @@
           <dorel-loader loading="[[ retrievingProducts ]]"></dorel-loader>
           <template is="dom-if" if="{{ checkIfProductsAreEmpty(renderedCount, retrievingProducts) }}">
             <div class="no-products">
-              0 Results
+              {{ localize('0_Results') }}
             </div>
           </template>
         </div>
@@ -114,6 +114,10 @@
   <script>
     Polymer({
       is: 'dorel-category-listing',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
 
       properties: {
         /**
