@@ -48,12 +48,19 @@
 
       routeChanged: function(route) {
         var urlSegments = route.path.split('/').filter(function(segment) {
-          return segment !== '' ? true : false;
+          return segment && segment !== '';
         });
-        var firstUrlSegment = urlSegments && urlSegments.length ? urlSegments[0] : '';
+
+        var firstUrlSegment;
+
+        if(!urlSegments || !urlSegments.length || urlSegments[0].length !== 5) {
+          firstUrlSegment = CONFIG.LOCALE.CODE;
+        } else {
+          firstUrlSegment = urlSegments && urlSegments.length ? urlSegments[0] : CONFIG.LOCALE.CODE;
+        }
+
         var country = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[0] : CONFIG.LOCALE.LANGUAGE;
         var language = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[1] : CONFIG.LOCALE.COUNTRY_CODE;
-
 
         if(this._isCountryOrLanguageChanged(country, language)) {
             this.fire('setAppCache', { path: 'currentLanguage' , value: {
