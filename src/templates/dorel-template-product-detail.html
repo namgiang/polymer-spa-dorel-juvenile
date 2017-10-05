@@ -12,27 +12,11 @@
 <dom-module id="dorel-template-product-detail">
   <template>
     <style>
-      :root {
-        /* Override the default background-color for the multi sections */
-        --theme-multi-background-color: var(--theme-color-background-tertiary);
-        --theme-multi-no-background-color: transparent;
-        --theme-multi-bottom-padding: var(--theme-component-space-inner-xlarge);
+      :host {
         float: left;
         width: 100%;
       }
 
-      .wrapper {
-        opacity: 0; /* make things invisible upon start */
-        -webkit-animation: fadeIn ease 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
-        -moz-animation: fadeIn ease 1;
-        animation: fadeIn ease 1;
-        -webkit-animation-duration: 1s;
-        -moz-animation-duration: .1s;
-        animation-duration: 1s;
-        -webkit-animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
-        -moz-animation-fill-mode: forwards;
-        animation-fill-mode: forwards;
-      }
 
       .loading-wrapper {
         position: absolute;
@@ -95,14 +79,17 @@
 
     <div class="wrapper">
 
-      <template is="dom-if"
-        if="[[ _isProductNotFound(product, retrievingProduct) ]]">
+      <template 
+        is="dom-if"
+        if="[[ !_isProductSet(product, retrievingProduct) ]]">
         <dorel-template-404 name="404"></dorel-template-404>
       </template>
 
 
-      <template is="dom-if"
+      <template 
+        is="dom-if"
         if="[[ _isProductSet(product, retrievingProduct) ]]">
+
         <template
           is="dom-if"
           if="[[ product.header_section ]]">
@@ -248,25 +235,7 @@
 
       },
 
-      /**
-       * @name _isProductSet
-       * @description will be used by the template
-       * returns a Boolean that either hide or shows the page
-       * @param product - Object
-       * @param loaded - Boolean
-       */
-      _isProductSet: function(product, loading) {
-          var isObjectEmpty = (Object.keys(product).length === 0 &&
-            product.constructor === Object);
-          return Boolean(!isObjectEmpty && !loading);
-      },
-
-      _isProductNotFound: function(product, loading) {
-          var isObjectEmpty = (Object.keys(product).length === 0 &&
-            product.constructor === Object);
-          return (isObjectEmpty && !loading);
-      }
-
+      behaviors: [TemplateBehaviors]
     });
   </script>
 </dom-module>

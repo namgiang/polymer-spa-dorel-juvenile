@@ -22,14 +22,16 @@
       .row {
         @apply(--theme-grid-row);
         @apply(--layout-flex);
+        @apply(--layout-center-justified);
         @apply(--theme-grid-row-mobile-margins);
       }
 
       .title {
-        @apply(--theme-typography-7);
+        @apply(--theme-typography-5);
         color: var(--theme-brand-color-1);
         width: 100%;
         text-align: center;
+        margin-top: 0;
       }
 
       .expand-collapse {
@@ -49,16 +51,16 @@
         padding: 4.5em var(--theme-gutter) 7.5em var(--theme-gutter);
       }
 
-      [tablet-small] dorel-product-accessory, [tablet-medium] dorel-product-accessory {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        width: calc(var(--theme-column-width) * 6);
-      }
-
-      [desktop-small-up] dorel-product-accessory {
+      [tablet-medium-up] dorel-product-accessory {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
         flex-basis: calc(var(--theme-column-width) * 4);
         width: calc(var(--theme-column-width) * 4);
+      }
+
+      [tablet-medium] dorel-product-accessory {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        width: calc(var(--theme-column-width) * 6);
       }
 
       [tablet-medium-up] .row {
@@ -67,6 +69,11 @@
 
       [tablet-medium-up] dorel-product-accessory {
         padding: 0 .75em;
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
       }
 
     </style>
@@ -83,11 +90,8 @@
         <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
         <section class="section-product-accessories"
-                 mobile-medium$="{{ breakpoints.mobileMedium }}"
-                 tablet-small$="{{ breakpoints.tabletSmall }}"
                  tablet-medium$="{{ breakpoints.tabletMedium }}"
-                 tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-                 desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+                 tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
           <template
             is="dom-if"
             if="[[ _hasValue(accessoriesOptions.title) ]]">
@@ -199,19 +203,7 @@
          */
         maxShown: {
           type: Number,
-          value: 5
-        },
-
-        /**
-         * @attribute
-         * @name accessoriesData
-         * @description data retrieved from ACF/Wordpress to build up this page
-         */
-        accessoriesData: {
-          type: Object,
-          value: {
-            accessories: []
-          }
+          value: 4
         },
 
         /**
@@ -259,7 +251,7 @@
          */
         initialContent: {
           type: String,
-          computed: '_computeInitialContent(accessoriesData)'
+          computed: '_computeInitialContent(relatedProducts)'
         },
         /**
          * @attribute
@@ -268,7 +260,7 @@
          */
         restContent: {
           type: String,
-          computed: '_computeRestContent(accessoriesData)'
+          computed: '_computeRestContent(relatedProducts)'
         },
 
         /**
@@ -278,7 +270,7 @@
          */
         relatedProducts: {
           type: Array,
-          value: function() {
+          value: function () {
             return [];
           }
         },
@@ -294,7 +286,7 @@
         }
       },
 
-      behavior: [DorelHasValueBehavior],
+      behaviors: [ConditionalBehaviors],
 
       observers: [
         '_setIncluded(relatedProducts, accessoriesOptions)'
@@ -304,21 +296,21 @@
        * @name _computeInitialContent
        * @description Splits the content on mobile if there are too many items
        */
-      _computeInitialContent: function (accessoriesData) {
-        if (accessoriesData && accessoriesData.accessories && accessoriesData.accessories.length > this.maxShown) {
-          return accessoriesData.accessories.slice(0, this.maxShown);
+      _computeInitialContent: function (relatedProducts) {
+        if (relatedProducts && relatedProducts.length > this.maxShown) {
+          return relatedProducts.slice(0, this.maxShown);
         }
 
-        return accessoriesData.accessories;
+        return relatedProducts;
       },
 
       /**
        * @name _computeRestContent
        * @description Splits the content on mobile if there are too many items
        */
-      _computeRestContent: function (accessoriesData) {
-        if (accessoriesData && accessoriesData.accessories && accessoriesData.accessories.length > this.maxShown) {
-          return accessoriesData.accessories.slice(this.maxShown);
+      _computeRestContent: function (relatedProducts) {
+        if (relatedProducts && relatedProducts.length > this.maxShown) {
+          return relatedProducts.slice(this.maxShown);
         }
 
         return []
@@ -348,13 +340,13 @@
        * @param relatedProducts | Array
        * @param accessoriesOptions | Object
        */
-      _setIncluded: function(relatedProducts, accessoriesOptions) {
-        if(!relatedProducts || !relatedProducts.length || !accessoriesOptions || !accessoriesOptions.included_products || !accessoriesOptions.included_products.length ) {
+      _setIncluded: function (relatedProducts, accessoriesOptions) {
+        if (!relatedProducts || !relatedProducts.length || !accessoriesOptions || !accessoriesOptions.included_products || !accessoriesOptions.included_products.length) {
           return;
         }
         var included = accessoriesOptions.included_products.replace(' ', '').split(',');
-        relatedProducts.forEach(function(accessory) {
-          if(included.indexOf(accessory.sku) > -1) {
+        relatedProducts.forEach(function (accessory) {
+          if (included.indexOf(accessory.sku) > -1) {
             accessory.included = true;
           }
         });
@@ -367,7 +359,7 @@
        * @param relatedProducts | Array
        * @returns Boolean
        */
-      _hasRelatedProducts: function(relatedProducts) {
+      _hasRelatedProducts: function (relatedProducts) {
         return Boolean(relatedProducts && relatedProducts.length > 0);
       }
     });

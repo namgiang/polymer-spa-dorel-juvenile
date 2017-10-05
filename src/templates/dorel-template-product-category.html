@@ -1,7 +1,6 @@
 <link rel="import" href="../atoms/dorel-expandable-panel.html">
 <link rel="import" href="../organisms/dorel-category-listing.html">
 <link rel="import" href="../organisms/dorel-section-header.html">
-<link rel="import" href="../organisms/dorel-section-category-sidebar.html">
 <link rel="import" href="../organisms/dorel-category-submenu.html">
 <link rel="import" href="../organisms/dorel-category-filter.html">
 <link rel="import" href="../utils/dorel-magento-collect-products-by-category.html">
@@ -10,10 +9,6 @@
   <template>
     <style>
       :host {
-        /* Override the default background-color for the multi sections */
-        --theme-multi-background-color: var(--theme-color-background-tertiary);
-        --theme-multi-no-background-color: transparent;
-        --theme-multi-bottom-padding: var(--theme-component-space-inner-xlarge);
         float: left;
         width: 100%;
         background-color: var(--theme-color-white);
@@ -84,7 +79,7 @@
         is="dom-if"
         if="[[templateData.acf.hero_header.length]]">
         <dorel-section-header
-          section-header-data="[[heroHeaderData]]"
+          section-header-data="[[heroHeader]]"
           gtm-parent="dorel-section-header"
           gtm-parent-index="[[ index ]]"></dorel-section-header>
       </template>
@@ -196,6 +191,21 @@
 
         /**
          * @attribute
+         * @name sort
+         * @description define the default sorting type/order of the product listing
+         */
+        sort: {
+          type: Object,
+          value: function() {
+            return {
+              type: 'name',
+              order: 'asc'
+            };
+          }
+        },
+
+        /**
+         * @attribute
          * @name category
          * @description a loading indicator from the collect-products component
          * if products are retrieved it will set Boolean to false
@@ -215,59 +225,7 @@
 
       },
 
-      behaviors: [DorelObjectHasPropertiesBehavior],
-
-      /**
-       * @name _defineComponentModels
-       * @description Fixed WP/ACF data is defined by an array (workaround). For components
-       * that always have one item in the array a new data model is created to be set on
-       * component attribute level. Binding with [0] array item selector doesn't work.
-       *
-       * @param Object
-       */
-      _defineComponentModels: function(templateData) {
-        // check if the templateData has content
-        if(!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
-
-        this._setInitialProductSorting(templateData);
-        
-        // set the homeHeaderData for the heroHeader component
-        if(typeof templateData.acf.hero_header !== 'undefined') {
-          this.set('heroHeaderData', templateData.acf.hero_header[0]);
-        }
-
-        if(typeof templateData.acf.left_sidebar !== 'undefined') {
-          var leftSidebar = {};
-
-          if(typeof templateData.acf.left_sidebar[0].filters[0] !== 'undefined') {
-            leftSidebar.filters = templateData.acf.left_sidebar[0].filters[0];
-          }
-
-          if(typeof templateData.acf.left_sidebar[0].filters[0] !== 'undefined') {
-            leftSidebar.productSubCategories = templateData.acf.left_sidebar[0].product_sub_categories[0];
-          }
-
-          this.set('leftSidebar', leftSidebar);
-        }
-      },
-
-      /**
-       * @name _setInitialProductSorting
-       * @description will set the sort Object that will be used by the
-       * category-listing component
-       *
-       * @param templateData - Object
-       */
-      _setInitialProductSorting: function (templateData) {
-        if (!this._hasProperty(templateData) || typeof templateData.acf === 'undefined') return;
-
-        var sort = {
-          type: templateData.acf.product_listing_sorting || 'name',
-          order: templateData.acf.product_listing_order || 'asc'
-        };
-
-        this.set('sort', sort);
-      }
+      behaviors: [TemplateBehaviors]
     });
   </script>
 </dom-module>
