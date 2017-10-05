@@ -92,7 +92,7 @@
              tablet-small$="[[ breakpoints.tabletSmall ]]"
              tablet-medium$="[[ breakpoints.tabletMedium ]]"
              desktop-small$="[[ breakpoints.desktopSmall ]]">
-      <h2 class="title">Please select your country</h2>
+      <h2 class="title">{{ localize('Please_select_your_country') }}</h2>
       <div class="container">
         <template is="dom-repeat" items="[[ continentsData ]]" filter="[[ _filterContinents() ]]" sort="_sortContinents">
           <div class="continent">
@@ -115,7 +115,7 @@
                     link="[[ _getInternationalContinentLink(continentsData) ]]"
                     icon=""
                     size="medium">
-           International website ([[ _getInternationalContinentLanguage(continentsData) ]])
+           {{ localize('International_website') }} ([[ _getInternationalContinentLanguage(continentsData) ]])
          </dorel-cta>
       <div>
     </template>
@@ -124,6 +124,11 @@
   <script>
     Polymer({
       is: 'dorel-multilingual-continents',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],      
+      
       properties: {
         /**
          * @name centered
