@@ -24,13 +24,17 @@
         box-sizing: border-box;
         float: left;
         display: inline-block;
-        padding: 1.5em;
+        padding: 1.5em 0;
       }
 
       dorel-bynder-image {
         height: 100%;
         width: 100%;
         float: left;
+      }
+
+      dorel-layout-container {
+        max-width: var(--theme-base-paragraph-width);
       }
 
       .title {
@@ -44,30 +48,26 @@
         width: auto;
       }
 
-      [tablet-medium-up] .image-container {
+      [desktop-small-up] .image-container {
         -ms-flex-preferred-size: 66.6666667%;
         flex-basis: 66.6666667%;
         max-width: 66.6666667%;
       }
 
-      [tablet-medium-up] .info-container {
+      [desktop-small-up] .info-container {
         -ms-flex-preferred-size: calc(100% - 66.6666667%);
         flex-basis: calc(100% - 66.6666667%);
         max-width: calc(100% - 66.6666667%);
-        padding: 3em;
+        padding: 2.25em 0;
       }
 
-      [tablet-medium] .info-container {
-        padding: 1.5em;
-      }
 
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="layout horizontal wrap"
-             tablet-medium$="[[ breakpoints.tabletMedium ]]"
-             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
       <div class="image-container">
         <dorel-bynder-image media-id="[[ templateData.bynder_background_image ]]"
                             derivative-identifier="Widescreen Retina landscape"
@@ -78,23 +78,26 @@
                             mobile-width="100%"
                             mobile-height="15em"></dorel-bynder-image>
       </div>
-      <div class="info-container">
-        <h1 class="title">[[ templateData.title ]]</h1>
-        <div class="description">
-          <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
-        </div>
 
-        <template
-          is="dom-if"
-          if="[[ templateData.cta_toggle ]]">
-          <dorel-cta title="[[ templateData.cta_text ]]"
-                     type="primary"
-                     link="[[ templateData.cta_href ]]"
-                     size="medium"
-                     icon="dorel-icons:chevron-right">
-            [[ templateData.cta_text ]]
-          </dorel-cta>
-        </template>
+      <div class="info-container">
+        <dorel-layout-container>
+          <h1 class="title">[[ templateData.title ]]</h1>
+          <div class="description">
+            <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
+          </div>
+
+          <template
+            is="dom-if"
+            if="[[ templateData.cta_toggle ]]">
+            <dorel-cta title="[[ templateData.cta_text ]]"
+                       type="primary"
+                       link="[[ templateData.cta_href ]]"
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              [[ templateData.cta_text ]]
+            </dorel-cta>
+          </template>
+        </dorel-layout-container>
       </div>
     </section>
   </template>
