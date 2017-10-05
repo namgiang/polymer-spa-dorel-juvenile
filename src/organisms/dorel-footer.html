@@ -9,14 +9,10 @@
         background-color: var(--theme-footer-background-color);
         float: left;
         width: 100%;
+        padding-bottom: 1.5em;
       }
 
-      footer {
-        @apply(--max-width-container);
-        padding: var(--theme-gutter) var(--theme-gutter-mobile);
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
+      dorel-layout-row {
         position: relative;
       }
 
@@ -91,14 +87,6 @@
       }
 
       .footer-menu {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
-        -webkit-flex-basis: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        width: 100%;
-        display: initial;
-        box-sizing: border-box;
         max-height: 4.5em;
         overflow: hidden;
         border-bottom: 1px solid var(--theme-color-white);
@@ -145,40 +133,6 @@
         transform: rotate(135deg) translate(0.375rem, -0.375rem);
       }
 
-      /* Layout */
-      .footer-info {
-        @apply(--theme-grid-row);
-        padding: 0;
-      }
-
-      /* Responsiv layout */
-      footer[tablet-medium-up] {
-        padding: var(--theme-gutter);
-      }
-
-      [tablet-medium-up] .footer-menu {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
-        -webkit-flex-basis: calc(var(--theme-column-width) * 3);
-        flex-basis: calc(var(--theme-column-width) * 3);
-        max-width: calc(var(--theme-column-width) * 3);
-        overflow: visible;
-        max-height: inherit;
-        border: 0;
-        margin-top: 1.5em;
-      }
-
-      [desktop-small-up] .footer-menu {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
-        -webkit-flex-basis: calc(var(--theme-column-width) * 2);
-        flex-basis: calc(var(--theme-column-width) * 2);
-        max-width: calc(var(--theme-column-width) * 2);
-      }
-
-      [tablet-medium-up] .footer-info {
-        @apply(--theme-grid-row-margins);
-      }
-
       [tablet-medium-up] .footer-heading {
         @apply(--theme-typography-2);
         color: var(--theme-footer-header-color);
@@ -219,64 +173,109 @@
         display: none;
       }
 
-      [tablet-medium-up] dorel-multilingual-select-language {
+      [tablet-medium-up] .footer-menu {
+        @apply(--theme-grid-column);
+        padding: 0 var(--theme-grid-gutter);
+        float: left;
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        -webkit-flex-basis: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        width: calc(var(--theme-column-width) * 3);
+        overflow: visible;
+        max-height: inherit;
+        border: 0;
+        margin-top: 1.5em;
+      }
+
+      [desktop-small-up] .footer-menu {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
+        -webkit-flex-basis: calc(var(--theme-column-width) * 2);
+        flex-basis: calc(var(--theme-column-width) * 2);
+        width: calc(var(--theme-column-width) * 2);
+      }
+
+      .multilingual-container {
+        clear: both;
+        margin: .75em;
+        width: 100%;
+        display: flex;
+      }
+
+      dorel-multilingual-select-language {
+        margin: auto;
+      }
+
+      [desktop-small-up] dorel-multilingual-select-language {
         position: absolute;
         right: 1.5em;
-        top: 2.25em;
+        top: .75em;
         float: right;
         height: 3em;
         display: block;
+        margin: 0;
       }
+
+      [tablet-medium-up] .footer-menu {
+        border-bottom: 0px;
+      }
+
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <footer tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
             desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
-      <!-- check if we need to show the social links -->
-      <template
-        is="dom-if"
-        if="[[ appCache.collect.options.footer_social_toggle ]]">
 
-        <section class="footer-media-links layout horizontal center center-justified wrap">
-
-          <!-- dom-repeat social channels -->
+      <dorel-layout-container>
+        <dorel-layout-row align="center">
+          <!-- check if we need to show the social links -->
           <template
-            is="dom-repeat"
-            items="[[ appCache.collect.options.social_channels ]]"
-            as="socialChannel">
-            <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
-               on-click="_socialClick">
-              <iron-icon icon="social-iconset:[[ socialChannel.social_media_icon ]]"></iron-icon>
-              <span>[[ socialChannel.social_media_text ]]</span>
-            </a>
+            is="dom-if"
+            if="[[ appCache.collect.options.footer_social_toggle ]]">
+            <!-- dom-repeat social channels -->
+            <template
+              is="dom-repeat"
+              items="[[ appCache.collect.options.social_channels ]]"
+              as="socialChannel">
+              <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
+                 on-click="_socialClick">
+                <iron-icon icon="social-iconset:[[ socialChannel.social_media_icon ]]"></iron-icon>
+                <span>[[ socialChannel.social_media_text ]]</span>
+              </a>
+            </template>
           </template>
           <!--// dom-repeat social channels -->
 
-        </section>
-      </template>
+          <div class="multilingual-container">
+            <!-- TOOD: Add conditional dom-if template -->
+            <dorel-multilingual-select-language light="true"
+                                                current-language="{{ currentLanguage }}"
+                                                continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+          </div>
+        </dorel-layout-row>
 
-      <!-- TOOD: Add conditional dom-if template -->
-      <dorel-multilingual-select-language light="true"
-                                          current-language="{{ currentLanguage }}"
-                                          continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
 
-      <section id="footer-widget-area" class="footer-info">
-        <!-- widget areas are inserted here -->
-      </section>
+        <dorel-layout-row align="left">
+          <dorel-layout-column id="footer-widget-area" class="footer-info"
+                               desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+            <!-- widget areas are inserted here -->
+          </dorel-layout-column>
+        </dorel-layout-row>
 
-      <div class="footer-disclaimer">
+        <div class="footer-disclaimer">
           <span class="footer-copyright">
             Copyright &#9400;
             {{ _getCopyrightYearRange(appCache.collect.options.footer_year) }}
             [[ appCache.collect.options.footer_copyright ]]
           </span>
-      </div>
+        </div>
 
-      <section class="footer-back-to-top">
-        <dorel-back-to-top></dorel-back-to-top>
-      </section>
+        <section class="footer-back-to-top">
+          <dorel-back-to-top></dorel-back-to-top>
+        </section>
 
+      </dorel-layout-container>
     </footer>
 
   </template>
