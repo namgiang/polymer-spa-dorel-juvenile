@@ -36,7 +36,7 @@
 
     </style>
 
-    <section class="content-container">
+    <dorel-layout-container>
       <h1 class="class-for-h1">Multilingual Components</h1>
       <p>
         This section describes components used for language and country selection purposes.
@@ -83,16 +83,23 @@
       <h1 class="class-for-h2">Currently selected country &amp; language</h1>
       <p>The currently selected component is used in the header and footer navigation, and will open up the overlay when
         clicked. Two variations exist; one for a light background and one used on darker backgrounds.</p>
-      <div class="container-fluid container-standout">
-        <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
-                                            continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
-      </div>
-      <div class="container-fluid container-standout dark-bg">
-        <dorel-multilingual-select-language light="true"
-                                            current-language="{{ currentLanguage }}"
-                                            continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
-      </div>
-    </section>
+      <dorel-layout-row align="left">
+        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12"
+                             class="container-standout">
+          <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
+                                              continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+        </dorel-layout-column>
+      </dorel-layout-row>
+
+      <dorel-layout-row align="left">
+        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12"
+                             class="container-standout dark-bg">
+          <dorel-multilingual-select-language light="true"
+                                              current-language="{{ currentLanguage }}"
+                                              continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
   </template>
   <hr>
   <script>
