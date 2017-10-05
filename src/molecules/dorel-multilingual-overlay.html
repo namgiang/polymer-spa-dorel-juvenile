@@ -79,15 +79,8 @@
         height: 100%;
       }
 
-      .content {
-        @apply(--max-width-container);
-        padding: 0 var(--theme-gutter-mobile);
-        box-sizing: border-box;
+      dorel-layout-container {
         height: 100%;
-      }
-
-      [tablet-medium-up] .content {
-        padding: 0 var(--theme-gutter);
       }
 
       [tablet-medium-up] .container {
@@ -116,11 +109,11 @@
                      icon="dorel-icons:close"></iron-icon>
         </div>
         <div class="container">
-          <div class="content">
+          <dorel-layout-container>
             <paper-dialog-scrollable>
               <slot></slot>
             </paper-dialog-scrollable>
-          </div>
+          </dorel-layout-container>
         </div>
       </paper-dialog>
 
@@ -140,14 +133,6 @@
       open: function () {
         var dialog = this.$$('#dialog');
         dialog.open();
-      },
-      /**
-       * @name _eventTracking
-       * @description this is for example tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event) {
-        /* ...TRACKING CODE FOR THIS PLUGIN... */
       }
     });
 

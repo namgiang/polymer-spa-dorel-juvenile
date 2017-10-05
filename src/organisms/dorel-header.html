@@ -51,12 +51,11 @@
       }
 
       .header-items {
-        @apply(--max-width-container);
-        @apply(--layout-vertical);
         background-color: var(--theme-color-white);
         box-sizing: border-box;
         transition: .15s ease padding;
-        padding: .75em;
+        padding-top: .75em;
+        padding-bottom: .75em;
       }
 
       .header-item-menu {
@@ -70,19 +69,13 @@
         background-color: var(--theme-color-monochrome-2);
       }
 
-      .header-toolbar-container {
-        @apply(--max-width-container);
-        padding: 0 var(--theme-gutter);
-        box-sizing: border-box;
-      }
-
-      .header-toolbar-container dorel-multilingual-select-language {
+      dorel-multilingual-select-language {
         float: right;
       }
 
       #hamburger {
         position: absolute;
-        top: 1.25em;
+        top: calc(50% - 15px);
         right: .75em;
         z-index: 1000;
         color: var(--theme-color-text-link);
@@ -101,11 +94,9 @@
       }
 
       .header-item-logo {
-        order: 4;
         margin-top: var(--theme-header-logo-top);
-        /* center the logo */
-        @apply(--layout-horizontal);
         transition: transform 0.20s ease;
+        float: left;
       }
 
       :host-context([mobile-menu-opened]) .header-item-logo {
@@ -118,12 +109,6 @@
 
       [desktop-small-up][compact-menu] header {
         transform: translateY(-3em);
-      }
-
-      /* Responsive Behaviour */
-      [tablet-medium-up] .header-items {
-        padding-left: 1.5em;
-        padding-right: 1.5em;
       }
 
       [tablet-medium-up] #hamburger {
@@ -139,28 +124,14 @@
         height: var(--theme-header-wrapper-small-up);
       }
 
-      [desktop-small-up] .header-item-logo {
-        order: 1;
-        flex: 1;
-      }
-
       [desktop-small-up] .header-item-menu {
-        @apply(--layout-wrap);
-        order: 4;
-        display: flex;
+        float: right;
         padding: var(--theme-header-item-padding) 0;
       }
 
       [desktop-small-up] .header-items {
-        /* layout horizontal header-main */
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
-        padding: var(--theme-header-items-top-bottom-padding) var(--theme-gutter);
-      }
-
-      [desktop-small-up] .header-contain-main-elements {
-        @apply(--layout-horizontal);
-        @apply(--layout-justified);
+        padding-top: var(--theme-header-items-top-bottom-padding);
+        padding-bottom: var(--theme-header-items-top-bottom-padding);
       }
     </style>
 
@@ -172,15 +143,14 @@
       <header>
         <div class="desktop-header">
           <template is="dom-if" if="[[ breakpoints.desktopSmallUp ]]">
-            <div class="header-toolbar">
-              <div class="header-toolbar-container">
-                <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
-                                                    continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
-              </div>
-            </div>
+            <dorel-layout-container class="header-toolbar">
+              <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
+                                                  continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+            </dorel-layout-container>
+
           </template>
 
-          <div class="header-items">
+          <dorel-layout-container class="header-items">
             <div class="header-item header-item-logo">
               <div>
                 <a href="/" aria-label="Maxi Cosi"
@@ -189,7 +159,6 @@
                 </a>
               </div>
             </div>
-
             <nav class="header-item header-item-menu">
               <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
                 <dorel-main-menu-desktop
@@ -209,7 +178,6 @@
                   mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-main-menu-mobile>
               </template>
             </nav>
-
             <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
 
               <div id="hamburger">
@@ -231,8 +199,7 @@
                 </template>
               </div>
             </template>
-          </div>
-        </div>
+          </dorel-layout-container>
       </header>
     </div>
   </template>

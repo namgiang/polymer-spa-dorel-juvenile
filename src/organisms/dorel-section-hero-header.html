@@ -20,6 +20,7 @@
       }
 
       .title {
+        @apply(--theme-typography-6);
         color: var(--theme-color-white);
         margin: 0;
         text-shadow: var(--theme-text-shadow);
@@ -27,60 +28,50 @@
       }
 
       .subtitle {
-        @apply(--theme-typography-3);
+        @apply(--theme-typography-4);
         font-weight: var(--theme-font-weight-light);
         margin-top: 0;
         color: var(--theme-color-white);
         text-shadow: var(--theme-text-shadow);
       }
 
-      .image {
-        width: 100%;
-        display: block;
-        background-position: 50% 50%;
-        background-repeat: no-repeat;
-        background-size: cover;
-        height: 40.5em;
-      }
-
-      .content-wrapper {
-        @apply(--max-width-container);
-        @apply(--layout-horizontal);
-        @apply(--layout-end);
-        @apply(--layout-end-justified);
-        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+      dorel-layout-container {
         position: absolute;
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
         right: 0;
         left: 0;
         top: 0;
+        height: 100%;
       }
 
-      .content {
-        @apply(--theme-grid-column);
-        position: static;
-        padding: 0;
-        top: initial;
-        flex: initial;
-        margin: 0;
-        bottom: initial;
-        right: initial;
-        -ms-flex: auto;
-        -webkit-box-flex: auto;
-        flex: auto;
+      dorel-layout-row {
+        position: relative;
+        height: 100%;
+      }
+
+      dorel-layout-column {
         text-align: right;
       }
 
-      .title {
-        @apply(--theme-typography-5);
-        margin-top: 0;
+      dorel-layout-column {
+        position: absolute;
+        bottom: 3em;
+        right: 0;
       }
 
       [tablet-small] .title {
         @apply(--theme-typography-7);
         margin-top: 0;
+      }
+
+      [tablet-small] .subtitle {
+        @apply(--theme-typography-5);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] dorel-layout-column {
+        margin-top: 0;
+        bottom: 25%;
       }
 
       [tablet-medium-up] .title {
@@ -91,30 +82,8 @@
 
       [tablet-medium-up] .subtitle {
         @apply(--theme-typography-6);
-        margin-top: .375em;
-      }
-
-      [tablet-small] .subtitle {
-        @apply(--theme-typography-5);
         font-weight: var(--theme-font-weight-light);
-        margin-top: 0;
-      }
-
-      [tablet-medium-up] .content-wrapper {
-        padding: var(--theme-gutter);
-      }
-
-      .hero-header[tablet-medium-up] {
-        @apply(--layout-horizontal);
-      }
-
-      [tablet-medium-up] .content {
-        position: absolute;
-        bottom: 3em;
-        right: 0;
-        padding: 0 1.5em;
-        margin-top: 0;
-        bottom: 25%;
+        margin-top: .375em;
       }
 
     </style>
@@ -143,19 +112,22 @@
         <dorel-bynder-responsive-image
           media-id="[[ heroHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
       </template>
-      <div class="content-wrapper">
-        <div class="content">
-          <header>
-            <template is="dom-if" if="[[ _hasValue(heroHeaderData.title) ]]">
-              <h3 class="title">[[ heroHeaderData.title ]]</h3>
-            </template>
+      <dorel-layout-container>
+        <dorel-layout-row>
+          <dorel-layout-column desktop-column-span="12" tablet-column-span="12"
+                               mobile-column-span="12">
+            <header>
+              <template is="dom-if" if="[[ _hasValue(heroHeaderData.title) ]]">
+                <h3 class="title">[[ heroHeaderData.title ]]</h3>
+              </template>
 
-            <template is="dom-if" if="[[ _hasValue(heroHeaderData.sub_title) ]]">
-              <p class="subtitle">
-                [[ heroHeaderData.sub_title ]]
-              </p>
-            </template>
-          </header>
+              <template is="dom-if" if="[[ _hasValue(heroHeaderData.sub_title) ]]">
+                <p class="subtitle">
+                  [[ heroHeaderData.sub_title ]]
+                </p>
+              </template>
+            </header>
+          </dorel-layout-column>
 
           <!--<template
             is="dom-if"
@@ -171,8 +143,9 @@
               [[ heroHeaderData.cta_text ]]
             </dorel-cta>
           </template> -->
-        </div>
-      </div>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
     </section>
   </template>
   <script>
@@ -191,7 +164,6 @@
             return {};
           }
         }
-
       },
 
       behaviors: [ConditionalBehaviors]
