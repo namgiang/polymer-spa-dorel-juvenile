@@ -8,19 +8,6 @@
         --button-margin-spacing: -1.5em;
       }
 
-      .results {
-        padding: 1.5em var(--theme-gutter-mobile);
-        float: left;
-        width: 100%;
-        box-sizing: border-box;
-        background-color: var(--theme-color-white);
-      }
-
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--layout-flex);
-      }
-
       .title {
         @apply(--theme-typography-7);
         margin-top: 0;
@@ -28,25 +15,6 @@
         width: 100%;
         text-align: left;
         box-sizing: border-box;
-      }
-
-      .location-title {
-        @apply(--theme-typography-5);
-        width: 100%;
-        text-align: left;
-        margin-top: 0;
-      }
-
-      .location-content {
-        @apply(--theme-paragraph-text);
-        margin-top: 0;
-      }
-
-      .results-content {
-        @apply(--theme-grid-column-mobile);
-        max-width: var(--theme-base-paragraph-width);
-        width: 100%;
-        padding: 0;
       }
 
       ul {
@@ -69,28 +37,11 @@
         margin-right: 1.5em;
       }
 
-      /* Responsive Behaviour */
-      [tablet-medium-up] li {
-        padding-bottom: 0;
-        border-bottom: 0;
-      }
-
-      .results[tablet-medium-up] {
-        padding: 3em var(--theme-gutter);
-      }
-
-      [tablet-medium-up] .results-content {
-        margin: auto;
-      }
-
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-
-    <div class="results layout horizontal center center-justified wrap"
-         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-      <div class="row">
-        <div class="results-content">
+    <dorel-layout-container>
+      <dorel-layout-row align="center">
+        <dorel-layout-column desktop-column-span="6" tablet-column-span="9" mobile-column-span="12">
           <h2 class="title">Results</h2>
           <ul>
             <template
@@ -107,9 +58,9 @@
               </li>
             </template>
           </ul>
-        </div>
-      </div>
-    </div>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
   </template>
 
   <script>
