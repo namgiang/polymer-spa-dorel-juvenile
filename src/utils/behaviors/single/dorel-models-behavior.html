@@ -89,10 +89,17 @@
     _defineOptionModels: function(appCache) {
       if (!this._hasProperties(appCache) 
         || !this._hasProperties(appCache.collect)
-        || !this._hasProperties(appCache.collect.options)
-        || !this._hasProperties(appCache.collect.options.customer_support)) return;
+        || !this._hasProperties(appCache.collect.options)) return;
 
-      this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+      // SET CUSTOMER SUPPORT OPTIONS
+      if(typeof appCache.collect.options.customer_support !== 'undefined') {
+        this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+      }
+
+      // SET FOOTER OPTIONS
+      if(typeof appCache.collect.options.footer !== 'undefined') {
+        this.set('footerOptions', appCache.collect.options.footer[0]);
+      }
     }
   };
 </script>
