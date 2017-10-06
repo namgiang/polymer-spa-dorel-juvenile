@@ -59,7 +59,7 @@
       },
 
       observers: [
-        '_get(productId, type)'
+        '_get(productId, type, appCache.currentLanguage)'
       ],
 
        /**
@@ -70,9 +70,10 @@
         * @param productId - String
         * @param type - String
        */
-      _get: function(productId, type) {
+      _get: function(productId, type, currentLanguage) {
 
-        if(!productId || !type) {
+
+        if(!productId || !type || !currentLanguage) {
           return;
         }
 
@@ -87,7 +88,7 @@
         if(item) {
           this.data = item;
         } else {
-          this._retrieveData(productId, type);
+          this._retrieveData(productId, type, currentLanguage);
         }
 
       },
@@ -99,18 +100,19 @@
        * @param productId - String
        * @param type - String
       */
-      _retrieveData: function(productId, type) {
+      _retrieveData: function(productId, type, currentLanguage) {
         var collectProductEl = this.$.collect;
 
         var urlMap = {
           usps: '/rest/V1/dorel-uspbuilder/usplist?product_id=',
           features: '/rest/V1/dorel-featurebuilder/featurelist?product_id=',
           accordions: '/rest/V1/dorel-accordionbuilder/accordionlist?product_id='
-        };
+        };;
 
         if(urlMap[type]) {
           // set the url with the endPoint
-          collectProductEl.url = CONFIG.ECOM_URL + urlMap[type] + productId;
+          collectProductEl.url = CONFIG.ECOM_URL + urlMap[type] + productId + '&language=' + currentLanguage.languageCode;
+
           // make the call
           return collectProductEl.generateRequest();
         }

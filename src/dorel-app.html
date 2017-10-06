@@ -20,6 +20,7 @@
 <!-- SHARED BEHAVIORS -->
 <link rel="import" href="utils/behaviors/bundled/dorel-conditional-behaviors.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
+<link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
 
 <!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
@@ -109,6 +110,27 @@
 
     </style>
 
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+
+    <app-route
+      route="{{ route }}"
+      pattern="/:language"
+      query-params="{{ queryParams }}"
+      tail="{{ tail }}"></app-route>
+
+    <app-route
+      route="{{ tail }}"
+      pattern="/:page"
+      tail="{{ subroute }}"></app-route>
+
+    <dorel-multilingual-manager
+      route="[[ route ]]"
+      current-language="[[ appCache.currentLanguage ]]"
+      continents-data="{{ continentsData }}">
+    </dorel-multilingual-manager>
+
+
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
     <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
 
@@ -131,22 +153,19 @@
 
     <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-
-    <!-- define routing -->
-    <app-location route="{{ route }}"></app-location>
-    <app-route
-      route="{{ route }}"
-      pattern="/:page"
-      data="{{ routeData }}"
-      query-params="{{ queryParams }}"
-      tail="{{ subroute }}"></app-route>
-
     <dorel-brand-manager
       query-params="[[ queryParams ]]"
       brandNames="{{ brandNames }}"
       brand="{{ brand }}">
     </dorel-brand-manager>
+
+    <dorel-meta-manager
+      brand-name="[[ brand.label ]]"
+      current-page="[[ currentPage ]]"
+      app-cache="[[ appCache ]]"
+      route="[[ route ]]"
+      id="metaManager">
+    </dorel-meta-manager>
 
     <dorel-main-routing
       app-cache="[[ appCache ]]"
@@ -155,18 +174,6 @@
       previous-states="{{ previousStates }}"
       current-page="{{ currentPage }}">
     </dorel-main-routing>
-
-    <dorel-meta-manager
-      brand-name="[[ brand.label ]]"
-      current-page="[[ currentPage ]]"
-      app-cache="[[ appCache ]]"
-      id="metaManager">
-    </dorel-meta-manager>
-
-    <dorel-multilingual-manager
-      current-language="{{ currentLanguage }}"
-      continents-data="{{ continentsData }}">
-    </dorel-multilingual-manager>
 
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"
@@ -180,10 +187,11 @@
         load-complete="[[ loadComplete ]]"
         route="[[ route ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ currentLanguage ]]"
+        current-language="[[ appCache.currentLanguage ]]"
         mobile-menu-opened="{{ mobileMenuOpened }}"
         page="[[ page ]]"
-        brand-name="[[ brand.label ]]"></dorel-header>
+        brand-name="[[ brand.label ]]">
+      </dorel-header>
     </template>
 
     <!-- content pages -->
@@ -272,7 +280,7 @@
         id="footer"
         app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ currentLanguage ]]">
+        current-language="[[ appCache.currentLanguage ]]">
       </dorel-footer>
     </template>
 
@@ -390,6 +398,9 @@
       },
 
       _setAppCache: function (event) {
+        if(!this.get('appCache')) {
+          this._setInitialAppCache();
+        }
         var data = event.detail;
         var path = data.path;
         var value = data.value;
@@ -398,8 +409,10 @@
         }
       },
 
-      ready: function () {
-
+      _setInitialAppCache: function() {
+        if(this.get('appCache')) {
+          return
+        }
         var appCache = {
           wpUrl: CONFIG.CMS_URL, // DONE
           dioApiUrl: CONFIG.DIO_API_URL, // marnix
@@ -429,6 +442,10 @@
         };
 
         this.set('appCache', appCache);
+      },
+
+      ready: function () {
+        this._setInitialAppCache();
       },
 
       /**
@@ -527,11 +544,6 @@
 
       shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
-      },
-
-      shouldOpenMobileMenu: function(mobileMenuOpened, breakPoints) {
-        debugger;
-        return Boolean(mobileMenuOpened, breakPoints);
       }
 
     });

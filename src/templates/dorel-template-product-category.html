@@ -174,7 +174,16 @@
 
       },
 
-      behaviors: [TemplateBehaviors]
+      behaviors: [TemplateBehaviors],
+
+      listeners: {
+        'newProducts' : '_setProducts'
+      },
+
+      _setProducts: function(event) {
+        this.set('products', event.detail.products);
+        this.set('retrievingProducts', false);
+      },
     });
   </script>
 </dom-module>

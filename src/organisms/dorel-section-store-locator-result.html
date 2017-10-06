@@ -29,7 +29,7 @@
       <template
         is="dom-if"
         if="[[ !store.address ]]">
-        <p class="location-content">No Address Available</p>
+        <p class="location-content">{{ localize('No_Address_Available') }}</p>
       </template>
       <template is="dom-if"
                 if="[[ store.address ]]">
@@ -51,7 +51,7 @@
                      gtm-parent-index="[[ gtmParentIndex ]]"
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
-                     gtm-cta-index="0">Plan route</dorel-cta>
+                     gtm-cta-index="0">{{ localize('Plan_route') }}</dorel-cta>
         </template>
         <template
           is="dom-if"
@@ -83,7 +83,7 @@
                      gtm-parent-index="[[ gtmParentIndex ]]"
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
-                     gtm-cta-index="2">Visit website</dorel-cta>
+                     gtm-cta-index="2">{{ localize('Visit_website') }}</dorel-cta>
         </template>
       </template>
     </div>
@@ -92,6 +92,11 @@
   <script>
     Polymer({
       is: 'dorel-section-store-locator-result',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
+
       properties: {
 
         /**

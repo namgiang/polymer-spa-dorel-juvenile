@@ -2,7 +2,7 @@
   <template>
     <iron-ajax
       id="categories"
-      url="" 
+      url=""
       handle-as="json"
       on-response="_categoriesLoaded"></iron-ajax>
   </template>
@@ -10,7 +10,7 @@
   <script>
     Polymer({
       is: 'dorel-wp-collect-categories',
-      
+
       properties: {
 
         /**
@@ -47,7 +47,7 @@
 
 
         var categoriesEl = this.$.categories;
-        categoriesEl.url = wpUrl + '/wp/v2/categories';
+        categoriesEl.url = wpUrl + 'wp-json/wp/v2/categories';
 
          // do the products call
         categoriesEl.generateRequest();
@@ -56,7 +56,7 @@
       /**
        * @helper
        * @name _categoriesLoaded
-       * @description handle of the iron-ajax response and set the 
+       * @description handle of the iron-ajax response and set the
        */
       _categoriesLoaded: function(data) {
         var categories = data.detail.response;
