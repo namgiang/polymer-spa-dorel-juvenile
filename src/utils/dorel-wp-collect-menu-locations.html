@@ -2,8 +2,8 @@
   <template>
     <iron-ajax
       auto
-      url="[[ endPoint ]]" 
-      handle-as="json" 
+      url="[[ endPoint ]]"
+      handle-as="json"
       on-response="_menuLoaded"></iron-ajax>
 
     <iron-ajax
@@ -18,7 +18,7 @@
   Polymer({
     is: 'dorel-wp-collect-menu-locations',
     properties: {
-      
+
       /**
        * `appCache` the application cache
        */
@@ -35,7 +35,7 @@
     },
 
     observers: [
-      '_initMenuLocations(appCache.wpUrl)'
+      '_initMenuLocations(appCache.wpUrl, appCache.currentLanguage)'
     ],
 
     /**
@@ -43,13 +43,13 @@
      * @name _initMenuLocations
      * @description when the wpUrl changes it sets the endPoint which will fire the iron-ajax
      */
-    _initMenuLocations: function(wpUrl) {
-      if (typeof wpUrl === 'undefined' || wpUrl === '') return;
+    _initMenuLocations: function(wpUrl, currentLanguage) {
+      if (typeof wpUrl === 'undefined' || wpUrl === '' || !currentLanguage) return;
 
-      this.endPoint = wpUrl + '/wp-api-menus/v2/menu-locations';
+      this.endPoint = wpUrl + currentLanguage.path + '/wp-json/wp-api-menus/v2/menu-locations';
     },
 
-    /** 
+    /**
      * @name _menuLoaded
      * @description process the retrieved menu locations
      */
@@ -62,7 +62,7 @@
           var wpUrl = this.get('appCache.wpUrl');
 
           // for every key retrieve its menuItems
-          this.$.menuItems.url = wpUrl + '/wp-api-menus/v2/menu-locations/' + key;
+          this.$.menuItems.url = wpUrl + 'wp-json/wp-api-menus/v2/menu-locations/' + key;
 
           // kicks off the request, when response is given _menuItemsLoaded is fired
           this.$.menuItems.generateRequest();
@@ -73,7 +73,7 @@
       this.fire('setAppCache', { value: response, path: 'collect.menus' });
     },
 
-    /** 
+    /**
      * @name _menuItemsLoaded
      * @description This function handles the generateRequest
      * of the menu items per menu location.
@@ -89,7 +89,7 @@
       for (var i = 0, len = response.length; i < len; i++) {
         response[i].title = response[i].title.toLowerCase();
       }
-      
+
       // place the menu items in the right key inside the collect
       this.fire('setAppCache', { value: {}, path: 'collect.menus.' + menuLocation });
       this.fire('setAppCache', { value: response, path: 'collect.menus.' + menuLocation + '.items' });

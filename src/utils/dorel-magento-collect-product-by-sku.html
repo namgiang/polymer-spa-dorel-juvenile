@@ -67,7 +67,7 @@
       },
 
       observers: [
-        '_init(productName)'
+        '_init(productName, appCache.currentLanguage)'
       ],
 
       /**
@@ -78,9 +78,9 @@
        * @param token - String
        * @param colorMap - Array
        */
-      _init: function(productName) {
+      _init: function(productName, currentLanguage) {
         // if category or productName is empty we can't make the call return
-        if(!productName) {
+        if(!productName || !currentLanguage) {
           return;
         }
 
@@ -110,7 +110,8 @@
        */
       _getProduct: function(productName) {
         var productsEl = this.$.product;
-        productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/product/' + productName;
+        var currentLanguageCode = this.get('appCache.currentLanguage.languageCode');
+        productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/product/' + productName + '?language=' + currentLanguageCode;
         productsEl.generateRequest();
       },
 

@@ -1,6 +1,7 @@
 <link rel="import" href="../molecules/dorel-product-feature.html">
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
+<link rel="import" href="../utils/behaviors/single/dorel-multilingual-behavior.html">
 
 <dom-module id="dorel-section-product-features">
   <template>
@@ -111,7 +112,7 @@
                            size="medium"
                            class="expand-collapse"
                            icon="dorel-icons:expand-more">
-                  Show all features
+                  {{ localize('Show_all_features') }}
                 </dorel-cta>
               </template>
               <template is="dom-if" if="[[ expanded ]]">
@@ -122,7 +123,7 @@
                            size="medium"
                            class="expand-collapse"
                            icon="dorel-icons:expand-less">
-                  Show less features
+                  {{ localize('Show_less_features') }}
                 </dorel-cta>
               </template>
             </template>
@@ -142,6 +143,11 @@
   <script>
     Polymer({
       is: 'dorel-section-product-features',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
+
       properties: {
 
         productId: {
