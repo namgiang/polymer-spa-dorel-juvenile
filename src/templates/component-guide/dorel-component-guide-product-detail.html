@@ -2,10 +2,12 @@
 <link rel="import" href="../../organisms/dorel-section-product-usps.html">
 <link rel="import" href="../../organisms/dorel-section-product-accessories.html">
 <link rel="import" href="../../organisms/dorel-section-product-features.html">
+<link rel="import" href="../../organisms/dorel-section-product-showcase.html">
 
 <script src="mocks/product-detail/usps.js"></script>
 <script src="mocks/product-detail/features.js"></script>
 <script src="mocks/product-detail/accessories.js"></script>
+<script src="mocks/product-detail/product-showcase.js"></script>
 
 <dom-module id="dorel-component-guide-product-detail">
   <template>
@@ -21,11 +23,18 @@
         The following section documents components used on the product detail page
       </p>
       <hr>
+      <h2 class="class-for-h2">Product Showcase</h2>
+    </dorel-layout-container>
+
+    <dorel-section-product-showcase app-cache="[[ appCache ]]"
+                                    showcase-data="[[ productShowcaseData ]]"></dorel-section-product-showcase>
+
+    <dorel-layout-container>
       <h2 class="class-for-h2">Product Features</h2>
       <p>With a centered layout, and expand/collapse on mobile</p>
     </dorel-layout-container>
 
-    <dorel-section-product-features features-data="[[ featuresData]]"></dorel-section-product-features>
+    <dorel-section-product-features features-data="[[ featuresData ]]"></dorel-section-product-features>
 
     <dorel-layout-container>
       <hr>
@@ -48,6 +57,12 @@
     Polymer({
       is: 'dorel-component-guide-product-detail',
       properties: {
+        appCache: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
         brand: {
           type: String
         },
@@ -66,6 +81,10 @@
         relatedProducts: {
           type: Array,
           value: relatedProductsMock
+        },
+        productShowcaseData: {
+          type: Object,
+          value: productShowcaseDataMock
         }
       }
     });
