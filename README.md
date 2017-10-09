@@ -1,7 +1,5 @@
 # Polymer SPA - Dorel Juvenile
 
-[![Build Status](https://travis-ci.org/PolymerElements/polymer-starter-kit.svg?branch=master)](https://travis-ci.org/PolymerElements/polymer-starter-kit)
-
 This template is a starting point for all Dorel Juvenile's branded websites. Together with a Wordpress container the Polymer SPA stands at the core of what is needed to run a white label for Dorel.
 
 ### Setup
