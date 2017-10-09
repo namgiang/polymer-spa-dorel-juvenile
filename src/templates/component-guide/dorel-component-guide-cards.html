@@ -1,0 +1,60 @@
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+<script src="mocks/cards/cards.js"></script>
+
+<dom-module id="dorel-component-guide-cards">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      dorel-card {
+        width: 100%;
+        max-width: 20em;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div class="content-container">
+        <h1 class="class-for-h1">Card Sections</h1>
+        <p>Cards can be displayed in sections using the <i>dorel-section-cards</i> component.
+          Two variations exist, one which spans two columns and another which spans three columns. An additional title and description can be added as well.</p>
+      </div>
+      <dorel-section-cards cards-data="[[ cardsData ]]"></dorel-section-cards>
+      <dorel-section-cards cards-data="[[ cardsDataCompact ]]" compact="true"></dorel-section-cards>
+      <dorel-section-cards cards-data="[[ cardsDataNoImage ]]"></dorel-section-cards>
+      <dorel-section-cards cards-data="[[ cardsDataCTA ]]" cta-type="secondary"></dorel-section-cards>
+      <dorel-section-cards cards-data="[[ cardsDataLinkLists ]]"></dorel-section-cards>
+    </section>
+
+  </template>
+
+  <hr>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-cards',
+      properties: {
+        cardsData: {
+          type: Object,
+          value: cardsMock
+        },
+        cardsDataCompact: {
+          type: Object,
+          value: cardsMockCompact
+        },
+        cardsDataNoImage: {
+          type: Object,
+          value: cardsMockNoImage
+        },
+        cardsDataCTA: {
+          type: Object,
+          value: cardsMockCTA
+        },
+        cardsDataLinkLists: {
+          type: Object,
+          value: cardsMockLinkLists
+        },
+      }
+    });
+  </script>
+</dom-module>

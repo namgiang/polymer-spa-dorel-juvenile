@@ -1,0 +1,115 @@
+<link rel="import" href="dorel-country-collect.html">
+
+<dom-module id="dorel-multilingual-manager">
+  <template>
+
+    <dorel-country-collect
+      continents-data="{{ continentsData }}">
+    </dorel-country-collect>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-manager',
+
+      properties: {
+
+        /**
+         * @name continentsData
+         * @description will contain data that includes domain countries and languages
+         */
+        continentsData: {
+          type: Array,
+          notify: true
+        },
+
+        /**
+         * @name currentLanguage
+         * @description current state (language and country) of the application
+         * TODO: Need be connected to the route in the mutlilingual epic
+         */
+        currentLanguage: {
+          type: Object,
+          value: {}
+        },
+
+
+        route: {
+          type: Object
+        }
+
+      },
+
+      observers: [
+        'routeChanged(route)',
+        'setCurrent(continentsData)'
+      ],
+
+      routeChanged: function(route) {
+        var urlSegments = route.path.split('/').filter(function(segment) {
+          return segment && segment !== '';
+        });
+
+        var firstUrlSegment;
+
+        if(!urlSegments || !urlSegments.length || urlSegments[0].length !== 5) {
+          firstUrlSegment = CONFIG.LOCALE.CODE;
+        } else {
+          firstUrlSegment = urlSegments && urlSegments.length ? urlSegments[0] : CONFIG.LOCALE.CODE;
+        }
+
+        var country = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[0] : CONFIG.LOCALE.LANGUAGE;
+        var language = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[1] : CONFIG.LOCALE.COUNTRY_CODE;
+
+        if(this._isCountryOrLanguageChanged(country, language)) {
+            this.fire('setAppCache', { path: 'currentLanguage' , value: {
+              countryCode: country,
+              languageCode: language,
+              path: firstUrlSegment
+            } });
+        }
+      },
+
+      _isCountryOrLanguageChanged: function(country, language) {
+        var currentLanguage = this.get('currentLanguage');
+        return !Boolean(currentLanguage && currentLanguage.languageCode === language && currentLanguage.countryCode === country);
+      },
+
+      setCurrent: function(continentsData) {
+        if(!continentsData || !continentsData.length) {
+          return;
+        }
+        var currentLanguage = this.get('currentLanguage');
+        var continent = this.continentsData.find(function(continent) {
+          return continent.countries.some(function(country) {
+            return country.iso === currentLanguage.countryCode;
+          });
+        });
+        if(!continent) {
+          return;
+        }
+        var country = continent.countries.find(function(country) {
+          return country.iso === currentLanguage.countryCode;
+        });
+        if(!country) {
+          return;
+        }
+        var language = country.languages.find(function(language) {
+          return language.iso_code === currentLanguage.languageCode;
+        });
+        if(!language) {
+          return;
+        }
+        var extendedCurrentLanguage = Object.assign(currentLanguage, {
+          country: country,
+          language: language
+        });
+
+        this.fire('setAppCache', { path: 'currentLanguage' , value: extendedCurrentLanguage });
+      },
+
+
+    });
+  </script>
+</dom-module>

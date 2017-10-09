@@ -13,33 +13,51 @@
           type: String
         },
 
+        currentPage: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
+
+        route: {
+          type: Object
+        }
+
       },
 
-      /**
-       * @name listeners
-       * @description listens to all different fires
-       */
-      listeners: {
-        'addMetaData': '_addMetaData'
-      },
+      observers: [
+        '_setPageMetaData(currentPage, appCache.currentLanguage, route)',
+        '_productMetaData(appCache.current.product)'
+      ],
 
+      _setPageMetaData: function(currentPage, currentLanguage, route) {
+        if (!currentPage || !currentPage.acf) {
+          return;
+        }
+        this.addMetaData(currentPage.acf, currentLanguage)
+      },
       /**
        * @name addMetaData
        * @description adds the right seo meta data
        */
-      addMetaData: function (metaData) {
-        if (typeof metaData === 'undefined') return;
+      addMetaData: function(metaData, currentLanguage) {
 
-        // add the page's title
-        if (typeof metaData.metaTitle !== 'undefined') {
-          document.title = this._defineMetaTitle(metaData.metaTitle);
-        }
+
+        document.title = this._defineMetaTitle(metaData.meta_title || '');
 
         // add the page's description
-        if (typeof metaData.metaDescription !== 'undefined') {
+        if (typeof metaData.meta_description !== 'undefined' && metaData.meta_title.length) {
           var metaDesc = document.createElement('meta');
           metaDesc.name = 'description';
-          metaDesc.content = metaData.metaDescription;
+          metaDesc.content = metaData.meta_description;
           document.getElementsByTagName('head')[0].appendChild(metaDesc);
         }
 
@@ -48,12 +66,12 @@
 
           // add the meta http-equiv language
           if (typeof CONFIG.LOCALE.LANGUAGE !== 'undefined') {
-            this._addMetaEquiv('language', CONFIG.LOCALE.LANGUAGE);
+            this._addMetaEquiv('language', currentLanguage.languageCode || CONFIG.LOCALE.LANGUAGE);
           }
 
           // add the meta http-equiv country
           if (typeof CONFIG.LOCALE.COUNTRY !== 'undefined') {
-            this._addMetaEquiv('country', CONFIG.LOCALE.COUNTRY);
+            this._addMetaEquiv('country', currentLanguage.countryCode || CONFIG.LOCALE.COUNTRY);
           }
 
           // add the meta http-equiv content-language
@@ -79,10 +97,15 @@
        * @param String | null
        */
       _defineMetaTitle: function (titleSuffix) {
-        var configBrand = this.brandName || '';
+        var configBrand = this.brandName;
+
 
         // replace every dash with a space
         var titlePrefix = configBrand.replace(/-/g, ' ');
+
+        if(!titleSuffix.length) {
+            return titlePrefix;
+        }
 
         // capitalize every new word
         titlePrefix = titlePrefix.replace(/\b\w/g, function (l) {
@@ -117,6 +140,19 @@
 
         // add the meta tag to the head
         document.getElementsByTagName('head')[0].appendChild(meta);
+      },
+
+      _productMetaData: function(product) {
+        //inital current.product is not set so it will return
+        if(!product) {
+          return;
+        }
+        // if product.meta_data exists use title or description else 404
+        var metaData = {
+          meta_title: product.meta_data ? product.meta_data.meta_title : '404',
+          meta_description: product.meta_data ? product.meta_data.meta_description : '404 - The page does not exist'
+        };
+        this.addMetaData(metaData);
       }
 
     });

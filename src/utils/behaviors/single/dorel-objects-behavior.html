@@ -1,0 +1,40 @@
+<script>
+  /** 
+   * @name ObjectsBehavior
+   * @description all object conditional checking
+   */
+  ObjectsBehavior = {
+
+    /** 
+     * @name _hasProperties
+     * @description check if an Object has properties
+     *
+     * @param Object
+     *
+     * @returns Boolean
+     */
+    _hasProperties: function(obj) {
+      var hasProp = false;
+
+      for(var prop in obj) {
+        var hasProp = (obj.hasOwnProperty(prop));
+      }
+
+      return hasProp;
+    },
+
+    /**
+     * @name _toggleObject
+     * @description checks a toggle value and a object to see if the toggle
+     * is true and the Object has properties
+     *
+     * @param Boolean
+     * @param Object
+     *
+     * @returns Boolean
+     */
+    _toggleObject: function(toggle, object) {
+      return Boolean(toggle && this._hasProperties(object));
+    }
+  };
+</script>

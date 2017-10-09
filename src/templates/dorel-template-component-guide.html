@@ -1,145 +1,60 @@
-<link rel="import" href="component-guide/dorel-component-guide-buttons.html">
-<link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="component-guide/dorel-component-guide-forms.html">
-<link rel="import" href="component-guide/dorel-component-guide-introduction.html">
-<link rel="import" href="component-guide/dorel-component-guide-layout.html">
-<link rel="import" href="component-guide/dorel-component-guide-typography.html">
-<link rel="import" href="component-guide/dorel-component-guide-colors.html">
-<link rel="import" href="component-guide/dorel-component-guide-home.html">
-<link rel="import" href="component-guide/dorel-component-guide-product-widgets.html">
-<link rel="import" href="component-guide/dorel-component-guide-breakpoints.html">
 <link rel="import" href="component-guide/dorel-component-toolbar.html">
-
+<link rel="import" href="../molecules/dorel-nav-tabs.html">
+<link rel="import" href="component-guide/pages/dorel-component-guide-overview.html">
+<link rel="import" href="component-guide/pages/dorel-component-guide-basic.html">
+<link rel="import" href="component-guide/pages/dorel-component-guide-complex.html">
 
 <dom-module id="dorel-template-component-guide">
   <template>
-    <style is="custom-style">
-
-      paper-item:after, paper-item:before {
-        background-color: var(--theme-color-white) !important;
-      }
-
-      paper-item:hover {
-        color: var(--theme-brand-color);
-      }
-
-      paper-item {
-        @apply(--theme-typography-2);
-        float: left;
-        width: auto;
-        cursor: pointer;
-        padding: 0 1em;
-        margin-top: 0;
-        margin-bottom: -1px;
-        border-bottom: 1px solid var(--theme-color-monochrome-2);
-        box-sizing: border-box;
-        transition: color .3s ease, border-bottom .3s ease;
-
-        --paper-item-selected: {
-          background: transparent;
-          font-weight: normal;
-          border-bottom: 1px solid var(--theme-brand-color-1);
-          font-weight: normal !important;
-          color: var(--theme-brand-color-1);
-        };
-      }
-
+    <style>
       paper-menu {
-        background-color: transparent;
-        padding: 0;
-        border-bottom: 1px solid var(--theme-color-monochrome-2);
-        width: 100%;
-        box-sizing: border-box;
-        float: left;
-      }
-
-      .component-guide-container {
-        @apply(--max-width-host);
-      }
-
-      .component-guide {
-        @apply(--max-width-container);
-        padding: 0 var(--theme-gutter);
-        position: relative;
-        float: left;
-        width: 100%;
-        box-sizing: border-box;
-        background-color: var(--theme-color-white);
-      }
-
-      .component-guide__navigation, .component-guide__content {
-        display: inline-block;
-        float: left;
-        box-sizing: border-box;
-      }
-
-      .component-guide__navigation {
-        float: left;
-        width: 100%;
-        background-color: transparent;
-      }
-
-      .component-guide__content {
-        min-height: calc(100vh - 112px);
-        padding: 1.5em 0 3em 0;
-        width: 100%;
+        min-height: 3em;
       }
     </style>
 
-    <!-- define routing for products -->
     <app-route
       route="{{ route }}"
-      pattern="/:componentName"
-      data="{{ routeData }}"
-      tail="{{ subroute }}"></app-route>
-    <dorel-component-toolbar brand="{{ brand }}"
-                             available-brands="{{ availableBrands }}">
-    </dorel-component-toolbar>
-    <div class="component-guide-container">
-      <div class="component-guide">
-        <div class="component-guide__navigation">
-          <paper-menu selected="{{ routeData.componentName }}"
-                      attr-for-selected='name'>
-            <paper-item name="introduction">Introduction</paper-item>
-            <paper-item name="typography">Typography</paper-item>
-            <paper-item name="layout-sizes">Layout & Sizes</paper-item>
-            <paper-item name="colors">Colors</paper-item>
-            <paper-item name="buttons">Buttons</paper-item>
-            <paper-item name="forms">Forms</paper-item>
-            <paper-item name="home">Home</paper-item>
-            <paper-item name="product-widgets">Product Widgets</paper-item>
-            <paper-item name="breakpoints">Breakpoints</paper-item>
-          </paper-menu>
-        </div>
-        <iron-pages class="component-guide__content"
-                    selected="{{ routeData.componentName }}"
-                    fallback-selection="introduction"
-                    attr-for-selected="name">
-          <dorel-component-guide-introduction brand="{{ brand }}"
-                                              name="introduction"></dorel-component-guide-introduction>
-          <dorel-component-guide-typography name="typography"></dorel-component-guide-typography>
-          <dorel-component-guide-layout name="layout-sizes"></dorel-component-guide-layout>
-          <dorel-component-guide-colors name="colors"></dorel-component-guide-colors>
-          <dorel-component-guide-buttons name="buttons"></dorel-component-guide-buttons>
-          <dorel-component-guide-forms name="forms"></dorel-component-guide-forms>
-          <dorel-component-guide-home name="home"></dorel-component-guide-home>
-          <dorel-component-guide-product-widgets name="product-widgets"></dorel-component-guide-product-widgets>
-          <dorel-component-guide-breakpoints name="breakpoints"></dorel-component-guide-breakpoints>
-        </iron-pages>
-      </div>
-    </div>
+      pattern="/:pageName"
+      tail="{{ subroute }}"
+      data="{{ subrouteData }}"></app-route>
+
+    <!-- Only show toolbar when subpages are shown -->
+    <template is="dom-if" if="[[ subrouteData.pageName ]]">
+      <dorel-component-toolbar app-cache="[[ appCache ]]"
+                               brand="{{ brand }}"
+                               available-brands="{{ availableBrands }}">
+      </dorel-component-toolbar>
+    </template>
+
+    <!-- Only show overview when no subpages are shown -->
+    <template is="dom-if" if="[[ !subrouteData.pageName ]]">
+      <dorel-component-guide-overview available-brands="[[ availableBrands ]]"></dorel-component-guide-overview>
+    </template>
+
+    <iron-pages selected="[[ subrouteData.pageName ]]"
+                attr-for-selected="page">
+      <dorel-component-guide-basic route="{{ subroute }}" brand="{{ brand }}"
+                                   page="basic"></dorel-component-guide-basic>
+      <dorel-component-guide-complex route="{{ subroute }}" page="complex"></dorel-component-guide-complex>
+    </iron-pages>
   </template>
 
   <script>
     Polymer({
       is: 'dorel-template-component-guide',
       properties: {
+        appCache: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
         /**
          * @name brand
          * @description defines the brand
          */
         brand: {
-          type: String,
+          type: Object,
           notify: true,
           readOnly: false
         },
@@ -151,7 +66,7 @@
           type: Array,
           value: []
         }
-      },
+      }
     });
   </script>
 </dom-module>

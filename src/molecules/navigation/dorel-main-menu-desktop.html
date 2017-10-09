@@ -1,0 +1,134 @@
+<link rel="import" href="../../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../../utils/behaviors/bundled/dorel-main-menu-behaviors.html">
+
+<link rel="import" href="dorel-main-menu-item.html">
+
+<dom-module id="dorel-main-menu-desktop">
+  <template>
+    <style>
+      :root {
+        font-family: var(--theme-font);
+      }
+
+      :host {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        justify-content: center;
+      }
+
+      .main-menu {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        justify-content: center;
+      }
+
+      .main-menu__item {
+        margin-left: 1.5rem;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+      }
+    </style>
+
+    <ul class="main-menu" id="mainmenu">
+      <template is="dom-repeat" items="[[ menuItems ]]" as="mainMenuItem" index-as="index">
+        <li class="main-menu__item" dropdown-opened$="[[ mainMenuItem.dropdown ]]">
+          <dorel-main-menu-item
+            main-item="[[ mainMenuItem ]]"
+            is-dropdown="[[ mainMenuItem.dropdown ]]"
+            opened="[[ mainMenuItem.opened ]]"
+            route="[[ route ]]"
+            is-active="[[ checkIfActive(mainMenuItem.link, route) ]]"
+            index="[[ index ]]">
+          </dorel-main-menu-item>
+        </li>
+      </template>
+    </ul>
+
+  </template>
+  <script>
+
+    Polymer({
+      is: 'dorel-main-menu-desktop',
+      properties: {
+
+        /**
+         * @name menuItems
+         * @description Array of menu items (Objects) that are used in the template repeat
+         */
+        menuItems: {
+          type: Array,
+          value: function () {
+            return [];
+          }
+        },
+
+      },
+
+      behaviors: [MainMenuBehavior],
+
+      observers: [
+        'routeChanged(route)'
+      ],
+
+      listeners: {
+        'toggleDropdown': '_toggleDropdown'
+      },
+
+      _toggleDropdown: function (event) {
+        var indexItem = event.detail.value;
+
+        var currentValue = this.get('menuItems.' + indexItem + '.opened');
+        if (!currentValue) {
+          this._closePreviousDropdown();
+        }
+        this.set('menuItems.' + indexItem + '.opened', !currentValue);
+        this.windowOnScrollListen();
+        this.clickOutsideListen();
+      },
+
+      _closePreviousDropdown: function () {
+        var menuItems = this.get('menuItems');
+        if(typeof menuItems === 'undefined' || !menuItems.length) return;
+
+        var previousDropdownIndex = menuItems.findIndex(function (item) {
+          return item.opened === true;
+        });
+        if (typeof previousDropdownIndex === 'undefined' || previousDropdownIndex < 0) {
+          return;
+        }
+        this.removeOpenedDropdown(previousDropdownIndex);
+      },
+
+      routeChanged: function (route) {
+        if (route) {
+          this._closePreviousDropdown();
+        }
+      },
+
+      removeOpenedDropdown: function (indexItem) {
+        this.set('menuItems.' + indexItem + '.opened', false);
+      },
+
+      onClickOutside: function () {
+        this._closePreviousDropdown();
+      },
+
+      onWindowScrolled: function () {
+        this._closePreviousDropdown();
+      },
+
+    });
+
+  </script>
+</dom-module>

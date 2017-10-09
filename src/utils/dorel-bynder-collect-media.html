@@ -1,0 +1,154 @@
+<script src="../../bower_components/oauth-signature/dist/oauth-signature.js"></script>
+<dom-module id="dorel-bynder-collect-media">
+  <template>
+    <iron-ajax
+      id="collect"
+      content-type="application/json"
+      method="get"
+      handle-as="json"
+      on-error="_mediaError"
+      on-response="_mediaResponse"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-bynder-collect-media',
+      properties: {
+        /**
+         * @name mediaId
+         * @description The Bynder media ID used to retrieve assets
+         */
+        mediaId: {
+          type: String,
+          value: '',
+          observer: '_onMediaIdChange'
+        },
+        /**
+         * @name mediaContent
+         * @description the content retrieved using from Bynder
+         */
+        mediaContent: {
+          type: Object,
+          notify: true,
+        }
+      },
+      /**
+       * @name _getRandomSequence
+       * @description Generates a random sequence of characters based on a given length
+       */
+      _getRandomSequence: function (length) {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < length; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        return text;
+      },
+      /**
+       * @name _getTimestamp
+       * @description Generates a timestamp
+       */
+      _getTimestamp: function () {
+        return Math.floor((new Date()).getTime() / 1000);
+      },
+      /**
+       * @name _getSignature
+       * @description Generates an OAuth1 signature
+       */
+      _getSignature: function (httpMethod, url, parameters, consumerSecret, tokenSecret) {
+        // generates a RFC 3986 encoded, BASE64 encoded HMAC-SHA1 hash
+        var rfcEncodedSignature = oauthSignature.generate(httpMethod, url, parameters, consumerSecret, tokenSecret);
+        return rfcEncodedSignature;
+      },
+      /**
+       * @name _oauthParametersToString
+       * @description Given a dictionary of parameters and an OAuth1 signature, this will reformat into a header string
+       */
+      _oauthParametersToString: function (parameters, signature) {
+        var authString = 'OAuth ';
+        parameters['oauth_signature'] = signature;
+
+        for (var item in parameters) {
+          var key = item;
+          var value = parameters[item];
+          authString += key + '="' + value + '",';
+        }
+
+        return authString;
+      },
+      /**
+       * @name _onMediaIdChange
+       * @description Requests a Bynder asset
+       */
+      _onMediaIdChange: function () {
+        if (this.mediaId && typeof this.mediaId !== 'undefined' && this.mediaId.length > 0) {
+          this._retrieveMedia();
+        }
+        else {
+          this.mediaContent = {};
+        }
+      },
+      /**
+       * @name _retrieveMedia
+       * @description Requests a Bynder asset
+       */
+      _retrieveMedia: function () {
+
+        // Initialise all of the variables needed for the request
+        var consumerKey = CONFIG.BYNDER_CONSUMER_KEY;
+        var consumerSecret = CONFIG.BYNDER_CONSUMER_KEY_SECRET;
+        var tokenKey = CONFIG.BYNDER_TOKEN_KEY;
+        var tokenKeySecret = CONFIG.BYNDER_TOKEN_KEY_SECRET;
+        var requestUrl = [CONFIG.BYNDER_API_URL, 'media', this.mediaId, '?versions=1'].join('/');
+        var httpMethod = 'GET';
+        var nonce = this._getRandomSequence(11);
+        var timestamp = this._getTimestamp();
+
+        // Set the header parameters, needed for the request and as input for generating the signature
+        var parameters = {
+          oauth_consumer_key: consumerKey,
+          oauth_token: tokenKey,
+          oauth_nonce: nonce,
+          oauth_timestamp: timestamp,
+          oauth_signature_method: "HMAC-SHA1",
+          oauth_version: "1.0",
+          versions: "1"
+        };
+
+        // Create the OAuth signature
+        var oauth_signature = this._getSignature(httpMethod, requestUrl, parameters, consumerSecret, tokenKeySecret);
+        //Generate the header string
+        var authString = this._oauthParametersToString(parameters, oauth_signature);
+
+        var params = {
+          'Authorization': authString,
+          'Accept': "*/*",
+        };
+
+        // Set the iron-ajax parameters and request data
+        var collect = this.$.collect;
+        collect.headers = params;
+        collect.url = requestUrl;
+        collect.generateRequest();
+      },
+      /**
+       * @name _mediaError
+       * @description Handles Bynder error responses
+       */
+      _mediaError: function (response) {
+        console.log('Error retrieving Bynder media:');
+        console.log(response);
+      },
+      /**
+       * @name _mediaResponse
+       * @description Handles Bynder responses
+       */
+      _mediaResponse: function (response) {
+        this.mediaContent = response.detail.response;
+      }
+    });
+  </script>
+
+</dom-module>

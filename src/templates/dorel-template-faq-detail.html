@@ -1,0 +1,281 @@
+<link rel="import" href="../organisms/dorel-section-service-faq-detail.html">
+
+<dom-module id="dorel-template-faq-detail">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+        margin-top: 1.5em;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+      dorel-section-page-nav {
+        width: 100%;
+      }
+      dorel-section-service-faq-detail {
+        margin: 1.5em 0;
+      }
+
+       dorel-section-service-support {
+         margin: 1.5em 0;
+       }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: left;
+        flex: 0 0 100%;
+      }
+
+      .container-faq, .container-promo-contact {
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-section-service-faq-promo {
+        float: left;
+        margin: 1.5em 0;
+        width: 100%;
+      }
+
+      [tablet-medium-up] dorel-section-service-faq-detail {
+        margin: 3em 0 1.5em 0;
+      }
+
+      [desktop-small-up] .container-faq {
+        width: 66.6666666%;
+      }
+
+      [desktop-small-up] .container-promo-contact {
+        width: calc(100% - 66.6666666%);
+      }
+
+      [desktop-small-up] dorel-section-service-faq-promo {
+        margin-top: 3em;
+      }
+
+      [tablet-medium-up] .container-faq, [tablet-medium-up] .container-promo-contact {
+        @apply(--theme-grid-column);
+      }
+
+      [tablet-medium-up] {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+      [tablet-medium-up] .container-faq {
+        box-sizing: border-box;
+        padding-right: 3em;
+      }
+
+      .breadcrumb-wrapper {
+        float: left;
+        width: 100%;
+        height: 4.5em;
+      }
+    </style>
+
+    <!-- retrieving the faq detail if we haven't retrieved it yet -->
+    <dorel-gmt-collect-faqs
+      app-cache="[[ appCache ]]"
+      endpoint-segments="[[ gmtEndpointSegment ]]"></dorel-gmt-collect-faqs>
+
+    <app-route
+      route="{{ route }}"
+      pattern="/:faqCategory"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+
+      <div class="row">
+
+        <!-- page-nav -->
+        <dorel-section-page-nav
+          breadcrumbs-toggle="true"></dorel-section-page-nav>
+        <!--// page-nav -->
+        
+        <div class="container-faq">
+          <!-- title & description -->
+          <h2 class="title">[[ templateData.acf.title ]]</h2>
+          <dorel-safe-html html="[[ templateData.acf.description ]]"></dorel-safe-html>
+          <!--// title & description -->
+
+          <dorel-section-service-faq-detail
+            faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
+        </div>
+
+        <div class="container-promo-contact">
+
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[faqPromo.promo_toggle]]">
+            <dorel-section-service-faq-promo
+              template-data="[[faqPromo]]"></dorel-section-service-faq-promo>
+          </template>
+
+          <!-- customer support -->
+          <template
+            is="dom-if"
+            if="[[ templateData.acf.customer_support_toggle ]]">
+            <dorel-customer-support
+                  compact="true"
+                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
+          </template>
+          <!--// customer support -->
+
+        </div>
+      </div>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-template-faq-detail',
+
+      properties: {
+
+        /**
+         * @name routeData
+         * @description the route data contains the faq category slug
+         * that is after faq in the url ([domain]/faq/:category-slug).
+         * This is used to check if the application retrieved this category
+         * already in the cache, otherwise it will retrieve the information
+         */
+        routeData: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineOptionModels'
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name faqPromo
+         * @description faqPromo contains the information for the promo section
+         * that is part of the right sidebar when enabled in WP
+         */
+        faqPromo: Object,
+
+        /**
+         * @name faqDetail
+         * @description faqDetail contains the information for the faq detail
+         * component to show its sub categories and all questions/answers
+         */
+        faqDetail: Object,
+
+        /**
+         * @name customerSupportOptions
+         * @description all customer support settings extracted from collect.options
+         */
+        customerSupportOptions: Object
+      },
+
+      behaviors: [TemplateBehaviors],
+
+      observers: [
+        '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
+      ],
+
+      /**
+       * @observer
+       * @name _faqCategorySlugChanged
+       * @description when the routeData changes it contains the faqCategorySlug,
+       * the application checks if it can find it in cache. If it finds a match in cache
+       * the matched category will be shown, otherwise it will be retrieved by the gmt collect
+       *
+       * @param newSlug - string - the category slug
+       */
+      _setFaqDetail: function(faqGlobals, routeData, categoryId) {
+        if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
+        
+        var categoryId = Number(categoryId);
+        var inCache = this._findInCache(categoryId);
+
+        if (typeof inCache === 'undefined' || !inCache) {
+          // initiate a new gmt collect
+          this._setEndpointSegments(categoryId);
+        } else {
+          // set the faqDetail retrieved from the cache
+          this.set('faqDetail', inCache);
+        }
+
+      },
+
+      /**
+       * @helper
+       * @name _findInCache
+       * @description find a provided detail slug in the cached faqs
+       */
+      _findInCache: function(detailCategory) {
+        var faqCache = this.get('appCache.faqs');
+        // if no length, return false (no match can be found either way)
+        if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
+
+        return faqCache.find(function(category) {
+          return category.id === detailCategory;
+        });
+      },
+
+      /**
+       * @helper
+       * @name _retrieveCategoryById
+       * @description set the endpoint-segments for the gmt-collect
+       */
+      _setEndpointSegments: function(catId) {
+        if(typeof catId === 'undefined') return;
+
+        this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
+      }
+    });
+
+  </script>
+
+</dom-module>

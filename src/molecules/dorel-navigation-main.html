@@ -40,21 +40,17 @@
         color: var(--theme-color-text-link-active);
       }
 
-      dorel-tab:not(:first-child) {
-        padding-left: 1rem;
-      }
-
       paper-submenu .menu-content {
         background-color: var(--theme-color-monochrome-2);
       }
 
       dorel-tabs, dorel-tab {
-        height: var(--theme-scale-3);
+        height: 1.5em;
       }
 
       /* new styling */
       dorel-tab {
-        padding: .5em var(--theme-scale-3);
+        padding: .75em 0 .75em 2em;
         text-transform: capitalize;
       }
 
@@ -81,59 +77,7 @@
     <!--
       Mobile menu
     -->
-    <app-drawer opened="{{ mobileMenuOpened }}" align="right" swipe-open tabindex="0">
-      <div class="menu-spacer-top"></div>
-      <template
-        is="dom-if"
-        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
-        <iron-selector role="navigation" class="drawer-list"
-                       selected="[[ page ]]"
-                       attr-for-selected="name">
-          <paper-menu>
-            <template
-              is="dom-repeat"
-              items="[[ globals.Dorel.collect.menus.main_menu.items ]]"
-              as="menuItem"
-              initial-count="4">
 
-              <!-- if not children -->
-              <template
-                is="dom-if"
-                if="[[ !menuItem.children.length ]]">
-                <a class="mobile-menu-item"
-                   href="[[ menuItem.url ]]"
-                   title="[[ menuItem.title ]]"
-                   on-click="_menuItemTap"
-                   gtm-parent="dorel-navigation-main"
-                   gtm-parent-index="[[ index ]]">
-                  <paper-item>[[ _unescapeHtml(menuItem.title) ]]</paper-item>
-                </a>
-              </template>
-
-              <!-- if has children (submenu) -->
-              <template
-                is="dom-if"
-                if="[[ menuItem.children.length ]]">
-
-                <!-- Important! Make sure to expose the
-                 - mobileMenuOpened
-                 - searchOpened
-                 - subMenuOpened
-                -->
-                <dorel-navigation-sub
-                  active-id="{{ activeId }}"
-                  menu-item="{{ menuItem }}"
-                  mobile-menu-opened="{{ mobileMenuOpened }}"
-                  search-opened="{{ searchOpened }}"
-                  sub-menu-opened="{{ subMenuOpened }}"
-                  gtm-parent="dorel-navigation-main"
-                  gtm-parent-index="[[ index ]]"></dorel-navigation-sub>
-              </template>
-            </template>
-          </paper-menu>
-        </iron-selector>
-      </template>
-    </app-drawer>
 
     <!--
       Desktop menu
@@ -143,7 +87,7 @@
       <!-- only show if menu contains items -->
       <template
         is="dom-if"
-        if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        if="[[ appCache.collect.menus.main_menu.items.length ]]">
         <nav
           role="navigation">
           <dorel-tabs
@@ -153,7 +97,7 @@
               <!-- loop through the menu items -->
               <template
                 is="dom-repeat"
-                items="[[ globals.Dorel.collect.menus.main_menu.items ]]"
+                items="[[ appCache.collect.menus.main_menu.items ]]"
                 as="menuItem">
 
                 <!-- if menu doesn't have children just show the menu item -->
@@ -207,6 +151,38 @@
 
       is: 'dorel-navigation-main',
       properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
+        /**
+         * @name currentLanguage
+         * @description Object containing the currently selected region and language
+         * TODO: This is temporarily filled with  dummy data, connect to API later
+         */
+        currentLanguage: {
+          type: Object,
+          value: function () {
+            return {
+              'country': 'Belgium',
+              'language': 'Dutch',
+              'countryCode': 'be'
+            }
+          }
+        },
+
+        /**
+         * @name continentsData
+         * @description Object containing the continents (and country, language data)
+         * TODO: This is temporarily filled with  dummy data, connect to API later
+         */
+        continentsData: {
+          type: Array,
+          value: []
+        },
 
         /**
          * @attribute
@@ -256,8 +232,7 @@
 
         var element = Polymer.dom(event).localTarget;
 
-        // send event data to tracking function
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'click',
           component: 'navigation',
           structure: {
@@ -270,7 +245,10 @@
             'currentPage': document.URL,
             'targetPage': element.href
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
+
       },
 
       /**

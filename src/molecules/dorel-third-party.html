@@ -2,9 +2,9 @@
   <template>
     <template
       is="dom-if"
-      if="{{ globals.Dorel.collect.options.zendesk_loaded }}">
+      if="[[ appCache.collect.options.zendesk_loaded ]]">
       <dorel-zendesk
-        zendesk-loaded="{{ globals.Dorel.collect.options.zendesk_loaded }}"></dorel-zendesk>
+        zendesk-loaded="[[ appCache.collect.options.zendesk_loaded ]]"></dorel-zendesk>
     </template>
   </template>
   <script>
@@ -12,27 +12,16 @@
       is: 'dorel-third-party',
 
       properties: {
-
-        /**
-         * @name hubspotToggle
-         * @description defines the toggle defined in the WP theme settings
-         * this is retrieved through the wp-collect-options and placed in
-         * the globals object
-         */
-        hubspotToggle: {
-          type: Boolean
+      //hubspot-toggle="[[ appCache.collect.options.hubspot_toggle ]]"
+      //hubspot-portal-id="[[ appCache.Dorel.collect.options.hubspot_portal_id ]]"
+      //zendesk-toggle="[[ globals.Dorel.collect.options.zendesk_toggle ]]"
+      //zendesk-host="[[ globals.Dorel.collect.options.zendesk_host ]]"
+        appCache: {
+          type: Object,
+          value: function() {
+            return {};
+          }
         },
-
-        /**
-         * @name hubspotPortalId
-         * @description defines portal ID set in the WP theme settings
-         * this is retrieved through the wp-collect-options and placed in
-         * the globals object
-         */
-        hubspotPortalId: {
-          type: String
-        },
-
         /**
          * @name hubspotScriptSrc
          * @description the third-party source of the JavaScript
@@ -43,31 +32,11 @@
           type: String,
           value: '//js.hsforms.net/forms/v2.js'
         },
-
-        /**
-         * @name zendeskToggle
-         * @description defines the toggle set in the WP theme settings
-         * this is retrieved through the wp-collect-options and placed in
-         * the globals object
-         */
-        zendeskToggle: {
-          type: Boolean
-        },
-
-        /**
-         * @name zendeskHost
-         * @description defines the host of the Zendesk, this should be
-         * the subdomain that has been defined in the WP theme settings under
-         * Zendesk Host
-         */
-        zendeskHost: {
-          type: String
-        }
       },
 
       observers: [
-        '_initHubspot(hubspotToggle, hubspotPortalId, hubspotScriptSrc)',
-        '_initZendesk(zendeskToggle, zendeskHost)'
+        '_initHubspot(appCache.collect.options.hubspot_toggle, appCache.collect.options.hubspot_portal_id, hubspotScriptSrc)',
+        '_initZendesk(appCache.collect.options.zendesk_toggle, appCache.collect.options.zendesk_host)'
       ],
 
       /** 
@@ -80,6 +49,7 @@
        * @parameter hubspotScriptSrc String - the source of the hubspot javascript
        */
       _initHubspot: function(hubspotToggle, hubspotPortalId, hubspotScriptSrc) {
+
         // make sure the toggle, portalId, src are set/true and if the script isn't included yet
         if ( typeof hubspotToggle === 'undefined' || !hubspotToggle ||
           typeof hubspotPortalId === 'undefined' || hubspotPortalId === '' ||
@@ -99,7 +69,8 @@
           // import the dorel-hubspot component, needs to be async FALSE!!!!!
           self.importHref(
             self.resolveUrl('../atoms/dorel-hubspot.html'), function() {
-              Polymer.globalsManager.set('Dorel.collect.options.hubspot_loaded', true);
+              self.fire('setAppCache', { value: true, path: 'collect.options.hubspot_loaded'});
+
             }, null, false
           );
         };
@@ -128,16 +99,17 @@
 
           window.zEmbed = function() {
             queue.push(arguments);
-          }
+          };
+
           window.zE = window.zE || window.zEmbed;
-          document.zendeskHost = self.zendeskHost;
+          document.zendeskHost = zendeskHost;
           document.zEQueue = queue;
         }());
 
         // import the dorel-hubspot component
         self.importHref(
           self.resolveUrl('../atoms/dorel-zendesk.html'), function() {
-            Polymer.globalsManager.set('Dorel.collect.options.zendesk_loaded', true);
+            self.fire('setAppCache', { value: true, path: 'collect.options.zendesk_loaded'});
           }, null, true
         );
       },

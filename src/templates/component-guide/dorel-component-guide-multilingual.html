@@ -1,0 +1,299 @@
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+<link rel="import" href="../../molecules/dorel-multilingual-overlay.html">
+<link rel="import" href="../../molecules/dorel-multilingual-flag.html">
+<link rel="import" href="../../molecules/dorel-multilingual-country.html">
+<link rel="import" href="../../molecules/dorel-multilingual-continents.html">
+<link rel="import" href="../../molecules/dorel-multilingual-select-language.html">
+
+<dom-module id="dorel-component-guide-multilingual">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      dorel-cta {
+        float: left;
+        width: auto;
+        clear: both;
+      }
+
+      dorel-multilingual-country {
+        margin: .75em 0;
+      }
+
+      dorel-multilingual-flag {
+        float: left;
+        margin-top: 1.5em;
+        margin-right: .75em;
+      }
+
+      .flags {
+        float: left;
+        width: 100%;
+      }
+
+      .container-standout {
+        border: 1px solid var(--theme-color-monochrome-2);
+      }
+
+    </style>
+
+    <section class="content-container">
+      <h1 class="class-for-h1">Multilingual Components</h1>
+      <p>
+        This section describes components used for language and country selection purposes.
+      </p>
+      <h1 class="class-for-h2">Multilingual Flag</h1>
+      <p>The multilingual flag displays a countries flag, and accepts a ISO 3166-1 country code.</p>
+      <div class="flags">
+        <dorel-multilingual-flag country-code="km"></dorel-multilingual-flag>
+        <dorel-multilingual-flag country-code="ir"></dorel-multilingual-flag>
+        <dorel-multilingual-flag country-code="jp"></dorel-multilingual-flag>
+        <dorel-multilingual-flag country-code="bz"></dorel-multilingual-flag>
+        <dorel-multilingual-flag country-code="cn"></dorel-multilingual-flag>
+        <dorel-multilingual-flag country-code="do"></dorel-multilingual-flag>
+        <dorel-multilingual-flag country-code="lb"></dorel-multilingual-flag>
+      </div>
+      <hr>
+      <h1 class="class-for-h2">Country &amp; Language Select</h1>
+      <p>The country select component has a hover state to select the language(s).
+        The component accepts a country, it's ISO 3166-1 country code and an arbitrary amount of languages.</p>
+      <dorel-multilingual-country country-data="[[ singleCountryData ]]"></dorel-multilingual-country>
+      <hr>
+      <h1 class="class-for-h2">Continent Select</h1>
+      <p>The continent select groups countries in columns based on there region.</p>
+      <dorel-multilingual-continents continents-data="[[ continentsData ]]"></dorel-multilingual-continents>
+      <hr>
+      <h1 class="class-for-h2">Country Overlay</h1>
+      <p>
+        The country overlay opens a fullscreen overlay that can contain slotted components.
+        In this case we place the continent select in it. To preview the overlay, click on the following button.
+      </p>
+      <dorel-cta title="Open country overlay"
+                 type="primary"
+                 link=""
+                 size="medium"
+                 on-click="openOverlay"
+                 icon="dorel-icons:chevron-right">
+        Open country overlay
+      </dorel-cta>
+      <dorel-multilingual-overlay id="overlay">
+        <dorel-multilingual-continents centered="true"
+                                       continents-data="[[ continentsData ]]"></dorel-multilingual-continents>
+      </dorel-multilingual-overlay>
+      <hr>
+      <h1 class="class-for-h2">Currently selected country &amp; language</h1>
+      <p>The currently selected component is used in the header and footer navigation, and will open up the overlay when
+        clicked. Two variations exist; one for a light background and one used on darker backgrounds.</p>
+      <div class="container-fluid container-standout">
+        <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
+                                            continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+      </div>
+      <div class="container-fluid container-standout dark-bg">
+        <dorel-multilingual-select-language light="true"
+                                            current-language="{{ currentLanguage }}"
+                                            continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
+      </div>
+    </section>
+  </template>
+  <hr>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-multilingual',
+      properties: {
+        /**
+         * @name currentLanguage
+         * @description Object containing the current country and language
+         */
+        'currentLanguage': {
+          type: Object,
+          value: function () {
+            return {
+              country: 'Belgium',
+              countryCode: 'be',
+              language: 'Dutch',
+            }
+          }
+        },
+
+        /**
+         * @name continentsData
+         * @description Object containing the continents (and country, language data)
+         */
+        continentsData: {
+          type: Array,
+          value: [{
+            name: 'Europe', countries: [
+              {
+                iso: 'at',
+                name: 'Austria',
+                languages: [
+                  {name: 'German'},
+                ]
+              }, {
+                iso: 'be',
+                name: 'Belgium',
+                languages: [
+                  {name: 'Dutch'},
+                  {name: 'French'},
+                ]
+              }, {
+                iso: 'cz',
+                name: 'Czech Republic',
+                languages: [
+                  {name: 'Czech'}
+                ]
+              }
+            ]
+          },
+            {
+              name: 'North America', countries: [
+              {
+                iso: 'ca',
+                name: 'Canada',
+                languages: [
+                  {name: 'English'},
+                  {name: 'French'},
+                ]
+              }, {
+                iso: 'mx',
+                name: 'Mexico',
+                languages: [
+                  {name: 'Spanish'},
+                ]
+              }, {
+                iso: 'us',
+                name: 'United States',
+                languages: [
+                  {name: 'English'},
+                ]
+              }
+            ]
+            },
+            {
+              name: 'South America', countries: [
+              {
+                iso: 'at',
+                name: 'Austria',
+                languages: [
+                  {name: 'German'},
+                ]
+              }, {
+                iso: 'be',
+                name: 'Belgium',
+                languages: [
+                  {name: 'Dutch'},
+                  {name: 'French'},
+                ]
+              }, {
+                iso: 'cz',
+                name: 'Czech Republic',
+                languages: [
+                  {name: 'Czech'}
+                ]
+              }
+            ]
+            },
+            {
+              name: 'Asia Pacific', countries: [
+              {
+                iso: 'at',
+                name: 'Austria',
+                languages: [
+                  {name: 'German'},
+                ]
+              }, {
+                iso: 'be',
+                name: 'Belgium',
+                languages: [
+                  {name: 'Dutch'},
+                  {name: 'French'},
+                ]
+              }, {
+                iso: 'cz',
+                name: 'Czech Republic',
+                languages: [
+                  {name: 'Czech'}
+                ]
+              }
+            ]
+            },
+            {
+              name: 'Middle East', countries: [
+              {
+                iso: 'at',
+                name: 'Austria',
+                languages: [
+                  {name: 'German'},
+                ]
+              }, {
+                iso: 'be',
+                name: 'Belgium',
+                languages: [
+                  {name: 'Dutch'},
+                  {name: 'French'},
+                ]
+              }, {
+                iso: 'cz',
+                name: 'Czech Republic',
+                languages: [
+                  {name: 'Czech'}
+                ]
+              }
+            ]
+            },
+            {
+              name: 'Africa', countries: [
+              {
+                iso: 'at',
+                name: 'Austria',
+                languages: [
+                  {name: 'German'},
+                ]
+              }, {
+                iso: 'be',
+                name: 'Belgium',
+                languages: [
+                  {name: 'Dutch'},
+                  {name: 'French'},
+                ]
+              }, {
+                iso: 'cz',
+                name: 'Czech Republic',
+                languages: [
+                  {name: 'Czech'}
+                ]
+              }
+            ]
+            }]
+        },
+
+        /**
+         * @name singleCountryData
+         * @description Object containing the current country and its languages
+         */
+        singleCountryData: {
+          type: Object,
+          value: function () {
+            return {
+              iso: 'aw',
+              name: 'Aruba',
+              languages: [
+                {name: 'Papiamento'},
+                {name: 'Dutch'},
+                {name: 'English', id: 2},
+                {name: 'Spanish', id: 2},
+              ]
+            };
+          }
+        }
+      },
+
+      /**
+       * @name openOverlay
+       * @description Opens the overlay containing the regions, countries and languages
+       */
+      openOverlay: function () {
+        this.$.overlay.open();
+      }
+    });
+  </script>
+</dom-module>

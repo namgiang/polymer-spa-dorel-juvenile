@@ -1,0 +1,203 @@
+<dom-module id="dorel-responsive-image">
+  <template>
+    <style>
+
+      iron-image {
+        float: left;
+        clear: both;
+        width: 100vw;
+        display: block;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: var(--image-background-color);
+      }
+
+      /*  The following styling determines the aspect ratios for the images.
+      *   For the definitions of the aspect ratios, see:
+      *   http://www.dorel.io/service-manual/global-design-framework/responsive-images.html
+      */
+
+      /* Full-screen Image Styling */
+      [image-type='full-screen'][portrait-small] {
+        /* 9:16 */
+        height: calc((100vw / 9) * 16);
+
+      }
+
+      [image-type='full-screen'][portrait-medium],
+      [image-type='full-screen'][portrait-retina] {
+        /* 3:4 */
+        height: calc((100vw / 3) * 4);
+
+      }
+
+      [image-type='full-screen'][landscape-small],
+      [image-type='full-screen'][landscape-medium],
+      [image-type='full-screen'][landscape-large],
+      [image-type='full-screen'][landscape-extra-large] {
+        /* 16:9 */
+        height: calc((100vw / 16) * 9);
+
+      }
+
+      /* Widescreen Image Styling */
+      [image-type='wide-screen'][portrait-small],
+      [image-type='wide-screen'][portrait-medium] {
+        /* 3:2 */
+        height: calc((100vw / 3) * 2);
+      }
+
+      [image-type='wide-screen'][portrait-retina],
+      [image-type='wide-screen'][landscape-small],
+      [image-type='wide-screen'][landscape-medium],
+      [image-type='wide-screen'][landscape-large],
+      [image-type='wide-screen'][landscape-extra-large] {
+        /* 3:1 */
+        height: calc((100vw / 3) * 1);
+      }
+
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <iron-image sizing="cover"
+                fade="true"
+                preload
+                title$="[[ alt ]]"
+                alt$="[[ alt ]]"
+                placeholder$="[[ currentImagePlaceholder ]]"
+                src$="[[ currentImageSource ]]"
+                image-type$="[[ imageType ]]"
+                portrait-small$="[[ breakpoints.portraitSmall ]]"
+                portrait-medium$="[[ breakpoints.portraitMedium ]]"
+                portrait-retina$="[[ breakpoints.portraitLargeUp ]]"
+                landscape-small$="[[ breakpoints.landscapeSmall ]]"
+                landscape-medium$="[[ breakpoints.landscapeMedium ]]"
+                landscape-large$="[[ breakpoints.landscapeLarge ]]"
+                landscape-extra-large$="[[ breakpoints.landscapeExtraLarge]]">
+    </iron-image>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-responsive-image',
+      observers: [
+        '_breakpointsChanged(breakpoints.*)'
+      ],
+      properties: {
+        /**
+         * @attribute
+         * @name imageSources
+         * @description a dictionary containing the image sources for each derivative
+         */
+        imageSources: {
+          type: Object,
+          observer: '_imageSourcesChanged',
+          notify: true
+        },
+        /**
+         * @attribute
+         * @name currentImageDerivative
+         * @description a string containing the source of the currently shown image
+         */
+        currentImageSource: {
+          type: String
+        },
+        /**
+         * @attribute
+         * @name currentImagePlaceholder
+         * @description a string containing the source of the placeholder
+         */
+        currentImagePlaceholder: {
+          type: String,
+          notify: true
+        },
+        /**
+         * @attribute
+         * @name currentImageDerivative
+         * @description a string containing the label of the currently shown image derivative
+         */
+        currentImageDerivative: {
+          type: String,
+          notify: true
+        },
+        /**
+         * @attribute
+         * @name breakpoints
+         * @description Breakpoints for devices and screen orientations, set by dorel-media-query
+         */
+        breakpoints: {
+          type: Object
+        },
+        /**
+         * @attribute
+         * @name imageType
+         * @description Image types, defaults to wide-screen and can be set to full-screen
+         */
+        imageType: {
+          type: String,
+          value: 'wide-screen',
+          reflectToAttribute: true
+        },
+        /**
+         * @name alt
+         * @description Alt attribute for SEO
+         */
+        alt: {
+          type: String,
+          value: ''
+        }
+      },
+      /**
+       * @name _setImagePlaceholder
+       * @description Sets the image placeholder if it's available
+       */
+      _setImagePlaceholder: function () {
+        // Set the image placeholder
+        if (this.imageSources.hasOwnProperty('placeholder')) {
+          this.currentImagePlaceholder = this.imageSources['placeholder'];
+        }
+      },
+      /**
+       * @name _setImage
+       * @description Determines the screen size and orientation and changes the shown image accordingly
+       */
+      _setImage: function () {
+        // First determine the orientation of the device
+        var orientationLabel = (this.breakpoints.portrait) ? 'portrait' : 'landscape';
+        // Next, retrieve the right breakpoint according to the orientation
+        var orientationBreakpoint = (orientationLabel === 'portrait') ? this.breakpoints.portraitLargeUp : this.breakpoints.desktopSmallUp
+        // Check the breakpoint to distinguish between large and small devices.
+        var sizeLabel = orientationBreakpoint ? 'large' : 'small';
+
+        // Now we can create the derivative name
+        this.currentImageDerivative = sizeLabel + '-' + orientationLabel;
+
+        // And retrieve its source
+        if (this.imageSources.hasOwnProperty(this.currentImageDerivative)) {
+          this.currentImageSource = this.imageSources[this.currentImageDerivative];
+        }
+      },
+      /**
+       * @name _imageSourcesChanged
+       * @description Observes the image sources, and sets the right image
+       */
+      _imageSourcesChanged: function () {
+        this.currentImageSource = '';
+        this.currentImagePlaceholder = '';
+
+        if (this.imageSources !== undefined && this.imageSources !== null) {
+          this._setImagePlaceholder();
+          this._setImage();
+        }
+      },
+      /**
+       * @name _breakpointsChanged
+       * @description Observes the breakpoints, and sets the right image
+       */
+      _breakpointsChanged: function () {
+        if (this.imageSources !== undefined && this.imageSources !== null) {
+          this._setImage();
+        }
+      },
+    });
+  </script>
+</dom-module>

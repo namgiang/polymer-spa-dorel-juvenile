@@ -1,0 +1,460 @@
+<link rel="import" href="../atoms/dorel-accordion-item.html">
+
+<dom-module id="dorel-section-service-faq-overview">
+  <template>
+    <style>
+      .host {
+        @apply(--max-width-host);
+        --button-margin-spacing: -1.5em;
+      }
+
+      section {
+        @apply(--max-width-container);
+        float: none;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+        margin: auto;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: center;
+        flex: 0 0 100%;
+        float: left;
+        width: 100%;
+      }
+
+      .container {
+        @apply(--theme-grid-column);
+        margin-top: 0;
+        width: 100%;
+        padding: 0;
+      }
+
+      .topic-select {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: 33.3333333%;
+        width: 33.3333333%;
+        flex-basis: 33.3333333%;
+        max-width: 33.3333333%;
+        padding: 0 0 0 .75em;
+        float: left;
+        display: inline-block;
+      }
+
+      .accordion-topics {
+        width: 100%;
+        margin-top: 1.5em;
+      }
+
+      paper-item {
+        height: 3em;
+      }
+
+      paper-menu {
+        padding: 0;
+      }
+
+      .topic.iron-selected {
+        background-color: var(--theme-color-monochrome-2);
+        color: var(--theme-brand-color-2) !important;
+        /* border-bottom: 1px solid var(--theme-brand-color-1); */
+      }
+
+      .topic-display {
+        @apply(--theme-grid-column);
+        background-color: var(--theme-color-monochrome-2);
+        flex-grow: 1;
+        padding: 1.5em 1.5em 1.5em 2.25em;
+        float: left;
+        display: inline-block;
+      }
+
+      .topic {
+        height: 3em;
+        padding: .75em;
+        display: flex;
+        align-items: center;
+        color: var(--theme-brand-color-2);
+        border-bottom: 1px solid var(--theme-color-monochrome-2);
+        transition: background-color .3s ease, color .3s ease;
+      }
+
+      .topic:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+      .topic-description {
+        flex-grow: 1;
+      }
+
+      .icon-left {
+        padding-right: 1em;
+      }
+
+      .icon-right {
+        float: right;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* TODO: List styles will be added when the info pages are updated, this should be replaced later */
+      li::before {
+        content: "• ";
+        padding-right: .5em;
+        color: var(--theme-brand-color-2);
+      }
+
+      li:first-child {
+        padding-top: 0;
+      }
+
+      li {
+        padding-top: 1.5em;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--theme-brand-color-2);
+        transition: .3s ease color;
+      }
+
+      a:visited {
+        text-decoration: none;
+        color: var(--theme-brand-color-2);
+      }
+
+      a:hover {
+        color: var(--theme-brand-color-1);
+      }
+
+      dorel-section-service-faq-promo {
+        padding-top: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-cta {
+        float: right;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        margin-top:0;
+      }
+
+      section[tablet-medium-up] {
+        padding: 0 var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .container {
+        padding: 0 .75em;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] .desktop-topics-row {
+        margin-right: 0;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="layout horizontal center center-justified wrap"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="row">
+        <div class="container">
+          <template is="dom-if" if="[[ _hasValue(templateData.title) ]]">
+            <h2 class="title">[[ templateData.title ]]</h2>
+          </template>
+          <template is="dom-if" if="[[ _hasValue(templateData.description) ]]">
+            <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
+          </template>
+        </div>
+      </div>
+      
+      <div class="row desktop-topics-row">
+        <template
+          is="dom-if"
+          if="[[ faqCategories.length ]]">
+
+          <!-- Desktop Service Topic Listing -->
+          <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+
+            <div class="topic-select">
+              <paper-menu attr-for-selected="name"
+                          selected="{{ selectedTopic }}">
+
+                <template
+                  is="dom-repeat"
+                  items="[[ faqCategories ]]"
+                  as="category">
+                  <div role="button" name$="[[ index ]]" class="topic">
+                    <iron-icon class="icon-left" icon="dorel-icons:help-outline"></iron-icon>
+                    <template is="dom-if" if="[[ _hasValue(category.name) ]]">
+                      <span class="topic-description">[[ category.name ]]</span>
+                    </template>
+                    <template is="dom-if" if="[[ !_hasValue(category.name) ]]">
+                      <span class="topic-description">no category title set</span>
+                    </template>
+                    <iron-icon class="icon-right" icon="dorel-icons:chevron-right"></iron-icon>
+                  </div>
+                </template>
+
+              </paper-menu>
+            </div>
+
+            <div class="topic-display">
+              <iron-pages attr-for-selected="name"
+                          selected="{{ selectedTopic }}"
+                          fallback-selection="0">
+
+                <!-- dom-repeat faqCategories -->
+                <template
+                  is="dom-repeat"
+                  items="[[ faqCategories ]]"
+                  as="category">
+
+                  <!--// dom-if featured -->
+                  <template
+                    is="dom-if"
+                    if="[[ category.featured_questions.length ]]">
+                    <div class="topic-listing" name$="[[ index ]]">
+                      <ul>
+
+                        <!-- dom-repeat featured -->
+                        <template
+                          is="dom-repeat"
+                          items="[[ category.featured_questions ]]"
+                          as="featured">
+
+                          <li>
+                            <a
+                              href="[[ category.detail_page ]]?sub_category_id=[[ featured.service_topics_sub_category_id ]]&question_id=[[ featured.id ]]">[[
+                              featured.question ]]</a>
+                          </li>
+
+                        </template>
+                        <!--// dom-repeat featured -->
+
+                      </ul>
+
+                      <dorel-cta title="[[ templateData.services_cta_text ]]"
+                                 type="link"
+                                 link="[[ category.detail_page ]]"
+                                 size="medium"
+                                 icon="dorel-icons:chevron-right">
+                        [[ templateData.cta_text ]]
+                      </dorel-cta>
+
+                      <!-- faq promo -->
+                      <template
+                        is="dom-if"
+                        if="[[ category.faq_promo.promo_toggle ]]">
+                        <dorel-section-service-faq-promo
+                          template-data="[[ category.faq_promo ]]"
+                          no-padding="true"
+                          light="true"></dorel-section-service-faq-promo>
+                      </template>
+                      <!--// faq promo -->
+
+                    </div>
+                  </template>
+                  <!--// dom-if featured -->
+
+                </template>
+                <!--// dom-repeat faqCategories -->
+
+              </iron-pages>
+            </div>
+          </template>
+          <!-- End Desktop Service Topic Listing-->
+
+          <!-- Mobile Service Topic Listing -->
+          <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+            <div class="accordion-topics">
+              <template
+                is="dom-repeat"
+                items="[[ faqCategories ]]"
+                as="category">
+
+
+                <dorel-accordion-item
+                  heading="[[ category.name ]]"
+                  icon="dorel-icons:help-outline">
+                  <div class="topic-listing">
+                    <ul>
+
+                      <!-- dom-repeat sub_categories -->
+                      <template
+                        is="dom-repeat"
+                        items="[[ category.sub_categories ]]"
+                        as="subCategory">
+
+                        <!-- dom-repeat questions -->
+                        <template
+                          is="dom-repeat"
+                          items="[[ subCategory.items ]]"
+                          as="faq">
+
+                          <!-- faq featured -->
+                          <template
+                            is="dom-if"
+                            if="[[ faq.featured ]]">
+                            <li>
+                              <a
+                                href="[[ category.detail_page ]]?sub_category_id=[[ faq.service_topics_sub_category_id ]]&question_id=[[ faq.id ]]">[[
+                                faq.question ]]</a>
+                            </li>
+                          </template>
+                          <!--// faq featured -->
+
+                        </template>
+                        <!--// dom-repeat questions -->
+
+                      </template>
+                      <!-- dom-repeat sub_categories -->
+
+                    </ul>
+                  </div>
+                  <dorel-cta title="[[ templateData.services_cta_text ]]"
+                             type="link"
+                             link="[[ category.detail_page ]]"
+                             size="medium"
+                             icon="dorel-icons:chevron-right">
+                    [[ templateData.cta_text ]]
+                  </dorel-cta>
+
+                  <!-- faq promo -->
+                  <template
+                    is="dom-if"
+                    if="[[ category.faq_promo.promo_toggle ]]">
+                    <dorel-section-service-faq-promo 
+                      template-data="[[ category.faq_promo ]]"
+                      light="true"></dorel-section-service-faq-promo>
+                  </template>
+                  <!--// faq promo -->
+
+                </dorel-accordion-item>
+              </template>
+            </div>
+          </template>
+          <!-- End Mobile Service Topic Listing -->
+        </template>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-service-faq-overview',
+      properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
+        selectedTopic: {
+          type: String,
+          value: ''
+        },
+
+        templateData: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name faqCategories
+         * @description the faqCategories retrieved from the GMT
+         */
+        faqCategories: {
+          type: Array,
+          observer: '_addFaqDetailData'
+        }
+      },
+
+      behaviors: [ConditionalBehaviors],
+
+      /**
+       * @observer
+       * @name _addFaqDetailData
+       * @description adds detail page and promo spot data to the faqCategories
+       * @param newVal - Array - new faq categories
+       * @param oldVal - Array - previous set categories
+       */
+      _addFaqDetailData: function (newVal, oldVal) {
+        if (typeof newVal === 'undefined' || newVal === oldVal) return;
+
+        // retrieve the faqDetailPages from Wordpress
+        var detailPages = this._getFaqDetailPages();
+
+        /**
+         * TLDR: Add detail page data to the faq category (detail link/promo data)
+         * -----
+         * first iterate over the detail pages in wordpress,
+         * then iteratate over the newly defined categories and find
+         * a match between the faq category defined in the gmt on the detail page
+         * and the category to add detail page data to the category
+         */
+        detailPages.forEach(function (detailPage) {
+
+          newVal.forEach(function (faqCat) {
+
+            // add the detail page defined in the Wordpress detail to the faqCategory
+            if (Number(detailPage.acf.gmt_category_selector) === faqCat.id) {
+              // set the detail page defined on the detail page category selector
+              faqCat.detail_page = detailPage.link;
+
+              // set the detail page faq promo on the overview category as well
+              if (typeof detailPage.acf !== 'undefined' && typeof detailPage.acf.faq_promo !== 'undefined' && detailPage.acf.faq_promo.length) {
+                faqCat.faq_promo = detailPage.acf.faq_promo[0];
+              }
+            }
+
+          }); // faqCategories foreach
+
+        }); // detailPages foreach
+      },
+
+      /**
+       * @name _getFaqDetailPages
+       * @description return all the faq detail pages from WP
+       * @returns Array of page objects
+       */
+      _getFaqDetailPages: function () {
+        var wpPages = this.get('appCache.collect.pages');
+
+        if(typeof wpPages === 'undefined') return [];
+
+        // filter out the detailPages from WP
+        var faqPages = wpPages.filter(function (page) {
+          return page.template === 'faq-detail';
+        });
+
+        // return the faqDetailPages
+        return faqPages;
+      }
+    });
+
+  </script>
+
+</dom-module>

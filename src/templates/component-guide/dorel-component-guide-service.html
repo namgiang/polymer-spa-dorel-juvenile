@@ -1,0 +1,127 @@
+<script src="mocks/faqs/customer-support.js"></script>
+<script src="mocks/faqs/promo.js"></script>
+<script src="mocks/faqs/service-faqs.js"></script>
+
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+<link rel="import" href="../../organisms/dorel-section-service-faq-overview.html">
+<link rel="import" href="../../organisms/dorel-section-service-faq-detail.html">
+<link rel="import" href="../../organisms/dorel-section-service-faq-promo.html">
+
+<dom-module id="dorel-component-guide-service">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      dorel-service-faq-promo {
+        margin-top: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-customer-support {
+        margin-top: 1.5em;
+      }
+
+      dorel-customer-support.compact {
+        max-width: 400px;
+        width: 100%;
+      }
+
+      dorel-section-service-faq-overview, dorel-section-service-faq-promo, dorel-customer-support {
+        float: left;
+        width: 100%;
+        margin-top: 1.5em;
+      }
+
+      .class-for-h2 {
+        margin-top: 1.5em;
+      }
+
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="content-container" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <h1 class="class-for-h1">Service Components</h1>
+      <p>Components used for the service pages</p>
+      <hr>
+      <h1 class="class-for-h2">FAQ Overview</h1>
+    </section>
+    
+    <dorel-section-service-faq-overview
+      template-data="[[ templateData ]]"
+      faq-categories="[[ faqOverview ]]"></dorel-section-service-faq-overview>
+    
+    <section class="content-container">
+      <h2 class="class-for-h2">FAQ Detail</h2>
+      <dorel-section-service-faq-detail 
+        faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
+    </section>
+
+    <section class="content-container">
+      <h2 class="class-for-h2">FAQ Promo</h2>
+      <dorel-section-service-faq-promo
+        template-data="[[ faqPromo ]]" 
+        light="true"></dorel-section-service-faq-promo>
+      <dorel-section-service-faq-promo 
+        compact="true"
+        template-data="[[ faqPromo ]]"></dorel-section-service-faq-promo>
+    </section>
+
+    <section class="content-container">
+      <h2 class="class-for-h2">Service Support</h2>
+        <dorel-customer-support
+          class="compact"
+          compact="true"
+          template-data="[[ customerSupport ]]"></dorel-customer-support>
+        <dorel-customer-support
+          template-data="[[ customerSupport ]]"></dorel-customer-support>
+    </section>
+  </template>
+
+  <hr>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-service',
+      properties: {
+
+        templateData: {
+          type: Object,
+          value: function() {
+            return {
+              title: 'Section Title',
+              description: 'Section description ipsum dulum',
+              cta_text: 'view all'
+            };
+          }
+        },
+
+        customerSupport: {
+          type: Object,
+          value: function() {
+            return customerSupportMock;
+          }
+        },
+
+        faqPromo: {
+          type: Object,
+          value: function() {
+            return promoMock;
+          }
+        },
+
+        faqDetail: {
+          type: Object,
+          value: function() {
+            return serviceFaqsMock;
+          }
+        },
+
+        faqOverview: {
+          type: Array,
+          value: serviceFaqsOverview
+        }
+      }
+    });
+  </script>
+</dom-module>

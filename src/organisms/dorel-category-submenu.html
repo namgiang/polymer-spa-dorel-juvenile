@@ -1,0 +1,125 @@
+<dom-module id="dorel-category-submenu">
+  <template>
+    <style>
+      :host {
+        @apply(--max-width-host);
+      }
+
+      nav {
+        width: 100%;
+      }
+
+      .menu {
+        margin: .75rem 0 .75rem 0;
+        padding-left: 2em;
+      }
+
+      .menu-item {
+        min-height: 1.5rem;
+      }
+
+      .link {
+        @apply(--theme-typography-3);
+        color: var(--theme-color-monochrome-7);
+        text-decoration: none;
+      }
+
+      .link:hover {
+        @apply(--theme-text-link-active);
+        color:var(--theme-color-text-link-active);
+      }
+
+      [tablet-medium-up] .link {
+        @apply(--theme-typography-3);
+      }
+
+      [tablet-medium-up] .menu {
+        margin: .75rem 0 .75rem 0;
+        padding-left: 2em;
+      }
+
+      [desktop-small-up] .link {
+        @apply(--theme-typography-3);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <nav role="navigation"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+      desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+      <ul class="menu">
+        <template
+          is="dom-repeat"
+          items="[[ items ]]"
+          as="menuItem">
+            <li class="menu-item">
+              <a
+                class="link"
+                href="[[ getUrl(menuItem) ]]"
+                on-click="_menuItemTap"
+                gtm-parent="dorel-category-submenu"
+                gtm-parent-index="[[ index ]]">[[ menuItem.post_title ]]</a>
+            </li>
+        </template>
+      </ul>
+    </nav>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-submenu',
+      properties: {
+
+        /**
+         * @attribute
+         * @name items
+         * @description Array of menu items passed by the parent
+         * will be used by the template
+         */
+        items: {
+          type: Array
+        }
+
+      },
+
+      /**
+       * @name getUrl
+       * @description Used in template for building up the url
+       * this is needed because we don't recieve the full url from wordpress
+       * @returns String
+       */
+      getUrl: function(menuItem) {
+        var currentUrl = window.location.href.split('?')[0].split('#')[0];
+        currentUrl = currentUrl.substr(-1) === '/' ? currentUrl : currentUrl + '/';
+        return currentUrl + menuItem.post_name;
+      },
+
+      /**
+       * @name _menuItemTap
+       * @description handles all menu item clicks
+       */
+      _menuItemTap: function (event) {
+        var element = Polymer.dom(event).localTarget;
+
+        var event = {
+          action: 'click',
+          component: 'dorel-category-submenu',
+          structure: {
+            name: 'dorel-category-submenu-item',
+            index: Number(element.gtmParentIndex) + 1
+          },
+          element: element,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': element.href
+          }
+        };
+
+        // send event data to tracking function
+        this.fire('setAppCache', {value: event, path: 'events'});
+      }
+    });
+  </script>
+</dom-module>

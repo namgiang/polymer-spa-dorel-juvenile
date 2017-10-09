@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="utils/dorel-global-variables.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
@@ -8,31 +7,49 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
-<!-- used by store locator -->
-<link rel="import" href="atoms/dorel-safe-html.html">
+<!-- SHARED BEHAVIORS -->
+<link rel="import" href="utils/behaviors/bundled/dorel-conditional-behaviors.html">
+<link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
+<link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
 
-<!-- TODO: These should only be included conditionally, based on the config.js -->
-<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
-<link rel="import" href="themes/theme-dorel-shared-styles.html">
-
-<!-- Header has priority for percieved initial load -->
-<link rel="import" href="organisms/dorel-header.html">
-
-<!-- Since 'home' is the default route, eagerly load it. -->
-<link rel="import" href="templates/dorel-template-home.html">
-
-<!-- Load the breakpoints early as well -->
-<link rel="import" href="atoms/dorel-media-query.html">
-
+<!-- SHARED UTILS -->
+<link rel="import" href="utils/dorel-magento-auth.html">
+<link rel="import" href="utils/dorel-gmt-collect-faqs.html">
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
 <link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
+<link rel="import" href="utils/dorel-main-routing.html">
+<link rel="import" href="utils/dorel-product-category-manager.html">
+<link rel="import" href="utils/dorel-brand-manager.html">
+<link rel="import" href="utils/dorel-main-menu-creator.html">
+
+<!-- SHARED ATOMS -->
+<link rel="import" href="atoms/dorel-media-query.html">
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
-<dom-module id="dorel-app">
+<!-- SHARED ORGANISMS -->
+<link rel="import" href="organisms/dorel-header.html">
+<link rel="import" href="organisms/dorel-section-hero-header.html">
+<link rel="import" href="organisms/dorel-section-cta.html">
+<link rel="import" href="organisms/dorel-section-heroes.html">
+<link rel="import" href="organisms/dorel-section-cards.html">
+
+<!-- Since 'home' is the default route, eagerly load it. -->
+<link rel="import" href="templates/dorel-template-home.html">
+
+<!-- 
+* TODO: 
+* These should only be included conditionally, based on the app-config.js AVAILABLE_BRANDS
+-->
+<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
+<link rel="import" href="themes/theme-dorel-shared-styles.html">
+<link rel="import" href="themes/theme-quinny-shared-styles.html">
+
+<dom-module id="dorel-app" mobile-menu-opened$="{{ mobileMenuOpened }}">
   <template>
     <style>
       /*
@@ -48,6 +65,21 @@
         color: var(--theme-color-black);
         display: block;
         min-height: 100vh;
+        min-width: 100vw;
+      }
+
+      #main, #footer {
+        transition: transform 0.20s ease;
+      }
+
+      :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
+        transform: translate(-256px, 0);
+      }
+
+      @media screen and (min-width: 1025px) {
+        :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
+          transform: translate(0, 0);
+        }
       }
 
       :root {
@@ -64,53 +96,94 @@
 
       iron-pages {
         margin: 0 auto;
+        min-height: 100vh;
       }
 
     </style>
 
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+
+    <app-route
+      route="{{ route }}"
+      pattern="/:language"
+      query-params="{{ queryParams }}"
+      tail="{{ tail }}"></app-route>
+
+    <app-route
+      route="{{ tail }}"
+      pattern="/:page"
+      tail="{{ subroute }}"></app-route>
+
+    <dorel-multilingual-manager
+      route="[[ route ]]"
+      current-language="[[ appCache.currentLanguage ]]"
+      continents-data="{{ continentsData }}">
+    </dorel-multilingual-manager>
+
+
     <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations
-      wp-url="{{ globals.Dorel.wpUrl }}"></dorel-wp-collect-menu-locations>
+    <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages></dorel-wp-collect-pages>
+    <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
 
     <!-- collect the options pages -->
-    <dorel-wp-collect-options
-      wp-url="[[ globals.Dorel.wpUrl ]]"></dorel-wp-collect-options>
+    <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
+
+    <!-- create datamodel for the main menu -->
+    <dorel-main-menu-creator app-cache="[[ appCache ]]"></dorel-main-menu-creator>
 
     <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets></dorel-wp-collect-widgets>
-
-    <dorel-wp-collect-categories></dorel-wp-collect-categories>
+    <dorel-wp-collect-widgets app-cache="[[ appCache ]]"></dorel-wp-collect-widgets>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-    <dorel-gtm-events
-      gtm-data="[[ globals.Dorel ]]"></dorel-gtm-events>
 
-    <dorel-third-party
-      hubspot-toggle="{{ globals.Dorel.collect.options.hubspot_toggle }}"
-      hubspot-portal-id="{{ globals.Dorel.collect.options.hubspot_portal_id }}"
-      zendesk-toggle="[[ globals.Dorel.collect.options.zendesk_toggle ]]"
-      zendesk-host="[[ globals.Dorel.collect.options.zendesk_host ]]"></dorel-third-party>
+    <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
 
-    <!-- define routing -->
-    <app-location route="{{ route }}"></app-location>
-    <app-route
-      route="{{ route }}"
-      pattern="/:page"
-      data="{{ routeData }}"
-      tail="{{ subroute }}"></app-route>
+    <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
+
+    <dorel-brand-manager
+      query-params="[[ queryParams ]]"
+      brandNames="{{ brandNames }}"
+      brand="{{ brand }}">
+    </dorel-brand-manager>
 
     <dorel-meta-manager
-      brand-name="[[ brandName ]]"
-      id="metaManager"></dorel-meta-manager>
+      brand-name="[[ brand.label ]]"
+      current-page="[[ currentPage ]]"
+      app-cache="[[ appCache ]]"
+      route="[[ route ]]"
+      id="metaManager">
+    </dorel-meta-manager>
 
-    <dorel-header
-      load-complete="[[ loadComplete ]]"
-      page="[[ page ]]"
-      brand-name="[[ brandName ]]"></dorel-header>
+    <dorel-main-routing
+      app-cache="[[ appCache ]]"
+      route="[[ route ]]"
+      category-page="{{ categoryPage }}"
+      previous-states="{{ previousStates }}"
+      current-page="{{ currentPage }}">
+    </dorel-main-routing>
+
+    <dorel-product-category-manager
+      category-page="[[ categoryPage ]]"
+      sort="{{ sort }}"
+      category="{{ category }}">
+    </dorel-product-category-manager>
+
+    <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
+      <dorel-header
+        app-cache="[[ appCache ]]"
+        load-complete="[[ loadComplete ]]"
+        route="[[ route ]]"
+        continents-data="[[ continentsData ]]"
+        current-language="[[ appCache.currentLanguage ]]"
+        mobile-menu-opened="{{ mobileMenuOpened }}"
+        page="[[ page ]]"
+        brand-name="[[ brand.label ]]">
+      </dorel-header>
+    </template>
 
     <!-- content pages -->
     <main id="main" role="main">
@@ -119,16 +192,27 @@
                   selected="[[ currentPage.template ]]"
                   attr-for-selected="name">
 
+        <dorel-template-product-category-about
+          name="product-category-about"
+          template-data="[[ currentPage ]]"></dorel-template-product-category-about>
+
         <dorel-template-home
           name="home"
           template-data="[[ currentPage ]]"></dorel-template-home>
 
         <dorel-template-info
           name="info"
+          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-info>
+
+        <dorel-template-info-overview
+          name="info-overview"
+          app-cache="[[ appCache ]]"
+          template-data="[[ currentPage ]]"></dorel-template-info-overview>
 
         <dorel-template-store-locator
           name="store-locator"
+          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
         <dorel-template-products
@@ -136,25 +220,66 @@
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-products>
 
+        <dorel-template-product-detail
+          name="product-detail"
+          route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
+          category="[[ category ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-detail>
+
         <dorel-template-product-category
           name="product-category"
+          route="[[ subroute ]]"
+          app-cache="[[ appCache ]]"
+          category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-category>
+
+        <dorel-template-faq-overview
+          name="faq-overview"
+          app-cache="[[ appCache ]]"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-overview>
+
+        <dorel-template-faq-detail
+          name="faq-detail"
+          app-cache="[[ appCache ]]"
+          route="[[ subroute ]]"
+          template-data="[[ currentPage ]]"></dorel-template-faq-detail>
+
+        <dorel-template-product-advisory-tool
+          name="product-advisory-tool"
+          app-cache="[[ appCache ]]"
+          brand-name="[[ brand.label ]]"
+          template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
         <dorel-template-component-guide
           name="component-guide"
-          brand="{{ brandName }}"
+          app-cache="[[ appCache ]]"
+          brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
 
         <dorel-template-404 name="404"></dorel-template-404>
+
       </iron-pages>
     </main>
 
-    <dorel-footer></dorel-footer>
+    <template
+      is="dom-if"
+      if="[[ shouldShow(currentPage) ]]">
+      <dorel-footer
+        id="footer"
+        app-cache="[[ appCache ]]"
+        continents-data="[[ continentsData ]]"
+        current-language="[[ appCache.currentLanguage ]]">
+      </dorel-footer>
+    </template>
 
-    <dorel-grid-overlay available-brands="{{ brandNames }}"
-                        selected-brand="{{ brandName }}"
-                        page-route-path="{{ route.path }}"></dorel-grid-overlay>
+    <dorel-grid-overlay
+      app-cache="[[ appCache ]]"
+      available-brands="{{ brandNames }}"
+      selected-brand="{{ brand }}"
+      page-route-path="{{ route.path }}"></dorel-grid-overlay>
   </template>
 
   <script>
@@ -188,14 +313,21 @@
           readOnly: false,
         },
 
+        mobileMenuOpened: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false
+        },
+
         /**
-         * @name brandName
-         * @description defines the brand
+         * @name brand
+         * @description The currently selected brand
          */
-        brandName: {
-          type: String,
-          notify: true,
-          readOnly: false,
+        brand: {
+          type: Object,
+          value: function () {
+            return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+          }
         },
 
         /**
@@ -204,7 +336,9 @@
          */
         brandNames: {
           type: Array,
-          value: []
+          value: function () {
+            return CONFIG.AVAILABLE_BRANDS;
+          }
         },
 
         /**
@@ -213,7 +347,25 @@
          */
         currentPage: {
           type: Object
-        }
+        },
+
+        categoryPage: {
+          type: Object
+        },
+
+        category: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
 
       },
 
@@ -222,131 +374,69 @@
        * @description observe if a function is called
        */
       observers: [
-        '_routePageChanged(route, globals.Dorel.collect.pages)',
-        '_pageChanged(page, currentPage)',
-        '_setCurrentPage(currentPage)',
-        '_brandChanged(brandName)',
+        '_pageChanged(currentPage)'
       ],
 
       created: function () {
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
-        // Create the Dorel global https://github.com/ivanrod/polymer-global-variables-demo
-        Polymer.globalsManager.set('Dorel', {
-          wpUrl: {}, // will be a string later (bug inside globalsManager)
-          dioApiUrl: {},
-          locale: {},
-          collect: {},
-          current: {},
-          events: {},
-          grid: {
-            horizontal: false,
-            vertical: false
-          }
-        });
-
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
       },
 
+      listeners: {
+        'setAppCache': '_setAppCache'
+      },
+
+      _setAppCache: function (event) {
+        if(!this.get('appCache')) {
+          this._setInitialAppCache();
+        }
+        var data = event.detail;
+        var path = data.path;
+        var value = data.value;
+        if (data && path) {
+          this.set('appCache.' + path, value);
+        }
+      },
+
+      _setInitialAppCache: function() {
+        if(this.get('appCache')) {
+          return
+        }
+        var appCache = {
+          wpUrl: CONFIG.CMS_URL, // DONE
+          dioApiUrl: CONFIG.DIO_API_URL, // marnix
+          collect: {}, // marnix
+          current: {}, // DONE
+          product: {
+            products: [], // aron | DONE
+            attributes: {
+              accordions: [], // aron | DONE
+              features: [], // aron | DONE
+              usps: [] // aron | DONE
+            },
+            retrievedCategories: [], // aron | DONE
+            auth: {
+              token: '', // aron | DONE
+              timestamp: '' // // aron | DONE
+            },
+            colorMap: [] // aron | DONE
+          },
+          faqs: [], // aron | DONE
+          events: {}, // DONE
+          grid: { // DONE
+            horizontal: false,
+            vertical: false
+          },
+          previousState: {}
+        };
+
+        this.set('appCache', appCache);
+      },
+
       ready: function () {
-
-        // Define the wpUrl in the globals (object becomes string)
-        Polymer.globalsManager.set('Dorel.wpUrl', CONFIG.CMS_URL);
-
-        // Define the custom api in the globals (obj becomes string)
-        Polymer.globalsManager.set('Dorel.dioApiUrl', CONFIG.DIO_API_URL);
-        Polymer.globalsManager.set('Dorel.locale', CONFIG.LOCALE);
-
-        this.brandNames = CONFIG.AVAILABLE_BRANDS;
-        this.brandName = this.brandNames[CONFIG.SELECTED_BRAND].label;
-      },
-
-
-      /**
-       * @observer
-       * @name _brandChanged
-       * @description the brand was changed, triggers a change in shared styles
-       *
-       * @param page - String - the string of the current active brand
-       */
-      _brandChanged: function (brandName) {
-
-        //Removed the current shared style from the dom, if it exists.
-        var currentSharedStyle = Polymer.dom(this.root).querySelector('#brand-shared-style');
-        if (currentSharedStyle != undefined) {
-          currentSharedStyle.remove();
-        }
-
-        // Checks the apps config, and sets the according brand theme
-        var brandTheme = ['theme', this.brandName, 'shared-styles'].join('-').toLowerCase();
-        var domModule = document.createElement('style', 'custom-style');
-        domModule.setAttribute('include', brandTheme);
-        domModule.setAttribute('id', 'brand-shared-style');
-        Polymer.dom(this.root).appendChild(domModule);
-        Polymer.updateStyles();
-      },
-
-      /**
-       * @observer
-       * @name _routePageChanged
-       * @description on url/route change get the first segment of the url
-       * then set it as the page. With those settings start the setCurrentPage
-       * which will change the iron-pages selected
-       *
-       * @param page - String - the route page string
-       * @param pages - Array - all the retrieved pages from WP
-       */
-      _routePageChanged: function (page, pages) {
-        // if the route is undefined
-        if (typeof page === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
-
-        // get the a clean last segment of the route.path
-        page = page.path.match(/([^\/]*)\/*$/).pop();
-
-        // refer to this for find function
-        var self = this;
-
-        /**
-         * if last segment is undefined or empty string set to home,
-         * all others to segment
-         */
-        this.page = page || 'home';
-
-        // Matches the page to the component guide template
-        if (this.page === 'component-guide') {
-          this.currentPage = {
-            template: 'component-guide'
-          };
-          // break
-          return;
-        }
-
-        /** map the page variable and check if it contains products
-          * if true - match the slug of the product page with the route.path
-          * if false - match the slug of the page with the route.path
-          * return the the item that matches
-        */
-        this.currentPage = pages.find(function (item) {
-          if (item.products) {
-            return item.products.find(function (item) {
-              return item.slug === self.page;
-            });
-          }
-          return item.slug === self.page;
-        });
-
-        // when the page cannot be matched, it is always the 404
-        if (typeof this.currentPage === 'undefined') {
-
-          // set the page to 404
-          this.page = '404';
-
-          // set the currentPage to 404
-          this.currentPage = {
-            template: '404'
-          };
-        }
+        this._setInitialAppCache();
       },
 
       /**
@@ -354,69 +444,21 @@
        * @name _pageChanged
        * @description when the page variable changes lazyload the page
        * or retrieve it all the way.
-       * @param page - string - the page we need to transition to
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function (page, currentPage) {
-        if (typeof page === 'undefined' || page === '' ||
-          typeof currentPage === 'undefined' || currentPage === '') return;
+      _pageChanged: function (currentPage) {
+        if (typeof currentPage === 'undefined' || currentPage === '') {
+          return;
+        }
 
-        // home route is eagerly loaded
-        if (page === 'home') {
-
+        if (currentPage.template === 'home') {
           this._ensureLazyLoaded();
-
-          // other routes are lazy loaded
         } else {
-          // don't include the home template twice (its loaded eagerly)
-          if (currentPage.template === 'home' ||
-            typeof currentPage.template === 'undefined') return;
-
-          // import the template on demand
           this.importHref(
             this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
             function () {
               this._ensureLazyLoaded();
             }, null, false);
-
-        }
-
-      },
-
-      /**
-       * @observer
-       * @name _setCurrentPage
-       * @description set the current page in the globals
-       */
-      _setCurrentPage: function (currentPage) {
-
-        /**
-         * if we are dealing with products we need to match
-         * which product it is
-         */
-        if (currentPage.slug === 'products') {
-
-          // get last segment slug
-          var lastSegment = this._getLastSegment(document.URL);
-
-          // match it with the products
-          currentPage = currentPage.products.find(function (item) {
-            return item.slug === lastSegment;
-          });
-        }
-
-        // set the global currentPage
-        Polymer.globalsManager.set('Dorel.current.page', currentPage);
-
-        // TODO: Maybe create a separate component for meta changes?
-        if (currentPage !== undefined &&
-            currentPage.acf &&
-            currentPage.acf.meta_title &&
-            currentPage.acf.meta_description) {
-          this.$.metaManager.addMetaData({
-            metaTitle: currentPage.acf.meta_title,
-            metaDescription: currentPage.acf.meta_description
-          });
         }
 
         // tracking of the pageload
@@ -451,7 +493,6 @@
             });
           });
         }
-
       },
 
       /**
@@ -469,13 +510,14 @@
        * more info http://bit.ly/2nb6I7G
        */
       _eventTracking: function () {
-        var globalsObj = Polymer.globalsManager.get('Dorel');
-        var globalsCopy = this._cloneObj(globalsObj);
+        var globalsObj = this.get('appCache');
+        var globalsCopy = Object.assign({}, globalsObj);
+
 
         /**
          * Tracking on pageload
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'loaded',
           component: 'page',
           element: this,
@@ -485,46 +527,14 @@
               document.URL : globalsCopy.current.page,
             'globals': globalsCopy
           }
-        });
+        };
+
+        this.fire('setAppCache', { value: event, path: 'events' });
       },
 
-      /**
-       * @name _cloneObj
-       * @description creates a clone of an object
-       *
-       * @parameter Object - object to clone
-       */
-      _cloneObj: function (obj) {
 
-        // if object is not defined or not an object, jump out
-        if (null == obj || "object" != typeof obj) return obj;
-
-        // make a reference to the object's constructor
-        var copy = obj.constructor();
-
-        // iterate over every attribute in the object and make a copy
-        for (var attr in obj) {
-          if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-        }
-
-        // return the copied object
-        return copy;
-      },
-
-      /**
-       * @name _getLastSegment
-       * @description strips the last segment from the url
-       *
-       * @parameter String - current document url
-       */
-      _getLastSegment: function (url) {
-        url = url.replace(/(^\w+:|^)\/\//, '');
-
-        if (url.lastIndexOf('/') === (url.length - 1)) {
-          url = url.substr(0, url.lastIndexOf('/'));
-        }
-
-        return url.substr(url.lastIndexOf('/') + 1, url.length);
+      shouldShow: function (currentPage) {
+        return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
     });

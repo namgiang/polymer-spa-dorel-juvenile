@@ -1,0 +1,162 @@
+<dom-module id="dorel-wysiwyg-html">
+  <template>
+    <style>
+      #content {
+        float: left;
+        width: 100%;
+      }
+
+      h2, h3 {
+        color: var(--theme-brand-color-1);
+      }
+
+      h2 {
+        @apply(--theme-typography-5);
+      }
+
+      h3 {
+        @apply(--theme-typography-3);
+      }
+
+      h2, h3, p, blockquote, ol, ul, .code, img, figcaption, figure {
+        float: left;
+        clear: both;
+      }
+
+      p {
+        @apply(--theme-paragraph-text);
+      }
+
+      a {
+        @apply(--theme-text-link);
+      }
+
+      a:hover, .accessory a:focus {
+        @apply(--theme-text-link-active);
+      }
+
+      blockquote {
+        margin: 0;
+      }
+
+      blockquote p {
+        @apply(--theme-blockquotes-mobile);
+      }
+
+      blockquote p:before {
+        content: '“';
+      }
+
+      blockquote p:after {
+        content: '”';
+      }
+
+      ol, ul {
+        @apply(--theme-list);
+      }
+
+      ul li, ol li {
+        @apply(--theme-list-item);
+      }
+
+      ul li:first-child, ol li:first-child {
+        margin-top: 0;
+      }
+
+      ol li:before {
+        @apply(--theme-ordered-list-bullet);
+      }
+
+      ul li:before {
+        @apply(--theme-unordered-list-bullet);
+      }
+
+      /* TODO: Not sure if this is the right class for the wysiwyg */
+      .code {
+        @apply(--theme-code);
+      }
+
+      .code pre {
+        @apply(--theme-code-pre);
+      }
+
+      img {
+        width: 100%;
+      }
+
+      figure {
+        float: left;
+        margin: 1.5em 0 0 0;
+        display: block;
+      }
+
+      figcaption {
+        @apply(--theme-figcaption);
+      }
+
+      table {
+        @apply(--theme-table);
+      }
+
+      thead tr {
+        @apply(--theme-table-row);
+      }
+
+      th, tr, td {
+        @apply(--theme-table-elements);
+      }
+
+      [tablet-medium-up] h2 {
+        @apply(--theme-typography-8);
+      }
+
+      [tablet-medium-up] h3 {
+        @apply(--theme-typography-5);
+      }
+
+      [tablet-medium-up] blockquote p {
+        @apply(--theme-blockquotes-desktop);
+      }
+
+      h3 + p, h3 + ul, h3 + ol, h3 + blockquote {
+        margin-top: 0;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <div id="content"></div>
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-wysiwyg-html',
+      properties: {
+        /**
+         * @attribute
+         * @name html
+         * @description holds the html markup in string format to place
+         */
+        html: {
+          type: String,
+          value: '',
+          observer: '_htmlChanged'
+        }
+      },
+
+      /**
+       * @name _htmlChanged
+       * @description checks to see if the html attribute changed, if so insert the
+       * new html inside the content div
+       */
+      _htmlChanged: function () {
+        Polymer.dom(this.$.content).innerHTML = (typeof this.html === 'undefined') ? '' : this.html;
+      }
+    });
+  </script>
+
+</dom-module>

@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
 
 <dom-module id="dorel-section-product-accordions">
   <template>
@@ -57,7 +58,6 @@
 
       .accordion-content {
         padding: 0 1.5em 1.5em 1.5em;
-        margin-top: -1.5em;
         float: left;
         width: 100%;
         box-sizing: border-box;
@@ -96,6 +96,13 @@
       }
     </style>
 
+
+    <dorel-magento-collect-custom-data
+      product-id="[[ productId ]]"
+      app-cache="[[ appCache ]]"
+      data="{{ accordionsData }}"
+      type="accordions"></dorel-magento-collect-custom-data>
+
     <template
       is="dom-if"
       if="[[ accordionsData.accordions.length ]]">
@@ -132,9 +139,9 @@
                 <iron-collapse id$="collapse{{ index }}">
                   <template
                     is="dom-if"
-                    if="[[ _hasValue(accordion.content) ]]">
+                    if="[[ _hasValue(accordion.description) ]]">
                     <div class="accordion-content">
-                      <dorel-safe-html html="[[ accordion.content ]]"></dorel-safe-html>
+                      <dorel-safe-html html="[[ accordion.description ]]"></dorel-safe-html>
                     </div>
                   </template>
                 </iron-collapse>
@@ -152,6 +159,10 @@
       is: 'dorel-section-product-accordions',
       properties: {
 
+        productId: {
+          type: Number
+        },
+
         /**
          * @attribute
          * @name accordionsData
@@ -163,13 +174,20 @@
           value: function () {
             return {};
           }
-        }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        },
       },
 
-      _getIconState: function (selector) {
-
-        return opened;
-      },
+      behaviors: [ConditionalBehaviors],
 
       /**
        * @name _toggleCollapse
@@ -196,30 +214,18 @@
       },
 
       /**
-       * @name _hasValue
-       * @description checks to see if a value is set
-       *
-       * @returns Boolean
-       */
-      _hasValue: function (val) {
-        return (typeof val !== 'undefined' || val !== '');
-      },
-
-      /**
        * @name _eventTracking
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
       _eventTracking: function (event, selector, accordionState) {
 
-        var globals = Polymer.globalsManager.get('Dorel');
-
         var gtmCtaIndex = selector.getAttribute('gtm-cta-index');
 
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'toggle-accordion',
           component: 'accordion',
           structure: {
@@ -237,7 +243,9 @@
             'currentState': (accordionState) ? 'open' : 'closed',
             'targetState': (accordionState) ? 'closed' : 'open'
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>

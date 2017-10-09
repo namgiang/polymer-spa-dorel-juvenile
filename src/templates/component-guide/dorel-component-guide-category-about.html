@@ -1,0 +1,66 @@
+<script src="mocks/cards/cards.js"></script>
+<script src="mocks/hero-header/hero-header.js"></script>
+<script src="mocks/sub-categories/sub-categories.js"></script>
+
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+<link rel="import" href="../../organisms/dorel-section-category-about-sub-categories.html">
+<link rel="import" href="../../organisms/dorel-section-category-about-header.html">
+
+<dom-module id="dorel-component-guide-category-about">
+  <template>
+    <style include="dorel-component-guide-shared-styles">
+      dorel-section-category-about-header {
+        margin-top: 1.5em;
+      }
+
+      dorel-section-category-about-sub-categories {
+        margin-top: 3em;
+        float: left;
+        width: 100%;
+      }
+    </style>
+
+    <section class="content-container">
+      <div class="class-for-h1">Category About Pages</div>
+      <p class="class-for-p">Components used in the Category About Pages.</p>
+      <hr>
+    </section>
+    <section class="content-container">
+      <div class="class-for-h2">Category About Header</div>
+    </section>
+    <dorel-section-category-about-header template-data="[[ subcategoryHeader ]]"></dorel-section-category-about-header>
+    <hr>
+    <section class="content-container">
+      <div class="class-for-h2">Subcategory section</div>
+      <dorel-section-category-about-sub-categories
+        template-data="[[ subCategories ]]"></dorel-section-category-about-sub-categories>
+    </section>
+    <hr>
+    <section class="content-container">
+      <div class="class-for-h2">Cards section</div>
+    </section>
+    <dorel-section-cards cards-data="[[ cardsData ]]" cta-type="secondary" compact="true"></dorel-section-cards>
+
+    <hr>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-category-about',
+      properties: {
+        subcategoryHeader: {
+          type: Object,
+          value: categoryAboutHeaderMock
+        },
+        subCategories: {
+          type: Object,
+          value: subCategoriesMock
+        },
+        cardsData: {
+          type: Array,
+          value: cardsMock
+        }
+      }
+    });
+  </script>
+</dom-module>

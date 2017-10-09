@@ -2,17 +2,20 @@
   <template>
     <style include="iron-flex">
 
+      section {
+        margin-top: var(--button-margin-spacing, 0);
+      }
+
+      /* 
+       * CTA - Default states 
+       */
+
+      /* aplies to all type of cta's (both button and regular link) */
       .theme-cta {
         @apply(--theme-button);
         @apply(--theme-button-primary);
         @apply(--theme-button-small);
         width: 100%;
-        margin-top: var(--button-margin-spacing, 1.5em) !important;
-      }
-
-      .theme-cta:hover, .theme-cta:focus {
-        @apply(--theme-button-active);
-        cursor: pointer;
       }
 
       .theme-cta--primary {
@@ -31,17 +34,53 @@
         @apply(--theme-button-link);
       }
 
+      .theme-cta--inverted {
+        @apply(--theme-button-inverted);
+      }
+
+      .theme-cta--inverted .theme-cta__icon {
+        @apply(--theme-button-link-icon);
+      }
+
       .theme-cta--link .theme-cta__content {
         padding: 0;
       }
 
       .theme-cta--link .theme-cta__icon {
         padding-right: 0;
+        @apply(--theme-button-link-icon);
+      }
+
+      /* 
+       * CTA - Hover and focus states 
+       */
+
+      .theme-cta:hover, .theme-cta:focus {
+        cursor: pointer;
+      }
+
+      .theme-cta:hover .theme-cta__icon, .theme-cta:focus .theme-cta__icon {
+        @apply(--theme-button-icon-active);
+      }
+
+      .theme-cta--primary:hover, .theme-cta--primary:focus,
+      .theme-cta--secondary:hover, .theme-cta--secondary:focus,
+      .theme-cta--tertiary:hover, .theme-cta--tertiary:focus,
+      .theme-cta--inverted:hover, .theme-cta--inverted:focus {
+        @apply(--theme-button-active);
       }
 
       .theme-cta--link:hover, .theme-cta--link:focus {
         @apply(--theme-button-link-active);
       }
+
+      .theme-cta--link:hover .theme-cta__icon, .theme-cta--link:focus .theme-cta__icon {
+        @apply(--theme-button-link-icon-active);
+      }
+
+      /* 
+       * CTA - Sizes 
+       */
 
       .theme-cta--small {
         @apply(--theme-button-small);
@@ -60,6 +99,10 @@
         padding: 0;
       }
 
+      /* 
+       * CTA - Content 
+       */
+
       .theme-cta__content {
         -webkit-box-align: center;
         -webkit-flex-align: center;
@@ -70,15 +113,47 @@
         padding: 0 0 0 0.75em;
       }
 
+      /* 
+       * CTA - Icon styling 
+       */
+
       .theme-cta__icon {
         @apply(--theme-button-icon);
+      }
+
+      .theme-cta--primary .theme-cta__icon {
+        @apply(--theme-button-primary-icon);
+      }
+
+      .theme-cta--secondary .theme-cta__icon {
+        @apply(--theme-button-secondary-icon);
+      }
+
+      .theme-cta--tertiary .theme-cta__icon {
+        @apply(--theme-button-tertiary-icon);
+      }
+
+      .theme-cta--small .theme-cta__icon {
+        @apply(--theme-button-icon-small);
       }
 
       .theme-cta__icon--left {
         width: 3em;
         height: 2.5em;
         margin: 0;
+      }
 
+      :host([no-margin]) a {
+        margin-top: 0 !important;
+      }
+
+      :host([rotate]) a {
+        transform: scaleX(-1);
+      }
+
+      :host([rotate]) span {
+        transform: scaleX(-1);
+        padding: 0 0.75em 0 0;
       }
 
       :host([disabled]) a {
@@ -90,7 +165,27 @@
         cursor: not-allowed;
       }
 
-      /* Responsive Behaviour */
+      :host([type="link"][active]) a {
+        @apply(--theme-button-link-active);
+      }
+
+      :host([type="primary"][active]) a {
+        @apply(--theme-button-active);
+      }
+
+      :host([type="link"][active]) .theme-cta__icon {
+        @apply(--theme-button-link-icon-active);
+      }
+
+      :host([type="link"]) .theme-cta__icon {
+        border-left: 0;
+      }
+
+
+      /* 
+       * Responsive Behaviour 
+       */
+
       [tablet-medium-up] .theme-cta__icon--left {
         width: 5.125em;
         height: 3.125em;
@@ -105,36 +200,37 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <section>
+      <a href$="[[ link ]]"
+         title$="[[ title ]]"
+         target$="[[ target ]]"
+         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         target$="[[ _isExternal(linkTarget) ]]"
+         gtm-action$="[[ gtmAction ]]"
+         gtm-parent$="[[ gtmParent ]]"
+         gtm-parent-index$="[[ gtmParentIndex ]]"
+         gtm-child$="[[ gtmChild ]]"
+         gtm-child-index$="[[ gtmChildIndex ]]"
+         gtm-cta-index$="[[ gtmCtaIndex ]]"
+         on-click="_clickCTA">
 
-    <a href$="[[ link ]]"
-       title$="[[ title ]]"
-       target$="[[ target ]]"
-       class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
-       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-       target$="[[ _isExternal(linkTarget) ]]"
-       gtm-action$="[[ gtmAction ]]"
-       gtm-parent$="[[ gtmParent ]]"
-       gtm-parent-index$="[[ gtmParentIndex ]]"
-       gtm-child$="[[ gtmChild ]]"
-       gtm-child-index$="[[ gtmChildIndex ]]"
-       gtm-cta-index$="[[ gtmCtaIndex ]]"
-       on-click="_clickCTA">
+        <template
+          is="dom-if"
+          if="[[ extraIcon ]]">
+          <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
+        </template>
 
-      <template
-        is="dom-if"
-        if="[[ extraIcon ]]">
-        <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
-      </template>
+        <span class="theme-cta__content"><content id="content"></content></span>
 
-      <span class="theme-cta__content"><content id="content"></content></span>
+        <template
+          is="dom-if"
+          if="[[ icon ]]">
+          <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
+        </template>
 
-      <template
-        is="dom-if"
-        if="[[ icon ]]">
-        <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
-      </template>
-
-    </a>
+      </a>
+    </section>
   </template>
 
   <script>
@@ -180,7 +276,7 @@
         /**
          * @attribute
          * @name type
-         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary' and 'tertiary' are supported.
+         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary', 'tertiary' and 'link' are supported. Per type, certain css applies to differentiate beteen one another.
          */
         type: {
           type: String,
@@ -194,7 +290,7 @@
          */
         size: {
           type: String,
-          value: 'small'
+          value: 'medium'
         },
 
         /**
@@ -215,6 +311,10 @@
          */
         extraIcon: {
           type: String,
+        },
+
+        disabled: {
+          type: Boolean
         }
       },
 
@@ -262,7 +362,7 @@
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: this.gtmAction ? this.gtmAction : 'click',
           component: 'call-to-action',
           structure: structure,
@@ -272,7 +372,9 @@
             'currentPage': document.URL,
             'targetPage': element.href
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       },
 
       /**

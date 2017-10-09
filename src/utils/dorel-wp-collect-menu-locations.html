@@ -2,8 +2,8 @@
   <template>
     <iron-ajax
       auto
-      url="[[ endPoint ]]" 
-      handle-as="json" 
+      url="[[ endPoint ]]"
+      handle-as="json"
       on-response="_menuLoaded"></iron-ajax>
 
     <iron-ajax
@@ -18,11 +18,12 @@
   Polymer({
     is: 'dorel-wp-collect-menu-locations',
     properties: {
+
       /**
-       * `wpUrl` this is the url to your Wordpress instance
+       * `appCache` the application cache
        */
-      wpUrl: {
-        type: String
+      appCache: {
+        type: Object
       },
 
       /**
@@ -32,11 +33,23 @@
         type: String
       }
     },
+
     observers: [
-      '_initMenuLocations(globals.Dorel.wpUrl)'
+      '_initMenuLocations(appCache.wpUrl, appCache.currentLanguage)'
     ],
 
-    /** 
+    /**
+     * @observer
+     * @name _initMenuLocations
+     * @description when the wpUrl changes it sets the endPoint which will fire the iron-ajax
+     */
+    _initMenuLocations: function(wpUrl, currentLanguage) {
+      if (typeof wpUrl === 'undefined' || wpUrl === '' || !currentLanguage) return;
+
+      this.endPoint = wpUrl + currentLanguage.path + '/wp-json/wp-api-menus/v2/menu-locations';
+    },
+
+    /**
      * @name _menuLoaded
      * @description process the retrieved menu locations
      */
@@ -46,9 +59,10 @@
       // iterate over the keys of the response
       for (var key in response) {
         if (key !== 'utilities_menu') {
+          var wpUrl = this.get('appCache.wpUrl');
 
           // for every key retrieve its menuItems
-          this.$.menuItems.url = this.wpUrl + '/wp-api-menus/v2/menu-locations/' + key;
+          this.$.menuItems.url = wpUrl + 'wp-json/wp-api-menus/v2/menu-locations/' + key;
 
           // kicks off the request, when response is given _menuItemsLoaded is fired
           this.$.menuItems.generateRequest();
@@ -56,10 +70,10 @@
       }
 
       // place all the menu locations in the collect menus object
-      Polymer.globalsManager.set('Dorel.collect.menus', response);
+      this.fire('setAppCache', { value: response, path: 'collect.menus' });
     },
 
-    /** 
+    /**
      * @name _menuItemsLoaded
      * @description This function handles the generateRequest
      * of the menu items per menu location.
@@ -75,41 +89,10 @@
       for (var i = 0, len = response.length; i < len; i++) {
         response[i].title = response[i].title.toLowerCase();
       }
-      
+
       // place the menu items in the right key inside the collect
-      Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation, {});
-      Polymer.globalsManager.set('Dorel.collect.menus.' + menuLocation + '.items', response);
-
-      // set the menuData (two way data binding for the app)
-      this.menuData = this.globals.Dorel.collect.menus;
-    },
-    
-    /**
-     * @name _initMenuLocations
-     * @description Observer function which defines the endpoint when it's available as a global variable
-     */
-    _initMenuLocations: function(wpUrl) {
-      if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
-
-      this.endPoint = this.wpUrl + '/wp-api-menus/v2/menu-locations';
-    },
-
-
-
-    /**
-     * @name _hasProps
-     * @description check if the observed data model has properties
-     */
-    _hasProps: function(dataObj) {
-      // define dataEmpty variable to check wheter the dorelEvt object is empty or not
-      var hasProps = false;
-
-      // check for properties in the dorelEvt object
-      for (var prop in dataObj) {
-        hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
-      }
-
-      return hasProps;
+      this.fire('setAppCache', { value: {}, path: 'collect.menus.' + menuLocation });
+      this.fire('setAppCache', { value: response, path: 'collect.menus.' + menuLocation + '.items' });
     }
 
   });

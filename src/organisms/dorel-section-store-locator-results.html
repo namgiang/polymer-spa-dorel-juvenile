@@ -4,8 +4,8 @@
   <template>
     <style include="iron-flex iron-flex-alignment" is="custom-style">
 
-      :root {
-        --button-margin-spacing: 0;
+      :host {
+        --button-margin-spacing: -1.5em;
       }
 
       .results {
@@ -91,7 +91,7 @@
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <div class="row">
         <div class="results-content">
-          <h2 class="title">Results</h2>
+          <h2 class="title">{{ localize('Results' }}</h2>
           <ul>
             <template
               is="dom-repeat"
@@ -115,6 +115,10 @@
   <script>
     Polymer({
       is: 'dorel-section-store-locator-results',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
 
       properties: {
 

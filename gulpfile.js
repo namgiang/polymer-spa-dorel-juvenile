@@ -3,7 +3,7 @@
 /**
  * Load Deps
  */
-var gulp  = require('gulp');
+var gulp = require('gulp');
 var shell = require('gulp-shell');
 var imagemin = require('gulp-imagemin');
 
@@ -14,31 +14,18 @@ gulp.task('compress-images', function () {
   var dest = './build/assets/img';
 
   return gulp.src('./assets/images/*')
-    .pipe(imagemin())
-    .pipe(gulp.dest('./assets/images/'));
+          .pipe(imagemin())
+          .pipe(gulp.dest('./assets/images/'));
 });
 
 /**
  * Task for building polymer
  */
 gulp.task('build-polymer', shell.task([
-    'polymer build'
+  'polymer build --add-service-worker --add-push-manifest --insert-prefetch-links --js-minify --css-minify --html-minify --js-compile --name unbundled'
 ]));
-
-/**
- * Task building service worker
- */
-gulp.task('generate-service-worker', ['build-polymer'], function(callback) {
-  var path = require('path');
-  var swPrecache = require('sw-precache');
-  var rootDir = './build/unbundled';
-  swPrecache.write(path.join(rootDir, 'service-worker.js'), {
-    staticFileGlobs: [rootDir + '/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff}'],
-    stripPrefix: rootDir
-  }, callback);
-});
 
 /**
  * Generate all (this script should run)
  */
-gulp.task('build', ['compress-images', 'build-polymer', 'generate-service-worker']);
+gulp.task('build', ['compress-images', 'build-polymer']);

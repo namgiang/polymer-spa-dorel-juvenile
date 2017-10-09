@@ -4,7 +4,7 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
-        --button-margin-spacing: 0;
+        --button-margin-spacing: -1.5em;
         @apply(--max-width-host);
       }
 
@@ -20,7 +20,6 @@
         width: 100%;
         box-sizing: border-box;
         position: relative;
-        margin-top: 1.5em;
         padding: 0 var(--theme-gutter-mobile);
       }
 
@@ -66,13 +65,13 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <template is="dom-if" if="[[ ctaData.ctas.length ]]">
+    <template is="dom-if" if="[[ ctaData.length ]]">
       <section class="section-cta layout horizontal center center-justified wrap"
                tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
         <div class="row">
           <template
             is="dom-repeat"
-            items="[[ ctaData.ctas ]]"
+            items="[[ ctaData ]]"
             as="cta">
             <h2>
               <dorel-cta

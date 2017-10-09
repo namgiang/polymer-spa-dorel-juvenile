@@ -1,8 +1,8 @@
 <dom-module id="dorel-section-store-locator-result">
   <template>
     <style include="iron-flex iron-flex-alignment" is="custom-style">
-      :root {
-        --button-margin-spacing: 0;
+      :host {
+        --button-margin-spacing: -1.5em;
       }
 
       .location-title {
@@ -28,7 +28,7 @@
       <template
         is="dom-if"
         if="[[ !store.address ]]">
-        <p class="location-content">No Address Available</p>
+        <p class="location-content">{{ localize('No_Address_Available') }}</p>
       </template>
       <template is="dom-if"
                 if="[[ store.address ]]">
@@ -43,14 +43,14 @@
                      type="link"
                      target="_blank"
                      link="http://maps.google.com/maps?z=16&daddr=[[ store.address ]],+[[ store.city ]],+[[ store.country ]],+[[ store.postal_code ]]"
-                     size="small"
+                     size="medium"
                      icon="dorel-icons:location"
                      gtm-action="plan-route-retailer"              
                      gtm-parent="[[ gtmParent ]]"
                      gtm-parent-index="[[ gtmParentIndex ]]"
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
-                     gtm-cta-index="0">Plan route</dorel-cta>
+                     gtm-cta-index="0">{{ localize('Plan_route') }}</dorel-cta>
         </template>
         <template
           is="dom-if"
@@ -58,7 +58,7 @@
           <dorel-cta title="Call"
                      type="link"
                      link="tel:[[ store.phone_number ]]"
-                     size="small"
+                     size="medium"
                      icon="dorel-icons:call"
                      gtm-action="call-retailer"              
                      gtm-parent="[[ gtmParent ]]"
@@ -75,14 +75,14 @@
                      type="link"
                      target="_blank"
                      link="[[ store.online_shop.url ]]"
-                     size="small"
+                     size="medium"
                      icon="dorel-icons:external-link"
                      gtm-action="visit-website-retailer"              
                      gtm-parent="[[ gtmParent ]]"
                      gtm-parent-index="[[ gtmParentIndex ]]"
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
-                     gtm-cta-index="2">Visit website</dorel-cta>
+                     gtm-cta-index="2">{{ localize('Visit_website') }}</dorel-cta>
         </template>
       </template>
     </div>
@@ -91,6 +91,11 @@
   <script>
     Polymer({
       is: 'dorel-section-store-locator-result',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
+
       properties: {
 
         /**

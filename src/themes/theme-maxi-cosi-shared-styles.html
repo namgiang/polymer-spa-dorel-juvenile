@@ -13,7 +13,6 @@
          */
 
         /* Brand colors */
-        /* http://www.colourco.de/monochrome/5/%230381a7 */
         --theme-brand-color-1: #0096C3;
         --theme-brand-color-2: #004178;
         --theme-brand-color-3: #00205B;
@@ -39,19 +38,17 @@
         --theme-color-black: var(--theme-color-monochrome-7);
         --theme-color-error: var(--theme-brand-complementary-color-3);
 
+        --theme-color-active: var(--theme-brand-color-1);
+
         /* ------------------------------------------------
-         * Modular scale
+         * Header, Menu
          */
-        /* TODO: change this to .25, because we will need it */
-        --theme-scale-1: 0.25000em;
-        --theme-scale-2: calc(var(--theme-scale-1) * 3);
-        --theme-scale-3: calc(var(--theme-scale-1) * 6);
-        --theme-scale-4: calc(var(--theme-scale-1) * 9);
-        --theme-scale-5: calc(var(--theme-scale-1) * 12);
-        --theme-scale-6: calc(var(--theme-scale-1) * 15);
-        --theme-scale-7: calc(var(--theme-scale-1) * 18);
-        --theme-scale-8: calc(var(--theme-scale-1) * 21);
-        --theme-scale-9: calc(var(--theme-scale-1) * 24);
+        --theme-header-wrapper: 4.5em;
+        --theme-header-wrapper-small-up: 10.5em;
+        --theme-header-items-top-bottom-padding: 1.5em;
+        --theme-header-item-padding: .75em;
+        --theme-header-logo-top: 0;
+        --theme-menu-offset: 10.5rem;
 
         /* ------------------------------------------------
          * Grid
@@ -60,12 +57,13 @@
         --theme-column-width: 8.33333333%;
 
         /* Spacing between columns */
-        --theme-gutter: var(--theme-scale-3);
+        /* TODO: phase --theme-gutter out */
+        --theme-gutter: 1.5em;
         --theme-gutter-mobile: 1em;
 
-        /* A cointainer in the grid should have some inner spacing */
-        --theme-column-container-size: var(theme-gutter);
-        --theme-column-container-size-mobile: var(--theme-gutter-mobile);
+        --theme-grid-margin: 1.5em;
+        --theme-grid-margin-mobile: 1em;
+        --theme-grid-gutter: .75em;
 
         /* A single row */
         --theme-grid-row: {
@@ -106,9 +104,9 @@
           -ms-flex: 0 0 auto;
           -webkit-box-flex: 0;
           flex: 0 0 auto;
-          padding-right: var(--theme-scale-2);
-          padding-left: var(--theme-scale-2);
-          margin-top: var(--theme-scale-3);
+          padding-right: .75em;
+          padding-left: .75em;
+          margin-top: 1.5em;
         };
 
         /* Modifier for mobile screens */
@@ -144,6 +142,7 @@
         --theme-base-paragraph-width: 640px; /*560px; */
         --theme-font-weight: 400;
         --theme-font-weight-light: 300;
+        --theme-font-weight-bold: 500;
 
         --theme-font: 'Neo Sans', Helvetica Neue, Helvetica, Arial, sans-serif;
 
@@ -246,21 +245,134 @@
           * Typography colors
           */
         --theme-color-text-link: var(--theme-brand-color-2);
-        --theme-color-text-link-active: var(--theme-brand-color-1);
+        --theme-color-text-link-active: var(--theme-color-active);
 
         --theme-text-link: {
           color: var(--theme-color-text-link);
           text-decoration: none;
           transition: color .3s ease, border-bottom .3s ease;
-          border-bottom: 1px solid var(--theme-color-monochrome-2);
+          border-bottom: 1px solid var(--theme-color-text-link);
         };
 
         --theme-text-link-active: {
-          color: var(--theme-color-text-link-active);
-          border-bottom: 1px solid var(--theme-color-text-link-active);
+          color: var(--theme-color-active);
+          border-bottom: 1px solid var(--theme-color-active);
+        };
+
+        /*
+         * Textual elements
+         */
+        --theme-blockquotes-mobile: {
+          @apply(--theme-typography-2);
+          color: var(--theme-brand-color-1);
+          border-left: .125em solid var(--theme-brand-color-1);
+          max-width: var(--theme-base-paragraph-width);
+          font-style: italic;
+          margin-left: 0;
+          padding-left: 0.5em;
+        };
+
+        --theme-blockquotes-desktop: {
+          @apply(--theme-blockquotes-mobile);
+          @apply(--theme-typography-5);
+        };
+
+        --theme-list: {
+          @apply(--theme-paragraph-text);
+          max-width: var(--theme-base-paragraph-width);
+          padding-left: 0;
+          list-style: none;
+          counter-reset: item;
+        };
+
+        --theme-list-item: {
+          margin-top: .5em;
+          padding-left: 1.5em;
+          position: relative;
+        };
+
+        --theme-ordered-list-bullet: {
+          @apply(--theme-typography-3);
+          color: var(--theme-brand-color-1);
+          content: counter(item);
+          counter-increment: item;
+          margin-right: .5em;
+          margin-top: 0;
+          float: left;
+          position: absolute;
+          left: 0;
+        };
+
+        --theme-unordered-list-bullet: {
+          content: '';
+          float: left;
+          display: inline-block;
+          margin-right: 1em;
+          width: .375em;
+          height: .375em;
+          margin-top: .6em;
+          border-radius: .5em;
+          background-color: var(--theme-brand-color-1);
+          position: absolute;
+          left: 0;
+        };
+
+        --theme-code: {
+          max-width: var(--theme-base-paragraph-width);
+          background-color: var(--theme-color-monochrome-2);
+          border: 1px solid var(--theme-color-monochrome-3);
+          width: 100%;
+          float: left;
+          overflow-x: scroll;
+          overflow-y: hidden;
+          display: block;
+          word-wrap: normal;
+          padding: 1.5rem;
+          margin: 1.5em 0 0 0;
+          box-sizing: border-box;
+          white-space: normal;
+        };
+
+        --theme-code-pre: {
+          white-space: pre-line;
+          font-family: monospace, monospace;
+          margin: 0;
+          float: left;
+        };
+
+        --theme-figcaption: {
+          @apply(--theme-typography-1);
+          width: 100%;
+          text-align: center;
+          font-style: italic;
+          margin: 0.85715em 0;
+        };
+
+        /* Tables */
+        --theme-table: {
+          @apply(--theme-typography-1);
+          background-color: var(--theme-color-monochrome-2);
+          margin-top: 1.75em;
+          line-height: 1.5em;
+          padding: 1.75em;
+          clear: both;
+          float: left;
+        };
+
+        --theme-table-row: {
+          box-shadow: inset 0 -1px 0 0 var(--theme-color-monochrome-3);
+        };
+
+        --theme-table-elements: {
+          line-height: 1.5em;
+          height: 1.5em;
+          padding: 0 1.5em 0 0;
+          text-align: left;
+          font-weight: normal;
         };
 
         /* Rounded Edges */
+        --theme-border-radius-0: .25em;
         --theme-border-radius-1: .5em;
         --theme-border-radius-2: 1em;
         --theme-border-radius-3: 1.5em;
@@ -273,8 +385,8 @@
         --theme-button-border-radius: var(--theme-border-radius-1);
 
         --theme-button: {
-          line-height: var(--theme-scale-3);
-          margin: var(--theme-scale-3) 0 0 0;
+          line-height: 1.5em;
+          margin: 1.5em 0 0 0;
           -webkit-box-align: center;
           -webkit-flex-align: center;
           -ms-flex-align: center;
@@ -285,7 +397,6 @@
           display: -o-flex;
           display: flex;
           align-items: center;
-          padding: .625em 0;
           border-radius: var(--theme-button-border-radius);
           border: 2px solid transparent;
           transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, opacity .3s ease;
@@ -296,11 +407,12 @@
 
         --theme-button-small: {
           @apply(--theme-typography-2);
+          padding: .188em 0;
         };
 
         --theme-button-medium: {
-          @apply(--theme-typography-3);
-          padding: .325em 0;
+          @apply(--theme-typography-2);
+          padding: .625em 0;
         };
 
         --theme-button-large: {
@@ -315,10 +427,14 @@
           background-color: var(--theme-brand-complementary-color-2)
         };
 
+        --theme-button-inverted: {
+          background-color: var(--theme-color-white);
+        };
+
         --theme-button-secondary: {
           color: var(--theme-brand-color-2);
           fill: var(--theme-brand-color-2);
-          border: 2px solid var(--theme-color-monochrome-2);
+          border: 2px solid var(--theme-brand-complementary-color-1);
           background-color: var(--theme-color-white);
         };
 
@@ -339,20 +455,45 @@
         --theme-button-link-active: {
           background-color: transparent;
           border-color: transparent;
-          color: var(--theme-color-text-link-active);
-          fill: var(--theme-color-text-link-active);
+          color: var(--theme-color-active);
+          fill: var(--theme-color-active);
         };
 
         --theme-button-active: {
-          background-color: var(--theme-brand-complementary-color-1);
-          border-color: var(--theme-brand-complementary-color-1);
+          background-color: var(--theme-color-active);
+          border-color: var(--theme-color-active);
           color: var(--theme-color-white);
         };
 
+        --theme-button-movie-play: {
+          background-color: var(--theme-color-monochrome-1);
+        };
+
         --theme-button-icon: {
-          height: var(--theme-scale-3);
-          width: var(--theme-scale-3);
+          height: 1.5em;
+          width: 1.5em;
           padding: 0 .5em;
+        };
+
+        /* Not used, but necessary to reset icon style */
+        --theme-button-primary-icon: {
+        };
+        --theme-button-secondary-icon: {
+        };
+        --theme-button-tertiary-icon: {
+        };
+        --theme-button-link-icon: {
+        };
+
+        --theme-button-icon-small: {
+          height: 1.5em;
+          width: 1.5em;
+          padding: 0 .188em;
+        };
+
+        --theme-button-icon-active: {
+        };
+        --theme-button-link-icon-active: {
         };
 
         /*
@@ -376,7 +517,7 @@
         };
 
         --theme-form-input-active: {
-          border-color: var(--theme-color-text-link-active);
+          border-color: var(--theme-color-active);
         };
 
         --theme-form-input-disabled: {
@@ -429,8 +570,8 @@
         };
 
         --theme-form-select-active: {
-          border-color: var(--theme-color-text-link-active);
-          color: var(--theme-color-text-link-active);
+          border-color: var(--theme-color-active);
+          color: var(--theme-color-active);
         };
 
         --theme-form-textarea: {
@@ -438,6 +579,14 @@
           min-height: 5.7em;
           margin-bottom: 1.45em;
         };
+
+        /*
+        * Form checkboxes
+        */
+        --theme-checkbox-background-color: var(--theme-color-white);
+        --theme-checkbox-border-color: var(--theme-color-monochrome-3);
+        --theme-checkbox-hover-color: var(--theme-brand-color-1);
+        --theme-checkbox-check-color: var(--theme-brand-color-1);
 
         /*
         * Footer variables
@@ -457,6 +606,7 @@
         --theme-logo-mobile-width: 14em;
         --theme-logo-mobile-height: 3em;
         --theme-logo: url('/assets/images/logos/logo-maxi-cosi.svg') no-repeat center center;
+        --theme-logo-alternative: url('/assets/images/logos/logo-maxi-cosi-alternative.svg') no-repeat center center;
 
         --max-width-limit: 1280px;
 
@@ -472,13 +622,6 @@
           display: -ms-flexbox;
           display: -webkit-flex;
           display: flex;
-        };
-
-        /*
-        * Image placeholder
-        */
-        --image-placeholder: {
-          background: linear-gradient(to right, var(--theme-brand-color-1) 0%, var(--theme-brand-color-2) 100%);
         };
 
         /*
@@ -501,7 +644,14 @@
         --paper-menu-focused-item-after: {
           background-color: var(--theme-color-monochrome-2);
           font-weight: var(--theme-font-weight);
-        }
+        } /*
+        * Maxi-Cosi styled icons
+        */
+
+        --theme-svg-icon-chevron: {
+          d: path("M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z");
+        };
+
       }
     </style>
   </template>

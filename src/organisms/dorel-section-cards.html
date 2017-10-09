@@ -1,6 +1,6 @@
 <link rel="import" href="../molecules/dorel-card.html">
 
-<dom-module id="dorel-section-cards">
+<dom-module id="dorel-section-cards" light-background$="[[ lightBackground ]]">
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
@@ -8,13 +8,18 @@
         /* Note: The negative margin is a correction so that there is no whitespace between the cards and the footer */
         margin: 1.5em 0 0 0;
         @apply(--max-width-host);
+        flex-wrap: wrap;
+      }
+
+      :host-context( [light-background]) {
+        background-color: var(--theme-color-monochrome-1);
       }
 
       .section-cards {
         @apply(--max-width-container);
         width: 100%;
         float: left;
-        padding: 1.5em var(--theme-gutter-mobile);
+        padding: 0 var(--theme-gutter-mobile) 1.5em var(--theme-gutter-mobile);
         box-sizing: border-box;
       }
 
@@ -22,6 +27,29 @@
         @apply(--theme-grid-row);
         @apply(--layout-flex);
         @apply(--theme-grid-row-mobile-margins);
+        justify-content: center;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+
+      .description {
+        text-align: center;
+        display: flex;
+      }
+
+      .description dorel-safe-html {
+        margin: auto;
+      }
+
+      .titling-section {
+        float: left;
+        width: 100%;
+        padding: var(--theme-gutter-mobile);
       }
 
       dorel-card {
@@ -40,23 +68,70 @@
         padding: 0 .75em;
       }
 
+      [tablet-medium-up][compact] dorel-card {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
+        flex-basis: calc(var(--theme-column-width) * 4);
+        max-width: calc(var(--theme-column-width) * 4);
+        padding: 0 .75em;
+      }
+
+      [tablet-medium][compact] dorel-card {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
+        flex-basis: calc(var(--theme-column-width) * 6);
+        max-width: calc(var(--theme-column-width) * 6);
+        padding: 0 .75em;
+      }
+
       .section-cards[tablet-medium-up] {
-        padding: 1.5em var(--theme-gutter);
+        padding: 0 var(--theme-gutter) 3em var(--theme-gutter);;
       }
 
       [tablet-medium-up] .row {
         @apply(--theme-grid-row-margins);
       }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+      .titling-section[tablet-medium-up] {
+        padding: var(--theme-gutter);
+      }
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
+    <!-- dom-repeat cards -->
     <template
       is="dom-if"
       if="[[ cardsData.cards.length ]]">
 
+      <section class="titling-section" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <!-- section title -->
+        <template
+          is="dom-if"
+          if="[[ cardsData.title ]]">
+          <h2 class="title">[[ cardsData.title ]]</h2>
+        </template>
+        <!--// section title -->
+
+        <!-- section description -->
+        <template
+          is="dom-if"
+          if="[[ cardsData.description]]">
+          <div class="description">
+            <dorel-safe-html html="[[ cardsData.description ]]"></dorel-safe-html>
+          </div>
+        </template>
+        <!--// section description -->
+      </section>
+
+
       <section class="section-cards layout horizontal center center-justified wrap"
-               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+               compact$="[[ compact ]]"
+               tablet-medium$="[[ breakpoints.tabletMedium ]]"
+               desktop-small$="[[ breakpoints.desktopSmall ]]"
+               tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
         <div class="row">
           <template
             is="dom-repeat"
@@ -64,6 +139,7 @@
             as="card">
             <dorel-card
               card-data="[[ card ]]"
+              cta-type="[[ ctaType ]]"
               gtm-parent="[[ gtmParent ]]"
               gtm-parent-index="[[ gtmParentIndex ]]"
               gtm-child="dorel-card"
@@ -71,7 +147,10 @@
           </template>
         </div>
       </section>
+
     </template>
+    <!-- dom-repeat cards -->
+
   </template>
 
   <script>
@@ -79,7 +158,33 @@
       is: 'dorel-section-cards',
 
       properties: {
-
+        /**
+         * @attribute
+         * @name lightBackground
+         * @description Light background for the section
+         */
+        lightBackground: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * @attribute
+         * @name compact
+         * @description If compact, the section will show 3 cards on a row instead of 2
+         */
+        compact: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * @attribute
+         * @name ctaType
+         * @description CTA type which will appear in the card
+         */
+        ctaType: {
+          type: String,
+          value: 'primary',
+        },
         /**
          * @attribute
          * @name cardsData
@@ -91,7 +196,6 @@
             return {};
           }
         }
-
       }
     });
 

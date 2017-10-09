@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../atoms/dorel-input-select.html">
 
 <dom-module id="dorel-component-toolbar">
   <template>
@@ -6,7 +7,6 @@
       :host {
         @apply(--max-width-host);
         background-color: var(--theme-brand-color-1);
-        margin-bottom: 1.5em;
       }
 
       :root {
@@ -36,19 +36,33 @@
         margin-bottom: -1.5em;
         margin-left: 3em;
       }
+
+      dorel-cta {
+        float: left;
+        width: auto;
+        margin-top: -1.5em;
+      }
     </style>
     <div class="toolbar">
+      <dorel-cta title="Back to overview"
+                 type="inverted"
+                 link="[[ backLink ]]"
+                 size="medium"
+                 icon="dorel-icons:overview">
+        Back to overview
+      </dorel-cta>
+      <!-- NOTE: this is a select box for selecting brands. Switched off now because we can change brands through the overview
       <dorel-input-select label=""
                           options="[[ availableBrands ]]"
-                          selected="{{ brand }}"></dorel-input-select>
+                          selected="{{ brand }}"></dorel-input-select> -->
 
       <paper-toggle-button noink
-                           checked$="[[ globals.Dorel.grid.vertical ]]"
+                           checked$="[[ appCache.grid.vertical ]]"
                            on-click="_setVerticalRhythm">
         Vertical Rhythm
       </paper-toggle-button>
       <paper-toggle-button noink
-                           checked$="[[ globals.Dorel.grid.horizontal ]]"
+                           checked$="[[ appCache.grid.horizontal ]]"
                            on-click="_setHorizontalGrid">
         Horizontal Grid
       </paper-toggle-button>
@@ -60,12 +74,18 @@
     Polymer({
       is: 'dorel-component-toolbar',
       properties: {
+        appCache: {
+          type: Object,
+          value: function () {
+            return {}
+          }
+        },
         /**
          * @name brand
          * @description defines the brand
          */
         brand: {
-          type: String,
+          type: Object,
           notify: true,
           readOnly: false
         },
@@ -76,6 +96,13 @@
         availableBrands: {
           type: Array,
           value: []
+        },
+
+        backLink: {
+          type: String,
+          value: function() {
+            return '/' + CONFIG.LOCALE.CODE + '/component-guide/';
+          }
         }
       },
       /**
@@ -83,16 +110,16 @@
        * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
        */
       _setVerticalRhythm: function () {
-        var vertical = Polymer.globalsManager.get('Dorel.grid.vertical');
-        Polymer.globalsManager.set('Dorel.grid.vertical', !vertical);
+        var vertical = this.appCache.grid.vertical;
+        this.fire('setAppCache', {value: !vertical, path: 'grid.vertical'});
       },
       /**
        * @name _setHorizontalGrid
        * @description Toggles the horizontal grid global variable (and it's connected overlay component)
        */
       _setHorizontalGrid: function () {
-        var horizontal = Polymer.globalsManager.get('Dorel.grid.horizontal');
-        Polymer.globalsManager.set('Dorel.grid.horizontal', !horizontal);
+        var horizontal = this.appCache.grid.horizontal;
+        this.fire('setAppCache', {value: !horizontal, path: 'grid.horizontal'});
       },
     });
   </script>

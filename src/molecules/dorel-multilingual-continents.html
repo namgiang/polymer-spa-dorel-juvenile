@@ -1,0 +1,239 @@
+<link rel="import" href="dorel-multilingual-country.html">
+<dom-module id="dorel-multilingual-continents">
+  <template>
+    <style>
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      section {
+        float: left;
+        width: 100%;
+      }
+
+      ul {
+        padding: 0;
+        list-style: none;
+        margin: .75em 0;
+        float: left;
+        width: 100%;
+      }
+
+      li {
+        float: left;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .title {
+        @apply(--theme-typography-4);
+      }
+
+      .continent-title {
+        @apply(--theme-typography-2);
+        font-weight: bold;
+      }
+
+      .continent {
+        float: left;
+        display: inline-block;
+        width: 100%;
+      }
+
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        box-sizing: border-box;
+      }
+
+      [centered] .container {
+        @apply(--layout-center-justified);
+      }
+
+      [centered] .title {
+        text-align: center;
+      }
+
+      [tablet-medium-up] .continent {
+        width: 16.6666667%;
+      }
+
+      [tablet-small] .continent {
+        width: 50%;
+      }
+
+      [tablet-medium] .continent {
+        width: 25%;
+      }
+
+      [tablet-medium-up] .container {
+        padding-top: 1.5em;
+      }
+
+      .cta-wrapper {
+        margin-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+      }
+
+      .cta-wrapper dorel-cta {
+        width: auto;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section centered$="[[ centered ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium$="[[ breakpoints.tabletMedium ]]"
+             desktop-small$="[[ breakpoints.desktopSmall ]]">
+      <h2 class="title">{{ localize('Please_select_your_country') }}</h2>
+      <div class="container">
+        <template is="dom-repeat" items="[[ continentsData ]]" filter="[[ _filterContinents() ]]" sort="_sortContinents">
+          <div class="continent">
+            <h3 class="continent-title">[[ item.name ]]</h3>
+            <ul>
+              <template is="dom-repeat" items="[[ item.countries ]]">
+                <li>
+                  <dorel-multilingual-country country-data="[[ item ]]"></dorel-multilingual-country>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </div>
+    </section>
+    <template is="dom-if" if="[[ _isInternationalContinentAvailable(continentsData) ]]">
+      <div class="cta-wrapper" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <dorel-cta title="Link to the international website (English)"
+                    type="link"
+                    link="[[ _getInternationalContinentLink(continentsData) ]]"
+                    icon=""
+                    size="medium">
+           {{ localize('International_website') }} ([[ _getInternationalContinentLanguage(continentsData) ]])
+         </dorel-cta>
+      <div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-multilingual-continents',
+
+      behaviors: [
+        DorelMultilingualBehavior
+      ],      
+      
+      properties: {
+        /**
+         * @name centered
+         * @description Centers the position of the layout
+         */
+        centered: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * @name continentsData
+         * @description Continent data, used for display the countries in columns
+         */
+        continentsData: {
+          type: Array,
+          value: []
+        }
+      },
+
+      /**
+       * @name _filterContinents
+       * @description filters out the international continent
+       */
+      _filterContinents: function() {
+        var self = this;
+        return function(continent) {
+          // if there is no continent return false
+          if(!continent || !continent.countries || !continent.countries.length) {
+            return false;
+          }
+          return !self._isInternationalContinent(continent);
+        };
+      },
+
+      /**
+       * @name _sortContinents
+       * @description sorts continents based on most countries
+       */
+      _sortContinents: function(a, b) {
+        if(b.countries.length === a.countries.length) {
+          return 0;
+        }
+        return a.countries.length > b.countries.length ? -1 : 1;
+      },
+
+      /**
+       * @name _isInternationalContinent
+       * @description check if the title of a continent is equal to International
+       * @returns Boolean
+       */
+      _isInternationalContinent: function(continent) {
+        return Boolean(continent.name === 'International');
+      },
+
+      /**
+       * @name _getInternationalContinentLink
+       * @description gets the International continent from the data and uses the first country link
+       * @returns String
+       */
+      _getInternationalContinentLink: function(continentsData) {
+        var self = this;
+        var international = continentsData.find(function(continent) {
+          return self._isInternationalContinent(continent);
+        });
+        return international && international.countries && international.countries.length ? international.countries[0].website_url : '';
+      },
+
+      /**
+       * @name _getInternationalContinentLanguage
+       * @description gets the International continent from the data and uses the first language
+       * in the countries array/languages array
+       * @returns String
+       */
+      _getInternationalContinentLanguage: function(continentsData) {
+        var self = this;
+        
+        var international = continentsData.find(function(continent) {
+          return self._isInternationalContinent(continent);
+        });
+
+        return international.countries[0].languages[0].name;
+      },
+
+      /**
+       * @name _getInternationalContinentLink
+       * @description check if there is a continent with the title International
+       * @returns Boolean
+       */
+      _isInternationalContinentAvailable: function(continentsData) {
+        var self = this;
+        return continentsData.some(function(continent) {
+          return self._isInternationalContinent(continent) && continent.countries && continent.countries.length;
+        });
+      },
+
+      /**
+       * @name _eventTracking
+       * @description this is for example tracking only
+       * more info http://bit.ly/2nb6I7G
+       */
+      _eventTracking: function (event) {
+        /* ...TRACKING CODE FOR THIS PLUGIN... */
+      }
+    });
+
+  </script>
+
+</dom-module>

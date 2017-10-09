@@ -1,0 +1,214 @@
+<dom-module id="dorel-breadcrumbs">
+  <template>
+    <style>
+      :host {
+        display: inline;
+      }
+
+      .breadcrumb-menu {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .breadcrumb-item {
+        @apply(--theme-typography-1);
+        display: inline;
+        margin-right: 1.5rem;
+        position: relative;
+      }
+
+      [tablet-medium-up] .breadcrumb-item {
+        @apply(--theme-typography-2);
+      }
+
+      .breadcrumb-item a {
+        color: var(--theme-color-text-link);
+        text-decoration: none;
+        transition: 0.2s;
+      }
+
+      .breadcrumb-item a:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .breadcrumb-item:after {
+        content: '>';
+        position: absolute;
+        margin-top: 1px;
+        transform: translate(50%, 0);
+        color: var(--theme-color-black);
+      }
+
+      .breadcrumb-item:last-of-type:after {
+        display: none;
+      }
+
+      .breadcrumb-item:last-of-type a {
+        color: var(--theme-color-monochrome-3);
+        cursor: default;
+        text-decoration: none;
+      }
+    </style>
+
+    <!-- define routing -->
+    <app-location route="{{ route }}"></app-location>
+    <app-route
+      route="{{ route }}"></app-route>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <ol class="breadcrumb-menu" itemscope itemtype="http://schema.org/BreadcrumbList"
+      tablet-small$="[[ breakpoints.tabletSmall ]]"
+      tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <template
+        is="dom-repeat"
+        items="[[ breadcrumbs ]]"
+        as="breadcrumb"
+        index-as="index"
+        rendered-item-count="{{ renderedCount }}">
+        <li class="breadcrumb-item"
+            itemprop="itemListElement" itemscope
+            itemtype="http://schema.org/ListItem">
+          <a itemprop="item" href="[[ breadcrumb.url ]]">
+          <span itemprop="name">[[ breadcrumb.label ]]</span></a>
+          <meta itemprop="position" content="[[ setIndex(index) ]]" />
+        </li>
+      </template>
+    </ol>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      is: 'dorel-breadcrumbs',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name route
+         * @description data coming from the app-route
+         */
+        route: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name breadcrumbs
+         * @description Array of object that represent the breadcrumbs
+         */
+        breadcrumbs: {
+          type: Array,
+          value: []
+        },
+
+      },
+
+      observers: [
+        'routeChanged(route)'
+      ],
+
+      /**
+       * observer
+       * @name routeChanged
+       * @description is called if the route changes
+       * @param route - Object
+       */
+      routeChanged: function(route) {
+        this.set('breadcrumbs', []);
+        // create array of paths in array and filter out empty strings
+        var pathArray = route.path.split('/').filter(function(path, index) {
+          return Boolean(path !== '');
+        });
+        // Add the first part of url: https://example.com/
+        pathArray.unshift(window.location.origin);
+        this._setBreadCrumbs(pathArray);
+      },
+
+      /**
+       * @name _setBreadCrumbs
+       * @description will create a new array of object from the param array
+       * and set the breadcrumbs
+       * @param pathArray - Array of strings
+       */
+      _setBreadCrumbs: function(pathArray) {
+        var self = this;
+        array = pathArray.map(function(item, index) {
+          return {
+            url: self._getUrl(index, pathArray),
+            label: self._getLabel(item, index)
+          };
+        });
+
+        array.forEach(function(item, index) {
+          if(index === 0) {
+            return
+          }
+          var newItem = Object.assign({}, item);
+          self.push('breadcrumbs', newItem);
+        });
+      },
+
+      /**
+       * helpermethod
+       * @name _getUrl
+       * @description will filter the array based on the index
+       * @param index - Number
+       * @param array - Array of strings
+       * @returns String - url
+       */
+      _getUrl: function(index, array) {
+        var newArray = array.filter(function(path, _index) {
+          return Boolean(_index <= index)
+        })
+        return newArray.join('/');
+      },
+
+      /**
+       * helpermethod
+       * @name _getLabel
+       * @description will remove '-', replace it with a space
+       * workaround if index === 0, because we can't extract the name home from the url (http://dorel.io)
+       * @param item - String
+       * @param index - Number
+       * @returns String
+       */
+      _getLabel: function(item, index) {
+        if(index === 1) {
+          return 'Home'; // TODO: Translations
+        }
+        var label = item.split('-').join(' ');
+        return this._capitalizeFirstLetter(label);
+      },
+
+      /**
+       * helpermethod
+       * @name _capitalizeFirstLetter
+       * @description will capitalize the first char
+       * @param string - String
+       * @returns String
+       */
+      _capitalizeFirstLetter: function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      },
+
+      /**
+       * helpermethod
+       * @name setIndex
+       * @description used by the template to correct numbering that starts with 0
+       * @param index - Number
+       * @returns Number
+       */
+      setIndex: function(index) {
+        return index + 1;
+      }
+
+
+    });
+
+  </script>
+
+</dom-module>

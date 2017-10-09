@@ -1,0 +1,194 @@
+<link rel="import" href="../organisms/dorel-section-service-faq-overview.html">
+
+<dom-module id="dorel-template-faq-overview">
+  <template>
+    <style>
+      :host {
+       
+      }
+
+      .section {
+        @apply(--max-width-container);
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        padding: 0 var(--theme-gutter-mobile);
+        float: none;
+        margin: auto;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile-margins);
+        @apply(--layout-flex);
+        justify-content: center;
+        float: left;
+        width: 100%;
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      section {
+        padding-top: 0;
+      }
+
+      dorel-section-page-nav {
+        width: 100%!important;
+      }
+
+      dorel-section-service-support {
+        padding-top: 3em;
+      }
+
+      dorel-service-support {
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
+      }
+
+      [tablet-medium-up] dorel-service-support {
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] .container {
+        @apply(--theme-grid-column);
+      }
+
+      [tablet-medium-up] .section {
+        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
+      }
+
+      [tablet-medium-up] .row {
+        @apply(--theme-grid-row-margins);
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+    </style>
+
+    <dorel-gmt-collect-faqs
+      endpoint-segments="categories?featured_questions=1"></dorel-gmt-collect-faqs>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+
+      <!-- section-hero-header -->
+      <template
+        is="dom-if"
+        if="[[ templateData.acf.hero_header.length ]]">
+        <dorel-section-header
+          no-offset="true"
+          section-header-data="[[heroHeader]]"
+          gtm-parent="dorel-template-faq-overview"
+          gtm-parent-index="[[ index ]]"></dorel-section-header>
+      </template>
+      <!--// section-hero-header -->
+
+      <!-- breadcrumbs (page-nav) -->
+      <dorel-section-page-nav
+        breadcrumbs-toggle="true"></dorel-section-page-nav>
+      <!--// breadcrumbs (page-nav) -->
+
+      <!-- section-products-overview -->
+      <template
+        is="dom-if"
+        if="[[productsOverviewFaq.products_faq]]">
+        --- products-overview-placeholder ---
+      </template>
+      <!--// section-products-support -->
+
+      <!-- section-service-overview -->
+      <template
+        is="dom-if"
+        if="[[servicesOverviewFaq.services_faq]]">
+        <dorel-section-service-faq-overview
+          app-cache="[[appCache]]"
+          template-data="[[servicesOverviewFaq]]"
+          faq-categories="[[appCache.faqs]]"></dorel-section-service-faq-overview>
+      </template>
+      <!--// section-service-overview -->
+
+      <!-- section-service-support -->
+      <template
+        is="dom-if"
+        if="[[_toggleObject(templateData.acf.customer_support_toggle, customerSupportOptions)]]">
+        <div class="">
+          <div class="section">
+            <div class="row">
+              <div class="container">
+                <dorel-customer-support
+                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <!--// section-service-support -->
+    </section>
+  </template>
+
+  </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-faq-overview',
+      properties: {
+        /**
+         * `appCache` the application cache
+         */
+        appCache: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineOptionModels'
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name homeHeaderData
+         * @description the data model used for the hero header component
+         */
+        heroHeader: Array,
+
+        /**
+         * @name productsOverviewFaq
+         * @description the data model used for the products overview faq component
+         */
+        productsOverviewFaq: Array,
+
+        /**
+         * @name servicesOverviewFaq
+         * @description the data model used for the services overview faq component
+         */
+        servicesOverviewFaq: Array,
+
+        /**
+         * @name customerSupportOptions
+         * @description the data model used for the customer support component
+         */
+        customerSupportOptions: Object
+      },
+
+      behaviors: [TemplateBehaviors]
+    });
+
+  </script>
+
+</dom-module>

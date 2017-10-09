@@ -1,22 +1,24 @@
 <dom-module id="dorel-video-wrap">
   <template>
     <style>
+
       .video-wrap {
-        text-align: center;
         position: relative;
-        min-height: 315px;
-        margin: var(--theme-component-space-inner) 0;
+        padding-bottom: 56.25%; /*16:9*/
+        height: 0;
+        overflow: hidden;
       }
+
       .video-wrap iframe {
-        margin: 0 auto;
-        width: 100%;
         position: absolute;
-        height: 100%;
-        left: 0;
         top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
       }
+
     </style>
-    
+
     <template
       is="dom-if"
       if="[[ hasVideoId(videoId) ]]">
@@ -25,10 +27,10 @@
         is="dom-if"
         if="[[ isYoutubeVideo(videoType) ]]">
         <div class="video-wrap">
-          <iframe src="https://www.youtube.com/embed/[[ videoId ]]" 
-            frameborder="0" 
-            allowfullscreen
-            on-click="_iframeClick"></iframe>
+          <iframe src="https://www.youtube.com/embed/[[ videoId ]]"
+                  frameborder="0"
+                  allowfullscreen
+                  on-click="_iframeClick"></iframe>
         </div>
       </template>
 
@@ -73,7 +75,7 @@
           type: Boolean,
           value: false
         }
-        
+
       },
 
       /**
@@ -82,7 +84,7 @@
        *
        * @returns Boolean if it is not undefined, empty or null (true/false)
        */
-      hasVideoId: function(videoId) {
+      hasVideoId: function (videoId) {
         return (typeof videoId !== 'undefined' || videoId !== '' || videoId !== null);
       },
 
@@ -92,7 +94,7 @@
        *
        * @returns Boolean if the videoType is youtube
        */
-      isYoutubeVideo: function(videoType) {
+      isYoutubeVideo: function (videoType) {
         return (typeof videoType !== 'undefined' && videoType === 'youtube');
       },
 
@@ -100,7 +102,7 @@
        * @name iframeClick
        * @description handles clicks on the iframe
        */
-      _iframeClick: function(event) {
+      _iframeClick: function (event) {
         this.playVideo = !this.playVideo;
 
         this._eventTracking(event);
@@ -113,19 +115,19 @@
        *
        * @todo tracking isn't working currently, because an iframe is used for videos
        */
-      _eventTracking: function(event) {
+      _eventTracking: function (event) {
 
-        var globals = Polymer.globalsManager.get('Dorel');
-
-        /** 
+        /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: (this.playVideo) ? 'play' : 'stop',
           component: 'big-video',
           element: Polymer.dom(event).localTarget,
           event: 'polymer_event'
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>

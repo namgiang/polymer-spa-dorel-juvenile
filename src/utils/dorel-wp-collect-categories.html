@@ -2,7 +2,7 @@
   <template>
     <iron-ajax
       id="categories"
-      url="" 
+      url=""
       handle-as="json"
       on-response="_categoriesLoaded"></iron-ajax>
   </template>
@@ -10,54 +10,58 @@
   <script>
     Polymer({
       is: 'dorel-wp-collect-categories',
-      
+
       properties: {
+
         /**
+         * @attribute
+         * @name appCache
+         * @description the application cache
+         */
+        appCache: {
+          type: Object
+        },
+
+        /**
+         * @attribute
          * @name endPoint
          * @description the endpoint or url of the api
          */
         endPoint: {
           type: String
-        },
+        }
 
       },
 
       observers: [
-        '_retrieveCategories(globals.Dorel.wpUrl)'
+        '_retrieveCategories(appCache.wpUrl)'
       ],
 
+      /**
+       * @observer
+       * @name _retrieveCategories
+       * @description retrieve the categories from Wordpress
+       */
       _retrieveCategories: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '' || !this._hasProps(wpUrl)) return;
+        if (typeof wpUrl === 'undefined' || wpUrl === '') return;
 
 
         var categoriesEl = this.$.categories;
-        categoriesEl.url = this.globals.Dorel.wpUrl + '/wp/v2/categories';
+        categoriesEl.url = wpUrl + 'wp-json/wp/v2/categories';
 
          // do the products call
         categoriesEl.generateRequest();
       },
 
+      /**
+       * @helper
+       * @name _categoriesLoaded
+       * @description handle of the iron-ajax response and set the
+       */
       _categoriesLoaded: function(data) {
         var categories = data.detail.response;
 
-        // to retrieve the menu use Polymer.globalsManager.get('Dorel');
-        Polymer.globalsManager.set('Dorel.collect.categories', categories);
-      },
-
-      /**
-       * @name _hasProps
-       * @description check if the observed data model has properties
-       */
-      _hasProps: function(dataObj) {
-        // define dataEmpty variable to check wheter the dorelEvt object is empty or not
-        var hasProps = false;
-
-        // check for properties in the dorelEvt object
-        for (var prop in dataObj) {
-          hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
-        }
-
-        return hasProps;
+        this.fire('setAppCache', { value: categories, path: 'collect.categories' });
       }
     });
   </script>

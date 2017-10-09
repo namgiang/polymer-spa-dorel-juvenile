@@ -108,6 +108,8 @@
         }
       },
 
+      behaviors: [ConditionalBehaviors],
+
       /**
        * @name iframeClick
        * @description handles clicks on the iframe
@@ -149,7 +151,7 @@
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: 'click',
           component: component,
           element: element,
@@ -158,19 +160,11 @@
             'currentPage': document.URL,
             'targetPage': element.href
           }
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
 
         this._eventTracking(event);
-      },
-
-      /**
-       * @name _hasValue
-       * @description checks to see if a value is set
-       *
-       * @returns Boolean
-       */
-      _hasValue: function (val) {
-        return (typeof val !== 'undefined' || val !== '');
       },
 
       /**
@@ -182,17 +176,17 @@
        */
       _eventTracking: function (event) {
 
-        var globals = Polymer.globalsManager.get('Dorel');
-
         /**
          * Tracking on click for cta
          */
-        Polymer.globalsManager.set('Dorel.events', {
+        var event = {
           action: (this.playVideo) ? 'play' : 'stop',
           component: 'product-video',
           element: Polymer.dom(event).localTarget,
           event: 'polymer_event'
-        });
+        };
+
+        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>

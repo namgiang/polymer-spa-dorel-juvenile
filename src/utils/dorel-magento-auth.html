@@ -1,0 +1,99 @@
+<dom-module id="dorel-magento-auth">
+  <template>
+
+    <iron-ajax
+      id="authenticate"
+      content-type="application/json"
+      method="post"
+      handle-as="json"
+      on-response="_authResponse"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-magento-auth',
+
+      properties: {
+
+        token: {
+          type: String,
+          notify: true
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        }
+
+      },
+
+      retrieveToken: function() {
+        this._checkTimestamp();
+      },
+
+      _checkTimestamp: function() {
+
+        // get timestamp from globals
+        var timestamp = this.get('appCache.product.auth.timestamp');
+        var token = this.get('appCache.product.auth.token');
+
+        // check if timestamp and token are set
+        if(timestamp && token) {
+
+          //if timestamp exists calculate time difference between the previous set timestamp and the current time
+          var seconds = Math.abs(timestamp - Date.now()) / 1000;
+
+          //calculate the amount of hours
+          var hours = Math.floor(seconds / 3600) % 24;
+
+          if(hours && hours >= 4) {
+            //if hours exists and is equal or bigger than 4 authenticate because token is not valid anymore
+            this._authenticate();
+          } else {
+            this.token = token;
+          }
+        } else {
+          // authenticate because timestamp is not set
+          this._authenticate();
+        }
+      },
+
+      /**
+       * @name _authenticate
+       * @description set correct end-point and credentials and make call to end-point to retreive token
+       * @param response
+       */
+      _authenticate: function() {
+        var auth = this.$.authenticate;
+
+        //TODO remove credentials
+        var params = {
+          username: 'api_user',
+          password: 'DorelAp1@#'
+        };
+        auth.body = JSON.stringify(params);
+        auth.url = CONFIG.ECOM_URL + '/rest/V1/integration/admin/token';
+        auth.generateRequest();
+      },
+
+      /**
+       * @name _authResponse
+       * @description set token and set newTimestamp for token because token is only valid for a certain amount of time
+       * @param response
+       */
+      _authResponse: function(response) {
+        var token = response.detail.response;
+        var newTimestamp = Date.now();
+        this.fire('setAppCache', { value: token, path: 'product.auth.token' });
+        this.fire('setAppCache', { value: newTimestamp, path: 'product.auth.timestamp' });
+        this.set('token', token);
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,57 @@
+<dom-module id="dorel-country-collect">
+  <template>
+
+    <iron-ajax
+      id="country_collect"
+      handle-as="json"
+      on-response="_countryCollectResponse"></iron-ajax>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-country-collect',
+
+      properties: {
+
+        /**
+         * @name continentsData
+         * @description will contain response data that includes domain countries and languages
+         */
+        continentsData: {
+          type: Array,
+          notify: true
+        }
+
+      },
+
+      ready: function() {
+        this._getCountries();
+      },
+
+      /**
+       * @name _getCountries
+       * @description set the url and generate the request
+       */
+      _getCountries: function() {
+        var countryCollectEl = this.$.country_collect;
+        countryCollectEl.url = CONFIG.DIO_API_URL + '/regions';
+        countryCollectEl.generateRequest();
+      },
+
+      /**
+       * @name _countryCollectResponse
+       * @description response of the countries and set the continentsData if results are available
+       * @param response
+       */
+      _countryCollectResponse: function(response) {
+        var countries = response.detail.response;
+        if(countries && countries.results && countries.results.length) {
+          this.set('continentsData', countries.results);
+        } else {
+          this.set('continentsData', []);
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,130 @@
+<link rel="import" href="../organisms/dorel-section-header.html">
+
+<dom-module id="dorel-template-info-overview">
+  <template>
+    <style>
+      .wrapper {
+        float: left;
+        width: 100%;
+      }
+      
+      .row {
+        width: 100%;
+      }
+
+      .max-width-container {
+        @apply(--max-width-container);
+        max-width: var(--theme-base-paragraph-width);
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .content-description {
+        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
+        width: 100%;
+        text-align: center;
+        float: left;
+        display: flex;
+        box-sizing: border-box;
+      }
+
+      .content-description dorel-safe-html {
+        margin: auto;
+        float: none;
+      }
+
+      dorel-section-cards {
+        margin-top: 0;
+      }
+
+    </style>
+
+    <div class="wrapper">
+
+      <div class="container layout horizontal center center-justified wrap">
+        <div class="row">
+
+          <!-- section-hero-header -->
+          <template
+            is="dom-if"
+            if="[[templateData.acf.hero_header.length]]">
+            <dorel-section-header
+              text-header="true"
+              section-header-data="[[heroHeader]]"></dorel-section-header>
+
+            <template
+              is="dom-if"
+              if="[[ templateData.acf.breadcrumbs_toggle ]]">
+              <dorel-section-page-nav
+                breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+            </template>
+          </template>
+          <!--// section-hero-header -->
+
+          <template
+            is="dom-if"
+            if="[[ _hasValue(templateData.acf.description) ]]">
+            <div class="content-description">
+              <dorel-safe-html html="[[templateData.acf.description]]"></dorel-safe-html>
+            </div>
+          </template>
+
+          <!-- Section cards -->
+          <template
+            is="dom-if"
+            if="[[sectionCards.cards.length]]">
+            <dorel-section-cards
+              compact="true"
+              cards-data="[[sectionCards]]"></dorel-section-cards>
+          </template>
+          <!--// Section cards -->
+
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-info-overview',
+
+      properties: {
+
+        appCache: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description the data coming from ACF/Wordpress which is delegated to the page builder
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name homeHeaderData
+         * @description the data model used for the hero header component
+         */
+        heroHeaderData: Object,
+
+        /**
+         * @name parentCardsData
+         * @description the data model used for the cards component
+         */
+        sectionCards: Object
+
+      },
+
+      behaviors: [TemplateBehaviors]
+    });
+  </script>
+</dom-module>

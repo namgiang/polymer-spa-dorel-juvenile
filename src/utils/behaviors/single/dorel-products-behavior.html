@@ -1,0 +1,40 @@
+<script>
+  /**
+   * @name ProductsBehavior
+   * @description conditional checking for products
+   */
+  ProductsBehavior = {
+
+    /**
+     * @name _isProductSet
+     * @description checking to see if the product is defined and
+     * not loading
+     *
+     * @param Object - product
+     * @param Boolean - loading
+     *
+     * @return Boolean
+     */
+    _isProductSet: function(product, loading) {
+      var isObjectEmpty = (Object.keys(product).length === 0 &&
+        product.constructor === Object);
+      return Boolean(!isObjectEmpty && !loading);
+    },
+
+    /**
+     * @name _isProductNotSet
+     * @description checking to see if the product is not defined and
+     * not loading
+     *
+     * @param Object - product
+     * @param Boolean - loading
+     *
+     * @return Boolean
+     */
+    _isProductNotSet: function(product, loading) {
+      var isObjectEmpty = (Object.keys(product).length === 0 &&
+        product.constructor === Object);
+      return Boolean(isObjectEmpty === true && !loading);
+    }
+  };
+</script>
