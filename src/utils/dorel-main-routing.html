@@ -68,8 +68,21 @@
         // if the route is undefined
         if (typeof route === 'undefined' || typeof pages === 'undefined' || !pages.length) return;
 
+        var pathArray = route.path.split('/').filter(function(item) {
+          return item && item.length;
+        });
+
+        // if url is only root add default language in url segment
+        if(!pathArray || !pathArray.length || pathArray[0].length !== 5) {
+          var path = pathArray.join('/');
+          if(path) {
+            return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/' + path + '/';
+          }
+          return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/';
+        }
+
         // Matches the page to the component guide template
-        if (route.path.indexOf('component-guide') === 1) {
+        if (route.path.indexOf('component-guide') !== -1) {
           this.currentPage = {
             template: 'component-guide'
           };
@@ -77,8 +90,10 @@
           return;
         }
 
+
         // get the a clean last segment of the route.path
         lastSegment = route.path.match(/([^\/]*)\/*$/).pop();
+
 
         // refer to this for find function
         var self = this;
@@ -87,8 +102,11 @@
          * if last segment is undefined or empty string set to home,
          * all others to segment
          */
-        this.page = lastSegment || 'home';
-
+        if(pathArray.length === 1) {
+         this.set('page', 'home');
+        } else {
+         this.set('page', lastSegment || 'home');
+        }
 
         var url = (window.location.origin + this.route.path);
         var fullUrl = url.slice(-1) === '/' ? url : url + '/';
@@ -187,7 +205,7 @@
         return string.replace(/[\/\[\]\&]+|/g, '');
       },
 
-      _stripQueryStringAndHashFromPath: function (url) {
+      _stripQueryStringAndHashFromPath: function(url) {
         return url.split("?")[0].split("#")[0];
       }
     });

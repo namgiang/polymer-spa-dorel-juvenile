@@ -1,8 +1,8 @@
 <dom-module id="dorel-wp-collect-options">
   <template>
-    <iron-ajax 
-      auto 
-      url="[[ endPoint ]]" 
+    <iron-ajax
+      auto
+      url="[[ endPoint ]]"
       handle-as="json"
       on-response="_optionsLoaded"></iron-ajax>
   </template>
@@ -23,20 +23,20 @@
       },
 
       observers: [
-        '_initOptions(appCache.wpUrl)'
+        '_initOptions(appCache.wpUrl, appCache.currentLanguage)'
       ],
 
       /**
        * @name _initOptions
        * @description Observer function which defines the endpoint when it's available as a global variable
        */
-      _initOptions: function(wpUrl) {
-        if (typeof wpUrl === 'undefined' || wpUrl === '') return;
+      _initOptions: function(wpUrl, currentLanguage) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !currentLanguage) return;
 
-        this.endPoint = wpUrl + '/acf/v2/options';
+        this.endPoint = wpUrl + currentLanguage.path + '/wp-json/acf/v2/options';
       },
 
-      /** 
+      /**
        * @name _optionsLoaded
        * @description retrieve all the options
        */
@@ -50,7 +50,7 @@
         for (var key in options.acf) {
 
           // first put the response in the application cache to use it later
-          this.fire('setAppCache', { 
+          this.fire('setAppCache', {
             path: 'collect.options.' + key,
             value: options.acf[key]
           });

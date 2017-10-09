@@ -20,16 +20,6 @@
         },
 
         /**
-         * @name collect
-         * @description this array will hold all the pages collected from the
-         * async requests (pages, posts)
-         */
-        collect: {
-          type: Array,
-          value: []
-        },
-
-        /**
          * @name perPage
          * @description this variable indicates how many pages are retrieved
          * per request
@@ -41,7 +31,7 @@
       },
 
       observers: [
-        '_initPages(appCache.wpUrl)'
+        '_initPages(appCache.wpUrl, appCache.currentLanguage.path)'
       ],
 
       /**
@@ -49,10 +39,11 @@
        * @name _initPages
        * @description when the wpUrl is set in the application cache set the endpoint
        */
-      _initPages: function(wpUrl) {
+      _initPages: function(wpUrl, currentLanguage) {
         if (typeof wpUrl === 'undefined' || wpUrl === '') return;
-
-        this.endPoint = wpUrl + '/wp/v2/pages?per_page=' + this.perPage;
+        this.endPoint = wpUrl +
+        (currentLanguage && currentLanguage.length ? currentLanguage + '/' : '') +
+        'wp-json/wp/v2/pages?per_page=' + this.perPage;
       },
 
       /**
@@ -62,8 +53,6 @@
        */
       _pagesLoaded: function(data) {
         var pages = data.detail.response;
-
-        if (!pages.length) return;
 
         // iterate over all pages items, alter its template
         for (var i = 0, len = pages.length; i < len; i++) {
@@ -76,13 +65,12 @@
           pages[i].template = pageName;
         }
 
-        // extend the collect pages object with the new page
-        this.collect = this.collect.concat(pages);
+        pages = pages && pages.length ? pages : [{ template: '404'}]
 
         // set the application cache
         this.fire('setAppCache', {
-          path: 'collect.pages', 
-          value: this.collect 
+          path: 'collect.pages',
+          value: pages
         });
       }
     });

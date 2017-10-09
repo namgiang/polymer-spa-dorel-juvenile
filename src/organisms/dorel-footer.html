@@ -236,7 +236,7 @@
       <!-- check if we need to show the social links -->
       <template
         is="dom-if"
-        if="[[ appCache.collect.options.footer_social_toggle ]]">
+        if="[[footerOptions.social_toggle]]">
 
         <section class="footer-media-links layout horizontal center center-justified wrap">
 
@@ -262,14 +262,36 @@
                                           continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
 
       <section id="footer-widget-area" class="footer-info">
-        <!-- widget areas are inserted here -->
+        <template 
+          is="dom-repeat"
+          items="[[footerOptions.footer_menus]]"
+          as="menu">
+          <div class="footer-menu">
+            <h3 class="footer-heading">[[menu.title]]</h3>
+            
+            <template
+              is="dom-if"
+              if="[[menu.items.length]]">
+              <ul>
+                <template
+                  is="dom-repeat"
+                  items="[[menu.items]]"
+                  as="item">
+                  <li>
+                    <a href="[[item.link]]">[[item.title]]</a>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </div>
+        </template>
       </section>
 
       <div class="footer-disclaimer">
           <span class="footer-copyright">
             Copyright &#9400;
-            {{ _getCopyrightYearRange(appCache.collect.options.footer_year) }}
-            [[ appCache.collect.options.footer_copyright ]]
+            [[_getCopyrightYearRange(footerOptions.start_year)]]
+            [[footerOptions.copyright]]
           </span>
       </div>
 
@@ -290,8 +312,11 @@
          * `appCache` the application cache
          */
         appCache: {
-          type: Object
+          type: Object,
+          observer: '_defineOptionModels'
         },
+
+        footerOptions: Object,
 
         /**
          * @name currentLanguage
@@ -459,15 +484,7 @@
             }]
         },
       },
-
-      /**
-       * Check if one of theses globals are changed. These are needed to build
-       * up the footer widgets and copyright
-       */
-      observers: [
-        '_areasChanged(appCache.collect.widgetAreas.footer-widget-area)',
-      ],
-
+      
       /**
        * Listen to all clicks inside the component to define an
        * accordion click
@@ -475,6 +492,8 @@
       listeners: {
         'click': 'accordionClick',
       },
+
+      behaviors: [TemplateBehaviors],
 
       /**
        * @name _socialClick
@@ -542,43 +561,12 @@
       },
 
       /**
-       * @name _areasChanged
-       * @description when the areas are set or changed place them
-       * in there designated element
-       */
-      _areasChanged: function (data) {
-        // if no data is given jump out
-        if (typeof data === 'undefined' || typeof data.widgets === 'undefined') return;
-
-        // set the element
-        var self = this;
-
-        if (data.widgets.length) {
-
-          /**
-           * iterate over every widget inside the footer-widget-area
-           * and append it to the footer-widget-area div
-           */
-          for (var i = 0, len = data.widgets.length; i < len; i++) {
-            var footerColumn = document.createElement("div");
-            footerColumn.className = 'footer-menu';
-            footerColumn.innerHTML = data.widgets[i].rendered;
-
-            Polymer.dom(self.$['footer-widget-area']).appendChild(footerColumn);
-          }
-        }
-
-        // alternative ready after whole footer has been build up
-        this.__ready();
-      },
-
-      /**
        * @name __ready
        * @description because the footer widget areas are placed
        * at runtime the normal ready function doesn't have access
        * to all elements.
        */
-      __ready: function () {
+      ready: function () {
         var self = this;
 
         // define footer links for tracking

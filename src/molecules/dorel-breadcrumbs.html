@@ -120,7 +120,7 @@
       routeChanged: function(route) {
         this.set('breadcrumbs', []);
         // create array of paths in array and filter out empty strings
-        var pathArray = route.path.split('/').filter(function(path) {
+        var pathArray = route.path.split('/').filter(function(path, index) {
           return Boolean(path !== '');
         });
         // Add the first part of url: https://example.com/
@@ -137,10 +137,16 @@
       _setBreadCrumbs: function(pathArray) {
         var self = this;
         array = pathArray.map(function(item, index) {
-          return { url: self._getUrl(index, pathArray), label: self._getLabel(item, index)};
+          return {
+            url: self._getUrl(index, pathArray),
+            label: self._getLabel(item, index)
+          };
         });
 
-        array.forEach(function(item) {
+        array.forEach(function(item, index) {
+          if(index === 0) {
+            return
+          }
           var newItem = Object.assign({}, item);
           self.push('breadcrumbs', newItem);
         });
@@ -171,7 +177,7 @@
        * @returns String
        */
       _getLabel: function(item, index) {
-        if(index === 0) {
+        if(index === 1) {
           return 'Home'; // TODO: Translations
         }
         var label = item.split('-').join(' ');

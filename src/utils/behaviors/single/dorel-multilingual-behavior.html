@@ -1,0 +1,24 @@
+<link rel="import" href="../../../../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<script>
+  BehaviorImplementation = {
+    properties: {
+      /**
+       * @name language
+       * @description Polymer.AppLocalizeBehavior language setting
+       */
+      language: {
+        value: (window.location.href.split('/')[3]).substring(3, 5)
+      }
+    },
+    /**
+     * @name attached
+     * @description - Load Polymer.AppLocalizeBehavior translation data
+     */
+    attached: function() {
+      this.loadResources(this.resolveUrl('https://api.dorel.io/v1/translations'));
+    }
+  }
+
+  DorelMultilingualBehavior = [Polymer.AppLocalizeBehavior, BehaviorImplementation]
+</script>

@@ -107,7 +107,7 @@
         <ul class="language-list">
           <template is="dom-repeat" items="[[ countryData.languages ]]">
             <li>
-              <dorel-cta title="[[ item.name ]]" type="link" link="[[ countryData.website_url ]]" size="medium" icon="">[[ item.name ]]
+              <dorel-cta title="[[ item.name ]]" type="link" link="[[ generateLink(countryData, item) ]]" size="medium" icon="">[[ item.name ]]
               </dorel-cta>
             </li>
           </template>
@@ -122,7 +122,7 @@
           <ul class="language-list">
             <template is="dom-repeat" items="[[ countryData.languages ]]">
               <li>
-                <dorel-cta title="[[ item.name ]]" type="link" link="[[ countryData.website_url ]]" size="medium" icon="">[[ item.name ]]
+                <dorel-cta title="[[ item.name ]]" type="link" link="[[ generateLink(countryData, item) ]]" size="medium" icon="">[[ item.name ]]
                 </dorel-cta>
               </li>
             </template>
@@ -151,6 +151,22 @@
        */
       _eventTracking: function (event) {
         /* ...TRACKING CODE FOR THIS PLUGIN... */
+      },
+
+      /**
+       * @name generateLink
+       * @description Generates a link that is used by the template
+       * @param countryData - Object
+       * @param language - Object
+       * @returns string
+       */
+      generateLink: function(countryData, language) {
+        var websiteUrl = countryData.website_url;
+        var lastChar = websiteUrl.slice(-1);
+        if(lastChar !== '/') {
+          websiteUrl = websiteUrl + '/';
+        }
+        return websiteUrl + countryData.iso + '-' + language.iso_code + '/';
       }
     });
 
