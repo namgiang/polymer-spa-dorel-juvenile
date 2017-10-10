@@ -2,68 +2,46 @@
   <template>
     <style>
       :host {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
-      .section {
-        @apply(--max-width-container);
-        padding: 1.5em var(--theme-gutter-mobile);
-        width: 100%;
         float: left;
-        box-sizing: border-box;
-        margin: auto;
+        width: 100%;
         min-height: 4.5em;
       }
-      .column {
-        display: flex;
-        justify-content: space-between;
-        margin: 0 auto;
+
+      dorel-layout-container {
+        padding-top: 1.5em;
+        padding-bottom: 1.5em;
       }
+
       .amount {
         @apply(--theme-typography-1);
         color: var(--theme-color-monochrome-3);
-        display: inline;
-        margin-right: 1.5rem;
-        position: relative;
         margin: 0;
+        float: right;
       }
 
-      [tablet-medium-up] .amount {
-        @apply(--theme-typography-2);
-        margin: 0;
+      dorel-breadcrumbs {
+        float: left;
       }
 
-      .section[tablet-medium-up] {
-        padding: 1.5em var(--theme-gutter);
-      }
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-layout-container>
+      <!-- breadcrumbs -->
+      <template
+        is="dom-if"
+        if="[[ breadcrumbsToggle ]]">
+        <dorel-breadcrumbs></dorel-breadcrumbs>
+      </template>
+      <!--// breadcrumbs -->
 
-    <section class="section"
-             text-header$="[[ textHeader ]]"
-             info-header$="[[ infoHeader ]]"
-             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      <div class="column">
-        
-        <!-- breadcrumbs -->
-        <template 
-          is="dom-if" 
-          if="[[ breadcrumbsToggle ]]">
-          <dorel-breadcrumbs></dorel-breadcrumbs>
-        </template>
-        <!--// breadcrumbs -->
-        
-        <!-- result count -->
-        <template 
-          is="dom-if" 
-          if="[[ shouldShowResults(renderedCount) ]]">
-          <p class="amount"><b>[[ renderedCount ]]</b> {{ localize('Results') }}</p>
-        </template>
-        <!--// result count -->
-     </div>
-    </section>
+      <!-- result count -->
+      <template
+        is="dom-if"
+        if="[[ shouldShowResults(renderedCount) ]]">
+        <p class="amount"><b>[[ renderedCount ]]</b> {{ localize('Results') }}</p>
+      </template>
+      <!--// result count -->
+    </dorel-layout-container>
   </template>
   <script>
     Polymer({
@@ -102,7 +80,7 @@
        * @param renderedCount - Number
        * @returns Boolean
        */
-      shouldShowResults: function(renderedCount) {
+      shouldShowResults: function (renderedCount) {
         return Boolean(renderedCount !== 'undefined');
       },
     });

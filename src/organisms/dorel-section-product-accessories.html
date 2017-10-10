@@ -5,106 +5,42 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       :host {
-        @apply(--max-width-host);
         background-color: var(--theme-color-monochrome-2);
         float: left;
         width: 100%;
       }
 
-      .section-product-accessories {
-        @apply(--max-width-container);
-        width: 100%;
-        float: left;
-        padding: 1.5em var(--theme-gutter-mobile) 3em var(--theme-gutter-mobile);
-        box-sizing: border-box;
+      [tablet-medium-up] dorel-layout-row {
+        margin-top: 1.5em;
       }
 
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--layout-flex);
-        @apply(--layout-center-justified);
-        @apply(--theme-grid-row-mobile-margins);
+      dorel-layout-container {
+        padding-bottom: 1.5em;
       }
 
-      .title {
-        @apply(--theme-typography-5);
-        color: var(--theme-brand-color-1);
-        width: 100%;
-        text-align: center;
-        margin-top: 0;
+      dorel-layout-container[tablet-medium-up] {
+        padding: 1.5em 0 4.5em 0;
       }
 
       .expand-collapse {
         margin: auto;
       }
-
-      dorel-product-accessory {
-        box-sizing: border-box;
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        width: 100%;
-        margin-top: 1.5em;
-      }
-
-      /* Responsive Behaviour */
-      .section-product-accessories[tablet-medium-up] {
-        padding: 4.5em var(--theme-gutter) 7.5em var(--theme-gutter);
-      }
-
-      [tablet-medium-up] dorel-product-accessory {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
-        flex-basis: calc(var(--theme-column-width) * 4);
-        width: calc(var(--theme-column-width) * 4);
-      }
-
-      [tablet-medium] dorel-product-accessory {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        width: calc(var(--theme-column-width) * 6);
-      }
-
-      [tablet-medium-up] .row {
-        @apply(--theme-grid-row-margins);
-      }
-
-      [tablet-medium-up] dorel-product-accessory {
-        padding: 0 .75em;
-      }
-
-      [tablet-medium-up] .title {
-        @apply(--theme-typography-7);
-        margin-top: 0;
-      }
-
     </style>
 
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <template is="dom-if" if="[[ _hasRelatedProducts(relatedProducts) ]]">
+      <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <dorel-titling title="[[ accessoriesOptions.title ]]"
+                       description="[[ accessoriesOptions.description ]]"></dorel-titling>
 
-    <template
-      is="dom-if"
-      if="[[ relatedProducts ]]">
-
-      <template
-        is="dom-if"
-        if="[[ _hasRelatedProducts(relatedProducts) ]]">
-
-        <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-
-        <section class="section-product-accessories"
-                 tablet-medium$="{{ breakpoints.tabletMedium }}"
-                 tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-          <template
-            is="dom-if"
-            if="[[ _hasValue(accessoriesOptions.title) ]]">
-            <h2 class="title">[[ accessoriesOptions.title ]]</h2>
-          </template>
-
-          <div class="row">
-            <!-- mobile -->
-            <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
-              <template
-                is="dom-repeat"
-                items="[[ initialContent ]]"
-                as="accessory">
+        <dorel-layout-row>
+          <!-- mobile -->
+          <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+            <template
+              is="dom-repeat"
+              items="[[ initialContent ]]"
+              as="accessory">
+              <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
                 <dorel-product-accessory
                   accessory-data="[[ accessory ]]"
                   gtm-action="open-accessory-lightbox"
@@ -112,14 +48,16 @@
                   gtm-parent-index="[[ gtmParentIndex ]]"
                   gtm-child="dorel-product-accessory"
                   gtm-child-index="[[ index ]]"></dorel-product-accessory>
-              </template>
-              <template is="dom-if" if="[[ restContent.length ]]">
-                <!-- Rest content to expand/collapse -->
-                <iron-collapse id="collapse">
-                  <template
-                    is="dom-repeat"
-                    items="[[ restContent ]]"
-                    as="accessory">
+              </dorel-layout-column>
+            </template>
+            <template is="dom-if" if="[[ restContent.length ]]">
+              <!-- Rest content to expand/collapse -->
+              <iron-collapse id="collapse">
+                <template
+                  is="dom-repeat"
+                  items="[[ restContent ]]"
+                  as="accessory">
+                  <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
                     <dorel-product-accessory
                       accessory-data="[[ accessory ]]"
                       gtm-action="open-accessory-lightbox"
@@ -127,48 +65,50 @@
                       gtm-parent-index="[[ gtmParentIndex ]]"
                       gtm-child="dorel-product-accessory"
                       gtm-child-index="[[ index ]]"></dorel-product-accessory>
-                  </template>
-                </iron-collapse>
-                <!-- Toggles expand and collapse -->
-                <template is="dom-if" if="[[ !expanded ]]">
-                  <dorel-cta title="Show all accessories"
-                             on-click="_toggle"
-                             type="link"
-                             link=""
-                             size="medium"
-                             class="expand-collapse"
-                             icon="dorel-icons:expand-more"
-                             gtm-action="show-all-accessories"
-                             gtm-parent="[[ gtmParent ]]"
-                             gtm-parent-index="[[ gtmParentIndex ]]"
-                             gtm-cta-index="0">
-                    {{ localize('Show_all_accessories') }}
-                  </dorel-cta>
+                  </dorel-layout-column>
                 </template>
-                <template is="dom-if" if="[[ expanded ]]">
-                  <dorel-cta title="Show less accessories"
-                             on-click="_toggle"
-                             type="link"
-                             link=""
-                             size="medium"
-                             class="expand-collapse"
-                             icon="dorel-icons:expand-less"
-                             gtm-action="show-less-accessories"
-                             gtm-parent="[[ gtmParent ]]"
-                             gtm-parent-index="[[ gtmParentIndex ]]"
-                             gtm-cta-index="1">
-                    {{ localize('Show_less_accessories') }}
-                  </dorel-cta>
-                </template>
+              </iron-collapse>
+              <!-- Toggles expand and collapse -->
+              <template is="dom-if" if="[[ !expanded ]]">
+                <dorel-cta title="{{ localize('Show_all_accessories') }}"
+                           on-click="_toggle"
+                           type="link"
+                           link=""
+                           size="medium"
+                           class="expand-collapse"
+                           icon="dorel-icons:expand-more"
+                           gtm-action="show-all-accessories"
+                           gtm-parent="[[ gtmParent ]]"
+                           gtm-parent-index="[[ gtmParentIndex ]]"
+                           gtm-cta-index="0">
+                  {{ localize('Show_all_accessories') }}
+                </dorel-cta>
+              </template>
+              <template is="dom-if" if="[[ expanded ]]">
+                <dorel-cta title="Show less accessories"
+                           on-click="_toggle"
+                           type="link"
+                           link=""
+                           size="medium"
+                           class="expand-collapse"
+                           icon="dorel-icons:expand-less"
+                           gtm-action="show-less-accessories"
+                           gtm-parent="[[ gtmParent ]]"
+                           gtm-parent-index="[[ gtmParentIndex ]]"
+                           gtm-cta-index="1">
+                  {{ localize('Show_less_accessories') }}
+                </dorel-cta>
               </template>
             </template>
-
-            <!-- desktop -->
-            <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
-              <template
-                is="dom-repeat"
-                items="[[ relatedProducts ]]"
-                as="accessory">
+          </template>
+          <!--// mobile -->
+          <!-- desktop -->
+          <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+            <template
+              is="dom-repeat"
+              items="[[ relatedProducts ]]"
+              as="accessory">
+              <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
                 <dorel-product-accessory
                   accessory-data="[[ accessory ]]"
                   gtm-action="open-accessory-lightbox"
@@ -176,23 +116,21 @@
                   gtm-parent-index="[[ gtmParentIndex ]]"
                   gtm-child="dorel-product-accessory"
                   gtm-child-index="[[ index ]]"></dorel-product-accessory>
-              </template>
+              </dorel-layout-column>
             </template>
-          </div>
-        </section>
-      </template>
+          </template>
+          <!--// desktop -->
+        </dorel-layout-row>
+      </dorel-layout-container>
     </template>
+
   </template>
 
   <script>
 
     Polymer({
       is: 'dorel-section-product-accessories',
-
-      behaviors: [
-        DorelMultilingualBehavior
-      ],
-
+      behaviors: [DorelMultilingualBehavior],
       properties: {
         accessoryScrollHandler: {
           type: Boolean,
@@ -290,7 +228,7 @@
         }
       },
 
-      behaviors: [ConditionalBehaviors],
+      behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
 
       observers: [
         '_setIncluded(relatedProducts, accessoriesOptions)'
