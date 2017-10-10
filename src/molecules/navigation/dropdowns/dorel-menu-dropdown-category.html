@@ -58,7 +58,7 @@
 
     </style>
     <dorel-layout-container>
-      <dorel-layout-row>
+      <dorel-layout-row align="right">
         <template
           is="dom-repeat"
           items="[[ featuredItems ]]"
@@ -79,6 +79,7 @@
           <ul class="dropdown-menu" id="dropdownMenu">
             <template is="dom-repeat" items="[[ _maxItems(dropdownItems) ]]" as="menuItem">
               <li class="dropdown-menu-item" is-active$="[[ checkIfActive(menuItem.link, route) ]]">
+
                 <dorel-cta title="[[ menuItem.title ]]"
                            type="link"
                            on-click="clickMenuItem"
@@ -110,17 +111,17 @@
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
                      gtm-cta-index="0">
-            {{ localize('All') }} [[ mainItem.title ]]
+            All [[ mainItem.title ]]
           </dorel-cta>
         </dorel-layout-column>
       </dorel-layout-row>
     </dorel-layout-container>
+
   </template>
   <script>
 
     Polymer({
       is: 'dorel-menu-dropdown-category',
-
       properties: {
 
         /**
@@ -171,7 +172,7 @@
 
       },
 
-      behaviors: [MainMenuBehavior, DorelMultilingualBehavior],
+      behaviors: [MainMenuBehavior],
 
 
       /**

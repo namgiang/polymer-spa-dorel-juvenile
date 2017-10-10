@@ -3,11 +3,15 @@
 <link rel="import" href="../../organisms/dorel-section-product-accessories.html">
 <link rel="import" href="../../organisms/dorel-section-product-features.html">
 <link rel="import" href="../../organisms/dorel-section-product-showcase.html">
+<link rel="import" href="../../organisms/dorel-section-product-video.html">
+<link rel="import" href="../../organisms/dorel-section-product-accordions.html">
 
 <script src="mocks/product-detail/usps.js"></script>
 <script src="mocks/product-detail/features.js"></script>
 <script src="mocks/product-detail/accessories.js"></script>
 <script src="mocks/product-detail/product-showcase.js"></script>
+<script src="mocks/product-detail/videos.js"></script>
+<script src="mocks/product-detail/accordion.js"></script>
 
 <dom-module id="dorel-component-guide-product-detail">
   <template>
@@ -45,11 +49,24 @@
 
     <dorel-layout-container>
       <hr>
+      <h2 class="class-for-h2">Product Video</h2>
+    </dorel-layout-container>
+
+    <dorel-section-product-video video-data="[[ productVideoData ]]"></dorel-section-product-video>
+
+    <dorel-layout-container>
+      <hr>
       <h2 class="class-for-h2">Product Accessories</h2>
       <p>With a centered layout, and expand/collapse on mobile</p>
     </dorel-layout-container>
     <dorel-section-product-accessories related-products="[[ relatedProducts ]]"
                                        accessories-options="[[ accessoriesOptions ]]"></dorel-section-product-accessories>
+
+    <dorel-layout-container>
+      <hr>
+      <h2 class="class-for-h2">Product Accordion</h2>
+    </dorel-layout-container>
+    <dorel-section-product-accordions accordions-data="[[ accordionsData ]]"></dorel-section-product-accordions>
 
 
   </template>
@@ -85,6 +102,14 @@
         productShowcaseData: {
           type: Object,
           value: productShowcaseDataMock
+        },
+        productVideoData: {
+          type: Object,
+          value: productVideoMock
+        },
+        accordionsData: {
+          type: Object,
+          value: accordionMock
         }
       }
     });
