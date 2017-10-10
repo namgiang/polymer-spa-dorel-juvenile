@@ -8,15 +8,7 @@
       }
 
       .error {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-center-justified);
-        padding: 0 var(--theme-gutter-mobile);
-        min-height: auto;
-        float: left;
-        width: 100%;
         margin: 3em 0;
-        box-sizing: border-box;
       }
 
       .error__title {
@@ -33,28 +25,25 @@
         @apply(--theme-typography-8);
       }
 
-      .error[tablet-medium-up] {
-        min-height: 50vh;
-        padding: 0 var(--theme-gutter);
-      }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <div class="error" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-      <div>
-        <h1 class="error__title">{{ localize('404_error_title') }}</h1>
-        <p class="error__content">{{ localize('404_error_content_1') }}</p>
-        <p class="error__content">{{ localize('404_error_content_2') }}</p>
-        <p class="error__content">{{ localize('404_regards') }}<br>{{ localize('maxi_cosi_team') }}</p>
-      </div>
-    </div>
+    <dorel-layout-container class="error" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <dorel-layout-row>
+        <dorel-layout-column desktop-column-span="7" tablet-column-span="9" mobile-column-span="12">
+          <h1 class="error__title">{{ localize('404_error_title') }}</h1>
+          <p class="error__content">{{ localize('404_error_content_1') }}</p>
+          <p class="error__content">{{ localize('404_error_content_2') }}</p>
+          <p class="error__content">{{ localize('404_regards') }}<br>{{ localize('maxi_cosi_team') }}</p>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
   </template>
 
   <script>
     Polymer({
       is: 'dorel-template-404',
-      
+
       behaviors: [
         DorelMultilingualBehavior
       ]

@@ -35,7 +35,9 @@
                 attr-for-selected="page">
       <dorel-component-guide-basic route="{{ subroute }}" brand="{{ brand }}"
                                    page="basic"></dorel-component-guide-basic>
-      <dorel-component-guide-complex route="{{ subroute }}" page="complex"></dorel-component-guide-complex>
+      <dorel-component-guide-complex route="{{ subroute }}"
+                                     page="complex"
+                                     app-cache="[[ appCache ]]"></dorel-component-guide-complex>
     </iron-pages>
   </template>
 
@@ -66,7 +68,20 @@
           type: Array,
           value: []
         }
-      }
+      },
+      /**
+       * @name _routeChanged
+       * @description Observer callback for the route.
+       * Fallback for when users don't access the component with a trailing slah in the url.
+       * Trailing slash is needed for navigation to subpages
+       */
+      /*_routeChanged: function (changedRoute) {
+
+        if (changedRoute.path === '') {
+          this.set('route.path', '/');
+        }
+
+      }*/
     });
   </script>
 </dom-module>
