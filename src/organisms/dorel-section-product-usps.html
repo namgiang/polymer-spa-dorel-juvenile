@@ -3,23 +3,15 @@
 <dom-module id="dorel-section-product-usps">
   <template>
     <style>
+
       :host {
-        @apply(--max-width-host);
-      }
-
-      .section-product-usps {
-        @apply(--max-width-container);
-        width: 100%;
+        margin: 3em 0;
         float: left;
-        box-sizing: border-box;
-        padding: 1.5em var(--theme-gutter-mobile);
+        width: 100%;
       }
 
-      .title {
-        @apply(--theme-typography-5);
-        color: var(--theme-brand-color-1);
-        width: 100%;
-        text-align: center;
+      dorel-layout-row {
+        margin-top: 0
       }
 
       .usp-title {
@@ -33,23 +25,6 @@
         margin: .75em 0;
       }
 
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--layout-flex);
-        @apply(--layout-center-justified);
-        @apply(--theme-grid-row-mobile-margins);
-      }
-
-      .usp {
-        @apply(--theme-grid-column);
-        @apply(--theme-grid-column-mobile);
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        padding: 0;
-        margin-top: 1.5em;
-      }
-
       .usp-image {
         width: 100%;
         float: left;
@@ -61,30 +36,8 @@
         padding: 0 1em;
       }
 
-      /* Responsive behaviour */
-      .section-product-usps[tablet-medium-up] {
-        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);
-      }
-
-      [tablet-medium-up] .usp {
-        padding: 0 .75em;
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 4);
-        flex-basis: calc(var(--theme-column-width) * 4);
-        max-width: calc(var(--theme-column-width) * 4);
-      }
-
-      [tablet-medium] .usp {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 6);
-        flex-basis: calc(var(--theme-column-width) * 6);
-        max-width: calc(var(--theme-column-width) * 6);
-      }
-
-      [tablet-medium-up] .row {
-        @apply(--theme-grid-row-margins);
-      }
-
-      [tablet-medium-up] .title {
-        @apply(--theme-typography-7);
+      [tablet-medium-up] dorel-layout-row {
+        margin-top: 1.5em;
       }
 
       [tablet-medium-up] .usp-description {
@@ -99,68 +52,54 @@
       app-cache="[[ appCache ]]"
       type="usps"></dorel-magento-collect-custom-data>
 
-    <template is="dom-if"
-              if="[[ uspsData.usps.length ]]">
-
-      <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-
-      <section class="section-product-usps layout horizontal center center-justified wrap"
-               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-               tablet-medium$="{{ breakpoints.tabletMedium }}">
-
-        <template
-          is="dom-if"
-          if="[[ _hasValue(uspsData.title) ]]">
-          <h4 class="title">[[ uspsData.title ]]</h4>
-        </template>
-
-        <template
-          is="dom-if"
-          if="[[ uspsData.usps.length ]]">
-          <div class="row">
-
-            <template
-              is="dom-repeat"
-              items="[[ uspsData.usps ]]"
-              as="usp">
-
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <dorel-titling title="[[ uspsData.title ]]" description="[[ uspsData.description ]]"></dorel-titling>
+      <template
+        is="dom-if"
+        if="[[ uspsData.usps.length ]]">
+        <dorel-layout-row>
+          <template
+            is="dom-repeat"
+            items="[[ uspsData.usps ]]"
+            as="usp">
+            <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
               <div class="usp">
-                <div class="usp-wrapper">
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(usp.image) ]]">
+                  <iron-image class="usp-image"
+                              sizing="cover"
+                              fade="true"
+                              preload
+                              src$="[[ usp.image ]]">
+                  </iron-image>
+                </template>
+
+                <div class="usp-content">
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.title) ]]">
+                    <h3 class="usp-title">[[ usp.title ]]</h3>
+                  </template>
 
                   <template
                     is="dom-if"
-                    if="[[ _hasValue(usp.image) ]]">
-                    <iron-image class="usp-image"
-                                sizing="cover"
-                                fade="true"
-                                preload
-                                src$="[[ usp.image ]]">
-                    </iron-image>
+                    if="[[ _hasValue(usp.description) ]]">
+                    <div class="usp-description">
+                      <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
+                    </div>
                   </template>
-
-                  <div class="usp-content">
-
-                    <template
-                      is="dom-if"
-                      if="[[ _hasValue(usp.title) ]]">
-                      <h3 class="usp-title">[[ usp.title ]]</h3>
-                    </template>
-
-                    <template
-                      is="dom-if"
-                      if="[[ _hasValue(usp.description) ]]">
-                      <div class="usp-description">
-                        <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
-                      </div>
-                    </template>
-                  </div>
                 </div>
               </div>
-            </template>
-          </div>
-        </template>
-      </section>
-    </template>
+            </dorel-layout-column>
+
+          </template>
+        </dorel-layout-row>
+      </template>
+    </dorel-layout-container>
+
+
   </template>
   <script>
     Polymer({

@@ -12,53 +12,11 @@
         float: left;
         width: 100%;
         background-color: var(--theme-color-white);
+        margin-bottom: 3em;
       }
 
-      .container {
-        @apply(--max-width-container);
-        box-sizing: border-box;
-        padding-top: 0;
-      }
-
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--layout-flex);
-      }
-
-      .content {
-        width: 100%;
-        @apply(--theme-grid-column);
+      dorel-layout-column {
         margin-top: 0;
-      }
-
-      .sidebar {
-        width: 100%;
-        @apply(--theme-grid-column);
-        margin-top: 0;
-      }
-
-      [tablet-medium-up] .container {
-        padding: 0 var(--theme-gutter);
-      }
-
-      [tablet-medium-up] .row {
-        @apply(--theme-grid-row-margins);
-      }
-
-      [desktop-small-up] .main-content {
-        display: flex;
-      }
-
-      [desktop-small-up] .content {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
-        flex-basis: calc(var(--theme-column-width) * 9);
-        max-width: calc(var(--theme-column-width) * 9);
-      }
-
-      [desktop-small-up] .sidebar {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
-        flex-basis: calc(var(--theme-column-width) * 3);
-        max-width: calc(var(--theme-column-width) * 3);
       }
     </style>
 
@@ -69,76 +27,68 @@
       products="{{ products }}"></dorel-magento-collect-products-by-category>
 
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <!-- section-header -->
+    <template
+      is="dom-if"
+      if="[[templateData.acf.hero_header.length]]">
+      <dorel-section-header
+        section-header-data="[[heroHeader]]"
+        gtm-parent="dorel-section-header"
+        gtm-parent-index="[[ index ]]"></dorel-section-header>
+    </template>
+    <!--// section-header -->
 
-    <div tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-         desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+    <dorel-section-page-nav
+      breadcrumbs-toggle="true"
+      rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
 
-      <!-- section-header -->
-      <template
-        is="dom-if"
-        if="[[templateData.acf.hero_header.length]]">
-        <dorel-section-header
-          section-header-data="[[heroHeader]]"
-          gtm-parent="dorel-section-header"
-          gtm-parent-index="[[ index ]]"></dorel-section-header>
-      </template>
-      <!--// section-header -->
-
-      <dorel-section-page-nav
-        breadcrumbs-toggle="true"
-        rendered-count="[[ renderedCount ]]"></dorel-section-page-nav>
-
-      <div class="container layout horizontal center center-justified wrap">
-        <div class="row">
-          <div class="sidebar">
-            <template
-              is="dom-if"
-              if="[[leftSidebar.productSubCategories.toggle]]">
-              <dorel-expandable-panel header="Subcategories" opened>
-                <dorel-category-submenu
-                  items="[[leftSidebar.productSubCategories.sub_categories]]">
-                </dorel-category-submenu>
-              </dorel-expandable-panel>
-            </template>
-
-            <template
-              is="dom-if"
-              if="[[leftSidebar.filters.toggle]]">
-              <dorel-expandable-panel header="Filters" opened>
-                <dorel-category-filter
-                  filter-data="[[ leftSidebar.filters.filter_groups ]]"
-                  retrieving-products="[[ retrievingProducts ]]"
-                  product-data="[[ products ]]">
-                </dorel-category-filter>
-              </dorel-expandable-panel>
-            </template>
-          </div>
-
-          <div class="content">
-            <dorel-category-listing
-              products-data="[[ products ]]"
-              retrieving-products="[[ retrievingProducts ]]"
-              sort="[[ sort ]]"
-              rendered-count="{{ renderedCount }}"
-              gtm-parent="dorel-category-listing"
-              gtm-parent-index="2"></dorel-category-listing>
-          </div>
+    <dorel-layout-container>
+      <dorel-layout-row>
+        <!--- Sidebar --->
+        <dorel-layout-column desktop-column-span="3" tablet-column-span="5" mobile-column-span="12">
+          <template
+            is="dom-if"
+            if="[[leftSidebar.productSubCategories.toggle]]">
+            <dorel-expandable-panel header="Subcategories" opened>
+              <dorel-category-submenu
+                items="[[leftSidebar.productSubCategories.sub_categories]]">
+              </dorel-category-submenu>
+            </dorel-expandable-panel>
+          </template>
 
           <template
             is="dom-if"
-            if="{{ templateData.acf.title }}">
-            <dorel-section-seo
-              meta-title="[[ templateData.acf.title ]]"
-              meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
+            if="[[leftSidebar.filters.toggle]]">
+            <dorel-expandable-panel header="Filters" opened>
+              <dorel-category-filter
+                filter-data="[[ leftSidebar.filters.filter_groups ]]"
+                retrieving-products="[[ retrievingProducts ]]"
+                product-data="[[ products ]]">
+              </dorel-category-filter>
+            </dorel-expandable-panel>
           </template>
+        </dorel-layout-column>
+        <!--// Sidebar --->
+        <dorel-layout-column desktop-column-span="9" tablet-column-span="7" mobile-column-span="12">
+          <dorel-category-listing
+            products-data="[[ products ]]"
+            retrieving-products="[[ retrievingProducts ]]"
+            sort="[[ sort ]]"
+            rendered-count="{{ renderedCount }}"
+            gtm-parent="dorel-category-listing"
+            gtm-parent-index="2"></dorel-category-listing>
+        </dorel-layout-column>
+      </dorel-layout-row>
 
-        </div>
-      </div>
-      <!--// container -->
-
-    </div>
-    <!--// tablet div -->
+      <template
+        is="dom-if"
+        if="{{ templateData.acf.title }}">
+        <dorel-section-seo
+          meta-title="[[ templateData.acf.title ]]"
+          meta-description="[[ templateData.acf.description ]]"></dorel-section-seo>
+      </template>
+    </dorel-layout-container>
+    <!--// container -->
 
   </template>
   <script>
@@ -196,7 +146,7 @@
          */
         sort: {
           type: Object,
-          value: function() {
+          value: function () {
             return {
               type: 'name',
               order: 'asc'
@@ -228,10 +178,10 @@
       behaviors: [TemplateBehaviors],
 
       listeners: {
-        'newProducts' : '_setProducts'
+        'newProducts': '_setProducts'
       },
 
-      _setProducts: function(event) {
+      _setProducts: function (event) {
         this.set('products', event.detail.products);
         this.set('retrievingProducts', false);
       }
