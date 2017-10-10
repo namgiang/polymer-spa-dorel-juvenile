@@ -3,32 +3,36 @@
 <dom-module id="dorel-section-category-about-sub-categories">
   <template>
     <style>
-      dorel-layout-container {
-        margin-bottom: 3em;
-
+      :host {
+        float: left;
+        width: 100%;
+        margin-bottom: 1.5em;
       }
+
       dorel-category-sub {
-        margin-top: 3em;
+        margin-top: 1.5em;
         float: left;
         width: 100%;
       }
+
+
     </style>
 
     <dorel-layout-container>
       <dorel-titling title="[[ templateData.title ]]" description="[[ templateData.description ]]"></dorel-titling>
-      <template
-        is="dom-if"
-        if="[[ templateData.categories.length ]]">
-
-        <template
-          is="dom-repeat"
-          items="[[ templateData.categories]]"
-          as="subCategory">
-          <dorel-category-sub sub-category-data="[[ subCategory ]]"></dorel-category-sub>
-        </template>
-
-      </template>
     </dorel-layout-container>
+    <template
+      is="dom-if"
+      if="[[ templateData.categories.length ]]">
+
+      <template
+        is="dom-repeat"
+        items="[[ templateData.categories]]"
+        as="subCategory">
+        <dorel-category-sub sub-category-data="[[ subCategory ]]"></dorel-category-sub>
+      </template>
+
+    </template>
   </template>
 
   <script>

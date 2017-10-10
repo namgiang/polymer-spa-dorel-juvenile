@@ -24,7 +24,6 @@
       }
 
       .horizontal-grid {
-        @apply(--max-width-container);
         position: fixed;
         left: 0;
         right: 0;
@@ -43,12 +42,6 @@
         opacity: 1;
       }
 
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--theme-grid-row-mobile);
-        padding: 0 var(--theme-gutter-mobile);
-
-      }
 
       .column {
         @apply(--theme-grid-column);
@@ -83,8 +76,9 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <div tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="vertical-rhythm" shown$="[[ appCache.grid.vertical ]]"></div>
-      <div class="horizontal-grid" shown$="[[ appCache.grid.horizontal ]]">
-        <div class="row">
+
+      <dorel-layout-container class="horizontal-grid" shown$="[[ appCache.grid.horizontal ]]">
+        <dorel-layout-row>
           <div class="column">
             <div class="column-content"></div>
           </div>
@@ -121,8 +115,8 @@
           <div class="column">
             <div class="column-content"></div>
           </div>
-        </div>
-      </div>
+        </dorel-layout-row>
+      </dorel-layout-container>
     </div>
   </template>
   <script>

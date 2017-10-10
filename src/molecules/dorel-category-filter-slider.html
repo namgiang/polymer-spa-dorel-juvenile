@@ -2,9 +2,8 @@
 
 <dom-module id="dorel-category-filter-slider">
   <template>
-    <style include="iron-flex iron-flex-alignment">
+    <style>
       :host {
-        @apply(--max-width-container);
         display: flex;
         width: 100%;
         margin: .75rem 0;
@@ -31,12 +30,12 @@
       </div>
       <template is="dom-if" if="[[ isSet(sliderValue, 'true') ]]">
         <div class="price-indicator">
-          {{ localize('Max:') }} &euro;[[ sliderValue ]],-
+          Max: &euro;[[ sliderValue ]],-
         </div>
       </template>
       <template is="dom-if" if="[[ isSet(sliderValue, 'false') ]]">
         <div class="price-indicator">
-          {{ localize('Filter_not_active') }}
+          Filter not active
         </div>
       </template>
       <dorel-slider class="slider"
@@ -52,11 +51,6 @@
   <script>
     Polymer({
       is: 'dorel-category-filter-slider',
-      
-      behaviors: [
-        DorelMultilingualBehavior
-      ],      
-      
       properties: {
 
 
