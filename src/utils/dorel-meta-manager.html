@@ -66,12 +66,14 @@
 
           // add the meta http-equiv language
           if (typeof CONFIG.LOCALE.LANGUAGE !== 'undefined') {
-            this._addMetaEquiv('language', currentLanguage.languageCode || CONFIG.LOCALE.LANGUAGE);
+            var languageCode = currentLanguage && currentLanguage.languageCode ? currentLanguage.languageCode : CONFIG.LOCALE.LANGUAGE;
+            this._addMetaEquiv('language', languageCode);
           }
 
           // add the meta http-equiv country
           if (typeof CONFIG.LOCALE.COUNTRY !== 'undefined') {
-            this._addMetaEquiv('country', currentLanguage.countryCode || CONFIG.LOCALE.COUNTRY);
+            var countryCode = currentLanguage && currentLanguage.countryCode ? currentLanguage.countryCode : CONFIG.LOCALE.COUNTRY;
+            this._addMetaEquiv('country', countryCode);
           }
 
           // add the meta http-equiv content-language
