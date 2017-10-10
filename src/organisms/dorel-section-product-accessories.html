@@ -14,7 +14,7 @@
         margin-top: 1.5em;
       }
 
-      dorel-layout-container  {
+      dorel-layout-container {
         padding-bottom: 1.5em;
       }
 
@@ -70,7 +70,7 @@
               </iron-collapse>
               <!-- Toggles expand and collapse -->
               <template is="dom-if" if="[[ !expanded ]]">
-                <dorel-cta title="Show all accessories"
+                <dorel-cta title="{{ localize('Show_all_accessories') }}"
                            on-click="_toggle"
                            type="link"
                            link=""
@@ -81,7 +81,7 @@
                            gtm-parent="[[ gtmParent ]]"
                            gtm-parent-index="[[ gtmParentIndex ]]"
                            gtm-cta-index="0">
-                  Show all accessories
+                  {{ localize('Show_all_accessories') }}
                 </dorel-cta>
               </template>
               <template is="dom-if" if="[[ expanded ]]">
@@ -96,7 +96,7 @@
                            gtm-parent="[[ gtmParent ]]"
                            gtm-parent-index="[[ gtmParentIndex ]]"
                            gtm-cta-index="1">
-                  Show less accessories
+                  {{ localize('Show_less_accessories') }}
                 </dorel-cta>
               </template>
             </template>
@@ -130,7 +130,7 @@
 
     Polymer({
       is: 'dorel-section-product-accessories',
-
+      behaviors: [DorelMultilingualBehavior],
       properties: {
         accessoryScrollHandler: {
           type: Boolean,
@@ -228,7 +228,7 @@
         }
       },
 
-      behaviors: [ConditionalBehaviors],
+      behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
 
       observers: [
         '_setIncluded(relatedProducts, accessoriesOptions)'

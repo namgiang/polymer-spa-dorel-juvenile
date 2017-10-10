@@ -8,15 +8,18 @@
         width: 100%;
         margin: .75rem 0;
       }
+
       .price-filter-wrapper {
         display: flex;
         flex-direction: column;
         width: 100%;
       }
+
       .price-indicator {
         min-height: 1.5rem;
         line-height: 1.5rem;
       }
+
       .filter-name {
         font-weight: 600;
         min-height: 1.5rem;
@@ -30,12 +33,12 @@
       </div>
       <template is="dom-if" if="[[ isSet(sliderValue, 'true') ]]">
         <div class="price-indicator">
-          Max: &euro;[[ sliderValue ]],-
+          {{ localize('Max:') }} &euro;[[ sliderValue ]],-
         </div>
       </template>
       <template is="dom-if" if="[[ isSet(sliderValue, 'false') ]]">
         <div class="price-indicator">
-          Filter not active
+          {{ localize('Filter_not_active') }}
         </div>
       </template>
       <dorel-slider class="slider"
@@ -51,8 +54,10 @@
   <script>
     Polymer({
       is: 'dorel-category-filter-slider',
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
       properties: {
-
 
         /**
          * @attribute
@@ -103,13 +108,13 @@
         '_setSlider(sliderValue, filterData)',
       ],
 
-      _setInitial: function(filterData, newFilterdata) {
-        if(!this.filterData || !this.filterData.name) {
+      _setInitial: function (filterData, newFilterdata) {
+        if (!this.filterData || !this.filterData.name) {
           return;
         }
-        if(this.filterData.values && this.filterData.values.length && !newFilterdata) {
+        if (this.filterData.values && this.filterData.values.length && !newFilterdata) {
           var maxAmount = 0;
-          var amounts = this.filterData.values.map(function(item) {
+          var amounts = this.filterData.values.map(function (item) {
             return item.value;
           });
           var higestAmount = Math.max.apply(Math, amounts);
@@ -130,21 +135,21 @@
        * @param sliderValue - Number
        * @param filterData - Object
        **/
-      _setSlider: function(sliderValue) {
+      _setSlider: function (sliderValue) {
         var queryParams = this.queryParams || {};
 
         var exists = queryParams[this.filterData.name] ? queryParams[this.filterData.name] : null;
 
-        if(sliderValue === 0 && exists || this.maxAmount === sliderValue) {
+        if (sliderValue === 0 && exists || this.maxAmount === sliderValue) {
           delete queryParams[this.filterData.name];
         } else {
           queryParams[this.filterData.name] = sliderValue;
         }
-        this.fire('update-filter', { value: queryParams });
+        this.fire('update-filter', {value: queryParams});
       },
 
-      isSet: function(sliderValue, boolean) {
-        if(boolean === 'true') {
+      isSet: function (sliderValue, boolean) {
+        if (boolean === 'true') {
           return Boolean(sliderValue > 0)
         }
         return Boolean(sliderValue === 0)
