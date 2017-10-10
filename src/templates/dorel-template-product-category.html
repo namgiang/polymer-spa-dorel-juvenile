@@ -55,12 +55,13 @@
               </dorel-category-submenu>
             </dorel-expandable-panel>
           </template>
+
           <template
             is="dom-if"
             if="[[leftSidebar.filters.toggle]]">
             <dorel-expandable-panel header="Filters" opened>
               <dorel-category-filter
-                filter-data="[[leftSidebar.filters.filter_groups]]"
+                filter-data="[[ leftSidebar.filters.filter_groups ]]"
                 retrieving-products="[[ retrievingProducts ]]"
                 product-data="[[ products ]]">
               </dorel-category-filter>
@@ -177,10 +178,10 @@
       behaviors: [TemplateBehaviors],
 
       listeners: {
-        'newProducts' : '_setProducts'
+        'newProducts': '_setProducts'
       },
 
-      _setProducts: function(event) {
+      _setProducts: function (event) {
         this.set('products', event.detail.products);
         this.set('retrievingProducts', false);
       },

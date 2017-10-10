@@ -12,8 +12,7 @@
          * used to extract all the filter_groups per product
          */
         productData: {
-          type: Array,
-          value: function() { return []; }
+          type: Array
         },
 
         /**
@@ -36,7 +35,7 @@
       },
 
       observers: [
-        '_productDataChanged(productData)'
+        '_productDataChanged(productData, filterData)'
       ],
 
       /**
@@ -46,11 +45,10 @@
        * will set the filterData with response of _setFilters
        * @param products - Array
        */
-      _productDataChanged: function(products) {
-        if(!products) {
+      _productDataChanged: function(products, filterData) {
+        if(!products || !filterData) {
           return;
         }
-        var filterData = this.get('filterData') ? this.get('filterData') : [];
         this.set('filterGroups', []);
         var filterGroups = this._setFilters(products, filterData);
         this.set('filterGroups', filterGroups);
