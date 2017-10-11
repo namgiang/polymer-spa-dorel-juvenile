@@ -1,0 +1,87 @@
+<dom-module id="dorel-product-information-basic">
+  <template>
+    <style>
+      dorel-safe-html {
+        margin-top: -1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-layout-column {
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        float: right;
+      }
+
+      iron-image {
+        width: 9em;
+        height: 9em;
+      }
+
+      .image-container {
+        float: left;
+        display: inline-block;
+        height: 100%;
+        margin: 0 1.5em 1.5em 0;
+      }
+
+      .content-container {
+        float: left;
+        display: inline-block;
+
+        flex: 1 1 400px;
+      }
+
+      .content {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+    </style>
+    <div class="content">
+      <template is="dom-if" if="[[ data.image_src ]]">
+        <div class="image-container">
+          <iron-image class="image"
+                      sizing="contain"
+                      fade="true"
+                      preload
+                      src$="[[ data.image_src ]]"></iron-image>
+        </div>
+      </template>
+      <div class="content-container">
+        <dorel-safe-html html="[[ data.description ]]"></dorel-safe-html>
+        <template is="dom-if" if="[[ data.cta_toggle ]]">
+          <!-- TODO: At GTM/Analytics stuff here -->
+          <dorel-cta title="[[ data.cta_text ]]"
+                     type="link"
+                     link="[[ item.data_link ]]"
+                     size="medium"
+                     icon="dorel-icons:chevron-right">
+            [[ data.cta_text ]]
+          </dorel-cta>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-product-information-basic',
+      properties: {
+        /**
+         * @attribute
+         * @name data
+         * @description Content data
+         */
+        data: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>

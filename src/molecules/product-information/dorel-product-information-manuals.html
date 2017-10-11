@@ -1,0 +1,47 @@
+<dom-module id="dorel-product-information-manuals">
+  <template>
+    <style>
+      :host {
+        --button-margin-spacing: -1.5em;
+        float: left;
+        width: 100%;
+        margin-top: -1.5em;
+      }
+
+      dorel-cta {
+        float: left;
+        width: auto;
+        display: inline-block;
+        margin-right: 1.5em;
+      }
+    </style>
+    <template is="dom-repeat" items="[[ data.files ]]">
+      <!-- TODO: At GTM/Analytics stuff here -->
+      <dorel-cta title="[[ item.title ]]"
+                 type="link"
+                 link="[[ item.src ]]"
+                 size="medium"
+                 left-align-icon
+                 icon="dorel-icons:picture-as-pdf">
+        [[ item.title ]]
+      </dorel-cta>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-product-information-manuals',
+      properties: {
+        /**
+         * @attribute
+         * @name data
+         * @description Content data
+         */
+        data: {
+          type: Object
+        }
+      }
+    });
+  </script>
+</dom-module>
