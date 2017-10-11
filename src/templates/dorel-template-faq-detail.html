@@ -99,6 +99,7 @@
               if="[[ templateData.acf.customer_support_toggle ]]">
               <dorel-customer-support
                 compact="true"
+                social-link="[[ _getFacebookLink(appCache.collect.options.social_channels) ]]"
                 template-data="[[customerSupportOptions]]"></dorel-customer-support>
             </template>
             <!--// customer support -->
@@ -173,7 +174,7 @@
         customerSupportOptions: Object
       },
 
-      behaviors: [TemplateBehaviors],
+      behaviors: [TemplateBehaviors, SocialBehavior],
 
       observers: [
         '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
