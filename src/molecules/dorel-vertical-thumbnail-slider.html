@@ -26,11 +26,14 @@
       }
       .control-item {
         width: 100%;
-        height: 5rem;
+        height: 3rem;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 3rem;
+      }
+      [tablet-medium-up] .control-item {
+        height: 5rem;
       }
       .thumbnails-wrapper {
         box-sizing: border-box;
@@ -76,7 +79,7 @@
       }
     </style>
 
-    <div class="controls">
+    <div class="controls" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
 
       <div class="control-item">
         <template is="dom-if" if="[[ shouldShowControls(slides) ]]">
@@ -130,7 +133,8 @@
          * @description Array of objects (slides)
          */
         slides: {
-          type: Array
+          type: Array,
+          observer: '_resetSlide'
         },
 
         /**
@@ -200,7 +204,8 @@
 
       observers: [
         '_setSize(breakpoints.tabletMediumUp)',
-        '_setContainers(sizeOfThumbnail, maxThumbnailsInView)'
+        '_setContainers(sizeOfThumbnail, maxThumbnailsInView)',
+        '_positionUpdated(position, maxThumbnailsInView, slides)'
       ],
 
       /**
@@ -222,6 +227,23 @@
 
       /**
        * observer
+       * @name _resetSlide
+       * @description if current position is bigger then the length of the new slides
+       * it should set it to the last possible slide of the new slides array
+       */
+      _resetSlide: function(newVal, oldVal) {
+        if(typeof oldVal === 'undefined' || !newVal.length) {
+          return;
+        }
+        var position = this.get('position')
+        if(position > newVal.length - 1 && newVal.length > 5) {
+          this._setOffset(newVal.length -1);
+          this.fire('setSlide', { value: newVal[newVal.length - 1] });
+        }
+      },
+
+      /**
+       * observer
        * @name _setContainers
        * @description will update the height of the wrappers of the thumbnails if sizeOfThumbnail or maxThumbnailsInView change
        */
@@ -234,43 +256,62 @@
       },
 
       /**
-       * @name previous
-       * @description  go to previous step of slider
-       * if slider can go a step a back the function will call _setOffset and the slider position will change and set nextEnabled to true
-       * if slider can NOT go a step back the function will not call _setOffset and set previousEnabled to false
+       * observer
+       * @name _positionUpdated
+       * @description will calculate the when the vertical slider cant go up or down anymore
+       * will toggle the booleans `nextEnabled`/`previousEnabled` depending of the results
+       * will call `_setOffset` with a calculation
        */
-      previous: function() {
-        var offset = this.get('offset');
-        var slidesLength = this.get('slides').length;
-        var positiveLength = slidesLength - this.get('maxThumbnailsInView');
-        if(positiveLength === offset || offset === 0) {
-          return;
+      _positionUpdated: function(position, maxThumbnailsInView, slides) {
+        var numberOfItems = slides.length;
+        var maxItems = maxThumbnailsInView;
+        var spacing = Math.floor(maxThumbnailsInView / 2);
+
+        if(position <= spacing) {
+          this._setOffset(0);
+        } else if (position + 1 >= numberOfItems - spacing) {
+          this._setOffset((numberOfItems - maxItems) * -1);
+        } else {
+          this._setOffset(position * -1 + spacing);
         }
-        if(positiveLength === offset + 1 || offset === -1) {
+
+        if(position >= numberOfItems - 1) {
+          this.set('nextEnabled', false);
+        } else {
+          this.set('nextEnabled', true);
+        }
+        if(position <= 0) {
           this.set('previousEnabled', false);
         }
-        this._setOffset(offset + 1);
-        this.set('nextEnabled', true);
+        this.set('previousEnabled', true);
+      },
+
+      /**
+       * @name previous
+       * @description will set to the previous slide if the index can be matched
+       */
+      previous: function() {
+        var position = this.get('position');
+        var slide = this.get('slides').find(function(item, index) {
+          return index === position -1;
+        });
+        if(slide) {
+          this.fire('setSlide', { value: slide });
+        }
       },
 
       /**
        * @name next
-       * @description go to next step of slider
-       * if slider can go a step a forward the function will call _setOffset and the slider position will change and set previousEnabled to true
-       * if slider can NOT go a step forward the function will not call _setOffset and set nextEnabled to false
+       * @description will set to the next slide if the index can be matched
        */
       next: function() {
-        var offset = this.get('offset');
-        var slidesLength = this.get('slides').length;
-        var negativeLength = this.get('maxThumbnailsInView') - slidesLength;
-        if(offset <= negativeLength) {
-          return;
+        var position = this.get('position');
+        var slide = this.get('slides').find(function(item, index) {
+          return index === position + 1;
+        });
+        if(slide) {
+          this.fire('setSlide', { value: slide });
         }
-        if(offset - 1 <= negativeLength) {
-          this.set('nextEnabled', false);
-        }
-        this._setOffset(offset - 1);
-        this.set('previousEnabled', true);
       },
 
       /**
