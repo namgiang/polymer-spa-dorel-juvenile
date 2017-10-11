@@ -15,7 +15,7 @@
         opacity: 0.5;
         width: 5rem;
         height: 5rem;
-        transition: 0.2s;
+        transition: opacity 0.2s;
         box-sizing: border-box;
         cursor: pointer;
       }
@@ -48,10 +48,10 @@
         height: 2.5rem;
         opacity: 0.7;
         transform: scale(0);
-        transition: 0.2s;
-        -webkit-box-shadow: 1px 1px 1px 0px #BDBDBD;
-        -moz-box-shadow: 1px 1px 1px 0px #BDBDBD;
-        box-shadow: 1px 1px 1px 0px #BDBDBD;
+        transition: box-shadow 0.2s, opacity 0.2s, transform 0.2s;
+        -webkit-box-shadow: 1px 1px 1px 0px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 1px 1px 1px 0px var(--theme-color-monochrome-3);
+        box-shadow: 1px 1px 1px 0px var(--theme-color-monochrome-3);
       }
       .btn[enabled] {
         opacity: 1;
@@ -59,9 +59,9 @@
         transform: scale(1);
       }
       .btn[enabled]:hover {
-        -webkit-box-shadow: 3px 3px 3px 0px #BDBDBD;
-        -moz-box-shadow: 3px 3px 3px 0px #BDBDBD;
-        box-shadow: 3px 3px 3px 0px #BDBDBD;
+        -webkit-box-shadow: 3px 3px 3px 0px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 3px 3px 3px 0px var(--theme-color-monochrome-3);
+        box-shadow: 3px 3px 3px 0px var(--theme-color-monochrome-3);
       }
       .icon {
         position: absolute;
@@ -91,7 +91,7 @@
             items="[[ slides ]]"
             index-as="index"
             as="slide">
-            <div on-click="setSlide" class="thumbnail" active$="{{ isActive(index, position) }}" style="width: {{ sizeOfThumbnail }}rem; height: {{ sizeOfThumbnail }}rem;">
+            <div on-click="_setSlide" class="thumbnail" active$="{{ isActive(index, position) }}" style="width: {{ sizeOfThumbnail }}rem; height: {{ sizeOfThumbnail }}rem;">
               <iron-image class="image"
                  sizing="contain"
                  style="width: {{ sizeOfThumbnail }}rem; height: {{ sizeOfThumbnail }}rem;"
@@ -210,8 +210,8 @@
       /**
        * @name previous
        * @description  go to previous step of slider
-       * if slider can go a step a back the function will call setOffset and the slider position will change and set nextEnabled to true
-       * if slider can NOT go a step back the function will not call setOffset and set previousEnabled to false
+       * if slider can go a step a back the function will call _setOffset and the slider position will change and set nextEnabled to true
+       * if slider can NOT go a step back the function will not call _setOffset and set previousEnabled to false
        */
       previous: function() {
         var offset = this.get('offset');
@@ -223,15 +223,15 @@
         if(positiveLength === offset + 1 || offset === -1) {
           this.set('previousEnabled', false);
         }
-        this.setOffset(offset + 1);
+        this._setOffset(offset + 1);
         this.set('nextEnabled', true);
       },
 
       /**
        * @name next
        * @description go to next step of slider
-       * if slider can go a step a forward the function will call setOffset and the slider position will change and set previousEnabled to true
-       * if slider can NOT go a step forward the function will not call setOffset and set nextEnabled to false
+       * if slider can go a step a forward the function will call _setOffset and the slider position will change and set previousEnabled to true
+       * if slider can NOT go a step forward the function will not call _setOffset and set nextEnabled to false
        */
       next: function() {
         var offset = this.get('offset');
@@ -243,27 +243,27 @@
         if(offset - 1 <= negativeLength) {
           this.set('nextEnabled', false);
         }
-        this.setOffset(offset - 1);
+        this._setOffset(offset - 1);
         this.set('previousEnabled', true);
       },
 
       /**
-       * @name setOffset
+       * @name _setOffset
        * @description will set a new position of the thumbnails wrapper
        * @param offset - Number
        */
-      setOffset: function(offset) {
+      _setOffset: function(offset) {
         var distance = (offset * this.get('sizeOfThumbnail')).toString();
         this.$.thumbnails.style.transform = 'translate(0, ' + distance + 'rem)';
         this.set('offset', offset);
       },
 
       /**
-       * @name setSlide
-       * @description will fire a setSlide event with the clicked slide as value
+       * @name _setSlide
+       * @description will fire a _setSlide event with the clicked slide as value
        * @param event - Object
        */
-      setSlide: function(event) {
+      _setSlide: function(event) {
         var slide = event.model.slide;
         this.fire('setSlide', { value: slide });
       },
