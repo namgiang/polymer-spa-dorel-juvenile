@@ -1,46 +1,24 @@
 <dom-module id="dorel-product-information-faq">
   <template>
-    <style></style>
+    <style>
+      .extra-link {
+        float: right;
+        text-align: right;
+        clear: both;
+        padding-right: 1em;
+      }
+    </style>
     <dorel-layout-component>
-      <dorel-accordion-item heading="Lorem Ipsum"
-                            small="true"
-                            light="true"
-                            gtm-parent="[[ gtmParent ]]"
-                            gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
-        <p>The new Vela offers Maxi-Cosi’s ISOFIX compatible system, ISOGO™, a patented ISOFIX compatible soft latch
-          system, which enables you to secure your <a href="">child’s</a> car seat quick and safely in 3 simple steps and gives you
-          confidence your seat is always correctly installed.</p>
-      </dorel-accordion-item>
-      <dorel-accordion-item heading="Lorem Ipsum"
-                            small="true"
-                            light="true"
-                            gtm-parent="[[ gtmParent ]]"
-                            gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
-        <p>The new Vela offers Maxi-Cosi’s ISOFIX compatible system, ISOGO™, a patented ISOFIX compatible soft latch
-          system, which enables you to secure your child’s car seat quick and safely in 3 simple steps and gives you
-          confidence your seat is always correctly installed.</p>
-
-      </dorel-accordion-item>
-      <dorel-accordion-item heading="Lorem Ipsum"
-                            small="true"
-                            light="true"
-                            gtm-parent="[[ gtmParent ]]"
-                            gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
-        <p>The new Vela offers Maxi-Cosi’s ISOFIX compatible system, ISOGO™, a patented ISOFIX compatible soft latch
-          system, which enables you to secure your child’s car seat quick and safely in 3 simple steps and gives you
-          confidence your seat is always correctly installed.</p>
-
-      </dorel-accordion-item>
-      <dorel-accordion-item heading="Lorem Ipsum"
-                            small="true"
-                            light="true"
-                            gtm-parent="[[ gtmParent ]]"
-                            gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
-        <p>The new Vela offers Maxi-Cosi’s ISOFIX compatible system, ISOGO™, a patented ISOFIX compatible soft latch
-          system, which enables you to secure your child’s car seat quick and safely in 3 simple steps and gives you
-          confidence your seat is always correctly installed.</p>
-
-      </dorel-accordion-item>
+      <template is="dom-repeat" items="[[ data.faq_items ]]">
+        <dorel-accordion-item heading="[[ item.title ]]"
+                              small="true"
+                              light="true"
+                              gtm-parent="[[ gtmParent ]]"
+                              gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
+          <dorel-safe-html html="[[ item.description ]]"></dorel-safe-html>
+          <dorel-safe-html class="extra-link" html="[[ item.extra_link_html ]]"></dorel-safe-html>
+        </dorel-accordion-item>
+      </template>
     </dorel-layout-component>
   </template>
 
