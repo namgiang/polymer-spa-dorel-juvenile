@@ -10,6 +10,12 @@
 <link rel="import" href="../molecules/product-information/dorel-product-information-specifications.html">
 
 <dom-module id="dorel-section-product-accordions">
+  <style>
+    dorel-safe-html {
+      float: right;
+      text-align: right;
+    }
+  </style>
   <template>
     <dorel-magento-collect-custom-data
       product-id="[[ productId ]]"
@@ -50,9 +56,16 @@
 
                   <!-- Product Information Specifications -->
                   <template is="dom-if" if="[[ _isPageComponent(item.type, 'specifications') ]]">
-                    <dorel-product-information-specifications data="[[ item ]]"></dorel-product-information-specifications>
+                    <dorel-product-information-specifications
+                      data="[[ item ]]"></dorel-product-information-specifications>
                   </template>
                   <!--// Product Information Specifications -->
+
+                  <!-- Extra link html -->
+                  <template is="dom-if" if="[[ item.extra_link_html ]]">
+                    <dorel-safe-html html="[[ item.extra_link_html ]]"></dorel-safe-html>
+                  </template>
+                  <!-- Extra link html -->
 
                 </dorel-accordion-item>
               </template>

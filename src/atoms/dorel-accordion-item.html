@@ -41,7 +41,7 @@
       }
 
       .accordion-content {
-        padding: .75em 1.5em 0.75em 1.5em;
+        padding: 0 1.5em 1.5em 1.5em;
         float: left;
         width: 100%;
         box-sizing: border-box;
@@ -96,6 +96,14 @@
         right: 0.5rem;
       }
 
+      :host-context([light]) .accordion-container {
+        background-color: var(--theme-color-white);
+      }
+
+      :host-context([small]) {
+        margin: .375em 0;
+      }
+
     </style>
     <div class="accordion-container" opened$="[[ opened ]]" icon$="[[ icon.length ]]">
       <template
@@ -147,7 +155,20 @@
           value: ''
         },
 
+        /**
+         * @name small
+         * @description Small variation of the accordion
+         */
         small: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        /**
+         * @name light
+         * @description Small variation of the accordion
+         */
+        light: {
           type: Boolean,
           reflectToAttribute: true
         },
