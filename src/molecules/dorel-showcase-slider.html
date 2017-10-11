@@ -21,10 +21,10 @@
         width: 100%;
       }
     </style>
-    <template is="dom-if" if="[[ shouldShowThumbnails(slideshowData) ]]">
-      <dorel-vertical-thumbnail-slider tablet-medium-up$="{{ breakpoints.tabletMediumUp }}" slides="[[ slideshowData.slides ]]" position="[[ position ]]"></dorel-vertical-thumbnail-slider>
+    <template is="dom-if" if="[[ shouldShowThumbnails(slides) ]]">
+      <dorel-vertical-thumbnail-slider tablet-medium-up$="{{ breakpoints.tabletMediumUp }}" slides="[[ slides ]]" position="[[ position ]]"></dorel-vertical-thumbnail-slider>
     </template>
-    <dorel-image-slider id="carousel" slides="[[ slideshowData.slides ]]"></dorel-image-slider>
+    <dorel-image-slider id="carousel" slides="[[ slides ]]"></dorel-image-slider>
   </template>
 
   <script>
@@ -57,47 +57,45 @@
          * @description data to build up the component
          * TODO: // Remove dummy data if data is in the magento product
          */
-        slideshowData: {
-          type: Object,
+        slides: {
+          type: Array,
           value: function () {
-            return {
-              slides: [
-                {
-                  order: 1,
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
-                },
-                {
-                  order: 2,
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
-                },
-                {
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
-                },
-                {
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
-                },
-                {
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
-                },
-                {
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
-                },
-                {
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
-                },
-                {
-                  image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
-                  thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
-                }
-              ]
-            };
+            return [
+              {
+                order: 1,
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                order: 2,
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              }
+            ]
           }
         }
 
@@ -118,7 +116,7 @@
        */
       _setSlide: function(event) {
         var slide = event.detail.value;
-        var index = this.get('slideshowData.slides').findIndex(function(_slide) {
+        var index = this.get('slides').findIndex(function(_slide) {
           return _slide === slide;
         });
         if(this.$.carousel && typeof index !== 'undefined') {
@@ -140,12 +138,12 @@
       /**
        * template helper method
        * @name shouldShowThumbnails
-       * @description will return a boolean that indicates if the slideshowData.slides has more then 1 slide
+       * @description will return a boolean that indicates if the slides has more then 1 slide
        * @returns Boolean
-       * @param slideshowData - Object
+       * @param slides - Array
        */
-      shouldShowThumbnails: function(slideshowData) {
-        return Boolean(slideshowData && slideshowData.slides && slideshowData.slides.length && slideshowData.slides.length > 1);
+      shouldShowThumbnails: function(slides) {
+        return Boolean(slides && slides.length && slides.length > 1);
       }
     });
   </script>
