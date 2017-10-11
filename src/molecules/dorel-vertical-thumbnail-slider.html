@@ -5,6 +5,8 @@
         flex-direction: column;
         overflow: hidden;
         width: auto;
+        display: flex;
+        justify-content: center;
         --iron-icon-fill-color: var(--theme-brand-color-2);
       }
       .image {
@@ -178,7 +180,6 @@
          * is used by calculations in the methods of this component
          */
         maxThumbnailsInView: {
-          readOnly: true,
           type: Number,
           value: 5
         },
@@ -190,7 +191,6 @@
          * is used by calculations in the methods of this component
          */
         sizeOfThumbnail: {
-          readOnly: true,
           type: Number,
           value: 5
         },
@@ -198,13 +198,39 @@
 
       },
 
+      observers: [
+        '_setSize(breakpoints.tabletMediumUp)',
+        '_setContainers(sizeOfThumbnail, maxThumbnailsInView)'
+      ],
+
       /**
-       * @name ready
-       * @description will set the height of the wrappers of the thumbnails
+       * observer
+       * @name _setSize
+       * @description will set the size of the thumnail and the amount of the thumbnails if the screensize changes
+       * after setting new sizes it will correct the offset
        */
-      ready: function() {
-        this.$.thumbnails.style.height = (this.get('sizeOfThumbnail') * this.get('maxThumbnailsInView').toString()) + 'rem';
-        this.$.thumbnailsWrapper.style.height = (this.get('sizeOfThumbnail') * this.get('maxThumbnailsInView').toString()) + 'rem';
+      _setSize: function(tabletMediumUp) {
+        if(tabletMediumUp) {
+          this.set('maxThumbnailsInView', 5);
+          this.set('sizeOfThumbnail', 5);
+        } else {
+          this.set('maxThumbnailsInView', 3);
+          this.set('sizeOfThumbnail', 4);
+        }
+        this._setOffset(0);
+      },
+
+      /**
+       * observer
+       * @name _setContainers
+       * @description will update the height of the wrappers of the thumbnails if sizeOfThumbnail or maxThumbnailsInView change
+       */
+      _setContainers: function(sizeOfThumbnail, maxThumbnailsInView) {
+        if(typeof sizeOfThumbnail === 'undefined' || typeof maxThumbnailsInView === 'undefined' ) {
+          return;
+        }
+        this.$.thumbnails.style.height = ((sizeOfThumbnail * maxThumbnailsInView).toString()) + 'rem';
+        this.$.thumbnailsWrapper.style.height = ((sizeOfThumbnail * maxThumbnailsInView).toString()) + 'rem';
       },
 
       /**

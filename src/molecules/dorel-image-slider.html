@@ -64,7 +64,7 @@
         <l2t-paper-slider class="simple-slider"
                           id="simpleSlider"
                           position="{{ position }}"
-                          hide-nav="[[ isMobile(breakpoints) ]]"
+                          hide-nav="[[ hideBulletPoints ]]"
                           slide-duration="4"
                           total-slides="[[ slides.length ]]">
           <template
@@ -117,6 +117,16 @@
          */
         breakpoints: {
           type: Object
+        },
+
+        /**
+         * @attribute
+         * @name hideBulletPoints
+         * @description boolean that will either show or hide bullet points of the l2t-paper-slider
+         */
+        hideBulletPoints: {
+          type: Boolean,
+          value: true
         }
 
       },
@@ -144,18 +154,7 @@
        */
       moveSliderTo: function(index) {
         this.$.simpleSlider.movePos(index);
-      },
-
-      /**
-       * template helper method
-       * @name isMobile
-       * @description will return true if breakpoints.tabletMediumUp is true
-       * @param breakpoints - Object
-       * @returns Boolean
-       */
-      isMobile: function(breakpoints) {
-        return Boolean(breakpoints && breakpoints.tabletMediumUp === true);
-      },
+      }
 
     });
   </script>
