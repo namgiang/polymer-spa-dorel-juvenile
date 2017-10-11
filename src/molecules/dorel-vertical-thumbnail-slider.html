@@ -275,15 +275,26 @@
           this._setOffset(position * -1 + spacing);
         }
 
+        this._setEnabled(position, numberOfItems);
+      },
+
+      /**
+       * @name _setEnabled
+       * @description handles the enabled boolean of the next and previous button
+       * @param position - Number
+       * @param numberOfItems - Array
+       */
+      _setEnabled: function(position, numberOfItems) {
         if(position >= numberOfItems - 1) {
-          this.set('nextEnabled', false);
+           this.set('nextEnabled', false);
         } else {
           this.set('nextEnabled', true);
         }
         if(position <= 0) {
           this.set('previousEnabled', false);
+        } else {
+          this.set('previousEnabled', true);
         }
-        this.set('previousEnabled', true);
       },
 
       /**
