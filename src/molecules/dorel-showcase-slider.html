@@ -1,0 +1,150 @@
+<link rel="import" href="dorel-image-slider.html">
+<link rel="import" href="dorel-vertical-thumbnail-slider.html">
+
+<dom-module id="dorel-showcase-slider">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: row;
+      }
+      dorel-thumbnail-slider {
+        width: auto;
+        margin-right: 1.5rem;
+        display: none;
+      }
+      dorel-thumbnail-slider[tablet-medium-up] {
+        display: flex;
+      }
+      dorel-image-slider {
+        flex: 1;
+        width: 100%;
+      }
+    </style>
+    <template is="dom-if" if="[[ shouldShowThumbnails(slides) ]]">
+      <dorel-vertical-thumbnail-slider tablet-medium-up$="{{ breakpoints.tabletMediumUp }}" slides="[[ slides ]]" position="[[ position ]]"></dorel-vertical-thumbnail-slider>
+    </template>
+    <dorel-image-slider id="carousel" slides="[[ slides ]]"></dorel-image-slider>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-showcase-slider',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name breakpoints
+         * @description breakpoints of the dorel-media-manager component
+         */
+        breakpoints: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name position
+         * @description the position of the active slide
+         */
+        position: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name slideshowData
+         * @description data to build up the component
+         * TODO: // Remove dummy data if data is in the magento product
+         */
+        slides: {
+          type: Array,
+          value: function () {
+            return [
+              {
+                order: 1,
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                order: 2,
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_memorybutton_zoom.ashx?vs=1&d=20170622T022024Z&mw=60&mh=60',
+              },
+              {
+                image_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&jpeg=85&mh=382&jpeg=85',
+                thumbnail_url: 'http://media.maxi-cosi.com/nl-nl/~/media/assets/commercial/feature-images/mc630_maxicosi_carseat_babycarseat_pebble_2017_red_robinred_suncanopy_side.ashx?vs=1&d=20170605T230605Z&mw=60&mh=60',
+              }
+            ]
+          }
+        }
+
+      },
+
+      listeners: {
+        'setSlide' : '_setSlide',
+        'updatePosition' : '_updatePosition'
+      },
+
+      /**
+       * listener
+       * @name _setSlide
+       * @description Everytime a thumbnail is clicked the thumbnail-slider component dispatches the 'setSlide' event,
+       * In the event we can find the slide, that needs to be set by the image-slider.
+       * the function calls the public method `moveSliderTo`"` of the image-slider component with the index of the slide that needs to be set.
+       * @param event - Object
+       */
+      _setSlide: function(event) {
+        var slide = event.detail.value;
+        var index = this.get('slides').findIndex(function(_slide) {
+          return _slide === slide;
+        });
+        if(this.$.carousel && typeof index !== 'undefined') {
+          this.$.carousel.moveSliderTo(index);
+        }
+      },
+
+      /**
+       * listener
+       * @name _updatePosition
+       * @description Everytime the image-slider updates the position this method is called.
+       * In the event contains the index of the active position. The function will update the position property
+       * @param event - Object
+       */
+      _updatePosition: function(event) {
+        this.set('position', event.detail);
+      },
+
+      /**
+       * template helper method
+       * @name shouldShowThumbnails
+       * @description will return a boolean that indicates if the slides has more then 1 slide
+       * @returns Boolean
+       * @param slides - Array
+       */
+      shouldShowThumbnails: function(slides) {
+        return Boolean(slides && slides.length && slides.length > 1);
+      }
+    });
+  </script>
+</dom-module>
