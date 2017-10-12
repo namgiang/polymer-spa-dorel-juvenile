@@ -18,6 +18,7 @@
 <link rel="import" href="atoms/layout/dorel-layout-row.html">
 
 <!-- SHARED BEHAVIORS -->
+<link rel="import" href="utils/behaviors/specific/dorel-app-cache-behavior.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-conditional-behaviors.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
 <link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
@@ -367,17 +368,9 @@
           type: Number
         },
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
-        },
-
       },
+
+      behaviors: [ appCacheBehavior ],
 
       /**
        * @name observers
@@ -392,61 +385,6 @@
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
-      },
-
-      listeners: {
-        'setAppCache': '_setAppCache'
-      },
-
-      _setAppCache: function (event) {
-        if(!this.get('appCache')) {
-          this._setInitialAppCache();
-        }
-        var data = event.detail;
-        var path = data.path;
-        var value = data.value;
-        if (data && path) {
-          this.set('appCache.' + path, value);
-        }
-      },
-
-      _setInitialAppCache: function() {
-        if(this.get('appCache')) {
-          return
-        }
-        var appCache = {
-          wpUrl: CONFIG.CMS_URL, // DONE
-          dioApiUrl: CONFIG.DIO_API_URL, // marnix
-          collect: {}, // marnix
-          current: {}, // DONE
-          product: {
-            products: [], // aron | DONE
-            attributes: {
-              accordions: [], // aron | DONE
-              features: [], // aron | DONE
-              usps: [] // aron | DONE
-            },
-            retrievedCategories: [], // aron | DONE
-            auth: {
-              token: '', // aron | DONE
-              timestamp: '' // // aron | DONE
-            },
-            colorMap: [] // aron | DONE
-          },
-          faqs: [], // aron | DONE
-          events: {}, // DONE
-          grid: { // DONE
-            horizontal: false,
-            vertical: false
-          },
-          previousState: {}
-        };
-
-        this.set('appCache', appCache);
-      },
-
-      ready: function () {
-        this._setInitialAppCache();
       },
 
       /**
