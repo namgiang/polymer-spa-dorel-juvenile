@@ -35,6 +35,10 @@
         text-shadow: var(--theme-text-shadow);
       }
 
+      dorel-cta {
+        float: right;
+      }
+
       dorel-layout-container {
         position: absolute;
         right: 0;
@@ -85,7 +89,6 @@
         font-weight: var(--theme-font-weight-light);
         margin-top: .375em;
       }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -126,23 +129,21 @@
                   [[ heroHeaderData.sub_title ]]
                 </p>
               </template>
+              <template
+                is="dom-if"
+                if="[[ heroHeaderData.cta_toggle ]]">
+                <dorel-cta
+                  title="[[ heroHeaderData.cta_text ]]"
+                  icon="dorel-icons:play-circle-outline"
+                  type="primary"
+                  link="[[ heroHeaderData.cta_href ]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  [[ heroHeaderData.cta_text ]]
+                </dorel-cta>
+              </template>
             </header>
-          </dorel-layout-column>
-
-          <!--<template
-            is="dom-if"
-            if="[[ heroHeaderData.cta_toggle ]]">
-            <dorel-cta
-              title="[[ heroHeaderData.cta_text ]]"
-              icon="dorel-icons:play-circle-outline"
-              type="primary"
-              link="[[ heroHeaderData.cta_href ]]"
-              gtm-parent="[[ gtmParent ]]"
-              gtm-parent-index="[[ gtmParentIndex ]]"
-              gtm-cta-index="0">
-              [[ heroHeaderData.cta_text ]]
-            </dorel-cta>
-          </template> -->
           </dorel-layout-column>
         </dorel-layout-row>
       </dorel-layout-container>
