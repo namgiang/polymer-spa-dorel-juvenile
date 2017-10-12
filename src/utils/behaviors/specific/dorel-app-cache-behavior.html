@@ -36,7 +36,8 @@
      * @param event.value - Can be anything, will be used to add or update the data on the appCache
      */
     _setAppCache: function(event) {
-      if(!this.get('appCache')) {
+      var appCache = this.get('appCache');
+      if(!appCache) {
         this._setInitialAppCache();
       }
       var data = event.detail;
@@ -55,13 +56,13 @@
      */
     _newReferenceValue: function(value) {
       // if value is an Array
-      if(value.constructor === Array) {
+      if(typeof value !== 'undefined' && value.constructor === Array) {
         var self = this;
-        // return a new Array
-        return value.map(function(key) {
+        var newArray = value.map(function(key) {
           // with a clone of the items in the array
           return self._newReferenceValue(key);
         });
+        return Array.from(newArray);
       }
       // check what type and return a clone of the value
       switch (typeof value) {
