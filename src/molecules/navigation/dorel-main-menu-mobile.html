@@ -160,158 +160,82 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <app-drawer id="drawer" opened="{{ mobileMenuOpened }}" align="right" swipe-open tabindex="0"
-                tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+    <app-drawer id="drawer" opened="{{ mobileMenuOpened }}" align="right" swipe-open tabindex="0" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="menu-spacer-top"></div>
       <div class="mobile-nav">
         <ul class="main-menu">
-          <template is="dom-repeat" items="[[ menuItems ]]" as="mainItem">
-            <!-- Normal link -->
-            <template is="dom-if" if="[[ !mainItem.dropdown ]]">
-              <li class="main-menu--item">
-                <a on-click="clickMenuItem"
-                   class="main-menu--link link"
-                   active$="[[ checkIfActive(mainItem.link, route) ]]"
-                   href="[[ mainItem.link ]]">
-                  [[ mainItem.title ]]
-                </a>
-              </li>
-            </template>
+            <template is="dom-repeat" items="[[ menuItems ]]" as="mainItem">
 
-            <template is="dom-if" if="[[ mainItem.dropdown ]]">
-              <li>
-                <dorel-accordion-item
-                  small
-                  light
-                  opened="[[ mainItem.opened ]]"
-                  id$="[[ mainItem.id ]]"
-                  on-click="_openAccordion"
-                  heading="[[ mainItem.title ]]">
+              <!-- Normal link -->
+              <template is="dom-if" if="[[ !mainItem.dropdown ]]">
+                <li class="main-menu--item">
+                  <a on-click="clickMenuItem"
+                    class="main-menu--link link"
+                    active$="[[ checkIfActive(mainItem.link, route) ]]"
+                    href="[[ mainItem.link ]]">
+                    [[ mainItem.title ]]
+                  </a>
+                </li>
+              </template>
 
-                  <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
+              <template is="dom-if" if="[[ mainItem.dropdown ]]">
+                <li>
+                  <dorel-accordion-item
+                    small
+                    light
+                    opened="[[ mainItem.opened ]]"
+                    id$="[[ mainItem.id ]]"
+                    on-click="_openAccordion"
+                    heading="[[ mainItem.title ]]">
+
+                    <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
+                      <ul class="sub-menu">
+                        <template is="dom-repeat" items="[[ getDeepArrayItems(mainItem, 'sub_category_items') ]]" as="dropdownItem">
+                          <li class="sub-menu__item">
+                              <a on-click="clickMenuItem"
+                                class="link"
+                                gtm-parent="dorel-navigation-main"
+                                gtm-parent-index="[[ index ]]"
+                                active$="[[ checkIfActive(dropdownItem.link, route) ]]"
+                                href="[[ dropdownItem.link ]]">
+                                [[ dropdownItem.title ]]
+                              </a>
+                          </li>
+                        </template>
+                      </ul>
+                      <dorel-cta
+                        gtm-parent="dorel-navigation-main"
+                        gtm-parent-index="1"
+                        size="medium"
+                        type="tertiary"
+                        on-click="clickMenuItem"
+                        no-margin
+                        class="cta"
+                        link="[[ mainItem.link ]]"
+                        title="[[ mainItem.title ]]">
+                        <span>All [[ mainItem.title ]]</span>
+                      </dorel-cta>
+                    </template>
+
                     <ul class="sub-menu">
-                      <template is="dom-repeat" items="[[ getDeepArrayItems(mainItem, 'sub_category_items') ]]"
-                                as="dropdownItem">
+                      <template is="dom-repeat" items="[[ getDeepArrayItems(mainItem, 'dropdown_items') ]]" as="dropdownItem" filter="[[ filterDropdownItems(mainItem) ]]">
                         <li class="sub-menu__item">
-                          <a on-click="clickMenuItem"
-                             class="link"
-                             gtm-parent="dorel-navigation-main"
-                             gtm-parent-index="[[ index ]]"
-                             active$="[[ checkIfActive(dropdownItem.link, route) ]]"
-                             href="[[ dropdownItem.link ]]">
-                            [[ dropdownItem.title ]]
-                          </a>
+                            <a on-click="clickMenuItem"
+                              class="link"
+                              gtm-parent="dorel-navigation-main"
+                              gtm-parent-index="[[ index ]]"
+                              active$="[[ checkIfActive(dropdownItem.link, route) ]]"
+                              href="[[ dropdownItem.link ]]">
+                              [[ dropdownItem.title ]]
+                            </a>
                         </li>
                       </template>
                     </ul>
-                    <dorel-cta
-                      gtm-parent="dorel-navigation-main"
-                      gtm-parent-index="1"
-                      size="medium"
-                      type="tertiary"
-                      on-click="clickMenuItem"
-                      no-margin
-                      class="cta"
-                      link="[[ mainItem.link ]]"
-                      title="[[ mainItem.title ]]">
-                      <span>All [[ mainItem.title ]]</span>
-                    </dorel-cta>
-                  </template>
 
-                  <ul class="sub-menu">
-                    <template is="dom-repeat" items="[[ getDeepArrayItems(mainItem, 'dropdown_items') ]]"
-                              as="dropdownItem" filter="[[ filterDropdownItems(mainItem) ]]">
-                      <li class="sub-menu__item">
-                        <a on-click="clickMenuItem"
-                           class="link"
-                           gtm-parent="dorel-navigation-main"
-                           gtm-parent-index="[[ index ]]"
-                           active$="[[ checkIfActive(dropdownItem.link, route) ]]"
-                           href="[[ dropdownItem.link ]]">
-                          [[ dropdownItem.title ]]
-                        </a>
-                      </li>
-                    </template>
-                  </ul>
-
-                </dorel-accordion-item>
-              </li>
+                  </dorel-accordion-item>
+                </li>
+              </template>
             </template>
-          </template>
-
-          <template is="dom-repeat" items="[[ menuItems ]]" as="mainItem">
-            <!-- Normal link -->
-            <template is="dom-if" if="[[ !mainItem.dropdown ]]">
-              <li class="main-menu--item">
-                <a on-click="clickMenuItem"
-                   class="main-menu--link link"
-                   active$="[[ checkIfActive(mainItem.link, route) ]]"
-                   href="[[ mainItem.link ]]">
-                  [[ mainItem.title ]]
-                </a>
-              </li>
-            </template>
-
-            <template is="dom-if" if="[[ mainItem.dropdown ]]">
-              <li>
-                <dorel-accordion-item
-                  small
-                  light
-                  opened="[[ mainItem.opened ]]"
-                  id$="[[ mainItem.id ]]"
-                  on-click="_openAccordion"
-                  heading="[[ mainItem.title ]]">
-
-                  <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
-                    <ul class="sub-menu">
-                      <template is="dom-repeat" items="[[ getDeepArrayItems(mainItem, 'sub_category_items') ]]"
-                                as="dropdownItem">
-                        <li class="sub-menu__item">
-                          <a on-click="clickMenuItem"
-                             class="link"
-                             gtm-parent="dorel-navigation-main"
-                             gtm-parent-index="[[ index ]]"
-                             active$="[[ checkIfActive(dropdownItem.link, route) ]]"
-                             href="[[ dropdownItem.link ]]">
-                            [[ dropdownItem.title ]]
-                          </a>
-                        </li>
-                      </template>
-                    </ul>
-                    <dorel-cta
-                      gtm-parent="dorel-navigation-main"
-                      gtm-parent-index="1"
-                      size="medium"
-                      type="tertiary"
-                      on-click="clickMenuItem"
-                      no-margin
-                      class="cta"
-                      link="[[ mainItem.link ]]"
-                      title="[[ mainItem.title ]]">
-                      <span>All [[ mainItem.title ]]</span>
-                    </dorel-cta>
-                  </template>
-
-                  <ul class="sub-menu">
-                    <template is="dom-repeat" items="[[ getDeepArrayItems(mainItem, 'dropdown_items') ]]"
-                              as="dropdownItem" filter="[[ filterDropdownItems(mainItem) ]]">
-                      <li class="sub-menu__item">
-                        <a on-click="clickMenuItem"
-                           class="link"
-                           gtm-parent="dorel-navigation-main"
-                           gtm-parent-index="[[ index ]]"
-                           active$="[[ checkIfActive(dropdownItem.link, route) ]]"
-                           href="[[ dropdownItem.link ]]">
-                          [[ dropdownItem.title ]]
-                        </a>
-                      </li>
-                    </template>
-                  </ul>
-
-                </dorel-accordion-item>
-              </li>
-            </template>
-          </template>
         </ul>
       </div>
     </app-drawer>
