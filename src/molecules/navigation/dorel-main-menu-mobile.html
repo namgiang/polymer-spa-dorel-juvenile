@@ -39,7 +39,6 @@
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
       }
 
-
       .mobile-nav {
         background-color: var(--theme-color-monochrome-2);
         overflow: auto;
@@ -67,7 +66,7 @@
         background-color: var(--theme-color-monochrome-1);
         border-radius: var(--theme-border-radius-1);
         overflow: hidden;
-        margin-bottom: .75rem;
+        margin-bottom: .375rem;
         min-height: min-content;
       }
 
@@ -107,7 +106,7 @@
       .sub-menu {
         list-style-type: none;
         margin: 0;
-        padding: .75rem 0 .75rem  0;
+        padding: .75rem 0 .75rem 0;
       }
 
       .cta {
@@ -180,9 +179,10 @@
               </template>
 
               <template is="dom-if" if="[[ mainItem.dropdown ]]">
-                <li class="main-menu--item">
+                <li>
                   <dorel-accordion-item
-                    small="true"
+                    small
+                    light
                     opened="[[ mainItem.opened ]]"
                     id$="[[ mainItem.id ]]"
                     on-click="_openAccordion"
@@ -243,8 +243,8 @@
     <div class="mobile-multi-language" mobile-opened$="[[ mobileMenuOpened ]]">
       <div class="mobile-multi-language-container">
         <dorel-multilingual-select-language
-            current-language="{{ currentLanguage }}"
-            continents-data="[[ continentsData ]]">
+          current-language="{{ currentLanguage }}"
+          continents-data="[[ continentsData ]]">
         </dorel-multilingual-select-language>
       </div>
     </div>
@@ -292,9 +292,9 @@
        * @description handles a accordion click
        * @param event - Object
        */
-      _openAccordion: function(event) {
+      _openAccordion: function (event) {
         var accordionId = Number(Polymer.dom(event).localTarget.id);
-        var newMenuItems = this.get('menuItems').map(function(menuItem) {
+        var newMenuItems = this.get('menuItems').map(function (menuItem) {
           menuItem.opened = menuItem.id === accordionId && !menuItem.opened ? true : false;
           return Object.assign({}, menuItem);
         });
@@ -309,11 +309,11 @@
        * @param index - Number
        * @returns Boolean
        */
-      filterDropdownItems: function(mainItem, index) {
+      filterDropdownItems: function (mainItem, index) {
         var self = this;
-        return function(item) {
+        return function (item) {
           // if dropdownType is category we should only show the first item
-          if(self.isDropdownTypeCategory(mainItem)) {
+          if (self.isDropdownTypeCategory(mainItem)) {
             return mainItem.dropdown_items[0].id === item.id ? true : false;
           } else {
             return true;
@@ -326,7 +326,7 @@
        * @description closes the mobile menu and calls _emitGtmEvent
        * @param event - Object
        */
-      clickMenuItem: function(event) {
+      clickMenuItem: function (event) {
         this.set('mobileMenuOpened', false);
         this._emitGtmEvent(event);
       }
