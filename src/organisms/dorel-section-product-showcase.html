@@ -149,7 +149,7 @@
           <!-- Column -->
           <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
             <div class="showcase-gallery-view">
-              <dorel-showcase-slider breakpoints="[[ breakpoints ]]"></dorel-showcase-slider>
+              <dorel-showcase-slider slides="[[ slides ]]" breakpoints="[[ breakpoints ]]"></dorel-showcase-slider>
             </div>
           </dorel-layout-column>
 
@@ -306,9 +306,20 @@
           type: Object
         },
 
+        slides: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        }
+
       },
 
       behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
+
+      listeners: {
+        'colorUpdated': '_changeSlider'
+      },
 
       ready: function () {
         //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
@@ -321,7 +332,29 @@
         if (storeLocatorPage) {
           this.set('storeLocatorPage.store_locator_button', true);
         }
+        var parentProduct = this.get('showcaseData');
+        if(parentProduct && parentProduct.child_products && parentProduct.child_products.length) {
+            this._setSlider(parentProduct.child_products[0]);
+        }
+      },
 
+      /**
+       * listener
+       * @name _changeSlider
+       * @description will listen to the colorUpdated event fired by the color-switcher component
+       * @param Event - Object
+       */
+      _changeSlider: function(event) {
+        this._setSlider(event.detail);
+      },
+
+      /**
+       * @name _setSlider
+       * @description will set the active slides that are used by dorel-showcase-slider component
+       * @param Product - Object
+       */
+      _setSlider: function(product) {
+        this.set('slides', product.slider);
       },
 
       /**

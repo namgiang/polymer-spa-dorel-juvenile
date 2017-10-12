@@ -178,6 +178,11 @@
        * @param e - Object - the clicked object/target
        */
       _changeCurrentColor: function (event) {
+        var color = event.model.item;
+        if(typeof color !== 'undefined') {
+          this.fire('colorUpdated', color);
+        }
+
         var element = Polymer.dom(event).localTarget;
 
         this.newColorImage = event.target.getAttribute('color-image');
