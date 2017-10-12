@@ -54,7 +54,7 @@
                     duration="{{ duration }}"
                     durationformatted="{{ durationFormatted }}"
                     fractionloaded="{{ fractionLoaded }}"
-                    volume="{{ volume }}"
+                    volume="0"
                     playbackrate="{{ playbackRate }}"
                     playbackquality="{{ playbackQuality }}"
                     playbackstarted="{{ playbackstarted }}"
@@ -84,7 +84,6 @@
       duration: Number,
       durationFormatted: String,
       fractionLoaded: Number,
-      volume: Number,
       playbackRate: Number,
       playbackQuality: String,
       playbackstarted: Boolean,
@@ -99,5 +98,10 @@
     handleYouTubeError: function (ev) {
       console.error('YouTube playback error', ev.detail);
     },
+    ready: function (ev) {
+      this.$.googleYouTube.addEventListener('google-youtube-ready', function() {
+        this.$.googleYouTube.mute();
+      }.bind(this))
+    }
   });
 </script>
