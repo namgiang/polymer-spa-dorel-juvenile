@@ -19,7 +19,7 @@
         float: left;
         border: 2px solid transparent;
         border-radius: 2em;
-        padding: .25em;
+        padding: 2px;
         transition: border .3s ease;
         margin-right: .5em;
       }
@@ -31,8 +31,8 @@
       .list-group-item span {
         display: block;
         border-radius: 1em;
-        width: 1.75em;
-        height: 1.75em;
+        width: 22px;
+        height: 22px;
         border: 1px solid var(--theme-color-monochrome-3);
         cursor: pointer;
         transition: opacity .3s ease;
@@ -46,6 +46,13 @@
       .color-switcher {
         float: left;
         width: 100%;
+      }
+
+      .image-color {
+        width: 22px;
+        height: 22px;
+        border-radius: 2em;
+        pointer-events: none;
       }
 
     </style>
@@ -68,15 +75,31 @@
             as="item"
             filter="[[ _filterChildProducts(filters.*) ]]">
             <li class$="list-group-item {{ _isCurrentColor(currentName, item.color.name) }}">
-              <span on-click="_changeCurrentColor"
-                    role="button"
-                    tabindex="0"
-                    color-image$="[[ item.images.image ]]"
-                    color-name$="[[ item.color.name ]]"
-                    gtm-action$="[[ gtmAction ]]"
-                    gtm-child$="[[ gtmChild ]]"
-                    gtm-cta-index$="[[ index ]]"
-                    style$="background-color: [[ item.color.value ]];"></span>
+
+              <template is="dom-if" if="[[ _checkType(item, 'hex') ]]">
+                <span on-click="_changeCurrentColor"
+                      role="button"
+                      tabindex="0"
+                      color-image$="[[ item.images.image ]]"
+                      color-name$="[[ item.color.name ]]"
+                      gtm-action$="[[ gtmAction ]]"
+                      gtm-child$="[[ gtmChild ]]"
+                      gtm-cta-index$="[[ index ]]"
+                      style$="background-color: [[ item.color.value ]];"></span>
+              </template>
+
+              <template is="dom-if" if="[[ _checkType(item, 'image') ]]">
+                <span on-click="_changeCurrentColor"
+                      role="button"
+                      tabindex="0"
+                      color-image$="[[ item.images.image ]]"
+                      color-name$="[[ item.color.name ]]"
+                      gtm-action$="[[ gtmAction ]]"
+                      gtm-child$="[[ gtmChild ]]"
+                      gtm-cta-index$="[[ index ]]">
+                  <img src="[[ item.color.value ]]" class="image-color" />
+                </span>
+              </template>
             </li>
           </template>
         </ul>
@@ -236,7 +259,11 @@
        */
       _isCurrentColor: function (current, name) {
         return (current === name) ? 'active' : '';
-      }
+      },
+
+      _checkType: function(item, type) {
+        return Boolean(item && item.color && item.color.type === type);
+      },
     });
   </script>
 
