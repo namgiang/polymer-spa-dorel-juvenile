@@ -5,13 +5,15 @@
     <style>
       :host {
         width: 100%;
+        float: left;
+        margin: .75em 0;
       }
 
       .accordion-heading {
         @apply(--theme-paragraph-text);
         max-width: 100%;
         margin-top: 0;
-        padding: 1.5em;
+        padding: 1.5em .75em 1.5em .75em;
         transition: color .3s ease;
         color: var(--theme-color-text-link);
       }
@@ -30,7 +32,8 @@
       }
 
       .accordion-container {
-        box-shadow: inset 0 -2px 0 0 var(--theme-color-monochrome-2);
+        background-color: var(--theme-color-monochrome-2);
+        border-radius: var(--theme-border-radius-1);
         position: relative;
         float: left;
         width: 100%;
@@ -38,7 +41,7 @@
       }
 
       .accordion-content {
-        padding: .75em 1.5em 0.75em 1.5em;
+        padding: 0 .75em 1.5em .75em;
         float: left;
         width: 100%;
         box-sizing: border-box;
@@ -65,7 +68,7 @@
       }
 
       .accordion-container[opened] .accordion-heading {
-        font-weight: 500;
+        color: var(--theme-color-text-link-active);
       }
 
       .accordion-container[opened] .accordion-heading + .accordion-icon {
@@ -76,12 +79,16 @@
         padding: 0 1.5em 1.5em 1.5em;
       }
 
+      [tablet-medium-up] .accordion-heading  {
+        padding: 1.5em;
+      }
+
       :host-context([small]) .accordion-heading {
         padding: 0.75rem;
       }
 
       :host-context([small]) .accordion-content {
-        padding: 0 .75rem;
+        padding: 0 .75rem 1.5rem .75rem;
       }
 
       :host-context([small]) .accordion-container[opened] .accordion-heading {
@@ -93,8 +100,21 @@
         right: 0.5rem;
       }
 
+      :host-context([light]) .accordion-container {
+        background-color: var(--theme-color-white);
+      }
+
+      :host-context([small]) {
+        margin: .375em 0;
+      }
+
     </style>
-    <div class="accordion-container" opened$="[[ opened ]]" icon$="[[ icon.length ]]">
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div class="accordion-container"
+         opened$="[[ opened ]]"
+         icon$="[[ icon.length ]]"
+         tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <template
         is="dom-if"
         if="[[ heading.length ]]">
@@ -144,7 +164,20 @@
           value: ''
         },
 
+        /**
+         * @name small
+         * @description Small variation of the accordion
+         */
         small: {
+          type: Boolean,
+          reflectToAttribute: true
+        },
+
+        /**
+         * @name light
+         * @description Small variation of the accordion
+         */
+        light: {
           type: Boolean,
           reflectToAttribute: true
         },

@@ -1,0 +1,42 @@
+<dom-module id="dorel-product-information-specifications">
+  <template>
+    <style>
+      .image {
+        width: 9em;
+        height: 9em;
+        background-color: var(--theme-color-white);
+        border-radius: var(--theme-border-radius-1);
+        margin: .75em;
+        float: left;
+        display: inline-block;
+      }
+    </style>
+
+    <template is="dom-repeat" items="[[ data.tiles ]]">
+      <iron-image class="image"
+                  sizing="contain"
+                  fade="true"
+                  preload
+                  src$="[[ item.src ]]"></iron-image>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-product-information-specifications',
+      properties: {
+        /**
+         * @attribute
+         * @name data
+         * @description Content data
+         */
+        data: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      }
+    });
+  </script>
+</dom-module>
