@@ -1,5 +1,7 @@
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../atoms/dorel-bynder-image.html">
+<link rel="import" href="dorel-image-listitem.html">
+
 <dom-module id="dorel-card">
   <template>
     <style>
@@ -70,7 +72,7 @@
       <!-- cardImage -->
       <template
         is="dom-if"
-        if="[[ _hasValue(cardData.bynder_card_image) ]]">
+        if="[[ cardData.bynder_card_image ]]">
         <dorel-bynder-image media-id="[[ cardData.bynder_card_image ]]"
                             derivative-identifier="Widescreen Small landscape"
                             width="100%"
@@ -86,15 +88,28 @@
         <!-- cardTitle -->
         <template
           is="dom-if"
-          if="[[ _hasValue(cardData.card_title) ]]">
+          if="[[ cardData.card_title ]]">
           <h3 class="title">[[ cardData.card_title ]]</h3>
         </template>
         <!--// cardTitle -->
 
+        <!-- topicBlocks -->
+        <template
+          is="dom-repeat"
+          items="[[ cardData.topic_blocks ]]">
+          <dorel-image-listitem 
+            bynder-image="[[ item.topic_bynder_image ]]"
+            image-url="[[ item.topic_image ]]"
+            title="[[ item.topic_title ]]"
+            text="[[ item.topic_text ]]"
+          ></dorel-image-listitem>
+        </template>
+        <!-- //topicBlocks -->
+
         <!-- cardContent -->
         <template
           is="dom-if"
-          if="[[ _hasValue(cardData.card_text) ]]">
+          if="[[ cardData.card_text ]]">
           <p class="description">
             <dorel-safe-html html="[[ cardData.card_text ]]"></dorel-safe-html>
           </p>
@@ -104,7 +119,7 @@
         <!-- Link list -->
         <template
           is="dom-if"
-          if="[[ _hasValue(cardData.child_ctas) ]]">
+          if="[[ cardData.child_ctas) ]]">
           <div class="link-container">
             <template is="dom-repeat" items="[[ cardData.child_ctas ]]" as="link">
               <dorel-cta
