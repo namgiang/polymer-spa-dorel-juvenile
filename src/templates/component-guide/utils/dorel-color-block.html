@@ -16,6 +16,7 @@
         background-color: var(--color-block-color);
         float: left;
         width: 100%;
+        transition: background-color .3s ease;
       }
 
       .label {
@@ -45,8 +46,15 @@
   <script>
     Polymer({
       is: 'dorel-color-block',
-      observers: ['_colorVariableChanged(colorVariable)'],
+      observers: ['_colorVariableChanged(colorVariable)', '_brandChanged(brand)'],
       properties: {
+        /**
+         * @name brand
+         * @description The currently shown brand
+         */
+        brand: {
+          type: String
+        },
         /**
          * @name colorVariable
          * @description The color variable will give the block it's color (usually it's from the shared styles)
@@ -69,6 +77,18 @@
       _colorVariableChanged: function (colorVariable) {
         this.colorHex = this.getComputedStyleValue(colorVariable);
         this.updateStyles({'--color-block-color': this.colorHex});
+      },
+      /**
+       * @name _brandChanged
+       * @description Observer for the brand. Updates the color variables
+       */
+      _brandChanged: function (brand) {
+        var self = this;
+        /* Slight timeout to make sure all the shared styles have been updated before this is called.
+        Hacky but will work for now */
+        setTimeout(function () {
+          self._colorVariableChanged(self.colorVariable);
+        }, 300);
       }
     });
   </script>
