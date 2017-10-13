@@ -83,7 +83,12 @@
       </template>
 
       <template is="dom-if" if="[[ renderImage ]]">
-        <img id="myImage" src="[[ imageSource ]]" alt="[[ alt ]]">
+        <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+          <img id="myImage" src="[[ imageSource ]]" alt="[[ alt ]]">
+        </template>
+        <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+          <img id="myImage" src="[[ mobileImageSource ]]" alt="[[ alt ]]">
+        </template>
       </template>
           
   </template>
@@ -109,7 +114,7 @@
         },
         /**
          * @name renderImage
-         * @description The component will rendedr an image tag instead of a container with background-image
+         * @description The component will render an image tag instead of a container with background-image
          */
         renderImage: {
           type: Boolean,

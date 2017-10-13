@@ -32,7 +32,7 @@
         <dorel-layout-row>
           <!-- cards section -->
             <template is="dom-repeat" items="[[ cardsData.cards ]]" as="card">
-              <dorel-layout-column desktop-column-span="[[ dtColSpan ]]" tablet-column-span="6" mobile-column-span="12">
+              <dorel-layout-column desktop-column-span="[[ desktopColSpan ]]" tablet-column-span="6" mobile-column-span="12">
                 <dorel-card
                   card-data="[[ card ]]"
                   cta-type="[[ ctaType ]]"
@@ -92,8 +92,11 @@
             return {};
           }
         },
-
-        dtColSpan: {
+        /**
+         * @name desktopColSpan
+         * @description computed property depending on compact attribute
+         */
+        desktopColSpan: {
           type: Number,
           computed: 'computeColspan(compact)'
         }
