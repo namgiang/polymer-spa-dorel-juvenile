@@ -2,7 +2,6 @@
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../../bower_components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
 <link rel="import" href="../../molecules/dorel-logo.html">
-<link rel="import" href="../../molecules/dorel-navigation-main.html">
 
 <dom-module id="dorel-product-advisory-nav">
   <template>
@@ -181,7 +180,9 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
     <div class="spacing"></div>
+
     <div class="header-wrapper"
          tablet-small-up$="{{  breakpoints.tabletSmallUp }}"
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
@@ -353,36 +354,8 @@
         if(!previousState || previousState.path === '/product-advisory') {
           return origin;
         }
-        
+
         return origin + previousState.path;
-      },
-
-
-      /**
-       * @name _toggleMobileMenu
-       * @description handler for toggling the mobile menu
-       */
-      _toggleMobileMenu: function (event) {
-
-        // submenu (desktop) will always be false
-        this.subMenuOpened = false;
-
-        // actual mobileMenu toggler
-        this.mobileMenuOpened = !this.mobileMenuOpened;
-
-        // send event to tracking
-        var event = {
-          action: this.mobileMenuOpened ? 'open' : 'close',
-          component: 'hamburger',
-          element: Polymer.dom(event).localTarget.parentNode,
-          event: 'polymer_event',
-          things: {
-            'currentState': this.mobileMenuOpened ? 'close' : 'open',
-            'toState': this.mobileMenuOpened ? 'open' : 'close'
-          }
-        };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
       }
     });
   </script>
