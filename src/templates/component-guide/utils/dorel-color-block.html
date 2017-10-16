@@ -1,0 +1,95 @@
+<!--`dorel-color-block` can be used to display colors, given a shared style variable.-->
+<dom-module id="dorel-color-block">
+  <template>
+    <style>
+      :host {
+        --color-block-color: var(--theme-color-monochrome-1);
+        float: left;
+        width: 100%;
+      }
+
+      .color {
+        min-height: 6em;
+        border: 1px solid var(--theme-color-monochrome-2);
+        margin-top: -1px;
+        margin-bottom: -1px;
+        background-color: var(--color-block-color);
+        float: left;
+        width: 100%;
+        transition: background-color .3s ease;
+      }
+
+      .label {
+        color: var(--theme-color-monochrome-4);
+        font-size: 12px;
+        line-height: 24px;
+        margin-top: 0;
+        padding: 0 1em;
+      }
+
+      .color-variable {
+        float: left;
+      }
+
+      .color-hex {
+        float: right;
+      }
+    </style>
+
+    <div class="color"></div>
+    <div class="label">
+      <div class="color-variable">[[ colorVariable ]]</div>
+      <div class="color-hex">[[ colorHex]]</div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-color-block',
+      observers: ['_colorVariableChanged(colorVariable)', '_brandChanged(brand)'],
+      properties: {
+        /**
+         * @name brand
+         * @description The currently shown brand
+         */
+        brand: {
+          type: String
+        },
+        /**
+         * @name colorVariable
+         * @description The color variable will give the block it's color (usually it's from the shared styles)
+         */
+        colorVariable: {
+          type: String
+        },
+        /**
+         * @name colorHex
+         * @description Hex code used to color the block. Determined using the giver colorVariable.
+         */
+        colorHex: {
+          type: String
+        }
+      },
+      /**
+       * @name _colorVariableChanged
+       * @description Observer for the color variable. Updates this components color using the given variable name
+       */
+      _colorVariableChanged: function (colorVariable) {
+        this.colorHex = this.getComputedStyleValue(colorVariable);
+        this.updateStyles({'--color-block-color': this.colorHex});
+      },
+      /**
+       * @name _brandChanged
+       * @description Observer for the brand. Updates the color variables
+       */
+      _brandChanged: function (brand) {
+        var self = this;
+        /* Slight timeout to make sure all the shared styles have been updated before this is called.
+        Hacky but will work for now */
+        setTimeout(function () {
+          self._colorVariableChanged(self.colorVariable);
+        }, 300);
+      }
+    });
+  </script>
+</dom-module>

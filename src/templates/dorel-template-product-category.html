@@ -1,4 +1,3 @@
-<link rel="import" href="../atoms/dorel-expandable-panel.html">
 <link rel="import" href="../organisms/dorel-category-listing.html">
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-category-submenu.html">
@@ -49,23 +48,31 @@
           <template
             is="dom-if"
             if="[[leftSidebar.productSubCategories.toggle]]">
-            <dorel-expandable-panel header="Subcategories" opened>
+            <dorel-accordion-item heading="{{ localize('Subcategories') }}"
+                                  opened
+                                  small
+                                  gtm-parent="[[ gtmParent ]]"
+                                  gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
               <dorel-category-submenu
                 items="[[leftSidebar.productSubCategories.sub_categories]]">
               </dorel-category-submenu>
-            </dorel-expandable-panel>
+            </dorel-accordion-item>
           </template>
 
           <template
             is="dom-if"
             if="[[leftSidebar.filters.toggle]]">
-            <dorel-expandable-panel header="Filters" opened>
+            <dorel-accordion-item heading="{{ localize('Filters') }}"
+                                  opened
+                                  small
+                                  gtm-parent="[[ gtmParent ]]"
+                                  gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
               <dorel-category-filter
                 filter-data="[[ leftSidebar.filters.filter_groups ]]"
                 retrieving-products="[[ retrievingProducts ]]"
                 product-data="[[ products ]]">
               </dorel-category-filter>
-            </dorel-expandable-panel>
+            </dorel-accordion-item>
           </template>
         </dorel-layout-column>
         <!--// Sidebar --->
@@ -175,7 +182,7 @@
 
       },
 
-      behaviors: [TemplateBehaviors],
+      behaviors: [TemplateBehaviors, DorelMultilingualBehavior],
 
       listeners: {
         'newProducts': '_setProducts'

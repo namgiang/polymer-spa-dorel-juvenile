@@ -1,0 +1,122 @@
+<script>
+  appCacheBehavior = {
+
+    properties: {
+      /**
+       * @attribute
+       * @name appCache
+       * @description the temporary cache of the application,
+       * contains data that used to be contained by the globalsManager
+       */
+      appCache: {
+        type: Object
+      }
+    },
+
+    listeners: {
+      'setAppCache': '_setAppCache'
+    },
+
+    /**
+     * @name ready
+     * @description will call the set initial appCache method
+     */
+    ready: function () {
+      this._setInitialAppCache();
+    },
+
+    /**
+     * listener
+     * @name _setAppCache
+     * @description this important method will listen to the event that are send to the root component
+     * everytime a event with a payload is fired, the _setAppCache will update a certain path of the appCache
+     * it will transform the data to clear the reference so polymer will always render if the data is changed
+     * this is done with _newReferenceValue method. After the data reference is cleared it will set new the appCache path
+     * @param event.path - String, represents a certain tree of the appCache
+     * @param event.value - Can be anything, will be used to add or update the data on the appCache
+     */
+    _setAppCache: function(event) {
+      var appCache = this.get('appCache');
+      if(!appCache) {
+        this._setInitialAppCache();
+      }
+      var data = event.detail;
+      var path = data.path;
+      var value = this._newReferenceValue(data.value);
+      if (data && path) {
+        this.set('appCache.' + path, value);
+      }
+    },
+
+    /**
+     * helper method
+     * @name _setInitialAppCache
+     * @description used to determine what type the value is,
+     * depending on type, it will clear reference and return the new value
+     */
+    _newReferenceValue: function(value) {
+      // if value is an Array
+      if(typeof value !== 'undefined' && value.constructor === Array) {
+        var self = this;
+        var newArray = value.map(function(key) {
+          // with a clone of the items in the array
+          return self._newReferenceValue(key);
+        });
+        return Array.from(newArray);
+      }
+      // check what type and return a clone of the value
+      switch (typeof value) {
+        case 'string':
+          return value;
+        case 'number':
+          return new Number(value);
+        case 'object':
+          return Object.assign({}, value);
+        default:
+          return value;
+      }
+    },
+
+
+    /**
+     * @name _setInitialAppCache
+     * @description used to set the initial appCache
+     */
+    _setInitialAppCache: function() {
+      if(this.get('appCache')) {
+        return
+      }
+      var appCache = {
+        wpUrl: CONFIG.CMS_URL,
+        dioApiUrl: CONFIG.DIO_API_URL,
+        collect: {
+          options: {}
+        },
+        current: {},
+        product: {
+          products: [],
+          attributes: {
+            accordions: [],
+            features: [],
+            usps: []
+          },
+          retrievedCategories: [],
+          auth: {
+            token: '',
+            timestamp: ''
+          },
+          colorMap: []
+        },
+        faqs: [],
+        events: {},
+        grid: {
+          horizontal: false,
+          vertical: false
+        },
+        previousState: {}
+      };
+
+      this.set('appCache', appCache);
+    }
+  }
+</script>
