@@ -4,6 +4,9 @@
   <template>
     <style>
       :host {
+
+        --video-border-radius: 10px;
+
         position: relative;
         overflow: hidden;
 
@@ -12,7 +15,7 @@
           padding-bottom: 56.25%;
           height: 0 !important;
           overflow: hidden;
-          border-radius: 10px;
+          border-radius: var(--video-border-radius)
         };
 
         --google-youtube-iframe: {
@@ -155,6 +158,11 @@
    * @description add event listener for muting video when hero
    */  
     ready: function (ev) {
+      if(this.isHero) {
+        this.updateStyles({
+          '--video-border-radius': 0
+        })
+      }
       this.$.googleYouTube.addEventListener('google-youtube-ready', function() {
         if(this.isHero) {
           this.$.googleYouTube.mute();
