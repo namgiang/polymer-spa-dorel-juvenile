@@ -1,5 +1,6 @@
 <link rel="import" href="../../../atoms/dorel-cta.html">
 <link rel="import" href="../../../atoms/dorel-bynder-image.html">
+
 <dom-module id="dorel-dropdown-card" is-active="[[ isActive ]]">
   <template>
     <style include="iron-flex">
@@ -55,10 +56,9 @@
       .title {
         @apply(--theme-typography-2);
         color: var(--theme-brand-color-2);
+        margin-top: .75em;
         float: left;
         width: 100%;
-        transition: 0.2s;
-        margin-top: 1rem;
       }
 
       .sub-title {
@@ -66,8 +66,7 @@
         color: var(--theme-color-monochrome-7);
         float: left;
         width: 100%;
-        transition: 0.2s;
-        margin-top: 0.3em;
+        margin-top: 0;
       }
 
       .card:hover .title {
@@ -98,7 +97,6 @@
         flex: 1;
         max-width: 100%;
       }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -132,8 +130,12 @@
         <template
           is="dom-if"
           if="[[ _hasValue(cardData.card_title) ]]">
-          <h3 class="title">[[ cardData.card_title ]]</h3>
-          <p class="sub-title">[[ cardData.sub_title ]]</p>
+          <h3 class="title">
+              <dorel-safe-html html="[[ cardData.card_title ]]"></dorel-safe-html>
+          </h3>
+          <p class="sub-title">
+            <dorel-safe-html html="[[ cardData.sub_title ]]"></dorel-safe-html>
+          </p>
         </template>
         <!--// cardTitle -->
 

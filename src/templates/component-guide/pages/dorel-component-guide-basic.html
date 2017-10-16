@@ -4,7 +4,7 @@
 <dom-module id="dorel-component-guide-basic">
   <template>
     <style include="dorel-component-guide-shared-styles">
-      :host {
+      :host, iron-pages {
         float: left;
         width: 100%;
       }
@@ -17,47 +17,56 @@
 
     <section>
       <!-- Important! The topic attribute should correspond with the template.-->
-      <!-- So for topic="itnroduction", there should be a dorel-component-guide-introduction.html -->
-      <div class="component-guide-container">
-        <div class="component-guide__navigation">
-          <paper-menu id="topics"
-                      selected="{{ subrouteData.componentName }}"
-                      attr-for-selected="topic">
-            <paper-item topic="introduction">Introduction</paper-item>
-            <paper-item topic="typography">Typography</paper-item>
-            <paper-item topic="layout">Layout & Sizes</paper-item>
-            <paper-item topic="colors">Colors</paper-item>
-            <paper-item topic="buttons">Buttons</paper-item>
-            <paper-item topic="forms">Forms</paper-item>
-            <paper-item topic="breakpoints">Breakpoints</paper-item>
-            <paper-item topic="images">Images</paper-item>
-          </paper-menu>
-        </div>
-      </div>
-      <!-- Important! The topic attribut should correspond with the template.-->
-      <!-- So for topic="inroduction", there should be a dorel-component-guide-introduction.html -->
-      <div class="component-guide-container">
-        <iron-pages class="component-guide__content"
-                    selected="[[ subrouteData.componentName ]]"
-                    on-selected-changed="_pageSelected"
+      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
+      <dorel-layout-container>
+        <paper-menu id="topics"
+                    selected="{{ subrouteData.componentName }}"
                     attr-for-selected="topic">
-          <dorel-component-guide-introduction brand="{{ brand }}"
-                                              subroute="[[ subrouteData.componentName ]]"
-                                              topic="introduction"></dorel-component-guide-introduction>
-          <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>
-          <dorel-component-guide-layout topic="layout"></dorel-component-guide-layout>
-          <dorel-component-guide-colors topic="colors"></dorel-component-guide-colors>
-          <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>
-          <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>
-          <dorel-component-guide-breakpoints topic="breakpoints"></dorel-component-guide-breakpoints>
-          <dorel-component-guide-images topic="images"></dorel-component-guide-images>
-        </iron-pages>
-      </div>
+          <paper-item topic="introduction">Introduction</paper-item>
+          <paper-item topic="typography">Typography</paper-item>
+          <paper-item topic="layout">Layout & Sizes</paper-item>
+          <paper-item topic="colors">Colors</paper-item>
+          <paper-item topic="buttons">Buttons</paper-item>
+          <paper-item topic="forms">Forms</paper-item>
+          <paper-item topic="breakpoints">Breakpoints</paper-item>
+          <paper-item topic="images">Images</paper-item>
+          <paper-item topic="accordions">Accordions</paper-item>
+        </paper-menu>
+      </dorel-layout-container>
+      <!-- Important! The topic attribute should correspond with the template.-->
+      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
+      <iron-pages class="component-guide__content"
+                  selected="[[ subrouteData.componentName ]]"
+                  on-selected-changed="_pageSelected"
+                  attr-for-selected="topic">
+        <dorel-component-guide-introduction brand="[[ brand ]]"
+                                            subroute="[[ subrouteData.componentName ]]"
+                                            topic="introduction"></dorel-component-guide-introduction>
+        <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>
+        <dorel-component-guide-layout topic="layout"></dorel-component-guide-layout>
+        <dorel-component-guide-colors brand="[[ brand ]]" topic="colors"></dorel-component-guide-colors>
+        <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>
+        <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>
+        <dorel-component-guide-breakpoints topic="breakpoints"></dorel-component-guide-breakpoints>
+        <dorel-component-guide-images topic="images"></dorel-component-guide-images>
+        <dorel-component-guide-accordions topic="accordions"></dorel-component-guide-accordions>
+      </iron-pages>
     </section>
   </template>
   <script>
     Polymer({
       is: 'dorel-component-guide-basic',
+      properties: {
+        /**
+         * @name brand
+         * @description defines the brand
+         */
+        brand: {
+          type: Object,
+          notify: true,
+          readOnly: false
+        }
+      },
       behaviors: [componentGuideBehavior]
     });
   </script>

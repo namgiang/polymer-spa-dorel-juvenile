@@ -2,25 +2,27 @@
 <link rel="import" href="../atoms/dorel-bynder-image.html">
 <dom-module id="dorel-card">
   <template>
-    <style include="iron-flex">
+    <style>
       :host {
         @apply(--layout-horizontal);
         --button-margin-spacing: -1.5em;
       }
 
       .card {
-        background-color: var(--theme-color-white);
-        border: 1px solid var(--theme-color-monochrome-2);
+        background-color: var(--theme-color-monochrome-2);
         border-radius: var(--theme-border-radius-1);
         /* NOTE: This forces GPU rendering, hack for delayed rounded corners rendering*/
         will-change: transform;
         float: left;
-        margin-top: 1.5em;
         overflow: hidden;
         flex: 1;
         -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+      }
+
+      .card[light-background] {
+        background-color: var(--theme-color-white);
       }
 
       .description {
@@ -52,12 +54,6 @@
         width: 100%;
       }
 
-      .card-image {
-        width: 100%;
-        float: left;
-        height: 12em;
-      }
-
       .title {
         @apply(--theme-typography-5);
         color: var(--theme-brand-color-1);
@@ -73,7 +69,7 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <div class="card" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+    <div class="card" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}" light-background$="[[ lightBackground ]]">
       <!-- cardImage -->
       <template
         is="dom-if"
@@ -180,8 +176,15 @@
          */
         cardData: {
           type: Object
+        },
+        /**
+         * @attribute
+         * @name lightBackground
+         * @description Determines the background color of the card
+         */
+        lightBackground: {
+          type: Boolean,
         }
-
       },
 
       behaviors: [ConditionalBehaviors]

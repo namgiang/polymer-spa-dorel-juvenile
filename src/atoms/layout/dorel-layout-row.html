@@ -1,4 +1,4 @@
-<dom-module id="dorel-layout-row">
+<dom-module id="dorel-layout-row" align$="[[ align ]]">
   <template>
     <style>
       :host {
@@ -8,12 +8,29 @@
         justify-content: center;
         width: auto;
         clear: both;
+        text-align: left;
+      }
+
+      :host-context([align="left"]) {
+        justify-content: left;
+      }
+
+      :host-context([align="right"]) {
+        justify-content: flex-end;
       }
     </style>
     <slot></slot>
   </template>
 
   <script>
-    Polymer({is: 'dorel-layout-row'});
+    Polymer({
+      is: 'dorel-layout-row',
+      properties: {
+        align: {
+          type: String,
+          value: 'center'
+        }
+      }
+    });
   </script>
 </dom-module>

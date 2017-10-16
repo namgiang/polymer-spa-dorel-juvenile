@@ -5,92 +5,55 @@
   <template>
     <style>
       :host {
-        @apply(--max-width-host);
         --button-margin-spacing: -1.5em;
       }
 
-      section {
-        @apply(--max-width-container);
+      dorel-nav-tabs {
+        margin: 0;
         float: left;
         width: 100%;
-        box-sizing: border-box;
-        position: relative;
       }
 
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--theme-grid-row-mobile-margins);
-        @apply(--layout-flex);
-        justify-content: center;
-        flex: 0 0 100%;
-      }
-
-      dorel-nav-tabs {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
+      .content {
+        margin-top: 1.5em;
+        float: left;
         width: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        margin-top: 0;
-        margin-bottom: 1.5em;
-      }
-
-      .faq-questions {
-        @apply(--theme-grid-column);
-        -ms-flex-preferred-size: 100%;
-        width: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
       }
 
       p {
         margin: 0 0 1.5em 0;
       }
-
-      [tablet-medium-up] .row {
-        @apply(--theme-grid-row-margins);
-      }
-
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-  
     <app-location route="{{ route }}"></app-location>
     <iron-query-params
       params-string="{{ query }}"
       params-object="{{ queryParams }}"></iron-query-params>
     <app-route-converter
-      path="{{path}}"
-      query-params="{{queryParams}}"
-      route="{{route}}"></app-route-converter>
-    <app-route route="{{route}}"></app-route>
+      path="{{ path }}"
+      query-params="{{ queryParams }}"
+      route="{{ route }}"></app-route-converter>
+    <app-route route="{{ route }}"></app-route>
 
-    <section class="layout horizontal center center-justified wrap"
-             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      
-      <div class="row">
-        <dorel-nav-tabs 
-          selected="{{ selectedSubTab }}"
-          tabs="[[ faqDetail.sub_categories ]]"
-          title="name"></dorel-nav-tabs>
-      </div>
-
-      <div class="row">
-        <template
-          is="dom-repeat" 
-          items="[[ questions ]]"
-          as="faq">
-          <dorel-accordion-item
-            auto-scroll="true"
-            heading="[[ faq.question ]]" 
-            opened$="[[ faq.opened ]]"
-            question-id$="[[ faq.id ]]"
-            on-click="_addToQueryParams">
-            <p>[[ faq.answer ]]</p>
-          </dorel-accordion-item>
-        </template>
-      </div>
-    </section>
+    <dorel-nav-tabs
+      selected="{{ selectedSubTab }}"
+      tabs="[[ faqDetail.sub_categories ]]"
+      title="name"></dorel-nav-tabs>
+    <div class="content">
+      <template
+        is="dom-repeat"
+        items="[[ questions ]]"
+        as="faq">
+        <dorel-accordion-item
+          auto-scroll="true"
+          heading="[[ faq.question ]]"
+          opened$="[[ faq.opened ]]"
+          question-id$="[[ faq.id ]]"
+          on-click="_addToQueryParams">
+          <p>[[ faq.answer ]]</p>
+        </dorel-accordion-item>
+      </template>
+    </div>
   </template>
 
   <script>
@@ -159,8 +122,8 @@
        * @name initFaqState
        * @description checks if the values needed are set
        */
-      _initFaqState: function(faqDetail, queryParams) {
-        
+      _initFaqState: function (faqDetail, queryParams) {
+
         // if no faqDetail is defined or no queryParams sub is given
         if (typeof faqDetail === 'undefined') return;
 
@@ -173,7 +136,7 @@
 
         var selectedSubTab = this.get('selectedSubTab');
 
-        if(typeof selectedSubTab !== 'undefined') {
+        if (typeof selectedSubTab !== 'undefined') {
           // set the questions model that is used in the dom-repeat
           this._setQuestions(subCategories[selectedSubTab].items, questionId);
         }
@@ -187,9 +150,9 @@
        * @params subCatId - String - subCategoryId of the queryParams
        * @returns Number - array number of the tab that is selected
        */
-      _getSelectedTab: function(subCategories, subCatId) {
-        if(typeof subCategories === 'undefined') return;
-        
+      _getSelectedTab: function (subCategories, subCatId) {
+        if (typeof subCategories === 'undefined') return;
+
         // go over each sub category and match the subCategoryID with the queryParams subID
         for (var i = 0; i < subCategories.length; i++) {
           if (subCategories[i].id === Number(subCatId)) {
@@ -207,7 +170,7 @@
        * while changing the subCategoryId also change the questionId and set the questions
        * @params selectedSubTab - Number - number of the array category
        */
-      _selectedSubTabChanged: function(selectedSubTab) {
+      _selectedSubTabChanged: function (selectedSubTab) {
         if (typeof this.faqDetail === 'undefined' || typeof selectedSubTab === 'undefined') return;
 
         // get the currently selected subCategory
@@ -215,7 +178,7 @@
         var queryParams = this.get('queryParams');
 
         // update the queryParams with the right tab id
-        if(selectedSubCat.id !== Number(queryParams.sub_category_id)) {
+        if (selectedSubCat.id !== Number(queryParams.sub_category_id)) {
           this._updateQueryParams(selectedSubCat.id, queryParams.question_id);
         }
       },
@@ -226,10 +189,10 @@
        * @param subCatQuestions - Array of objects
        * @param questionId - String id of the queryParam
        */
-      _setQuestions: function(subCatQuestions, questionId) {
+      _setQuestions: function (subCatQuestions, questionId) {
 
         // set the opened property for each question of the subCategory
-        subCatQuestions.forEach(function(question) {
+        subCatQuestions.forEach(function (question) {
           question.opened = (question.id === Number(questionId));
         });
 
@@ -244,7 +207,7 @@
        * @param subCategoryId - String - the id of the subCategory
        * @param questionId - String - the id of the question
        */
-      _updateQueryParams: function(subCategoryId, questionId) {
+      _updateQueryParams: function (subCategoryId, questionId) {
 
         // create empty object to set queryParams later
         var queryParams = {};
@@ -252,7 +215,7 @@
         var questions = this.faqDetail.sub_categories[selectedSubTab].items;
 
         // find match in questions of the selected subCategory
-        var hasQuestionMatch = questions.find(function(question) {
+        var hasQuestionMatch = questions.find(function (question) {
           return question.id === Number(questionId);
         });
 
@@ -275,8 +238,8 @@
        * @name _addToQueryParams
        * @description update the queryParams when an accordion is clicked
        */
-      _addToQueryParams: function(e) {
-        var questionId = e.target.getAttribute('question-id');
+      _addToQueryParams: function (e) {
+        var questionId = e.currentTarget.getAttribute('question-id');
 
         if (typeof questionId === 'undefined') return;
 

@@ -7,12 +7,24 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
+<!-- Header has priority for perceived initial load -->
+<link rel="import" href="organisms/dorel-header.html">
+<link rel="import" href="atoms/dorel-safe-html.html">
+
+<!-- Layout, responsive components -->
+<link rel="import" href="atoms/dorel-media-query.html">
+<link rel="import" href="atoms/layout/dorel-layout-container.html">
+<link rel="import" href="atoms/layout/dorel-layout-column.html">
+<link rel="import" href="atoms/layout/dorel-layout-row.html">
+
 <!-- SHARED BEHAVIORS -->
+<link rel="import" href="utils/behaviors/specific/dorel-app-cache-behavior.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-conditional-behaviors.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
 <link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
+<link rel="import" href="utils/behaviors/single/dorel-social-behavior.html">
 
-<!-- SHARED UTILS -->
+<!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
 <link rel="import" href="utils/dorel-gmt-collect-faqs.html">
 <link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
@@ -27,9 +39,6 @@
 <link rel="import" href="utils/dorel-brand-manager.html">
 <link rel="import" href="utils/dorel-main-menu-creator.html">
 
-<!-- SHARED ATOMS -->
-<link rel="import" href="atoms/dorel-media-query.html">
-<link rel="import" href="atoms/dorel-grid-overlay.html">
 
 <!-- SHARED ORGANISMS -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -41,8 +50,10 @@
 <!-- Since 'home' is the default route, eagerly load it. -->
 <link rel="import" href="templates/dorel-template-home.html">
 
-<!-- 
-* TODO: 
+<link rel="import" href="atoms/dorel-grid-overlay.html">
+
+<!--
+* TODO:
 * These should only be included conditionally, based on the app-config.js AVAILABLE_BRANDS
 -->
 <link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
@@ -98,7 +109,6 @@
         margin: 0 auto;
         min-height: 100vh;
       }
-
     </style>
 
     <!-- define routing -->
@@ -121,10 +131,6 @@
       continents-data="{{ continentsData }}">
     </dorel-multilingual-manager>
 
-
-    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
-
     <!-- collect all pages from wordpress -->
     <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
 
@@ -133,9 +139,6 @@
 
     <!-- create datamodel for the main menu -->
     <dorel-main-menu-creator app-cache="[[ appCache ]]"></dorel-main-menu-creator>
-
-    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets app-cache="[[ appCache ]]"></dorel-wp-collect-widgets>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
@@ -357,17 +360,9 @@
           type: Number
         },
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
-        },
-
       },
+
+      behaviors: [ appCacheBehavior ],
 
       /**
        * @name observers
@@ -382,61 +377,6 @@
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
-      },
-
-      listeners: {
-        'setAppCache': '_setAppCache'
-      },
-
-      _setAppCache: function (event) {
-        if(!this.get('appCache')) {
-          this._setInitialAppCache();
-        }
-        var data = event.detail;
-        var path = data.path;
-        var value = data.value;
-        if (data && path) {
-          this.set('appCache.' + path, value);
-        }
-      },
-
-      _setInitialAppCache: function() {
-        if(this.get('appCache')) {
-          return
-        }
-        var appCache = {
-          wpUrl: CONFIG.CMS_URL, // DONE
-          dioApiUrl: CONFIG.DIO_API_URL, // marnix
-          collect: {}, // marnix
-          current: {}, // DONE
-          product: {
-            products: [], // aron | DONE
-            attributes: {
-              accordions: [], // aron | DONE
-              features: [], // aron | DONE
-              usps: [] // aron | DONE
-            },
-            retrievedCategories: [], // aron | DONE
-            auth: {
-              token: '', // aron | DONE
-              timestamp: '' // // aron | DONE
-            },
-            colorMap: [] // aron | DONE
-          },
-          faqs: [], // aron | DONE
-          events: {}, // DONE
-          grid: { // DONE
-            horizontal: false,
-            vertical: false
-          },
-          previousState: {}
-        };
-
-        this.set('appCache', appCache);
-      },
-
-      ready: function () {
-        this._setInitialAppCache();
       },
 
       /**

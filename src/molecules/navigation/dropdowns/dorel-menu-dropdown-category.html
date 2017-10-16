@@ -1,4 +1,5 @@
 <link rel="import" href="../dropdown-items/dorel-dropdown-card.html">
+
 <dom-module id="dorel-menu-dropdown-category" opened$="[[ opened]]">
   <template>
     <style>
@@ -21,6 +22,7 @@
         -webkit-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
         -moz-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
         box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+        padding-bottom: 1.5em;
 
       }
 
@@ -30,32 +32,6 @@
         opacity: 1;
         visibility: visible;
         transition: all 0.25s;
-      }
-
-      .content {
-        box-sizing: border-box;
-        transition: .15s ease padding;
-        box-sizing: border-box;
-        width: 100%;
-      }
-
-      .featured {
-        @apply(--max-width-container);
-        padding: 1.5rem;
-        float: left;
-        width: 100%;
-        box-sizing: border-box;
-        float: none;
-        margin: auto;
-
-      }
-
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--layout-flex);
-        @apply(--theme-grid-row-margins);
-        position: relative;
-        justify-content: flex-end;
       }
 
       .dropdown-menu {
@@ -72,12 +48,6 @@
         width: 100%;
       }
 
-      .dropdown-menu__title {
-        @apply(--theme-typography-3);
-        color: var(--theme-brand-color-2);
-        margin: 0;
-      }
-
       .dropdown-menu-item {
         margin-top: .75rem;
       }
@@ -86,93 +56,78 @@
         margin-top: 0;
       }
 
-      .featured__column {
-        @apply(--theme-grid-column);
-        margin-top: 0;
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
-        flex-basis: calc(var(--theme-column-width) * 2);
-        width: calc(10vw * 2);
-        -ms-flex: 1;
-        -webkit-flex: 1;
-        flex: 1;
-        display: block;
-        max-width: 17em;
+      dorel-dropdown-card {
+        height: 100%;
       }
-
-      dorel-card {
-        -ms-flex: 1;
-        -webkit-flex: 1;
-        flex: 1;
-      }
-
     </style>
-    <div class="content">
-      <div class="featured">
-        <div class="row">
-          <template
-            is="dom-repeat"
-            items="[[ featuredItems ]]"
-            as="card">
-            <div class="featured__column">
-              <dorel-dropdown-card
-                is-active="[[ checkIfActive(card.link, route) ]]"
-                card-data="[[ _transformToCartData(card) ]]"
-                cta-type="[[ ctaType ]]"
-                gtm-parent="[[ gtmParent ]]"
-                gtm-parent-index="[[ gtmParentIndex ]]"
-                gtm-child="dorel-card"
-                cta-type="link"
-                gtm-child-index="[[ index ]]"></dorel-dropdown-card>
-            </div>
-          </template>
-          <div class="featured__column">
-            <ul class="dropdown-menu" id="dropdownMenu">
-              <template is="dom-repeat" items="[[ _maxItems(dropdownItems) ]]" as="menuItem">
-                <li class="dropdown-menu-item" is-active$="[[ checkIfActive(menuItem.link, route) ]]">
+    <dorel-layout-container>
+      <dorel-layout-row align="right">
+        <template
+          is="dom-repeat"
+          items="[[ featuredItems ]]"
+          as="card">
+          <dorel-layout-column desktop-column-span="2" tablet-column-span="4" mobile-column-span="12">
+            <dorel-dropdown-card
+              is-active="[[ checkIfActive(card.link, route) ]]"
+              card-data="[[ _transformToCartData(card) ]]"
+              cta-type="[[ ctaType ]]"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-child="dorel-card"
+              cta-type="link"
+              gtm-child-index="[[ index ]]"></dorel-dropdown-card>
+          </dorel-layout-column>
+        </template>
+        <dorel-layout-column desktop-column-span="2" tablet-column-span="4" mobile-column-span="12">
+          <ul class="dropdown-menu" id="dropdownMenu">
+            <template is="dom-repeat" items="[[ _maxItems(dropdownItems) ]]" as="menuItem">
+              <li class="dropdown-menu-item" is-active$="[[ checkIfActive(menuItem.link, route) ]]">
 
-                  <dorel-cta title="[[ menuItem.title ]]"
-                             type="link"
-                             on-click="clickMenuItem"
-                             link="[[ menuItem.link ]]"
-                             size="small"
-                             no-margin
-                             icon="dorel-icons:chevron-right"
-                             gtm-parent="dorel-navigation-main"
-                             gtm-parent="[[ gtmParent ]]"
-                             gtm-parent-index="[[ gtmParentIndex ]]"
-                             gtm-child="[[ gtmChild ]]"
-                             gtm-child-index="[[ gtmChildIndex ]]"
-                             gtm-cta-index="[[ index ]]">
-                    [[ menuItem.title ]]
-                  </dorel-cta>
-                </li>
-              </template>
-            </ul>
-            <dorel-cta title="[[ mainItem.title ]]"
-                       type="primary"
-                       class="view-all-cta"
-                       link="[[ mainItem.link ]]"
-                       size="medium"
-                       no-margin
-                       icon="dorel-icons:chevron-right"
-                       gtm-action="plan-route-retailer"
-                       gtm-parent="[[ gtmParent ]]"
-                       gtm-parent-index="[[ gtmParentIndex ]]"
-                       gtm-child="[[ gtmChild ]]"
-                       gtm-child-index="[[ gtmChildIndex ]]"
-                       gtm-cta-index="0">
-              {{ localize('All') }} [[ mainItem.title ]]
-            </dorel-cta>
-          </div>
-        </div>
-        <div>
-        </div>
+                <dorel-cta title="[[ menuItem.title ]]"
+                           type="link"
+                           on-click="clickMenuItem"
+                           link="[[ menuItem.link ]]"
+                           size="small"
+                           no-margin
+                           icon="dorel-icons:chevron-right"
+                           gtm-parent="dorel-navigation-main"
+                           gtm-parent="[[ gtmParent ]]"
+                           gtm-parent-index="[[ gtmParentIndex ]]"
+                           gtm-child="[[ gtmChild ]]"
+                           gtm-child-index="[[ gtmChildIndex ]]"
+                           gtm-cta-index="[[ index ]]">
+                  [[ menuItem.title ]]
+                </dorel-cta>
+              </li>
+            </template>
+          </ul>
+          <dorel-cta title="{{ localize('All') }} [[ mainItem.title ]]"
+                     type="primary"
+                     class="view-all-cta"
+                     link="[[ mainItem.link ]]"
+                     size="medium"
+                     no-margin
+                     icon="dorel-icons:chevron-right"
+                     gtm-action="plan-route-retailer"
+                     gtm-parent="[[ gtmParent ]]"
+                     gtm-parent-index="[[ gtmParentIndex ]]"
+                     gtm-child="[[ gtmChild ]]"
+                     gtm-child-index="[[ gtmChildIndex ]]"
+                     gtm-cta-index="0">
+            {{ localize('All') }} [[ mainItem.title ]]
+
+          </dorel-cta>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
+
   </template>
   <script>
-
+    /**
+     * TODO: doc comments to add!
+     **/
     Polymer({
       is: 'dorel-menu-dropdown-category',
-
       properties: {
 
         /**
@@ -188,7 +143,7 @@
 
         /**
          * @name featuredItems
-         * @description array of featurd links (subcategories or products)
+         * @description array of featured links (subcategories or products)
          */
         featuredItems: {
           type: Array,

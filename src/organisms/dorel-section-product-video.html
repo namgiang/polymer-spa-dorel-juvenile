@@ -1,92 +1,26 @@
+<link rel="import" href="../atoms/dorel-video-wrap.html">
+
 <dom-module id="dorel-section-product-video">
   <template>
     <style>
       :host {
-        @apply(--max-width-host);
-      }
-
-      .section-product-video {
-        @apply(--max-width-container);
-        padding: 3em var(--theme-gutter-mobile) 1.5em var(--theme-gutter-mobile);
-        width: 100%;
         float: left;
-        box-sizing: border-box;
-      }
-
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--layout-flex);
-        @apply(--layout-center-justified);
-      }
-
-      .video {
-        @apply(--theme-grid-column);
-        padding: 0;
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        max-width: 100%;
-        margin-top: 0;
-      }
-
-      .video-wrapper {
-        position: relative;
-        height: 0;
-        overflow: hidden;
-        padding-bottom: 20em;
-      }
-
-      iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
-        height: 100%;
+        margin: 3em 0;
       }
-
-      .section-product-video[tablet-medium-up] {
-        padding: 7.5em var(--theme-gutter);
-      }
-
-      [tablet-medium-up] .video {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 8);
-        flex-basis: calc(var(--theme-column-width) * 8);
-        max-width: calc(var(--theme-column-width) * 8);
-      }
-
-      [tablet-medium] .video-wrapper {
-        padding-bottom: 21em;
-      }
-
-      [tablet-medium-up] .video-wrapper {
-        padding-bottom: 27em;
-      }
-
 
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <template
       is="dom-if"
       if="[[ videoData.video_id ]]">
-      <section class="section-product-video layout horizontal center center-justified wrap"
-               tablet-medium$="{{ breakpoints.tabletMedium }}"
-               tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-        <div class="row">
-          <div class="video">
-            <div class="video-wrapper"
-                 on-click="_iframeClick"
-                 gtm-parent$="[[ gtmParent ]]"
-                 gtm-parent-index$="[[ gtmParentIndex ]]"
-                 gtm-child$="[[ gtmChild ]]"
-                 gtm-child-index$="[[ gtmChildIndex ]]"
-                 gtm-cta-index$="[[ gtmCtaIndex ]]">
-              <iframe src="https://www.youtube.com/embed/[[ videoData.video_id ]]"
-                      frameborder="0"
-                      allowfullscreen width="853" height="480"></iframe>
-            </div>
-          </div>
-        </div>
-      </section>
+      <dorel-layout-container class="section-product-video">
+        <dorel-layout-row align="center">
+          <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12">
+            <dorel-video-wrap video-id="[[ videoData.video_id ]]" video-type="youtube"></dorel-video-wrap>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
     </template>
   </template>
   <script>

@@ -14,7 +14,7 @@
       .theme-cta {
         @apply(--theme-button);
         @apply(--theme-button-primary);
-        @apply(--theme-button-small);
+        @apply(--theme-button-medium);
         width: 100%;
       }
 
@@ -47,8 +47,8 @@
       }
 
       .theme-cta--link .theme-cta__icon {
-        padding-right: 0;
         @apply(--theme-button-link-icon);
+        padding-right: 0;
       }
 
       /* 
@@ -81,10 +81,6 @@
       /* 
        * CTA - Sizes 
        */
-
-      .theme-cta--small {
-        @apply(--theme-button-small);
-      }
 
       .theme-cta--medium {
         @apply(--theme-button-medium);
@@ -133,10 +129,6 @@
         @apply(--theme-button-tertiary-icon);
       }
 
-      .theme-cta--small .theme-cta__icon {
-        @apply(--theme-button-icon-small);
-      }
-
       .theme-cta__icon--left {
         width: 3em;
         height: 2.5em;
@@ -181,8 +173,24 @@
         border-left: 0;
       }
 
+      /*
+       * Left aligned icons
+       */
+      :host([left-align-icon]) .theme-cta {
+        flex-direction: row-reverse;
+      }
 
-      /* 
+      :host([left-align-icon]) .theme-cta__icon {
+        @apply(--theme-button-link-icon);
+        padding: 0 .5em 0 0.25em;
+      }
+
+      :host([left-align-icon]) .theme-cta__content {
+        padding: 0 .5em 0 0;
+
+      }
+
+      /*
        * Responsive Behaviour 
        */
 
@@ -280,13 +288,13 @@
          */
         type: {
           type: String,
-          value: 'primary',
+          value: 'primary'
         },
 
         /**
          * @attribute
          * @name size
-         * @description defines the size of the CTA. Currently 'small', 'medium' and 'large' are supported
+         * @description defines the size of the CTA. Currently 'medium' and 'large' are supported
          */
         size: {
           type: String,
@@ -300,7 +308,7 @@
          */
         icon: {
           type: String,
-          value: 'dorel-icons:chevron-right',
+          value: 'dorel-icons:chevron-right'
         },
 
         /**
@@ -310,10 +318,25 @@
          * Use the dorel-iconset icons here. For example: dorel-icons:chevron-right
          */
         extraIcon: {
-          type: String,
+          type: String
         },
 
+        /**
+         * @attribute
+         * @name disabled
+         * @description Sets the disabled state of the CTA
+         */
         disabled: {
+          type: Boolean
+        },
+
+        /**
+         * @attribute
+         * leftAlignIcon
+         * @description Aligns the main icon to the left of the button label
+         */
+
+        leftAlignIcon: {
           type: Boolean
         }
       },

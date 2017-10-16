@@ -1,26 +1,20 @@
 <link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../atoms/dorel-input-select.html">
+<!--<link rel="import" href="../../atoms/dorel-input-select.html"> -->
 
 <dom-module id="dorel-component-toolbar">
   <template>
     <style>
       :host {
-        @apply(--max-width-host);
         background-color: var(--theme-brand-color-1);
+        float: left;
+        width: 100%;
+        padding: 1.5em 0
       }
 
       :root {
         --paper-toggle-button-label-color: var(--theme-color-white);
         --paper-toggle-button-checked-button-color: var(--theme-color-white);
         --paper-toggle-button-checked-bar-color: var(--theme-color-black);
-      }
-
-      .toolbar {
-        @apply(--max-width-container);
-        float: left;
-        width: 100%;
-        padding: 1.5em;
-        box-sizing: border-box;
       }
 
       paper-toggle-button {
@@ -43,12 +37,13 @@
         margin-top: -1.5em;
       }
     </style>
-    <div class="toolbar">
+    <dorel-layout-container>
       <dorel-cta title="Back to overview"
                  type="inverted"
                  link="[[ backLink ]]"
                  size="medium"
-                 icon="dorel-icons:overview">
+                 left-align-icon
+                 icon="dorel-icons:chevron-left">
         Back to overview
       </dorel-cta>
       <!-- NOTE: this is a select box for selecting brands. Switched off now because we can change brands through the overview
@@ -66,8 +61,7 @@
                            on-click="_setHorizontalGrid">
         Horizontal Grid
       </paper-toggle-button>
-    </div>
-
+    </dorel-layout-container>
   </template>
 
   <script>

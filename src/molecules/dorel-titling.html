@@ -1,0 +1,75 @@
+<dom-module id="dorel-titling">
+  <template>
+    <style>
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+
+      .description {
+        text-align: center;
+        display: flex;
+      }
+
+      .description dorel-safe-html {
+        margin: auto;
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <!-- section title -->
+      <template
+        is="dom-if"
+        if="[[ title ]]">
+        <h2 class="title">[[ title ]]</h2>
+      </template>
+      <!--// section title -->
+
+      <!-- section description -->
+      <template
+        is="dom-if"
+        if="[[ description]]">
+        <div class="description">
+          <dorel-safe-html html="[[ description ]]"></dorel-safe-html>
+        </div>
+      </template>
+      <!--// section description -->
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-titling',
+
+      properties: {
+        /**
+         * @name title
+         * @description The main title
+         */
+        title: {
+          type: String
+        },
+        /**
+         * @name description
+         * @description A paragraph description text
+         */
+        description: {
+          type: String
+        }
+      },
+    });
+
+  </script>
+
+</dom-module>

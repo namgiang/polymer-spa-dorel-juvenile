@@ -1,54 +1,35 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
-
 <dom-module id="dorel-section-service-faq-overview">
   <template>
     <style>
-      .host {
-        @apply(--max-width-host);
-        --button-margin-spacing: -1.5em;
+      :host {
+        float: left;
+        width: 100%
+        margin-bottom: 3em;
       }
 
-      section {
-        @apply(--max-width-container);
-        float: none;
+      .intro {
         width: 100%;
-        box-sizing: border-box;
-        position: relative;
-        padding: 0 var(--theme-gutter-mobile);
-        margin: auto;
+        float: left;
       }
 
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--theme-grid-row-mobile-margins);
-        @apply(--layout-flex);
-        justify-content: center;
-        flex: 0 0 100%;
+      .desktop-topics-row {
         float: left;
         width: 100%;
-      }
-
-      .container {
-        @apply(--theme-grid-column);
-        margin-top: 0;
-        width: 100%;
-        padding: 0;
+        margin-top: 1.5em;
       }
 
       .topic-select {
-        @apply(--theme-grid-column);
         -ms-flex-preferred-size: 33.3333333%;
         width: 33.3333333%;
         flex-basis: 33.3333333%;
         max-width: 33.3333333%;
-        padding: 0 0 0 .75em;
         float: left;
         display: inline-block;
       }
 
       .accordion-topics {
         width: 100%;
-        margin-top: 1.5em;
       }
 
       paper-item {
@@ -62,14 +43,13 @@
       .topic.iron-selected {
         background-color: var(--theme-color-monochrome-2);
         color: var(--theme-brand-color-2) !important;
-        /* border-bottom: 1px solid var(--theme-brand-color-1); */
       }
 
       .topic-display {
-        @apply(--theme-grid-column);
+        width: 66.666666667%;
         background-color: var(--theme-color-monochrome-2);
-        flex-grow: 1;
-        padding: 1.5em 1.5em 1.5em 2.25em;
+        box-sizing: border-box;
+        padding: 1.5em 1.5em 2.5em 2.25em;
         float: left;
         display: inline-block;
       }
@@ -101,39 +81,39 @@
       }
 
       ul {
+        @apply(--theme-list);
         margin: 0;
         padding: 0;
         list-style: none;
       }
 
-      /* TODO: List styles will be added when the info pages are updated, this should be replaced later */
+      li {
+        @apply(--theme-list-item);
+      }
+
       li::before {
-        content: "• ";
-        padding-right: .5em;
-        color: var(--theme-brand-color-2);
+        @apply(--theme-unordered-list-bullet);
+        background-color: var(--theme-color-text-link);
       }
 
       li:first-child {
         padding-top: 0;
-      }
-
-      li {
-        padding-top: 1.5em;
+        margin-top: 0;
       }
 
       a {
         text-decoration: none;
-        color: var(--theme-brand-color-2);
+        color: var(--theme-color-text-link);
         transition: .3s ease color;
       }
 
       a:visited {
         text-decoration: none;
-        color: var(--theme-brand-color-2);
+        color: var(--theme-color-text-link);
       }
 
       a:hover {
-        color: var(--theme-brand-color-1);
+        color: var(--theme-color-text-link-active);
       }
 
       dorel-section-service-faq-promo {
@@ -149,53 +129,38 @@
       .title {
         @apply(--theme-typography-5);
         color: var(--theme-brand-color-1);
-        margin-top:0;
-      }
-
-      section[tablet-medium-up] {
-        padding: 0 var(--theme-gutter) 3em var(--theme-gutter);;
-      }
-
-      [tablet-medium-up] .container {
-        padding: 0 .75em;
-      }
-
-      [tablet-medium-up] .row {
-        @apply(--theme-grid-row-margins);
+        margin-top: 0;
       }
 
       [tablet-medium-up] .title {
         @apply(--theme-typography-7);
-        margin-top: 0;
       }
 
       [tablet-medium-up] .desktop-topics-row {
-        margin-right: 0;
+        margin-top: 3em;
       }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section class="layout horizontal center center-justified wrap"
-             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      <div class="row">
-        <div class="container">
-          <template is="dom-if" if="[[ _hasValue(templateData.title) ]]">
-            <h2 class="title">[[ templateData.title ]]</h2>
-          </template>
-          <template is="dom-if" if="[[ _hasValue(templateData.description) ]]">
-            <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
-          </template>
-        </div>
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <div class="intro">
+        <template is="dom-if" if="[[ _hasValue(templateData.title) ]]">
+          <h2 class="title">[[ templateData.title ]]</h2>
+        </template>
+        <template is="dom-if" if="[[ _hasValue(templateData.description) ]]">
+          <dorel-safe-html html="[[ templateData.description ]]"></dorel-safe-html>
+        </template>
       </div>
-      
-      <div class="row desktop-topics-row">
+
+      <div class="desktop-topics-row">
         <template
           is="dom-if"
           if="[[ faqCategories.length ]]">
 
           <!-- Desktop Service Topic Listing -->
-          <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+          <template is="dom-if" if="[[ breakpoints.desktopSmallUp ]]">
 
             <div class="topic-select">
               <paper-menu attr-for-selected="name"
@@ -287,7 +252,7 @@
           <!-- End Desktop Service Topic Listing-->
 
           <!-- Mobile Service Topic Listing -->
-          <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+          <template is="dom-if" if="[[ !breakpoints.desktopSmallUp ]]">
             <div class="accordion-topics">
               <template
                 is="dom-repeat"
@@ -345,7 +310,7 @@
                   <template
                     is="dom-if"
                     if="[[ category.faq_promo.promo_toggle ]]">
-                    <dorel-section-service-faq-promo 
+                    <dorel-section-service-faq-promo
                       template-data="[[ category.faq_promo ]]"
                       light="true"></dorel-section-service-faq-promo>
                   </template>
@@ -443,7 +408,7 @@
       _getFaqDetailPages: function () {
         var wpPages = this.get('appCache.collect.pages');
 
-        if(typeof wpPages === 'undefined') return [];
+        if (typeof wpPages === 'undefined') return [];
 
         // filter out the detailPages from WP
         var faqPages = wpPages.filter(function (page) {

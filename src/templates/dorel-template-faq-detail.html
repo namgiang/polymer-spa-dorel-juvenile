@@ -4,39 +4,20 @@
   <template>
     <style>
       :host {
-        @apply(--max-width-host);
-        margin-top: 1.5em;
-      }
-
-      section {
-        @apply(--max-width-container);
         float: left;
         width: 100%;
-        box-sizing: border-box;
-        position: relative;
-        padding: 0 var(--theme-gutter-mobile);
+        margin-bottom: 3em;
       }
 
-      dorel-section-page-nav {
-        width: 100%;
+      dorel-layout-column {
+        margin-top: 0;
       }
-      dorel-section-service-faq-detail {
+
+      dorel-section-service-faq-detail, dorel-section-service-support {
         margin: 1.5em 0;
       }
 
-       dorel-section-service-support {
-         margin: 1.5em 0;
-       }
-
-      .row {
-        @apply(--theme-grid-row);
-        @apply(--theme-grid-row-mobile-margins);
-        @apply(--layout-flex);
-        justify-content: left;
-        flex: 0 0 100%;
-      }
-
-      .container-faq, .container-promo-contact {
+      .container-faq, .container-promo-contact, dorel-section-page-nav {
         width: 100%;
       }
 
@@ -55,28 +36,8 @@
         margin: 3em 0 1.5em 0;
       }
 
-      [desktop-small-up] .container-faq {
-        width: 66.6666666%;
-      }
-
-      [desktop-small-up] .container-promo-contact {
-        width: calc(100% - 66.6666666%);
-      }
-
       [desktop-small-up] dorel-section-service-faq-promo {
         margin-top: 3em;
-      }
-
-      [tablet-medium-up] .container-faq, [tablet-medium-up] .container-promo-contact {
-        @apply(--theme-grid-column);
-      }
-
-      [tablet-medium-up] {
-        padding: 1.5em var(--theme-gutter) 3em var(--theme-gutter);;
-      }
-
-      [tablet-medium-up] .row {
-        @apply(--theme-grid-row-margins);
       }
 
       [tablet-medium-up] .title {
@@ -86,12 +47,6 @@
       [tablet-medium-up] .container-faq {
         box-sizing: border-box;
         padding-right: 3em;
-      }
-
-      .breadcrumb-wrapper {
-        float: left;
-        width: 100%;
-        height: 4.5em;
       }
     </style>
 
@@ -108,50 +63,51 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
-             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+    <!-- page-nav -->
+    <dorel-section-page-nav
+      breadcrumbs-toggle="true"></dorel-section-page-nav>
+    <!--// page-nav -->
 
-      <div class="row">
+    <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+                            desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+      <dorel-layout-row align="left">
+        <dorel-layout-column desktop-column-span="8" tablet-column-span="12" mobile-column-span="12">
+          <div class="container-faq">
+            <!-- title & description -->
+            <h2 class="title">[[ templateData.acf.title ]]</h2>
+            <dorel-safe-html html="[[ templateData.acf.description ]]"></dorel-safe-html>
+            <!--// title & description -->
 
-        <!-- page-nav -->
-        <dorel-section-page-nav
-          breadcrumbs-toggle="true"></dorel-section-page-nav>
-        <!--// page-nav -->
-        
-        <div class="container-faq">
-          <!-- title & description -->
-          <h2 class="title">[[ templateData.acf.title ]]</h2>
-          <dorel-safe-html html="[[ templateData.acf.description ]]"></dorel-safe-html>
-          <!--// title & description -->
+            <dorel-section-service-faq-detail
+              faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
+          </div>
+        </dorel-layout-column>
+        <dorel-layout-column desktop-column-span="4" tablet-column-span="12" mobile-column-span="12">
+          <div class="container-promo-contact">
 
-          <dorel-section-service-faq-detail
-            faq-detail="[[ faqDetail ]]"></dorel-section-service-faq-detail>
-        </div>
+            <!-- customer support -->
+            <template
+              is="dom-if"
+              if="[[faqPromo.promo_toggle]]">
+              <dorel-section-service-faq-promo
+                template-data="[[faqPromo]]"></dorel-section-service-faq-promo>
+            </template>
 
-        <div class="container-promo-contact">
+            <!-- customer support -->
+            <template
+              is="dom-if"
+              if="[[ templateData.acf.customer_support_toggle ]]">
+              <dorel-customer-support
+                compact="true"
+                social-link="[[ _getFacebookLink(appCache.collect.options.social_channels) ]]"
+                template-data="[[customerSupportOptions]]"></dorel-customer-support>
+            </template>
+            <!--// customer support -->
 
-          <!-- customer support -->
-          <template
-            is="dom-if"
-            if="[[faqPromo.promo_toggle]]">
-            <dorel-section-service-faq-promo
-              template-data="[[faqPromo]]"></dorel-section-service-faq-promo>
-          </template>
-
-          <!-- customer support -->
-          <template
-            is="dom-if"
-            if="[[ templateData.acf.customer_support_toggle ]]">
-            <dorel-customer-support
-                  compact="true"
-                  template-data="[[customerSupportOptions]]"></dorel-customer-support>
-          </template>
-          <!--// customer support -->
-
-        </div>
-      </div>
-
-    </section>
+          </div>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
   </template>
   <script>
     Polymer({
@@ -178,7 +134,7 @@
          */
         appCache: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: '_defineOptionModels'
@@ -191,7 +147,7 @@
          */
         templateData: {
           type: Object,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: '_defineComponentModels'
@@ -218,7 +174,7 @@
         customerSupportOptions: Object
       },
 
-      behaviors: [TemplateBehaviors],
+      behaviors: [TemplateBehaviors, SocialBehavior],
 
       observers: [
         '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
@@ -233,9 +189,9 @@
        *
        * @param newSlug - string - the category slug
        */
-      _setFaqDetail: function(faqGlobals, routeData, categoryId) {
+      _setFaqDetail: function (faqGlobals, routeData, categoryId) {
         if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
-        
+
         var categoryId = Number(categoryId);
         var inCache = this._findInCache(categoryId);
 
@@ -254,12 +210,12 @@
        * @name _findInCache
        * @description find a provided detail slug in the cached faqs
        */
-      _findInCache: function(detailCategory) {
+      _findInCache: function (detailCategory) {
         var faqCache = this.get('appCache.faqs');
         // if no length, return false (no match can be found either way)
         if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
 
-        return faqCache.find(function(category) {
+        return faqCache.find(function (category) {
           return category.id === detailCategory;
         });
       },
@@ -269,8 +225,8 @@
        * @name _retrieveCategoryById
        * @description set the endpoint-segments for the gmt-collect
        */
-      _setEndpointSegments: function(catId) {
-        if(typeof catId === 'undefined') return;
+      _setEndpointSegments: function (catId) {
+        if (typeof catId === 'undefined') return;
 
         this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_questions=0');
       }
