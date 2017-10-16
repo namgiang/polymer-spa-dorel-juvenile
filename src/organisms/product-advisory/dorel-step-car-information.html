@@ -159,7 +159,7 @@
                 <template is="dom-if" if="[[ shouldShow(next) ]]">
                   <div class="cta-wrapper cta-wrapper--desktop">
                     <dorel-cta title="[[ data.options.next ]]" type="primary" link="" size="medium" icon="dorel-icons:chevron-right" on-click="nextStep"
-                      id="nextButton" disabled>
+                      id="next-button" disabled>
                       [[ data.options.next ]]
                     </dorel-cta>
                   </div>
@@ -191,7 +191,7 @@
             <div class="fixed-container">
               <div class="cta-wrapper cta-wrapper--mobile">
                 <dorel-cta title="[[ data.options.next ]]" type="primary" link="" size="medium" icon="dorel-icons:chevron-right" on-click="nextStep"
-                  id="nextButtonMobile" disabled>
+                  id="next-button-mobile" disabled>
                   [[ data.options.next ]]
                 </dorel-cta>
               </div>
@@ -283,15 +283,15 @@
        * @param invalid - Boolean
        */
       _setDisabled: function(invalid) {
-        if(!this.$$('next-button') && !this.$$('next-button-mobile')) {
+        if(!this.$$('#next-button') && !this.$$('#next-button-mobile')) {
           return;
         }
         if(invalid) {
-          this.$$('next-button').setAttribute('disabled', true);
-          this.$$('next-button-mobile').setAttribute('disabled', true);
+          this.$$('#next-button').setAttribute('disabled', true);
+          this.$$('#next-button-mobile').setAttribute('disabled', true);
         } else {
-          this.$$('next-button').removeAttribute('disabled');
-          this.$$('next-button-mobile').removeAttribute('disabled');
+          this.$$('#next-button').removeAttribute('disabled');
+          this.$$('#next-button-mobile').removeAttribute('disabled');
         }
       },
 
