@@ -30,13 +30,9 @@
         <!-- section title -->
 
         <dorel-layout-row>
-          <!-- Wide cards section -->
-          <template is="dom-if" if="[[ !compact ]]">
-            <template
-              is="dom-repeat"
-              items="[[ cardsData.cards ]]"
-              as="card">
-              <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
+          <!-- cards section -->
+            <template is="dom-repeat" items="[[ cardsData.cards ]]" as="card">
+              <dorel-layout-column desktop-column-span="[[ desktopColSpan ]]" tablet-column-span="6" mobile-column-span="12">
                 <dorel-card
                   light-background="[[ !lightBackground ]]"
                   card-data="[[ card ]]"
@@ -44,9 +40,12 @@
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"
                   gtm-child="dorel-card"
-                  gtm-child-index="[[ index ]]"></dorel-card>
+                  gtm-child-index="[[ index ]]">
+                </dorel-card>
               </dorel-layout-column>
             </template>
+<<<<<<< HEAD
+=======
           </template>
 
           <!-- Compact cards section-->
@@ -67,6 +66,7 @@
               </dorel-layout-column>
             </template>
           </template>
+>>>>>>> develop
         </dorel-layout-row>
       </template>
     </dorel-layout-container>
@@ -115,7 +115,19 @@
           value: function () {
             return {};
           }
+        },
+        /**
+         * @name desktopColSpan
+         * @description computed property depending on compact attribute
+         */
+        desktopColSpan: {
+          type: Number,
+          computed: 'computeColspan(compact)'
         }
+      },
+
+      computeColspan: function(compact) {
+        return compact ? 4 :6 ;
       }
     });
 
