@@ -3,7 +3,6 @@
   <template>
     <style>
       :host {
-        --button-margin-spacing: -1.5em;
         float: left;
         width: 100%
         margin-bottom: 3em;
@@ -82,39 +81,39 @@
       }
 
       ul {
+        @apply(--theme-list);
         margin: 0;
         padding: 0;
         list-style: none;
       }
 
-      /* TODO: List styles will be added when the info pages are updated, this should be replaced later */
+      li {
+        @apply(--theme-list-item);
+      }
+
       li::before {
-        content: "• ";
-        padding-right: .5em;
-        color: var(--theme-brand-color-2);
+        @apply(--theme-unordered-list-bullet);
+        background-color: var(--theme-color-text-link);
       }
 
       li:first-child {
         padding-top: 0;
-      }
-
-      li {
-        padding-top: 1.5em;
+        margin-top: 0;
       }
 
       a {
         text-decoration: none;
-        color: var(--theme-brand-color-2);
+        color: var(--theme-color-text-link);
         transition: .3s ease color;
       }
 
       a:visited {
         text-decoration: none;
-        color: var(--theme-brand-color-2);
+        color: var(--theme-color-text-link);
       }
 
       a:hover {
-        color: var(--theme-brand-color-1);
+        color: var(--theme-color-text-link-active);
       }
 
       dorel-section-service-faq-promo {
@@ -135,7 +134,6 @@
 
       [tablet-medium-up] .title {
         @apply(--theme-typography-7);
-        margin-top: 0;
       }
 
       [tablet-medium-up] .desktop-topics-row {
