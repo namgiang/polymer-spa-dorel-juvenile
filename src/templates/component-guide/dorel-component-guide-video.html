@@ -1,86 +1,24 @@
+<link rel="import" href="../../organisms/dorel-section-hero-header.html">
 <link rel="import" href="dorel-component-guide-shared-styles.html">
-<link rel="import" href="../../molecules/dorel-youtube-lightbox.html">
 
 <script src="mocks/hero-header/hero-header.js"></script>
 
 <dom-module id="dorel-component-guide-video">
   <template>
 
-    <style include="dorel-component-guide-shared-styles">
-    
-    <style>
-      dorel-section-hero-header {
-        margin-top: 1.5em;
-      }
+    <style include="dorel-component-guide-shared-styles"></style>
 
-      dorel-cta {
-        float: left;
-        margin-right: 1.5em;
-      }
-
-      dorel-layout-column {
-        margin-top: 0;
-      }
-
-      .container-standout dorel-cta {
-        margin-top: -1.5em;
-      }
-
-      .container-standout {
-        margin-top: 1.5em;
-      }
-
-
-      /*
-       * both interactions in interaction CTA's should have the same *static* width
-       */
-      .component-guide-width-125 {
-        width: 125px;
-      }
-
-      .component-guide-width-150 {
-        width: 150px;
-      }
-
-      .component-guide-width-180 {
-        width: 180px;
-      }
-    </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <dorel-layout-container>
       <h1 class="class-for-h1">Video</h1>
-      <p>Components used for playing video's</p>
+      <p>Components used for playing video</p>
       <hr>
-      <h1 class="class-for-h2">Section Hero Header</h1>
+      <h1 class="class-for-h2">Section Hero Header (with video cta)</h1>
     </dorel-layout-container>
-    <dorel-section-hero-header hero-header-data="[[ heroHeaderData ]]">
 
-    </dorel-section-hero-header>
-    
-    <dorel-layout-container>
-      <dorel-layout-row align="left">
-        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12"
-                             class="container-standout dark-bg">
-          <dorel-cta title="Watch movie"
-                     type="inverted"
-                     link=""
-                     size="medium"
-                     on-click="_openLightbox"
-                     icon="dorel-icons:play-circle-outline">
-            Watch movie
-          </dorel-cta>
-        </dorel-layout-column>
-      </dorel-layout-row>
-    </dorel-layout-container>
-    <dorel-youtube-lightbox
-      accessory-lightbox-data="[[ accessoryData ]]"
-      gtm-action="[[ gtmAction ]]"
-      gtm-parent="[[ gtmParent ]]"
-      gtm-parent-index="[[ gtmParentIndex ]]"
-      gtm-child="[[ gtmChild ]]"
-      gtm-child-index="[[ gtmChildIndex ]]"
-      gtm-cta-index="0"></dorel-youtube-lightbox>
+    <dorel-section-hero-header hero-header-data="[[heroHeaderData]]"></dorel-section-hero-header>
+
   </template>
   <script>
     Polymer({
@@ -88,7 +26,7 @@
       properties: {
         heroHeaderData: {
           type: Object,
-          value: heroHeaderMock
+          value: heroHeaderVideoLightboxMock
         },
         appCache: {
           type: Object,
@@ -96,15 +34,6 @@
             return {};
           }
         }
-      },
-
-      /**
-       * @name _openLightbox
-       * @description handle of the click on the details links
-       */
-      _openLightbox: function (event) {
-        var lightbox = this.$$('dorel-youtube-lightbox');
-        lightbox.open();
       }
     });
   </script>

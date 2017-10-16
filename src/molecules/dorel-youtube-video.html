@@ -91,7 +91,7 @@
     },
 
     listeners: {
-      'tap': '_resetVideo'
+      'tap': '_pauseAfterTap'
     },
 
     handleStateChange: function (ev) {
@@ -106,21 +106,25 @@
     },
 
     play: function() {
-        this.$.googleYouTube.seekTo(0);
-        this.$.googleYouTube.play();
+      this.$.googleYouTube.seekTo(0);
+      this.$.googleYouTube.play();
+    },
+
+    stop: function() {
+      this.$.googleYouTube.pause();
+      this.$.googleYouTube.seekTo(0);
     },
 
     /**
-     * Will rewind the video if a cta dialog-dimiss or dialog-confirm is seen
-     */
-    _resetVideo: function(event) {
+     * @name _pauseAfterTap
+     * @description Will instantly (faster then stop) stop the video after tap if a cta dialog-dimiss or dialog-confirm is seen
+    */
+    _pauseAfterTap: function(event) {
       var path = Polymer.dom(event).path;
-
       for (var i = 0, l = path.indexOf(this); i < l; i++) {
         var target = path[i];
         if (target.hasAttribute && (target.hasAttribute('dialog-dismiss') || target.hasAttribute('dialog-confirm'))) {
           this.$.googleYouTube.pause();
-          this.$.googleYouTube.seekTo(0);
         }
       }
     }
