@@ -227,7 +227,6 @@
     <footer tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
             desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
 
-
       <dorel-layout-container>
         <dorel-layout-row align="center">
           <!-- check if we need to show the social links -->
@@ -256,9 +255,8 @@
           </div>
         </dorel-layout-row>
 
-
         <dorel-layout-row align="left">
-          <dorel-layout-column id="footerWidgetArea" class="footer-info"
+          <dorel-layout-column id="footer-widget-area" class="footer-info"
                                desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
             <!-- widget areas are inserted here -->
             <template
@@ -267,7 +265,6 @@
               as="menu">
               <div class="footer-menu">
                 <h3 class="footer-heading">[[menu.title]]</h3>
-
                 <template
                   is="dom-if"
                   if="[[menu.items.length]]">
@@ -568,20 +565,18 @@
        * to all elements.
        */
       ready: function () {
-        var self = this;
 
-        // define footer links for tracking
-        var footerMenuLink = this.$.footerWidgetArea.querySelectorAll('.footer-menu a');
-
-        // hookup click handlers for every link
-        for (var i = 0, len = footerMenuLink.length; i < len; i++) {
-          // add eventListener for link
-          footerMenuLink[i].addEventListener('click', function (event) {
-
-            // start tracking when clicked
-            self._eventTracking(event, 'switch');
-          });
-        }
+        // define footer links for tracking, 
+        // must be in timeout because we are looking for elements in a dom-if / dom-repeat
+        setTimeout(function(){
+          var footerMenuLink = this.root.querySelectorAll('.footer-menu a');
+          // add eventListeners
+          for (var i = 0, len = footerMenuLink.length; i < len; i++) {
+            footerMenuLink[i].addEventListener('click', function (event) {
+              this._eventTracking(event, 'switch');
+            }.bind(this));
+          } 
+        }.bind(this));
       },
 
       /**
