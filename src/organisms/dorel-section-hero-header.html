@@ -1,6 +1,7 @@
-<link rel="import" href="../molecules/dorel-hero-video.html">
 <link rel="import" href="../atoms/dorel-bynder-image.html">
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<link rel="import" href="../molecules/dorel-youtube-video.html">
+<link rel="import" href="../molecules/dorel-youtube-lightbox.html">
 
 <dom-module id="dorel-section-hero-header">
   <template>
@@ -99,13 +100,13 @@
       <!-- Show video on larger screens -->
       <template is="dom-if" if="{{ breakpoints.tabletMediumUp }}">
         <!-- Show video in header if there is a video -->
-        <template is="dom-if" if="[[ _showVideoLoop(heroHeaderData.video_toggle, heroHeaderData.video_id) ]]">
-          <dorel-hero-video video-id="[[ heroHeaderData.video_id ]]"
-                            thumbnail="[[ heroHeaderData.bynder_background_image ]]"></dorel-hero-video>
+        <template is="dom-if" if="[[ _showVideoLoop(heroHeaderData.looping_video_toggle, heroHeaderData.looping_video_id) ]]">
+          <dorel-youtube-video video-id="[[ heroHeaderData.looping_video_id ]]"
+                            thumbnail="[[ heroHeaderData.bynder_background_image ]]" autoplay="1" is-hero></dorel-youtube-video>
         </template>
 
         <!-- Show image in header if there is no video -->
-        <template is="dom-if" if="[[ !_showVideoLoop(heroHeaderData.video_toggle, heroHeaderData.video_id) ]]">
+        <template is="dom-if" if="[[ !_showVideoLoop(heroHeaderData.looping_video_toggle, heroHeaderData.looping_video_id) ]]">
           <dorel-bynder-responsive-image
             media-id="[[ heroHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
         </template>
@@ -131,10 +132,10 @@
               </template>
               <template
                 is="dom-if"
-                if="[[ heroHeaderData.cta_toggle ]]">
+                if="[[ !_isVideoCTA(heroHeaderData.cta_type) ]]">
                 <dorel-cta
                   title="[[ heroHeaderData.cta_text ]]"
-                  icon="dorel-icons:play-circle-outline"
+                  icon="dorel-icons:chevron-right"
                   type="primary"
                   link="[[ heroHeaderData.cta_href ]]"
                   gtm-parent="[[ gtmParent ]]"
@@ -143,11 +144,34 @@
                   [[ heroHeaderData.cta_text ]]
                 </dorel-cta>
               </template>
+              <template
+                is="dom-if"
+                if="[[ _isVideoCTA(heroHeaderData.cta_type) ]]">
+                <dorel-cta
+                  icon="dorel-icons:play-circle-outline"
+                  type="primary"
+                  link=""
+                  on-click="openYouTubeLightbox"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  {{ localize('Watch_video') }}
+                </dorel-cta>
+              </template>
             </header>
           </dorel-layout-column>
         </dorel-layout-row>
       </dorel-layout-container>
     </section>
+    <dorel-youtube-lightbox
+      video_id="[[ heroHeaderData.cta_video_id ]]"
+      gtm-action="[[ gtmAction ]]"
+      gtm-parent="[[ gtmParent ]]"
+      gtm-parent-index="[[ gtmParentIndex ]]"
+      gtm-child="[[ gtmChild ]]"
+      gtm-child-index="[[ gtmChildIndex ]]"
+      gtm-cta-index="0">
+    </dorel-youtube-lightbox>
   </template>
   <script>
     Polymer({
@@ -167,7 +191,24 @@
         }
       },
 
-      behaviors: [ConditionalBehaviors]
+      behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
+
+      /**
+       * @name _isVideoCTA
+       * @description Test cta type for video
+       */
+      _isVideoCTA: function(cta_type) {
+        return (cta_type === 'video-cta');
+      },
+
+      /**
+       * @name openYouTubeLightbox
+       * @description open a ligthbox with a You-Tube video
+       */
+      openYouTubeLightbox: function (event) {
+        var youtubeLigthbox = this.$$('dorel-youtube-lightbox');
+        youtubeLigthbox.open();
+      }
     });
   </script>
 </dom-module>

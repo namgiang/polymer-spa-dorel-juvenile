@@ -1,9 +1,12 @@
 <link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
-<dom-module id="dorel-hero-video">
+<dom-module id="dorel-youtube-video">
   <template>
     <style>
       :host {
+
+        --video-border-radius: 10px;
+
         position: relative;
         overflow: hidden;
 
@@ -12,6 +15,7 @@
           padding-bottom: 56.25%;
           height: 0 !important;
           overflow: hidden;
+          border-radius: var(--video-border-radius)
         };
 
         --google-youtube-iframe: {
@@ -44,7 +48,7 @@
         opacity: 0;
       }
     </style>
-
+    <content></content>
     <google-youtube id="googleYouTube"
                     playsupported="{{ playSupported }}"
                     video-id="[[ videoId ]]"
@@ -54,14 +58,14 @@
                     duration="{{ duration }}"
                     durationformatted="{{ durationFormatted }}"
                     fractionloaded="{{ fractionLoaded }}"
-                    volume="0"
+                    volume="{{ volume }}"
                     playbackrate="{{ playbackRate }}"
                     playbackquality="{{ playbackQuality }}"
                     playbackstarted="{{ playbackstarted }}"
                     width="100vw"
                     chromeless="true"
                     modestbranding="0"
-                    autoplay="1"
+                    autoplay="{{ autoplay }}"
                     on-google-youtube-state-change="handleStateChange"
                     on-google-youtube-error="handleYouTubeError">
     </google-youtube>
@@ -73,7 +77,7 @@
 </dom-module>
 <script>
   Polymer({
-    is: 'dorel-hero-video',
+    is: 'dorel-youtube-video',
     properties: {
       thumbnail: String,
       videoId: String,
@@ -84,24 +88,86 @@
       duration: Number,
       durationFormatted: String,
       fractionLoaded: Number,
+      volume: Number,
       playbackRate: Number,
       playbackQuality: String,
       playbackstarted: Boolean,
+      isHero: {
+        type: Boolean,
+        value: false
+      }
     },
 
+    listeners: {
+      'tap': '_pauseAfterTap'
+    },
+
+    /**
+     * @name handleStateChange
+     * @description loop video
+    */
     handleStateChange: function (ev) {
       //Restart the video when it's ended
       if (this.state === 0) {
         this.$.googleYouTube.play();
       }
     },
+
+    /**
+     * @name handleYouTubeError
+     * @description show console message on error
+    */
     handleYouTubeError: function (ev) {
       console.error('YouTube playback error', ev.detail);
     },
+
+    /**
+     * @name play
+     * @description public function to play video
+    */
+    play: function() {
+      this.$.googleYouTube.seekTo(0);
+      this.$.googleYouTube.play();
+    },
+
+    /**
+     * @name stop
+     * @description public function to stop video
+    */
+    stop: function() {
+      this.$.googleYouTube.pause();
+      this.$.googleYouTube.seekTo(0);
+    },
+
+    /**
+     * @name _pauseAfterTap
+     * @description private function for instantly (faster then stop) stopping the video after tap if a cta dialog-dimiss or dialog-confirm is seen
+    */
+    _pauseAfterTap: function(event) {
+      var path = Polymer.dom(event).path;
+      for (var i = 0, l = path.indexOf(this); i < l; i++) {
+        var target = path[i];
+        if (target.hasAttribute && (target.hasAttribute('dialog-dismiss') || target.hasAttribute('dialog-confirm'))) {
+          this.$.googleYouTube.pause();
+        }
+      }
+    },
+  
+  /**
+   * @name on ready
+   * @description add event listener for muting video when hero
+   */  
     ready: function (ev) {
+      if(this.isHero) {
+        this.updateStyles({
+          '--video-border-radius': 0
+        })
+      }
       this.$.googleYouTube.addEventListener('google-youtube-ready', function() {
-        this.$.googleYouTube.mute();
-      }.bind(this))
+        if(this.isHero) {
+          this.$.googleYouTube.mute();
+        }
+      }.bind(this));
     }
   });
 </script>
