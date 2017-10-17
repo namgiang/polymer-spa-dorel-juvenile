@@ -1,4 +1,4 @@
-<dom-module id="dorel-layout-row" align$="[[ align ]]">
+<dom-module id="dorel-layout-row" align$="[[ align ]]" reverse$="[[ reverse ]]">
   <template>
     <style>
       :host {
@@ -12,11 +12,15 @@
       }
 
       :host-context([align="left"]) {
-        justify-content: left;
+        justify-content: flex-start;
       }
 
       :host-context([align="right"]) {
         justify-content: flex-end;
+      }
+
+      :host-context([reverse]) {
+        flex-direction: row-reverse;
       }
     </style>
     <slot></slot>
@@ -29,6 +33,16 @@
         align: {
           type: String,
           value: 'center'
+        },
+        /**
+         * @attribute
+         * @name reverse
+         * @description reverts the flex direction of this row, items will be shown in reversed order
+         *              when this is used the alignment will reverse as well!, left will be right and vice versa
+         */
+        reverse: {
+          type: Boolean,
+          value: false
         }
       }
     });
