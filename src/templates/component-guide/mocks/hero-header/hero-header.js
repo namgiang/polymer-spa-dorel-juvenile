@@ -1,19 +1,19 @@
 var heroHeaderMock = {
-  title: "Lorem ipsum",
-  sub_title: "Dolor sit amet",
-  cta_toggle: false,
-  looping_video_toggle: false,
-  bynder_background_image: "7F84BD5F-551A-4DA5-8532AB44763439AA",
-  video_id: ""
+  "title": "Lorem ipsum",
+  "sub_title": "Dolor sit amet",
+  "cta_toggle": false,
+  "looping_video_toggle": false,
+  "bynder_background_image": "7F84BD5F-551A-4DA5-8532AB44763439AA",
+  "looping_video_id": "",
 };
 
 var heroHeaderVideoMock = {
-  title: "Aliena dixit in physicis nec ea ipsa",
-  sub_title: "Quae cum dixisset, finem ille",
-  cta_toggle: false,
-  looping_video_toggle: true,
-  bynder_background_image: "305816CF-2B2E-4BB4-ADA9D751CC1DBAFC",
-  video_id: "L0bcb48y4bE"
+  "title": "Aliena dixit in physicis nec ea ipsa",
+  "sub_title": "Quae cum dixisset, finem ille",
+  "cta_toggle": false,
+  "looping_video_toggle": true,
+  "bynder_background_image": "305816CF-2B2E-4BB4-ADA9D751CC1DBAFC",
+  "looping_video_id": "L0bcb48y4bE"
 };
 
 var heroHeaderVideoLightboxMock = {
