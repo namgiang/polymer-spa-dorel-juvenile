@@ -19,7 +19,7 @@
         float: none;
       }
 
-      #collapse {
+      iron-collapse {
         float: left;
         width: 100%;
       }
@@ -32,7 +32,7 @@
         <dorel-safe-html html="[[ initialContent ]]"></dorel-safe-html>
         <!-- Expandable/Collapsible longer description (if available) -->
         <template is="dom-if" if="[[ restContent ]]">
-          <iron-collapse id="collapse">
+          <iron-collapse>
             <dorel-safe-html html="[[ restContent  ]]"></dorel-safe-html>
           </iron-collapse>
           <!-- Toggles expand and collapse -->
@@ -69,7 +69,6 @@
       behaviors: [
         DorelMultilingualBehavior
       ],      
-      
 
       properties: {
         /**
@@ -156,10 +155,11 @@
        * @description expands/collapses content
        * **/
       _toggle: function () {
-        this.$.collapse.toggle();
+        this.$$('iron-collapse').toggle();
         this.expanded = !this.expanded;
       }
     });
 
   </script>
 </dom-module>
+
