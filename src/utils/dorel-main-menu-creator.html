@@ -27,18 +27,18 @@
       },
 
       observers: [
-        '_createMenuDataModel(appCache.collect.options, appCache.collect.pages)'
+        '_createMenuDataModel(appCache.collect.options.main_menu, appCache.collect.pages)'
       ],
 
       listeners: {
         'newProducts': '_setMenuProducts'
       },
 
-      _createMenuDataModel: function(options, pages) {
-        if(!options || !options.main_menu || !pages) {
+      _createMenuDataModel: function(mainMenu, pages) {
+        if(!mainMenu || !pages) {
           return;
         }
-        var mainMenu = this._createLinks(options.main_menu, pages);
+        var mainMenu = this._createLinks(mainMenu, pages);
         this.fire('setAppCache', { value: mainMenu, path: 'mainMenu'});
       },
 
