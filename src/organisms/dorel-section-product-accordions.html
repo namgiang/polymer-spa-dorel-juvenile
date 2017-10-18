@@ -4,7 +4,7 @@
 
 <link rel="import" href="../atoms/dorel-accordion-item.html">
 
-<link rel="import" href="../molecules/product-information/dorel-product-information-basic.html">
+<link rel="import" href="../molecules/product-information/dorel-product-information-topic.html">
 <link rel="import" href="../molecules/product-information/dorel-product-information-faq.html">
 <link rel="import" href="../molecules/product-information/dorel-product-information-manuals.html">
 <link rel="import" href="../molecules/product-information/dorel-product-information-specifications.html">
@@ -17,6 +17,15 @@
       clear: both;
       padding-right: 1em;
     }
+
+    dorel-layout-container {
+      padding: 1.5em 0;
+    }
+
+    dorel-layout-container[tablet-medium-up] {
+      padding: 3em 0;
+    }
+
   </style>
   <template>
     <dorel-magento-collect-custom-data
@@ -29,7 +38,9 @@
       is="dom-if"
       if="[[ accordionsData.accordions.length ]]">
 
-      <dorel-layout-container>
+      <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+      <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
         <dorel-layout-row align="center">
           <dorel-layout-column desktop-column-span="8" tablet-column-span="12" mobile-column-span="12">
             <div class="accordion">
@@ -39,36 +50,29 @@
                                       gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
 
                   <!-- Product Information Basic -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.type, 'basic') ]]">
-                    <dorel-product-information-basic data="[[ item ]]"></dorel-product-information-basic>
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'topic') ]]">
+                    <dorel-product-information-topic data="[[ item ]]"></dorel-product-information-topic>
                   </template>
                   <!--// Product Information Basic -->
 
                   <!-- Product Information FAQ -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.type, 'faq') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'faq') ]]">
                     <dorel-product-information-faq data="[[ item ]]"></dorel-product-information-faq>
                   </template>
                   <!--// Product Information FAQ -->
 
                   <!-- Product Information Manuals -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.type, 'manuals') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'manuals') ]]">
                     <dorel-product-information-manuals data="[[ item ]]"></dorel-product-information-manuals>
                   </template>
                   <!--// Product Information Manuals -->
 
                   <!-- Product Information Specifications -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.type, 'specifications') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'specifications') ]]">
                     <dorel-product-information-specifications
                       data="[[ item ]]"></dorel-product-information-specifications>
                   </template>
                   <!--// Product Information Specifications -->
-
-                  <!-- Extra link html -->
-                  <template is="dom-if" if="[[ item.extra_link_html ]]">
-                    <dorel-safe-html class="extra-link" html="[[ item.extra_link_html ]]"></dorel-safe-html>
-                  </template>
-                  <!-- Extra link html -->
-
                 </dorel-accordion-item>
               </template>
             </div>
