@@ -42,6 +42,10 @@
         width: var(--image-width);
         height: var(--image-height);
       }
+
+      #myImage {
+        max-width:100%;
+      }
     </style>
 
     <!-- Handles the ajax call and returns the bynder data -->
@@ -50,32 +54,43 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-small$="[[ breakpoints.tabletMediumUp ]]"
-             tablet-medium-up$="[[ breakpoints.desktopSmallUp ]]">
+    <template is="dom-if" if="[[ !renderImage]]">
+      <section tablet-small$="[[ breakpoints.tabletMediumUp ]]"
+        tablet-medium-up$="[[ breakpoints.desktopSmallUp ]]">
 
-      <!-- Desktop Image -->
-      <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
-        <iron-image sizing="[[ sizing ]]"
-                    fade="true"
-                    preload
-                    title$="[[ alt ]]"
-                    alt$="[[ alt ]]"
-                    placeholder$="[[ imagePlaceholder ]]"
-                    src$="[[ imageSource ]]"></iron-image>
+          <!-- Desktop Image -->
+          <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+            <iron-image sizing="[[ sizing ]]"
+                        fade="true"
+                        preload
+                        title$="[[ alt ]]"
+                        alt$="[[ alt ]]"
+                        placeholder$="[[ imagePlaceholder ]]"
+                        src$="[[ imageSource ]]"></iron-image>
+          </template>
+
+          <!-- Mobile Image -->
+          <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+            <iron-image sizing="[[ sizing ]]"
+                        fade="true"
+                        preload
+                        title$="[[ alt ]]"
+                        alt$="[[ alt ]]"
+                        placeholder$="[[ imagePlaceholder ]]"
+                        src$="[[ mobileImageSource ]]"></iron-image>
+          </template>
+        </section>
       </template>
 
-      <!-- Mobile Image -->
-      <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
-        <iron-image sizing="[[ sizing ]]"
-                    fade="true"
-                    preload
-                    title$="[[ alt ]]"
-                    alt$="[[ alt ]]"
-                    placeholder$="[[ imagePlaceholder ]]"
-                    src$="[[ mobileImageSource ]]"></iron-image>
+      <template is="dom-if" if="[[ renderImage ]]">
+        <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+          <img id="myImage" src="[[ imageSource ]]" alt="[[ alt ]]">
+        </template>
+        <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+          <img id="myImage" src="[[ mobileImageSource ]]" alt="[[ alt ]]">
+        </template>
       </template>
-
-    </section>
+          
   </template>
   <script>
     Polymer({
@@ -96,6 +111,14 @@
         mobileWidth: {
           type: String,
           value: '16em'
+        },
+        /**
+         * @name renderImage
+         * @description The component will render an image tag instead of a container with background-image
+         */
+        renderImage: {
+          type: Boolean,
+          value: false
         },
         /**
          * @name mobileHeight
