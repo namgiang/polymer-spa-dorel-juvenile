@@ -1,0 +1,21 @@
+<script>
+    MergeArraysBehavior = {
+      /**
+       * helperMethod
+       * @name _mergeArrays
+       * @description this method will merge 2 arrays and
+       * filter out de duplicates based on the value of the key
+       * @param array1 - Array
+       * @param array2 - Array
+       * @param key - String
+       */
+      _mergeArrays: function(array1, array2, key) {
+        //check if item exists else filter it before merging arrays
+        return array1.concat(array2.filter(function(newItem, index) {
+            return Boolean(!array1.some(function(oldItem) {
+              return oldItem[key] === newItem[key];
+            }));
+        }));
+      }
+    }
+</script>

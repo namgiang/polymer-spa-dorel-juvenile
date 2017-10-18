@@ -4,7 +4,7 @@ var serviceFaqsOverview = [
     "created_at": "2017-09-07 10:28:39",
     "detail_page": "http://localhost:8080/faq/warranty/",
     "faq_promo_toggle": false,
-    "featured_questions": [
+    "featured_items": [
       {
         "answer": "Our Lifetime Warranty applies if you are the first user and only when you registered your purchase (car seat,          pushchair/stroller or carrycot) within 3 months of your purchase. For all requests under this Warranty regarding defects in materials and workmanship, you must present original proof of purchase accompanied with the Lifetime Warranty certificate you receive after registration.",
         "created_at": "2017-09-07 10:28:39",
@@ -51,7 +51,7 @@ var serviceFaqsOverview = [
     "created_at": "2017-09-07 10:28:39",
     "detail_page": "http://localhost:8080/faq/services/",
     "faq_promo_toggle": false,
-    "featured_questions": [
+    "featured_items": [
       {
         "answer": "Lorem ipsum dulum",
         "created_at": "2017-09-07 10:28:39",
