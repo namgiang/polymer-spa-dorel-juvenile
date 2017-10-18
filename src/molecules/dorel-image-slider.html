@@ -1,0 +1,165 @@
+<link rel="import" href="../../bower_components/l2t-paper-slider/l2t-paper-slider.html">
+<dom-module id="dorel-image-slider">
+  <template>
+    <style>
+    :host {
+      --paper-slider-dot-container-styles: {
+        background-color: var(--theme-color-monochrome-4);
+        border-radius: 1em;
+        bottom: 1.375em;
+      }
+
+      --paper-slide-dot-styles: {
+        background-color: var(--theme-color-white);
+        width: .75em;
+        height: .75em;
+        margin: .5em;
+        border-style: none;
+        border: 1px solid var(--theme-color-white);
+      };
+
+      --paper-slide-dot-selected: var(--theme-brand-color-1);
+
+      --paper-slide-height: auto;
+    }
+
+      .section-slideshow {
+        position: relative;
+        float: left;
+        width: 100%;
+        margin-top: 1.5em;
+      }
+
+      .section-slideshow .simple-slider {
+        width: 100%;
+      }
+
+      .simple-slider-slide:focus {
+        outline: none;
+      }
+
+      .section-slideshow .simple-slider-slide {
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+      }
+
+      l2t-paper-slider {
+        outline: none;
+      }
+
+      .image {
+        height: 20rem;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      [tablet-medium-up] .image {
+        height: 28rem;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+      <section class="section-slideshow" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+        <!-- simple-slider -->
+        <l2t-paper-slider class="simple-slider"
+                          id="simpleSlider"
+                          position="{{ position }}"
+                          hide-nav="[[ hideBulletPoints ]]"
+                          slide-duration="4"
+                          total-slides="[[ slides.length ]]">
+          <template
+            is="dom-repeat"
+            items="[[ slides ]]"
+            as="slide">
+
+            <paper-slide class="simple-slider-slide">
+               <iron-image class="image"
+                  sizing="contain"
+                  fade="true"
+                  preload
+                  src$="[[ slide.image_url ]]"></iron-image>
+            </paper-slide>
+
+          </template>
+        </l2t-paper-slider>
+      </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-image-slider',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name slides
+         * @description Array of slides to show
+         */
+        slides: {
+          type: Array
+        },
+
+        /**
+         * @attribute
+         * @name position
+         * @description active position that is set by the l2t-paper-slider
+         */
+        position: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name breakpoints
+         * @description breakpoints of the dorel-media-manager component
+         */
+        breakpoints: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name hideBulletPoints
+         * @description boolean that will either show or hide bullet points of the l2t-paper-slider
+         */
+        hideBulletPoints: {
+          type: Boolean,
+          value: true
+        }
+
+      },
+
+      observers: [
+        '_updatePosition(position)'
+      ],
+
+      /**
+       * observer
+       * @name _setSlide
+       * @description Everytime the position of the active slide of the l2t-paper-slider changes
+       * fire a event updatePosition with the index of the active slide
+       * @param position - Number
+       */
+      _updatePosition: function(position) {
+        this.fire('updatePosition', position);
+      },
+
+      /**
+       * @name moveSliderTo
+       * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
+       * this will set the slide of l2t-paper-slider
+       * @param index - Number
+       */
+      moveSliderTo: function(index) {
+        this.$.simpleSlider.movePos(index);
+      }
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,148 @@
+<link rel="import" href="dorel-image-slider.html">
+<link rel="import" href="dorel-vertical-thumbnail-slider.html">
+
+<dom-module id="dorel-showcase-slider">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-direction: row;
+      }
+      dorel-thumbnail-slider {
+        width: auto;
+        margin-right: 1.5rem;
+        display: none;
+      }
+      dorel-thumbnail-slider[tablet-medium-up] {
+        display: flex;
+      }
+      dorel-vertical-thumbnail-slider {
+        opacity: 0;
+        pointer-events: none;
+      }
+      dorel-vertical-thumbnail-slider[active] {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      dorel-image-slider {
+        flex: 1;
+        width: 100%;
+        cursor: pointer;
+      }
+    </style>
+    <dorel-vertical-thumbnail-slider
+      active$="[[ shouldShowThumbnails(slides) ]]"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+      breakpoints="[[ breakpoints ]]"
+      slides="[[ slides ]]"
+      position="[[ position ]]">
+    </dorel-vertical-thumbnail-slider>
+    <dorel-image-slider id="carousel"  slides="[[ slides ]]"></dorel-image-slider>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-showcase-slider',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name breakpoints
+         * @description breakpoints of the dorel-media-manager component
+         */
+        breakpoints: {
+          type: Object
+        },
+
+        /**
+         * @attribute
+         * @name position
+         * @description the position of the active slide
+         */
+        position: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name slideshowData
+         * @description data to build up the component
+         * TODO: // Remove dummy data if data is in the magento product
+         */
+        slides: {
+          type: Array,
+          value: function () {
+            return [
+            ]
+          }
+        }
+
+      },
+
+      observers: [
+        '_slidesChanged(slides)'
+      ],
+
+      listeners: {
+        'setSlide' : '_setSlide',
+        'updatePosition' : '_updatePosition'
+      },
+
+      /**
+       * observer
+       * @name _slidesChanged
+       * @description Everytime the slides array changes check if the position of the slider is a greater then the number of items in the array
+       * if true it means the slider can't show a image on that position so set it to the higest possible position
+       * @param slides - Array
+       */
+      _slidesChanged: function(slides) {
+        var position = this.get('position');
+        if(slides && slides.length && position > (slides.length - 1)) {
+          var index = slides.length - 1;
+          this.$.carousel.moveSliderTo(index);
+        }
+      },
+
+      /**
+       * listener
+       * @name _setSlide
+       * @description Everytime a thumbnail is clicked the thumbnail-slider component dispatches the 'setSlide' event,
+       * In the event we can find the slide, that needs to be set by the image-slider.
+       * the function calls the public method `moveSliderTo`"` of the image-slider component with the index of the slide that needs to be set.
+       * @param event - Object
+       */
+      _setSlide: function(event) {
+        var slide = event.detail.value;
+        var index = this.get('slides').findIndex(function(_slide) {
+          return _slide === slide;
+        });
+        if(this.$.carousel && typeof index !== 'undefined') {
+          this.$.carousel.moveSliderTo(index);
+        }
+      },
+
+      /**
+       * listener
+       * @name _updatePosition
+       * @description Everytime the image-slider updates the position this method is called.
+       * In the event contains the index of the active position. The function will update the position property
+       * @param event - Object
+       */
+      _updatePosition: function(event) {
+        this.set('position', event.detail);
+      },
+
+      /**
+       * template helper method
+       * @name shouldShowThumbnails
+       * @description will return a boolean that indicates if the slides has more then 1 slide
+       * @returns Boolean
+       * @param slides - Array
+       */
+      shouldShowThumbnails: function(slides) {
+        return Boolean(slides && slides.length && slides.length > 1);
+      }
+    });
+  </script>
+</dom-module>

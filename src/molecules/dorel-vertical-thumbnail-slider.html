@@ -1,0 +1,377 @@
+<dom-module id="dorel-vertical-thumbnail-slider">
+  <template>
+    <style is="custom-style">
+      :host {
+        flex-direction: column;
+        overflow: hidden;
+        width: auto;
+        display: flex;
+        justify-content: center;
+        --iron-icon-fill-color: var(--theme-brand-color-2);
+      }
+      .image {
+        position: absolute;
+        left: .25rem;
+        right: .25rem;
+        top: .25rem;
+        bottom: .25rem;
+      }
+      .thumbnail {
+        opacity: 0.5;
+        width: 5rem;
+        height: 5rem;
+        transition: opacity 0.2s;
+        box-sizing: border-box;
+        cursor: pointer;
+        position: relative;
+      }
+      .thumbnail[active] {
+        opacity: 1;
+      }
+      .control-item {
+        width: 100%;
+        height: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3rem;
+      }
+      [tablet-medium-up] .control-item {
+        height: 5rem;
+      }
+      .thumbnails-wrapper {
+        box-sizing: border-box;
+        height: 25rem;
+        overflow: hidden;
+      }
+      .thumbnails {
+        height: 25rem;
+        transform: translate(0, 0);
+        transition: transform 0.22s ease-in-out;
+      }
+      .btn {
+        border-radius: 50%;
+        background-color: var(--theme-color-monochrome-2);
+        position: relative;
+        width: 2.5rem;
+        height: 2.5rem;
+        opacity: 0.7;
+        transform: scale(0);
+        transition: box-shadow 0.2s, opacity 0.2s, transform 0.2s;
+        -webkit-box-shadow: 1px 1px 1px 0px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 1px 1px 1px 0px var(--theme-color-monochrome-3);
+        box-shadow: 1px 1px 1px 0px var(--theme-color-monochrome-3);
+      }
+      .btn[enabled] {
+        opacity: 1;
+        cursor: pointer;
+        transform: scale(1);
+      }
+      .btn[enabled]:hover {
+        -webkit-box-shadow: 3px 3px 3px 0px var(--theme-color-monochrome-3);
+        -moz-box-shadow: 3px 3px 3px 0px var(--theme-color-monochrome-3);
+        box-shadow: 3px 3px 3px 0px var(--theme-color-monochrome-3);
+      }
+      .icon {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) rotate(-90deg);
+      }
+      .btn--next .icon {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+    </style>
+
+    <div class="controls" tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <div class="control-item">
+        <template is="dom-if" if="[[ shouldShowControls(slides) ]]">
+          <div class="btn btn--previous" on-click="previous" enabled$="[[ previousEnabled ]]">
+            <iron-icon class="icon" icon="dorel-icons:chevron-right"></iron-icon>
+          </div>
+        </template>
+      </div>
+
+      <div class="thumbnails-wrapper" id="thumbnailsWrapper">
+        <div class="thumbnails" id="thumbnails">
+          <template
+            is="dom-repeat"
+            items="[[ slides ]]"
+            index-as="index"
+            as="slide">
+            <div on-click="_setSlide" class="thumbnail" active$="{{ isActive(index, position) }}" style="width: {{ sizeOfThumbnail }}rem; height: {{ sizeOfThumbnail }}rem;">
+              <iron-image class="image"
+                 sizing="contain"
+                 fade="true"
+                 preload
+                 src$="[[ slide.thumbnail_url ]]"></iron-image>
+            </div>
+          </template>
+        </div>
+      </div>
+
+
+      <div class="control-item">
+        <template is="dom-if" if="[[ shouldShowControls(slides) ]]">
+          <div class="btn btn--next" on-click="next" enabled$="{{ nextEnabled }}">
+            <iron-icon class="icon" icon="dorel-icons:chevron-right"></iron-icon>
+          </div>
+        </template>
+      </div>
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-vertical-thumbnail-slider',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name slides
+         * @description Array of objects (slides)
+         */
+        slides: {
+          type: Array,
+          observer: '_resetSlide'
+        },
+
+        /**
+         * @attribute
+         * @name position
+         * @description the position of the active slide
+         */
+        position: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * @attribute
+         * @name offset
+         * @description a variable number to keep track of the current active slide
+         */
+        offset: {
+          type: Number,
+          value: 0
+        },
+
+        /**
+         * @attribute
+         * @name previousEnabled
+         * @description a boolean that indicates if the previous button is enabled
+         */
+        previousEnabled: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * @attribute
+         * @name nextEnabled
+         * @description a boolean that indicates if the next button is enabled
+         */
+        nextEnabled: {
+          type: Boolean,
+          value: true
+        },
+
+        /**
+         * @attribute
+         * @name maxThumbnailsInView
+         * @description a variable for the max amount of items in the thumbnail slider,
+         * is used by calculations in the methods of this component
+         */
+        maxThumbnailsInView: {
+          type: Number,
+          value: 5
+        },
+
+        /**
+         * @attribute
+         * @name sizeOfThumbnail
+         * @description a variable for the size (rem) of items in the thumbnail slider,
+         * is used by calculations in the methods of this component
+         */
+        sizeOfThumbnail: {
+          type: Number,
+          value: 5
+        },
+
+
+      },
+
+      observers: [
+        '_setSize(breakpoints.tabletMediumUp)',
+        '_setContainers(sizeOfThumbnail, maxThumbnailsInView)',
+        '_positionUpdated(position, maxThumbnailsInView, slides)'
+      ],
+
+      /**
+       * observer
+       * @name _setSize
+       * @description will set the size of the thumnail and the amount of the thumbnails if the screensize changes
+       * after setting new sizes it will correct the offset
+       */
+      _setSize: function(tabletMediumUp) {
+        if(tabletMediumUp) {
+          this.set('maxThumbnailsInView', 5);
+          this.set('sizeOfThumbnail', 5);
+        } else {
+          this.set('maxThumbnailsInView', 3);
+          this.set('sizeOfThumbnail', 4);
+        }
+        this._setOffset(0);
+      },
+
+      /**
+       * observer
+       * @name _resetSlide
+       * @description if current position is bigger then the length of the new slides
+       * it should set it to the last possible slide of the new slides array
+       */
+      _resetSlide: function(newVal, oldVal) {
+        if(typeof oldVal === 'undefined' || !newVal.length) {
+          return;
+        }
+        var position = this.get('position')
+        if(position > newVal.length - 1 && newVal.length > 5) {
+          this._setOffset(newVal.length -1);
+          this.fire('setSlide', { value: newVal[newVal.length - 1] });
+        }
+      },
+
+      /**
+       * observer
+       * @name _setContainers
+       * @description will update the height of the wrappers of the thumbnails if sizeOfThumbnail or maxThumbnailsInView change
+       */
+      _setContainers: function(sizeOfThumbnail, maxThumbnailsInView) {
+        if(typeof sizeOfThumbnail === 'undefined' || typeof maxThumbnailsInView === 'undefined' ) {
+          return;
+        }
+        this.$.thumbnails.style.height = ((sizeOfThumbnail * maxThumbnailsInView).toString()) + 'rem';
+        this.$.thumbnailsWrapper.style.height = ((sizeOfThumbnail * maxThumbnailsInView).toString()) + 'rem';
+      },
+
+      /**
+       * observer
+       * @name _positionUpdated
+       * @description will calculate the when the vertical slider cant go up or down anymore
+       * will toggle the booleans `nextEnabled`/`previousEnabled` depending of the results
+       * will call `_setOffset` with a calculation
+       */
+      _positionUpdated: function(position, maxThumbnailsInView, slides) {
+        var numberOfItems = slides.length;
+        var maxItems = maxThumbnailsInView;
+        var spacing = Math.floor(maxThumbnailsInView / 2);
+
+        if(position <= spacing) {
+          this._setOffset(0);
+        } else if (position + 1 >= numberOfItems - spacing) {
+          this._setOffset((numberOfItems - maxItems) * -1);
+        } else {
+          this._setOffset(position * -1 + spacing);
+        }
+
+        this._setEnabled(position, numberOfItems);
+      },
+
+      /**
+       * @name _setEnabled
+       * @description handles the enabled boolean of the next and previous button
+       * @param position - Number
+       * @param numberOfItems - Array
+       */
+      _setEnabled: function(position, numberOfItems) {
+        if(position >= numberOfItems - 1) {
+           this.set('nextEnabled', false);
+        } else {
+          this.set('nextEnabled', true);
+        }
+        if(position <= 0) {
+          this.set('previousEnabled', false);
+        } else {
+          this.set('previousEnabled', true);
+        }
+      },
+
+      /**
+       * @name previous
+       * @description will set to the previous slide if the index can be matched
+       */
+      previous: function() {
+        var position = this.get('position');
+        var slide = this.get('slides').find(function(item, index) {
+          return index === position -1;
+        });
+        if(slide) {
+          this.fire('setSlide', { value: slide });
+        }
+      },
+
+      /**
+       * @name next
+       * @description will set to the next slide if the index can be matched
+       */
+      next: function() {
+        var position = this.get('position');
+        var slide = this.get('slides').find(function(item, index) {
+          return index === position + 1;
+        });
+        if(slide) {
+          this.fire('setSlide', { value: slide });
+        }
+      },
+
+      /**
+       * @name _setOffset
+       * @description will set a new position of the thumbnails wrapper
+       * @param offset - Number
+       */
+      _setOffset: function(offset) {
+        var distance = (offset * this.get('sizeOfThumbnail')).toString();
+        this.$.thumbnails.style.transform = 'translate(0, ' + distance + 'rem)';
+        this.set('offset', offset);
+      },
+
+      /**
+       * @name _setSlide
+       * @description will fire a _setSlide event with the clicked slide as value
+       * @param event - Object
+       */
+      _setSlide: function(event) {
+        var slide = event.model.slide;
+        this.fire('setSlide', { value: slide });
+      },
+
+      /**
+       * template helper method
+       * @name shouldShowControls
+       * @description will return true if slides.length is bigger then the maxThumbnailsInView
+       * @param slides - Array
+       * @returns Boolean
+       */
+      shouldShowControls: function(slides) {
+        return Boolean(slides && slides.length > this.get('maxThumbnailsInView'))
+      },
+
+      /**
+       * template helper method
+       * @name isActive
+       * @description will return true if the index of the slide is equal to the active position
+       * @param slideIndex - Number
+       * @param position - Number
+       * @returns Boolean
+       */
+      isActive: function(slideIndex, position) {
+        return Boolean(slideIndex === position);
+      }
+
+    });
+  </script>
+</dom-module>
