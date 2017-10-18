@@ -31,6 +31,15 @@
         flex-wrap: wrap;
       }
 
+      dorel-safe-html {
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        float: right;
+        margin-right: .75em;
+      }
+
     </style>
     <div class="content">
       <template is="dom-if" if="[[ data.image ]]">
@@ -43,7 +52,16 @@
         </div>
       </template>
       <div class="content-container">
-        <p>[[ data.description ]]</p>
+        <dorel-safe-html html="[[ data.description ]]"></dorel-safe-html>
+        <template is="dom-if" if="[[ data.link_text ]]">
+          <dorel-cta title="[[ data.link_text ]]"
+                     type="link"
+                     link="[[ data.link_url ]]"
+                     size="medium"
+                     icon="dorel-icons:chevron-right">
+            [[ data.link_text ]]
+          </dorel-cta>
+        </template>
       </div>
     </div>
   </template>
