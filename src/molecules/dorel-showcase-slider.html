@@ -16,19 +16,27 @@
       dorel-thumbnail-slider[tablet-medium-up] {
         display: flex;
       }
+      dorel-vertical-thumbnail-slider {
+        opacity: 0;
+        pointer-events: none;
+      }
+      dorel-vertical-thumbnail-slider[active] {
+        opacity: 1;
+        pointer-events: auto;
+      }
       dorel-image-slider {
         flex: 1;
         width: 100%;
+        cursor: pointer;
       }
     </style>
-    <template is="dom-if" if="[[ shouldShowThumbnails(slides) ]]">
-      <dorel-vertical-thumbnail-slider
-        tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-        breakpoints="[[ breakpoints ]]"
-        slides="[[ slides ]]"
-        position="[[ position ]]">
-      </dorel-vertical-thumbnail-slider>
-    </template>
+    <dorel-vertical-thumbnail-slider
+      active$="[[ shouldShowThumbnails(slides) ]]"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+      breakpoints="[[ breakpoints ]]"
+      slides="[[ slides ]]"
+      position="[[ position ]]">
+    </dorel-vertical-thumbnail-slider>
     <dorel-image-slider id="carousel"  slides="[[ slides ]]"></dorel-image-slider>
   </template>
 
@@ -72,9 +80,28 @@
 
       },
 
+      observers: [
+        '_slidesChanged(slides)'
+      ],
+
       listeners: {
         'setSlide' : '_setSlide',
         'updatePosition' : '_updatePosition'
+      },
+
+      /**
+       * observer
+       * @name _slidesChanged
+       * @description Everytime the slides array changes check if the position of the slider is a greater then the number of items in the array
+       * if true it means the slider can't show a image on that position so set it to the higest possible position
+       * @param slides - Array
+       */
+      _slidesChanged: function(slides) {
+        var position = this.get('position');
+        if(slides && slides.length && position > (slides.length - 1)) {
+          var index = slides.length - 1;
+          this.$.carousel.moveSliderTo(index);
+        }
       },
 
       /**

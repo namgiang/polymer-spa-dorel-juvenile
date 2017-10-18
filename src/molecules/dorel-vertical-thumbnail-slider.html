@@ -10,8 +10,11 @@
         --iron-icon-fill-color: var(--theme-brand-color-2);
       }
       .image {
-        width: 5rem;
-        height: 5rem;
+        position: absolute;
+        left: .25rem;
+        right: .25rem;
+        top: .25rem;
+        bottom: .25rem;
       }
       .thumbnail {
         opacity: 0.5;
@@ -20,6 +23,7 @@
         transition: opacity 0.2s;
         box-sizing: border-box;
         cursor: pointer;
+        position: relative;
       }
       .thumbnail[active] {
         opacity: 1;
@@ -99,7 +103,6 @@
             <div on-click="_setSlide" class="thumbnail" active$="{{ isActive(index, position) }}" style="width: {{ sizeOfThumbnail }}rem; height: {{ sizeOfThumbnail }}rem;">
               <iron-image class="image"
                  sizing="contain"
-                 style="width: {{ sizeOfThumbnail }}rem; height: {{ sizeOfThumbnail }}rem;"
                  fade="true"
                  preload
                  src$="[[ slide.thumbnail_url ]]"></iron-image>
