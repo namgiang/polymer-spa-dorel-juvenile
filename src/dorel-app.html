@@ -361,7 +361,8 @@
        * @description observe if a function is called
        */
       observers: [
-        '_pageChanged(currentPage)'
+        '_pageChanged(currentPage)',
+        '_brandChanged(brand)'        
       ],
 
       created: function () {
@@ -467,7 +468,48 @@
 
       shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
-      }
+      },
+      
+      /**
+       * @observer
+       * @name _brandChanged
+       * @description the brand was changed, imports the right styles and triggers a change in shared styles
+       * @param brand - Object - the object containing the brand index and label
+       */
+      _brandChanged: function (brand) {
+        var self = this;
+
+        // Create the brand identifier string
+        self.brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
+        // Create the brand path using the brand identifier string
+        self.brandThemeUrl = 'themes/' + self.brandTheme + '.html';
+
+        // First import and load the theme
+        this.importHref(this.resolveUrl(self.brandThemeUrl), function () {
+          //Removed the current shared style from the dom, if it exists.
+          var currentSharedStyle = this.shadowRoot.querySelector('#brand-shared-style');
+
+          if (currentSharedStyle !== null) {
+            currentSharedStyle.parentNode.removeChild(currentSharedStyle);
+          }
+
+          // Build up the right DOM elements to use the stule.
+          var domModuleChild = document.createElement('style');
+          domModuleChild.setAttribute('include', self.brandTheme);
+
+          var domModule = document.createElement('custom-style');
+          domModule.setAttribute('id', 'brand-shared-style');
+          domModule.appendChild(domModuleChild);
+
+          // Add the style to the DOM
+          this.shadowRoot.appendChild(domModule);
+
+          //Render the styles
+          console.log('Rendering new styles');
+          //Polymer.updateStyles();
+          //Polymer.dom.flush();
+        });
+      }      
 
     });
   </script>
