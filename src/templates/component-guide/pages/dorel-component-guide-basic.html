@@ -14,72 +14,36 @@
 
     <app-route
       route="{{ route }}"
-      pattern="/:componentName"
+      pattern="/:tabIndex"
       data="{{ subrouteData }}"></app-route>
 
     <section>
-      <!-- Important! The topic attribute should correspond with the template.-->
-      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
       <dorel-layout-container>
-        
-        <!--<paper-menu id="topics"-->
-        <!--            selected="{{ subrouteData.componentName }}"-->
-        <!--            attr-for-selected="topic">-->
-        <!--  <paper-item topic="introduction">Introduction</paper-item>-->
-        <!--  <paper-item topic="typography">Typography</paper-item>-->
-        <!--  <paper-item topic="layout">Layout & Sizes</paper-item>-->
-        <!--  <paper-item topic="colors">Colors</paper-item>-->
-        <!--  <paper-item topic="buttons">Buttons</paper-item>-->
-        <!--  <paper-item topic="forms">Forms</paper-item>-->
-        <!--  <paper-item topic="breakpoints">Breakpoints</paper-item>-->
-        <!--  <paper-item topic="images">Images</paper-item>-->
-        <!--  <paper-item topic="accordions">Accordions</paper-item>-->
-        <!--</paper-menu>-->
-        
-        <dorel-nav-tabs
-          selected="{{ subrouteData.componentName }}"
-          tabs="[[ basicComponents.sub_categories ]]"
-          title="name"></dorel-nav-tabs>
-    <div class="content">
-      <template
-        is="dom-repeat"
-        items="[[ questions ]]"
-        as="faq">
-        <dorel-accordion-item
-          auto-scroll="true"
-          heading="[[ faq.question ]]"
-          opened$="[[ faq.opened ]]"
-          question-id$="[[ faq.id ]]"
-          on-click="_addToQueryParams">
-          <p>[[ faq.answer ]]</p>
-        </dorel-accordion-item>
-      </template>
-    </div>
-    
+        <dorel-nav-tabs title="title" selected="{{ subrouteData.tabIndex }}" tabs="[[ components ]]"></dorel-nav-tabs>
       </dorel-layout-container>
-      <!-- Important! The topic attribute should correspond with the template.-->
-      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
-      <!--<iron-pages class="component-guide__content"-->
-      <!--            selected="[[ subrouteData.componentName ]]"-->
-      <!--            on-selected-changed="_pageSelected"-->
-      <!--            attr-for-selected="topic">-->
-      <!--  <dorel-component-guide-introduction brand="[[ brand ]]"-->
-      <!--                                      subroute="[[ subrouteData.componentName ]]"-->
-      <!--                                      topic="introduction"></dorel-component-guide-introduction>-->
-      <!--  <dorel-component-guide-typography topic="typography"></dorel-component-guide-typography>-->
-      <!--  <dorel-component-guide-layout topic="layout"></dorel-component-guide-layout>-->
-      <!--  <dorel-component-guide-colors brand="[[ brand ]]" topic="colors"></dorel-component-guide-colors>-->
-      <!--  <dorel-component-guide-buttons topic="buttons"></dorel-component-guide-buttons>-->
-      <!--  <dorel-component-guide-forms topic="forms"></dorel-component-guide-forms>-->
-      <!--  <dorel-component-guide-breakpoints topic="breakpoints"></dorel-component-guide-breakpoints>-->
-      <!--  <dorel-component-guide-images topic="images"></dorel-component-guide-images>-->
-      <!--  <dorel-component-guide-accordions topic="accordions"></dorel-component-guide-accordions>-->
-      <!--</iron-pages>-->
+
+      <iron-pages class="component-guide__content"
+                  selected="[[ subrouteData.tabIndex ]]"
+                  attr-for-selected="index">
+        <dorel-component-guide-introduction brand="[[ brand ]]"
+                                            subroute="[[ subrouteData.tabIndex ]]"
+                                            index="0"></dorel-component-guide-introduction>
+        <dorel-component-guide-typography index="1"></dorel-component-guide-typography>
+        <dorel-component-guide-layout index="2"></dorel-component-guide-layout>
+        <dorel-component-guide-colors brand="[[ brand ]]" index="3"></dorel-component-guide-colors>
+        <dorel-component-guide-buttons index="4"></dorel-component-guide-buttons>
+        <dorel-component-guide-forms index="5"></dorel-component-guide-forms>
+        <dorel-component-guide-breakpoints index="6"></dorel-component-guide-breakpoints>
+        <dorel-component-guide-images index="7"></dorel-component-guide-images>
+        <dorel-component-guide-accordions index="8"></dorel-component-guide-accordions>
+      </iron-pages>
     </section>
   </template>
   <script>
     Polymer({
       is: 'dorel-component-guide-basic',
+      observers: ['_navSelectChanged(subrouteData.tabIndex)'],
+      behaviors: [componentGuideBehavior],
       properties: {
         /**
          * @name brand
@@ -90,18 +54,13 @@
           notify: true,
           readOnly: false
         },
-        selectedSubTab: {
-          type: Number,
-          value: null // needs to be null, otherwise change will not be detected
-        },        
-        basicComponents: {
+        components: {
           type: Array,
           value: function () {
             return basicComponents;
           }
-        },
-      },
-      behaviors: [componentGuideBehavior]
+        }
+      }
     });
   </script>
 </dom-module>

@@ -1,14 +1,22 @@
 <script>
   componentGuideBehavior = {
     /**
+     * @name _navSelectChanged
+     * @description Called when the nav selection changes
+     */
+    _navSelectChanged: function (tabIndex) {
+      if (typeof tabIndex !== 'undefined') {
+        var selectedPagePath = this.components[tabIndex].filePath;
+        this._pageSelected(selectedPagePath);
+      }
+    },
+    /**
      * @name _pageSelected
      * @description Imports the correct component guide template when it is shown
      */
-    _pageSelected: function (event) {
-      var selectedPage = this.$.topics.selected;
-
-      if (typeof selectedPage !== 'undefined' || selectedPage.length > 0) {
-        var selectedPageTemplate = '../../component-guide/dorel-component-guide-' + selectedPage + '.html';
+    _pageSelected: function (selectedPagePath) {
+      if (typeof selectedPagePath !== 'undefined' || selectedPagePath.length > 0) {
+        var selectedPageTemplate = '../../component-guide/' + selectedPagePath;
         this.importHref(this.resolveUrl(selectedPageTemplate), function () {
         });
       }
