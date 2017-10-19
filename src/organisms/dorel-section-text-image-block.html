@@ -1,0 +1,98 @@
+<link rel="import" href="../atoms/dorel-bynder-image.html">
+<link rel="import" href="../atoms/dorel-cta.html">
+
+<dom-module id="dorel-section-text-image-block">
+  <template>
+    <!-- YOUR STYLES HERE -->
+    <style>
+      /* Mobile first styling */
+
+      :host {
+        clear: both;
+        --button-margin-spacing: -1.5em;
+      }
+
+      .image-container {
+        height: 12rem;
+      }
+
+      .image-container[desktop] {
+        height: 100%;
+        min-height: 20rem;
+      }
+
+      .text-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 100%;
+      }
+
+      h2 {
+        @apply(--theme-typography-6);
+      }
+
+      p {
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        clear: both;
+        float: left;
+        width: auto;
+      }
+    </style>
+
+    <!-- MEDIA QUERIES are defined underneath the STYLE -->
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <!-- INITIAL SECTION with the MEDIA QUERIES defined as attributes -->
+    <!-- NOTE: all Polymer defined attributes are written on a new line with a tab indent! -->
+    <section class="dorel-section-text-image-block">
+      <dorel-layout-container>
+        <dorel-layout-row reverse$="[[ breakpoints.tabletMediumUp ]]">
+          <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
+            <div class="image-container" desktop$="[[ breakpoints.tabletMediumUp ]]">
+              <dorel-bynder-image height="100%" width="100%" tablet-width="100%" tablet-height="100%" mobile-width="100%" mobile-height="100%"
+                sizing="contain" media-id="[[ blockData.bynderImage ]]">
+              </dorel-bynder-image>
+            </div>
+          </dorel-layout-column>
+          <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
+            <div class="text-container">
+              <div>
+                <h2 class="title">[[ blockData.title ]]</h2>
+                <p class="text">[[ blockData.text ]]</p>
+                <template is="dom-repeat" items="[[ blockData.ctas ]]" as="cta">
+                  <dorel-cta type="link" size="medium" link="[[ cta.link ]]">[[ cta.text]]</dorel-cta>
+                </template>
+              </div>
+            </div>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-text-image-block',
+
+      properties: {
+
+        /**
+        * @name blockData
+        * @description title of the item
+        */
+        blockData: {
+          type: Object,
+          value: {}
+        }
+
+      },
+    });
+
+  </script>
+
+</dom-module>
