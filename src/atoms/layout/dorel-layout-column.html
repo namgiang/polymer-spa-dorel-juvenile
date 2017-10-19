@@ -1,5 +1,10 @@
 <dom-module id="dorel-layout-column">
   <template>
+    
+    
+    <style include="theme-maxi-cosi-shared-styles"></style>
+    
+    
     <style>
       :host {
         @apply(--theme-grid-column);
@@ -39,6 +44,10 @@
           type: Number,
           value: 12
         },
+        count: {
+          type: Number,
+          value: 0
+        },
         /**
          * @name desktopColumnSpan
          * @description Number of columns this component should span on tablet.
@@ -61,12 +70,17 @@
       observers: [
         '_updateColumns(mobileColumnSpan, tabletColumnSpan, desktopColumnSpan)'
       ],
+      
+      
       /**
        * @name attached
        * @description Updates the column width based on the column span properties
        */
       _updateColumns: function (mobileColumnSpan, tabletColumnSpan, desktopColumnSpan) {
-        var singleColumnWidth = 100 / this.getComputedStyleValue('--theme-columns');
+        
+        /* @todo fix this: var singleColumnWidth = 100 / this.getComputedStyleValue('--theme-columns'); */
+        var singleColumnWidth = 100 / 12;
+        
         var mobileColumnWidth = singleColumnWidth * mobileColumnSpan;
         var tabletColumnWidth = singleColumnWidth * tabletColumnSpan;
         var desktopColumnWidth = singleColumnWidth * desktopColumnSpan;
