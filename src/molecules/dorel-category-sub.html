@@ -40,9 +40,9 @@
       }
 
       dorel-cta {
-        width: auto;
         float: left;
         clear: both;
+        margin-top: 1.5em;
       }
 
       [tablet-medium-up] .title {
@@ -68,9 +68,22 @@
           <div class="description">
             <dorel-safe-html html="[[ subCategoryData.description ]]"></dorel-safe-html>
           </div>
+          <template
+            is="dom-if"
+            if="[[ subCategoryData.cta_toggle ]]">
+            <dorel-cta title="[[ subCategoryData.cta_text ]]"
+                       type="secondary"
+                       link="[[ subCategoryData.cta_link ]]"
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              [[ subCategoryData.cta_text ]]
+            </dorel-cta>
+          </template>
+
         </dorel-layout-column>
       </dorel-layout-row>
     </dorel-layout-container>
+
 
   </template>
 
