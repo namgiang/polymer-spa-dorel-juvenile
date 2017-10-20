@@ -56,53 +56,33 @@
 * TODO:
 * These should only be included conditionally, based on the app-config.js AVAILABLE_BRANDS
 -->
-<!--<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">-->
+<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
 <!--<link rel="import" href="themes/theme-dorel-shared-styles.html">-->
 <!--<link rel="import" href="themes/theme-quinny-shared-styles.html">-->
 
 <dom-module id="dorel-app" mobile-menu-opened$="{{ mobileMenuOpened }}">
   <template>
-    <style>
-      /*
-       * Application wide styling
-       * - Will define standard styling for components
-       */
-      :host {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        @apply(--theme-typography-2);
-        margin: 0;
-        --primary-color: var(--theme-brand-color-1);
-        color: var(--theme-color-black);
-        display: block;
-        min-height: 100vh;
-      }
-
-      #main, #footer {
-        transition: transform 0.20s ease;
-      }
-
-      :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
-        transform: translate(-256px, 0);
-      }
-
-      @media screen and (min-width: 1025px) {
-        :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
-          transform: translate(0, 0);
+    <custom-style>
+      <style include="theme-maxi-cosi-shared-styles"></style>
+      <style is="custom-style">
+        :host > * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          @apply(--theme-typography-2);
+          margin: 0;
+          color: var(--theme-color-black);
         }
-      }
 
+        main {
+          min-height: calc(100vh - 155px);
+        }
 
-      main {
-        min-height: calc(100vh - 155px);
-      }
-
-      iron-pages {
-        margin: 0 auto;
-        min-height: 100vh;
-      }
-    </style>
-
+        iron-pages {
+          margin: 0 auto;
+          min-height: 100vh;
+        }
+      </style>
+    </custom-style>
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
 
@@ -354,7 +334,7 @@
 
       },
 
-      behaviors: [ appCacheBehavior ],
+      behaviors: [appCacheBehavior],
 
       /**
        * @name observers
@@ -362,7 +342,7 @@
        */
       observers: [
         '_pageChanged(currentPage)',
-        '_brandChanged(brand)'        
+        '_brandChanged(brand)'
       ],
 
       created: function () {
@@ -462,14 +442,14 @@
           }
         };
 
-        this.fire('setAppCache', { value: event, path: 'events' });
+        this.fire('setAppCache', {value: event, path: 'events'});
       },
 
 
       shouldShow: function (currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       },
-      
+
       /**
        * @observer
        * @name _brandChanged
@@ -477,39 +457,40 @@
        * @param brand - Object - the object containing the brand index and label
        */
       _brandChanged: function (brand) {
-        var self = this;
+        //TODO: This doesn't work well in Polymer 2, hardcoded the maxicosi style for now.
+        /*var self = this;
 
-        // Create the brand identifier string
-        self.brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
-        // Create the brand path using the brand identifier string
-        self.brandThemeUrl = 'themes/' + self.brandTheme + '.html';
+         // Create the brand identifier string
+         self.brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
+         // Create the brand path using the brand identifier string
+         self.brandThemeUrl = 'themes/' + self.brandTheme + '.html';
 
-        // First import and load the theme
-        this.importHref(this.resolveUrl(self.brandThemeUrl), function () {
-          //Removed the current shared style from the dom, if it exists.
-          var currentSharedStyle = this.shadowRoot.querySelector('#brand-shared-style');
+         // First import and load the theme
+         this.importHref(this.resolveUrl(self.brandThemeUrl), function () {
+         //Removed the current shared style from the dom, if it exists.
+         var currentSharedStyle = this.shadowRoot.querySelector('#brand-shared-style');
 
-          if (currentSharedStyle !== null) {
-            currentSharedStyle.parentNode.removeChild(currentSharedStyle);
-          }
+         if (currentSharedStyle !== null) {
+         currentSharedStyle.parentNode.removeChild(currentSharedStyle);
+         }
 
-          // Build up the right DOM elements to use the stule.
-          var domModuleChild = document.createElement('style');
-          domModuleChild.setAttribute('include', self.brandTheme);
+         // Build up the right DOM elements to use the stule.
+         var domModuleChild = document.createElement('style');
+         domModuleChild.setAttribute('include', self.brandTheme);
 
-          var domModule = document.createElement('custom-style');
-          domModule.setAttribute('id', 'brand-shared-style');
-          domModule.appendChild(domModuleChild);
+         var domModule = document.createElement('custom-style');
+         domModule.setAttribute('id', 'brand-shared-style');
+         domModule.appendChild(domModuleChild);
 
-          // Add the style to the DOM
-          this.shadowRoot.appendChild(domModule);
+         // Add the style to the DOM
+         this.shadowRoot.appendChild(domModule);
 
-          //Render the styles
-          console.log('Rendering new styles');
-          //Polymer.updateStyles();
-          //Polymer.dom.flush();
-        });
-      }      
+         //Render the styles
+         console.log('Rendering new styles');
+         //Polymer.updateStyles();
+         //Polymer.dom.flush();
+         });*/
+      }
 
     });
   </script>
