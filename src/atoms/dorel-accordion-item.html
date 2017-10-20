@@ -122,8 +122,8 @@
             aria-expanded="false"
             tabindex="0"
             role="button"
-            aria-controls$="#collapse[[ index ]]"
-            data-selector$="#collapse[[ index ]]"
+            aria-controls$="#collapse"
+            data-selector$="#collapse"
             on-click="_toggleCollapse"
             gtm-parent="[[ gtmParent ]]"
             gtm-parent-index="[[ gtmParentIndex ]]"
@@ -136,9 +136,9 @@
         <iron-icon class="accordion-icon"
                    icon="dorel-icons:expand-more"></iron-icon>
       </template>
-      <iron-collapse id$="collapse[[ index ]]" opened="{{ opened }}">
-        <div class="accordion-content" id="accordion">
-          <slot id="content"></slot>
+      <iron-collapse id="collapse" opened="{{ opened }}">
+        <div class="accordion-content">
+          <slot></slot>
         </div>
       </iron-collapse>
     </div>
@@ -278,13 +278,12 @@
         // Toggle the aria expanded boolean
         e.target.setAttribute('aria-expanded', !ariaExpanded);
 
-        var selector = e.target.dataset.selector;
-
+        var accordion = this.$.collapse;
         // check state
-        var state = (this.$$(selector).classList.contains('iron-collapse-opened'));
+        var state = accordion.classList.contains('iron-collapse-opened');
 
         // toggle collapse
-        this.$$(selector).toggle();
+        accordion.toggle();
 
         // event tracking
         this._eventTracking(e, e.target, state);
