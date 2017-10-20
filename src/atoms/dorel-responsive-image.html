@@ -61,7 +61,6 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <iron-image sizing="cover"
                 fade="true"
-                preload
                 title$="[[ alt ]]"
                 alt$="[[ alt ]]"
                 placeholder$="[[ currentImagePlaceholder ]]"
@@ -91,7 +90,8 @@
         imageSources: {
           type: Object,
           observer: '_imageSourcesChanged',
-          notify: true
+          notify: true,
+          return: function(){ return {}; }
         },
         /**
          * @attribute
@@ -125,7 +125,8 @@
          * @description Breakpoints for devices and screen orientations, set by dorel-media-query
          */
         breakpoints: {
-          type: Object
+          type: Object,
+          return: function(){}
         },
         /**
          * @attribute
