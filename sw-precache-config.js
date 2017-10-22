@@ -2,7 +2,7 @@ module.exports = {
   staticFileGlobs: [
     '/index.html',
     '/manifest.json',
-    '/node_modules/@webcomponents/webcomponentsjs/webcomponents-lite.min.js',
+    '/node_modules/webcomponentsjs/webcomponents-lite.min.js',
     '/assets/images/*'
   ],
   navigateFallback: '/index.html',
