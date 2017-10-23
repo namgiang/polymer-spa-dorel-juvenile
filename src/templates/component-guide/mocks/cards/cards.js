@@ -28,19 +28,19 @@ var cardsMockCompact = {
       "card_title": "Safety Ratings",
       "topic_blocks": [
         {
-          "topic_bynder_image": "E4C5EE4B-F34D-4812-97F177BC86EC6E5D",
-          "topic_title": "ADAC",
-          "topic_text": "ADAC Phasellus ex sapien, efficitur sed elit sagittis, eleifend accumsan leo."
+          "image": "https://image.flaticon.com/icons/svg/260/260215.svg",
+          "title": "ADAC",
+          "description": "ADAC Phasellus ex sapien, efficitur sed elit sagittis, eleifend accumsan leo."
         },
         {
-          "topic_bynder_image": "E4C5EE4B-F34D-4812-97F177BC86EC6E5D",
-          "topic_title": "TCS",
-          "topic_text": "TCS Phasellus ex sapien, efficitur sed elit sagittis, eleifend accumsan leo."
+          "image": "https://image.flaticon.com/icons/svg/260/260248.svg",
+          "title": "TCS",
+          "description": "TCS Phasellus ex sapien, efficitur sed elit sagittis, eleifend accumsan leo."
         },
         {
-          "topic_bynder_image": "E4C5EE4B-F34D-4812-97F177BC86EC6E5D",
-          "topic_title": "ÖAMTC",
-          "topic_text": "ÖAMTC Phasellus ex sapien, efficitur sed elit sagittis, eleifend accumsan leo."
+          "image": "https://image.flaticon.com/icons/svg/260/260208.svg",
+          "title": "ÖAMTC",
+          "description": "ÖAMTC Phasellus ex sapien, efficitur sed elit sagittis, eleifend accumsan leo."
         }
       ],
     },
@@ -48,19 +48,19 @@ var cardsMockCompact = {
       "card_title": "Car Installation",
       "topic_blocks": [
         {
-          "topic_bynder_image": "E4C5EE4B-F34D-4812-97F177BC86EC6E5D",
-          "topic_title": "Isize",
-          "topic_text": "Morbi sollicitudin placerat mauris at pretium. Maecenas faucibus ligula at dolor pulvinar viverra."
+          "image": "https://image.flaticon.com/icons/svg/260/260235.svg",
+          "title": "Isize",
+          "description": "Morbi sollicitudin placerat mauris at pretium. Maecenas faucibus ligula at dolor pulvinar viverra."
         },
         {
-          "topic_bynder_image": "E4C5EE4B-F34D-4812-97F177BC86EC6E5D",
-          "topic_title": "Isofix",
-          "topic_text": "Praesent faucibus auctor ultricies. Morbi non est lorem. Proin vehicula tempor erat id feugiat."
+          "image": "https://image.flaticon.com/icons/svg/260/260240.svg",
+          "title": "Isofix",
+          "description": "Praesent faucibus auctor ultricies. Morbi non est lorem. Proin vehicula tempor erat id feugiat."
         },
         {
-          "topic_bynder_image": "E4C5EE4B-F34D-4812-97F177BC86EC6E5D",
-          "topic_title": "Seatbelt",
-          "topic_text": "Seatbeltus mustes fastor alwacii, eu ornare metus hendrerit. Quisque luctus leo erat, a blandit arcu fermentum id. Pellentesque et mauris pharetra, vulputate sem eu, porttitor libero. "
+          "image": "https://image.flaticon.com/icons/svg/260/260211.svg",
+          "title": "Seatbelt",
+          "description": "Seatbeltus mustes fastor alwacii, eu ornare metus hendrerit. Quisque luctus leo erat, a blandit arcu fermentum id. Pellentesque et mauris pharetra, vulputate sem eu, porttitor libero. "
         }
       ],
       "card_text": "Learn more on installing in your car.",
