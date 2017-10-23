@@ -1,0 +1,61 @@
+<link rel="import" href="../molecules/product-information/dorel-product-information-manuals.html">
+<link rel="import" href="../molecules/product-information/dorel-product-information-specifications.html">
+
+<link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
+<link rel="import" href="./dorel-section-cards.html">
+
+
+<dom-module id="dorel-section-product-topiclists">
+  <style>
+  </style>
+  <template>
+###################### topics ############################
+
+    <dorel-magento-collect-custom-data
+      product-id="[[ productId ]]" app-cache="[[ appCache ]]" data="{{ topiclistData }}" type="topiclist"></dorel-magento-collect-custom-data>
+
+
+    <template is="dom-if" if="[[ topiclistData ]]">
+
+      yes data!
+    </template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-product-accordions',
+      behaviors: [PageBuilderBehavior],
+      properties: {
+
+        productId: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name accordionsData
+         * @description coming from the page-builder this data object is filled
+         * with ACF/Wordpress data about the component
+         */
+         topiclistData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        }
+      },
+
+      behaviors: [TemplateBehaviors]
+    });
+  </script>
+</dom-module>
