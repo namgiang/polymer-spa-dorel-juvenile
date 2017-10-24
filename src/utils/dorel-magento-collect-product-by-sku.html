@@ -122,7 +122,13 @@
        */
       _productResponse: function(response) {
         //set newProducts Array from response
-        var newProducts = response.detail.response;
+        var response = response.detail.response || [];
+        var newProducts = response.map(function(product) {
+          if(product && !product.child_products || product && !product.child_products.length) {
+            product.child_products = [Object.assign({}, product)];
+          }
+          return product;
+        });
 
         //if there are no products in Array
         if(!newProducts.length) {
