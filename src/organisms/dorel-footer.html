@@ -32,6 +32,7 @@
 
       .footer-disclaimer {
         margin-top: 1.5em;
+        float: left;
       }
 
       /**
@@ -79,6 +80,7 @@
       .footer-back-to-top {
         padding: 1.5rem 0 0 0;
         width: 100%;
+        float: left;
       }
 
       .footer-menu ul {
@@ -143,7 +145,7 @@
         height: auto;
       }
 
-      .footer-disclaimer,
+      /*.footer-disclaimer,
       .footer-info,
       .footer-back-to-top {
         float: left;
@@ -155,11 +157,8 @@
       [tablet-medium-up] .footer-back-to-top {
         float: none;
         width: auto;
-      }
+      } */
 
-      [tablet-medium-up] .footer-info {
-        margin-top: 1.5em;
-      }
 
       [tablet-medium-up] ul {
         margin: .75em 0;
@@ -256,8 +255,7 @@
         </dorel-layout-row>
 
         <dorel-layout-row align="left">
-          <dorel-layout-column id="footer-widget-area" class="footer-info"
-                               desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+          <div id="footer-widget-area" class="footer-info">
             <!-- widget areas are inserted here -->
             <template
               is="dom-repeat"
@@ -281,7 +279,7 @@
                 </template>
               </div>
             </template>
-          </dorel-layout-column>
+          </div>
         </dorel-layout-row>
 
         <div class="footer-disclaimer">
@@ -417,14 +415,14 @@
 
         // define footer links for tracking, 
         // must be in timeout because we are looking for elements in a dom-if / dom-repeat
-        setTimeout(function(){
+        setTimeout(function () {
           var footerMenuLink = this.root.querySelectorAll('.footer-menu a');
           // add eventListeners
           for (var i = 0, len = footerMenuLink.length; i < len; i++) {
             footerMenuLink[i].addEventListener('click', function (event) {
               this._eventTracking(event, 'switch');
             }.bind(this));
-          } 
+          }
         }.bind(this));
       },
 

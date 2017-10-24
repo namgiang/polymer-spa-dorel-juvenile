@@ -4,6 +4,11 @@
   <template>
     <style include="grid-mixins"></style>
     <style>
+      :host {
+        float: left;
+        width: 100%;
+      }
+
       section {
         @apply(--theme-grid-row);
         @apply(--layout-flex);
@@ -14,15 +19,15 @@
         text-align: left;
       }
 
-      :host-context([align="left"]) section {
+      [align="left"] {
         justify-content: flex-start;
       }
 
-      :host-context([align="right"]) section {
+      [align="right"] {
         justify-content: flex-end;
       }
 
-      :host-context([reverse]) section {
+      [reverse] {
         flex-direction: row-reverse;
       }
 
@@ -67,7 +72,8 @@
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]" tablet-medium$="[[ breakpoints.tabletMedium]]">
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             tablet-medium$="[[ breakpoints.tabletMedium]]" align$="[[ align ]]" reverse$="[[ reverse ]]">
       <slot></slot>
     </section>
   </template>
@@ -78,7 +84,8 @@
       properties: {
         align: {
           type: String,
-          value: 'center'
+          value: 'center',
+          reflectToAttribute: true
         },
         /**
          * @attribute
