@@ -126,26 +126,26 @@
         <!--// cardContent -->
 
         <!-- Link list -->
-        <template
-          is="dom-if"
-          if="[[ cardData.child_ctas) ]]">
+        <template is="dom-if" if="[[ cardData.child_ctas) ]]">
           <div class="link-container">
             <template is="dom-repeat" items="[[ cardData.child_ctas ]]" as="link">
-              <dorel-cta
-                class="link-list-cta"
-                type="link"
-                title="[[ link.title ]]"
-                link="[[ link.link ]]"
-                link-target="[[ link.target ]]"
-                size="medium"
-                icon="dorel-icons:chevron-right"
-                gtm-parent="[[ gtmParent ]]"
-                gtm-parent-index="[[ gtmParentIndex ]]"
-                gtm-child="[[ gtmChild ]]"
-                gtm-child-index="[[ gtmChildIndex ]]"
-                gtm-cta-index="[[ index ]]">
-                [[ link.title ]]
-              </dorel-cta>
+              <template is="dom-if" if="[[ link.title.length ]]">
+                <dorel-cta
+                  class="link-list-cta"
+                  type="link"
+                  title="[[ link.title ]]"
+                  link="[[ link.link ]]"
+                  link-target="[[ link.target ]]"
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="[[ gtmChild ]]"
+                  gtm-child-index="[[ gtmChildIndex ]]"
+                  gtm-cta-index="[[ index ]]">
+                    [[ link.title ]]
+                </dorel-cta>
+              </template>
             </template>
           </div>
         </template>
