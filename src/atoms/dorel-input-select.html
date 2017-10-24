@@ -1,3 +1,4 @@
+
 <link rel="import" href="dorel-input-error.html">
 <link rel="import" href="../../node_modules/iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../../node_modules/iron-input/iron-input.html">
@@ -109,6 +110,33 @@
   Polymer({
     is: 'dorel-input-select',
     properties: {
+
+      /**
+       * @attribute
+       * @name label
+       * @description the label text for the input element
+       */
+      label: {
+        type: String,
+        value: ''
+      },
+      /**
+       * @attribute
+       * @name invalid
+       * @description Indicates if the input is invalid
+       */
+      invalid: {
+        type: Boolean
+      },
+      /**
+       * @attribute
+       * @name errorMessage
+       * @description the error message shown if the input is invalid
+       */
+      errorMessage: {
+        type: String,
+        value: ''
+      },
       /**
        * The currently selected option
        */
@@ -116,7 +144,7 @@
         type: Object,
         notify: true,
         readOnly: false,
-        value: function() {
+        value: function () {
           return {label: '', value: ''}
         }
       },
@@ -152,7 +180,7 @@
      */
     _onChange: function (event) {
       var selectedValue = event.path[0].value;
-      var selectedOption = this.get('options').find(function(option) {
+      var selectedOption = this.get('options').find(function (option) {
         return option.value === selectedValue || option.value === parseInt(selectedValue);
       });
       var selected = {
@@ -160,7 +188,7 @@
         value: selectedOption.value
       };
       this.set('selected', selected)
-      this.fire('on-selectbox-change', { value: selected });
+      this.fire('on-selectbox-change', {value: selected});
     },
 
     /**
@@ -181,33 +209,33 @@
 
       var initOptions = this.get('options');
 
-      if(!initOptions) {
+      if (!initOptions) {
         return;
       }
 
-      while(select.firstChild) {
+      while (select.firstChild) {
         select.removeChild(select.firstChild);
       }
 
-      var options = initOptions.filter(function(item, index, self) {
-        return self.some(function(_item) {
+      var options = initOptions.filter(function (item, index, self) {
+        return self.some(function (_item) {
           return _item.value === item.value;
         });
       });
 
       for (var i = 0; i < options.length; i++) {
         var option = options[i];
-        if(!option || !option.label) {
+        if (!option || !option.label) {
           return;
         }
         var newOption = document.createElement('option');
         newOption.textContent = option.label;
         // Use the option value, or default to the list index
         newOption.value = option.value;
-        if(newOption.textContent && this.selected && this.selected.label) {
+        if (newOption.textContent && this.selected && this.selected.label) {
           newOption.selected = this._isSelected(newOption.textContent, this.selected.label);
         } else {
-          if(i === 0) {
+          if (i === 0) {
             newOption.selected = true;
           }
         }

@@ -1,3 +1,4 @@
+
 <link rel="import" href="dorel-input-error.html">
 <link rel="import" href="../../node_modules/iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../../node_modules/iron-input/iron-input.html">
@@ -96,7 +97,8 @@
 
     <template is="dom-if" if="[[errorMessage]]">
       <dorel-input-error aria-live="assertive"
-                         invalid$="[[invalid]]">[[errorMessage]]</dorel-input-error>
+                         invalid$="[[invalid]]">[[errorMessage]]
+      </dorel-input-error>
     </template>
   </template>
 </dom-module>
@@ -104,9 +106,37 @@
 <script>
   Polymer({
     is: 'dorel-input',
+    properties: {
+      /**
+       * @attribute
+       * @name label
+       * @description the label text for the input element
+       */
+      label: {
+        type: String,
+        value: ''
+      },
+      /**
+       * @attribute
+       * @name invalid
+       * @description Indicates if the input is invalid
+       */
+      invalid: {
+        type: Boolean
+      },
+      /**
+       * @attribute
+       * @name errorMessage
+       * @description the error message shown if the input is invalid
+       */
+      errorMessage: {
+        type: String,
+        value: ''
+      }
+    },
 
     behaviors: [
-      Polymer.IronFormElementBehavior,
+      Polymer.IronFormElementBehavior
     ]
   });
 </script>
