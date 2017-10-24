@@ -57,6 +57,10 @@
         width: 100%;
       }
 
+      .card-image {
+        max-width: 100%;
+      }
+
       [tablet-medium-up] .title {
         @apply(--theme-typography-6);
       }
@@ -79,16 +83,25 @@
                             mobile-width="100%"
                             mobile-height="12em"></dorel-bynder-image>
       </template>
+
       <!--// cardImage -->
 
       <div class="card-content">
         <!-- cardTitle -->
         <template
-          is="dom-if"
-          if="[[ cardData.card_title ]]">
-          <h3 class="title">[[ cardData.card_title ]]</h3>
-        </template>
-        <!--// cardTitle -->
+        is="dom-if"
+        if="[[ cardData.card_title ]]">
+        <h3 class="title">[[ cardData.card_title ]]</h3>
+      </template>
+      <!--// cardTitle -->
+
+      <!-- cardImage in content -->
+      <template
+        is="dom-if"
+        if="[[ cardData.card_image ]]">
+        <img src="[[ cardData.card_image ]]" class="card-image">
+      </template>
+      <!--// cardImage in content -->
 
         <!-- topicBlocks -->
         <template
