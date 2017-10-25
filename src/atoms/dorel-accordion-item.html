@@ -119,6 +119,7 @@
         is="dom-if"
         if="[[ heading.length ]]">
         <h2 class="accordion-heading"
+            id="accordion"
             aria-expanded="false"
             tabindex="0"
             role="button"
@@ -232,9 +233,8 @@
       _openedStateChanged: function () {
         var self = this;
         setTimeout(function () {
-          var accordionDomElement = self.$.accordion;
-          //this._scrollToItem(accordionDomElement);
-
+          //Accessing the accordion here through shadowroot queryselect because it's dynamically created
+          var accordionDomElement = self.shadowRoot.querySelector('#accordion');
           var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordionDomElement);
 
 
