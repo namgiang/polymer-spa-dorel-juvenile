@@ -1,4 +1,5 @@
 <link rel="import" href="../../node_modules/google-map/google-map.html">
+<link rel="import" href="../../node_modules/google-map/google-map-marker.html">
 <link rel="import" href="../../node_modules/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../organisms/dorel-section-store-locator-results.html">
@@ -535,18 +536,6 @@
         }
 
         this.storesResponse = data.detail.response;
-
-        // setup geometry fro the fitbounds
-        var geometry = {
-          org: {
-            lat: this.storesResponse.originalLat,
-            lng: this.storesResponse.originalLng
-          },
-          res: {
-            lat: this.storesResponse.results[this.storesResponse.totalResults - 2].lat,
-            lng: this.storesResponse.results[this.storesResponse.totalResults - 2].lng
-          }
-        };
 
         // Create bounds
         var bounds = new google.maps.LatLngBounds();
