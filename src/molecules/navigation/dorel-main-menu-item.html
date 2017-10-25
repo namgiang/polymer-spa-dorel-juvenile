@@ -1,23 +1,21 @@
 <link rel="import" href="dropdowns/dorel-menu-dropdown-default.html">
 <link rel="import" href="dropdowns/dorel-menu-dropdown-category.html">
+<link rel="import" href="../../atoms/dorel-icons.html">
 
-<dom-module id="dorel-main-menu-item" is-dropdown$="[[ isDropdown ]]" is-active$="[[ isActive ]]">
+<dom-module id="dorel-main-menu-item">
   <template>
-    <style>
+    <style is="custom-style">
       :host {
         display: flex;
         flex-direction: row;
         justify-content: center;
         flex: 1;
         color: var(--theme-color-monochrome-7);
+        --iron-icon: transition: opacity 0.15s;
       }
 
       :host:hover {
         color: var(--theme-color-text-link-active);
-      }
-
-      :host-context([is-active]) {
-        color: var(--theme-brand-color-2);
       }
 
       .menu-item {
@@ -56,27 +54,30 @@
         color: var(--theme-color-text-link-active);
       }
 
-      :host-context([is-active]) .link {
+      [is-active] {
+        color: var(--theme-brand-color-2);
+      }
+
+      [is-active] .link {
         color: var(--theme-color-text-link-active);
         cursor: default;
       }
 
-      :host-context([is-active]) .menu-item:hover .link {
+      [is-active] .menu-item:hover .link {
         color: var(--theme-color-text-link-active);
         cursor: default;
       }
 
       .menu-item__icon {
-        display: none;
         margin-left: 0.2rem;
-        --iron-icon: transition: opacity 0.15s;
+        display: none;
       }
 
       .menu-item:hover .menu-item__icon {
         color: var(--theme-color-text-link-active);
       }
 
-      :host-context([is-dropdown]) .menu-item__icon {
+      [is-dropdown] .menu-item__icon {
         display: flex;
         flex: 1;
       }
@@ -111,7 +112,7 @@
       }
     </style>
 
-    <div class="menu-item" class$="{{ getClasses(mainItem) }}">
+    <div class="menu-item" class$="{{ getClasses(mainItem) }}" is-active$="[[ isActive ]]" is-dropdown$="[[ isDropdown ]]">
       <template is="dom-if" if="[[ !mainItem.dropdown ]]">
         <a on-click="clickMainItem"
           class="link"
@@ -128,7 +129,6 @@
           gtm-parent="dorel-navigation-main"
           gtm-parent-index="[[ index ]]">
           [[ mainItem.title ]]
-
           <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
         </div>
 
@@ -147,7 +147,7 @@
             <dorel-menu-dropdown-category
               index="[[ index ]]"
               main-item="[[ mainItem ]]"
-              opened$="[[ opened ]]"
+              opened="[[ opened ]]"
               route="[[ route ]]"
               featured-items="[[ mainItem.sub_category_items ]]"
               dropdown-items="[[ mainItem.dropdown_items ]]">
@@ -208,8 +208,7 @@
          */
         route: {
           type: Object
-        }
-
+        },
       },
 
       behaviors: [MainMenuBehavior],
