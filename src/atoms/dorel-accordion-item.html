@@ -6,7 +6,6 @@
       :host {
         width: 100%;
         float: left;
-        margin-bottom: 1.5em;
       }
 
       .accordion-heading {
@@ -42,6 +41,7 @@
         float: left;
         width: 100%;
         transition: background-color .3s ease;
+        margin-bottom: 1.5em;
       }
 
       .accordion-content {
@@ -71,7 +71,7 @@
         color: var(--theme-color-text-link-active);
       }
 
-      .accordion-container[opened] .accordion-heading + .accordion-icon {
+      .accordion-icon[opened] {
         transform: rotate(180deg);
       }
 
@@ -83,28 +83,32 @@
         padding: 1.5em;
       }
 
-      :host-context([small]) .accordion-heading {
+      [small] .accordion-heading {
         padding: 0.75rem;
       }
 
-      :host-context([small]) .accordion-content {
+      [small] .accordion-content {
         padding: 0 .75rem .75rem .75rem;
       }
 
-      :host-context([small]) .accordion-container[opened] .accordion-heading {
+       .accordion-container[small] {
+         margin-bottom: .75em;
+       }
+
+      .accordion-container[opened][small] .accordion-heading {
         font-weight: var(--theme-font-weight);
       }
 
-      :host-context([small]) .accordion-icon {
+      [small] .accordion-icon {
         top: .75rem;
         right: 0.5rem;
       }
 
-      :host-context([light]) .accordion-container {
+      [light] {
         background-color: var(--theme-color-white);
       }
 
-      :host-context([small]) {
+      [small] {
         margin-bottom: .75em;
       }
 
@@ -112,6 +116,8 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <div class="accordion-container"
+         light$="[[ light ]]"
+         small$="[[ small ]]"
          opened$="[[ opened ]]"
          icon$="[[ icon.length ]]"
          tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
@@ -135,6 +141,7 @@
           [[ heading ]]
         </h2>
         <iron-icon class="accordion-icon"
+                   opened$="[[ opened ]]"
                    icon="dorel-icons:expand-more"></iron-icon>
       </template>
       <iron-collapse id="collapse" opened="{{ opened }}">
@@ -170,8 +177,7 @@
          * @description Small variation of the accordion
          */
         small: {
-          type: Boolean,
-          reflectToAttribute: true
+          type: Boolean
         },
 
         /**
@@ -179,8 +185,7 @@
          * @description Small variation of the accordion
          */
         light: {
-          type: Boolean,
-          reflectToAttribute: true
+          type: Boolean
         },
 
         /**
