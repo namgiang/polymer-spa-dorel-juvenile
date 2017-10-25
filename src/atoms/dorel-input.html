@@ -1,4 +1,3 @@
-
 <link rel="import" href="dorel-input-error.html">
 <link rel="import" href="../../node_modules/iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../../node_modules/iron-input/iron-input.html">
@@ -9,96 +8,84 @@
       :host {
         display: block;
       }
-
       :host([focused]) {
         outline: none;
       }
-
       :host([hidden]) {
         display: none !important;
       }
-
       label {
         @apply(--theme-form-input-label);
       }
-
       input {
         @apply(--theme-form-input);
       }
-
       :host([invalid]) input {
         @apply(--theme-form-input-error);
       }
-
       :host([invalid]) label {
         @apply(--theme-form-input-error-label);
       }
-
       input:hover, :host([invalid]) input:hover {
         @apply(--theme-form-input-active);
       }
-
       :host([disabled]) input {
         @apply(--theme-form-input-disabled);
       }
-
       :host([disabled]) label {
         @apply(--theme-form-input-disabled-label);
       }
-
       :host([required]) label:after {
         content: "*";
         margin-left: .125em;
-
       }
     </style>
 
+    <slot name="prefix"></slot>
 
-    <slot id="content" select="[prefix]"></slot>
+    <label hidden="[[!label]]" aria-hidden="true" for="input">[[ label ]]</label>
+    <iron-input bind-value="{{ value }}">
+      <input id="input"
+             aria-labelledby$="[[_ariaLabelledBy]]"
+             aria-describedby$="[[_ariaDescribedBy]]"
+             disabled$="[[disabled]]"
+             title$="[[title]]"
+             value="{{value::input}}"
+             invalid$="{{ invalid }}"
+             prevent-invalid-input="[[preventInvalidInput]]"
+             allowed-pattern="[[allowedPattern]]"
+             validator="[[validator]]"
+             type$="[[type]]"
+             pattern$="[[pattern]]"
+             required$="[[required]]"
+             autocomplete$="[[autocomplete]]"
+             autofocus$="[[autofocus]]"
+             inputmode$="[[inputmode]]"
+             minlength$="[[minlength]]"
+             maxlength$="[[maxlength]]"
+             min$="[[min]]"
+             max$="[[max]]"
+             step$="[[step]]"
+             name$="[[name]]"
+             placeholder$="[[placeholder]]"
+             readonly$="[[readonly]]"
+             list$="[[list]]"
+             size$="[[size]]"
+             autocapitalize$="[[autocapitalize]]"
+             autocorrect$="[[autocorrect]]"
+             on-change="_onChange"
+             tabindex$="[[tabindex]]"
+             autosave$="[[autosave]]"
+             results$="[[results]]"
+             accept$="[[accept]]"
+             multiple$="[[multiple]]">
+   </iron-input>
 
-    <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
-
-    <input is="iron-input" id="input"
-           aria-labelledby$="[[_ariaLabelledBy]]"
-           aria-describedby$="[[_ariaDescribedBy]]"
-           disabled$="[[disabled]]"
-           title$="[[title]]"
-           bind-value="{{ value }}"
-           invalid="{{ invalid }}"
-           prevent-invalid-input="[[preventInvalidInput]]"
-           allowed-pattern="[[allowedPattern]]"
-           validator="[[validator]]"
-           type$="[[type]]"
-           pattern$="[[pattern]]"
-           required$="[[required]]"
-           autocomplete$="[[autocomplete]]"
-           autofocus$="[[autofocus]]"
-           inputmode$="[[inputmode]]"
-           minlength$="[[minlength]]"
-           maxlength$="[[maxlength]]"
-           min$="[[min]]"
-           max$="[[max]]"
-           step$="[[step]]"
-           name$="[[name]]"
-           placeholder$="[[placeholder]]"
-           readonly$="[[readonly]]"
-           list$="[[list]]"
-           size$="[[size]]"
-           autocapitalize$="[[autocapitalize]]"
-           autocorrect$="[[autocorrect]]"
-           on-change="_onChange"
-           tabindex$="[[tabindex]]"
-           autosave$="[[autosave]]"
-           results$="[[results]]"
-           accept$="[[accept]]"
-           multiple$="[[multiple]]">
-
-    <slot id="content" select="[suffix]"></slot>
+    <slot name="suffix"></slot>
 
     <template is="dom-if" if="[[errorMessage]]">
       <dorel-input-error aria-live="assertive"
-                         invalid$="[[invalid]]">[[errorMessage]]
-      </dorel-input-error>
+                         invalid$="[[invalid]]">[[errorMessage]]</dorel-input-error>
     </template>
   </template>
 </dom-module>
@@ -107,36 +94,27 @@
   Polymer({
     is: 'dorel-input',
     properties: {
-      /**
-       * @attribute
-       * @name label
-       * @description the label text for the input element
-       */
-      label: {
+      value: {
         type: String,
-        value: ''
+        notify: true
       },
-      /**
-       * @attribute
-       * @name invalid
-       * @description Indicates if the input is invalid
-       */
-      invalid: {
+      label: {
+        type: String
+      },
+      required: {
         type: Boolean
       },
-      /**
-       * @attribute
-       * @name errorMessage
-       * @description the error message shown if the input is invalid
-       */
       errorMessage: {
-        type: String,
-        value: ''
+        type: String
+      },
+      invalid: {
+        reflectToAttribute: true,
+        type: Boolean
+      },
+      disabled: {
+        reflectToAttribute: true,
+        type: Boolean
       }
-    },
-
-    behaviors: [
-      Polymer.IronFormElementBehavior
-    ]
+    }
   });
 </script>

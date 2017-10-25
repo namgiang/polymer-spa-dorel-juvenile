@@ -264,7 +264,16 @@
             return {};
           }
         },
-
+        /**
+         * @attribute
+         * @name addressInput
+         * @description Address used in the input field
+         */
+        addressInput: {
+          type: String,
+          value: '',
+          notify: true
+        },
         apiLoaded: {
           type: Boolean,
           value: false,
@@ -278,7 +287,7 @@
         _form: {
           type: Object,
           value: function () {
-            return this.$['store-locator-form'];
+            return document.querySelector('#store-locator-form');
           }
         },
 
@@ -534,19 +543,25 @@
             lng: this.storesResponse.originalLng
           },
           res: {
-            lat: this.storesResponse.results[this.storesResponse.totalResults - 1].lat,
-            lng: this.storesResponse.results[this.storesResponse.totalResults - 1].lng
+            lat: this.storesResponse.results[this.storesResponse.totalResults - 2].lat,
+            lng: this.storesResponse.results[this.storesResponse.totalResults - 2].lng
           }
         };
 
-        // use the geometry object to define the latLng for gmaps
-        var userLatLng = new google.maps.LatLng(geometry.org.lat, geometry.org.lng);
-        var resLatLng = new google.maps.LatLng(geometry.res.lat, geometry.res.lng);
-
-        // set and extend the bounds
+        // Create bounds
         var bounds = new google.maps.LatLngBounds();
+
+        // First set the user location
+        var userLatLng = new google.maps.LatLng(this.storesResponse.originalLat, this.storesResponse.originalLng);
         bounds.extend(userLatLng);
-        bounds.extend(resLatLng);
+
+        // Next, extend the bounds with the results
+        for(var i = 0; i < this.storesResponse.results.length; i++)
+        {
+          var result = this.storesResponse.results[i];
+          var resultLatLng = new google.maps.LatLng(result.lat, result.lng);
+          bounds.extend(resultLatLng);
+        }
 
         // fit the map to our bounds
         this.map.fitBounds(bounds);
