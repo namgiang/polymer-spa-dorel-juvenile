@@ -16,6 +16,12 @@
         position: relative;
       }
 
+      .footer-info, dorel-layout-column {
+        float: left;
+        width: 100%;
+        margin: 0;
+      }
+
       /**
        * copyright and footer-menu links
        */
@@ -85,7 +91,9 @@
 
       .footer-menu ul {
         padding: 0;
-        margin: 0 0 1.5em 0;
+        margin: 0 0 1.5em 0;  
+        list-style: none;
+
       }
 
       .footer-menu {
@@ -97,45 +105,15 @@
         padding: 0;
       }
 
-      .footer-menu.open {
-        max-height: 1000px !important;
-      }
-
       /* lists not enumerated */
-      .footer-menu li {
-        padding: .75em 0;
-        list-style-type: none;
+      dorel-accordion-item dorel-cta  {
+        float: left;
+        width: 100%;
+        margin-top: 0;
+        margin-left: 1.5em;
       }
 
-      .footer-menu a:hover, .footer-menu a:focus {
-        color: var(--theme-color-white);
-      }
-
-      .footer-menu .footer-heading::before {
-        content: '';
-        position: absolute;
-        bottom: 2rem;
-        right: .75rem;
-        width: .75rem;
-        height: .75rem;
-        border-bottom: 2px solid var(--theme-white);
-        border-left: 2px solid var(--theme-white);
-        -webkit-transform: rotate(-45deg);
-        -ms-transform: rotate(-45deg);
-        transform: rotate(-45deg);
-        -ms-transform-origin: center;
-        -webkit-transform-origin: center;
-        transform-origin: center;
-        transition: transform .3s ease;
-      }
-
-      .footer-menu.open .footer-heading::before {
-        -webkit-transform: rotate(135deg) translate(0.375rem, -0.375rem);
-        -ms-transform: rotate(135deg) translate(0.375rem, -0.375rem);
-        transform: rotate(135deg) translate(0.375rem, -0.375rem);
-      }
-
-      [tablet-medium-up] .footer-heading {
+      .footer-heading {
         @apply(--theme-typography-2);
         color: var(--theme-footer-header-color);
         font-weight: var(--theme-footer-header-weight);
@@ -145,34 +123,15 @@
         height: auto;
       }
 
-      /*.footer-disclaimer,
-      .footer-info,
-      .footer-back-to-top {
-        float: left;
-        width: 100%;
-      }
-
-      [tablet-medium-up] .footer-disclaimer,
-      [tablet-medium-up] .footer-info,
-      [tablet-medium-up] .footer-back-to-top {
-        float: none;
-        width: auto;
-      } */
-
-
-      [tablet-medium-up] ul {
+      .footer-menu ul {
         margin: .75em 0;
       }
 
-      [tablet-medium-up] li {
+      .footer-menu li {
         padding: 0;
       }
 
-      [tablet-medium-up] .footer-menu .footer-heading::before {
-        display: none;
-      }
-
-      [tablet-medium-up] .footer-menu {
+      .footer-menu {
         @apply(--theme-grid-column);
         padding: 0 var(--theme-grid-gutter);
         float: left;
@@ -186,7 +145,7 @@
         margin-top: 1.5em;
       }
 
-      [desktop-small-up] .footer-menu {
+      .footer-menu {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
         -webkit-flex-basis: calc(var(--theme-column-width) * 2);
         flex-basis: calc(var(--theme-column-width) * 2);
@@ -213,11 +172,6 @@
         display: block;
         margin: 0;
       }
-
-      [tablet-medium-up] .footer-menu {
-        border-bottom: 0px;
-      }
-
 
     </style>
 
@@ -256,29 +210,58 @@
 
         <dorel-layout-row align="left">
           <div id="footer-widget-area" class="footer-info">
-            <!-- widget areas are inserted here -->
-            <template
-              is="dom-repeat"
-              items="[[footerOptions.footer_menus]]"
-              as="menu">
-              <div class="footer-menu">
-                <h3 class="footer-heading">[[menu.title]]</h3>
+            <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
                 <template
-                  is="dom-if"
-                  if="[[menu.items.length]]">
-                  <ul>
+                  is="dom-repeat"
+                  items="[[footerOptions.footer_menus]]"
+                  as="menu">
+                  <dorel-accordion-item heading="[[ menu.title ]]" small light>
                     <template
-                      is="dom-repeat"
-                      items="[[menu.items]]"
-                      as="item">
-                      <li>
-                        <a href="[[item.link]]">[[item.title]]</a>
-                      </li>
+                      is="dom-if"
+                      if="[[menu.items.length]]">
+                      <template
+                        is="dom-repeat"
+                        items="[[menu.items]]"
+                        as="item">
+                        <dorel-cta title="[[item.title]"
+                                   type="link"
+                                   link="[[item.link]]"
+                                   size="medium"
+                                   icon="">
+                          [[item.title]]
+                        </dorel-cta>
+                      </template>
                     </template>
-                  </ul>
+                  </dorel-accordion-item>
                 </template>
-              </div>
+              </dorel-layout-column>
             </template>
+            <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+              <template
+                is="dom-repeat"
+                items="[[footerOptions.footer_menus]]"
+                as="menu">
+                <div class="footer-menu">
+                  <h3 class="footer-heading">[[menu.title]]</h3>
+                  <template
+                    is="dom-if"
+                    if="[[menu.items.length]]">
+                    <ul>
+                      <template
+                        is="dom-repeat"
+                        items="[[menu.items]]"
+                        as="item">
+                        <li>
+                          <a href="[[item.link]]">[[item.title]]</a>
+                        </li>
+                      </template>
+                    </ul>
+                  </template>
+                </div>
+              </template>
+            </template>
+
           </div>
         </dorel-layout-row>
 
