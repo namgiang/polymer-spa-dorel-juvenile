@@ -39,28 +39,30 @@
 
     </style>
 
-    <dorel-layout-container>
-      <dorel-layout-row align="center">
-        <dorel-layout-column desktop-column-span="6" tablet-column-span="9" mobile-column-span="12">
-          <h2 class="title">{{ localize('Results') }}</h2>
-          <ul>
-            <template
-              is="dom-repeat"
-              items="[[ results ]]"
-              as="store">
-              <li>
-                <dorel-section-store-locator-result
-                  store="[[ store ]]"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-child="[[ gtmChild ]]"
-                  gtm-child-index="[[ index ]]"></dorel-section-store-locator-result>
-              </li>
-            </template>
-          </ul>
-        </dorel-layout-column>
-      </dorel-layout-row>
-    </dorel-layout-container>
+    <template is="dom-if" if="[[ results.length ]]">
+      <dorel-layout-container>
+        <dorel-layout-row align="center">
+          <dorel-layout-column desktop-column-span="6" tablet-column-span="9" mobile-column-span="12">
+            <h2 class="title">{{ localize('Results') }}</h2>
+            <ul>
+              <template
+                is="dom-repeat"
+                items="[[ results ]]"
+                as="store">
+                <li>
+                  <dorel-section-store-locator-result
+                    store="[[ store ]]"
+                    gtm-parent="[[ gtmParent ]]"
+                    gtm-parent-index="[[ gtmParentIndex ]]"
+                    gtm-child="[[ gtmChild ]]"
+                    gtm-child-index="[[ index ]]"></dorel-section-store-locator-result>
+                </li>
+              </template>
+            </ul>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
+    </template>
   </template>
 
   <script>
