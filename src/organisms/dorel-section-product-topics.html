@@ -1,0 +1,70 @@
+<link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
+<link rel="import" href="./dorel-section-cards.html">
+
+
+<dom-module id="dorel-section-product-topics">
+  <template>
+    <dorel-magento-collect-custom-data
+      product-id="[[ productId ]]"
+      app-cache="[[ appCache ]]"
+      data="{{ topicData }}"
+      type="topiclist">
+    </dorel-magento-collect-custom-data>
+    <template is="dom-if" if="[[ topicData ]]">
+      <dorel-section-cards cards-data="[[ cardData ]]" compact></dorel-section-cards>
+    </template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-section-product-topics',
+      behaviors: [PageBuilderBehavior],
+      properties: {
+
+        productId: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name accordionsData
+         * @description coming from the page-builder this data object is filled
+         * with ACF/Wordpress data about the component
+         */
+        topicData: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+
+        /**
+         * @name cardData
+         * @description computed property depending on topicData
+         */
+        cardData: {
+          type: Number,
+          computed: '_cardData(topicData)'
+        },
+
+        /**
+         * @attribute
+         * @name appCache
+         * @description the temporary cache of the application,
+         * contains data that used to be contained by the globalsManager
+         */
+        appCache: {
+          type: Object
+        }
+        },
+
+        _cardData: function (topicData) {
+          var data = {};
+          data.cards = topicData.Topics || [];
+          return data
+        },
+
+      behaviors: [TemplateBehaviors]
+    });
+  </script>
+</dom-module>
