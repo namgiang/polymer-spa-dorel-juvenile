@@ -562,6 +562,9 @@
        * @param e - EventObject - contains the click event
        */
       _submitLocator: function (event) {
+        //Prevents the enter key from submitting the form, which triggers a page navigation
+        event.detail.keyboardEvent.preventDefault();
+
         if (typeof this.addressInput === 'undefined' || this.address === this.addressInput) return;
 
         // handle the validation of the input and errors when the input is empty
