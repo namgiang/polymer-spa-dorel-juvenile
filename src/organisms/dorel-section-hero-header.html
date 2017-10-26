@@ -2,6 +2,7 @@
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
 <link rel="import" href="../molecules/dorel-youtube-video.html">
 <link rel="import" href="../molecules/dorel-youtube-lightbox.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 
 <dom-module id="dorel-section-hero-header">
   <template>
@@ -15,7 +16,6 @@
       .hero-header {
         @apply(--layout-vertical);
         width: 100%;
-        display: flex;
         justify-content: center;
         position: relative;
       }
@@ -119,47 +119,60 @@
       <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
         <header>
           <template is="dom-if" if="[[ _hasValue(heroHeaderData.title) ]]">
-                <h3 class="title">[[ heroHeaderData.title ]]</h3>
-              </template>
-
-          <template is="dom-if" if="[[ _hasValue(heroHeaderData.sub_title) ]]">
-                <p class="subtitle">
-                  [[ heroHeaderData.sub_title ]]
-                </p>
-              </template>
-          <template is="dom-if" if="[[ heroHeaderData.cta_toggle ]]">
-              <template
-                is="dom-if"
-                if="[[ !_isVideoCTA(heroHeaderData.cta_type) ]]">
-                <dorel-cta
-                  title="[[ heroHeaderData.cta_text ]]"
-                  icon="dorel-icons:chevron-right"
-                  type="primary"
-                  link="[[ heroHeaderData.cta_href ]]"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-cta-index="0">
-                  [[ heroHeaderData.cta_text ]]
-                </dorel-cta>
-              </template>
-          <template is="dom-if" if="[[ _isVideoCTA(heroHeaderData.cta_type) ]]">
-                <dorel-cta
-                  icon="dorel-icons:play-circle-outline"
-                  type="primary"
-                  link=""
-                  on-click="openYouTubeLightbox"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-cta-index="0">
-                  {{ localize('Watch_video') }}
-                </dorel-cta>
-              </template>
+            <h3 class="title">[[ heroHeaderData.title ]]</h3>
           </template>
+          <template is="dom-if" if="[[ _hasValue(heroHeaderData.sub_title) ]]">
+            <p class="subtitle">
+              [[ heroHeaderData.sub_title ]]
+            </p>
+          </template>
+          <template is="dom-if" if="[[ heroHeaderData.cta_toggle ]]">
+            <template
+              is="dom-if"
+              if="[[ !_isVideoCTA(heroHeaderData.cta_type) ]]">
+              <dorel-cta
+                title="[[ heroHeaderData.cta_text ]]"
+                icon="dorel-icons:chevron-right"
+                type="primary"
+                link="[[ heroHeaderData.cta_href ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-cta-index="0">
+                [[ heroHeaderData.cta_text ]]
+              </dorel-cta>
+            </template>
+            <template is="dom-if" if="[[ _isVideoCTA(heroHeaderData.cta_type) ]]">
+              <dorel-cta
+                icon="dorel-icons:play-circle-outline"
+                type="primary"
+                link=""
+                on-click="openYouTubeLightbox"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-cta-index="0">
+                {{ localize('Watch_video') }}
+              </dorel-cta>
+            </template>
+          </template>
+            <template is="dom-if" if="[[ _hasExpansion(heroHeaderData.expand_label) ]]">
+              <dorel-cta
+                icon="dorel-icons:expand-more"
+                type="link"
+                link=""
+                on-click="toggleExpansion"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-cta-index="0">[[ heroHeaderData.expand_label ]]
+              </dorel-cta>
+            </template>
         </header>
       </dorel-layout-column>
     </dorel-layout-row>
   </dorel-layout-container>
   </section>
+  <iron-collapse opened$=[[ expanded ]]>
+    <content></content>
+  </iron-collapse>
   <dorel-youtube-lightbox video_id="[[ heroHeaderData.cta_video_id ]]" gtm-action="[[ gtmAction ]]" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-cta-index="0">
   </dorel-youtube-lightbox>
   </template>
@@ -178,6 +191,16 @@
           value: function() {
             return {};
           }
+        },
+
+        /**
+         * @attribute
+         * @name expanded
+         * @description show expandable content
+         */
+        expanded: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -189,6 +212,23 @@
        */
       _isVideoCTA: function(cta_type) {
         return (cta_type === 'video-cta');
+      },
+
+      /**
+       * @name _hasExpansion
+       * @description Test if an expand button has to be shown
+       */
+      _hasExpansion: function (label) {
+        return label && label.length;
+      },
+
+      /**
+       * @name toggleExpansion
+       * @description Show / hide expandable content
+       */
+      toggleExpansion: function () {
+        console.log('toggleExpansion')
+        this.expanded = !this.expanded;
       },
 
       /**
