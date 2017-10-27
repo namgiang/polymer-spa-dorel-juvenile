@@ -213,9 +213,6 @@
                 <div class="accessory-description">
                   <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
                 </div>
-              </template>
-
-              <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
                 <dorel-cta
                   type="link"
                   title="{{ localize('View_more_details') }}"
@@ -228,7 +225,10 @@
                   gtm-child="[[ gtmChild ]]"
                   gtm-child-index="[[ gtmChildIndex ]]"
                   gtm-cta-index="0">{{ localize('View_more_details') }}
-                </dorel-cta>
+                </dorel-cta>                
+              </template>
+
+              <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
                 <dorel-color-switcher
                   current-image="{{ currentAccessoryImage }}"
                   colors-data="[[ accessoryLightboxData.child_products ]]"
@@ -271,9 +271,6 @@
        */
       open: function (event) {
         this.$.lightbox.open();
-      },
-      accessoryLightboxDataShow: function(data) {
-        console.log('hh', data)
       }
     });
   </script>
