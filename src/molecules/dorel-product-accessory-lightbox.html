@@ -120,28 +120,36 @@
       /*
       * Responsive behaviour
       */
-      [desktop-small-up] paper-dialog {
+      [desktop-large] paper-dialog {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
         flex-basis: calc(var(--theme-column-width) * 5);
         width: calc(var(--theme-column-width) * 5);
         max-width: calc(var(--theme-column-width) * 5);
         top: 12.5%;
-        left: calc(3.5 * var(--theme-column-width));
-
-        /* (100 - var(--theme-column-width) * 5) / 2 */
+        left: calc( calc( var(--theme-column-width) * 7 ) / 2 );
         height: 50vh;
-        max-height: 200px;
         border-radius: var(--theme-border-radius-2);
       }
 
-      [desktop-small-up] .lightbox-image {
+      [desktop-small] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        width: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
+        top: 12.5%;
+        left: calc( calc( var(--theme-column-width) * 7 ) / 2 );
+        height: 75vh;
+        border-radius: var(--theme-border-radius-2);
+      }
+
+      [desktop-large] .lightbox-image, [desktop-small] .lightbox-image {
         width: 16.5em;
         padding-right: 1.5em;
         margin-top: 0;
         float: left;
       }
 
-      [desktop-small-up] .lightbox-description {
+      [desktop-large] .lightbox-description, [desktop-small] .lightbox-description {
         width: calc(100% - 16.5em);
       }
 
@@ -158,8 +166,9 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="section-product-accessory-lightbox"
-             desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+             desktop-small$="{{ breakpoints.desktopSmall }}"
+             desktop-large$="{{ breakpoints.desktopLarge }}"
+             >
       <paper-dialog id="lightbox"
                     with-backdrop="true"
                     exit-animation="fade-out-animation"
@@ -214,6 +223,8 @@
                   <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
                 </div>
                 <dorel-cta
+                  dialog-confirm
+                  autofocus
                   type="link"
                   title="{{ localize('View_more_details') }}"
                   link="{{accessoryLightboxData.url}}"
