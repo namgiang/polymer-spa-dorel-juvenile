@@ -25,6 +25,10 @@
         z-index: 10000 !important;
         position: fixed;
         font-size: var(--theme-base-font-size);
+        padding: 3em 1.5em 1.5em 1.5em;
+        font-size: 1rem;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
       }
 
       paper-dialog-scrollable {
@@ -48,16 +52,6 @@
 
       .accessory-excerpt {
         margin-top: 0;
-      }
-
-      paper-dialog {
-        margin: 0;
-        padding: 3em 1.5em 1.5em 1.5em;
-        font-size: 1rem;
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        width: 100%;
-        max-width: 100%;
       }
 
       .lightbox-wrapper {
@@ -127,15 +121,17 @@
       * Responsive behaviour
       */
       [desktop-small-up] paper-dialog {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
-        flex-basis: calc(var(--theme-column-width) * 9);
-        width: calc(var(--theme-column-width) * 9);
-        max-width: calc(var(--theme-column-width) * 9);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        width: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
         top: 12.5%;
-        left: 12.5%;
-        height: 75vh;
-        border-radius: var(--theme-border-radius-2);
+        left: calc(3.5 * var(--theme-column-width));
 
+        /* (100 - var(--theme-column-width) * 5) / 2 */
+        height: 50vh;
+        max-height: 200px;
+        border-radius: var(--theme-border-radius-2);
       }
 
       [desktop-small-up] .lightbox-image {
@@ -149,6 +145,13 @@
         width: calc(100% - 16.5em);
       }
 
+      dorel-cta {
+        float: left;
+      }
+
+      dorel-color-switcher {
+        clear: left;
+      }
 
     </style>
 
@@ -213,6 +216,19 @@
               </template>
 
               <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
+                <dorel-cta
+                  type="link"
+                  title="{{ localize('View_more_details') }}"
+                  link="{{accessoryLightboxData.url}}"
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="[[ gtmAction ]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="[[ gtmChild ]]"
+                  gtm-child-index="[[ gtmChildIndex ]]"
+                  gtm-cta-index="0">{{ localize('View_more_details') }}
+                </dorel-cta>
                 <dorel-color-switcher
                   current-image="{{ currentAccessoryImage }}"
                   colors-data="[[ accessoryLightboxData.child_products ]]"
@@ -255,6 +271,9 @@
        */
       open: function (event) {
         this.$.lightbox.open();
+      },
+      accessoryLightboxDataShow: function(data) {
+        console.log('hh', data)
       }
     });
   </script>
