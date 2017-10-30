@@ -7,7 +7,10 @@
     <style>
       :host {
         @apply(--layout-horizontal);
-        --button-margin-spacing: -1.5em;
+      }
+
+      .card {
+        background-color: var(--theme-color-monochrome-2);
         border-radius: var(--theme-border-radius-1);
         overflow: hidden;
         /* NOTE: This forces GPU rendering, hack for delayed rounded corners rendering*/
@@ -15,13 +18,14 @@
         -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        flex: 1;
       }
 
-      .card {
+      /*.card {
         background-color: var(--theme-color-monochrome-2);
         float: left;
         flex: 1;
-      }
+      }*/
 
       .card[light-background] {
         background-color: var(--theme-color-white);
@@ -46,14 +50,10 @@
         margin-top: 1.5em;
       }
 
-      dorel-cta.link-list-cta {
-        margin-top: 0;
-      }
-
       .link-container {
-        margin-top: 1.5em;
         float: left;
         width: 100%;
+        margin-top: 1.5em;
       }
 
       .title {
@@ -61,6 +61,14 @@
         color: var(--theme-brand-color-1);
         float: left;
         width: 100%;
+      }
+
+      .card-image {
+        max-width: 100%;
+      }
+
+      .link-list-cta  {
+        margin-top: 0;
       }
 
       [tablet-medium-up] .title {
@@ -85,27 +93,32 @@
                             mobile-width="100%"
                             mobile-height="12em"></dorel-bynder-image>
       </template>
+
       <!--// cardImage -->
 
       <div class="card-content">
         <!-- cardTitle -->
         <template
-          is="dom-if"
-          if="[[ cardData.card_title ]]">
-          <h3 class="title">[[ cardData.card_title ]]</h3>
-        </template>
-        <!--// cardTitle -->
+        is="dom-if"
+        if="[[ cardData.card_title ]]">
+        <h3 class="title">[[ cardData.card_title ]]</h3>
+      </template>
+      <!--// cardTitle -->
+
+      <!-- cardImage in content -->
+      <template
+        is="dom-if"
+        if="[[ cardData.card_image ]]">
+        <img src="[[ cardData.card_image ]]" class="card-image">
+      </template>
+      <!--// cardImage in content -->
 
         <!-- topicBlocks -->
         <template
           is="dom-repeat"
-          items="[[ cardData.topic_blocks ]]">
-          <dorel-image-list-item
-            bynder-image="[[ item.topic_bynder_image ]]"
-            image-url="[[ item.topic_image ]]"
-            title="[[ item.topic_title ]]"
-            text="[[ item.topic_text ]]"
-          ></dorel-image-listitem>
+          items="[[ cardData.topic_blocks ]]" as="topic">
+          <dorel-image-list-item image-url="[[ topic.image ]]" title="[[ topic.title ]]" text="[[ topic.description ]]">
+          </dorel-image-list-item>
         </template>
         <!-- //topicBlocks -->
 
@@ -120,26 +133,26 @@
         <!--// cardContent -->
 
         <!-- Link list -->
-        <template
-          is="dom-if"
-          if="[[ cardData.child_ctas ]]">
+        <template is="dom-if" if="[[ cardData.child_ctas ]]">
           <div class="link-container">
             <template is="dom-repeat" items="[[ cardData.child_ctas ]]" as="link">
-              <dorel-cta
-                class="link-list-cta"
-                type="link"
-                title="[[ link.title ]]"
-                link="[[ link.link ]]"
-                link-target="[[ link.target ]]"
-                size="medium"
-                icon="dorel-icons:chevron-right"
-                gtm-parent="[[ gtmParent ]]"
-                gtm-parent-index="[[ gtmParentIndex ]]"
-                gtm-child="[[ gtmChild ]]"
-                gtm-child-index="[[ gtmChildIndex ]]"
-                gtm-cta-index="[[ index ]]">
-                [[ link.title ]]
-              </dorel-cta>
+              <template is="dom-if" if="[[ link.title.length ]]">
+                <dorel-cta
+                  class="link-list-cta"
+                  type="link"
+                  title="[[ link.title ]]"
+                  link="[[ link.link ]]"
+                  link-target="[[ link.target ]]"
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="[[ gtmChild ]]"
+                  gtm-child-index="[[ gtmChildIndex ]]"
+                  gtm-cta-index="[[ index ]]">
+                    [[ link.title ]]
+                </dorel-cta>
+              </template>
             </template>
           </div>
         </template>

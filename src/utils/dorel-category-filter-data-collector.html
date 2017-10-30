@@ -75,6 +75,14 @@
               if(productFilterGroup.name === group.name) {
                 productFilterGroup.values.map(function(item) {
                   item.label = item.value;
+                  //TODO should be refactured in end-point (back-end)
+                  // if item.color is not a hexcode it is a image
+                  if(item && item.color && item.color[0] !== '#') {
+                    // set image
+                    item.image = item.color;
+                    // remove color
+                    delete item.color;
+                  }
                   if(typeof item.value === 'string') {
                     item.value = item.value.replace(/\s/g, '-');
                   }
