@@ -321,6 +321,10 @@
         'colorUpdated': '_changeSlider'
       },
 
+      observers: [
+        '_showcaseDataChanged(showcaseData)'
+      ],
+
       ready: function () {
         //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
         var pages = this.get('appCache.collect.pages');
@@ -336,6 +340,16 @@
         if(parentProduct && parentProduct.child_products && parentProduct.child_products.length) {
             this._setSlider(parentProduct.child_products[0]);
         }
+      },
+
+      /**
+       * observer
+       * @name _showcaseDataChanged
+       * @description everytime the product/showcaseData changes call setSlider to update the slider
+       * @param showcaseData - Object
+       */
+      _showcaseDataChanged: function(showcaseData) {
+         this._setSlider(showcaseData.child_products[0]);
       },
 
       /**
