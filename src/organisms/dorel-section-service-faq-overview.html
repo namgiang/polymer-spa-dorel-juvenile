@@ -1,4 +1,6 @@
 <link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../../node_modules/iron-selector/iron-selector.html">
+
 <dom-module id="dorel-section-service-faq-overview">
   <template>
     <style>
@@ -32,14 +34,6 @@
         width: 100%;
       }
 
-      paper-item {
-        height: 3em;
-      }
-
-      paper-menu {
-        padding: 0;
-      }
-
       .topic.iron-selected {
         background-color: var(--theme-color-monochrome-2);
         color: var(--theme-brand-color-2) !important;
@@ -66,6 +60,7 @@
 
       .topic:hover {
         color: var(--theme-brand-color-1);
+        cursor: pointer;
       }
 
       .topic-description {
@@ -163,11 +158,8 @@
 
           <!-- Desktop Service Topic Listing -->
           <template is="dom-if" if="[[ breakpoints.desktopSmallUp ]]">
-
             <div class="topic-select">
-              <paper-menu attr-for-selected="name"
-                          selected="{{ selectedTopic }}">
-
+              <iron-selector attr-for-selected="name" selected="{{ selectedTopic }}">
                 <template
                   is="dom-repeat"
                   items="[[ faqCategories ]]"
@@ -183,8 +175,7 @@
                     <iron-icon class="icon-right" icon="dorel-icons:chevron-right"></iron-icon>
                   </div>
                 </template>
-
-              </paper-menu>
+              </iron-selector>
             </div>
 
             <div class="topic-display">

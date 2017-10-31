@@ -71,3 +71,20 @@ of the application.  Each new demand-loaded fragment should be added to the
 list of `fragments` in the included `polymer.json` file.  This will ensure
 those components and their dependencies are added to the list of pre-cached
 components (and will have bundles created in the fallback `bundled` build).
+
+
+
+
+### Front-end Development ###
+
+git clone git@github.com:dorel/polymer-spa-dorel-juvenile.git dorel-spa
+cd ./dorel-spa
+sudo docker build -t dorel-spa:latest .
+sudo docker run --name dorel-spa -p 80:80 -v /home/vince/dorel-spa:/code dorel-spa:latest
+sudo docker exec -it dorel-spa /bin/bash
+
+curl -sL https://deb.nodesource.com/setup_8.x | bash -
+apt-get install -y nodejs
+
+sudo docker exec dorel-spa "yarn install"
+sudo docker exec dorel-spa "yarn build"
