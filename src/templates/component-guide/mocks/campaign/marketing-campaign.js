@@ -38,11 +38,10 @@ var marketingCampaignMock = {
     "meta_description": "",
     "hero_header": [
       {
-        "bynder_background_image": "14BB9491-A186-40D8-B965680777095B8E",
+        "bynder_background_image": "7F84BD5F-551A-4DA5-8532AB44763439AA",
         "title": "Meet Maxi Cosi strollers",
         "sub_title" : "We carry the future",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        "video-id": "0zUUVyWAyRs"
+        "video_id": "0zUUVyWAyRs"
       }
     ],
     "marketing_header": {
@@ -58,13 +57,13 @@ var marketingCampaignMock = {
 
     "marketing_builder": [
       {
-        "acf_fc_layout": "content_blcok",
+        "acf_fc_layout": "content_block",
         "title": "Lorem ipsum",
         "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
         "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
       },
       {
-        "acf_fc_layout": "content_blcok",
+        "acf_fc_layout": "content_block",
         "title": "Lorem ipsum",
         "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
         "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"

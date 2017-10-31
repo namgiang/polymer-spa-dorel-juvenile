@@ -7,7 +7,7 @@
 
 
     TODO align items left, make cta-toggle and video optional
-    <dorel-section-hero-header hero-header-data="[[ heroHeaderData ]]"></dorel-section-hero-header>
+    <dorel-section-hero-header align="left" hero-header-data="[[ heroHeaderData ]]"></dorel-section-hero-header>
 
     <dorel-section-text-image-block block-data="[[ myBlockData ]]"></dorel-section-text-area-block>
 
@@ -46,11 +46,12 @@
           templateData.acf.hero_header[0] :
           {} ;
 
-          headerData.cta_toggle = true;//!!(headerData.cta_toggle);
-          headerData.looping_video_id = headerData.looping_video_id || '';
-          headerData.cta_toggle = true;//!!(headerData.cta_toggle);
-          headerData.cta_type = "video-cta";
-          headerData.looping_video_toggle = !!(headerData.looping_video_id);
+          // the video in a marketing campaign header is a cta_video
+          headerData.cta_video_id = headerData.video_id;
+          // if video_id is present we want a cta button
+          headerData.cta_toggle = !!headerData.video_id;
+          // cta_type can only be cta-video here, and button will not show when no id is provided
+          headerData.cta_type = 'cta-video';
 
           return headerData;
       }
