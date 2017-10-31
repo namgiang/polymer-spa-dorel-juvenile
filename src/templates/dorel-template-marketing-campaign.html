@@ -5,11 +5,15 @@
 <dom-module id="dorel-template-marketing-campaign">
   <template>
 
-
-    TODO align items left, make cta-toggle and video optional
     <dorel-section-hero-header align="left" hero-header-data="[[ heroHeaderData ]]"></dorel-section-hero-header>
 
-    <dorel-section-text-image-block block-data="[[ myBlockData ]]"></dorel-section-text-area-block>
+    <template is="dom-repeat" items="[[ marketingSections ]]" as="section">
+
+      <template is="dom-if" if="[[ section.isContentBlock ]]">
+        <dorel-section-text-image-block block-data="[[ section ]]"></dorel-section-text-area-block>
+      </template>
+
+    </template>
 
   </template>
 
@@ -32,13 +36,42 @@
           },
         },
 
+
         heroHeaderData: {
           type: Object,
           computed: 'getHeaderData(templateData)'
+        },
+
+        marketingSections: {
+          type: Array,
+          computed: 'getMarketingSections(templateData)'
         }
 
-
       },
+
+      getMarketingSections: function(templateData) {
+        var sections =  templateData.acf.marketing_builder || [];
+        var l = sections.length;
+
+        for (var i = 0; i < l; i++) {
+          var elem = sections[i];
+          switch (elem.acf_fc_layout) {
+            case 'content_block':
+              elem.isContentBlock = true;
+              // content block get a counter
+              // so we can switch between image-left and image-right layout if block succeed each other
+              elem.contentBlockCounter = (i > 0 && sections[i - 1].isContentBlock) ? sections[i - 1].contentBlockCounter + 1 : 0;
+              break;
+            case 'marketing_hero':
+              elem.isMarketingHero = true;
+            default:
+              console.warn('unknown layout', elem.acf_fc_layout);
+          }
+
+        }
+        return sections;
+      },
+
 
       getHeaderData: function(templateData) {
 
@@ -55,6 +88,10 @@
 
           return headerData;
       }
+
+
+
+
     });
   </script>
 </dom-module>

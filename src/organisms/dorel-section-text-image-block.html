@@ -1,5 +1,5 @@
-<link rel="import" href="../atoms/dorel-bynder-image.html">
 <link rel="import" href="../atoms/dorel-cta.html">
+<link rel="import" href="../atoms/dorel-safe-html.html">
 
 <dom-module id="dorel-section-text-image-block">
   <template>
@@ -13,11 +13,16 @@
 
       .image-container {
         height: 12rem;
+        text-align: center;
       }
 
       .image-container[desktop] {
         height: 100%;
         min-height: 20rem;
+      }
+      img {
+        max-width: 100%;
+        max-height: 100%;
       }
 
       .text-container {
@@ -29,10 +34,6 @@
 
       h2 {
         @apply(--theme-typography-6);
-      }
-
-      p {
-        margin-top: 0;
       }
 
       dorel-cta {
@@ -48,19 +49,17 @@
     <!-- NOTE: all Polymer defined attributes are written on a new line with a tab indent! -->
     <section class="dorel-section-text-image-block">
       <dorel-layout-container>
-        <dorel-layout-row reverse$="[[ breakpoints.tabletMediumUp ]]">
+        <dorel-layout-row reverse$="[[ _reverse(breakpoints.tabletMediumUp, imageLeftOnDesktop) ]]">
           <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
             <div class="image-container" desktop$="[[ breakpoints.tabletMediumUp ]]">
-              <dorel-bynder-image height="100%" width="100%" tablet-width="100%" tablet-height="100%" mobile-width="100%" mobile-height="100%"
-                sizing="contain" media-id="[[ blockData.bynderImage ]]">
-              </dorel-bynder-image>
+              <img src="[[ blockData.image ]]">
             </div>
           </dorel-layout-column>
           <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
             <div class="text-container">
               <div>
                 <h2 class="title">[[ blockData.title ]]</h2>
-                <p class="text">[[ blockData.text ]]</p>
+                <dorel-safe-html html="[[ blockData.description ]]"></dorel-safe-html>
                 <template is="dom-repeat" items="[[ blockData.ctas ]]" as="cta">
                   <dorel-cta type="link" size="medium" link="[[ cta.link ]]">[[ cta.text]]</dorel-cta>
                 </template>
@@ -86,9 +85,38 @@
         blockData: {
           type: Object,
           value: {}
+        },
+
+        /**
+        * @name imageLeftOnDesktop
+        * @description on desktop layout show image on the left
+        */
+        imageLeftOnDesktop: {
+          type: Boolean,
+          computed: '_showImageLeft(blockData)'
         }
 
       },
+
+      behaviors: [
+        {
+          // behavior defined here because it is only used here
+        _reverse: function (deskTop, imageLeftOnDesktop) {
+          return !!(!imageLeftOnDesktop && deskTop);
+        }
+      }],
+
+      /**
+       * @name _showImageLeft
+       * @description if textblocks succeed each other the image is placed left / right alternatively
+       *              to achieve this a counter is placed an the blocks,
+       *              if the counter is odd the image is placed on the left.
+       */
+      _showImageLeft(data) {
+        return !!(data.contentBlockCounter && data.contentBlockCounter % 2 !== 0);
+      }
+
+
     });
 
   </script>
