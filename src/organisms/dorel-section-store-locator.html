@@ -70,7 +70,7 @@
       }
 
       /* Responsive Behaviour */
-      [tablet-medium-up] .store-overlay{
+      [tablet-medium-up] .store-overlay {
         background-color: var(--theme-color-white);
         box-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.125);
         position: absolute;
@@ -540,8 +540,7 @@
         bounds.extend(userLatLng);
 
         // Next, extend the bounds with the results
-        for(var i = 0; i < this.storesResponse.results.length; i++)
-        {
+        for (var i = 0; i < this.storesResponse.results.length; i++) {
           var result = this.storesResponse.results[i];
           var resultLatLng = new google.maps.LatLng(result.lat, result.lng);
           bounds.extend(resultLatLng);
@@ -558,8 +557,11 @@
        * @param e - EventObject - contains the click event
        */
       _submitLocator: function (event) {
+
         //Prevents the enter key from submitting the form, which triggers a page navigation
-        event.detail.keyboardEvent.preventDefault();
+        if (typeof event.detail.keyboardEvent !== 'undefined') {
+          event.detail.keyboardEvent.preventDefault();
+        }
 
         if (typeof this.addressInput === 'undefined' || this.address === this.addressInput) return;
 
