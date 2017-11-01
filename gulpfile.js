@@ -24,7 +24,6 @@ const cleanCSS = require('gulp-clean-css');
 const swPrecacheConfig = require('./sw-precache-config.js');
 const polymerJson = require('./polymer.json');
 const polymerProject = new polymerBuild.PolymerProject(polymerJson);
-const buildDirectory = 'build/es5';
 
 /**
  * Waits for the given ReadableStream
@@ -36,8 +35,10 @@ function waitFor(stream) {
   });
 }
 
-function build() {
+gulp.task('build:es5', function () {
   return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
+
+    const buildDirectory = 'build/es5';
 
     // Lets create some inline code splitters in case you need them later in your build.
     let sourcesStreamSplitter = new polymerBuild.HtmlSplitter();
@@ -137,6 +138,11 @@ function build() {
         resolve();
       });
   });
-}
+});
 
-gulp.task('build', build);
+gulp.task('build:es6', function(done) {
+    gulp.src('./**/*')
+    .pipe(gulp.dest('build/es6'))
+    .on('end', () => console.log('Copied files to build/es6'));
+    done();
+});
