@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
 
 <dom-module id="dorel-accordion-item">
   <template>
@@ -6,7 +6,6 @@
       :host {
         width: 100%;
         float: left;
-        margin-bottom: 1.5em;
       }
 
       .accordion-heading {
@@ -42,6 +41,7 @@
         float: left;
         width: 100%;
         transition: background-color .3s ease;
+        margin-bottom: 1.5em;
       }
 
       .accordion-content {
@@ -71,7 +71,7 @@
         color: var(--theme-color-text-link-active);
       }
 
-      .accordion-container[opened] .accordion-heading + .accordion-icon {
+      .accordion-icon[opened] {
         transform: rotate(180deg);
       }
 
@@ -83,28 +83,32 @@
         padding: 1.5em;
       }
 
-      :host-context([small]) .accordion-heading {
+      [small] .accordion-heading {
         padding: 0.75rem;
       }
 
-      :host-context([small]) .accordion-content {
+      [small] .accordion-content {
         padding: 0 .75rem .75rem .75rem;
       }
 
-      :host-context([small]) .accordion-container[opened] .accordion-heading {
+       .accordion-container[small] {
+         margin-bottom: .75em;
+       }
+
+      .accordion-container[opened][small] .accordion-heading {
         font-weight: var(--theme-font-weight);
       }
 
-      :host-context([small]) .accordion-icon {
+      [small] .accordion-icon {
         top: .75rem;
         right: 0.5rem;
       }
 
-      :host-context([light]) .accordion-container {
+      [light] {
         background-color: var(--theme-color-white);
       }
 
-      :host-context([small]) {
+      [small] {
         margin-bottom: .75em;
       }
 
@@ -112,6 +116,8 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <div class="accordion-container"
+         light$="[[ light ]]"
+         small$="[[ small ]]"
          opened$="[[ opened ]]"
          icon$="[[ icon.length ]]"
          tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
@@ -119,11 +125,12 @@
         is="dom-if"
         if="[[ heading.length ]]">
         <h2 class="accordion-heading"
+            id="accordion"
             aria-expanded="false"
             tabindex="0"
             role="button"
-            aria-controls$="#collapse[[ index ]]"
-            data-selector$="#collapse[[ index ]]"
+            aria-controls$="#collapse"
+            data-selector$="#collapse"
             on-click="_toggleCollapse"
             gtm-parent="[[ gtmParent ]]"
             gtm-parent-index="[[ gtmParentIndex ]]"
@@ -134,11 +141,12 @@
           [[ heading ]]
         </h2>
         <iron-icon class="accordion-icon"
+                   opened$="[[ opened ]]"
                    icon="dorel-icons:expand-more"></iron-icon>
       </template>
-      <iron-collapse id$="collapse[[ index ]]" opened="{{ opened }}">
-        <div class="accordion-content" id="accordion">
-          <content></content>
+      <iron-collapse id="collapse" opened="{{ opened }}">
+        <div class="accordion-content">
+          <slot></slot>
         </div>
       </iron-collapse>
     </div>
@@ -169,8 +177,7 @@
          * @description Small variation of the accordion
          */
         small: {
-          type: Boolean,
-          reflectToAttribute: true
+          type: Boolean
         },
 
         /**
@@ -178,8 +185,7 @@
          * @description Small variation of the accordion
          */
         light: {
-          type: Boolean,
-          reflectToAttribute: true
+          type: Boolean
         },
 
         /**
@@ -232,9 +238,8 @@
       _openedStateChanged: function () {
         var self = this;
         setTimeout(function () {
-          var accordionDomElement = self.$.accordion;
-          //this._scrollToItem(accordionDomElement);
-
+          //Accessing the accordion here through shadowroot queryselect because it's dynamically created
+          var accordionDomElement = self.shadowRoot.querySelector('#accordion');
           var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordionDomElement);
 
 
@@ -278,13 +283,12 @@
         // Toggle the aria expanded boolean
         e.target.setAttribute('aria-expanded', !ariaExpanded);
 
-        var selector = e.target.dataset.selector;
-
+        var accordion = this.$.collapse;
         // check state
-        var state = (this.$$(selector).classList.contains('iron-collapse-opened'));
+        var state = accordion.classList.contains('iron-collapse-opened');
 
         // toggle collapse
-        this.$$(selector).toggle();
+        accordion.toggle();
 
         // event tracking
         this._eventTracking(e, e.target, state);

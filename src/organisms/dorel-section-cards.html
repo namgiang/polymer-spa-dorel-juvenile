@@ -1,18 +1,17 @@
 <link rel="import" href="../molecules/dorel-card.html">
 <link rel="import" href="../molecules/dorel-titling.html">
 
-<dom-module id="dorel-section-cards" light-background$="[[ lightBackground ]]">
+<dom-module id="dorel-section-cards">
   <template>
     <style>
-      :host {
+      dorel-layout-container {
         background-color: var(--theme-color-monochrome-2);
-        margin: 1.5em 0 0 0;
-        padding: 1.5em 0 3em 0;
+        padding: 1.5em 0 4.5em 0;
         float: left;
         width: 100%;
       }
 
-      :host-context([light-background]) {
+      dorel-layout-container[light-background]  {
         background-color: var(--theme-color-monochrome-1);
       }
 
@@ -20,9 +19,14 @@
         height: 100%;
       }
 
+      dorel-titling {
+        margin: .75em 0;
+        float: left;
+        width: 100%;
+      }
     </style>
 
-    <dorel-layout-container>
+    <dorel-layout-container light-background$="[[ lightBackground ]]">
       <dorel-titling title="[[ cardsData.title ]]" description="[[ cardsData.description ]]"></dorel-titling>
       <template
         is="dom-if"
@@ -31,19 +35,21 @@
 
         <dorel-layout-row>
           <!-- cards section -->
-            <template is="dom-repeat" items="[[ cardsData.cards ]]" as="card">
-              <dorel-layout-column desktop-column-span="[[ desktopColSpan ]]" tablet-column-span="6" mobile-column-span="12">
-                <dorel-card
-                  light-background="[[ !lightBackground ]]"
-                  card-data="[[ card ]]"
-                  cta-type="[[ ctaType ]]"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-child="dorel-card"
-                  gtm-child-index="[[ index ]]">
-                </dorel-card>
-              </dorel-layout-column>
-            </template>
+          <template is="dom-repeat" items="[[ cardsData.cards ]]" as="card">
+            <dorel-layout-column desktop-column-span$="[[ desktopColSpan ]]"
+                                 tablet-column-span="6"
+                                 mobile-column-span="12">
+              <dorel-card
+                light-background$="[[ !lightBackground ]]"
+                card-data="[[ card ]]"
+                cta-type="[[ ctaType ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="dorel-card"
+                gtm-child-index="[[ index ]]">
+              </dorel-card>
+            </dorel-layout-column>
+          </template>
         </dorel-layout-row>
       </template>
     </dorel-layout-container>
@@ -99,12 +105,16 @@
          */
         desktopColSpan: {
           type: Number,
-          computed: 'computeColspan(compact)'
-        }
+          computed: '_computeColSpan(compact)'
+        },
       },
 
-      computeColspan: function(compact) {
-        return compact ? 4 :6 ;
+      /**
+       * @name computeColSpan
+       * @description Returns a column span depending on the compactness of the section
+       */
+      _computeColSpan: function (compact) {
+        return compact ? 4 : 6;
       }
     });
 
