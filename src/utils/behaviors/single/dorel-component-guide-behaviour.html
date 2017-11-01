@@ -8,6 +8,14 @@
      * @description Called when the nav selection changes
      */
     _navSelectChanged: function (tabIndex) {
+
+      // TODO, this function is triggered twice, for complex and basic,
+      // no matter which page you're on
+      // prevent error (nasty quick fix)
+      if((this.components.length-1) < tabIndex) {
+        return
+      }
+
       if (typeof tabIndex !== 'undefined') {
         var selectedPagePath = this.components[tabIndex].filePath;
         this._pageSelected(selectedPagePath);
@@ -18,6 +26,9 @@
      * @description Imports the correct component guide template when it is shown
      */
     _pageSelected: function (selectedPagePath) {
+
+      console.log('_pageSelected', selectedPagePath);
+
       if (typeof selectedPagePath !== 'undefined' || selectedPagePath.length > 0) {
         var selectedPageTemplate = '../../component-guide/' + selectedPagePath;
         this.importHref(this.resolveUrl(selectedPageTemplate), function () {
