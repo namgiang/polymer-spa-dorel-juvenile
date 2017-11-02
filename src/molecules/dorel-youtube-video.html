@@ -4,6 +4,7 @@
   <template>
     <style is="custom-style">
       :host {
+
         position: relative;
         overflow: hidden;
 
@@ -15,7 +16,7 @@
           height: 0 !important;
           max-height: 0 !important;
           overflow: hidden;
-          border-radius: var(--video-border-radius)
+          border-radius: var(--video-border-radius);
         };
 
         --google-youtube-iframe: {
@@ -29,6 +30,12 @@
 
       google-youtube {
         overflow: hidden;
+        opacity: 0;
+        transition: opacity .3s ease;
+      }
+
+      [playing] google-youtube {
+        opacity: 1;
       }
 
       dorel-bynder-responsive-image {
@@ -44,12 +51,13 @@
         transition: opacity .3s ease;
       }
 
-      dorel-bynder-responsive-image[playing] {
+      [playing] dorel-bynder-responsive-image {
         opacity: 0;
       }
     </style>
     <section>
       <slot id="content"></slot>
+      <div playing$="[[ playing ]]">
       <google-youtube id="googleYouTube"
                       playsupported="{{ playSupported }}"
                       video-id="[[ videoId ]]"
@@ -72,9 +80,8 @@
       </google-youtube>
 
       <dorel-bynder-responsive-image
-        playing$="[[ playbackstarted ]]"
-        media-id="[[ thumbnail ]]" image-type="full-screen"></dorel-bynder-responsive-image>
-    </section>
+        media-id="[[ thumbnail ]]" image-type="[[ imageType ]]"></dorel-bynder-responsive-image>
+    </div>
   </template>
 </dom-module>
 <script>
@@ -121,10 +128,16 @@
         type: Boolean
       },
       isHero: {
-        type: Boolean
+        type: Boolean,
+        value: false
       },
-      autoplay: {
-        type: Number
+      playing: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
+      imageType: {
+        type: String,
+        value: 'full-screen'
       }
     },
 
@@ -139,6 +152,7 @@
     handleStateChange: function (ev) {
       //Restart the video when it's ended
       if (this.state === 0) {
+        this.playing = true;
         this.$.googleYouTube.play();
       }
     },
@@ -154,8 +168,9 @@
     /**
      * @name play
      * @description public function to play video
-     */
-    play: function () {
+    */
+    play: function() {
+      this.playing = true;
       this.$.googleYouTube.seekTo(0);
       this.$.googleYouTube.play();
     },
@@ -163,10 +178,19 @@
     /**
      * @name stop
      * @description public function to stop video
-     */
-    stop: function () {
+    */
+    stop: function() {
+      this.playing = false;
       this.$.googleYouTube.pause();
       this.$.googleYouTube.seekTo(0);
+    },
+
+    /**
+     * @name pause
+     * @description public function to pause video
+    */
+    pause: function() {
+      this.$.googleYouTube.pause();
     },
 
     /**
@@ -183,10 +207,10 @@
       }
     },
 
-    /**
-     * @name on ready
-     * @description add event listener for muting video when hero
-     */
+  /**
+   * @name on ready
+   * @description add event listener for muting video when hero
+   */
     ready: function (ev) {
       if (this.isHero) {
         this.updateStyles({
