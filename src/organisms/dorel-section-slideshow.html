@@ -1,72 +1,102 @@
-<link rel="import" href="../../bower_components/l2t-paper-slider/l2t-paper-slider.html">
+<link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
 
 
 <dom-module id="dorel-section-slideshow">
   <template>
     <style is="custom-style">
-
-      .section-slideshow {
+      .slideshow {
         position: relative;
-        float: left;
         width: 100%;
-        margin-top: 1.5em;
+      }
+      .control-item {
+        position: absolute;
+        transform: translate(0, -50%) scale(0);
+        transform-origin: right;
+        top: 50%;
+        right: 0;
+        background-color: var(--theme-color-monochrome-4);
+        height: 4rem;
+        width: 2rem;
+        z-index: 10;
+        border-top-left-radius: var(--theme-button-border-radius);
+        border-bottom-left-radius: var(--theme-button-border-radius);
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        cursor: pointer;
+        -webkit-box-shadow: 0px 1px 10px 2px rgba(0,0,0,0.15);
+        -moz-box-shadow: 0px 1px 10px 2px rgba(0,0,0,0.15);
+        box-shadow: 0px 1px 10px 2px rgba(0,0,0,0.15);
+        pointer-events: none;
+        opacity: 0.6;
+        transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+      }
+      .control-item[enabled] {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translate(0, -50%) scale(1);
+        opacity: 0.8;
+      }
+      .control-item--previous {
+        right: auto;
+        left: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: var(--theme-button-border-radius);
+        border-bottom-right-radius: var(--theme-button-border-radius);
+        transform-origin: left;
+      }
+      [tablet-medium-up] .control-item {
+        height: 6rem;
+        width: 3rem;
+      }
+      [desktop-small-up] .control-item {
+        height: 9rem;
+        width: 4.5rem;
+      }
+      .control-item:hover {
         background-color: var(--theme-color-monochrome-2);
+        -webkit-box-shadow: 0px 1px 10px 2px rgba(0,0,0,0.25);
+        -moz-box-shadow: 0px 1px 10px 2px rgba(0,0,0,0.25);
+        box-shadow: 0px 1px 10px 2px rgba(0,0,0,0.25);
+        opacity: 1;
       }
-
-      .section-slideshow .simple-slider {
-        width: 100%;
+      .control-item__icon {
+        width: 3rem;
+        height: 3rem;
+        transition: color 0.2s;
+        color: var(--theme-color-monochrome-1);
       }
-
-      .section-slideshow .simple-slider-slide {
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        width: 100%;
+      .control-item:hover .control-item__icon {
+        color: var(--theme-color-monochrome-5);
       }
-
-      l2t-paper-slider {
-        --paper-slider-dot-container-styles: {
-          background-color: rgba(154, 154, 154, .5);
-          border-radius: 1em;
-          bottom: 1.375em;
-        };
-
-        --paper-slide-dot-styles: {
-          background-color: var(--theme-color-white);
-          width: .75em;
-          height: .75em;
-          margin: .5em;
-          border-style: none;
-          border: 1px solid var(--theme-color-white);
-        };
-
-        --paper-slide-dot-selected: var(--theme-brand-color-1);
-
-        --paper-slide-height: 33em;
-      }
-
     </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <template
       is="dom-if"
       if="[[ slideshowData.slides.length ]]">
-      <section class$="section-slideshow {{ isFullWidth(slideshowData.width) }}">
-        <!-- simple-slider -->
-        <l2t-paper-slider class="simple-slider"
-                          auto-progress
-                          slide-duration="4"
-                          total-slides="[[ slideshowData.slides.length ]]">
-          <template
-            is="dom-repeat"
-            items="[[ slideshowData.slides ]]"
-            as="slide">
-            <paper-slide class="simple-slider-slide"
-                         style$="background-image: url([[ hasBackgroundImage(slide.image) ]]);"></paper-slide>
-
-          </template>
-        </l2t-paper-slider>
-      </section>
-
+      <div class="slideshow"
+        desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+        tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+        <div class="control-item control-item--next" on-click="moveNext" enabled$="{{ nextEnabled }}">
+          <iron-icon class="control-item__icon" icon="dorel-icons:chevron-right"></iron-icon>
+        </div>
+        <div class="control-item control-item--previous" on-click="movePrevious" enabled$="{{ previousEnabled }}">
+          <iron-icon class="control-item__icon" icon="dorel-icons:chevron-left"></iron-icon>
+        </div>
+        <dorel-content-carousel
+          id="slider"
+          slides="[[ slideshowData.slides ]]"
+          sizing="cover"
+          type="fullWidth"
+          hide-bullet-points="[[ hideBulletPoints ]]"
+          position="{{ position }}">
+        </dorel-content-carousel>
+      </div>
     </template>
   </template>
 
@@ -86,77 +116,81 @@
           value: function () {
             return {};
           }
-        }
-
-      },
-
-      /**
-       * @name isFullWidth
-       * @description defines if the container is full-width or fixed-width
-       *
-       * @returns String if it is full width 'container-fluid' will be returned
-       * otherwise it will be 'container'
-       */
-      isFullWidth: function (container) {
-        return (typeof container === '' || container === 'undefined' || container === 'full-width') ? 'container-fluid' : 'container';
-      },
-
-      /**
-       * @name hasBackgroundImage
-       * @description checks to see if an image is set for the slide
-       *
-       * @returns String if it a background image is defined otherwise it returns
-       * a placeholder url
-       */
-      hasBackgroundImage: function (bgImage) {
-        return (typeof bgImage === 'undefined' || bgImage === '' || !bgImage) ? '/assets/images/placeholders/slideshow/placeholder.jpg' : bgImage;
-      },
-
-      /**
-       * @name prevSlide
-       * @description handles what should happen when the previous button is clicked
-       */
-      prevSlide: function (event) {
-
-        // call the prev() function of simple-slider
-        this.$$('simple-slider').prev();
-
-        // track the event
-        this._eventTracking(event, 'previous');
-
-      },
-
-      /**
-       * @name nextSlide
-       * @description handles what should happen when the next button is clicked
-       */
-      nextSlide: function (event) {
-
-        // call the next() function of simple-slider
-        this.$$('simple-slider').next();
-
-        // track the event
-        this._eventTracking(event, 'next');
-      },
-
-      /**
-       * @name _eventTracking
-       * @description this is for cta tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking: function (event, type) {
+        },
 
         /**
-         * Tracking on click for cta
+         * @attribute
+         * @name hideBulletPoints
+         * @description boolean that will either show or hide bullet points of the l2t-paper-slider
          */
-        var event = {
-          action: type,
-          component: 'slideshow',
-          element: Polymer.dom(event).localTarget,
-          event: 'polymer_event'
-        };
+        hideBulletPoints: {
+          type: Boolean,
+          value: false
+        },
 
-        this.fire('setAppCache', {value: event, path: 'events'});
+        /**
+         * @attribute
+         * @name previousEnabled
+         * @description a boolean that indicates if the previous button is enabled
+         */
+        previousEnabled: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * @attribute
+         * @name nextEnabled
+         * @description a boolean that indicates if the next button is enabled
+         */
+        nextEnabled: {
+          type: Boolean,
+          value: true
+        },
+
+      },
+
+      listeners: {
+        'updatePosition' : 'checkIfShouldDisable'
+      },
+
+      /**
+       * @name moveNext
+       * @description will call the public method `moveNext` of the l2t-paper-slider
+       * this will set the slide of l2t-paper-slider to the next
+       */
+      moveNext: function() {
+        this.shadowRoot.querySelector('#slider').moveNext();
+      },
+
+      /**
+       * @name movePrevious
+       * @description will call the public method `movePrevious` of the l2t-paper-slider
+       * this will set the slide of l2t-paper-slider to the previous
+       */
+      movePrevious: function() {
+        this.shadowRoot.querySelector('#slider').movePrevious();
+      },
+
+      checkIfShouldDisable: function(event) {
+        var position = event.detail;
+        var slides = this.get('slideshowData.slides') || [];
+        if(typeof position === 'undefined') {
+          return;
+        }
+        var totalSlides = slides.length;
+        // last slide
+        if(totalSlides === position + 1) {
+          this.set('nextEnabled', false);
+        } else {
+          this.set('nextEnabled', true);
+        }
+        // first slide
+        if(position === 0) {
+          this.set('previousEnabled', false);
+        } else {
+          this.set('previousEnabled', true);
+        }
       }
     });
   </script>

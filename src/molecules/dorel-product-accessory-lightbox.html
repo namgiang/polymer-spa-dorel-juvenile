@@ -1,9 +1,9 @@
-<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../node_modules/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../node_modules/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../node_modules/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../node_modules/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../node_modules/iron-image/iron-image.html">
 
 <dom-module id="dorel-product-accessory-lightbox">
   <template>
@@ -25,6 +25,10 @@
         z-index: 10000 !important;
         position: fixed;
         font-size: var(--theme-base-font-size);
+        padding: 3em 1.5em 1.5em 1.5em;
+        font-size: 1rem;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
       }
 
       paper-dialog-scrollable {
@@ -48,16 +52,6 @@
 
       .accessory-excerpt {
         margin-top: 0;
-      }
-
-      paper-dialog {
-        margin: 0;
-        padding: 3em 1.5em 1.5em 1.5em;
-        font-size: 1rem;
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        width: 100%;
-        max-width: 100%;
       }
 
       .lightbox-wrapper {
@@ -126,37 +120,55 @@
       /*
       * Responsive behaviour
       */
-      [desktop-small-up] paper-dialog {
-        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
-        flex-basis: calc(var(--theme-column-width) * 9);
-        width: calc(var(--theme-column-width) * 9);
-        max-width: calc(var(--theme-column-width) * 9);
+      [desktop-large] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        width: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
         top: 12.5%;
-        left: 12.5%;
-        height: 75vh;
+        left: calc( calc( var(--theme-column-width) * 7 ) / 2 );
+        height: 50vh;
         border-radius: var(--theme-border-radius-2);
-
       }
 
-      [desktop-small-up] .lightbox-image {
+      [desktop-small] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        width: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
+        top: 12.5%;
+        left: calc( calc( var(--theme-column-width) * 7 ) / 2 );
+        height: 75vh;
+        border-radius: var(--theme-border-radius-2);
+      }
+
+      [desktop-large] .lightbox-image, [desktop-small] .lightbox-image {
         width: 16.5em;
         padding-right: 1.5em;
         margin-top: 0;
         float: left;
       }
 
-      [desktop-small-up] .lightbox-description {
+      [desktop-large] .lightbox-description, [desktop-small] .lightbox-description {
         width: calc(100% - 16.5em);
       }
 
+      dorel-cta {
+        float: left;
+      }
+
+      dorel-color-switcher {
+        clear: left;
+      }
 
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="section-product-accessory-lightbox"
-             desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+             desktop-small$="{{ breakpoints.desktopSmall }}"
+             desktop-large$="{{ breakpoints.desktopLarge }}"
+             >
       <paper-dialog id="lightbox"
                     with-backdrop="true"
                     exit-animation="fade-out-animation"
@@ -190,7 +202,6 @@
               <iron-image class="accessory-image"
                           sizing="contain"
                           fade="true"
-                          preload
                           src$="{{ currentAccessoryImage }}"></iron-image>
             </div>
             <div class="lightbox-description">
@@ -210,6 +221,21 @@
                 <div class="accessory-description">
                   <dorel-safe-html html="[[ accessoryLightboxData.description.value ]]"></dorel-safe-html>
                 </div>
+                <dorel-cta
+                  dialog-confirm
+                  autofocus
+                  type="link"
+                  title="{{ localize('View_more_details') }}"
+                  link="{{accessoryLightboxData.url}}"
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="[[ gtmAction ]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="[[ gtmChild ]]"
+                  gtm-child-index="[[ gtmChildIndex ]]"
+                  gtm-cta-index="0">{{ localize('View_more_details') }}
+                </dorel-cta>                
               </template>
 
               <template is="dom-if" if="[[ accessoryLightboxData.child_products.length ]]">
