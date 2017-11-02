@@ -1,7 +1,15 @@
-<dom-module id="dorel-layout-row" align="[[ align ]]" reverse$="[[ reverse ]]">
+<link rel="import" href="../../utils/grid-mixins.html">
+
+<dom-module id="dorel-layout-row">
   <template>
+    <style include="grid-mixins"></style>
     <style>
       :host {
+        float: left;
+        width: 100%;
+      }
+
+      section {
         @apply(--theme-grid-row);
         @apply(--layout-flex);
         @apply(--theme-grid-row-margins);
@@ -11,19 +19,63 @@
         text-align: left;
       }
 
-      :host-context([align="left"]) {
+      [align="left"] {
         justify-content: flex-start;
       }
 
-      :host-context([align="right"]) {
+      [align="right"] {
         justify-content: flex-end;
       }
 
-      :host-context([reverse]) {
+      [reverse] {
         flex-direction: row-reverse;
       }
+
+      [tablet-medium-up] ::slotted([desktop-column-span="1"]) { @apply --column-span-1;}
+      [tablet-medium-up] ::slotted([desktop-column-span="2"]) { @apply --column-span-2;}
+      [tablet-medium-up] ::slotted([desktop-column-span="3"]) { @apply --column-span-3;}
+      [tablet-medium-up] ::slotted([desktop-column-span="4"]) { @apply --column-span-4;}
+      [tablet-medium-up] ::slotted([desktop-column-span="5"]) { @apply --column-span-5;}
+      [tablet-medium-up] ::slotted([desktop-column-span="6"]) { @apply --column-span-6;}
+      [tablet-medium-up] ::slotted([desktop-column-span="7"]) { @apply --column-span-7;}
+      [tablet-medium-up] ::slotted([desktop-column-span="8"]) { @apply --column-span-8;}
+      [tablet-medium-up] ::slotted([desktop-column-span="9"]) { @apply --column-span-9;}
+      [tablet-medium-up] ::slotted([desktop-column-span="10"]) { @apply --column-span-10;}
+      [tablet-medium-up] ::slotted([desktop-column-span="11"]) { @apply --column-span-11;}
+      [tablet-medium-up] ::slotted([desktop-column-span="12"]) { @apply --column-span-12;}
+
+      [tablet-medium] ::slotted([tablet-column-span="1"]) { @apply --column-span-1;}
+      [tablet-medium] ::slotted([tablet-column-span="2"]) { @apply --column-span-2;}
+      [tablet-medium] ::slotted([tablet-column-span="3"]) { @apply --column-span-3;}
+      [tablet-medium] ::slotted([tablet-column-span="4"]) { @apply --column-span-4;}
+      [tablet-medium] ::slotted([tablet-column-span="5"]) { @apply --column-span-5;}
+      [tablet-medium] ::slotted([tablet-column-span="6"]) { @apply --column-span-6;}
+      [tablet-medium] ::slotted([tablet-column-span="7"]) { @apply --column-span-7;}
+      [tablet-medium] ::slotted([tablet-column-span="8"]) { @apply --column-span-8;}
+      [tablet-medium] ::slotted([tablet-column-span="9"]) { @apply --column-span-9;}
+      [tablet-medium] ::slotted([tablet-column-span="10"]) { @apply --column-span-10;}
+      [tablet-medium] ::slotted([tablet-column-span="11"]) { @apply --column-span-11;}
+      [tablet-medium] ::slotted([tablet-column-span="12"]) { @apply --column-span-12;}
+
+      ::slotted([mobile-column-span="1"]) { @apply --column-span-1;}
+      ::slotted([mobile-column-span="2"]) { @apply --column-span-2;}
+      ::slotted([mobile-column-span="3"]) { @apply --column-span-3;}
+      ::slotted([mobile-column-span="4"]) { @apply --column-span-4;}
+      ::slotted([mobile-column-span="5"]) { @apply --column-span-5;}
+      ::slotted([mobile-column-span="6"]) { @apply --column-span-6;}
+      ::slotted([mobile-column-span="7"]) { @apply --column-span-7;}
+      ::slotted([mobile-column-span="8"]) { @apply --column-span-8;}
+      ::slotted([mobile-column-span="9"]) { @apply --column-span-9;}
+      ::slotted([mobile-column-span="10"]) { @apply --column-span-10;}
+      ::slotted([mobile-column-span="11"]) { @apply --column-span-11;}
+      ::slotted([mobile-column-span="12"]) { @apply --column-span-12;}
     </style>
-    <slot></slot>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
+             tablet-medium$="[[ breakpoints.tabletMedium]]" align$="[[ align ]]" reverse$="[[ reverse ]]">
+      <slot></slot>
+    </section>
   </template>
 
   <script>
@@ -32,7 +84,8 @@
       properties: {
         align: {
           type: String,
-          value: 'center'
+          value: 'center',
+          reflectToAttribute: true
         },
         /**
          * @attribute

@@ -1,4 +1,5 @@
-<script src="../../../../bower_components/prism/prism.js"></script>
+<!-- TODO: Temporarily disabled for IE migration tests -->
+<!--<script src="../../../../node_modules/prismjs/prism.js"></script> -->
 
 <!--
 `dorel-code-snippet` can be used to display any component, and its highlighted syntax.
@@ -232,7 +233,7 @@ Use this for documenting live components -->
         margin-top: 0;
       }
     </style>
-    <content id="content"></content>
+    <slot id="content" select="[suffix]"></slot>
     <pre class="language-markup">
       <code id="code"></code>
     </pre>
@@ -275,12 +276,13 @@ Use this for documenting live components -->
       },
 
       ready: function () {
+        /*
         //Strip the content of unnecessary indentation
         var trimmedHTML = this._stripIndentation(this.innerHTML);
         //Highlight the syntax
         var highlightedHTML = Prism.highlight(trimmedHTML, Prism.languages.markup);
         //Place the highlighted content back into the component
-        Polymer.dom(this.$.code).innerHTML = highlightedHTML;
+        Polymer.dom(this.$.code).innerHTML = highlightedHTML; */
       }
     });
   </script>

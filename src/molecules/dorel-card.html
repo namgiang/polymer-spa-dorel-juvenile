@@ -12,15 +12,20 @@
       .card {
         background-color: var(--theme-color-monochrome-2);
         border-radius: var(--theme-border-radius-1);
+        overflow: hidden;
         /* NOTE: This forces GPU rendering, hack for delayed rounded corners rendering*/
         will-change: transform;
-        float: left;
-        overflow: hidden;
-        flex: 1;
         -webkit-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         -moz-box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
         box-shadow: 10px 10px 10px -12px var(--theme-color-monochrome-3);
+        flex: 1;
       }
+
+      /*.card {
+        background-color: var(--theme-color-monochrome-2);
+        float: left;
+        flex: 1;
+      }*/
 
       .card[light-background] {
         background-color: var(--theme-color-white);
@@ -42,12 +47,13 @@
       dorel-cta {
         float: left;
         clear: both;
+        margin-top: 1.5em;
       }
 
       .link-container {
-        margin-top: 1.5em;
         float: left;
         width: 100%;
+        margin-top: 1.5em;
       }
 
       .title {
@@ -59,6 +65,10 @@
 
       .card-image {
         max-width: 100%;
+      }
+
+      .link-list-cta  {
+        margin-top: 0;
       }
 
       [tablet-medium-up] .title {
@@ -107,11 +117,8 @@
         <template
           is="dom-repeat"
           items="[[ cardData.topic_blocks ]]" as="topic">
-          <dorel-image-list-item
-            image-url="[[ topic.image ]]"
-            title="[[ topic.title ]]"
-            text="[[ topic.description ]]"
-          ></dorel-image-listitem>
+          <dorel-image-list-item image-url="[[ topic.image ]]" title="[[ topic.title ]]" text="[[ topic.description ]]">
+          </dorel-image-list-item>
         </template>
         <!-- //topicBlocks -->
 
@@ -126,7 +133,7 @@
         <!--// cardContent -->
 
         <!-- Link list -->
-        <template is="dom-if" if="[[ cardData.child_ctas) ]]">
+        <template is="dom-if" if="[[ cardData.child_ctas ]]">
           <div class="link-container">
             <template is="dom-repeat" items="[[ cardData.child_ctas ]]" as="link">
               <template is="dom-if" if="[[ link.title.length ]]">

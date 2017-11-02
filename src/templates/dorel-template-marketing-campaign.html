@@ -1,0 +1,100 @@
+<link rel="import" href="../organisms/dorel-section-hero-header.html">
+<link rel="import" href="../organisms/dorel-section-text-image-block.html">
+
+
+<dom-module id="dorel-template-marketing-campaign">
+  <template>
+
+    <dorel-section-hero-header align="left" hero-header-data="[[ heroHeaderData ]]"></dorel-section-hero-header>
+
+    <template is="dom-repeat" items="[[ marketingSections ]]" as="section">
+
+      <template is="dom-if" if="[[ section.isContentBlock ]]">
+        <dorel-section-text-image-block block-data="[[ section ]]"></dorel-section-text-area-block>
+      </template>
+
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-marketing-campaign',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function () {
+            return {};
+            observer: '_defineComponentModels'
+          },
+        },
+
+
+        heroHeaderData: {
+          type: Object,
+          computed: 'getHeaderData(templateData)'
+        },
+
+        marketingSections: {
+          type: Array,
+          computed: 'getMarketingSections(templateData)'
+        }
+
+      },
+
+      getMarketingSections: function(templateData) {
+        if(!templateData.acf) {
+          return [];
+        }
+        var sections =  templateData.acf.marketing_builder || [];
+        var l = sections.length;
+
+        for (var i = 0; i < l; i++) {
+          var elem = sections[i];
+          switch (elem.acf_fc_layout) {
+            case 'content_block':
+              elem.isContentBlock = true;
+              // content block get a counter
+              // so we can switch between image-left and image-right layout if block succeed each other
+              elem.contentBlockCounter = (i > 0 && sections[i - 1].isContentBlock) ? sections[i - 1].contentBlockCounter + 1 : 0;
+              break;
+            case 'marketing_hero':
+              elem.isMarketingHero = true;
+            default:
+              console.warn('unknown layout', elem.acf_fc_layout);
+          }
+
+        }
+        return sections;
+      },
+
+
+      getHeaderData: function(templateData) {
+
+        var headerData = ( templateData.acf &&  templateData.acf.hero_header && templateData.acf.hero_header.length ) ?
+          templateData.acf.hero_header[0] :
+          {} ;
+
+          // the video in a marketing campaign header is a cta_video
+          headerData.cta_video_id = headerData.video_id;
+          // if video_id is present we want a cta button
+          headerData.cta_toggle = !!headerData.video_id;
+          // cta_type can only be cta-video here, and button will not show when no id is provided
+          headerData.cta_type = 'cta-video';
+
+          return headerData;
+      }
+
+
+
+
+    });
+  </script>
+</dom-module>
