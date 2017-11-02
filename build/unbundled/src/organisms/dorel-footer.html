@@ -1,0 +1,227 @@
+<html><head><link rel="import" href="../atoms/dorel-back-to-top.html">
+<link rel="import" href="../atoms/dorel-iconset-simple.html">
+
+</head><body><dom-module id="dorel-footer">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        background-color: var(--theme-footer-background-color);
+        float: left;
+        width: 100%;
+      }
+
+      footer {
+        @apply(--max-width-container);
+        padding: var(--theme-gutter);
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      footer[screen-small] {
+        padding: var(--theme-gutter) var(--theme-gutter-mobile);
+      }
+
+      /**
+       * copyright and footer-menu links
+       */
+      a, .footer-copyright, .footer-heading {
+        @apply(--theme-typography-2);
+        color: var(--theme-footer-text-color);
+        text-decoration: none;
+        margin-top: 0;
+      }
+
+      iron-icon {
+        fill: var(--theme-footer-icon-color);
+      }
+
+      .footer-disclaimer {
+        margin-top: 1.5em;
+      }
+
+      /**
+       * footer headings
+       */
+      .footer-heading {
+        color: var(--theme-footer-header-color);
+        font-weight: var(--theme-footer-header-weight);
+        text-transform: uppercase;
+      }
+
+      /**
+       * Social media(wrapper)
+       */
+      .footer-media-links {
+        margin: 0 0 1.5em 0;
+      }
+
+      .footer-media-link {
+        @apply(--theme-typography-1);
+        padding: 0 1em;
+        text-align: center;
+      }
+
+      .footer-media-link iron-icon {
+        position: static;
+      }
+
+      .footer-media-link span {
+        margin: 0 .5em;
+      }
+
+      /**
+       * footer back to top
+       */
+      .footer-back-to-top {
+        padding: 1.5rem 0 0 0;
+        width: 100%;
+      }
+
+      .footer-menu ul {
+        margin: .75em 0;
+        padding: 0;
+      }
+
+      .footer-menu {
+        @apply(--theme-grid-column);
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
+        flex-basis: calc(var(--theme-column-width) * 2);
+        max-width: calc(var(--theme-column-width) * 2);
+      }
+
+      [screen-medium] .footer-menu {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 3);
+        flex-basis: calc(var(--theme-column-width) * 3);
+        max-width: calc(var(--theme-column-width) * 3);
+      }
+
+      /* lists not enumerated */
+      .footer-menu li {
+        padding-left: 0;
+        list-style-type: none;
+      }
+
+      .footer-menu a:hover, .footer-menu a:focus {
+        color: var(--theme-color-white);
+      }
+
+      /* Layout */
+      .footer-info {
+        @apply(--theme-grid-row);
+      }
+
+      /* Mobile layout */
+      [screen-small] .footer-menu {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+        max-height: 4.5em;
+        overflow: hidden;
+        border-bottom: 1px solid var(--theme-color-white);
+        box-sizing: border-box;
+        transition: max-height .3s ease-in-out;
+        max-width: 100%;
+        margin-top: 0;
+        padding: 0;
+      }
+
+      [screen-small] .footer-info {
+        margin-top: 1.5em;
+        padding: 0 .75em;
+      }
+
+      [screen-small] .footer-menu.open {
+        max-height: 1000px !important;
+      }
+
+      [screen-small] .footer-menu .footer-heading {
+        @apply(--theme-typography-3);
+        color: var(--theme-color-white);
+        height: 3.5em;
+        line-height: 3.5em;
+        margin: 0;
+        position: relative;
+        cursor: pointer;
+        font-weight: 400;
+        text-transform: initial;
+      }
+
+      [screen-small] ul {
+        margin: 0 0 1.5em 0;
+      }
+
+      [screen-small] li {
+        padding: .75em 0;
+      }
+
+      [screen-small] .footer-menu .footer-heading::before {
+        content: '';
+        position: absolute;
+        bottom: 2rem;
+        right: .75rem;
+        width: .75rem;
+        height: .75rem;
+        border-bottom: 2px solid var(--theme-white);
+        border-left: 2px solid var(--theme-white);
+        transform: rotate(-45deg);
+        transform-origin: center;
+        transition: transform .3s ease;
+      }
+
+      [screen-small] .footer-menu.open .footer-heading::before {
+        transform: rotate(135deg) translate(0.375rem, -0.375rem);
+      }
+
+    </style>
+
+    <iron-media-query query="(max-width : 767px)" query-matches="{{ screenSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)" query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" query-matches="{{ desktopLarge }}"></iron-media-query>
+
+    <footer screen-small$="{{ screenSmall }}" screen-medium$="{{ screenMedium }}" desktop-large$="{{ screenLargeUp }}">
+
+      
+      <template is="dom-if" if="[[ globals.Dorel.collect.options.footer_social_toggle ]]">
+
+        <section class="footer-media-links layout horizontal center center-justified">
+          <template is="dom-if" if="[[ globals.Dorel.collect.options.footer_social_links.length ]]">
+
+            <template is="dom-repeat" items="[[ globals.Dorel.collect.options.footer_social_links ]]" as="social_link">
+              <a class="footer-media-link" href="[[ social_link.social_media_href ]]" on-click="_socialClick">
+                <iron-icon icon="social-iconset:[[ social_link.social_media_icon ]]"></iron-icon>
+                <span>[[ social_link.social_media_text ]]</span>
+              </a>
+            </template>
+
+          </template>
+          <template is="dom-if" if="[[ !globals.Dorel.collect.options.footer_social_links.length ]]">
+            <span class="footer-text">Please define your footer social links in the admin area</span>
+          </template>
+        </section>
+
+      </template>
+
+      <section id="footer-widget-area" class="footer-info">
+        
+      </section>
+
+      <div class="footer-disclaimer">
+          <span class="footer-copyright">
+            Copyright Ⓒ
+            {{ _getCopyrightYearRange(globals.Dorel.collect.options.footer_year) }}
+            [[ globals.Dorel.collect.options.footer_copyright ]]
+          </span>
+      </div>
+
+      <section class="footer-back-to-top">
+        <dorel-back-to-top></dorel-back-to-top>
+      </section>
+
+    </footer>
+
+  </template>
+
+  <script>Polymer({is:"dorel-footer",properties:{},observers:["_areasChanged(globals.Dorel.collect.widgetAreas.footer-widget-area)"],listeners:{click:"accordionClick"},_socialClick:function(e){this._eventTracking(e,"social")},accordionClick:function(e){"undefined"!=typeof Polymer.dom(e).rootTarget.parentNode&&Polymer.dom(e).rootTarget.parentNode.classList.contains("footer-menu")&&(Polymer.dom(e).rootTarget.parentNode.classList.contains("open")?Polymer.dom(e).rootTarget.parentNode.classList.remove("open"):Polymer.dom(e).rootTarget.parentNode.classList.add("open"),this._eventTracking(e,"accordionToggle"))},_getCopyrightYearRange:function(e){if("undefined"!=typeof e&&""!==e&&null!==e){var o=[];e=Number(e);var t=(new Date).getFullYear();return e<t?o.push(e,t):e===t&&o.push(e),o.join(" - ")}},_areasChanged:function(e){if("undefined"!=typeof e&&"undefined"!=typeof e.widgets){var o=this;if(e.widgets.length)for(var t=0,r=e.widgets.length;t<r;t++){var n=document.createElement("div");n.className="footer-menu",n.innerHTML=e.widgets[t].rendered,Polymer.dom(o.$["footer-widget-area"]).appendChild(n)}this.__ready()}},__ready:function(){for(var e=this,o=this.$$("#footer-widget-area").querySelectorAll(".footer-menu a"),t=0,r=o.length;t<r;t++)o[t].addEventListener("click",function(o){e._eventTracking(o,"switch")})},_eventTracking:function(e,o){var t={action:o,component:"footer",event:"polymer_event"};switch(o){case"accordionToggle":var r=Polymer.dom(e).rootTarget,n=r.parentNode,a=n.classList.contains("open");t.action=a?"open":"close",t.element=n;break;case"switch":t.element=Polymer.dom(e).localTarget,t.things={currentPage:document.URL,targetPage:Polymer.dom(e).localTarget.href};break;case"social":t.element=Polymer.dom(e).localTarget.parentNode}Polymer.globalsManager.set("Dorel.events",t)}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,126 @@
+<html><head><link rel="import" href="../../bower_components/polymer/polymer.html">
+
+</head><body><dom-module id="dorel-page-builder">
+  <template>
+
+    <style is="custom-style">
+      dorel-layout-section dorel-page-builder {
+        width: 100%;
+        display: flex;
+      }
+
+      dorel-hero {
+        --dorel-hero-bg: {
+          min-height: 540px; /* temporary */
+          background-size: cover;
+          background-position: 0 -230px;;
+          background-repeat: no-repeat;
+        };
+      }
+    </style>
+
+    
+    <template is="dom-if" if="{{ builderData.length }}">
+      
+      <template is="dom-repeat" items="[[ builderData ]]" as="component">
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'card') }}">
+
+          <dorel-card card-data="[[ component ]]"></dorel-card>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
+          
+          <dorel-layout-section>
+            <dorel-page-builder builder-data="[[ component.columns ]]"></dorel-page-builder>
+          </dorel-layout-section>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'column_half') }}">
+
+          
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'content_wrapper') }}">
+
+          <dorel-content-wrapper content-title="[[ component.content_wrapper_title ]]" content-html="[[ component.content_wrapper_text ]]"></dorel-content-wrapper>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'hero') }}">
+
+          <dorel-hero hero-data="[[ component ]]"></dorel-hero>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ _isPageComponent(component.acf_fc_layout, 'slider') }}">
+
+          <dorel-slider>
+            <dorel-slider-slide slide-data="[[ component.slides ]]" slide-index="0">
+            </dorel-slider-slide>
+
+            <dorel-slider-slide slide-data="[[ component.slides ]]" slide-index="1">
+            </dorel-slider-slide>
+          </dorel-slider>
+
+          
+
+        </template>
+        
+
+
+
+
+
+      </template>
+    </template>
+
+  </template>
+  
+  <script>Polymer({is:"dorel-page-builder",_isPageComponent:function(e,n){return e===n}});</script>
+
+</dom-module></body></html>

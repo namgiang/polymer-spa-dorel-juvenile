@@ -1,0 +1,81 @@
+<html><head></head><body><dom-module id="dorel-template-home">
+  <template>
+    <style>
+      .wrapper {
+        float: left;
+        width: 100%;
+      }
+    </style>
+
+    
+    
+
+    <div class="wrapper">
+
+
+      <div class="container layout horizontal center center-justified wrap">
+        <div class="row">
+
+          
+          <template is="dom-if" if="{{ templateData.acf.page_builder.length }}">
+
+            
+            <template is="dom-repeat" items="[[ templateData.acf.page_builder ]]" as="component" targetframerate="1000">
+
+              
+              <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_hero_header') }}">
+                
+                <dorel-section-hero-header hero-header-data="[[ component ]]" gtm-parent="dorel-section-hero-header" gtm-parent-index="[[ index ]]"></dorel-section-hero-header>
+
+              </template>
+              
+
+
+
+
+              
+              <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_cta') }}">
+
+                <dorel-section-cta cta-data="[[ component ]]" gtm-parent="dorel-section-cta" gtm-parent-index="[[ index ]]"></dorel-section-cta>
+
+              </template>
+              
+
+
+
+
+
+              
+              <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_heroes') }}">
+                
+                <dorel-section-heroes heroes-data="[[ component ]]" gtm-parent="dorel-section-heroes" gtm-parent-index="[[ index ]]"></dorel-section-heroes>
+
+              </template>
+              
+
+
+
+
+              
+              <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_cards') }}">
+
+                <dorel-section-cards cards-data="[[ component ]]" gtm-parent="dorel-section-cards" gtm-parent-index="[[ index ]]"></dorel-section-cards>
+
+              </template>
+              
+
+            </template>
+
+          </template>
+
+        </div>
+      </div>
+
+
+    </div>
+    
+  </template>
+
+  <script>Polymer({is:"dorel-template-home",properties:{templateData:{type:String}},isPageComponent:function(e,t){var p=e.substr(e.length-1),r=!isNaN(Number(p));if(r){var s=e.split("_");return s.pop(),strippedResponse=s.join("_"),strippedResponse===t}return e===t}});</script>
+</dom-module>
+</body></html>

@@ -1,0 +1,84 @@
+<html><head></head><body><dom-module id="dorel-section-downloads">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        --iron-image-placeholder: var(--image-placeholder);
+      }
+      .container {
+        padding: var(--theme-component-space-inner);
+      }
+
+      .title {
+        @apply(--theme-heading);
+        font-size: var(--theme-size-headline);
+        margin: 0 0 var(--theme-component-space-micro) 0;
+        text-align: center;
+        width: 100%;
+      }
+
+      .downloads {
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+      }
+
+      .downloads__item {
+        padding: var(--theme-component-space-inner);
+        text-align: center;
+
+      }
+
+      .downloads__item__label {
+        text-decoration: none;
+        color: var(--theme-color-link-primary);
+        cursor: pointer;
+        transition: color .3s ease;
+      }
+
+      .downloads__item__image {
+        width: 12rem;
+        height: 8rem;
+        opacity: .75;
+        margin: 0 auto 1rem auto;
+        display: block;
+        transition: opacity .3s ease;
+      }
+
+      .downloads__item:hover, .downloads__item:focus {
+        cursor: pointer;
+      }
+
+      .downloads__item:hover .downloads__item__image, .downloads__item:focus .downloads__item__image{
+        opacity: .5;
+      }
+
+      .downloads__item:hover .downloads__item__label, .downloads__item:focus .downloads__item__label {
+        color: var(--theme-color-text-link-active);
+      }
+
+    </style>
+  
+
+    <template is="dom-if" if="[[ downloadsData.downloads.length ]]">
+      <section class="container">
+        <h2 class="title">[[ downloadsData.downloads_title ]]</h2>
+        <div class="downloads">
+          <template is="dom-repeat" items="[[ downloadsData.downloads ]]" as="download">
+
+            <div class="downloads__item" role="button" tabindex="0" data-file$="[[ download.download_file ]]" on-click="_clickDownload">
+              <iron-image class="downloads__item__image" sizing="cover" fade="true" preload="" src$="[[ download.download_image ]]">
+              </iron-image>
+              <iron-icon icon="dorel-icons:file-download"></iron-icon>
+              <span class="downloads__item__label">[[ download.download_text ]]</span>
+            </div>
+          
+          </template>
+        </div>
+      </section>
+    </template>
+  </template>
+
+  <script>Polymer({is:"dorel-section-downloads",properties:{downloadsData:{type:Object,value:function(){return{}}}},_clickDownload:function(e){window.open(e.currentTarget.getAttribute("data-file"),"_blank"),this._eventTracking(e)},_eventTracking:function(e){Polymer.globalsManager.get("Dorel");Polymer.globalsManager.set("Dorel.events",{action:"click",component:"downloads",element:Polymer.dom(e).localTarget,event:"polymer_event",things:{downloadFile:e.currentTarget.getAttribute("data-file")}})}});</script>
+</dom-module>
+</body></html>

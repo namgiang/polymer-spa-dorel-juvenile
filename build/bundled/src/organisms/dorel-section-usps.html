@@ -1,0 +1,71 @@
+<html><head></head><body><dom-module id="dorel-section-usps">
+  <template>
+    <style>
+      :host {
+        z-index: 999;
+        position: relative;
+      }
+      .section-usps {
+        background-color: var(--theme-color-background-tertiary);
+        padding: var(--theme-component-space-inner-xlarge);
+        float: left;
+        width: 100%;
+        position: relative;
+      }
+      .section-usps .list-group {
+        list-style: none;
+        float: left;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        width: 1170px;
+        margin: auto;
+        float: none;
+      }
+      .section-usps .list-group .list-group-item {
+        width: 50%;
+        float: left;
+      }
+      
+      .section-usps[mobile-small] {
+        display: none;
+      }
+
+      .section-usps[mobile-medium] .list-group {
+        max-width: 360px;
+      }
+      .section-usps[tablets] .list-group,
+      .section-usps[desktopSmall] .list-group,
+      .section-usps[desktopFull] .list-group {
+        float: left;
+      }
+    </style>
+
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)" query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <template is="dom-if" if="[[ uspsData.usps.length ]]">
+      <section class="section-usps" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}" tablets$="{{ tablets }}" desktop-small$="{{ desktopSmall }}" desktop-full$="{{ desktopFull }}">
+          <ul class="list-group">
+
+            <template is="dom-repeat" items="[[ uspsData.usps ]]" as="usp">
+              <li class="list-group-item col-sm-6 col-md-6">
+                <iron-icon icon="dorel-icons:check"></iron-icon>
+                [[ usp.usp_text ]]
+              </li>
+            </template>
+
+      </ul>
+      </section>
+    </template>
+
+  </template>
+
+  <script>Polymer({is:"dorel-section-usps",properties:{uspsData:{type:Object,value:function(){return{}}}}});</script>
+</dom-module>
+</body></html>

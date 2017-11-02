@@ -1,0 +1,62 @@
+<html><head></head><body><dom-module id="dorel-section-content-wrap">
+  <template>
+    <style>
+      .section-content-wrap {
+        width: 100%;
+        float: left;
+        padding: 1.5em var(--theme-gutter);
+        box-sizing: border-box;
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      .wrap-container {
+        width: 100%;
+        display: flex;
+      }
+
+      [tablets] .wrap-container, [mobile-medium] .wrap-container, [mobile-small] .wrap-container {
+        margin-left: 0;
+      }
+
+      [mobile-medium] dorel-content-wrap, [mobile-small] dorel-content-wrap {
+        padding: 0;
+      }
+
+      [mobile-medium] .section-content-wrap, [mobile-small] .section-content-wrap {
+        padding: 0 var(--theme-gutter-mobile);
+      }
+
+    </style>
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 820px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 821px) and (max-width : 991px)" query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" query-matches="{{ desktopSmall }}"></iron-media-query>
+
+    <template is="dom-if" if="[[ contentWrappers.wrappers.length ]]">
+
+      <section class="section-content-wrap" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}" tablets$="{{ tablets }}" desktop-small$="{{ desktopSmall }}">
+
+        <div class="row">
+          <template is="dom-repeat" items="[[ contentWrappers.wrappers ]]" as="contentWrap">
+            <div class="wrap-container">
+              <dorel-content-wrap content-index="[[ index ]]" content-title="[[ contentWrap.title ]]" content-text="[[ contentWrap.text ]]">
+            </dorel-content-wrap></div>
+          </template>
+        </div>
+
+      </section>
+
+    </template>
+
+  </template>
+
+  <script>Polymer({is:"dorel-section-content-wrap",properties:{contentWrappers:{type:Object,value:function(){return{}}}}});</script>
+
+</dom-module>
+</body></html>

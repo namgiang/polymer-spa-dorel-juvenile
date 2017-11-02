@@ -1,0 +1,75 @@
+<html><head><link rel="import" href="dorel-input-error.html">
+<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+
+</head><body><dom-module id="dorel-input-select">
+  <template>
+    <style>
+      :host {
+        display: block;
+        float: left;
+        width: 100%;
+      }
+
+      :host([focused]) {
+        outline: none;
+      }
+
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      label {
+        @apply(--theme-form-input-label);
+      }
+
+      select {
+        @apply(--theme-form-select);
+      }
+
+      :host([invalid]) select {
+        @apply(--theme-form-input-error);
+      }
+
+      :host([invalid]) label {
+        @apply(--theme-form-input-error-label);
+      }
+
+      select:hover, :host([invalid]) select:hover {
+        @apply(--theme-form-select-active);
+      }
+
+      :host([disabled]) select {
+        @apply(--theme-form-input-disabled);
+        color:
+      }
+
+      :host([disabled]) label {
+        @apply(--theme-form-input-disabled-label);
+      }
+
+      :host([required]) label:after {
+        content: "*";
+        margin-left: .125em;
+      }
+
+    </style>
+
+    <content select="[prefix]"></content>
+
+    <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]</label>
+
+    <select is="iron-input" id="input" value$="{{ hostValue }}" aria-labelledby$="[[_ariaLabelledBy]]" aria-describedby$="[[_ariaDescribedBy]]" disabled$="[[disabled]]" title$="[[title]]" bind-value="{{ value }}" invalid="{{ invalid }}" prevent-invalid-input="[[preventInvalidInput]]" allowed-pattern="[[allowedPattern]]" validator="[[validator]]" type$="[[type]]" pattern$="[[pattern]]" required$="[[required]]" autocomplete$="[[autocomplete]]" autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" minlength$="[[minlength]]" maxlength$="[[maxlength]]" min$="[[min]]" max$="[[max]]" step$="[[step]]" name$="[[name]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" list$="[[list]]" size$="[[size]]" autocapitalize$="[[autocapitalize]]" autocorrect$="[[autocorrect]]" on-change="_onChange" tabindex$="[[tabindex]]" autosave$="[[autosave]]" results$="[[results]]" accept$="[[accept]]" multiple$="[[multiple]]">
+    </select>
+
+    <content select="[suffix]"></content>
+
+    <template is="dom-if" if="[[errorMessage]]">
+      <dorel-input-error aria-live="assertive" invalid$="[[invalid]]">[[errorMessage]]
+      </dorel-input-error>
+    </template>
+  </template>
+</dom-module>
+
+<script>Polymer({is:"dorel-input-select",properties:{selected:{type:String,notify:!0,readOnly:!1},options:{type:Object,observer:"_setSelectionOptions"},hostValue:{type:String,observer:"_onChange"}},behaviors:[Polymer.IronFormElementBehavior],_onChange:function(e){var t=e.path[0].value,n=this.options[t];this.selected=n.label},_isSelected:function(e,t){return e===t},_setSelectionOptions:function(){for(var e=this.$.input,t=0;t<this.options.length;t++){var n=this.options[t],o=document.createElement("option");o.textContent=n.label,o.value=t,o.selected=this._isSelected(o.textContent,this.selected),e.appendChild(o)}}});</script>
+</body></html>

@@ -1,0 +1,297 @@
+<html><head><link rel="import" href="../atoms/dorel-content-wrap.html">
+<link rel="import" href="../atoms/dorel-image-wrap.html">
+<link rel="import" href="../atoms/dorel-video-wrap.html">
+<link rel="import" href="../organisms/dorel-section-big-title.html">
+<link rel="import" href="../organisms/dorel-section-big-video.html">
+<link rel="import" href="../organisms/dorel-section-cards.html">
+<link rel="import" href="../organisms/dorel-section-cta.html">
+<link rel="import" href="../organisms/dorel-section-downloads.html">
+<link rel="import" href="../organisms/dorel-section-heroes.html">
+<link rel="import" href="../organisms/dorel-section-hero-header.html">
+<link rel="import" href="../organisms/dorel-section-multi.html">
+<link rel="import" href="../organisms/dorel-section-slideshow.html">
+<link rel="import" href="../organisms/dorel-section-usps.html">
+
+</head><body><dom-module id="dorel-page-builder">
+  <template>
+    <style>
+      .wrapper {
+        opacity: 0;  /* make things invisible upon start */
+        -webkit-animation: fadeIn ease 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+        -moz-animation: fadeIn ease 1;
+        animation: fadeIn ease 1;
+        -webkit-animation-duration: 1s;
+        -moz-animation-duration: .1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+        -moz-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+      }
+
+      @-webkit-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @-moz-keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+      @keyframes fadeIn { from { opacity: 0; opacity: 1\9; /* IE9 only */ } to { opacity: 1; } }
+
+      dorel-layout-section dorel-page-builder {
+        width: 100%;
+        display: flex;
+      }
+
+      dorel-hero {
+        --dorel-hero-bg: {
+          min-height: 540px; /* temporary */
+          background-size: cover;
+          background-position: 0 -230px;;
+          background-repeat: no-repeat;
+        };
+      }
+    </style>
+
+    <div class="wrapper">
+
+    
+    <template is="dom-if" if="{{ builderData.length }}">
+
+      
+      <template is="dom-repeat" items="[[ builderData ]]" as="component" targetframerate="1000">
+
+
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_hero_header') }}">
+          
+          <dorel-section-hero-header hero-header-data="[[ component ]]" gtm-parent="dorel-section-hero-header" gtm-parent-index="[[ index ]]"></dorel-section-hero-header>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_cta') }}">
+
+          <dorel-section-cta cta-data="[[ component ]]" gtm-parent="dorel-section-cta" gtm-parent-index="[[ index ]]"></dorel-section-cta>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_heroes') }}">
+          
+          <dorel-section-heroes heroes-data="[[ component ]]" gtm-parent="dorel-section-heroes" gtm-parent-index="[[ index ]]"></dorel-section-heroes>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_cards') }}">
+
+          <dorel-section-cards cards-data="[[ component ]]" gtm-parent="dorel-section-cards" gtm-parent-index="[[ index ]]"></dorel-section-cards>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'content_wrap') }}">
+          
+          <dorel-content-wrap title-type="[[ component.title_type ]]" title-align="[[ component.title_align ]]" content-title="[[ component.title ]]" content-html="[[ component.text ]]" gtm-component-index="[[ index ]]"></dorel-content-wrap>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'image_wrap') }}">
+          
+          <dorel-image-wrap image-url="[[ component.image_url ]]" gtm-component-index="[[ index ]]"></dorel-image-wrap>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'video_wrap') }}">
+          
+          <dorel-video-wrap video-type="[[ component.video_type ]]" video-id="[[ component.video_id ]]" gtm-component-index="[[ index ]]"></dorel-video-wrap>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_big_title') }}">
+          
+          <dorel-section-big-title big-title-data="[[ component ]]" gtm-component-index="[[ index ]]"></dorel-section-big-title>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_big_video') }}">
+          
+          <dorel-section-big-video video-wrap-data="[[ component ]]" gtm-component-index="[[ index ]]"></dorel-section-big-video>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_downloads') }}">
+          
+          <dorel-section-downloads downloads-data="[[ component ]]" gtm-component-index="[[ index ]]"></dorel-section-downloads>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_hubspot') }}">
+          
+          <dorel-hubspot hubspot-loaded="[[ globals.Dorel.collect.options.hubspot_loaded ]]" portal-id="[[ globals.Dorel.collect.options.hubspot_portal_id ]]" form-id="{{ component.hubspot_form_id }}" gtm-component-index="[[ index ]]"></dorel-hubspot>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_multi') }}">
+          
+          <dorel-section-multi multi-data="[[ component ]]" template-data="[[ templateData ]]" gtm-component-index="[[ index ]]"></dorel-section-multi>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'section_usps') }}">
+          
+          <dorel-section-usps usps-data="[[ component ]]" gtm-component-index="[[ index ]]"></dorel-section-usps>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'slider') }}">
+          
+          <dorel-slider>
+            <dorel-slider-slide slide-data="[[ component.slides ]]" slide-index="0">
+            </dorel-slider-slide>
+
+            <dorel-slider-slide slide-data="[[ component.slides ]]" slide-index="1">
+            </dorel-slider-slide>
+          </dorel-slider>
+
+          
+          <template is="dom-repeat" items="[[ component.slides ]]">
+            <dorel-slider-slide slide-data="[[ item ]]" slide-index="{{ index }}">
+            </dorel-slider-slide>
+
+          </template>
+          
+
+        </template>
+        
+
+
+        
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'column_wrapper') }}">
+
+          <dorel-layout-section>
+            <dorel-page-builder builder-data="[[ component.columns ]]" gtm-component-index="[[ index ]]"></dorel-page-builder>
+          </dorel-layout-section>
+
+        </template>
+        
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'column_full') }}">
+          
+          
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+
+        </template>
+        
+
+
+
+
+
+        
+        <template is="dom-if" if="{{ isPageComponent(component.acf_fc_layout, 'column_half') }}">
+          
+          
+          <dorel-layout-section-column column-align="[[ component.column_align ]]">
+            <dorel-column-content>
+              
+              <dorel-page-builder builder-data="[[ component.column_flex_content ]]"></dorel-page-builder>
+
+            </dorel-column-content>
+          </dorel-layout-section-column>
+
+        </template>
+        
+
+
+
+
+
+      </template>
+    </template>
+    </div>
+  </template>
+
+  <script>Polymer({is:"dorel-page-builder",properties:{builderData:{type:Object,value:function(){return{}}},templateData:{type:Object,value:function(){return{}}}},isPageComponent:function(e,t){var r=e.substr(e.length-1),n=!isNaN(Number(r));if(n){var p=e.split("_");return p.pop(),strippedResponse=p.join("_"),strippedResponse===t}return e===t}});</script>
+</dom-module></body></html>

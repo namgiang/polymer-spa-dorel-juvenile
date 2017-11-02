@@ -1,0 +1,177 @@
+<html><head><link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-submenu.html">
+
+</head><body><dom-module id="dorel-navigation-sub">
+  <template>
+    <style>
+
+      .section-secondary-menu {
+        background-color: var(--theme-color-white);
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 3em;
+        z-index: 2;
+        -webkit-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+        -moz-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+        box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
+      }
+
+      [compact-menu] .section-secondary-menu {
+        top: 2.5em;
+      }
+
+      .menu-item-container {
+        position: relative;
+      }
+
+      .menu-item-container .section-secondary-menu {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .menu-item-container[opened] .section-secondary-menu {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .sub-menu {
+        list-style-type: none;
+        margin: 0;
+        float: left;
+        padding: 0;
+        width: 100%;
+
+      }
+
+      .sub-menu a {
+        color: var(--theme-primary-text-color);
+        float: left;
+        width: 100%;
+        padding: var(--theme-scale-2) var(--theme-scale-3);
+      }
+
+      paper-submenu paper-item {
+        @apply(--theme-typography-2);
+        margin-top: 0;
+      }
+
+      paper-submenu paper-item.iron-selected {
+        font-weight: normal !important;
+      }
+
+      paper-submenu a, .sub-menu a {
+        text-transform: capitalize;
+        color: var(--theme-color-black);
+        text-decoration: none;
+      }
+
+      paper-submenu {
+        text-transform: capitalize;
+        font-weight: 100 !important;
+      }
+
+      paper-submenu .menu-content {
+        background-color: var(--theme-color-monochrome-2);
+        padding: 0;
+      }
+
+      dorel-tab {
+        padding: 0 var(--theme-scale-3);
+        text-transform: capitalize;
+        height: 1.5rem;
+        cursor: pointer;
+        transition: color .3s ease;
+      }
+
+      .has-submenu dorel-safe-html, paper-submenu a, .sub-menu a {
+        transition: color .3s ease;
+      }
+
+      .has-submenu:hover dorel-safe-html,
+      .has-submenu:focus dorel-safe-html,
+      paper-submenu a:hover,
+      .sub-menu a:hover,
+      paper-submenu:hover, dorel-tab:hover {
+        color: var(--theme-color-text-link-active);
+        cursor: pointer;
+      }
+
+      [screen-medium] .section-secondary-menu {
+        top: 2.75em;
+      }
+
+      dorel-tab, dorel-safe-html {
+        float: left;
+        display: inline-block;
+      }
+
+      iron-icon {
+        padding-left: var(--theme-scale-1);
+        margin-top: -2px;
+      }
+    </style>
+
+    <iron-media-query query="(max-width : 767px)" query-matches="{{ screenSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)" query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px)" query-matches="{{ screenMediumUp }}"></iron-media-query>
+
+    
+    <template is="dom-if" if="{{ !screenMediumUp }}">
+      <paper-submenu opened$="{{ thisOpened }}">
+        <paper-item class="menu-trigger layout horizontal justified" on-click="_dropdownToggle">
+          [[_unescapeHtml(menuItem.title)]]
+          <template is="dom-if" if="{{ thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+          </template>
+          <template is="dom-if" if="{{ !thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+          </template>
+        </paper-item>
+        <paper-menu class="menu-content">
+          <a href="[[ menuItem.url ]]" on-click="_menuItemClicked" gtm-parent="[[ gtmParent ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-index="0">
+            <paper-item>View All</paper-item>
+          </a>
+          <template is="dom-repeat" items="[[ menuItem.children ]]" as="child">
+            <a href="[[ child.url ]]" title="[[ child.title ]]" on-click="_menuItemClicked" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-index="0">
+              <paper-item>[[ _unescapeHtml(child.title) ]]</paper-item>
+            </a>
+          </template>
+        </paper-menu>
+      </paper-submenu>
+    </template>
+
+    
+    <template is="dom-if" if="{{ screenMediumUp }}">
+      <div class="menu-item-container" compact-menu$="[[ compactMenu ]]" opened$="{{ thisOpened }}" screen-medium$="{{ screenMedium }}">
+        <dorel-tab id="dropdown" class="has-submenu" name="[[ menuItem.title ]]" on-click="_dropdownToggle" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]">
+          [[ _unescapeHtml(menuItem.title) ]]
+          <template is="dom-if" if="{{ thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-less"></iron-icon>
+          </template>
+          <template is="dom-if" if="{{ !thisOpened }}">
+            <iron-icon icon="dorel-icons:expand-more"></iron-icon>
+          </template>
+        </dorel-tab>
+        <section class="section-secondary-menu layout horizontal">
+          <div>
+            <ul class="sub-menu">
+              <li>
+                <a href="[[ menuItem.url ]]" class="view-all" on-click="_menuItemClicked" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-index="0">View All</a>
+              </li>
+              <template is="dom-repeat" items="[[ menuItem.children ]]" as="child">
+                <li>
+                  <a href="[[ child.url ]]" on-click="_menuItemClicked" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-index="[[ index ]]">[[ _unescapeHtml(child.title) ]]</a>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </template>
+  </template>
+
+  <script>Polymer({is:"dorel-navigation-sub",properties:{subMenuOpened:{type:Boolean,value:!1,notify:!0,observer:"_closeThisOpened"},mobileMenuOpened:{type:Boolean,value:!1,notify:!0},searchOpened:{type:Boolean,value:!1,notify:!0},activeId:{type:Number,notify:!0,observer:"_setThisOpened"},thisOpened:{type:Boolean,value:!1},menuItem:{type:Object}},listeners:{tap:"_onTap"},_onTap:function(e){var n=this.gtmParent,t=Number(this.gtmParentIndex)+1;Number(this.gtmChildIndex)+1;if("A"===Polymer.dom(e).rootTarget.tagName){var i=Polymer.dom(e).rootTarget,o=i.classList.contains("view-all")?1:2,s=Number(i.getAttribute("gtm-index"))+o;Polymer.globalsManager.set("Dorel.events",{action:"click",component:"navigation",structure:{name:n,index:t,child:{name:"dorel-navigation-sub",index:1,event:{name:"submenu-item",index:s}}},element:i,event:"polymer_event"})}else{var i=Polymer.dom(e).localTarget;Polymer.globalsManager.set("Dorel.events",{action:this.subMenuOpened?"open":"close",component:"navigation",structure:{name:n,index:t,event:{name:"dorel-navigation-sub",index:1}},element:i,event:"polymer_event"})}},_closeThisOpened:function(e,n){"undefined"==typeof e||e||(this.thisOpened=e)},_setThisOpened:function(e){"undefined"!=typeof e&&"undefined"!=typeof this.menuItem&&(e===this.menuItem.ID?this.thisOpened=!this.thisOpened:e!==this.menuItem.ID&&(this.thisOpened=!1))},_dropdownToggle:function(e){e.preventDefault();var n=this;n.searchOpened=!1,"undefined"==typeof n.activeId?n.subMenuOpened=!n.subMenuOpened:n.activeId!==n.menuItem.ID?n.subMenuOpened=!0:n.activeId===n.menuItem.ID&&(n.subMenuOpened=!1),n.setActiveId(),window.onscroll=function(e){n.subMenuOpened=!1}},setActiveId:function(){this.activeId=this.subMenuOpened?this.menuItem.ID:null},_menuItemClicked:function(e){this.mobileMenuOpened=!1,this.subMenuOpened=!1,this.searchOpened=!1,this.activeId=null},_unescapeHtml:function(e){var n=document.createElement("div");return n.innerHTML=e,0===n.childNodes.length?"":n.childNodes[0].nodeValue}});</script>
+</dom-module>
+</body></html>

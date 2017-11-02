@@ -1,0 +1,39 @@
+<html><head></head><body><dom-module id="dorel-next-section">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .flex-center-justified {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-center);
+      }
+      .icon-container {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--theme-border-radius-large);
+      }
+      .icon-container:not(.icon-no-bg) {
+        background-color: var(--theme-brand-color-accent-dark-grey);
+      }
+      .next-section-container:hover {
+        cursor: pointer;
+      }
+      iron-icon {
+        color: white;
+      }
+      .next-section-introduction {
+        @apply(--theme-bodycopy);
+        color: white;
+      }
+    </style>
+
+    <div class="layout horizontal center center-justified next-section-container">
+      <div class$="{{_hideBgIfContent(next-section-text)}} icon-container flex-center-justified">
+        <iron-icon icon="hardware:keyboard-arrow-down" class=""></iron-icon>
+      </div>
+      <span class="next-section-introduction">{{next-section-text}}</span>
+    </div>
+  </template>
+
+  <script>Polymer({is:"dorel-next-section",properties:{nextSectionText:{type:String}},_hideBgIfContent:function(e){if(""!==e||e.length>1){var n="icon-no-bg";return n}}});</script>
+</dom-module>
+</body></html>

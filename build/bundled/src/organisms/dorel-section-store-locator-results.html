@@ -1,0 +1,118 @@
+<html><head><link rel="import" href="../organisms/dorel-section-store-locator-result.html">
+
+</head><body><dom-module id="dorel-section-store-locator-results">
+  <template>
+    <style include="iron-flex iron-flex-alignment" is="custom-style">
+
+      :root {
+        --button-margin-spacing: 0;
+      }
+
+      .results {
+        padding: 3em var(--theme-gutter);
+        float: left;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: var(--theme-color-white);
+      }
+
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--layout-flex);
+      }
+
+      .title {
+        @apply(--theme-typography-7);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: left;
+        box-sizing: border-box;
+      }
+
+      .location-title {
+        @apply(--theme-typography-5);
+        width: 100%;
+        text-align: left;
+        margin-top: 0;
+      }
+
+      .location-content {
+        @apply(--theme-paragraph-text);
+        margin-top: 0;
+      }
+
+      .results-content {
+        max-width: var(--theme-base-paragraph-width);
+        padding: 0 .75em;
+        margin-top: 0;
+        margin: auto;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      li {
+        float: left;
+        width: 100%;
+        margin-top: 1.5em;
+      }
+
+      dorel-cta {
+        width: auto;
+        float: left;
+        margin-right: 1.5em;
+      }
+
+      /* Responsive Behaviour */
+      [mobile-small] ul, [mobile-medium] ul, [mobile-small] .title, [mobile-medium] .title {
+        padding-left: 0;
+        margin-top: 0;
+      }
+
+      [mobile-small] li, [mobile-medium] li {
+        margin-top: 1.5em;
+        padding-bottom: 1.5em;
+        border-bottom: 1px solid var(--theme-color-monochrome-2);
+      }
+
+      .results[mobile-small],
+      .results[mobile-medium] {
+        padding: 1.5em var(--theme-gutter-mobile);
+      }
+
+      [mobile-small] .results-content,
+      [mobile-medium] .results-content {
+        @apply(--theme-grid-column-mobile);
+        padding: 0 .75em;
+        margin-top: 0;
+      }
+
+    </style>
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+
+    <div class="results layout horizontal center center-justified wrap" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}">
+      <div class="row">
+        <div class="results-content">
+          <h2 class="title">Results</h2>
+          <ul>
+            <template is="dom-repeat" items="[[ results ]]" as="store">
+              <li>
+                <dorel-section-store-locator-result store="[[ store ]]" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ index ]]"></dorel-section-store-locator-result>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>Polymer({is:"dorel-section-store-locator-results",properties:{results:{type:Object,value:function(){return{}}}}});</script>
+
+</dom-module>
+</body></html>

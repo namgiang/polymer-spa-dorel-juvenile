@@ -1,0 +1,140 @@
+<html><head><link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selectable.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../molecules/dorel-navigation-sub.html">
+<link rel="import" href="../molecules/dorel-tab.html">
+
+</head><body><dom-module id="dorel-navigation-main">
+  <template strip-whitespace="">
+    <style include="iron-flex iron-flex-alignment">
+      app-drawer {
+        z-index: 1000;
+      }
+
+      .menu-spacer-top {
+        height: 3em;
+        width: 100%;
+        display: flex;
+      }
+
+      paper-menu {
+        padding: 1.5em 0 0 0;
+      }
+
+      .mobile-menu-item {
+        text-decoration: none;
+        color: var(--theme-color-black);
+        text-transform: capitalize;
+      }
+
+      .mobile-menu-item:hover, .mobile-menu-item:focus {
+        color: var(--theme-color-text-link-active);
+      }
+
+      dorel-tab:not(:first-child) {
+        padding-left: 1rem;
+      }
+
+      paper-submenu .menu-content {
+        background-color: var(--theme-color-monochrome-2);
+      }
+
+      dorel-tabs, dorel-tab {
+        height: var(--theme-scale-3);
+      }
+
+      /* new styling */
+      dorel-tab {
+        padding: .5em var(--theme-scale-3);
+        text-transform: capitalize;
+      }
+
+      dorel-tab a {
+        color: var(--theme-color-black);
+        text-decoration: none;
+        transition: .3s ease color;
+      }
+
+      dorel-tab a:hover, dorel-tab a:focus {
+        color: var(--theme-color-text-link-active);
+        cursor: pointer;
+      }
+
+      dorel-tab, dorel-safe-html {
+        float: left;
+        display: inline-block;
+      }
+
+    </style>
+
+    <iron-media-query query="(max-width : 767px)" query-matches="{{ screenSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)" query-matches="{{ screenMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px)" query-matches="{{ screenMediumUp }}"></iron-media-query>
+
+    
+    <app-drawer opened="{{ mobileMenuOpened }}" align="right" swipe-open="" tabindex="0">
+      <div class="menu-spacer-top"></div>
+      <template is="dom-if" if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        <iron-selector role="navigation" class="drawer-list" selected="[[ page ]]" attr-for-selected="name">
+          <paper-menu>
+            <template is="dom-repeat" items="[[ globals.Dorel.collect.menus.main_menu.items ]]" as="menuItem" initial-count="4">
+
+              
+              <template is="dom-if" if="[[ !menuItem.children.length ]]">
+                <a class="mobile-menu-item" href="[[ menuItem.url ]]" title="[[ menuItem.title ]]" on-click="_menuItemTap" gtm-parent="dorel-navigation-main" gtm-parent-index="[[ index ]]">
+                  <paper-item>[[ _unescapeHtml(menuItem.title) ]]</paper-item>
+                </a>
+              </template>
+
+              
+              <template is="dom-if" if="[[ menuItem.children.length ]]">
+
+                
+                <dorel-navigation-sub active-id="{{ activeId }}" menu-item="{{ menuItem }}" mobile-menu-opened="{{ mobileMenuOpened }}" search-opened="{{ searchOpened }}" sub-menu-opened="{{ subMenuOpened }}" gtm-parent="dorel-navigation-main" gtm-parent-index="[[ index ]]"></dorel-navigation-sub>
+              </template>
+            </template>
+          </paper-menu>
+        </iron-selector>
+      </template>
+
+    </app-drawer>
+
+    
+    <template is="dom-if" if="{{ screenMediumUp }}">
+
+      
+      <template is="dom-if" if="[[ globals.Dorel.collect.menus.main_menu.items.length ]]">
+        <nav role="navigation" screenmedium$="{{ screenMedium }}">
+          <dorel-tabs selected="[[ page ]]" attr-for-selected="name">
+            <div class="layout horizontal center">
+              
+              <template is="dom-repeat" items="[[ globals.Dorel.collect.menus.main_menu.items ]]" as="menuItem">
+
+                
+                <template is="dom-if" if="[[ !menuItem.children.length ]]">
+                  <dorel-tab name="[[ menuItem.title ]]">
+                    <a href="[[ menuItem.url ]]" title="[[ menuItem.title ]]" on-click="_menuItemTap" gtm-parent="dorel-navigation-main" gtm-parent-index="[[ index ]]">[[ _unescapeHtml(menuItem.title) ]]</a>
+                  </dorel-tab>
+                </template>
+                
+                <template is="dom-if" if="[[ menuItem.children.length ]]">
+
+                  
+                  <dorel-navigation-sub compact-menu="[[ compactMenu ]]" active-id="{{ activeId }}" menu-item="{{ menuItem }}" mobile-menu-opened="{{ mobileMenuOpened }}" search-opened="{{ searchOpened }}" sub-menu-opened="{{ subMenuOpened }}" gtm-parent="dorel-navigation-main" gtm-child-index="[[ index ]]">
+                  </dorel-navigation-sub>
+                </template>
+                
+              </template>
+
+            </div>
+          </dorel-tabs>
+        </nav>
+      </template>
+
+    </template>
+
+  </template>
+  <script>Polymer({is:"dorel-navigation-main",properties:{mobileMenuOpened:{type:Boolean,value:!1,notify:!0},subMenuOpened:{type:Boolean,value:!1,notify:!0},searchOpened:{type:Boolean,value:!1,notify:!0}},_menuItemTap:function(e){this.mobileMenuOpened=!1,this.subMenuOpened=!1,this.searchOpened=!1;var n=Polymer.dom(e).localTarget;Polymer.globalsManager.set("Dorel.events",{action:"click",component:"navigation",structure:{name:"dorel-navigation-main",index:Number(n.gtmParentIndex)+1},element:n,event:"polymer_event",things:{currentPage:document.URL,targetPage:n.href}})},_unescapeHtml:function(e){var n=document.createElement("div");return n.innerHTML=e,0===n.childNodes.length?"":n.childNodes[0].nodeValue}});</script>
+</dom-module>
+</body></html>

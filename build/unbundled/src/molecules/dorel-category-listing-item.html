@@ -1,0 +1,71 @@
+<html><head><link rel="import" href="../atoms/dorel-color-switcher.html">
+
+</head><body><dom-module id="dorel-category-listing-item">
+  <style is="custom-style" include="iron-flex iron-flex-alignment">
+    :root {
+      --button-margin-spacing: 0;
+    }
+
+    .category-listing-item {
+      float: left;
+      width: 100%;
+      margin-top: 3em;
+    }
+
+    .image-wrapper {
+      border-radius: var(--theme-border-radius-2);
+      width: 100%;
+      height: 21em;
+      background-color: var(--theme-color-monochrome-2);
+      overflow: hidden;
+    }
+
+    .content-wrapper {
+      padding: 0 1em;
+    }
+
+    .image {
+      width: 100%;
+      height: 100%;
+      max-width: 17em;
+      max-height: 19.2em;
+      margin: auto;
+      float: none;
+      display: block;
+    }
+
+    .title {
+      @apply(--theme-typography-4);
+      float: left;
+      width: 100%;
+    }
+
+    dorel-cta {
+      float: left;
+    }
+
+    dorel-color-switcher {
+      width: 100%;
+    }
+
+
+  </style>
+  <template>
+    <section class="category-listing-item">
+      <div class="image-wrapper horizontal layout center">
+        <iron-image class="image" sizing="contain" fade="true" preload="" src$="{{ currentProductImage }}"></iron-image>
+      </div>
+      <div class="content-wrapper">
+        <dorel-color-switcher current-image="{{ currentProductImage }}" colors-data="[[ colorsData ]]" gtm-action="color-switch" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ gtmChildIndex ]]"></dorel-color-switcher>
+        <h2 class="title">[[ productName ]]</h2>
+        <dorel-cta type="link" link="[[ linkUrl ]]" size="small" icon="dorel-icons:play-circle-outline" gtm-action="click" gtm-parent="[[ gtmParent ]]" gtm-parent-index="[[ gtmParentIndex ]]" gtm-child="[[ gtmChild ]]" gtm-child-index="[[ gtmChildIndex ]]" gtm-cta-index="0">
+          See details
+        </dorel-cta>
+      </div>
+    </section>
+
+  </template>
+
+  <script>Polymer({is:"dorel-category-listing-item",properties:{colorsData:{type:Array,value:[]},imageUrl:{type:String,value:""},linkUrl:{type:String,value:""},productName:{type:String,value:""}}});</script>
+</dom-module>
+</body></html>

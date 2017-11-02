@@ -1,0 +1,92 @@
+<html><head></head><body><dom-module id="dorel-section-multi">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+
+
+      .section-multi {
+        margin: 0 auto;
+        padding: var(--theme-component-space-inner-xlarge) 0 0 0;
+        float: left;
+        width: 100%;
+      }
+
+      .section-multi .multi-title {
+        @apply(--theme-heading);
+        font-size: var(--theme-size-headline);
+        text-align: center;
+        margin: 0 0 var(--theme-component-space-inner-xlarge) 0;
+        width: 100%;
+      }
+
+      .section-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+      }
+
+      .section-container > .section-container-content {
+        @apply(--layout-flex);
+        padding: 0 var(--theme-component-space-inner);
+        box-sizing: border-box;
+        min-width: 320px;
+        max-width: 740px;
+
+      }
+
+      /* IE 11 fix for single columns */
+      .section-container[columns="1"] > .section-container-content {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+      }
+
+      .section-multi[desktop-full] .section-container {
+        width: 1170px;
+        margin: auto;
+      }
+
+      [background='background'] {
+        background-color: var(--theme-multi-background-color);
+        padding-bottom: var(--theme-multi-bottom-padding)
+      }
+
+      [background='no-background'] {
+        background-color: var(--theme-multi-no-background-color);
+      }
+
+    </style>
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)" query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" query-matches="{{ desktopFull }}"></iron-media-query>
+
+    <section class="section-multi" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}" tablets$="{{ tablets }}" desktop-small$="{{ desktopSmall }}" desktop-full$="{{ desktopFull }}" background$="{{ needsBackground(multiData.acf_fc_layout) }}">
+
+      <div class="section-container" columns="1">
+        <template is="dom-if" if="[[ multiData.multi_title ]]">
+          <div class="section-container-content">
+            <h2 class="multi-title">[[ multiData.multi_title ]]</h2>
+          </div>
+        </template>
+      </div>
+
+      <div class="section-container" columns$="[[ multiData.multi_columns.length ]]">
+        <template is="dom-repeat" items="[[ multiData.multi_columns ]]" as="col">
+          <div class="section-container-content">
+            <template is="dom-if" if="[[ col.column_components.length ]]">
+              <dorel-page-builder builder-data="[[ col.column_components ]]"></dorel-page-builder>
+            </template>
+          </div>
+        </template>
+      </div>
+
+    </section>
+  </template>
+
+  <script>Polymer({is:"dorel-section-multi",properties:{multiData:{type:Object},templateData:{type:Object},columnAmount:{type:Number,value:0}},ready:function(){this.columnAmount=this.multiData.multi_columns.length},isFullWidth:function(t){return"undefined"!=typeof t&&"full-width"===t},needsBackground:function(t){var e=t.substr(t.length-1),u=!isNaN(Number(e));return u?"no-background":"background"}});</script>
+
+</dom-module>
+</body></html>

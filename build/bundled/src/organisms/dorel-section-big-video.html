@@ -1,0 +1,49 @@
+<html><head></head><body><dom-module id="dorel-section-big-video">
+  <template>
+    <style>
+      .section-big-video {
+        height: 478px;
+      }
+
+      .section-big-video .video-wrap {
+        text-align: center;
+        position: relative;
+        min-height: 478px;
+      }
+      .section-big-video .video-wrap iframe {
+        margin: 0 auto;
+        width: 100%;
+        position: absolute;
+        height: 100%;
+        left: 0;
+        top: 0;
+      }
+    </style>
+
+
+    
+    <iron-media-query query="(max-width : 479px)" query-matches="{{ mobileSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 480px) and (max-width : 767px)" query-matches="{{ mobileMedium }}"></iron-media-query>
+    <iron-media-query query="(min-width : 768px) and (max-width : 991px)" query-matches="{{ tablets }}"></iron-media-query>
+    <iron-media-query query="(min-width : 992px) and (max-width : 1199px)" query-matches="{{ desktopSmall }}"></iron-media-query>
+    <iron-media-query query="(min-width : 1200px)" query-matches="{{ desktopFull }}"></iron-media-query>
+    
+    <template is="dom-if" if="[[ videoWrapData ]]">
+      <section class="section-big-video" mobile-small$="{{ mobileSmall }}" mobile-medium$="{{ mobileMedium }}" tablets$="{{ tablets }}" desktop-small$="{{ desktopSmall }}" desktop-full$="{{ desktopFull }}">
+          <template is="dom-if" if="[[ hasVideoId(videoWrapData.video_id) ]]">
+
+            <template is="dom-if" if="[[ isYoutubeVideo(videoWrapData.video_type) ]]">
+              <div class="video-wrap">
+                <iframe src="https://www.youtube.com/embed/[[ videoWrapData.video_id ]]" frameborder="0" allowfullscreen="" on-click="_iframeClick"></iframe>
+              </div>
+            </template>
+
+          </template>
+      </section>
+    </template>
+
+  </template>
+
+  <script>Polymer({is:"dorel-section-big-video",properties:{videoWrapData:{type:Object,value:function(){return{}}},playVideo:{type:Boolean,value:!1}},hasVideoId:function(e){return"undefined"!=typeof e||null!==e||""!==e},isYoutubeVideo:function(e){return"undefined"!=typeof e&&"youtube"===e},_iframeClick:function(e){this.playVideo=!this.playVideo,this._eventTracking(e)},_eventTracking:function(e){Polymer.globalsManager.get("Dorel");Polymer.globalsManager.set("Dorel.events",{action:this.playVideo?"play":"stop",component:"big-video",element:Polymer.dom(e).localTarget,event:"polymer_event"})}});</script>
+</dom-module>
+</body></html>
