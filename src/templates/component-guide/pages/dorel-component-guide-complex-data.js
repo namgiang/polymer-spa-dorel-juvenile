@@ -38,5 +38,9 @@ var complexComponents = [
   {
     title: "Text Image Block",
     filePath: "dorel-component-guide-text-image-block.html"
+  },
+  {
+    title: "Marketing Campaign",
+    filePath: "dorel-component-guide-marketing-campaign.html"
   }
 ];
