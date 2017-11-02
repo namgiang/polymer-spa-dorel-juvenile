@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../../node_modules/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../templates/component-guide/dorel-component-guide-shared-styles.html">
 
 <dom-module id="dorel-grid-overlay">
@@ -24,6 +24,7 @@
       }
 
       .horizontal-grid {
+        @apply(--max-width-container);
         position: fixed;
         left: 0;
         right: 0;
@@ -42,6 +43,12 @@
         opacity: 1;
       }
 
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile);
+        padding: 0 var(--theme-gutter-mobile);
+
+      }
 
       .column {
         @apply(--theme-grid-column);
@@ -76,9 +83,8 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <div tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <div class="vertical-rhythm" shown$="[[ appCache.grid.vertical ]]"></div>
-
-      <dorel-layout-container class="horizontal-grid" shown$="[[ appCache.grid.horizontal ]]">
-        <dorel-layout-row>
+      <div class="horizontal-grid" shown$="[[ appCache.grid.horizontal ]]">
+        <div class="row">
           <div class="column">
             <div class="column-content"></div>
           </div>
@@ -115,8 +121,8 @@
           <div class="column">
             <div class="column-content"></div>
           </div>
-        </dorel-layout-row>
-      </dorel-layout-container>
+        </div>
+      </div>
     </div>
   </template>
   <script>

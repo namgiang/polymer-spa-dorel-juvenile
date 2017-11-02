@@ -1,8 +1,8 @@
-<link rel="import" href="../../bower_components/google-map/google-map.html">
-<link rel="import" href="../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../../node_modules/google-map/google-map.html">
+<link rel="import" href="../../node_modules/google-map/google-map-marker.html">
+<link rel="import" href="../../node_modules/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../atoms/dorel-cta.html">
 <link rel="import" href="../organisms/dorel-section-store-locator-results.html">
-<link rel="import" href="../organisms/dorel-section-store-locator-result.html">
 <link rel="import" href="../atoms/dorel-input.html">
 <link rel="import" href="../atoms/dorel-input-select.html">
 <link rel="import" href="../organisms/dorel-section-header.html">
@@ -70,7 +70,7 @@
       }
 
       /* Responsive Behaviour */
-      [tablet-medium-up] .store-overlay{
+      [tablet-medium-up] .store-overlay {
         background-color: var(--theme-color-white);
         box-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.125);
         position: absolute;
@@ -260,7 +260,16 @@
             return {};
           }
         },
-
+        /**
+         * @attribute
+         * @name addressInput
+         * @description Address used in the input field
+         */
+        addressInput: {
+          type: String,
+          value: '',
+          notify: true
+        },
         apiLoaded: {
           type: Boolean,
           value: false,
@@ -274,7 +283,7 @@
         _form: {
           type: Object,
           value: function () {
-            return this.$['store-locator-form'];
+            return document.querySelector('#store-locator-form');
           }
         },
 
@@ -523,26 +532,19 @@
 
         this.storesResponse = data.detail.response;
 
-        // setup geometry fro the fitbounds
-        var geometry = {
-          org: {
-            lat: this.storesResponse.originalLat,
-            lng: this.storesResponse.originalLng
-          },
-          res: {
-            lat: this.storesResponse.results[this.storesResponse.totalResults - 1].lat,
-            lng: this.storesResponse.results[this.storesResponse.totalResults - 1].lng
-          }
-        };
-
-        // use the geometry object to define the latLng for gmaps
-        var userLatLng = new google.maps.LatLng(geometry.org.lat, geometry.org.lng);
-        var resLatLng = new google.maps.LatLng(geometry.res.lat, geometry.res.lng);
-
-        // set and extend the bounds
+        // Create bounds
         var bounds = new google.maps.LatLngBounds();
+
+        // First set the user location
+        var userLatLng = new google.maps.LatLng(this.storesResponse.originalLat, this.storesResponse.originalLng);
         bounds.extend(userLatLng);
-        bounds.extend(resLatLng);
+
+        // Next, extend the bounds with the results
+        for (var i = 0; i < this.storesResponse.results.length; i++) {
+          var result = this.storesResponse.results[i];
+          var resultLatLng = new google.maps.LatLng(result.lat, result.lng);
+          bounds.extend(resultLatLng);
+        }
 
         // fit the map to our bounds
         this.map.fitBounds(bounds);
@@ -555,6 +557,12 @@
        * @param e - EventObject - contains the click event
        */
       _submitLocator: function (event) {
+
+        //Prevents the enter key from submitting the form, which triggers a page navigation
+        if (typeof event.detail.keyboardEvent !== 'undefined') {
+          event.detail.keyboardEvent.preventDefault();
+        }
+
         if (typeof this.addressInput === 'undefined' || this.address === this.addressInput) return;
 
         // handle the validation of the input and errors when the input is empty

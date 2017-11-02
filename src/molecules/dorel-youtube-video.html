@@ -1,19 +1,20 @@
-<link rel="import" href="../../bower_components/google-youtube/google-youtube.html">
+<link rel="import" href="../../node_modules/google-youtube/google-youtube.html">
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
 <dom-module id="dorel-youtube-video">
   <template>
     <style is="custom-style">
       :host {
 
-        --video-border-radius: var(--theme-border-radius-1);
-
         position: relative;
         overflow: hidden;
+
+        --video-border-radius: 10px;
 
         --google-youtube-container: {
           position: relative;
           padding-bottom: 56.25%;
           height: 0 !important;
+          max-height: 0 !important;
           overflow: hidden;
           border-radius: var(--video-border-radius);
         };
@@ -54,8 +55,9 @@
         opacity: 0;
       }
     </style>
-    <content></content>
-    <div playing$="[[ playing ]]">
+    <section>
+      <slot id="content"></slot>
+      <div playing$="[[ playing ]]">
       <google-youtube id="googleYouTube"
                       playsupported="{{ playSupported }}"
                       video-id="[[ videoId ]]"
@@ -86,19 +88,45 @@
   Polymer({
     is: 'dorel-youtube-video',
     properties: {
-      thumbnail: String,
-      videoId: String,
-      playSupported: Boolean,
-      state: Number,
-      currentTime: Number,
-      currentTimeFormatted: String,
-      duration: Number,
-      durationFormatted: String,
-      fractionLoaded: Number,
-      volume: Number,
-      playbackRate: Number,
-      playbackQuality: String,
-      playbackstarted: Boolean,
+      thumbnail: {
+        type: String
+      },
+      videoId: {
+        type: String,
+      },
+      playSupported: {
+        type: Boolean
+      },
+      state: {
+        type: Number
+      },
+      currentTime: {
+        type: Number
+      },
+      currentTimeFormatted: {
+        type: String
+      },
+      duration: {
+        type: Number
+      },
+      durationFormatted: {
+        type: String
+      },
+      fractionLoaded: {
+        type: Number
+      },
+      volume: {
+        type: Number
+      },
+      playbackRate: {
+        type: Number
+      },
+      playbackQuality: {
+        type: String
+      },
+      playbackstarted: {
+        type: Boolean
+      },
       isHero: {
         type: Boolean,
         value: false
@@ -120,7 +148,7 @@
     /**
      * @name handleStateChange
      * @description loop video
-    */
+     */
     handleStateChange: function (ev) {
       //Restart the video when it's ended
       if (this.state === 0) {
@@ -132,7 +160,7 @@
     /**
      * @name handleYouTubeError
      * @description show console message on error
-    */
+     */
     handleYouTubeError: function (ev) {
       console.error('YouTube playback error', ev.detail);
     },
@@ -168,8 +196,8 @@
     /**
      * @name _pauseAfterTap
      * @description private function for instantly (faster then stop) stopping the video after tap if a cta dialog-dimiss or dialog-confirm is seen
-    */
-    _pauseAfterTap: function(event) {
+     */
+    _pauseAfterTap: function (event) {
       var path = Polymer.dom(event).path;
       for (var i = 0, l = path.indexOf(this); i < l; i++) {
         var target = path[i];
@@ -184,13 +212,13 @@
    * @description add event listener for muting video when hero
    */
     ready: function (ev) {
-      if(this.isHero) {
+      if (this.isHero) {
         this.updateStyles({
           '--video-border-radius': 0
         })
       }
-      this.$.googleYouTube.addEventListener('google-youtube-ready', function() {
-        if(this.isHero) {
+      this.$.googleYouTube.addEventListener('google-youtube-ready', function () {
+        if (this.isHero) {
           this.$.googleYouTube.mute();
         }
       }.bind(this));
