@@ -2,7 +2,7 @@
 <link rel="import" href="../organisms/dorel-section-product-accordions.html">
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-section-product-showcase.html">
-<link rel="import" href="../organisms/dorel-section-product-video.html">
+<link rel="import" href="../organisms/dorel-section-slideshow.html">
 <link rel="import" href="../utils/dorel-magento-collect-product-by-sku.html">
 
 <link rel="import" href="dorel-template-404.html">
@@ -108,11 +108,11 @@
 
         <template
           is="dom-if"
-          if="[[ product.video_section.video_id.length ]]">
-          <dorel-section-product-video
-            video-data="[[ product.video_section ]]"
+          if="[[ product.slides.length ]]">
+          <dorel-section-slideshow
+            slideshow-data="[[ slideshowData ]]"
             gtm-parent="dorel-section-product-video"
-            gtm-parent-index="3"></dorel-section-product-video>
+            gtm-parent-index="3"></dorel-section-slideshow>
         </template>
 
         <!-- gerelateerde producten -->
@@ -205,7 +205,8 @@
          */
         product: {
           type: Object,
-          value: {}
+          value: {},
+
         },
 
         /**
@@ -218,9 +219,34 @@
           type: Object
         },
 
+        slideshowData: {
+          type: Object,
+          computed: '_getSlideshowData(product)'
+        }
+
       },
 
-      behaviors: [TemplateBehaviors]
+      behaviors: [TemplateBehaviors],
+
+      /**
+       * @function
+       * @name _getSlideshowData
+       * @description wrap the array 'slides' in an object, temp add video to that array
+       */
+      _getSlideshowData: function(product) {
+        // add video_section to slides
+        if (product.video_section && product.video_section.video_id) {
+          product.slides.push({
+            type: 'video',
+            content: {"title": 'Play Video',},
+            video_id : product.video_section.video_id,
+            thumbnail : product.header_section.bynder_background_image,
+          });
+        }
+        return { slides: product.slides };
+      }
+
+
     });
   </script>
 </dom-module>
