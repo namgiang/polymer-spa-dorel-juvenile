@@ -58,30 +58,30 @@
     <section>
       <slot id="content"></slot>
       <div playing$="[[ playing ]]">
-      <google-youtube id="googleYouTube"
-                      playsupported="{{ playSupported }}"
-                      video-id="[[ videoId ]]"
-                      state="{{ state }}"
-                      currenttime="{{ currentTime }}"
-                      currenttimeformatted="{{ currentTimeFormatted }}"
-                      duration="{{ duration }}"
-                      durationformatted="{{ durationFormatted }}"
-                      fractionloaded="{{ fractionLoaded }}"
-                      volume="{{ volume }}"
-                      playbackrate="{{ playbackRate }}"
-                      playbackquality="{{ playbackQuality }}"
-                      playbackstarted="{{ playbackstarted }}"
-                      width="100vw"
-                      chromeless="true"
-                      modestbranding="0"
-                      autoplay="{{ autoplay }}"
-                      on-google-youtube-state-change="handleStateChange"
-                      on-google-youtube-error="handleYouTubeError">
-      </google-youtube>
+        <google-youtube id="googleYouTube"
+                        playsupported="{{ playSupported }}"
+                        video-id="[[ videoId ]]"
+                        state="{{ state }}"
+                        currenttime="{{ currentTime }}"
+                        currenttimeformatted="{{ currentTimeFormatted }}"
+                        duration="{{ duration }}"
+                        durationformatted="{{ durationFormatted }}"
+                        fractionloaded="{{ fractionLoaded }}"
+                        volume="{{ volume }}"
+                        playbackrate="{{ playbackRate }}"
+                        playbackquality="{{ playbackQuality }}"
+                        playbackstarted="{{ playbackstarted }}"
+                        width="100vw"
+                        chromeless="true"
+                        modestbranding="0"
+                        autoplay="{{ autoplay }}"
+                        on-google-youtube-state-change="handleStateChange"
+                        on-google-youtube-error="handleYouTubeError">
+        </google-youtube>
 
-      <dorel-bynder-responsive-image
-        media-id="[[ thumbnail ]]" image-type="[[ imageType ]]"></dorel-bynder-responsive-image>
-    </div>
+        <dorel-bynder-responsive-image
+          media-id="[[ thumbnail ]]" image-type="[[ imageType ]]"></dorel-bynder-responsive-image>
+      </div>
   </template>
 </dom-module>
 <script>
@@ -169,7 +169,7 @@
      * @name play
      * @description public function to play video
     */
-    play: function() {
+    play: function () {
       this.playing = true;
       this.$.googleYouTube.seekTo(0);
       this.$.googleYouTube.play();
@@ -179,7 +179,7 @@
      * @name stop
      * @description public function to stop video
     */
-    stop: function() {
+    stop: function () {
       this.playing = false;
       this.$.googleYouTube.pause();
       this.$.googleYouTube.seekTo(0);
@@ -189,8 +189,20 @@
      * @name pause
      * @description public function to pause video
     */
-    pause: function() {
+    pause: function () {
       this.$.googleYouTube.pause();
+    },
+
+    /**
+     * @name resume
+     * @description public function to resume video afterpause
+    */
+    resume: function () {
+      if (this.state === -1) {
+        this.playing = true;
+        this.$.googleYouTube.seekTo(0);
+      }
+      this.$.googleYouTube.play();
     },
 
     /**
@@ -207,10 +219,10 @@
       }
     },
 
-  /**
-   * @name on ready
-   * @description add event listener for muting video when hero
-   */
+    /**
+     * @name on ready
+     * @description add event listener for muting video when hero
+     */
     ready: function (ev) {
       if (this.isHero) {
         this.updateStyles({
