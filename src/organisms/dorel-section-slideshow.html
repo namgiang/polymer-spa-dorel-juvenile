@@ -115,7 +115,8 @@
           type: Object,
           value: function () {
             return {};
-          }
+          },
+          observer: '_slideshowDataChanged'
         },
 
         /**
@@ -191,7 +192,13 @@
         } else {
           this.set('previousEnabled', true);
         }
-      }
+      },
+
+      _slideshowDataChanged: function() {
+        var slides = this.get('slideshowData.slides') || [];
+        this.set('nextEnabled', !!(slides.length > 1));
+      },
+
     });
   </script>
 </dom-module>

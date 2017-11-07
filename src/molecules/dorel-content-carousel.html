@@ -151,7 +151,6 @@
     }
     .content__video {
       margin-right: 0;
-      trans
     }
     [tablet-medium-up] .content__video {
       margin-right: 1.5rem;
@@ -176,11 +175,29 @@
       color: var(--theme-color-monochrome-1);
       position: absolute;
       top: 50%;
-      font-size: 4rem !important;
       left: 50%;
-      margin-left: 0.3rem;
       transform: translate(-50%, -50%);
       text-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    }
+
+    /* play icon */
+    .content__play-icon::before {
+      display:block;
+      margin-left: 0.3rem;
+      font-size: 4rem !important;
+      content: '\25BA'
+    }
+
+    /* pause icon */
+    .content__play-icon[playing]::before {
+      display:block;
+      margin: 0 0 0.2rem 0.8rem;
+      content: '\258C \258C';
+      font-size: 2.5rem !important;
+    }
+
+    dorel-youtube-video {
+      --video-border-radius: 0px;
     }
 
     </style>
@@ -243,7 +260,7 @@
                       <template is="dom-if" if="[[ _shouldShowType(slide, 'video') ]]">
                         <div class="content__video">
                           <div on-click="_playVideo" class="content__play-btn">
-                            <span class="content__play-icon">&#9658;</span>
+                            <span class="content__play-icon" playing$="[[ videoIsPlaying ]]"></span>
                           </div>
                         </div>
                       </template>
@@ -340,6 +357,10 @@
           type: Number
         },
 
+        videoIsPlaying: {
+          type : Boolean,
+          value : false,
+        },
 
         /**
          * @attribute
@@ -428,7 +449,6 @@
         return hideBulletPoints || !(tabletMediumUp);
       },
 
-
       /**
        * @name _playVideo
        * @description on click play the video
@@ -440,12 +460,25 @@
         var index = this.get('slides').findIndex(function(item) {
           return item === slide;
         });
-        if(typeof index === 'undefined') {
+        if(!!index) {
           return
         }
         var videoEl = this.shadowRoot.querySelector('#videoplayer-' + index);
-        this.shadowRoot.querySelector('#videoplayer-' + index).play();
-        this.playing = index;
+        if(this.playing !== index) {
+          videoEl.play();
+          this.playing = index;
+          this.videoIsPlaying = true;
+        }
+        else {
+          if(this.videoIsPlaying) {
+            videoEl.pause();
+            this.videoIsPlaying = false;
+          }
+          else {
+            videoEl.resume();
+            this.videoIsPlaying = true;
+          }
+        }
       },
 
       /**
@@ -454,14 +487,12 @@
        * @param event - Object
        */
       _shouldBeStopped: function(event) {
-        var slide = event.model.slide;
         var index = this.get('slides').findIndex(function(item) {
           return item === slide;
         });
-        if(typeof index === 'undefined') {
-          return
+        if(!!index) {
+          this._stopVideo(index);
         }
-        this._stopVideo(index);
       },
 
       /**
@@ -471,11 +502,11 @@
        */
       _stopVideo: function(index) {
         this.playing = -1;
-        var self = this;
         // timeout is used for delay of the height animation
         setTimeout(function () {
-          self.shadowRoot.querySelector('#videoplayer-' + index).stop();
-        }, 500);
+          this.shadowRoot.querySelector('#videoplayer-' + index).stop();
+          this.videoIsPlaying = false;
+        }.bind(this), 500);
       },
 
       /**
