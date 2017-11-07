@@ -236,14 +236,15 @@
       _getSlideshowData: function(product) {
         // add video_section to slides
         if (product.video_section && product.video_section.video_id) {
-          product.slides.push({
+          var slides = [];
+          slides.push({
             type: 'video',
-            content: {"title": 'Play Video',},
+            content: product.video_section.content,
             video_id : product.video_section.video_id,
-            thumbnail : product.header_section.bynder_background_image,
+            bynder_image_id : product.video_section.bynder_image_id,
           });
         }
-        return { slides: product.slides };
+        return { slides: slides };
       }
 
 
