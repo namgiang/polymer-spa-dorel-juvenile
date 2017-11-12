@@ -1,6 +1,8 @@
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<link rel="import" href="../organisms/dorel-section-text-image-block.html">
 <link rel="import" href="../../node_modules/iron-icon/iron-icon.html">
+
 
 <dom-module id="dorel-section-feature-block">
   <template>
@@ -90,20 +92,25 @@
       }
 
       .close-bar {
+        position: relative;
         clear: both;
-        border:1px solid red;
       }
       .close-bar::before {
         position: absolute;
         display: inline-block;
-        border: 3px solid transparent;
-        border-width: 0 30px 20px 30px;
-        border-bottom: 20px solid red;
+        border: 30px solid transparent;
+        border-top: 0;
+        border-bottom: 20px solid #FFF;
         content: ' ';
-       margin-top: -20px;
-       z-index: 1000;
+        top: -20px;
+        left: 20px
       }
-
+      .align-right {
+        text-align: right;
+      }
+      .close-icon {
+        cursor: pointer;
+      }
     </style>
 
     <section class="feature-block"
@@ -156,14 +163,14 @@
       <dorel-layout-container>
         <dorel-layout-row class="close-bar">
           <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-            <iron-icon icon="dorel-icons:close"></iron-icon>
+            <div class="align-right">
+              <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon"></iron-icon>
+            </div>
           </dorel-layout-column>
         </dorel-layout-row>
       </dorel-layout-container>
     <template is="dom-repeat" items="[[ blockData.selling_points ]]">
-
-      [[ item.title ]]
-
+      <dorel-section-text-image-block block-data="[[ item ]]"></dorel-section-text-area-block>
     </template>
   </template>
 </template>
@@ -181,7 +188,8 @@
           type: Object,
           value: function() {
             return {};
-          }
+          },
+          observer: '_setSellingPointIndexes'
         },
 
         showMore: {
@@ -194,7 +202,16 @@
 
       _toggleMore: function() {
         this.showMore = !this.showMore
+      },
+
+      _setSellingPointIndexes : function() {
+        if(this.blockData.selling_points) {
+          for(var i=0; i< this.blockData.selling_points.length; i++) {
+            this.blockData.selling_points[i].contentBlockCounter = i;
+          }
+        }
       }
+
 
     });
   </script>
