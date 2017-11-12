@@ -1,0 +1,201 @@
+<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<link rel="import" href="../../node_modules/iron-icon/iron-icon.html">
+
+<dom-module id="dorel-section-feature-block">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        --image-background-color: var(--theme-brand-color-1);
+      }
+
+      .feature-block {
+        display:block;
+        @apply(--layout-vertical);
+        width: 100%;
+        justify-content: center;
+        position: relative;
+      }
+
+      .title {
+        @apply(--theme-typography-6);
+        color: var(--theme-color-white);
+        margin: 0;
+        text-shadow: var(--theme-text-shadow);
+        max-width: 800px;
+        display: inline-block;
+      }
+
+      .subtitle {
+        @apply(--theme-typography-4);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+        color: var(--theme-color-white);
+        text-shadow: var(--theme-text-shadow);
+      }
+
+      dorel-cta {
+        display: inline-block;
+        width:auto;
+        margin-top: 1.5em;
+      }
+
+      dorel-layout-container.on-image {
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        height: 100%;
+      }
+
+      dorel-layout-row.on-image {
+        position: relative;
+        height: 100%;
+      }
+
+      dorel-layout-column.on-image {
+        position: absolute;
+        bottom: 3em;
+        width: 100%;
+        text-align: left;
+      }
+
+      [tablet-small] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
+      }
+
+      [tablet-small] .subtitle {
+        @apply(--theme-typography-5);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] dorel-layout-column {
+        margin-top: 0;
+        bottom: 25%;
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-8);
+        font-size: 3.75em;
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] .subtitle {
+        @apply(--theme-typography-6);
+        font-weight: var(--theme-font-weight-light);
+        margin-top: .375em;
+      }
+
+      .close-bar {
+        clear: both;
+        border:1px solid red;
+      }
+      .close-bar::before {
+        position: absolute;
+        display: inline-block;
+        border: 3px solid transparent;
+        border-width: 0 30px 20px 30px;
+        border-bottom: 20px solid red;
+        content: ' ';
+       margin-top: -20px;
+       z-index: 1000;
+      }
+
+    </style>
+
+    <section class="feature-block"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <dorel-bynder-responsive-image
+          media-id="[[ blockData.bynder_background_image ]]"></dorel-bynder-responsive-image>
+
+  <dorel-layout-container class="on-image">
+    <dorel-layout-row class="on-image">
+      <dorel-layout-column class="on-image" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+          <template is="dom-if" if="[[ blockData.title ]]">
+            <h3 class="title">[[ blockData.title ]]</h3>
+          </template>
+          <template is="dom-repeat" items="[[ blockData.selling_points ]]">
+            <div class="icon_item">
+              <iron-icon icon="[[ item.icon ]]"></iron-icon>
+              <span>[[ item.title ]]</span>
+            </div>
+          </template>
+          <template is="dom-if" if="[[ blockData.cta_text ]]">
+            <div>
+              <dorel-cta
+                title="[[ blockData.cta_text ]]"
+                icon="dorel-icons:chevron-right"
+                type="primary"
+                link="[[ blockData.cta_href ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-cta-index="0">
+                [[ blockData.cta_text ]]
+              </dorel-cta>
+            </div>
+          </template>
+
+          <template is="dom-if" if="[[ blockData.selling_points ]]">
+            <template is="dom-if" if="[[ !showMore ]]">
+              <dorel-cta on-click="_toggleMore" type="link" icon="dorel-icons:expand-more">show more</dorel-cta>
+            </template>
+            <template is="dom-if" if="[[ showMore ]]">
+              <dorel-cta on-click="_toggleMore" type="link" icon="dorel-icons:expand-less">show less</dorel-cta>
+            </template>
+          </template>
+
+      </dorel-layout-column>
+    </dorel-layout-row>
+  </dorel-layout-container>
+</section>
+  <template is="dom-if" if="[[ showMore ]]">
+      <dorel-layout-container>
+        <dorel-layout-row class="close-bar">
+          <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+            <iron-icon icon="dorel-icons:close"></iron-icon>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
+    <template is="dom-repeat" items="[[ blockData.selling_points ]]">
+
+      [[ item.title ]]
+
+    </template>
+  </template>
+</template>
+  <script>
+    Polymer({
+      is: 'dorel-section-feature-block',
+
+      properties: {
+        /**
+         * @attribute
+         * @name blockData
+         * @description all data defined by ACF/Wordpress to build this component
+         */
+        blockData: {
+          type: Object,
+          value: function() {
+            return {};
+          }
+        },
+
+        showMore: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      behaviors: [DorelMultilingualBehavior],
+
+      _toggleMore: function() {
+        this.showMore = !this.showMore
+      }
+
+    });
+  </script>
+</dom-module>

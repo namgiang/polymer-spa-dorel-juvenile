@@ -1,6 +1,6 @@
 <link rel="import" href="../organisms/dorel-section-hero-header.html">
 <link rel="import" href="../organisms/dorel-section-text-image-block.html">
-
+<link rel="import" href="../organisms/dorel-section-feature-block.html">
 
 <dom-module id="dorel-template-marketing-campaign">
   <template>
@@ -9,9 +9,12 @@
 
     <template is="dom-repeat" items="[[ marketingSections ]]" as="section">
 
-      <template is="dom-if" if="[[ section.isContentBlock ]]">
-        <dorel-section-text-image-block block-data="[[ section ]]"></dorel-section-text-area-block>
-      </template>
+        <template is="dom-if" if="[[ section.isContentBlock ]]">
+          <dorel-section-text-image-block block-data="[[ section ]]"></dorel-section-text-area-block>
+        </template>
+        <template is="dom-if" if="[[ section.isFeatureBlock ]]">
+          <dorel-section-feature-block block-data="[[ section ]]"></dorel-section-text-area-block>
+        </template>
 
     </template>
 
@@ -35,7 +38,6 @@
             observer: '_defineComponentModels'
           },
         },
-
 
         heroHeaderData: {
           type: Object,
@@ -65,8 +67,9 @@
               // so we can switch between image-left and image-right layout if block succeed each other
               elem.contentBlockCounter = (i > 0 && sections[i - 1].isContentBlock) ? sections[i - 1].contentBlockCounter + 1 : 0;
               break;
-            case 'marketing_hero':
-              elem.isMarketingHero = true;
+            case 'feature_block':
+              elem.isFeatureBlock = true;
+              break;
             default:
               console.warn('unknown layout', elem.acf_fc_layout);
           }
@@ -74,7 +77,6 @@
         }
         return sections;
       },
-
 
       getHeaderData: function(templateData) {
 
@@ -91,9 +93,6 @@
 
           return headerData;
       }
-
-
-
 
     });
   </script>
