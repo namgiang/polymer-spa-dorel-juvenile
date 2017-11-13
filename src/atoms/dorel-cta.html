@@ -3,8 +3,8 @@
   <template>
     <style include="iron-flex">
 
-      /* 
-       * CTA - Default states 
+      /*
+       * CTA - Default states
        */
 
       /* aplies to all type of cta's (both button and regular link) */
@@ -31,8 +31,17 @@
         @apply(--theme-button-link);
       }
 
-      .theme-cta--inverted {
+      .theme-cta--primary.inverted {
         @apply(--theme-button-inverted);
+      }
+
+      .theme-cta--link.inverted {
+        @apply(--theme-link-inverted);
+      }
+
+      .theme-cta--link.dorel-cta.inverted:hover {
+        @apply(--theme-link-inverted);
+        opacity: 0.8;
       }
 
       .theme-cta--inverted .theme-cta__icon {
@@ -48,8 +57,8 @@
         padding-right: 0;
       }
 
-      /* 
-       * CTA - Hover and focus states 
+      /*
+       * CTA - Hover and focus states
        */
 
       .theme-cta:hover, .theme-cta:focus {
@@ -75,8 +84,8 @@
         @apply(--theme-button-link-icon-active);
       }
 
-      /* 
-       * CTA - Sizes 
+      /*
+       * CTA - Sizes
        */
 
       .theme-cta--medium {
@@ -92,8 +101,8 @@
         padding: 0;
       }
 
-      /* 
-       * CTA - Content 
+      /*
+       * CTA - Content
        */
 
       .theme-cta__content {
@@ -106,8 +115,8 @@
         padding: 0 0 0 0.75em;
       }
 
-      /* 
-       * CTA - Icon styling 
+      /*
+       * CTA - Icon styling
        */
 
       .theme-cta__icon {
@@ -180,11 +189,10 @@
 
       :host([left-align-icon]) .theme-cta__content {
         padding: 0 .5em 0 0;
-
       }
 
       /*
-       * Responsive Behaviour 
+       * Responsive Behaviour
        */
 
       [tablet-medium-up] .theme-cta__icon--left {
@@ -205,7 +213,7 @@
       <a href$="[[ link ]]"
          title$="[[ title ]]"
          target$="[[ target ]]"
-         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
+         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]] [[ invertedCssClass ]]"
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          target$="[[ _isExternal(linkTarget) ]]"
          gtm-action$="[[ gtmAction ]]"
@@ -286,6 +294,16 @@
 
         /**
          * @attribute
+         * @name inverted
+         * @description for CTA on a dark background. Only implemented for types 'primary' and 'link'
+         */
+        inverted: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * @attribute
          * @name size
          * @description defines the size of the CTA. Currently 'medium' and 'large' are supported
          */
@@ -331,6 +349,11 @@
 
         leftAlignIcon: {
           type: Boolean
+        },
+
+        invertedCssClass: {
+          type: String,
+          computed: '_getInvertedStyle(inverted)'
         }
       },
 
@@ -400,7 +423,12 @@
       _isExternal: function (linkTarget) {
         return (typeof linkTarget === 'undefined' || !linkTarget) ?
           '_self' : '_blank';
+      },
+
+      _getInvertedStyle: function(inverted) {
+        return inverted ? 'inverted' : '';
       }
+
     });
   </script>
 
