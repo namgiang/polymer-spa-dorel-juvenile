@@ -1,8 +1,8 @@
-<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<link rel="import" href="../atoms/dorel-icons.html">
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
 <link rel="import" href="../organisms/dorel-section-text-image-block.html">
 <link rel="import" href="../../node_modules/iron-icon/iron-icon.html">
-
+<link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
 
 <dom-module id="dorel-section-feature-block">
   <template>
@@ -29,12 +29,16 @@
         display: inline-block;
       }
 
-      .subtitle {
-        @apply(--theme-typography-4);
-        font-weight: var(--theme-font-weight-light);
-        margin-top: 0;
+      .icon-item {
         color: var(--theme-color-white);
-        text-shadow: var(--theme-text-shadow);
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+      }
+      .icon-item iron-icon {
+        margin-right: 8px;
+        --iron-icon-height: 32px;
+        --iron-icon-width: 32px;
       }
 
       dorel-cta {
@@ -68,12 +72,6 @@
         margin-top: 0;
       }
 
-      [tablet-small] .subtitle {
-        @apply(--theme-typography-5);
-        font-weight: var(--theme-font-weight-light);
-        margin-top: 0;
-      }
-
       [tablet-medium-up] dorel-layout-column {
         margin-top: 0;
         bottom: 25%;
@@ -83,12 +81,6 @@
         @apply(--theme-typography-8);
         font-size: 3.75em;
         margin-top: 0;
-      }
-
-      [tablet-medium-up] .subtitle {
-        @apply(--theme-typography-6);
-        font-weight: var(--theme-font-weight-light);
-        margin-top: .375em;
       }
 
       .close-bar {
@@ -111,13 +103,14 @@
       .close-icon {
         cursor: pointer;
       }
+
     </style>
 
     <section class="feature-block"
              tablet-small$="[[ breakpoints.tabletSmall ]]"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
         <dorel-bynder-responsive-image
-          media-id="[[ blockData.bynder_background_image ]]"></dorel-bynder-responsive-image>
+          media-id="[[ blockData.bynder_image ]]"></dorel-bynder-responsive-image>
 
   <dorel-layout-container class="on-image">
     <dorel-layout-row class="on-image">
@@ -125,16 +118,18 @@
           <template is="dom-if" if="[[ blockData.title ]]">
             <h3 class="title">[[ blockData.title ]]</h3>
           </template>
-          <template is="dom-repeat" items="[[ blockData.selling_points ]]">
-            <div class="icon_item">
-              <iron-icon icon="[[ item.icon ]]"></iron-icon>
-              <span>[[ item.title ]]</span>
+          <template is="dom-repeat" items="[[ blockData.usps ]]">
+            <div class="icon-item">
+              <template is="dom-if" if="[[ item.usp_icon ]]">
+                <iron-icon icon="[[ item.usp_icon ]]"></iron-icon>
+              </template>
+              <span>[[ item.usp_text ]]</span>
             </div>
           </template>
           <template is="dom-if" if="[[ blockData.cta_text ]]">
             <div>
               <dorel-cta
-                title="[[ blockData.cta_text ]]"
+                title="[[ blockData.cta_text ]]"dorel-cta
                 icon="dorel-icons:chevron-right"
                 type="primary"
                 link="[[ blockData.cta_href ]]"
@@ -146,12 +141,16 @@
             </div>
           </template>
 
-          <template is="dom-if" if="[[ blockData.selling_points ]]">
+          <template is="dom-if" if="[[ blockData.read_more_section ]]">
             <template is="dom-if" if="[[ !showMore ]]">
-              <dorel-cta on-click="_toggleMore" type="link" icon="dorel-icons:expand-more">show more</dorel-cta>
+              <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-more">
+                show more
+              </dorel-cta>
             </template>
             <template is="dom-if" if="[[ showMore ]]">
-              <dorel-cta on-click="_toggleMore" type="link" icon="dorel-icons:expand-less">show less</dorel-cta>
+              <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-less">
+                show less
+              </dorel-cta>
             </template>
           </template>
 
@@ -159,20 +158,20 @@
     </dorel-layout-row>
   </dorel-layout-container>
 </section>
-  <template is="dom-if" if="[[ showMore ]]">
-      <dorel-layout-container>
-        <dorel-layout-row class="close-bar">
-          <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-            <div class="align-right">
-              <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon"></iron-icon>
-            </div>
-          </dorel-layout-column>
-        </dorel-layout-row>
-      </dorel-layout-container>
-    <template is="dom-repeat" items="[[ blockData.selling_points ]]">
+  <iron-collapse opened="{{showMore}}">
+    <dorel-layout-container>
+      <dorel-layout-row class="close-bar">
+        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+          <div class="align-right">
+            <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon"></iron-icon>
+          </div>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
+    <template is="dom-repeat" items="[[ blockData.read_more_section ]]">
       <dorel-section-text-image-block block-data="[[ item ]]"></dorel-section-text-area-block>
     </template>
-  </template>
+  </iron-collapse>
 </template>
   <script>
     Polymer({
@@ -186,10 +185,8 @@
          */
         blockData: {
           type: Object,
-          value: function() {
-            return {};
-          },
-          observer: '_setSellingPointIndexes'
+          value: () => {},
+          observer: '_setFeatureIndexes'
         },
 
         showMore: {
@@ -204,14 +201,13 @@
         this.showMore = !this.showMore
       },
 
-      _setSellingPointIndexes : function() {
-        if(this.blockData.selling_points) {
-          for(var i=0; i< this.blockData.selling_points.length; i++) {
-            this.blockData.selling_points[i].contentBlockCounter = i;
+      _setFeatureIndexes : function() {
+        if(this.blockData.read_more_section) {
+          for(var i=0; i< this.blockData.read_more_section.length; i++) {
+            this.blockData.read_more_section[i].contentBlockCounter = i;
           }
         }
       }
-
 
     });
   </script>

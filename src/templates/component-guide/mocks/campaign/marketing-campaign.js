@@ -40,7 +40,7 @@ var marketingCampaignMock = {
       {
         "bynder_background_image": "7F84BD5F-551A-4DA5-8532AB44763439AA",
         "title": "Meet Maxi Cosi strollers",
-        "sub_title" : "We carry the future",
+        "sub_title": "We carry the future",
         "video_id": "0zUUVyWAyRs"
       }
     ],
@@ -52,83 +52,37 @@ var marketingCampaignMock = {
         "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
       },
       {
-        "acf_fc_layout": "content_block",
-        "title": "Dolor sit amet",
-        "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
-        "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
-      },
-      {
         "acf_fc_layout": "feature_block",
+        "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
         "title": "Explore the great outdoors",
-        "bynder_background_image": "14BB9491-A186-40D8-B965680777095B8E",
-        "cta_text" : "Meet Outdoor Strollers",
-        "cta_link" : "/uk-en/car-seats/euro-nxt",
-        "selling_points": [
+        "cta_text": "Meet Outdoor Strollers",
+        "cta_link": "/uk-en/car-seats/euro-nxt",
+        "usps": [
           {
-            "acf_fc_layout": "content_block",
-            "icon": "dorel-icons:play-circle-outline",
+            "usp_text": "Unique handsfree folding",
+          },
+          {
+            "usp_text": "All terrain shock absorbing wheels",
+          },
+        ],
+        "cta_style": "Primary",
+        "read_more_button": true,
+        "read_more_section": [
+          {
             "title": "Unique handsfree folding",
-            "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
-            "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
+            "description": "<p>enean at aliquam dolor. Suspendisse in volutpat risus. Praesent finibus tempor condimentum. Maecenas consequat eget lorem nec vestibulum. Donec metus diam, gravida eu cursus euismod, suscipit non arcu. <\/p>",
+            "image": "http:\/\/media.maxi-cosi.com\/nl-nl\/~\/media\/assets\/media\/main-collection-image\/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
           },
           {
-            "acf_fc_layout": "content_block",
-            "icon": "dorel-icons:play-circle-outline",
             "title": "All terrain shock absorbing wheels",
-            "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
-            "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
-          },
-        ]
+            "description": "<p>Phasellus arcu est, porta ut turpis vitae, sodales luctus mi. Nulla facilisi. Etiam in condimentum massa. Nam vitae risus vulputate, auctor libero eu, pharetra odio.<\/p>\n",
+            "image": "http:\/\/media.maxi-cosi.com\/nl-nl\/~\/media\/assets\/media\/main-collection-image\/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
+          }
+        ],
+        "read_more_default_state": true
+
       },
 
     ],
-
-
-  },
-  "_links": {
-    "self": [
-      {
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/pages/26544"
-      }
-    ],
-    "collection": [
-      {
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/pages"
-      }
-    ],
-    "about": [
-      {
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/types/page"
-      }
-    ],
-    "author": [
-      {
-        "embeddable": true,
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/users/1"
-      }
-    ],
-    "replies": [
-      {
-        "embeddable": true,
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/comments?post=26544"
-      }
-    ],
-    "version-history": [
-      {
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/pages/26544/revisions"
-      }
-    ],
-    "wp:attachment": [
-      {
-        "href": "http://dorel-spa.local:8080/uk-en/wp-json/wp/v2/media?parent=26544"
-      }
-    ],
-    "curies": [
-      {
-        "name": "wp",
-        "href": "https://api.w.org/{rel}",
-        "templated": true
-      }
-    ]
   }
 }
