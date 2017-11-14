@@ -56,6 +56,7 @@ var marketingCampaignMock = {
         "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
         "title": "Explore the great outdoors",
         "cta_text": "Meet Outdoor Strollers",
+        "cta_style" : "Inverted",
         "cta_link": "/uk-en/car-seats/euro-nxt",
         "usps": [
           {
@@ -65,8 +66,8 @@ var marketingCampaignMock = {
             "usp_text": "All terrain shock absorbing wheels",
           },
         ],
-        "cta_style": "Primary",
         "read_more_button": true,
+        "read_more_default_state": true,
         "read_more_section": [
           {
             "title": "Unique handsfree folding",
@@ -79,10 +80,29 @@ var marketingCampaignMock = {
             "image": "http:\/\/media.maxi-cosi.com\/nl-nl\/~\/media\/assets\/media\/main-collection-image\/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
           }
         ],
-        "read_more_default_state": true
-
       },
-
+      {
+        "acf_fc_layout": "carousel_block",
+        "slides": [
+          {
+            "type": "video",
+            "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            "video_id": 'A3PDXmYoF5U',
+            "content": {
+              "title": 'Full width video with text',
+              "description": 'This is a full width video with text',
+            }
+          },
+          {
+            "acf_fc_layout": "image",
+            "bynder_image_id": "7F84BD5F-551A-4DA5-8532AB44763439AA",
+            "content": {
+              "title": "This is a title",
+              "description": "This is a description"
+            }
+          }
+        ]
+      }
     ],
   }
 }

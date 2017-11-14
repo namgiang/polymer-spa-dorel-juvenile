@@ -221,7 +221,6 @@
           as="slide">
 
           <paper-slide class="slider__slide">
-
             <template is="dom-if" if="[[ _shouldShowType(slide, 'image_url') ]]">
               <iron-image class="slider__image"
                   sizing="[[ sizing ]]"
@@ -538,6 +537,7 @@
        * @param type - String
        */
       _shouldShowType: function(slide, type) {
+        slide.type = slide.type || slide.acf_fc_layout;
         if(type === 'image_url') {
           return slide && slide.image_url && slide.image_url.length;
         }

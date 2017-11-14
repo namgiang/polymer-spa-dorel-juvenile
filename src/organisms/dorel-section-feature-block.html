@@ -128,7 +128,7 @@
           </template>
           <template is="dom-if" if="[[ blockData.cta_text ]]">
             <div>
-              <dorel-cta
+              <dorel-cta inverted$="[[ ctaIsInverted ]]"
                 title="[[ blockData.cta_text ]]"dorel-cta
                 icon="dorel-icons:chevron-right"
                 type="primary"
@@ -186,7 +186,7 @@
         blockData: {
           type: Object,
           value: () => {},
-          observer: '_setFeatureIndexes'
+          observer: '_initBlockData'
         },
 
         showMore: {
@@ -201,12 +201,14 @@
         this.showMore = !this.showMore
       },
 
-      _setFeatureIndexes : function() {
+      _initBlockData : function() {
         if(this.blockData.read_more_section) {
           for(var i=0; i< this.blockData.read_more_section.length; i++) {
             this.blockData.read_more_section[i].contentBlockCounter = i;
           }
         }
+        this.showMore = this.blockData.read_more_default_state;
+        this.ctaIsInverted = this.blockData.cta_style === 'Inverted'
       }
 
     });
