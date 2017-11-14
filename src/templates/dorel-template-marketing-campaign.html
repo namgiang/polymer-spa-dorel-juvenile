@@ -1,6 +1,7 @@
 <link rel="import" href="../organisms/dorel-section-hero-header.html">
 <link rel="import" href="../organisms/dorel-section-text-image-block.html">
 <link rel="import" href="../organisms/dorel-section-feature-block.html">
+<link rel="import" href="../organisms/dorel-section-slideshow.html">
 
 <dom-module id="dorel-template-marketing-campaign">
   <template>
@@ -15,7 +16,11 @@
       <template is="dom-if" if="[[ section.isFeatureBlock ]]">
         <dorel-section-feature-block block-data="[[ section ]]"></dorel-section-text-area-block>
       </template>
-
+      <template is="dom-if" if="[[ section.isCarouselBlock ]]">
+        <dorel-section-slideshow slideshow-data="[[ section ]]"
+          gtm-parent="dorel-section-product-video"
+          gtm-parent-index="3"></dorel-section-slideshow>
+      </template>
     </template>
 
   </template>
@@ -69,6 +74,9 @@
               break;
             case 'feature_block':
               elem.isFeatureBlock = true;
+              break;
+            case 'carousel_block':
+              elem.isCarouselBlock = true;
               break;
             default:
               console.warn('unknown layout', elem.acf_fc_layout);
