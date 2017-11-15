@@ -1,4 +1,5 @@
 <link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
+<link rel="import" href="../../node_modules/polymer/lib/elements/dom-repeat.html">
 <dom-module id="dorel-image-carousel">
   <template>
     <style is="custom-style">
@@ -49,72 +50,79 @@
           position="{{ position }}"
           hide-nav
           total-slides="[[ slides.length ]]">
-        <template
-          is="dom-repeat"
-          items="[[ slides ]]"
-          as="slide">
-          <paper-slide class="slider__slide">
-            <iron-image class="slider__image"
+        <dom-repeat items="[[ slides ]]">
+          <template>
+            <paper-slide class="slider__slide">
+              <iron-image class="slider__image"
               sizing="contain"
               fade="true"
               preload
-              src$="[[ slide.image_url ]]"></iron-image>
-          </paper-slide>
-        </template>
+              src$="[[ item.image_url ]]"></iron-image>
+            </paper-slide>
+          </template>
+        </dom-repeat>
       </l2t-paper-slider>
     </section>
 
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-image-carousel',
 
-      properties: {
+    class DorelImageCarousel extends Polymer.Element {
+      static get is() {
+        return 'dorel-image-carousel';
+      }
 
-        /**
-         * @attribute
-         * @name slides
-         * @description Array of slides to show
-         */
-        slides: {
-          type: Array
-        },
+      static get properties() {
+        return {
 
-        /**
-         * @attribute
-         * @name position
-         * @description active position that is set by the l2t-paper-slider
-         */
-        position: {
-          type: Number
-        },
+          /**
+           * @attribute
+           * @name slides
+           * @description Array of slides to show
+           */
+          slides: {
+            type: Array
+          },
 
-        /**
-         * @attribute
-         * @name breakpoints
-         * @description breakpoints of the dorel-media-manager component
-         */
-        breakpoints: {
-          type: Object
-        },
+          /**
+           * @attribute
+           * @name position
+           * @description active position that is set by the l2t-paper-slider
+           */
+          position: {
+            type: Number
+          },
 
-      },
+          /**
+           * @attribute
+           * @name breakpoints
+           * @description breakpoints of the dorel-media-manager component
+           */
+          breakpoints: {
+            type: Object
+          },
 
-      observers: [
-        '_updatePosition(position)'
-      ],
+        }
+      }
+
+      static get observers() {
+        return [
+          '_updatePosition(position)'
+        ]
+      }
 
       /**
        * observer
-       * @name _setSlide
+       * @name _updatePosition
        * @description Everytime the position of the active slide of the l2t-paper-slider changes
        * fire a event updatePosition with the index of the active slide
        * @param position - Number
        */
-      _updatePosition: function(position) {
-        this.fire('updatePosition', position);
-      },
+      _updatePosition(position) {
+        let ev = new CustomEvent('updatePosition', {bubbles: true, composed: true, detail: {position: position}});
+        this.dispatchEvent(ev);
+      }
 
       /**
        * @name moveSliderTo
@@ -122,10 +130,13 @@
        * this will set the slide of l2t-paper-slider
        * @param index - Number
        */
-      moveSliderTo: function(index) {
+      moveSliderTo(index) {
         this.$.simpleSlider.movePos(index);
-      },
+      }
 
-    });
+    };
+
+    customElements.define(DorelImageCarousel.is, DorelImageCarousel);
+
   </script>
 </dom-module>
