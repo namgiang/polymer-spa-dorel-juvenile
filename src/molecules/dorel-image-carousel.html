@@ -4,7 +4,6 @@
     <style is="custom-style">
     :host {
       --theme-border-radius: 0
-      --paper-slide-height: auto;
     }
 
     .simple-slider-slide:focus {
@@ -13,6 +12,7 @@
 
     l2t-paper-slider {
       outline: none;
+      --paper-slide-height: auto;
     }
 
     l2t-paper-slider .slider__image {
@@ -36,35 +36,23 @@
       align-content: center;
       max-width: 100%;
     }
-    .content__align-center {
-      display: flex;
-      align-content: center;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      height: 100%;
-      width: 100%;
-      padding: 1.5rem;
-      box-sizing: border-box;
-    }
 
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <section class="section-slideshow"
+    <section
+      desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <l2t-paper-slider
           id="simpleSlider"
           position="{{ position }}"
           hide-nav
-          slide-duration="4"
           total-slides="[[ slides.length ]]">
         <template
           is="dom-repeat"
           items="[[ slides ]]"
           as="slide">
-
           <paper-slide class="slider__slide">
             <iron-image class="slider__image"
               sizing="contain"
@@ -72,7 +60,6 @@
               preload
               src$="[[ slide.image_url ]]"></iron-image>
           </paper-slide>
-
         </template>
       </l2t-paper-slider>
     </section>
@@ -137,24 +124,6 @@
        */
       moveSliderTo: function(index) {
         this.$.simpleSlider.movePos(index);
-      },
-
-      /**
-       * @name moveNext
-       * @description will call the public method `moveNext` of the l2t-paper-slider
-       * this will set the slide of l2t-paper-slider to the next
-       */
-      moveNext: function() {
-        this.$.simpleSlider.moveNext();
-      },
-
-      /**
-       * @name movePrevious
-       * @description will call the public method `movePrevious` of the l2t-paper-slider
-       * this will set the slide of l2t-paper-slider to the previous
-       */
-      movePrevious: function() {
-        this.$.simpleSlider.movePrev();
       },
 
     });
