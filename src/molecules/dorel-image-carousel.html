@@ -1,0 +1,162 @@
+<link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
+<dom-module id="dorel-image-carousel">
+  <template>
+    <style is="custom-style">
+    :host {
+      --theme-border-radius: 0
+      --paper-slide-height: auto;
+    }
+
+    .simple-slider-slide:focus {
+      outline: none;
+    }
+
+    l2t-paper-slider {
+      outline: none;
+    }
+
+    l2t-paper-slider .slider__image {
+      height: 20rem;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    [tablet-medium-up] l2t-paper-slider .slider__image {
+      height: 28rem;
+    }
+
+    .content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      max-width: 100%;
+    }
+    .content__align-center {
+      display: flex;
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      height: 100%;
+      width: 100%;
+      padding: 1.5rem;
+      box-sizing: border-box;
+    }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section-slideshow"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <l2t-paper-slider
+          id="simpleSlider"
+          position="{{ position }}"
+          hide-nav
+          slide-duration="4"
+          total-slides="[[ slides.length ]]">
+        <template
+          is="dom-repeat"
+          items="[[ slides ]]"
+          as="slide">
+
+          <paper-slide class="slider__slide">
+            <iron-image class="slider__image"
+              sizing="contain"
+              fade="true"
+              preload
+              src$="[[ slide.image_url ]]"></iron-image>
+          </paper-slide>
+
+        </template>
+      </l2t-paper-slider>
+    </section>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-image-carousel',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name slides
+         * @description Array of slides to show
+         */
+        slides: {
+          type: Array
+        },
+
+        /**
+         * @attribute
+         * @name position
+         * @description active position that is set by the l2t-paper-slider
+         */
+        position: {
+          type: Number
+        },
+
+        /**
+         * @attribute
+         * @name breakpoints
+         * @description breakpoints of the dorel-media-manager component
+         */
+        breakpoints: {
+          type: Object
+        },
+
+      },
+
+      observers: [
+        '_updatePosition(position)'
+      ],
+
+      /**
+       * observer
+       * @name _setSlide
+       * @description Everytime the position of the active slide of the l2t-paper-slider changes
+       * fire a event updatePosition with the index of the active slide
+       * @param position - Number
+       */
+      _updatePosition: function(position) {
+        this.fire('updatePosition', position);
+      },
+
+      /**
+       * @name moveSliderTo
+       * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
+       * this will set the slide of l2t-paper-slider
+       * @param index - Number
+       */
+      moveSliderTo: function(index) {
+        this.$.simpleSlider.movePos(index);
+      },
+
+      /**
+       * @name moveNext
+       * @description will call the public method `moveNext` of the l2t-paper-slider
+       * this will set the slide of l2t-paper-slider to the next
+       */
+      moveNext: function() {
+        this.$.simpleSlider.moveNext();
+      },
+
+      /**
+       * @name movePrevious
+       * @description will call the public method `movePrevious` of the l2t-paper-slider
+       * this will set the slide of l2t-paper-slider to the previous
+       */
+      movePrevious: function() {
+        this.$.simpleSlider.movePrev();
+      },
+
+    });
+  </script>
+</dom-module>
