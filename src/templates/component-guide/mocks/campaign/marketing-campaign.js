@@ -44,12 +44,18 @@ var marketingCampaignMock = {
         "video_id": "0zUUVyWAyRs"
       }
     ],
-    "marketing_builder": [
+    "page_builder": [
       {
         "acf_fc_layout": "content_block",
         "title": "Lorem ipsum",
         "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
-        "image": "http://media.maxi-cosi.com/nl-nl/~/media/assets/media/main-collection-image/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
+        "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
+      },
+      {
+        "acf_fc_layout": "content_block",
+        "title": "Lorem ipsum",
+        "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
+        "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
       },
       {
         "acf_fc_layout": "feature_block",
@@ -71,16 +77,15 @@ var marketingCampaignMock = {
           {
             "title": "Unique handsfree folding",
             "description": "<p>enean at aliquam dolor. Suspendisse in volutpat risus. Praesent finibus tempor condimentum. Maecenas consequat eget lorem nec vestibulum. Donec metus diam, gravida eu cursus euismod, suscipit non arcu. <\/p>",
-            "image": "http:\/\/media.maxi-cosi.com\/nl-nl\/~\/media\/assets\/media\/main-collection-image\/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
+            "bynder_image": "14BB9491-A186-40D8-B965680777095B8E"
           },
           {
             "title": "All terrain shock absorbing wheels",
             "description": "<p>Phasellus arcu est, porta ut turpis vitae, sodales luctus mi. Nulla facilisi. Etiam in condimentum massa. Nam vitae risus vulputate, auctor libero eu, pharetra odio.<\/p>\n",
-            "image": "http:\/\/media.maxi-cosi.com\/nl-nl\/~\/media\/assets\/media\/main-collection-image\/1303710110_2018_maxicosi_stroller_travelsystem_nova4_black_nomadblack_3qrt.ashx?vs=1&d=20170618T214140Z&mh=382&jpeg=85"
+            "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
           }
         ],
         "read_more_default_state": true
-
       },
 
     ],
