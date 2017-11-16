@@ -46,7 +46,7 @@
     <!-- NOTE: all Polymer defined attributes are written on a new line with a tab indent! -->
     <section class="dorel-section-text-image-block">
       <dorel-layout-container>
-        <dorel-layout-row reverse$="[[ _reverse(breakpoints.tabletMediumUp, componentCounter) ]]">
+        <dorel-layout-row reverse$="[[ _reverse(breakpoints.tabletMediumUp, componentCount) ]]">
           <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
             <div class="image-container" desktop$="[[ breakpoints.tabletMediumUp ]]">
               <dorel-bynder-image media-id="[[ blockData.bynder_image ]]"
@@ -82,7 +82,8 @@
       is: 'dorel-section-text-image-block',
 
       properties: {
-        /**
+       /**
+        * @attribute
         * @name blockData
         * @description title of the item
         */
@@ -91,15 +92,16 @@
           value: {}
         },
 
-        componentCounter: {
-          type: Number,
-          value: 0
-        },
+       /**
+        * @attribute
+        * @name componentCounter
+        * @description the number of the component
+        */
+        componentCount: Number,
       },
 
       _reverse: function (desktopBreakpoint, componentCount) {
         var imageLeft = !!(componentCount && componentCount % 2 !== 0);
-
         return !!(desktopBreakpoint && !imageLeft);
       }
 
