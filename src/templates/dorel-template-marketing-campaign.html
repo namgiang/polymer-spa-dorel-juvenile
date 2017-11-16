@@ -41,12 +41,16 @@
           <template
             is="dom-if"
             if="[[ _isPageComponent(component.acf_fc_layout, 'content_block') ]]">
-            <div class="max-width-container">
-              <!-- TODO: rename this component to what it is named in WP -->
-              <dorel-section-text-image-block
-                block-data="[[component]]"
-                component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
-            </div>
+            <dorel-layout-container>
+              <dorel-layout-row>
+                <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                  <!-- TODO: rename this component to what it is named in WP -->
+                  <dorel-section-text-image-block
+                    block-data="[[component]]"
+                    component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
+                </dorel-layout-column>
+              </dorel-layout-row>
+            </dorel-layout-container>
           </template>
           <!--// content_block-->
 
@@ -54,13 +58,27 @@
           <template
             is="dom-if"
             if="[[ _isPageComponent(component.acf_fc_layout, 'feature_block') ]]">
-            <div class="max-width-container">
-              <!-- TODO: rename this component to what it is named in WP -->
-              <dorel-section-feature-block
-                block-data="[[component]]"></dorel-section-feature-block>
-            </div>
+            <dorel-layout-row>
+              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                <!-- TODO: rename this component to what it is named in WP -->
+                <dorel-section-feature-block
+                  block-data="[[component]]"></dorel-section-feature-block>
+              </dorel-layout-column>
+            <dorel-layout-row>
           </template>
           <!--// feature_block -->
+
+          <!-- carousel_block -->
+          <template
+            is="dom-if"
+            if="[[ _isPageComponent(component.acf_fc_layout, 'carousel_block') ]]">
+            <dorel-layout-row>
+              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                <!-- TODO: PLACE CAROUSEL BLOCK HERE -->
+              </dorel-layout-column>
+            <dorel-layout-row>
+          </template>
+          <!--// carousel_block -->
 
         </template><!--// dom-repeat -->
 
