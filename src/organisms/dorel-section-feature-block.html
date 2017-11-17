@@ -103,76 +103,92 @@
       .close-icon {
         cursor: pointer;
       }
-
     </style>
 
     <section class="feature-block"
              tablet-small$="[[ breakpoints.tabletSmall ]]"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-        <dorel-bynder-responsive-image
-          media-id="[[ blockData.bynder_image ]]"></dorel-bynder-responsive-image>
 
-  <dorel-layout-container class="on-image">
-    <dorel-layout-row class="on-image">
-      <dorel-layout-column class="on-image" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-          <template is="dom-if" if="[[ blockData.title ]]">
-            <h3 class="title">[[ blockData.title ]]</h3>
-          </template>
-          <template is="dom-repeat" items="[[ blockData.usps ]]">
-            <div class="icon-item">
-              <template is="dom-if" if="[[ item.usp_icon ]]">
-                <iron-icon icon="[[ item.usp_icon ]]"></iron-icon>
+      <dorel-bynder-responsive-image
+        media-id="[[ blockData.bynder_image ]]"></dorel-bynder-responsive-image>
+
+      <dorel-layout-container class="on-image">
+        <dorel-layout-row class="on-image">
+          <dorel-layout-column class="on-image" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+
+            <!-- TITLE -->
+            <template is="dom-if" if="[[ blockData.title ]]">
+              <h3 class="title">[[ blockData.title ]]</h3>
+            </template><!--// TITLE -->
+
+            <!-- USPS -->
+            <template is="dom-repeat" items="[[ blockData.usps ]]">
+              <div class="icon-item">
+                <template is="dom-if" if="[[ item.usp_icon ]]">
+                  <iron-icon icon="[[ item.usp_icon ]]"></iron-icon>
+                </template>
+
+                <template is="dom-if" if="[[ item.usp_text ]]">
+                  <span>[[ item.usp_text ]]</span>
+                </template>
+              </div>
+            </template><!--// USPS -->
+
+            <!-- CTA -->
+            <template is="dom-if" if="[[ blockData.cta_text ]]">
+              <div>
+                <dorel-cta
+                  title="[[ blockData.cta_text ]]"
+                  icon="dorel-icons:chevron-right"
+                  type="primary"
+                  inverted="[[ _isValue('inverted', blockData.cta_type) ]]"
+                  link="[[ blockData.cta_href ]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  [[ blockData.cta_text ]]
+                </dorel-cta>
+              </div>
+            </template><!--// CTA -->
+
+            <!-- READ MORE CTA -->
+            <template is="dom-if" if="[[ blockData.read_more_section ]]">
+              <template is="dom-if" if="[[!showMore]]">
+                <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-more">show more</dorel-cta>
               </template>
-              <span>[[ item.usp_text ]]</span>
-            </div>
-          </template>
-          <template is="dom-if" if="[[ blockData.cta_text ]]">
-            <div>
-              <dorel-cta inverted$="[[ ctaIsInverted ]]"
-                title="[[ blockData.cta_text ]]"dorel-cta
-                icon="dorel-icons:chevron-right"
-                type="primary"
-                link="[[ blockData.cta_href ]]"
-                gtm-parent="[[ gtmParent ]]"
-                gtm-parent-index="[[ gtmParentIndex ]]"
-                gtm-cta-index="0">
-                [[ blockData.cta_text ]]
-              </dorel-cta>
-            </div>
-          </template>
+              <template is="dom-if" if="[[showMore]]">
+                <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-less">show less</dorel-cta>
+              </template>
+            </template><!--// READ MORE CTA -->
 
-          <template is="dom-if" if="[[ blockData.read_more_section ]]">
-            <template is="dom-if" if="[[ !showMore ]]">
-              <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-more">
-                show more
-              </dorel-cta>
-            </template>
-            <template is="dom-if" if="[[ showMore ]]">
-              <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-less">
-                show less
-              </dorel-cta>
-            </template>
-          </template>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
+    </section>
 
-      </dorel-layout-column>
-    </dorel-layout-row>
-  </dorel-layout-container>
-</section>
-  <iron-collapse opened="{{showMore}}">
-    <dorel-layout-container>
-      <dorel-layout-row class="close-bar">
-        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-          <div class="align-right">
-            <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon"></iron-icon>
-          </div>
-        </dorel-layout-column>
-      </dorel-layout-row>
-    </dorel-layout-container>
-    <template is="dom-repeat" items="[[ blockData.read_more_section ]]">
-      <dorel-section-text-image-block block-data="[[ item ]]"></dorel-section-text-area-block>
-    </template>
-  </iron-collapse>
-</template>
+    <!-- collapsed content -->
+    <iron-collapse opened="[[showMore]]">
+      <dorel-layout-container>
+        <dorel-layout-row class="close-bar">
+
+          <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+            <div class="align-right">
+              <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon"></iron-icon>
+            </div>
+          </dorel-layout-column>
+
+        </dorel-layout-row>
+      </dorel-layout-container>
+
+      <template is="dom-repeat" items="[[ blockData.read_more_section ]]">
+        <dorel-section-text-image-block
+          block-data="[[item]]"
+          component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
+      </template>
+    </iron-collapse><!--// collapsed content -->
+
+  </template>
+
   <script>
     Polymer({
       is: 'dorel-section-feature-block',
@@ -185,32 +201,44 @@
          */
         blockData: {
           type: Object,
-          value: () => {},
-          observer: '_initBlockData'
+          value: () => { return {}; },
+          observer: '_defaultState'
         },
 
         showMore: {
           type: Boolean,
           value: false
-        }
+        },
+
+        componentCount: {
+          type: Number,
+          value: 0
+        },
       },
 
-      behaviors: [DorelMultilingualBehavior],
+      behaviors: [DorelMultilingualBehavior, ValueBehavior],
 
       _toggleMore: function() {
-        this.showMore = !this.showMore
+        this.showMore = !this.showMore;
       },
 
-      _initBlockData : function() {
-        if(this.blockData.read_more_section) {
-          for(var i=0; i< this.blockData.read_more_section.length; i++) {
-            this.blockData.read_more_section[i].contentBlockCounter = i;
-          }
-        }
-        this.showMore = this.blockData.read_more_default_state;
-        this.ctaIsInverted = this.blockData.cta_style === 'Inverted'
-      }
+      /**
+       * @name _defaultState
+       * @description defines the default state of the read more section
+       */
+      _defaultState: function(blockData) {
+        this.set('showMore', blockData.read_more_default_state);
+      },
 
+      /**
+       * @name _getComponentCount
+       * @description counts a certain component (content_block) to align left or right
+       * in the child component
+       */
+      _getComponentCount: function() {
+        this.set('componentCount', this.get('componentCount')+1);
+        return this.componentCount;
+      }
     });
   </script>
 </dom-module>
