@@ -1,19 +1,110 @@
 <link rel="import" href="../organisms/dorel-section-hero-header.html">
 <link rel="import" href="../organisms/dorel-section-text-image-block.html">
-
+<link rel="import" href="../organisms/dorel-section-feature-block.html">
+<link rel="import" href="../organisms/dorel-timeline.html">
 
 <dom-module id="dorel-template-marketing-campaign">
   <template>
+    <style>
+      section {
+        padding-bottom: 1.5em;
+        float: left;
+        width: 100%;
+      }
 
-    <dorel-section-hero-header align="left" hero-header-data="[[ heroHeaderData ]]"></dorel-section-hero-header>
+      section[tablet-medium-up] {
+        padding-bottom: 3em;
+      }
 
-    <template is="dom-repeat" items="[[ marketingSections ]]" as="section">
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+    </style>
 
-      <template is="dom-if" if="[[ section.isContentBlock ]]">
-        <dorel-section-text-image-block block-data="[[ section ]]"></dorel-section-text-area-block>
-      </template>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    </template>
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <!-- HERO HEADER -->
+      <dorel-section-hero-header
+        align="left"
+        hero-header-data="[[heroHeader]]"></dorel-section-hero-header>
+      <!--// HERO HEADER -->
+
+
+      <template
+        is="dom-if"
+        if="{{ templateData.acf.page_builder.length }}">
+        <template
+          is="dom-repeat"
+          items="[[ templateData.acf.page_builder ]]"
+          as="component"
+          targetFramerate="1000">
+
+          <!-- content_block -->
+          <template
+            is="dom-if"
+            if="[[ _isPageComponent(component.acf_fc_layout, 'content_block') ]]">
+            <dorel-layout-container>
+              <dorel-layout-row>
+                <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                  <dorel-section-text-image-block
+                    block-data="[[component]]"
+                    component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
+                </dorel-layout-column>
+              </dorel-layout-row>
+            </dorel-layout-container>
+          </template>
+          <!--// content_block -->
+
+
+          <!-- feature_block -->
+          <template
+            is="dom-if"
+            if="[[ _isPageComponent(component.acf_fc_layout, 'feature_block') ]]">
+            <dorel-section-feature-block
+              block-data="[[component]]"></dorel-section-feature-block>
+          </template>
+          <!--// feature_block -->
+
+          <!-- carousel_block -->
+          <template
+            is="dom-if"
+            if="[[ _isPageComponent(component.acf_fc_layout, 'carousel_block') ]]">
+            <dorel-section-slideshow
+              slideshow-data="[[component]]"
+              gtm-parent="dorel-section-product-video"
+              gtm-parent-index="3"></dorel-section-slideshow>
+            <dorel-layout-row>
+          </template>
+          <!--// carousel_block -->
+
+          <template
+            is="dom-if"
+            if="[[ _isPageComponent(component.acf_fc_layout, 'timeline') ]]">
+            <dorel-layout-container>
+              <dorel-layout-row>
+                <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                  <h2 class="title">[[component.title]]</h2>
+                  <dorel-timeline
+                    interval="[[component.animation_interval]]"
+                    max-iterations="[[component.animation_amount]]"
+                    moments="[[component.timeline_moments]]"></dorel-timeline>
+                </dorel-layout-column>
+              </dorel-layout-row>
+            </dorel-layout-container>
+          </template>
+
+        </template><!--// dom-repeat -->
+      </template><!--// dom-if page_builder.length -->
+
+    </section><!--// section -->
 
   </template>
 
@@ -23,6 +114,13 @@
 
       properties: {
 
+        appCache: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+
         /**
          * @attribute
          * @name templateData
@@ -30,70 +128,39 @@
          */
         templateData: {
           type: Object,
-          value: function () {
+          value: function() {
             return {};
-            observer: '_defineComponentModels'
           },
+          observer: '_defineComponentModels'
         },
 
+        /**
+         * @name homeHeaderData
+         * @description the data model used for the hero header component
+         */
+        heroHeader: Object,
 
-        heroHeaderData: {
-          type: Object,
-          computed: 'getHeaderData(templateData)'
-        },
-
-        marketingSections: {
-          type: Array,
-          computed: 'getMarketingSections(templateData)'
+        /**
+         * @name componentCount
+         * @description keeps track of a component number to change alignment
+         */
+        componentCount: {
+          type: Number,
+          value: 0
         }
-
       },
 
-      getMarketingSections: function(templateData) {
-        if(!templateData.acf) {
-          return [];
-        }
-        var sections =  templateData.acf.marketing_builder || [];
-        var l = sections.length;
+      behaviors: [TemplateBehaviors],
 
-        for (var i = 0; i < l; i++) {
-          var elem = sections[i];
-          switch (elem.acf_fc_layout) {
-            case 'content_block':
-              elem.isContentBlock = true;
-              // content block get a counter
-              // so we can switch between image-left and image-right layout if block succeed each other
-              elem.contentBlockCounter = (i > 0 && sections[i - 1].isContentBlock) ? sections[i - 1].contentBlockCounter + 1 : 0;
-              break;
-            case 'marketing_hero':
-              elem.isMarketingHero = true;
-            default:
-              console.warn('unknown layout', elem.acf_fc_layout);
-          }
-
-        }
-        return sections;
-      },
-
-
-      getHeaderData: function(templateData) {
-
-        var headerData = ( templateData.acf &&  templateData.acf.hero_header && templateData.acf.hero_header.length ) ?
-          templateData.acf.hero_header[0] :
-          {} ;
-
-          // the video in a marketing campaign header is a cta_video
-          headerData.cta_video_id = headerData.video_id;
-          // if video_id is present we want a cta button
-          headerData.cta_toggle = !!headerData.video_id;
-          // cta_type can only be cta-video here, and button will not show when no id is provided
-          headerData.cta_type = 'cta-video';
-
-          return headerData;
+      /**
+       * @name _getComponentCount
+       * @description counts a certain component (content_block) to align left or right
+       * in the child component
+       */
+      _getComponentCount: function() {
+        this.set('componentCount', this.get('componentCount')+1);
+        return this.componentCount;
       }
-
-
-
 
     });
   </script>

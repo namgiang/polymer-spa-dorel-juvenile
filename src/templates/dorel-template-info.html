@@ -1,10 +1,10 @@
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../atoms/dorel-wysiwyg-html.html">
+<link rel="import" href="../atoms/dorel-iframe.html">
 
 <dom-module id="dorel-template-info">
   <template>
     <style>
-
       section {
         padding-bottom: 1.5em;
         float: left;
@@ -56,6 +56,8 @@
         margin: 3em auto 1.5em auto;
       }
 
+      /* prevent scrollbars */
+      iframe { overflow: hidden; }
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -98,6 +100,19 @@
                 <dorel-wysiwyg-html html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
               </div>
             </template>
+            <!--// dorel wysiwyg content-->
+
+            <!-- dorel FormAssembly -->
+            <template
+              is="dom-if"
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_formassembly') ]]">
+              <div class="max-width-container">
+                <dorel-iframe
+                  url="https://dorel.tfaforms.net/[[ component.formassembly_form_id ]]"
+                  height="[[ component.form_height ]]"></dorel-iframe>
+              </div>
+            </template>
+            <!--// dorel FormAssembly -->
 
             <!-- dorel bynder image -->
             <template
@@ -116,7 +131,9 @@
                                     height="31.5em"></dorel-bynder-image>
               </div>
             </template>
+            <!--// dorel bynder image -->
 
+            <!-- dorel video wrap -->
             <template
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
@@ -124,6 +141,7 @@
                 <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
               </div>
             </template>
+            <!-- dorel video wrap -->
 
             <!-- dorel section hubspot -->
             <template
@@ -176,8 +194,7 @@
          * @name homeHeaderData
          * @description the data model used for the hero header component
          */
-        heroHeaderData: Object
-
+        heroHeaderData: Object,
       },
 
       behaviors: [TemplateBehaviors]
