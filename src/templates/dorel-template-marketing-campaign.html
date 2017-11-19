@@ -15,37 +15,45 @@
       section[tablet-medium-up] {
         padding-bottom: 3em;
       }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
 
+      <!-- HERO HEADER -->
       <dorel-section-hero-header
         align="left"
         hero-header-data="[[heroHeader]]"></dorel-section-hero-header>
+      <!--// HERO HEADER -->
 
 
-      <!-- show when acf.page_builder has components -->
       <template
         is="dom-if"
         if="{{ templateData.acf.page_builder.length }}">
-
-        <!-- iterate over page_builder components -->
         <template
           is="dom-repeat"
           items="[[ templateData.acf.page_builder ]]"
           as="component"
           targetFramerate="1000">
 
-          <!-- content_block-->
+          <!-- content_block -->
           <template
             is="dom-if"
             if="[[ _isPageComponent(component.acf_fc_layout, 'content_block') ]]">
             <dorel-layout-container>
               <dorel-layout-row>
                 <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-                  <!-- TODO: rename this component to what it is named in WP -->
                   <dorel-section-text-image-block
                     block-data="[[component]]"
                     component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
@@ -53,19 +61,15 @@
               </dorel-layout-row>
             </dorel-layout-container>
           </template>
-          <!--// content_block-->
+          <!--// content_block -->
+
 
           <!-- feature_block -->
           <template
             is="dom-if"
             if="[[ _isPageComponent(component.acf_fc_layout, 'feature_block') ]]">
-            <dorel-layout-row>
-              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-                <!-- TODO: rename this component to what it is named in WP -->
-                <dorel-section-feature-block
-                  block-data="[[component]]"></dorel-section-feature-block>
-              </dorel-layout-column>
-            <dorel-layout-row>
+            <dorel-section-feature-block
+              block-data="[[component]]"></dorel-section-feature-block>
           </template>
           <!--// feature_block -->
 
@@ -73,28 +77,32 @@
           <template
             is="dom-if"
             if="[[ _isPageComponent(component.acf_fc_layout, 'carousel_block') ]]">
-            <dorel-layout-row>
-              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-                <dorel-section-slideshow
-                  slideshow-data="[[component]]"
-                  gtm-parent="dorel-section-product-video"
-                  gtm-parent-index="3"></dorel-section-slideshow>
-              </dorel-layout-column>
+            <dorel-section-slideshow
+              slideshow-data="[[component]]"
+              gtm-parent="dorel-section-product-video"
+              gtm-parent-index="3"></dorel-section-slideshow>
             <dorel-layout-row>
           </template>
           <!--// carousel_block -->
 
+          <template
+            is="dom-if"
+            if="[[ _isPageComponent(component.acf_fc_layout, 'timeline') ]]">
+            <dorel-layout-container>
+              <dorel-layout-row>
+                <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                  <h2 class="title">[[component.title]]</h2>
+                  <dorel-timeline
+                    interval="[[component.animation_interval]]"
+                    max-iterations="[[component.animation_amount]]"
+                    moments="[[component.timeline_moments]]"></dorel-timeline>
+                </dorel-layout-column>
+              </dorel-layout-row>
+            </dorel-layout-container>
+          </template>
+
         </template><!--// dom-repeat -->
-
       </template><!--// dom-if page_builder.length -->
-
-      <dorel-layout-container>
-        <dorel-layout-row>
-          <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-            <dorel-timeline></dorel-timeline>
-          </dorel-layout-column>
-        </dorel-layout-row>
-      </dorel-layout-container>
 
     </section><!--// section -->
 

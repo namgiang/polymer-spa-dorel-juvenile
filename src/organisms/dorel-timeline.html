@@ -1,149 +1,195 @@
 <dom-module id="dorel-timeline">
   <template>
     <style>
-      /* The actual timeline (the vertical ruler) */
       .timeline {
         position: relative;
+        float: left;
         width: 100%;
-        margin: 0 auto;
       }
 
-      /* The actual timeline (the vertical ruler) */
+      .moments-container {
+        margin: 0 auto;
+        padding: 20px 0;
+        width: 70%;
+      }
+
+      /* VERTICAL RULE */
       .timeline::after {
         content: '';
         position: absolute;
-        width: 6px;
-        background-color: grey;
+        width: 0px;
+        border-left: 2px dashed var(--theme-brand-color-1);
         top: 0;
         bottom: 0;
         left: 50%;
         margin-left: -3px;
+        z-index: 98;
       }
 
-      /* Container around content */
-      .container {
-        padding: 10px 0 10px 0;
+      .timeline-row {
+        float: left;
         position: relative;
-        background-color: inherit;
+        width: 100%;
+      }
+
+      .timeline-row.active {
+        background-color: transparent;
+      }
+
+      .timeline-row .container {
         width: 50%;
       }
 
-      /* The circles on the timeline */
-      .container::after {
+      .timeline-row .content-wrap {
+        padding: 10px 40px;
+      }
+
+      .timeline-row .content-overlay {
+        background-color: rgba(255,255,255, 0.5);
+        left: 0;
+        top: 0;
+        position: absolute;
+        width: 100%; height: 100%;
+        z-index: 97;
+      }
+
+      .timeline-row.active .content-overlay {
+        background-color: transparent;
+      }
+
+      .title {
+        display: block;
+        text-align: center;
+        width: 100%;
+      }
+
+      /* DOTS */
+      .timeline-row .content-wrap::after {
         content: '';
         position: absolute;
-        width: 25px;
-        height: 25px;
-        right: -17px;
-        background-color: #000;
-        border: 4px solid #FF9F55;
-        top: 15px;
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        border: 2px solid var(--theme-brand-color-1);
+        top: 50%;
         border-radius: 50%;
-        z-index: 1;
+        z-index: 99;
       }
 
-      /* Place the container to the left */
-      .left {
-        left: 0;
-        padding-right: 40px;
+      .timeline-row.active .content-wrap::after {
+        background-color: var(--theme-brand-color-1);
       }
 
-      /* Place the container to the right */
-      .right {
-        left: 50%;
-        padding-left: 40px;
-      }
-
-      /* Add arrows to the left container (pointing right)
-      .left::before {
-        content: " ";
-        height: 0;
+      /* POINTER TITLE */
+      .time {
+        background-color: var(--theme-brand-color-1);
+        color: var(--theme-color-monochrome-1);
+        font-weight: var(--theme-font-weight-bold);
+        padding: 5px 10px;
         position: absolute;
-        top: 22px;
-        width: 0;
-        z-index: 1;
-        right: 30px;
-        border: medium solid red;
-        border-width: 10px 0 10px 10px;
-        border-color: transparent transparent transparent white;
-      }
-
-      /* Add arrows to the right container (pointing left)
-      .right::before {
-        content: " ";
-        height: 0;
-        position: absolute;
-        top: 22px;
-        width: 0;
-        z-index: 1;
-        left: 30px;
-        border: medium solid blue;
-        border-width: 10px 10px 10px 0;
-        border-color: transparent white transparent transparent;
-      }
-
-      Fix the circle for containers on the right side
-      .right::after {
-        left: -16px;
-      }*/
-
-      /* The actual content */
-      .content {
-        padding: 20px 30px;
-        background-color: pink;
-        position: relative;
+        top: 48.6%;
         border-radius: 6px;
       }
 
-      .left .content::before {
+      /* POINTER TITLE ARROW */
+      .time::before {
         content: " ";
         height: 0;
         position: absolute;
-        top: 22px;
+        top: 7px;
         width: 0;
         z-index: 1;
-        right: 30px;
-        border: medium solid red;
-        border-width: 10px 0 10px 10px;
-        border-color: transparent transparent transparent white;
+        border: medium solid var(--theme-brand-color-1);
       }
 
-      .right .content::before {
-        content: " ";
-        height: 0;
+      /* ----- ODD/EVEN RULES ----- */
+      .timeline-row:nth-child(odd) .container.left {
+        float: left;
+        position: relative;
+      }
+      .timeline-row:nth-child(odd) .container.right {
+        top: 48%;
         position: absolute;
-        top: 22px;
-        width: 0;
-        z-index: 1;
-        left: 30px;
-        border: medium solid blue;
+        right: 0px;
+      }
+
+      /* ODD - DOTS */
+      .timeline-row:nth-child(odd) .content-wrap::after {
+        right: -7px;
+      }
+
+      /* ODD - POINTER */
+      .timeline-row:nth-child(odd) .time {
+        left: 20px;
+      }
+      .timeline-row:nth-child(odd) .time::before {
+        left: -10px;
         border-width: 10px 10px 10px 0;
-        border-color: transparent white transparent transparent;
-      }
-      .right .content::after {
-        left: -16px;
+        border-color: transparent var(--theme-brand-color-1) transparent transparent;
       }
 
+      /* EVEN - CONTAINERS */
+      .timeline-row:nth-child(even) .container.left {
+        float: right;
+        position: relative;
+      }
+      .timeline-row:nth-child(even) .container.right {
+        top: 48%;
+        position: absolute;
+        left: 0;
+      }
+
+      /* EVEN - DOTS */
+      .timeline-row:nth-child(even) .content-wrap::after {
+        left: -11px;
+      }
+
+      /* EVEN - POINTER */
+      .timeline-row:nth-child(even) .time {
+        right: 24px;
+      }
+      .timeline-row:nth-child(even) .time::before {
+        right: -10px;
+        border-width: 10px 0 10px 10px;
+        border-color: transparent transparent transparent var(--theme-brand-color-1);
+      }
     </style>
 
-    <div class="timeline">
-      <div class="container left">
+    <section class="timeline" on-click="_toggleTimeline">
+      <div class="moments-container">
+        <template
+          is="dom-repeat"
+          items="[[moments]]"
+          as="moment">
 
-        <div class="content">
-          <img src="https://www.w3schools.com/w3css/img_fjords.jpg" width="100%">
-          <h2>2017</h2>
-          <p>Lorem ipsum..</p>
-        </div>
+          <div class$="timeline-row [[_isActive(moment.active)]]">
+            <div class="content-overlay"></div>
 
+            <div class="container left">
+              <div class="content-wrap">
+                <div class="content">
+                  <dorel-bynder-image
+                    media-id="[[ moment.bynder_image ]]"
+                    derivative-identifier="webimage"
+                    width="100%"
+                    height="10em"
+                    tablet-width="100%"
+                    tablet-height="8em"
+                    mobile-width="100%"
+                    mobile-height="5em"></dorel-bynder-image>
+                  <span class="title">[[moment.title]]</span>
+                </div>
+              </div>
+            </div><!--// .container.left -->
+
+            <div class="container right">
+              <span class="time">[[moment.time_tooltip]]</span>
+            </div><!--// .container.right -->
+          </div><!--// .timeline-row -->
+
+        </template><!--// dom-repeat -->
       </div>
-
-      <div class="container right">
-        <div class="content">
-          <h2>2016</h2>
-          <p>Lorem ipsum..</p>
-        </div>
-      </div>
-    </div>
+    </section><!--// .timeline -->
 
   </template>
   <script>
@@ -151,11 +197,159 @@
       is: 'dorel-timeline',
       properties: {
 
+        /**
+         * @attribute
+         * @description all moments in time
+         */
+        moments: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * @attribute
+         * @description the time in milliseconds it progresses in time
+         */
+        interval: {
+          type: Number,
+          value: 1000
+        },
+
+        /**
+         * @attribute
+         * @description the amount the animation is repeated
+         */
+        maxIterations: {
+          type: Number,
+          value: 5
+        },
+
+        /**
+         * @attribute
+         * @description defines the overall status
+         * (true is animation is running, false is animation is off)
+         */
+        status: {
+          type: Boolean,
+          value: true
+        }
       },
 
+      /**
+       * @name ready
+       * @description on ready event to set the right values and start
+       * the animation
+       */
       ready: function() {
-        console.log('timeline');
+        var moments = this.get('moments');
+        if(typeof moments === 'undefined' || !moments.length) return;
+
+        // reset all active values per moment
+        this._resetMoments(moments);
+
+        // start the timeline
+        this.start();
       },
+
+      /**
+       * @name start
+       * @description starts the animation with the given parameters
+       */
+      start: function() {
+        var self = this;
+        var moments = this.get('moments');
+        var totalMoments = moments.length;
+        var count = 0;
+        var currentIteration = 1;
+        var maxIterations = Number(this.get('maxIterations'));
+
+        // interval for setting active states
+        this.set('animation', setInterval(function() {
+
+          // when the count is equal, reset the active states
+          if(count === totalMoments) {
+            for(var i = 0; i < totalMoments; i++) {
+              if(moments[i].active) {
+                moments[i].active = false;
+                count = 0;
+              }
+            }
+
+            // break out of the interval when the max has been reached
+            if(currentIteration === maxIterations) {
+              clearInterval(self.get('animation'));
+            }
+
+            // count the iteration
+            currentIteration++;
+
+          // normal state of progressing through the timeline
+          } else {
+            moments[count].active = true;
+            count++;
+          }
+
+          // force update the dom-repeat (hack, polymer workaround)
+          self._updateMoments(moments);
+        }, Number(this.get('interval'))));
+
+        this.set('status', true);
+      },
+
+      /**
+       * @name stop
+       * @description stops the animation (clears the interval)
+       */
+      stop: function() {
+        clearInterval(this.get('animation'));
+        this.set('status', false);
+        this._resetMoments(this.get('moments'));
+      },
+
+      /**
+       * @name _resetMoments
+       * @description sets the active value for all moments to false
+       */
+      _resetMoments: function(moments) {
+        for(var i = 0; i < moments.length; i++) {
+          moments[i].active = false;
+        }
+
+        // force update the dom-repeat (hack, polymer workaround)
+        this._updateMoments(moments);
+      },
+
+      /**
+       * @name _updateMoments
+       * @description workaround for updating the data of the dom-repeat
+       * (Polymer bug)
+       *
+       * @param - model - Object
+       */
+      _updateMoments: function(model) {
+        var newMoments = JSON.parse(JSON.stringify(model));
+        this.set('moments', newMoments);
+      },
+
+      /**
+       * @name _isActive
+       * @description returns the String 'active' when the val argument is true
+       *
+       * @param - val - String
+       * @returns - String
+       */
+      _isActive: function(val) {
+        return (typeof val === 'undefined' || !val) ? '' : 'active';
+      },
+
+      /**
+       * @name _toggleTimeline
+       * @description toggles the animation
+       */
+      _toggleTimeline: function() {
+        var status = this.get('status');
+        (typeof status !== 'undefined' && status) ? this.stop() : this.start();
+      }
     });
   </script>
 
