@@ -1,6 +1,5 @@
 <link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
 <link rel="import" href="./dorel-youtube-video.html">
-<link rel="import" href="../utils/behaviors/single/dorel-value-behavior.html">
 
 <dom-module id="dorel-video-slide">
   <template>
@@ -20,6 +19,7 @@
       align-content: center;
       max-width: 100%;
       transition: opacity .2s;
+      color: var(--theme-color-monochrome-1);
     }
 
     .content[hide] {
@@ -34,21 +34,18 @@
       justify-content: center;
       flex: 1;
       height: 100%;
-      width: 100%;
       padding: 1.5rem;
       box-sizing: border-box;
     }
     .content__title {
+      margin: 0;
       @apply(--theme-typography-8);
       font-size: 3.0000em !important;
-      color: var(--theme-color-monochrome-1);
-      margin: 0;
       text-shadow: 1px 1px 2px rgba(0,0,0,.5);
     }
     .content__description {
       @apply(--theme-typography-4);
       font-size: 1.5000em !important;
-      color: var(--theme-color-monochrome-1);
       text-shadow: 1px 1px 2px rgba(0,0,0,.5);
     }
     .content__text {
@@ -56,18 +53,10 @@
     }
     [tablet-medium-up] .content__text {
       display: block;
+      margin-left: 1.5rem;
     }
-    .content__video {
-      margin-right: 0;
-    }
-    [tablet-medium-up] .content__video {
-      margin-right: 1.5rem;
-    }
-    [playing] .content__video {
-      opacity: 0;
-    }
+
     .content__play-btn {
-      color: var(--theme-color-monochrome-1);
       width: 6rem;
       height: 6rem;
       border-radius: 50%;
@@ -80,7 +69,6 @@
     }
 
     .content__play-icon {
-      color: var(--theme-color-monochrome-1);
       position: absolute;
       top: 50%;
       left: 50%;
@@ -116,7 +104,6 @@
     <dorel-youtube-video id="video"
       class="slider__image"
       autoplay="0"
-      image-type="wide-screen"
       video-id$="[[ slide.video_id ]]"
       thumbnail$="[[ slide.bynder_image_id ]]"></dorel-youtube-video>
 
@@ -150,89 +137,107 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-video-slide',
 
-      properties: {
+    class DorelVideoSlide extends Polymer.Element {
+      static get is() {
+        return 'dorel-video-slide';
+      }
 
-        /**
-         * @attribute
-         * @name slides
-         * @description Array of slides to show
-         */
-        slide: {
-          type: Object,
-          // value: function () {
-          //   return {};
-          // }
-        },
+      static get properties() {
+        return {
 
-        /**
-         * @attribute
-         * @name is-selected-slide
-         * @description true when this slide is selected by the carousel
-         */
-        isSelectedSlide: {
-          type: Boolean
-        },
+          /**
+           * @attribute
+           * @name slides
+           * @description Array of slides to show
+           */
+          slide: {
+            type: Object,
+            // value: function () {
+            //   return {};
+            // }
+          },
 
-        /**
-         * @attribute
-         * @name breakpoints
-         * @description breakpoints of the dorel-media-manager component
-         */
-        breakpoints: {
-          type: Object
-        },
+          /**
+           * @attribute
+           * @name is-selected-slide
+           * @description true when this slide is selected by the carousel
+           */
+          isSelectedSlide: {
+            type: Boolean
+          },
 
-        /**
-         * @attribute
-         * @name sizing
-         * @description passed by the parent | option for the iron-image | contain or cover
-         */
-        sizing: {
-          type: String,
-          value: 'contain'
-        },
+          /**
+           * @attribute
+           * @name breakpoints
+           * @description breakpoints of the dorel-media-manager component
+           */
+          breakpoints: {
+            type: Object
+          },
 
-        playing: {
-          type : Boolean,
-          value : false,
-        },
+          /**
+           * @attribute
+           * @name sizing
+           * @description passed by the parent | option for the iron-image | contain or cover
+           */
+          sizing: {
+            type: String,
+            value: 'contain'
+          },
 
-        hideButtonTimeout: {
-          type: Number
-        },
+          playing: {
+            type : Boolean,
+            value : false,
+          },
 
-        /**
-         * @name hideButton
-         * @description playButton becomes
-         */
-        hideButton: {
-          type: Boolean,
-          value: false
+          hideButtonTimeout: {
+            type: Number
+          },
+
+          /**
+           * @name hideButton
+           * @description playButton becomes
+           */
+          hideButton: {
+            type: Boolean,
+            value: false
+          }
         }
-      },
+      }
 
-      observers: [
-        '_handleSlideChange(isSelectedSlide)'
-      ],
+      static get observers () {
+        return [
+          '_handleSlideChange(isSelectedSlide)'
+        ]
+      }
 
-      _handleSlideChange: function(isSelectedSlide) {
+
+      /**
+       * observer
+       * @name _handleSlideChange
+       * @description when this slide is no longer the selected slide in the caroussel, stop playing the video
+       * @param isSelectedSlide - Boolean
+       */
+      _handleSlideChange (isSelectedSlide) {
         if(!isSelectedSlide && this.get('playing')) {
           this.pause();
         }
-      },
-      /**
-       * @name _playVideo
-       * @description on click play the video
-       * @param event - Object
-       */
-      _togglePlay: function(event) {
-        this[ this.get('playing') ? 'pause' : 'play' ]();
-      },
+      }
 
-      play: function () {
+      /**
+       * @name _togglePlay
+       * @description play or pause the video
+       */
+      _togglePlay () {
+        this[ this.get('playing') ? 'pause' : 'play' ] ();
+      }
+
+      /**
+       * @name play
+       * @description play the video
+       */
+      play () {
         if(this.get('playing')) {
           return;
         }
@@ -240,9 +245,13 @@
         this.$.video.resume();
         this.addEventListener('mousemove', this.handleMouseMove);
         this.hideButtonLater();
-      },
+      }
 
-      pause: function () {
+      /**
+       * @name pause
+       * @description pause the video
+       */
+      pause () {
         if(!this.get('playing')) {
           return;
         }
@@ -251,20 +260,32 @@
         this.removeEventListener('mousemove', this.handleMouseMove);
         clearTimeout(this.get('hideButtonTimeout'));
         this.set('hideButton', false);
-      },
+      }
 
-      handleMouseMove: function(e) {
+      /**
+       * eventlistener
+       * @name handleMouseMove
+       * @description a mousemove over this element was detected
+       */
+      handleMouseMove () {
         this.set('hideButton', false);
         this.hideButtonLater();
-      },
+      }
 
-      hideButtonLater: function() {
+      /**
+       * @name hideButtonLater
+       * @description set a timeout to hide the video pause button
+       */
+      hideButtonLater () {
         clearTimeout(this.get('hideButtonTimeout'));
         this.set('hideButtonTimeout', setTimeout( () => {
           this.set('hideButton', true);
         },1200));
-      },
+      }
 
-    });
+    };
+
+  customElements.define(DorelVideoSlide.is, DorelVideoSlide);
+
   </script>
 </dom-module>

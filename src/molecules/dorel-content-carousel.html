@@ -39,12 +39,12 @@
       outline: none;
     }
 
-    .slider--full-width {
+    .slider {
       position: relative;
       overflow: hidden;
     }
 
-    .slider--full-width .slider__image {
+    .slider .slider__image {
       position: absolute;
       top: 0;
       left: 0;
@@ -54,7 +54,7 @@
       overflow: visible;
     }
 
-    .slider--full-width .slider__slide {
+    .slider .slider__slide {
       position: relative;
       padding-bottom: 56.25%;
       height: 0;
@@ -64,14 +64,14 @@
       transition: height 0.5s, padding 0.5s;
     }
 
-    [desktop-small-up] .slider--full-width .slider__slide {
+    [desktop-small-up] .slider .slider__slide {
       padding-bottom: 0;
       min-height: 20rem;
       max-height: 35rem;
       height: 80vh;
     }
 
-    [desktop-small-up] .slider--full-width .slider__image {
+    [desktop-small-up] .slider .slider__image {
       min-height: 20rem;
       height: 80vh;
       max-height: 35rem;
@@ -83,7 +83,7 @@
       position: static;
     }
 
-    [video-apect-ratio] .slider--full-width .slider__image {
+    [video-apect-ratio] .slider .slider__image {
       position: absolute;
       top: 0;
       left: 0;
@@ -91,7 +91,7 @@
       height: 100%;
     }
 
-    [video-apect-ratio] .slider--full-width .slider__slide {
+    [video-apect-ratio] .slider .slider__slide {
       position: relative;
       padding-bottom: 56.25%;
       min-height: 0;
@@ -152,12 +152,11 @@
       desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <l2t-paper-slider
-                        class="slider slider--full-width"
-                        id="simpleSlider"
-                        position="{{ position }}"
-                        hide-nav="[[ shouldHideNav(breakpoints.tabletMediumUp) ]]"
-                        slide-duration="4"
-                        total-slides="[[ slides.length ]]">
+        class="slider"
+        id="simpleSlider"
+        position="{{ position }}"
+        hide-nav="[[ shouldHideNav(breakpoints.tabletMediumUp) ]]"
+        total-slides="[[ slides.length ]]">
         <template
           is="dom-repeat"
           items="[[ slides ]]"
@@ -319,7 +318,7 @@
        * @param hideBulletPoints - Boolean
        */
       shouldHideNav: function(tabletMediumUp) {
-        return !tabletMediumUp;
+        return !tabletMediumUp || this.get('slides').length < 2;
       },
 
       /**
