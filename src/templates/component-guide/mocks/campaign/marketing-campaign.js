@@ -41,12 +41,16 @@ var marketingCampaignMock = {
         "bynder_background_image": "7F84BD5F-551A-4DA5-8532AB44763439AA",
         "title": "Meet Maxi Cosi strollers",
         "sub_title": "We carry the future",
-        "video_id": "0zUUVyWAyRs"
+        "cta_href": null,
+        "cta_text": "",
+        "cta_toggle": true,
+        "cta_type": "video-cta",
+        "cta_video_id": "_4IRMYuE1hI",
       }
     ],
     "page_builder": [
       {
-        "acf_fc_layout": "content_block",
+        "acf_fc_layout": "content_blocky",
         "title": "Lorem ipsum",
         "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
         "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
@@ -93,7 +97,7 @@ var marketingCampaignMock = {
           {
             "type": "video",
             "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
-            "video_id": 'A3PDXmYoF5U',
+            "video_id": 'jMhg9IHDJPU',
             "content": {
               "title": 'Full width video with text',
               "description": 'This is a full width video with text',
@@ -106,7 +110,16 @@ var marketingCampaignMock = {
               "title": "This is a title",
               "description": "This is a description"
             }
-          }
+          },
+          {
+            "type": "video",
+            "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            "video_id": '_4IRMYuE1hI',
+            "content": {
+              "title": 'Full width video with text',
+              "description": 'This is a full width video with text',
+            }
+          },
         ]
       }
     ],

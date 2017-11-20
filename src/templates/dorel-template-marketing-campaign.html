@@ -24,68 +24,58 @@
         align="left"
         hero-header-data="[[heroHeader]]"></dorel-section-hero-header>
 
-
-      <!-- show when acf.page_builder has components -->
+      <!-- iterate over page_builder components -->
       <template
-        is="dom-if"
-        if="{{ templateData.acf.page_builder.length }}">
+        is="dom-repeat"
+        items="[[ templateData.acf.page_builder ]]"
+        as="component"
+        targetFramerate="1000">
 
-        <!-- iterate over page_builder components -->
+        <!-- content_block-->
         <template
-          is="dom-repeat"
-          items="[[ templateData.acf.page_builder ]]"
-          as="component"
-          targetFramerate="1000">
-
-          <!-- content_block-->
-          <template
-            is="dom-if"
-            if="[[ _isPageComponent(component.acf_fc_layout, 'content_block') ]]">
-            <dorel-layout-container>
-              <dorel-layout-row>
-                <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-                  <!-- TODO: rename this component to what it is named in WP -->
-                  <dorel-section-text-image-block
-                    block-data="[[component]]"
-                    component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
-                </dorel-layout-column>
-              </dorel-layout-row>
-            </dorel-layout-container>
-          </template>
-          <!--// content_block-->
-
-          <!-- feature_block -->
-          <template
-            is="dom-if"
-            if="[[ _isPageComponent(component.acf_fc_layout, 'feature_block') ]]">
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'content_block') ]]">
+          <dorel-layout-container>
             <dorel-layout-row>
               <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
                 <!-- TODO: rename this component to what it is named in WP -->
-                <dorel-section-feature-block
-                  block-data="[[component]]"></dorel-section-feature-block>
+                <dorel-section-text-image-block
+                  block-data="[[component]]"
+                  component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
               </dorel-layout-column>
-            <dorel-layout-row>
-          </template>
-          <!--// feature_block -->
+            </dorel-layout-row>
+          </dorel-layout-container>
+        </template>
+        <!--// content_block-->
 
-          <!-- carousel_block -->
-          <template
-            is="dom-if"
-            if="[[ _isPageComponent(component.acf_fc_layout, 'carousel_block') ]]">
-            <dorel-layout-row>
-              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-                <dorel-section-slideshow
-                  slideshow-data="[[component]]"
-                  gtm-parent="dorel-section-product-video"
-                  gtm-parent-index="3"></dorel-section-slideshow>
-              </dorel-layout-column>
-            <dorel-layout-row>
-          </template>
-          <!--// carousel_block -->
+        <!-- feature_block -->
+        <template
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'feature_block') ]]">
+          <dorel-layout-container>
+              <dorel-layout-row>
+            <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+              <!-- TODO: rename this component to what it is named in WP -->
+              <dorel-section-feature-block
+                block-data="[[component]]"></dorel-section-feature-block>
+            </dorel-layout-column>
+          </dorel-layout-row></dorel-layout-container>
+        </template>
+        <!--// feature_block -->
 
-        </template><!--// dom-repeat -->
+        <!-- carousel_block -->
+        <template
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'carousel_block') ]]">
+          <dorel-section-slideshow
+            slideshow-data="[[component]]"
+            gtm-parent="dorel-section-product-video"
+            gtm-parent-index="3"></dorel-section-slideshow>
 
-      </template><!--// dom-if page_builder.length -->
+        </template>
+        <!--// carousel_block -->
+
+      </template><!--// dom-repeat -->
 
     </section><!--// section -->
 
