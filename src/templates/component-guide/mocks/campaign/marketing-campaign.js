@@ -50,7 +50,7 @@ var marketingCampaignMock = {
     ],
     "page_builder": [
       {
-        "acf_fc_layout": "content_blocky",
+        "acf_fc_layout": "content_block",
         "title": "Lorem ipsum",
         "description": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris accumsan odio odio, ac finibus elit imperdiet id. Duis varius, ante laoreet hendrerit commodo, metus dolor consectetur enim, gravida sagittis mauris nisl eu lectus.</p>\n",
         "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
