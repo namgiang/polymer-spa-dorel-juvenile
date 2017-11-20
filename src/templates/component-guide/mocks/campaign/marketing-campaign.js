@@ -41,7 +41,11 @@ var marketingCampaignMock = {
         "bynder_background_image": "7F84BD5F-551A-4DA5-8532AB44763439AA",
         "title": "Meet Maxi Cosi strollers",
         "sub_title": "We carry the future",
-        "video_id": "0zUUVyWAyRs"
+        "cta_href": null,
+        "cta_text": "",
+        "cta_toggle": true,
+        "cta_type": "video-cta",
+        "cta_video_id": "_4IRMYuE1hI",
       }
     ],
     "page_builder": [
@@ -62,6 +66,7 @@ var marketingCampaignMock = {
         "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
         "title": "Explore the great outdoors",
         "cta_text": "Meet Outdoor Strollers",
+        "cta_style" : "Inverted",
         "cta_link": "/uk-en/car-seats/euro-nxt",
         "usps": [
           {
@@ -71,8 +76,8 @@ var marketingCampaignMock = {
             "usp_text": "All terrain shock absorbing wheels",
           },
         ],
-        "cta_style": "Primary",
         "read_more_button": true,
+        "read_more_default_state": true,
         "read_more_section": [
           {
             "title": "Unique handsfree folding",
@@ -85,9 +90,38 @@ var marketingCampaignMock = {
             "bynder_image": "14BB9491-A186-40D8-B965680777095B8E",
           }
         ],
-        "read_more_default_state": true
       },
-
+      {
+        "acf_fc_layout": "carousel_block",
+        "slides": [
+          {
+            "type": "video",
+            "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            "video_id": 'jMhg9IHDJPU',
+            "content": {
+              "title": 'Full width video with text',
+              "description": 'This is a full width video with text',
+            }
+          },
+          {
+            "acf_fc_layout": "image",
+            "bynder_image_id": "7F84BD5F-551A-4DA5-8532AB44763439AA",
+            "content": {
+              "title": "This is a title",
+              "description": "This is a description"
+            }
+          },
+          {
+            "type": "video",
+            "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            "video_id": '_4IRMYuE1hI',
+            "content": {
+              "title": 'Full width video with text',
+              "description": 'This is a full width video with text',
+            }
+          },
+        ]
+      }
     ],
   }
 }
