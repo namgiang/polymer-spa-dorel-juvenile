@@ -142,56 +142,6 @@
     [tablet-medium-up] .content__text {
       display: block;
     }
-    .content__video {
-      margin-right: 0;
-    }
-    [tablet-medium-up] .content__video {
-      margin-right: 1.5rem;
-    }
-    [playing] .content__video {
-      opacity: 0;
-    }
-    .content__play-btn {
-      color: var(--theme-color-monochrome-1);
-      width: 6rem;
-      height: 6rem;
-      border-radius: 50%;
-      border-radius: 50%;
-      position: relative;
-      border: 0.5rem solid var(--theme-color-monochrome-1);
-      -webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
-      -moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
-      box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
-    }
-
-    .content__play-icon {
-      color: var(--theme-color-monochrome-1);
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-shadow: 1px 1px 2px rgba(0,0,0,.5);
-    }
-
-    /* play icon */
-    .content__play-icon::before {
-      display:block;
-      margin-left: 0.3rem;
-      font-size: 4rem !important;
-      content: '\25BA'
-    }
-
-    /* pause icon */
-    .content__play-icon[playing]::before {
-      display:block;
-      margin: 0 0 0.2rem 0.8rem;
-      content: '\258C \258C';
-      font-size: 2.5rem !important;
-    }
-
-    dorel-youtube-video {
-      --video-border-radius: 0px;
-    }
 
     </style>
 
@@ -241,7 +191,7 @@
             </template>
 
             <template is="dom-if" if="[[ _shouldShowType(slide, 'video') ]]">
-              <dorel-video-slide slide="[[ slide ]]" is-selected-slide$="[[ _isValue(position, index) ]]" selected ></dorel-video-slide>
+              <dorel-video-slide slide="[[ slide ]]" is-selected-slide$="[[ _isValue(position, index) ]]"></dorel-video-slide>
             </template>
 
           </paper-slide>
@@ -350,9 +300,6 @@
        */
       moveNext: function() {
         this.$.simpleSlider.moveNext();
-        if(this.playing > -1) {
-          this._stopVideo(this.playing);
-        }
       },
 
       /**
@@ -362,9 +309,6 @@
        */
       movePrevious: function() {
         this.$.simpleSlider.movePrev();
-        if(this.playing > -1) {
-          this._stopVideo(this.playing);
-        }
       },
 
       /**
