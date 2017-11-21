@@ -1,7 +1,10 @@
 <link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
-<link rel="import" href="./dorel-youtube-video.html">
 <link rel="import" href="./dorel-video-slide.html">
 <link rel="import" href="../utils/behaviors/single/dorel-value-behavior.html">
+<link rel="import" href="../atoms/dorel-bynder-image.html">
+<link rel="import" href="../atoms/dorel-media-query.html">
+<link rel="import" href="../../node_modules/polymer/lib/elements/dom-if.html">
+
 
 <dom-module id="dorel-content-carousel">
   <template>
@@ -190,10 +193,15 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-content-carousel',
 
-      properties: {
+  class DorelContentCarousel extends Polymer.mixinBehaviors([ValueBehavior], Polymer.Element) {
+
+    static get is() {
+      return 'dorel-content-carousel';
+    }
+
+    static get properties() {
+      return {
 
         /**
          * @attribute
@@ -251,75 +259,86 @@
           value: false
         }
 
-      },
+      }
+    }
 
-      behaviors: [ValueBehavior],
+    // behaviors: [ValueBehavior],
 
-      observers: [
-        '_updatePosition(position)',
-      ],
+    static get observers () {
+      return [
+        // '_handleSlideChange(isSelectedSlide)'
+      '_updatePosition(position)',
+      ]
+    }
 
-      /**
-       * observer
-       * @name _setSlide
-       * @description Everytime the position of the active slide of the l2t-paper-slider changes
-       * fire a event updatePosition with the index of the active slide
-       * @param position - Number
-       */
-      _updatePosition: function(position) {
-        this.fire('updatePosition', position);
-      },
 
-      /**
-       * @name moveSliderTo
-       * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
-       * this will set the slide of l2t-paper-slider
-       * @param index - Number
-       */
-      moveSliderTo: function(index) {
-        this.$.simpleSlider.movePos(index);
-      },
+    /**
+      * observer
+      * @name _updatePosition
+      * @description Everytime the position of the active slide of the l2t-paper-slider changes
+      * fire a event updatePosition with the index of the active slide
+      * @param position - Number
+      */
+    _updatePosition(position) {
+      let ev = new CustomEvent('updatePosition', {bubbles: true, composed: true, detail: {position: position}});
+      this.dispatchEvent(ev);
+    }
 
-      /**
-       * @name moveNext
-       * @description will call the public method `moveNext` of the l2t-paper-slider
-       * this will set the slide of l2t-paper-slider to the next
-       */
-      moveNext: function() {
-        this.$.simpleSlider.moveNext();
-      },
 
-      /**
-       * @name movePrevious
-       * @description will call the public method `movePrevious` of the l2t-paper-slider
-       * this will set the slide of l2t-paper-slider to the previous
-       */
-      movePrevious: function() {
-        this.$.simpleSlider.movePrev();
-      },
+    /**
+      * @name moveSliderTo
+      * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
+      * this will set the slide of l2t-paper-slider
+      * @param index - Number
+      */
+    moveSliderTo (index) {
+      this.$.simpleSlider.movePos(index);
+    }
 
-      /**
-       * template helper
-       * @name shouldHideNav
-       * @description If true hide the bullet points of the slider
-       * @param tabletMediumUp - Boolean
-       * @param hideBulletPoints - Boolean
-       */
-      shouldHideNav: function(tabletMediumUp) {
-        return !tabletMediumUp || this.get('slides').length < 2;
-      },
+    /**
+      * @name moveNext
+      * @description will call the public method `moveNext` of the l2t-paper-slider
+      * this will set the slide of l2t-paper-slider to the next
+      */
+    moveNext () {
+      this.$.simpleSlider.moveNext();
+    }
 
-      /**
-       * template helper
-       * @name _shouldShowType
-       * @description determines what part of the slide should be shown
-       * @param slide - Object
-       * @param type - String
-       */
-      _shouldShowType: function(slide, type) {
-        slide.type = slide.type || slide.acf_fc_layout;
-        return slide.type === type;
-      },
-    });
+    /**
+      * @name movePrevious
+      * @description will call the public method `movePrevious` of the l2t-paper-slider
+      * this will set the slide of l2t-paper-slider to the previous
+      */
+    movePrevious () {
+      this.$.simpleSlider.movePrev();
+    }
+
+    /**
+      * template helper
+      * @name shouldHideNav
+      * @description If true hide the bullet points of the slider
+      * @param tabletMediumUp - Boolean
+      * @param hideBulletPoints - Boolean
+      */
+    shouldHideNav (tabletMediumUp) {
+      return !tabletMediumUp || this.get('slides').length < 2;
+    }
+
+    /**
+      * template helper
+      * @name _shouldShowType
+      * @description determines what part of the slide should be shown
+      * @param slide - Object
+      * @param type - String
+      */
+    _shouldShowType (slide, type) {
+      slide.type = slide.type || slide.acf_fc_layout;
+      return slide.type === type;
+    }
+
+  };
+
+  customElements.define(DorelContentCarousel.is, DorelContentCarousel);
+
   </script>
 </dom-module>

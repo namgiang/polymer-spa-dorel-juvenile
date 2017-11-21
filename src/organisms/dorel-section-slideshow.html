@@ -175,23 +175,11 @@
       },
 
       checkIfShouldDisable: function(event) {
-        var position = event.detail;
-        var slides = this.get('slideshowData.slides') || [];
-        if(typeof position === 'undefined') {
-          return;
-        }
-        var totalSlides = slides.length;
-        // last slide
-        if(totalSlides === position + 1) {
-          this.set('nextEnabled', false);
-        } else {
-          this.set('nextEnabled', true);
-        }
-        // first slide
-        if(position === 0) {
-          this.set('previousEnabled', false);
-        } else {
-          this.set('previousEnabled', true);
+        var position = event.detail.position;
+        if(typeof position === 'number') {
+          var slides = this.get('slideshowData.slides') || [];
+          this.set('nextEnabled', !!(position < slides.length -1));
+          this.set('previousEnabled', !!(position > 0));
         }
       },
 
