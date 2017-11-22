@@ -4,10 +4,13 @@
 <dom-module id="dorel-section-slideshow">
   <template>
     <style is="custom-style">
-      .slideshow {
-        float: left;
-        position: relative;
+      :host {
+        float:left;
         width: 100%;
+      }
+      .slideshow {
+        display: block;
+        margin-top: 1.5rem;
       }
       .control-item {
         position: absolute;
@@ -80,7 +83,7 @@
     <template
       is="dom-if"
       if="[[ slideshowData.slides.length ]]">
-      <div class="slideshow"
+      <section class="slideshow"
         desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
         <div class="control-item control-item--next" on-click="moveNext" enabled$="{{ nextEnabled }}">
@@ -97,7 +100,7 @@
           hide-bullet-points="[[ hideBulletPoints ]]"
           position="{{ position }}">
         </dorel-content-carousel>
-      </div>
+      </section>
     </template>
   </template>
 
