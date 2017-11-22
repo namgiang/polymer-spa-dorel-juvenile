@@ -76,7 +76,7 @@ var marketingCampaignMock = {
             "usp_text": "All terrain shock absorbing wheels",
           },
         ],
-        "read_more_button": true,
+        "read_more_toggle": true,
         "read_more_default_state": true,
         "read_more_section": [
           {

@@ -1,5 +1,6 @@
 <link rel="import" href="../atoms/dorel-icons.html">
-<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<link rel="import" href="../atoms/dorel-bynder-image.html">
+<link rel="import" href="../atoms/dorel-media-query.html">
 <link rel="import" href="../organisms/dorel-section-text-image-block.html">
 <link rel="import" href="../../node_modules/iron-icon/iron-icon.html">
 <link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
@@ -8,16 +9,13 @@
   <template>
     <style>
       :host {
-        width: 100%;
-        --image-background-color: var(--theme-brand-color-1);
+        float: left;
+        width:100%;
       }
 
       .feature-block {
         display:block;
-        @apply(--layout-vertical);
-        width: 100%;
-        justify-content: center;
-        position: relative;
+        margin-top: 1.5rem;
       }
 
       .title {
@@ -47,14 +45,6 @@
         margin-top: 1.5em;
       }
 
-      dorel-layout-container.on-image {
-        position: absolute;
-        right: 0;
-        left: 0;
-        top: 0;
-        height: 100%;
-      }
-
       dorel-layout-row.on-image {
         position: relative;
         height: 100%;
@@ -62,7 +52,7 @@
 
       dorel-layout-column.on-image {
         position: absolute;
-        bottom: 3em;
+        bottom: 1em;
         width: 100%;
         text-align: left;
       }
@@ -72,17 +62,11 @@
         margin-top: 0;
       }
 
-      [tablet-medium-up] dorel-layout-column {
-        margin-top: 0;
-        bottom: 25%;
-      }
-
       [tablet-medium-up] .title {
         @apply(--theme-typography-8);
         font-size: 3.75em;
         margin-top: 0;
       }
-
       .close-bar {
         position: relative;
         clear: both;
@@ -90,29 +74,41 @@
       .close-bar::before {
         position: absolute;
         display: inline-block;
-        border: 30px solid transparent;
+        border: 1.5rem solid transparent;
         border-top: 0;
-        border-bottom: 20px solid #FFF;
+        border-bottom: 1.5rem  solid var(--theme-color-white);
         content: ' ';
-        top: -20px;
-        left: 20px
+        top: -1.5rem ;
+        left: 1rem
       }
-      .align-right {
-        text-align: right;
+
+      [tablet-small] .close-bar::before,
+      [tablet-medium-up] .close-bar::before {
+        border-left-width : 2rem;
+        border-right-width : 2rem;
       }
+
       .close-icon {
         cursor: pointer;
+        float: right;
       }
     </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section class="feature-block"
              tablet-small$="[[ breakpoints.tabletSmall ]]"
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
 
-      <dorel-bynder-responsive-image
-        media-id="[[ blockData.bynder_image ]]"></dorel-bynder-responsive-image>
+      <dorel-bynder-image
+        mobile-width="100%"
+        tablet-width="100%"
+        width="100%"
+        mobile-height="30rem"
+        tablet-height="30rem"
+        height="30rem"
+        media-id="[[ blockData.bynder_image ]]"></dorel-bynder-image>
 
-      <dorel-layout-container class="on-image">
+      <dorel-layout-container>
         <dorel-layout-row class="on-image">
           <dorel-layout-column class="on-image" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
 
@@ -152,41 +148,46 @@
             </template><!--// CTA -->
 
             <!-- READ MORE CTA -->
-            <template is="dom-if" if="[[ blockData.read_more_section ]]">
+            <template is="dom-if" if="[[ blockData.read_more_toggle ]]">
               <template is="dom-if" if="[[!showMore]]">
                 <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-more">show more</dorel-cta>
               </template>
               <template is="dom-if" if="[[showMore]]">
                 <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-less">show less</dorel-cta>
               </template>
-            </template><!--// READ MORE CTA -->
+            </template>
+            <!--// READ MORE CTA -->
 
           </dorel-layout-column>
         </dorel-layout-row>
       </dorel-layout-container>
     </section>
 
-    <!-- collapsed content -->
-    <iron-collapse opened="[[showMore]]">
-      <dorel-layout-container>
-        <dorel-layout-row class="close-bar">
+    <section
+      tablet-small$="[[ breakpoints.tabletSmall ]]"
+      tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+    <template is="dom-if" if="[[ blockData.read_more_toggle ]]">
 
-          <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-            <div class="align-right">
-              <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon"></iron-icon>
-            </div>
-          </dorel-layout-column>
+      <!-- collapsable content -->
+      <iron-collapse opened="[[showMore]]">
+        <dorel-layout-container>
+          <dorel-layout-row class="close-bar">
+            <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+              <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon" tabindex="0"></iron-icon>
+            </dorel-layout-column>
+          </dorel-layout-row>
+        </dorel-layout-container>
 
-        </dorel-layout-row>
-      </dorel-layout-container>
+        <template is="dom-repeat" items="[[ blockData.read_more_section ]]">
+          <dorel-section-text-image-block
+            block-data="[[item]]"
+            component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
+        </template>
+      </iron-collapse>
+      <!--// collapsable content -->
 
-      <template is="dom-repeat" items="[[ blockData.read_more_section ]]">
-        <dorel-section-text-image-block
-          block-data="[[item]]"
-          component-count="[[_getComponentCount()]]"></dorel-section-text-image-block>
-      </template>
-    </iron-collapse><!--// collapsed content -->
-
+    </template>
+    </section>
   </template>
 
   <script>
@@ -214,12 +215,19 @@
           type: Number,
           value: 0
         },
+
+        breakpoints: {
+          type: Object,
+          value: () => {}
+        }
+
+
       },
 
       behaviors: [DorelMultilingualBehavior, ValueBehavior],
 
       _toggleMore: function() {
-        this.showMore = !this.showMore;
+        this.set('showMore', !this.get('showMore'));
       },
 
       /**
@@ -227,7 +235,7 @@
        * @description defines the default state of the read more section
        */
       _defaultState: function(blockData) {
-        this.set('showMore', blockData.read_more_default_state);
+        this.set('showMore', this.get('blockData.read_more_default_state'));
       },
 
       /**
@@ -236,8 +244,8 @@
        * in the child component
        */
       _getComponentCount: function() {
-        this.set('componentCount', this.get('componentCount')+1);
-        return this.componentCount;
+        this.set('componentCount', this.get('componentCount') + 1);
+        return this.get('componentCount');
       }
     });
   </script>
