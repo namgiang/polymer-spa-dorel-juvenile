@@ -11,10 +11,6 @@ var slideshowMock = {
       },
       {
         "type": "image",
-        "image_url": 'https://images5.alphacoders.com/436/thumb-1920-436482.jpg',
-      },
-      {
-        "type": "image",
         "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
         "content": {
           "title": 'Full width image',

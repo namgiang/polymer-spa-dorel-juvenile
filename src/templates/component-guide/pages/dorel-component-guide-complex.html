@@ -1,5 +1,6 @@
 <link rel="import" href="../dorel-component-guide-shared-styles.html">
 <link rel="import" href="../../../utils/behaviors/single/dorel-component-guide-behaviour.html">
+<link rel="import" href="../../../utils/behaviors/single/dorel-value-behavior.html">
 
 <script src="../pages/dorel-component-guide-complex-data.js"></script>
 
@@ -38,7 +39,11 @@
           <dorel-component-guide-cards index="7"></dorel-component-guide-cards>
           <dorel-component-guide-video index="8"></dorel-component-guide-video>
           <dorel-component-guide-text-image-block index="9"></dorel-component-guide-text-image-block>
-          <dorel-component-guide-marketing-campaign index="10"></dorel-component-guide-marketing-campaign>
+
+          <!-- pages that can contain video need to be restamped, otherwise video's (with sound) can keep playing in the background -->
+          <template is="dom-if" if="[[ _isValue(subrouteData.tabIndex, '10') ]]" restamp="true">
+            <dorel-component-guide-marketing-campaign index="10"></dorel-component-guide-marketing-campaign>
+          </template>
 
         </iron-pages>
       </div>
@@ -49,7 +54,7 @@
     Polymer({
       is: 'dorel-component-guide-complex',
       observers: ['_navSelectChanged(subrouteData.tabIndex)'],
-      behaviors: [componentGuideBehavior],
+      behaviors: [componentGuideBehavior, ValueBehavior],
       properties: {
         appCache: {
           type: Object,

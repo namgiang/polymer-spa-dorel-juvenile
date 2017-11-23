@@ -1,5 +1,11 @@
 <link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
-<link rel="import" href="./dorel-youtube-video.html">
+<link rel="import" href="./dorel-video-slide.html">
+<link rel="import" href="../utils/behaviors/single/dorel-value-behavior.html">
+<link rel="import" href="../atoms/dorel-bynder-image.html">
+<link rel="import" href="../atoms/dorel-media-query.html">
+<link rel="import" href="../../node_modules/polymer/lib/elements/dom-if.html">
+
+
 <dom-module id="dorel-content-carousel">
   <template>
     <style is="custom-style">
@@ -36,12 +42,12 @@
       outline: none;
     }
 
-    .slider--full-width {
+    .slider {
       position: relative;
       overflow: hidden;
     }
 
-    .slider--full-width .slider__image {
+    .slider .slider__image {
       position: absolute;
       top: 0;
       left: 0;
@@ -51,7 +57,7 @@
       overflow: visible;
     }
 
-    .slider--full-width .slider__slide {
+    .slider .slider__slide {
       position: relative;
       padding-bottom: 56.25%;
       height: 0;
@@ -61,14 +67,14 @@
       transition: height 0.5s, padding 0.5s;
     }
 
-    [desktop-small-up] .slider--full-width .slider__slide {
+    [desktop-small-up] .slider .slider__slide {
       padding-bottom: 0;
       min-height: 20rem;
       max-height: 35rem;
       height: 80vh;
     }
 
-    [desktop-small-up] .slider--full-width .slider__image {
+    [desktop-small-up] .slider .slider__image {
       min-height: 20rem;
       height: 80vh;
       max-height: 35rem;
@@ -80,7 +86,7 @@
       position: static;
     }
 
-    [video-apect-ratio] .slider--full-width .slider__image {
+    [video-apect-ratio] .slider .slider__image {
       position: absolute;
       top: 0;
       left: 0;
@@ -88,7 +94,7 @@
       height: 100%;
     }
 
-    [video-apect-ratio] .slider--full-width .slider__slide {
+    [video-apect-ratio] .slider .slider__slide {
       position: relative;
       padding-bottom: 56.25%;
       min-height: 0;
@@ -98,16 +104,6 @@
       overflow: visible;
     }
 
-    .slider--product .slider__image {
-      height: 20rem;
-      width: 100%;
-      max-width: 100%;
-    }
-
-    [tablet-medium-up] .slider--product .slider__image {
-      height: 28rem;
-    }
-
     .content {
       position: absolute;
       top: 0;
@@ -115,20 +111,10 @@
       right: 0;
       bottom: 0;
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      align-content: center;
-      max-width: 100%;
-    }
-    .content__align-center {
-      display: flex;
-      align-content: center;
       align-items: center;
-      justify-content: center;
-      flex: 1;
-      height: 100%;
-      width: 100%;
-      padding: 1.5rem;
-      box-sizing: border-box;
+      max-width: 100%;
     }
     .content__title {
       @apply(--theme-typography-8);
@@ -149,56 +135,6 @@
     [tablet-medium-up] .content__text {
       display: block;
     }
-    .content__video {
-      margin-right: 0;
-    }
-    [tablet-medium-up] .content__video {
-      margin-right: 1.5rem;
-    }
-    [playing] .content__video {
-      opacity: 0;
-    }
-    .content__play-btn {
-      color: var(--theme-color-monochrome-1);
-      width: 6rem;
-      height: 6rem;
-      border-radius: 50%;
-      border-radius: 50%;
-      position: relative;
-      border: 0.5rem solid var(--theme-color-monochrome-1);
-      -webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
-      -moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
-      box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
-    }
-
-    .content__play-icon {
-      color: var(--theme-color-monochrome-1);
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-shadow: 1px 1px 2px rgba(0,0,0,.5);
-    }
-
-    /* play icon */
-    .content__play-icon::before {
-      display:block;
-      margin-left: 0.3rem;
-      font-size: 4rem !important;
-      content: '\25BA'
-    }
-
-    /* pause icon */
-    .content__play-icon[playing]::before {
-      display:block;
-      margin: 0 0 0.2rem 0.8rem;
-      content: '\258C \258C';
-      font-size: 2.5rem !important;
-    }
-
-    dorel-youtube-video {
-      --video-border-radius: 0px;
-    }
 
     </style>
 
@@ -209,12 +145,11 @@
       desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
       tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <l2t-paper-slider
-                        class$="slider {{_getClass(type)}}"
-                        id="simpleSlider"
-                        position="{{ position }}"
-                        hide-nav="[[ shouldHideNav(breakpoints.tabletMediumUp, hideBulletPoints) ]]"
-                        slide-duration="4"
-                        total-slides="[[ slides.length ]]">
+        class="slider"
+        id="simpleSlider"
+        position="{{ position }}"
+        hide-nav="[[ shouldHideNav(breakpoints.tabletMediumUp) ]]"
+        total-slides="[[ slides.length ]]">
         <template
           is="dom-repeat"
           items="[[ slides ]]"
@@ -222,61 +157,31 @@
 
           <paper-slide class="slider__slide">
 
-            <template is="dom-if" if="[[ _shouldShowType(slide, 'image_url') ]]">
-              <iron-image class="slider__image"
-                  sizing="[[ sizing ]]"
-                  fade="true"
-                  preload
-                  src$="[[ slide.image_url ]]"></iron-image>
-            </template>
-
             <template is="dom-if" if="[[ _shouldShowType(slide, 'image') ]]">
               <dorel-bynder-image media-id="[[ slide.bynder_image_id ]]"
-                                  width="100%"
-                                  height="100%"
-                                  mobile-width="100%"
-                                  mobile-height="100%"
-                                  tablet-width="100%"
-                                  tablet-height="100%"
-                                  image-type="wide-screen"
-                                  class="slider__image"></dorel-bynder-image>
+                width="100%"
+                height="100%"
+                mobile-width="100%"
+                mobile-height="100%"
+                tablet-width="100%"
+                tablet-height="100%"
+                image-type="wide-screen"
+                class="slider__image"></dorel-bynder-image>
+
+              <div class="content">
+                <div class="content__text">
+                  <template is="dom-if" if="[[ slide.content.title ]]">
+                    <h3 class="content__title">[[ slide.content.title ]]</h3>
+                  </template>
+                  <template is="dom-if" if="[[ slide.content.description ]]">
+                    <p class="content__description">[[ slide.content.description ]]</p>
+                  </template>
+                </div>
+              </div>
             </template>
 
             <template is="dom-if" if="[[ _shouldShowType(slide, 'video') ]]">
-              <dorel-youtube-video id$="videoplayer-{{ index}}"
-                class="slider__image"
-                autoplay="0"
-                volume="0"
-                image-type="wide-screen"
-                video-id="[[ slide.video_id ]]"
-                thumbnail="[[ slide.bynder_image_id ]]"></dorel-youtube-video>
-            </template>
-
-            <template is="dom-if" if="[[ slide.content ]]">
-              <div class="content">
-                <dorel-layout-container>
-                  <div class="content__align-center">
-
-                      <template is="dom-if" if="[[ _shouldShowType(slide, 'video') ]]">
-                        <div class="content__video">
-                          <div on-click="_playVideo" class="content__play-btn">
-                            <span class="content__play-icon" playing$="[[ videoIsPlaying ]]"></span>
-                          </div>
-                        </div>
-                      </template>
-
-                      <div class="content__text">
-                        <template is="dom-if" if="[[ slide.content.title ]]">
-                          <h3 class="content__title">[[ slide.content.title ]]</h3>
-                        </template>
-                        <template is="dom-if" if="[[ slide.content.description ]]">
-                          <p class="content__description">[[ slide.content.description ]]</p>
-                        </template>
-                      </div>
-
-                  </div>
-                </dorel-layout-container>
-              </div>
+              <dorel-video-slide slide="[[ slide ]]" is-selected-slide$="[[ _isValue(position, index) ]]"></dorel-video-slide>
             </template>
 
           </paper-slide>
@@ -288,10 +193,15 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-content-carousel',
 
-      properties: {
+  class DorelContentCarousel extends Polymer.mixinBehaviors([ValueBehavior], Polymer.Element) {
+
+    static get is() {
+      return 'dorel-content-carousel';
+    }
+
+    static get properties() {
+      return {
 
         /**
          * @attribute
@@ -322,15 +232,6 @@
 
         /**
          * @attribute
-         * @name hideBulletPoints
-         * @description boolean that will either show or hide bullet points of the l2t-paper-slider
-         */
-        hideBulletPoints: {
-          type: Boolean
-        },
-
-        /**
-         * @attribute
          * @name sizing
          * @description passed by the parent | option for the iron-image | contain or cover
          */
@@ -350,20 +251,6 @@
 
         /**
          * @attribute
-         * @name playing
-         * @description if the video is playing it will set the index of playing video if nothing is playing value = -1
-         */
-        playing: {
-          type: Number
-        },
-
-        videoIsPlaying: {
-          type : Boolean,
-          value : false,
-        },
-
-        /**
-         * @attribute
          * @name videoAspectRatio
          * @description should keep video aspect ratio 16:9
          */
@@ -372,177 +259,82 @@
           value: false
         }
 
-      },
+      }
+    }
 
-      observers: [
+    static get observers () {
+      return [
         '_updatePosition(position)',
-        '_setPlaying(playing)'
-      ],
+      ]
+    }
 
-      /**
-       * observer
-       * @name _setSlide
-       * @description Everytime the position of the active slide of the l2t-paper-slider changes
-       * fire a event updatePosition with the index of the active slide
-       * @param position - Number
-       */
-      _updatePosition: function(position) {
-        this.fire('updatePosition', position);
-      },
 
-      /**
-       * observer
-       * @name _setPlaying
-       * @description Everytime the "playing" changes
-       * @param playing - Number
-       */
-      _setPlaying: function(playing) {
-        if(playing > -1) {
-          this.videoAspectRatio = true;
-        } else {
-          this.videoAspectRatio = false;
-        }
-      },
+    /**
+      * observer
+      * @name _updatePosition
+      * @description Everytime the position of the active slide of the l2t-paper-slider changes
+      * fire a event updatePosition with the index of the active slide
+      * @param position - Number
+      */
+    _updatePosition(position) {
+      let ev = new CustomEvent('updatePosition', {bubbles: true, composed: true, detail: {position: position}});
+      this.dispatchEvent(ev);
+    }
 
-      /**
-       * @name moveSliderTo
-       * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
-       * this will set the slide of l2t-paper-slider
-       * @param index - Number
-       */
-      moveSliderTo: function(index) {
-        this.$.simpleSlider.movePos(index);
-      },
 
-      /**
-       * @name moveNext
-       * @description will call the public method `moveNext` of the l2t-paper-slider
-       * this will set the slide of l2t-paper-slider to the next
-       */
-      moveNext: function() {
-        this.$.simpleSlider.moveNext();
-        if(this.playing > -1) {
-          this._stopVideo(this.playing);
-        }
-      },
+    /**
+      * @name moveSliderTo
+      * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
+      * this will set the slide of l2t-paper-slider
+      * @param index - Number
+      */
+    moveSliderTo (index) {
+      this.$.simpleSlider.movePos(index);
+    }
 
-      /**
-       * @name movePrevious
-       * @description will call the public method `movePrevious` of the l2t-paper-slider
-       * this will set the slide of l2t-paper-slider to the previous
-       */
-      movePrevious: function() {
-        this.$.simpleSlider.movePrev();
-        if(this.playing > -1) {
-          this._stopVideo(this.playing);
-        }
-      },
+    /**
+      * @name moveNext
+      * @description will call the public method `moveNext` of the l2t-paper-slider
+      * this will set the slide of l2t-paper-slider to the next
+      */
+    moveNext () {
+      this.$.simpleSlider.moveNext();
+    }
 
-      /**
-       * template helper
-       * @name shouldHideNav
-       * @description If true hide the bullet points of the slider
-       * @param tabletMediumUp - Boolean
-       * @param hideBulletPoints - Boolean
-       */
-      shouldHideNav: function(tabletMediumUp, hideBulletPoints) {
-        return hideBulletPoints || !(tabletMediumUp);
-      },
+    /**
+      * @name movePrevious
+      * @description will call the public method `movePrevious` of the l2t-paper-slider
+      * this will set the slide of l2t-paper-slider to the previous
+      */
+    movePrevious () {
+      this.$.simpleSlider.movePrev();
+    }
 
-      /**
-       * @name _playVideo
-       * @description on click play the video
-       * @param event - Object
-       */
-      _playVideo: function(event) {
-        // workaround for bug in targeting a item in a dom-repeat with a nested dom-if @ https://github.com/Polymer/polymer/issues/1919 will be fixed in v2.x
-        var slide = event.model.slide || event.model.dataHost.dataHost.slide;
-        var index = this.get('slides').findIndex(function(item) {
-          return item === slide;
-        });
-        if(!!index) {
-          return
-        }
-        var videoEl = this.shadowRoot.querySelector('#videoplayer-' + index);
-        if(this.playing !== index) {
-          videoEl.play();
-          this.playing = index;
-          this.videoIsPlaying = true;
-        }
-        else {
-          if(this.videoIsPlaying) {
-            videoEl.pause();
-            this.videoIsPlaying = false;
-          }
-          else {
-            videoEl.resume();
-            this.videoIsPlaying = true;
-          }
-        }
-      },
+    /**
+      * template helper
+      * @name shouldHideNav
+      * @description If true hide the bullet points of the slider
+      * @param tabletMediumUp - Boolean
+      */
+    shouldHideNav (tabletMediumUp) {
+      return !tabletMediumUp || this.get('slides').length < 2;
+    }
 
-      /**
-       * @name _shouldBeStopped
-       * @description on click stop the video that is playing
-       * @param event - Object
-       */
-      _shouldBeStopped: function(event) {
-        var index = this.get('slides').findIndex(function(item) {
-          return item === slide;
-        });
-        if(!!index) {
-          this._stopVideo(index);
-        }
-      },
+    /**
+      * template helper
+      * @name _shouldShowType
+      * @description determines what part of the slide should be shown
+      * @param slide - Object
+      * @param type - String
+      */
+    _shouldShowType (slide, type) {
+      slide.type = slide.type || slide.acf_fc_layout;
+      return slide.type === type;
+    }
 
-      /**
-       * @name _stopVideo
-       * @description on click stop the video that is playing
-       * @param index - Number
-       */
-      _stopVideo: function(index) {
-        this.playing = -1;
-        // timeout is used for delay of the height animation
-        setTimeout(function () {
-          this.shadowRoot.querySelector('#videoplayer-' + index).stop();
-          this.videoIsPlaying = false;
-        }.bind(this), 500);
-      },
+  };
 
-      /**
-       * template helper
-       * @name _getClass
-       * @description will return a class name based on the param (type)
-       * @param type - String
-       */
-      _getClass: function(type) {
-        var className;
-        switch(type) {
-            case 'fullWidth':
-                className = 'slider--full-width';
-                break;
-            case 'product':
-                className = 'slider--product';
-                break;
-            default:
-              break;
-        }
-        return className;
-      },
+  customElements.define(DorelContentCarousel.is, DorelContentCarousel);
 
-      /**
-       * template helper
-       * @name _shouldShowType
-       * @description determines what part of the slide should be shown
-       * @param slide - Object
-       * @param type - String
-       */
-      _shouldShowType: function(slide, type) {
-        if(type === 'image_url') {
-          return slide && slide.image_url && slide.image_url.length;
-        }
-        return slide.type === type;
-      },
-    });
   </script>
 </dom-module>
