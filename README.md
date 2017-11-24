@@ -45,11 +45,11 @@ Inside the new dorel-spa folder:
 
 Adjust your dorel-spa path accordingly
 
-    sudo docker run -d --name dorel-spa -p 80:80 -v /Users/username/Documents/dorel-spa:/code dorel-spa
+    docker run -d --name dorel-spa -p 80:80 -v /Users/username/Documents/dorel-spa:/code dorel-spa
     
 Windows:
 
-    sudo docker run -d --name dorel-spa -p 80:80 -v C:\\Users\username\Documents\dorel-spa:/code dorel-spa
+    docker run -d --name dorel-spa -p 80:80 -v C:\\Users\username\Documents\dorel-spa:/code dorel-spa
     
 ##### Install dependencies
     
