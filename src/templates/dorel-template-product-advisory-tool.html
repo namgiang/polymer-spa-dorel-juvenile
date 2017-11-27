@@ -56,6 +56,14 @@
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingSelection }}">
     </dorel-car-fitting-selection>
+    
+   <dorel-car-fitting-selection
+      car-data="{{ carData }}"
+      hidden$="[[ !stepData.carFittingAddCar.isCurrent ]]"
+      product-name="[[ productData.sku ]]"
+      step-controller="{{ stepController  }}"
+      step-data="{{ stepData.carFittingAddCar }}">
+    </dorel-car-fitting-selection>
 
     <dorel-car-fitting-results
       car-data="{{ carData }}"
@@ -108,9 +116,65 @@
                   isCurrent: false,
                   stepName: 'carFittingSelection',
                   stepNumber: 1,
-                  nextStep: 'carFittingResults',
+                  nextStep: 'carFittingAddCar',
                   previousStep: null,
                   title: 'car_fitting_selection#step_title',
+                  hide_buttons: true,
+                  main_section: {
+                    section_type: 'car-details-form',
+                    title: 'car_fitting_selection#main_section_title',
+                    primary_cta: 'car_fitting_selection#primary_cta',
+                    secondary_cta: 'car_fitting_selection#secondary_cta',
+                    car_display_label: 'car_fitting_selection#car_display_label',
+                    form: {
+                      form_groups: [
+                        {
+                          label: 'car_fitting_selection#brand_input_label', 
+                          default_option: {
+                            label: 'Choose a brand',
+                            value: ''
+                          },
+                          options: []
+                        },
+                        {
+                          label: 'car_fitting_selection#model_input_label',
+                          default_option: {
+                            label: 'Choose a model',
+                            value: ''
+                          },
+                          options: []
+                        },
+                        {
+                          label: 'car_fitting_selection#type_input_label',
+                          default_option: {
+                            label: 'Choose a type',
+                            value: ''
+                          },
+                          options: []
+                        }
+                      ]
+                    }
+                  },
+                  sub_section: {
+                    title: '',
+                    notification_1: 'car_fitting_selection#sub_section_notification_1',
+                    notification_2: 'car_fitting_selection#sub_section_notification_2',
+                    notification_3: 'car_fitting_selection#sub_section_notification_3',
+                    background_image_id: '7F84BD5F-551A-4DA5-8532AB44763439AA'
+                  },
+                  options: {
+                    next: 'Show results',
+                    previous: 'Back'
+                  }
+                },
+                carFittingAddCar: {
+                  isCurrent: false,
+                  stepName: 'carFittingAddCar',
+                  stepNumber: 2,
+                  nextStep: 'carFittingResults',
+                  previousStep: 'carFittingSelection',
+                  title: 'car_fitting_add_cars#step_title',
+                  hide_buttons: false,
                   main_section: {
                     section_type: 'car-details-form',
                     title: 'car_fitting_selection#main_section_title',
@@ -161,9 +225,9 @@
                 carFittingResults: {
                   isCurrent: false,
                   stepName: 'carFittingResults',
-                  stepNumber: 2,
+                  stepNumber: 3,
                   nextStep: null,
-                  previousStep: 'carFittingSelection',                    
+                  previousStep: 'carFittingAddCar',
                   title: 'car_fitting_results#step_title',
                   main_section: {
                     section_type: 'car-details-form',
@@ -199,7 +263,7 @@
 
       getCurrentProgess() {
         const currentStepNumber = (this.getCurrentStepData()) ? this.getCurrentStepData().stepNumber : 0;
-        const totalAmountOfSteps = Object.keys(this.stepData).length;
+        const totalAmountOfSteps = Object.keys(this.stepData).length;;
         return (currentStepNumber * 100) / totalAmountOfSteps;
       }
 
@@ -211,7 +275,6 @@
 
       ready() {
         super.ready();
-
         if(this.queryParams && this.queryParams.productName) {
           this.set('requestedProductName', this.queryParams.productName);
           setTimeout(function(){

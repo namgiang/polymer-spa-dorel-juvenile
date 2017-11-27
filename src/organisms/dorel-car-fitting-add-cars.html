@@ -118,9 +118,7 @@
                                 size="medium"
                                 icon="dorel-icons:plus"
                                 on-tap="addCar"
-                                id="add_button"
-                                disabled
-                                hidden$="[[ stepData.hide_buttons ]]">
+                                id="add_button" disabled>
                       [[  localize(stepData.main_section.secondary_cta) ]]
                     </dorel-cta>
                   </dorel-layout-column>
@@ -130,9 +128,7 @@
                                 link=""
                                 size="medium"
                                 on-tap="nextStep"
-                                id="next_button"
-                                disabled
-                                hidden$="[[ stepData.hide_buttons ]]">
+                                id="next_button" disabled>
                       [[  localize(stepData.main_section.primary_cta) ]]
                     </dorel-cta>
                   </dorel-layout-column>
@@ -191,8 +187,27 @@
 
       static get observers() {
         return [
-            'updateStep(carData.*)'
+            'updateButtons(carData.*)'
         ];
+      }
+
+      updateButtons() {
+        if(this.carData.length > 0 && this.carData[0].result) {
+          this.$.next_button.removeAttribute('disabled');
+          this.$.add_button.removeAttribute('disabled');
+        } else {
+          this.$.next_button.setAttribute('disabled', true);
+          this.$.add_button.setAttribute('disabled', true);
+        }
+      }
+
+      nextStep() {
+        this.set('stepData.isCurrent', false);
+        this.set('stepController.currentStep', this.stepData.nextStep);
+      }
+
+      hasBynderImage(id) {
+        return Boolean(id && id.length);
       }
 
       addCar() {
@@ -200,6 +215,10 @@
           result: null,
           form: Object.create(this.stepData.main_section.form)
         });
+      }
+
+      editCar(event) {
+        this.set(`carData.${event.model.index}.result`, null);
       }
 
       deleteCar(event) {
@@ -211,49 +230,13 @@
         }
       }
 
-      editCar(event) {
-        this.set(`carData.${event.model.index}.result`, null);
-      }
-
-      hasBynderImage(id) {
-        return Boolean(id && id.length);
-      }
-
       incrementIndex(index) {
         return (Number(index) + 1);
       }
-
-      nextStep() {
-        this.set('stepData.isCurrent', false);
-        this.set('stepController.currentStep', this.stepData.nextStep);
-      }
-
+      
       ready() {
         super.ready();
-        if(this.carData.length < 1) this.addCar();
-      }
-      
-      shouldShow(step) {
-        let show;
-        if(this.stepController.currentStep && this.stepController.currentStep === step) {
-          show = true;
-        } else {
-          show = false;
-        }
-        return show; 
-      }
-
-      updateStep() {
-        if(this.carData.length > 0 && this.carData[0].result) {
-          if(this.stepController.currentStep === 'carFittingSelection') {
-            this.nextStep();
-          }
-          this.$.next_button.removeAttribute('disabled');
-          this.$.add_button.removeAttribute('disabled');
-        } else {
-          this.$.next_button.setAttribute('disabled', true);
-          this.$.add_button.setAttribute('disabled', true);
-        }
+        this.addCar();
       }
     }
 
