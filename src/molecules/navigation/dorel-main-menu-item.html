@@ -15,7 +15,7 @@
       }
 
       :host:hover {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-main-menu-text-link-color-active);
       }
 
       .menu-item {
@@ -26,6 +26,7 @@
         padding: 0.5rem 0.25rem;
         cursor: pointer;
         height: 2em;
+        @apply(--theme-main-menu-item);
       }
 
       .menu-item.category {
@@ -33,7 +34,6 @@
       }
 
       .link {
-        @apply(--theme-main-menu-item);
         margin: 0;
         transition: color 0.2s;
         text-decoration: none;
@@ -51,36 +51,40 @@
       }
 
       .menu-item:hover .link {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-main-menu-text-link-color-active);
       }
 
       [is-active] {
         color: var(--theme-brand-color-2);
       }
 
+      .link-text {
+        display: block;
+        position: relative;
+      }
+
+      [is-active] .link-text::after {
+        @apply(--theme-main-menu-selected-item-after)
+      }
+
       [is-active] .link {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-main-menu-text-link-color-active);
         cursor: default;
       }
 
-      [is-active] .menu-item:hover .link {
-        color: var(--theme-color-text-link-active);
+      [is-active].menu-item:hover .link {
+        color: var(--theme-main-menu-text-link-color-active);
         cursor: default;
       }
 
       .menu-item__icon {
-        margin-left: 0.2rem;
-        display: none;
+        @apply(--theme-main-menu-dropdown-icon)
       }
 
       .menu-item:hover .menu-item__icon {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-main-menu-text-link-color-active);
       }
 
-      [is-dropdown] .menu-item__icon {
-        display: flex;
-        flex: 1;
-      }
       .menu-item__icon[opened] {
         transform: scaleY(-1);
       }
@@ -112,23 +116,24 @@
       }
     </style>
 
-    <div class="menu-item" class$="{{ getClasses(mainItem) }}" is-active$="[[ isActive ]]" is-dropdown$="[[ isDropdown ]]">
+    <div class="menu-item" class$="{{ getClasses(mainItem) }}" is-active$="[[ isActive ]]">
       <template is="dom-if" if="[[ !mainItem.dropdown ]]">
         <a on-click="clickMainItem"
           class="link"
           gtm-parent="dorel-navigation-main"
           gtm-parent-index="[[ index ]]"
           href="[[ mainItem.link ]]">
-          [[ mainItem.title ]]
+          <span class="link-text">[[ mainItem.title ]]</span>
         </a>
       </template>
 
       <template is="dom-if" if="[[ mainItem.dropdown ]]">
         <div on-click="openDropdown"
+          tabindex="0"
           class="link"
           gtm-parent="dorel-navigation-main"
           gtm-parent-index="[[ index ]]">
-          [[ mainItem.title ]]
+          <span class="link-text">[[ mainItem.title ]]</span>
           <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
         </div>
 
@@ -182,15 +187,6 @@
          */
         index: {
           type: Number
-        },
-
-        /**
-         * @name isDropdown
-         * @description determines if menu item is a dropdown
-         */
-        isDropdown: {
-          type: Boolean,
-          reflectToAttribute: true
         },
 
         /**
