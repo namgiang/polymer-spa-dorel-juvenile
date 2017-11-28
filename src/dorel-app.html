@@ -34,7 +34,7 @@
 <link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
-<link rel="import" href="utils/dorel-main-routing.html">
+<link rel="import" href="utils/dorel-lang-routing.html">
 <link rel="import" href="utils/dorel-product-category-manager.html">
 <link rel="import" href="utils/dorel-brand-manager.html">
 <link rel="import" href="utils/dorel-main-menu-creator.html">
@@ -97,7 +97,7 @@
     </dorel-multilingual-manager>
 
     <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
+    <dorel-wp-collect-page app-cache="[[ appCache ]]"></dorel-wp-collect-page>
 
     <!-- collect the options pages -->
     <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
@@ -126,13 +126,13 @@
       id="metaManager">
     </dorel-meta-manager>
 
-    <dorel-main-routing
+    <dorel-lang-routing
       app-cache="[[ appCache ]]"
       route="[[ route ]]"
       category-page="{{ categoryPage }}"
       previous-states="{{ previousStates }}"
       current-page="{{ currentPage }}">
-    </dorel-main-routing>
+    </dorel-lang-routing>
 
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"
@@ -369,7 +369,7 @@
        * @param currentPage - Object - the previous page
        */
       _pageChanged: function (currentPage) {
-        if (typeof currentPage === 'undefined' || currentPage === '') {
+        if (typeof currentPage === 'undefined' || currentPage === '' || !currentPage) {
           return;
         }
 

@@ -150,7 +150,7 @@
           <dorel-layout-container class="header-items">
             <div class="header-item header-item-logo">
               <div>
-                <a href="/" aria-label="Maxi Cosi"
+                <a href="[[ _rootUrl(currentLanguage) ]]" aria-label="Maxi Cosi"
                    on-click="_logoClicked">
                   <dorel-logo brand-name="[[ brandName ]]"></dorel-logo>
                 </a>
@@ -356,6 +356,10 @@
 
         // send event to tracking
         this.fire('setAppCache', {value: event, path: 'events'});
+      },
+
+      _rootUrl: function(currentLanguage) {
+        return `${window.location.origin}/${currentLanguage.path}/`;
       }
 
     });
