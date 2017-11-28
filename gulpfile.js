@@ -141,7 +141,7 @@ gulp.task('build:es5', function () {
 });
 
 gulp.task('build:es6', function(done) {
-    gulp.src('./**/*')
+    gulp.src('./**/*', '!./build')
     .pipe(gulp.dest('build/es6'))
     .on('end', () => console.log('Copied files to build/es6'));
     done();
