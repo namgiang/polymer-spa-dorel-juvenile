@@ -1,9 +1,9 @@
-<link rel="import" href="../../../node_modules/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../../../node_modules/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../../node_modules/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
-<link rel="import" href="../../molecules/dorel-logo.html">
+<link rel="import" href="../../node_modules/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../node_modules/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../node_modules/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+<link rel="import" href="../molecules/dorel-logo.html">
 
-<dom-module id="dorel-product-advisory-nav">
+<dom-module id="dorel-car-fitting-nav">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .header-wrapper {
@@ -67,15 +67,22 @@
       }
 
       .header-flex {
+        width: 100%;
         display: flex;
         flex-direction: row;
       }
-
+ 
+      .page-title-box {
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+ 
       .page-title {
         @apply(--theme-typography-4);
-        margin: 0 0 0 1.5em;
-        display: flex;
-        align-items: center;
+        color: var(--theme-brand-color-1);
+        margin-left: 4.6em;
       }
 
       .header-item-close {
@@ -197,14 +204,12 @@
                    on-click="_logoClicked">
                   <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
                 </a>
-                <h2 class="page-title">
-                  [[ pageTitle ]]
-                </h2>
+                <h2 class="page-title">[[ localize(pageTitle) ]]</h2>
               </div>
             </div>
 
             <div class="header-item header-item-close">
-              <a href="[[ getPreviousStateUrl() ]]">
+              <a href="[[ productUrl ]]">
                 <iron-icon class="header-icon icon-close-page"
                            icon="dorel-icons:close"></iron-icon>
               </a>
@@ -230,7 +235,7 @@
               </div>
 
               <div class="header-item header-item-close">
-                <a href="[[ getPreviousStateUrl() ]]">
+                <a href="[[ productUrl ]]">
                 <iron-icon class="header-icon icon-close-page"
                            icon="dorel-icons:close"></iron-icon>
                 </a>
@@ -243,120 +248,31 @@
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-product-advisory-nav',
+    /* global Polymer */
+    /* global customElements */
+    /* global DorelMultilingualBehavior */
+    class DorelCarFittingNav extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+      static get is() {
+        return 'dorel-car-fitting-nav';
+      }
 
-      properties: {
-
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object
-        },
-
-        /**
-         * @attribute
-         * @name brandName
-         * @description defines the brand of the page
-         */
-        brandName: {
-          type: String
-        },
-
-        /**
-         * @attribute
-         * @name loadComplete
-         * @description is set within the dorel-app when all info is loaded
-         */
-        loadComplete: {
-          type: Boolean
-        },
-
-        /**
-         * @attribute
-         * @name pageTitle
-         * @description string with that respresents the title of a step
-         */
-        pageTitle: {
-          type: String
-        },
-
-        /**
-         * @attribute
-         * @name progress
-         * @description Number that indicates the progress of the flow
-         */
-        progress: {
-          type: Number
-        },
-
-        /**
-         * @exposed
-         * @name submenuOpened
-         * @description defines if one of the submenu's should be opened or closed
-         */
-        subMenuOpened: {
-          type: Boolean
-        },
-
-        /**
-         * @attribute
-         * @name previous
-         * @description Boolean that indicates if a user can route a step back
-         */
-        previous: {
-          type: Boolean
-        },
-
-        /**
-         * @exposed
-         * @name mobileMenuOpened
-         * @description defines if the mobile menu (drawer) should be opened or closed
-         */
-        mobileMenuOpened: {
-          type: Boolean
-        }
-      },
-
-      /**
-       * @name _logoClicked
-       * @description handle the clicks on the logo
-       */
-      _logoClicked: function (event) {
-        // track this event
-        var event = {
-          action: 'switch',
-          component: 'logo',
-          element: Polymer.dom(event).localTarget.parentNode, // needs to be parentNode!!!!!
-          event: 'polymer_event',
-          things: {
-            'currentPage': document.URL,
-            'targetPage': Polymer.dom(event).localTarget.parentNode.href // needs to be parentNode!!!!!
+      static get properties() {
+        return {
+          productUrl: {
+            type: String,
+            computed: 'getProductUrl(productName)'
           }
         };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
-      },
-
-      shouldShow: function(boolean) {
-        return Boolean(boolean);
-      },
-
-      previousStep: function() {
-        this.fire('previous-step');
-      },
-
-      getPreviousStateUrl: function() {
-        var origin = window.location.origin;
-        var previousState = this.get('appCache.previousState');
-
-        if(!previousState || previousState.path === '/product-advisory') {
-          return origin;
-        }
-
-        return origin + previousState.path;
       }
-    });
+
+      getProductUrl(productName) {
+        var origin = window.location.origin;
+        var locale = window.location.href.split('/')[3];
+        console.log(`${origin}/${locale}/car-seats/${productName}`);
+        return `${origin}/${locale}/car-seats/${productName}`;
+      }
+    }
+
+    customElements.define(DorelCarFittingNav.is, DorelCarFittingNav);
   </script>
 </dom-module>

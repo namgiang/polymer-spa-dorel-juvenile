@@ -12,13 +12,13 @@
       .form {
         display: flex;
         flex-direction: column;
-        background-color: var(--theme-color-monochrome-2);
+        /*background-color: var(--theme-color-monochrome-2);*/
       }
       .form_title {
         padding: .75em 1.5em .75em .75em;
         @apply(--theme-typography-4);
         margin: 0;
-        background-color: var(--theme-color-monochrome-6);
+        /*background-color: var(--theme-color-monochrome-6);*/
         color: var(--theme-color-monochrome-1);
         border-top-left-radius: var(--theme-button-border-radius);
         border-top-right-radius: var(--theme-button-border-radius);
@@ -26,6 +26,7 @@
       .form_groups {
         padding: .75em .75em .75em .75em;
       }
+
     </style>
     <div class="form">
 
@@ -44,18 +45,25 @@
         handle-as="json"
         on-response="_typeYearResponse"></iron-ajax>
 
-      <h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>
+      <iron-ajax
+        id="carConfig"
+        handle-as="json"
+        on-response="_carConfigResponse"></iron-ajax>
 
-      <template is="dom-if" if="[[ formData.form_groups.length ]]" restamp="true">
+      <!--<h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>-->
+      
+
+
+      <!--<template is="dom-if" if="[[ formData.form_groups.length ]]" restamp="true">-->
         <div class="form_groups">
           <template
             is="dom-repeat"
-            items="{{ formData.form_groups }}"
+            items="{{ carData.form.form_groups }}"
             index-as="index"
             as="item">
             <template is="dom-if" if="{{ item }}" restamp="true">
               <dorel-input-select
-                label="[[ item.label ]]"
+                label="[[ localize(item.label) ]]"
                 selected="[[ item.selected ]]"
                 options="[[ item.options ]]"
                 disabled$="[[ _hasOptions(item.options) ]]"
@@ -64,7 +72,7 @@
             </template>
           </template>
         </div>
-      </template>
+      <!--</template>-->
      </div>
 
   </template>
@@ -73,20 +81,23 @@
       is: 'dorel-car-details-form',
       properties: {
 
-        /**
-         * @attribute
-         * @name formData
-         * @description Object that is passed by parent
-         */
-        formData: {
+        carData: {
           type: Object
         },
 
+        values: {
+          type: Array,
+          value: []
+        }
 
       },
 
+      behaviors: [
+        DorelMultilingualBehavior
+      ],
+
       observers: [
-        '_validate(formData.form_groups.*)'
+        '_validate(carData.form.form_groups.*)'
       ],
 
       listeners: {
@@ -110,22 +121,23 @@
        * @param formGroups - Object
        */
       _validate: function(formGroups) {
+        var self = this;
         if(formGroups.value && formGroups.value && formGroups.value.length) {
           var isValid = formGroups.value.every(function(group) {
             return Boolean(group && group.selected && group.selected.value && group.selected.value !== '');
           })
-          var values = [];
+          this.values = []
           if(isValid) {
             var group_values = formGroups.value.map(function(group) {
               return group.selected.value;
             });
             group_values.forEach(function(group) {
               group.forEach(function(item) {
-                values.push(item);
+                self.values.push(item);
               });
             });
           }
-          this.fire('submit-groups', { value: { valid : isValid, groups_values: values } });
+          //this.fire('submit-groups', { value: { valid : isValid, groups_values: values } });
         }
       },
 
@@ -137,7 +149,7 @@
        */
       _selectboxChanged: function(event) {
         var updatedValue = event.detail.value;
-        var formGroups = this.get('formData.form_groups');
+        var formGroups = this.get('carData.form.form_groups');
         var groupIndex = this._getGroupIndex(formGroups, updatedValue);
 
         if(updatedValue.value !== '') {
@@ -153,6 +165,9 @@
         }
         if(groupIndex === 1) {
           this.getTypeYear(updatedValue);
+        }
+        if(groupIndex === 2) {
+          this._getCarConfig();
         }
       },
 
@@ -188,7 +203,7 @@
           }
           return Object.assign({}, group);
         }, []);
-        this.set('formData.form_groups', newFormGroups);
+        this.set('carData.form.form_groups', newFormGroups);
       },
 
       /**
@@ -220,13 +235,13 @@
        */
       _brandResponse: function(response) {
         var results = response.detail.response.results;
-        var group = this.get('formData.form_groups.' + 0);
+        var group = this.get('carData.form.form_groups.' + 0);
         results = results.map(function(result) {
           result.value = JSON.stringify(result.values);
           return Object.assign({}, result);
         });
         results.unshift(group.default_option);
-        this.set('formData.form_groups.' + 0 + '.options', results);
+        this.set('carData.form.form_groups.' + 0 + '.options', results);
       },
 
       /**
@@ -240,7 +255,7 @@
           return;
         } else {
           var item = updatedValue.value.find(function(item){
-            return item.filter === 'id';
+            return item.filter === 'car_brand_id';
           });
           var modelEl = this.$.model;
           modelEl.url = CONFIG.DIO_API_URL + '/car-brands/' + item.value + '/models';
@@ -255,13 +270,13 @@
        */
       _modelResponse: function(response) {
         var results = response.detail.response.results;
-        var group = this.get('formData.form_groups.' + 1);
+        var group = this.get('carData.form.form_groups.' + 1);
         results = results.map(function(result) {
           result.value = JSON.stringify(result.values);
           return Object.assign({}, result);
         });
         results.unshift(group.default_option);
-        this.set('formData.form_groups.' + 1 + '.options', results);
+        this.set('carData.form.form_groups.' + 1 + '.options', results);
       },
 
       /**
@@ -273,12 +288,12 @@
         if(!updatedValue || updatedValue.value === '') {
           return;
         }
-        var firstSelectBox = this.get('formData.form_groups.' + 0 + '.selected');
+        var firstSelectBox = this.get('carData.form.form_groups.' + 0 + '.selected');
         var brand = firstSelectBox.value.find(function(item){
-          return item.filter === 'id';
+          return item.filter === 'car_brand_id';
         });
 
-        var secondSelectBox =  this.get('formData.form_groups.' + 1 + '.selected');
+        var secondSelectBox =  this.get('carData.form.form_groups.' + 1 + '.selected');
 
         var modelName = secondSelectBox.value.find(function(item) {
           return item.filter === 'model_name';
@@ -301,13 +316,69 @@
        */
       _typeYearResponse: function(response) {
         var results = response.detail.response.results;
-        var group = this.get('formData.form_groups.' + 2);
+        var group = this.get('carData.form.form_groups.' + 2);
         results = results.map(function(result) {
           result.value = JSON.stringify(result.values);
           return Object.assign({}, result);
         });
         results.unshift(group.default_option);
-        this.set('formData.form_groups.' + 2 + '.options', results);
+        this.set('carData.form.form_groups.' + 2 + '.options', results);
+      },
+
+      /**
+       * listener
+       * @name _getResults
+       * @description will set the results and if the values are set generate a call based on the values array
+       * this call is to retrieve the results of the carfitting tool
+       * @param event - Object
+       */
+      _getCarConfig: function() {
+        if(this.values.length) {
+          var resultsEl = this.$.carConfig;
+          const brand_id = this._findValue(this.values, 'car_brand_id');
+          const model_name = this._findValue(this.values, 'model_name');
+          const model_type = this._findValue(this.values, 'model_type');
+          const introductipon_year = this._findValue(this.values, 'introduction_year');
+          const doors = this._findValue(this.values, 'doors');
+          resultsEl.url = `${CONFIG.DIO_API_URL}/carseat/${brand_id}?model_name=${model_name}&model_type=${model_type}&introduction_year=${introductipon_year}&doors=${doors}&carseat=${this.productName}`;
+          resultsEl.generateRequest();
+        }
+      },
+
+      /**
+       * Response
+       * @name _resultResponse
+       * @description response of the carfitting call
+       * @param response - Object
+       */
+      _carConfigResponse: function(event) {
+        if (event.detail.response.message === 'success') {
+          this.set('carData.result', event.detail.response);        
+        } else {
+          const brand_name = this._findValue(this.values, 'car_brand_name');
+          const model_type = this._findValue(this.values, 'model_type');
+          const introduction_year = this._findValue(this.values, 'introduction_year');
+          const result = {
+            car_information_label: `${brand_name}, ${model_type}, ${introduction_year }`
+          };
+          this.set('carData.result', result);  
+        }
+        this.set('carData.active', false);
+      },
+
+      /**
+       * help function
+       * @name _findValue
+       * @description will find and return correct value in array based on the params
+       * @param results - Array
+       * @param filterName - String
+       * @returns String/Number
+       */
+      _findValue: function(results, filterName) {
+        var item = results.find(function(_item) {
+          return _item.filter === filterName;
+        });
+        return item.value;
       },
 
       /**
@@ -320,12 +391,10 @@
         if(!index && index !== 0) {
           return;
         }
-        var defaultOption = this.get('formData.form_groups.' + index + '.default_option');
-        this.set('formData.form_groups.' + index + '.selected', defaultOption);
-        this.set('formData.form_groups.' + index + '.options', [defaultOption]);
-      },
-
-
+        var defaultOption = this.get('carData.form.form_groups.' + index + '.default_option');
+        this.set('carData.form.form_groups.' + index + '.selected', defaultOption);
+        this.set('carData.form.form_groups.' + index + '.options', [defaultOption]);
+      }
     });
   </script>
 </dom-module>
