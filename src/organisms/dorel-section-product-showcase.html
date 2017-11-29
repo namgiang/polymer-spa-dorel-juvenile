@@ -1,5 +1,6 @@
 <link rel="import" href="../molecules/dorel-expandable-content.html">
 <link rel="import" href="../molecules/dorel-showcase-slider.html">
+<link rel="import" href="../molecules/dorel-product-lead-lightbox.html">
 
 <dom-module id="dorel-section-product-showcase">
   <template>
@@ -229,7 +230,8 @@
                 <dorel-cta
                   type="primary"
                   title="{{ localize('Find_a_Store') }}"
-                  link="[[ storeLocatorPage.link ]]"
+                  on-click="_openLightbox"
+                  link=""
                   size="medium"
                   icon="dorel-icons:chevron-right"
                   gtm-action="click"
@@ -277,6 +279,8 @@
     </template>
 
     <div class="clear"></div>
+    <dorel-product-lead-lightbox
+      product-sku="[[showcaseData.sku]]"></dorel-product-lead-lightbox>
   </template>
 
   <script>
@@ -406,6 +410,15 @@
        * */
       _viewAccessories: function (event) {
         this.accessoryScrollHandler = !this.accessoryScrollHandler;
+      },
+
+      /**
+       * @name _openLightbox
+       * @description handle of the click on the details links
+       */
+      _openLightbox: function (event) {
+        var lightbox = this.$$('dorel-product-lead-lightbox');
+        lightbox.open();
       }
     });
   </script>
