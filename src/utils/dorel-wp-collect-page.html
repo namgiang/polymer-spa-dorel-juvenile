@@ -103,6 +103,51 @@
         return page;
       }
 
+      /**
+       * public method to retrieve pages
+       * @name getChildrenByParentId
+       * @description public method that returns child pages based on the id of the parent page
+       * @param id - Number
+       */
+      async getChildrenByParentId(id) {
+        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
+        const collectPageEl = this.$.collectPage;
+        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?parent=${id}`;
+        let json = await collectPageEl.generateRequest().completes;
+        const pages = json.__data.response || [];
+        pages.map(page => {
+          page.template = page.template.slice(0, -4).replace('page-', '');
+          return page;
+        });
+        if(pages.length) {
+          this.updateAppCache(pages);
+        }
+        return pages;
+      }
+
+      /**
+       * public method to retrieve pages
+       * @name getChildrenByParentId
+       * @description public method that returns child pages based on the id of the parent page
+       * @param template - String
+       */
+      async getPageByTemplate(template) {
+        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
+        const collectPageEl = this.$.collectPage;
+        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?template=${template}`;
+        let json = await collectPageEl.generateRequest().completes;
+        const pages = json.__data.response || [];
+        debugger;
+        pages.map(page => {
+          page.template = page.template.slice(0, -4).replace('page-', '');
+          return page;
+        });
+        if(pages.length) {
+          this.updateAppCache(pages);
+        }
+        return pages;
+      }
+
       updateAppCache(pages) {
         const oldPages = this.appCache.collect.pages || [];
         const updatedPages = this._mergeArrays(oldPages, pages, 'id');

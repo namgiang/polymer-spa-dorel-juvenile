@@ -35,7 +35,6 @@
         }
       }
     }
-
     static get observers () {
       return [
       '_createMenuDataModel(appCache.collect.options.main_menu)'
@@ -44,7 +43,7 @@
 
     ready () {
       super.ready()
-      this.addEventListener('newProducts', this._setMenuProducts)
+      this.addEventListener('newProducts', this._setMenuProducts);
     }
 
     async _createMenuDataModel(mainMenu) {
@@ -74,10 +73,6 @@
       item.id = page.id;
       item.link = this.cleanUrlToPath(page.link);
       item.opened = false;
-      if(item.dropdown_type === 'category') {
-        item.category_id = this._getMagentoCategoryId(page);
-        item.sub_category_items = this._getSubCategoryItems(page);
-      }
       if(item.dropdown === true && item.dropdown_items && item.dropdown_items.length) {
         const promises = await item.dropdown_items.map(async (_item) => {
           let page = await this.$.collectPageEl.getPageById(_item.page_object.ID);
@@ -91,16 +86,20 @@
       } else {
         item.dropdown_items = [];
       }
+      if(item.dropdown_type === 'category') {
+        let sub_category_items = await this._getSubCategoryItems(page);
+        item.category_id = this._getMagentoCategoryId(page);
+        item.sub_category_items = sub_category_items;
+      }
       return Object.assign({}, item);
     }
 
     async _getSubCategoryItems(page) {
-      var childPages = this._getChildPages(page);
-      var self = this;
-      var childPages = childPages.map(function(page) {
-        return self._getCategorySubMenuItems(page);
+      let allChildPages = await this.$.collectPageEl.getChildrenByParentId(page.id);
+      const childPages = allChildPages.map(page => {
+        return this._getCategorySubMenuItems(page)
       });
-      if(!childPages || childPages.length < 2) {
+      if(!childPages || childPages.length > 2) {
         var category = this._getMagentoCategoryId(page);
         this.$.products.getProducts(category, this.get('appCache.currentLanguage'));
       } else {
@@ -118,13 +117,6 @@
         thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
         title: page.title.rendered
       };
-    }
-
-    _getChildPages(page, pages) {
-      return [];
-      return pages.filter(function(_page) {
-        return _page.parent === page.id;
-      });
     }
 
     _getMagentoCategoryId(page) {
