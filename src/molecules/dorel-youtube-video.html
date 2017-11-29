@@ -79,6 +79,11 @@
                         on-google-youtube-error="handleYouTubeError">
         </google-youtube>
 
+        <template is="dom-if"
+                  if="[[ videoError ]]">
+          An error occurred while playing your video. Check the video id or try again.
+        </template>
+
         <dorel-bynder-responsive-image
           media-id="[[ thumbnail ]]" image-type="[[ imageType ]]"></dorel-bynder-responsive-image>
       </div>
@@ -138,6 +143,11 @@
       imageType: {
         type: String,
         value: 'full-screen'
+      },
+      videoError: {
+        type: Boolean,
+        value: false,
+        notify: true
       }
     },
 
@@ -162,7 +172,8 @@
      * @description show console message on error
      */
     handleYouTubeError: function (ev) {
-      console.error('YouTube playback error', ev.detail);
+      // console.error('YouTube playback error', ev.detail);
+      this.set('videoError', true);
     },
 
     /**
