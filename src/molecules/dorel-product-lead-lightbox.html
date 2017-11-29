@@ -2,8 +2,11 @@
 <link rel="import" href="../../node_modules/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../node_modules/neon-animation/animations/fade-in-animation.html">
 <link rel="import" href="../../node_modules/neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
 <link rel="import" href="../../node_modules/iron-image/iron-image.html">
+
+
+<link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
+<link rel="import" href="../utils/dorel-hatch-collect.html">
 
 <dom-module id="dorel-product-lead-lightbox">
   <!-- Optional shadow DOM template -->
@@ -63,6 +66,8 @@
         top: -3em;
         right: -.75em;
         z-index: 1;
+        width: 50px;
+        height: 50px;
       }
 
       .hatch-table {
@@ -70,7 +75,7 @@
       }
 
       .hatch-column {
-        min-width: 40px;
+        width: 40%;
       }
 
       .hatch-image {
@@ -152,6 +157,7 @@
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-hatch-collect response="{{hatch}}"></dorel-hatch-collect>
 
     <section class="section-product-lead-lightbox"
              desktop-small$="{{ breakpoints.desktopSmall }}"
@@ -183,17 +189,23 @@
             <h3 class="lightbox-title">{{ localize('product_lead_lightbox#hatch-title') }}</h3>
             <table class="hatch-table">
               <tbody>
-                <tr>
-                  <td class="hatch-column">
-                    <img src="">
-                  </td>
+                <template is="dom-repeat"
+                          items="[[hatch.retailers.retailer]]"
+                          as="retailer">
+                  <tr>
+                    <td class="hatch-column">
+                      <img src$="[[retailer.logo]]">
+                    </td>
 
-                  <td class="hatch-column"></td>
+                    <td class="hatch-column">
+                      [[retailer.stock_info]]
+                    </td>
 
-                  <td class="hatch-column">
-                    <a href="#">></a>
-                  </td>
-                </tr>
+                    <td class="cta">
+                      <a href="[[retailer.purchase_link]]">></a>
+                    </td>
+                  </tr>
+                </template>
               </tbody>
             </table>
           </paper-dialog-scrollable>

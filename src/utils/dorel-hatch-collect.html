@@ -1,0 +1,80 @@
+<dom-module id="dorel-hatch-collect">
+  <template>
+    <iron-ajax
+      id="hatch-collect"
+      url=""
+      handle-as="json"
+      on-response="_leadsGenerated"></iron-ajax>
+  </template>
+
+  <script>
+    class DorelHatchCollect extends Polymer.Element {
+
+      static get is() { return 'dorel-hatch-collect'; }
+
+      // Declare properties for the element's public API
+      static get properties() {
+        return {
+          endpointUrl: {
+            type: String,
+            value: 'https://gethatch.com/iceleads_rest'
+          },
+
+          affiliateId: {
+            type: Number,
+            value: 52380
+          },
+
+          productSku: {
+            type: Number,
+            value: 61708951
+          },
+
+          region: {
+            type: String,
+            value: 'DE'
+          },
+
+          sort: {
+            type: String,
+            value: 'random'
+          },
+
+          response: {
+            type: Object,
+            value: () => ({}),
+            notify: true
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          // Observer method name, followed by a list of dependencies, in parenthesis
+          'init(endpointUrl, affiliateId, productSku, region, sort)'
+        ]
+      }
+
+      init(endpointUrl, affiliateId, productSku, region, sort) {
+        // check if all parameters are set
+        if(typeof endpointUrl === 'undefined' || typeof affiliateId === 'undefined' ||
+          typeof productSku === 'undefined' || typeof region === 'undefined' ||
+          typeof sort === 'undefined') return;
+
+        const hatchEl = this.$['hatch-collect'];
+
+        hatchEl.url = `${endpointUrl}/affiliate/${affiliateId}/json/?mpn=${productSku}&region=${region}&sort=${sort}`;
+         // do the products call
+        hatchEl.generateRequest();
+      }
+
+      _leadsGenerated(data) {
+        this.set('response', data.detail.response.iceleads_interface);
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelHatchCollect.is, DorelHatchCollect);
+  </script>
+
+</dom-module>
