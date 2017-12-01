@@ -70,12 +70,37 @@
         height: 50px;
       }
 
-      .hatch-table {
-        border: 0;
+      .hatch-item {
+        display: flex;
+        margin-top: 1.5rem;
+        cursor: pointer;
       }
 
       .hatch-column {
-        width: 40%;
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
+
+      .hatch-column:first-child {
+        max-width: 300px;
+        padding-right: 1.5rem;
+      }
+
+      .cta {
+        color: var(--theme-brand-color-2);
+        border-radius: 50%;
+        border: 2px solid var(--theme-brand-color-2);
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-block;
+        margin-left: auto;
+        transition: color 0.2s, background-color 0.2s;
+      }
+
+      .hatch-item:hover .cta {
+        color: var(--theme-color-monochrome-1);
+        background-color: var(--theme-brand-color-2);
       }
 
       .hatch-image {
@@ -84,6 +109,19 @@
         position: relative;
         padding-right: 0;
         width: 100%;
+      }
+
+      .in-stock {
+        color: #3c8d51;
+      }
+
+      .out-of-stock {
+        color: var(--theme-color-monochrome-4);
+      }
+
+      .in-stock__icon {
+        margin-right: 7px;
+        margin-top: -2px;
       }
 
       .lightbox-description {
@@ -187,26 +225,28 @@
           </dorel-cta>
           <paper-dialog-scrollable>
             <h3 class="lightbox-title">{{ localize('product_lead_lightbox#hatch-title') }}</h3>
-            <table class="hatch-table">
-              <tbody>
+            <div class="hatch-item">
                 <template is="dom-repeat"
                           items="[[hatch.retailers.retailer]]"
                           as="retailer">
-                  <tr>
-                    <td class="hatch-column">
+                    <div class="hatch-column">
                       <img src$="[[retailer.logo]]">
-                    </td>
+                    </div>
 
-                    <td class="hatch-column">
-                      [[retailer.stock_info]]
-                    </td>
-
-                    <td class="cta">
-                      <a href="[[retailer.purchase_link]]">></a>
-                    </td>
-                  </tr>
+                    <template is="dom-if" if="[[ !retailer.stock_info ]]">
+                      <div class="hatch-column in-stock">
+                        <iron-icon class="in-stock__icon" icon="dorel-icons:check"></iron-icon> {{ localize('product_lead_lightbox#in-stock') }}
+                      </div>
+                    </template>
+                    <template is="dom-if" if="[[ retailer.stock_info ]]">
+                      <div class="hatch-column out-of-stock">
+                        {{ localize('product_lead_lightbox#out-of-stock') }}
+                      </div>
+                    </template>
+                    <div class="hatch-column">
+                      <a class="cta" href="[[retailer.purchase_link]]"><iron-icon class="cta__icon" icon="dorel-icons:chevron-right"></iron-icon></a>
+                    </div>
                 </template>
-              </tbody>
             </table>
           </paper-dialog-scrollable>
         </div>
