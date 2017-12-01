@@ -110,7 +110,7 @@
       }
 
       /* lists not enumerated */
-      dorel-accordion-item dorel-cta  {
+      dorel-accordeon-item dorel-cta  {
         float: left;
         width: 100%;
         margin-top: 0;
@@ -214,14 +214,14 @@
 
         <dorel-layout-row align="left">
           <div id="footer-widget-area" class="footer-info">
-            <!-- Mobile footer menu (accordions) -->
+            <!-- Mobile footer menu (accordeons) -->
             <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
               <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
                 <template
                   is="dom-repeat"
                   items="[[footerOptions.footer_menus]]"
                   as="menu">
-                  <dorel-accordion-item heading="[[ menu.title ]]" small light>
+                  <dorel-accordeon-item heading="[[ menu.title ]]" small light>
                     <template
                       is="dom-if"
                       if="[[menu.items.length]]">
@@ -238,7 +238,7 @@
                         </dorel-cta>
                       </template>
                     </template>
-                  </dorel-accordion-item>
+                  </dorel-accordeon-item>
                 </template>
               </dorel-layout-column>
             </template>
@@ -321,10 +321,10 @@
 
       /**
        * Listen to all clicks inside the component to define an
-       * accordion click
+       * accordeon click
        */
       listeners: {
-        'click': 'accordionClick',
+        'click': 'accordeonClick',
       },
 
       behaviors: [TemplateBehaviors],
@@ -340,14 +340,14 @@
       },
 
       /**
-       * @name accordionClick
+       * @name accordeonClick
        * @description handle the click event on the header tag for the
-       * accordions (mobile only)
+       * accordeons (mobile only)
        *
        * @todo add click event listeners like with the footer-links,
        * use attributes to open/close
        */
-      accordionClick: function (event) {
+      accordeonClick: function (event) {
 
         // return when not clicked on the footer-heading
         if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined'
@@ -361,8 +361,8 @@
           Polymer.dom(event).rootTarget.parentNode.classList.add('open');
         }
 
-        // track open/closing of accordion
-        this._eventTracking(event, 'accordionToggle');
+        // track open/closing of accordeon
+        this._eventTracking(event, 'accordeonToggle');
       },
 
       /**
@@ -437,24 +437,24 @@
         switch (type) {
 
         /**
-         * accordion was clicked (mobile)
+         * accordeon was clicked (mobile)
          */
-          case 'accordionToggle':
+          case 'accordeonToggle':
 
             // define the rootTarget
             var headingEl = Polymer.dom(event).rootTarget;
 
-            // use rootTarget to get the accordion
-            var accordionEl = headingEl.parentNode;
+            // use rootTarget to get the accordeon
+            var accordeonEl = headingEl.parentNode;
 
-            // check if the accordion is open
-            var accordionOpen = accordionEl.classList.contains('open');
+            // check if the accordeon is open
+            var accordeonOpen = accordeonEl.classList.contains('open');
 
             // define the action of the eventData
-            eventData.action = (accordionOpen) ? 'open' : 'close';
+            eventData.action = (accordeonOpen) ? 'open' : 'close';
 
-            // define the event data element for accordions
-            eventData.element = accordionEl;
+            // define the event data element for accordeons
+            eventData.element = accordeonEl;
 
             break;
 

@@ -2,14 +2,14 @@
 <link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
 
 
-<link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../atoms/dorel-accordeon-item.html">
 
 <link rel="import" href="../molecules/product-information/dorel-product-information-topic.html">
 <link rel="import" href="../molecules/product-information/dorel-product-information-faq.html">
 <link rel="import" href="../molecules/product-information/dorel-product-information-manuals.html">
 <link rel="import" href="../molecules/product-information/dorel-product-information-specifications.html">
 
-<dom-module id="dorel-section-product-accordions">
+<dom-module id="dorel-section-product-accordeons">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -29,49 +29,49 @@
     <dorel-magento-collect-custom-data
       product-id="[[ productId ]]"
       app-cache="[[ appCache ]]"
-      data="{{ accordionsData }}"
-      type="accordions"></dorel-magento-collect-custom-data>
+      data="{{ accordeonsData }}"
+      type="accordeons"></dorel-magento-collect-custom-data>
 
     <template
       is="dom-if"
-      if="[[ accordionsData.accordions.length ]]">
+      if="[[ accordeonsData.accordeons.length ]]">
 
       <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
       <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
         <dorel-layout-row align="center">
           <dorel-layout-column desktop-column-span="8" tablet-column-span="12" mobile-column-span="12">
-            <div class="accordion">
-              <template is="dom-repeat" items="[[ accordionsData.accordions ]]">
-                <dorel-accordion-item heading="[[ item.heading ]]"
+            <div class="accordeon">
+              <template is="dom-repeat" items="[[ accordeonsData.accordeons ]]">
+                <dorel-accordeon-item heading="[[ item.heading ]]"
                                       gtm-parent="[[ gtmParent ]]"
                                       gtm-parent-index="[[ gtmParentIndex ]]" gtm-cta-index$="[[ index ]]">
 
                   <!-- Product Information Basic -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'topic') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordeon_type, 'topic') ]]">
                     <dorel-product-information-topic data="[[ item ]]"></dorel-product-information-topic>
                   </template>
                   <!--// Product Information Basic -->
 
                   <!-- Product Information FAQ -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'faq') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordeon_type, 'faq') ]]">
                     <dorel-product-information-faq data="[[ item ]]"></dorel-product-information-faq>
                   </template>
                   <!--// Product Information FAQ -->
 
                   <!-- Product Information Manuals -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'manuals') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordeon_type, 'manuals') ]]">
                     <dorel-product-information-manuals data="[[ item ]]"></dorel-product-information-manuals>
                   </template>
                   <!--// Product Information Manuals -->
 
                   <!-- Product Information Specifications -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'specifications') ]]">
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordeon_type, 'specifications') ]]">
                     <dorel-product-information-specifications
                       data="[[ item ]]"></dorel-product-information-specifications>
                   </template>
                   <!--// Product Information Specifications -->
-                </dorel-accordion-item>
+                </dorel-accordeon-item>
               </template>
             </div>
           </dorel-layout-column>
@@ -81,7 +81,7 @@
   </template>
   <script>
     Polymer({
-      is: 'dorel-section-product-accordions',
+      is: 'dorel-section-product-accordeons',
       behaviors: [PageBuilderBehavior],
       properties: {
 
@@ -91,11 +91,11 @@
 
         /**
          * @attribute
-         * @name accordionsData
+         * @name accordeonsData
          * @description coming from the page-builder this data object is filled
          * with ACF/Wordpress data about the component
          */
-        accordionsData: {
+        accordeonsData: {
           type: Object,
           value: function () {
             return {};
