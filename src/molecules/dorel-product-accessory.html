@@ -118,7 +118,7 @@
           </template>
           <!-- NOTE: The permalink check was removed here. -->
           <dorel-cta
-            type="link"
+            type="[[ ctaType ]]"
             title="View Accessories"
             on-click="_openLightbox"
             link=""
@@ -160,7 +160,13 @@
           value: function () {
             return {};
           }
+        },
+
+        ctaType : {
+          type: String,
+          computed: 'getCtaType()'
         }
+
       },
 
       behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
@@ -172,7 +178,13 @@
       _openLightbox: function (event) {
         var lightbox = this.$$('dorel-product-accessory-lightbox');
         lightbox.open();
+      },
+
+      getCtaType: function() {
+        return CONFIG.SELECTED_BRAND === 2 ? 'secondary' : 'link';
       }
+
+
     });
 
   </script>
