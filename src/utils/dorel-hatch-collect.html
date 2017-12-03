@@ -1,0 +1,125 @@
+<dom-module id="dorel-hatch-collect">
+  <template>
+    <iron-ajax
+      id="hatch-collect"
+      url=""
+      handle-as="json"
+      on-response="_leadsGenerated"></iron-ajax>
+  </template>
+
+  <script>
+    class DorelHatchCollect extends Polymer.Element {
+
+      static get is() { return 'dorel-hatch-collect'; }
+
+      static get properties() {
+        return {
+          appCache: {
+            type: Object
+          },
+
+          /**
+           * The first part of the api url used for retrieving Hatch data
+           */
+          endpointUrl: {
+            type: String,
+            value: 'https://gethatch.com/iceleads_rest'
+          },
+
+          /**
+           * The affiliate id is used by Hatch to match an account to
+           * its available products
+           */
+          affiliateId: {
+            type: Number,
+            value: 52380
+          },
+
+          /**
+           * Product sku is an identifier for the product
+           */
+          productSku: {
+            type: Number,
+            value: 61708951
+          },
+
+          /**
+           * Region defines the region of the data being shown
+           */
+          region: {
+            type: String,
+            value: CONFIG.LOCALE.COUNTRY_CODE
+          },
+
+          /**
+           * Sorting will sort the retailers returned in the response
+           */
+          sort: {
+            type: String,
+            value: 'random'
+          },
+
+          /**
+           * filters the requested offers based on the retailer tier
+           */
+          tier: {
+            type: String
+          },
+
+          /**
+           * The hatch element will use 2 way data binding to expose the response
+           * to its parent component
+           */
+          response: {
+            type: Object,
+            value: () => ({}),
+            notify: true // propagate upward
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          // Observer method name, followed by a list of dependencies, in parenthesis
+          'init(endpointUrl, affiliateId, productSku, region, sort)'
+        ]
+      }
+
+      /**
+       * Gathers the information needed to do the api call to hatch. Defines the api url
+       * and generates the request
+       *
+       * @param {string} first part of the hatch url
+       * @param {number} affiliateId which matches with the Hatch account
+       * @param {number} the sku of the product matching both the Dorel db and Hatch db
+       * @param {string} iso code of a country in uppercase
+       * @param {sort} sorting of the response retailers (see documentation for more info)
+       */
+      init(endpointUrl, affiliateId, productSku, region, sort) {
+        // check if all parameters are set
+        if(typeof endpointUrl === 'undefined' || typeof affiliateId === 'undefined' ||
+          typeof productSku === 'undefined' || typeof region === 'undefined' ||
+          typeof sort === 'undefined') return;
+
+        const hatchEl = this.$['hatch-collect'];
+
+        hatchEl.url = `${endpointUrl}/affiliate/${affiliateId}/json/?mpn=${productSku}&region=${region}&sort=${sort}`;
+
+        if(typeof this.get('tier') !== 'undefined' && this.get('tier') !== 'none') {
+          hatchEl.url += `&tier=${Number(this.get('tier'))}`
+        }
+
+        // do the products call
+        hatchEl.generateRequest();
+      }
+
+      _leadsGenerated(data) {
+        this.set('response', data.detail.response.iceleads_interface);
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelHatchCollect.is, DorelHatchCollect);
+  </script>
+
+</dom-module>

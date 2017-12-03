@@ -1,0 +1,339 @@
+<link rel="import" href="../../node_modules/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../node_modules/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../node_modules/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../node_modules/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../node_modules/neon-animation/web-animations.html">
+<link rel="import" href="../../node_modules/iron-image/iron-image.html">
+
+
+<link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
+<link rel="import" href="../utils/dorel-hatch-collect.html">
+
+<dom-module id="dorel-product-lead-lightbox">
+  <!-- Optional shadow DOM template -->
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        --paper-dialog-scrollable: {
+          padding: 0;
+        };
+      }
+
+      paper-dialog {
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        max-width: none !important;
+        max-height: none !important;
+        z-index: 10000 !important;
+        position: fixed;
+        font-size: var(--theme-base-font-size);
+        padding: 3em 1.5em 1.5em 1.5em;
+        font-size: 1rem;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+      }
+
+      paper-dialog-scrollable {
+        float: left;
+        width: 100%;
+        height: 100%;
+      }
+
+      .lightbox-title {
+        @apply(--theme-typography-5);
+        width: 100%;
+        margin-top: 0;
+        padding: 0 !important;
+      }
+
+      .lightbox-wrapper {
+        @apply(--layout-center-justified);
+        position: relative;
+        float: left;
+        width: 100%;
+        height: 100%;
+        padding: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .close-dialog-cta {
+        position: absolute;
+        padding: 0;
+        margin: 0;
+        top: -3em;
+        right: -.75em;
+        z-index: 1;
+        width: 50px;
+        height: 50px;
+      }
+
+      .hatch-item {
+        display: flex;
+        margin-top: 1.5rem;
+        cursor: pointer;
+      }
+
+      .hatch-column {
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
+
+      .hatch-column:first-child {
+        max-width: 300px;
+        padding-right: 1.5rem;
+      }
+
+      .cta {
+        color: var(--theme-brand-color-2);
+        border-radius: 50%;
+        border: 2px solid var(--theme-brand-color-2);
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-block;
+        margin-left: auto;
+        transition: color 0.2s, background-color 0.2s;
+      }
+
+      .hatch-item:hover .cta {
+        color: var(--theme-color-monochrome-1);
+        background-color: var(--theme-brand-color-2);
+      }
+
+      .hatch-image {
+        box-sizing: border-box;
+        float: left;
+        position: relative;
+        padding-right: 0;
+        width: 100%;
+      }
+
+      .in-stock {
+        color: #3c8d51;
+      }
+
+      .out-of-stock {
+        color: var(--theme-color-monochrome-4);
+      }
+
+      .in-stock__icon {
+        margin-right: 7px;
+        margin-top: -2px;
+      }
+
+      .lightbox-description {
+        width: 100%;
+        box-sizing: border-box;
+        float: left;
+      }
+
+      .accessory-included-badge {
+        @apply(--theme-typography-1);
+        background-color: var(--theme-brand-complementary-color-3);
+        color: var(--theme-color-white);
+        margin-top: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        border-radius: 0.875em;
+        padding: 0 .75em;
+      }
+
+      .accessory-image {
+        width: 16.5em;
+        height: 18.7em;
+        border-radius: .5em;
+        float: none;
+        margin: auto;
+        display: block;
+      }
+
+      /*
+      * Responsive behaviour
+      */
+      [desktop-large] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        width: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
+        top: 12.5%;
+        left: calc( calc( var(--theme-column-width) * 7 ) / 2 );
+        height: 50vh;
+        border-radius: var(--theme-border-radius-2);
+      }
+
+      [desktop-small] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 5);
+        flex-basis: calc(var(--theme-column-width) * 5);
+        width: calc(var(--theme-column-width) * 5);
+        max-width: calc(var(--theme-column-width) * 5);
+        top: 12.5%;
+        left: calc( calc( var(--theme-column-width) * 7 ) / 2 );
+        height: 75vh;
+        border-radius: var(--theme-border-radius-2);
+      }
+
+      [desktop-large] .lightbox-image, [desktop-small] .lightbox-image {
+        width: 16.5em;
+        padding-right: 1.5em;
+        margin-top: 0;
+        float: left;
+      }
+
+      [desktop-large] .lightbox-description, [desktop-small] .lightbox-description {
+        width: calc(100% - 16.5em);
+      }
+
+      dorel-cta {
+        float: left;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-hatch-collect
+      response="{{hatch}}"
+      affiliate-id="[[thirdPartyOptions.hatch.affiliate_id]]"
+      sort="[[thirdPartyOptions.hatch.sort]]"
+      tier="[[thirdPartyOptions.hatch.tier]]"></dorel-hatch-collect>
+
+    <section class="section-product-lead-lightbox"
+             desktop-small$="{{ breakpoints.desktopSmall }}"
+             desktop-large$="{{ breakpoints.desktopLarge }}"
+             >
+      <paper-dialog id="lightbox"
+                    with-backdrop="true"
+                    entry-animation="fade-in-animation"
+                    exit-animation="fade-out-animation"
+                    on-iron-overlay-opened="_disableDocumentScrolling"
+                    on-iron-overlay-closed="_restoreDocumentScrolling">
+        <div class="lightbox-wrapper layout horizontal">
+          <dorel-cta
+            class="close-dialog-cta"
+            type="link"
+            link=""
+            size="medium"
+            icon="dorel-icons:close"
+            dialog-confirm autofocus
+            gtm-action="close-accessory-lightbox"
+            gtm-parent="[[ gtmParent ]]"
+            gtm-parent-index="[[ gtmParentIndex ]]"
+            gtm-child="[[ gtmChild ]]"
+            gtm-child-index="[[ gtmChildIndex ]]"
+            gtm-cta-index="0">
+            {{localize('Close')}}
+          </dorel-cta>
+          <paper-dialog-scrollable>
+
+            <template is="dom-if"
+                      if="[[thirdPartyOptions.hatch.toggle]]">
+              <h3 class="lightbox-title">{{ localize('product_lead_lightbox#hatch-title') }}</h3>
+              <div class="hatch-item">
+                <template is="dom-repeat"
+                          items="[[hatch.retailers.retailer]]"
+                          as="retailer">
+                  <div class="hatch-column">
+                    <img src$="[[retailer.logo]]">
+                  </div>
+
+                  <template
+                    is="dom-if"
+                    if="[[_showStockColumn(thirdPartyOptions.hatch.show_stock)]]">
+
+                    <template is="dom-if" if="[[ _checkStock(retailer.stock_qty) ]]">
+                      <div class="hatch-column in-stock">
+                        <iron-icon class="in-stock__icon" icon="dorel-icons:check"></iron-icon> {{ localize('product_lead_lightbox#in-stock') }}
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[ !_checkStock(retailer.stock_qty) ]]">
+                      <div class="hatch-column out-of-stock">
+                        {{ localize('product_lead_lightbox#out-of-stock') }}
+                      </div>
+                    </template>
+
+                  </template><!--// dom-if thirdPartyOptions.hatch.show_stock -->
+
+                  <div class="hatch-column">
+                    <a class="cta" href="[[retailer.purchase_link]]"><iron-icon class="cta__icon" icon="dorel-icons:chevron-right"></iron-icon></a>
+                  </div>
+                </template><!--// dom-repeat retailers -->
+              </div>
+            </template><!--// dom-if hatch.toggle -->
+          </paper-dialog-scrollable>
+        </div>
+      </paper-dialog>
+    </section>
+  </template>
+
+  <script>
+    class DorelProductLeadLightbox extends Polymer.mixinBehaviors([DorelMultilingualBehavior, TemplateBehaviors, OverlayBehavior], Polymer.Element) {
+
+      static get is() { return 'dorel-product-lead-lightbox'; }
+
+      // Declare properties for the element's public API
+      static get properties() {
+        return {
+          appCache: {
+            type: Object
+          },
+
+          productSku: {
+            type: String,
+            value: ''
+          },
+
+          thirdPartyOptions: {
+            type: Object,
+            value: () => ({})
+          }
+        }
+      }
+
+      ready() {
+        super.ready();
+        this._defineOptionModels(this.get('appCache'));
+      }
+
+      /**
+       * Public function that opens the lightbox dialog
+       */
+      open() {
+        this.$.lightbox.open();
+      }
+
+      /**
+       * Conditional to show or hide the stock column
+       *
+       * @param {boolean} toggle for enableing/disableing stock column
+       * @returns {boolean}
+       */
+      _showStockColumn(showStock) {
+        return (typeof showStock !== 'undefined' && showStock);
+      }
+
+      /**
+       * Checks the given parameter to show the right stock info
+       *
+       * @param {number} The quantity of the product in stock at the retailer
+       * (source: hatch API documentation):
+       * - 0:Notinstock
+       * - > 0: In stock
+       * - -99 : Pre-order option
+       * @returns {boolean}
+       */
+      _checkStock(stockQuantity) {
+        return (typeof stockQuantity !== 'undefined' && stockQuantity > 0);
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelProductLeadLightbox.is, DorelProductLeadLightbox);
+  </script>
+
+</dom-module>
