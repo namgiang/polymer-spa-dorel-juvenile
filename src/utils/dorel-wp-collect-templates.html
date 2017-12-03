@@ -1,0 +1,77 @@
+<dom-module id="dorel-wp-collect-templates">
+  <template>
+    <iron-ajax
+      id="wp-collect-templates"
+      url=""
+      handle-as="json"
+      on-response="_templatesLoaded"></iron-ajax>
+  </template>
+
+  <script>
+    class DorelWpCollectTemplates extends Polymer.Element {
+
+      static get is() { return 'dorel-wp-collect-templates'; }
+
+      static get properties() {
+        return {
+          /**
+           * `appCache` the application cache
+           */
+          appCache: {
+            type: Object
+          },
+
+          /**
+           * The given template type by an attribute
+           */
+          templateType: {
+            type: String
+          },
+
+          /**
+           * The hatch element will use 2 way data binding to expose the response
+           * to its parent component
+           */
+          response: {
+            type: Object,
+            value: () => ({}),
+            notify: true // propagate upward
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          '_init(appCache.wpUrl, appCache.currentLanguage)'
+        ]
+      }
+
+      _init(wpUrl, currentLanguage) {
+        if (typeof wpUrl === 'undefined' || wpUrl === '' || !currentLanguage) return;
+
+        const collectEl = this.$['wp-collect-templates'];
+        const templateType = this.get('templateType');
+
+        collectEl.url = `${wpUrl}${currentLanguage.path}/wp-json/wp/v2/templates`;
+
+
+        if(typeof templateType !== 'undefined' && templateType !== '') {
+          collectEl.url += `?type=${templateType}`;
+        }
+
+        // do the products call
+        collectEl.generateRequest();
+      }
+
+      _templatesLoaded(data) {
+        const templateType = this.get('templateType');
+        const response = (typeof templateType !== 'undefined' && templateType !== '') ? data.detail.response[0] : data.detail.response;
+
+        this.set('response', response);
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelWpCollectTemplates.is, DorelWpCollectTemplates);
+  </script>
+</dom-module>

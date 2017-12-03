@@ -1,10 +1,10 @@
 <link rel="import" href="../molecules/dorel-expandable-content.html">
 <link rel="import" href="../molecules/dorel-showcase-slider.html">
+<link rel="import" href="../molecules/dorel-product-lead-lightbox.html">
 
 <dom-module id="dorel-section-product-showcase">
   <template>
     <style>
-
      dorel-layout-column {
         margin-top: 0;
       }
@@ -139,145 +139,176 @@
       }
     </style>
 
+    <dorel-wp-collect-templates
+      app-cache="[[appCache]]"
+      template-type="page-store-locator.php"
+      response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-  <template
-  is="dom-if"
-  if="[[ showcaseData ]]">
-
-  <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-  tablet-medium$="{{ breakpoints.tabletMedium }}">
-
-  <dorel-layout-row align="center">
-
-    <!-- Column -->
-    <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
-      <div class="showcase-gallery-view">
-        <dorel-showcase-slider slides="[[ slides ]]" breakpoints="[[ breakpoints ]]"></dorel-showcase-slider>
-      </div>
-    </dorel-layout-column>
-
-    <!-- Column -->
-    <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
-
-      <template
-      is="dom-if"
-      if="[[ _hasValue(showcaseData.name.value) ]]">
-      <p class="showcase-title">[[ showcaseData.name.value ]]</p>
-    </template>
-
-    <!-- Product Specs -->
-    <ul class="showcase-product-specs">
-      <template
-      is="dom-if"
-      if="[[ _hasValue(showcaseData.age.value) ]]">
-      <li>
-        <div class="label">[[ showcaseData.age.label ]]:</div>
-        [[ showcaseData.age.value ]]
-      </li>
-    </template>
     <template
-    is="dom-if"
-    if="[[ _hasValue(showcaseData.max_weight.value) ]]">
-    <li>
-      <div class="label">[[ showcaseData.max_weight.label ]]:</div>
-      [[ showcaseData.max_weight.value ]]
-    </li>
+      is="dom-if"
+      if="[[ showcaseData ]]">
+      <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+                              tablet-medium$="{{ breakpoints.tabletMedium }}">
+
+        <dorel-layout-row align="center">
+
+          <!-- Column -->
+          <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
+            <div class="showcase-gallery-view">
+              <dorel-showcase-slider slides="[[ slides ]]" breakpoints="[[ breakpoints ]]"></dorel-showcase-slider>
+            </div>
+          </dorel-layout-column>
+
+          <!-- Column -->
+          <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
+
+            <template
+              is="dom-if"
+              if="[[ _hasValue(showcaseData.name.value) ]]">
+              <p class="showcase-title">[[ showcaseData.name.value ]]</p>
+            </template>
+
+            <!-- Product Specs -->
+            <ul class="showcase-product-specs">
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.age.value) ]]">
+                <li>
+                  <div class="label">[[ showcaseData.age.label ]]:</div>
+                  [[ showcaseData.age.value ]]
+                </li>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.max_weight.value) ]]">
+                <li>
+                  <div class="label">[[ showcaseData.max_weight.label ]]:</div>
+                  [[ showcaseData.max_weight.value ]]
+                </li>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ _hasValue(showcaseData.size.value) ]]">
+                <li>
+                  <div class="label">[[ showcaseData.size.label ]]:</div>
+                  [[ showcaseData.size.value ]]
+                </li>
+              </template>
+            </ul>
+            <!--// Product Specs -->
+
+            <!-- expandable text description -->
+            <template
+            is="dom-if"
+            if="[[ _hasValue(showcaseData.excerpt.value) ]]">
+              <dorel-expandable-content
+                excerpt="[[ showcaseData.excerpt.value ]]"
+                description="[[ showcaseData.description.value ]]"></dorel-expandable-content>
+            </template>
+            <!-- expandable text description  -->
+
+            <!-- color switcher -->
+            <template
+              is="dom-if"
+              if="[[ showcaseData.child_products.length ]]">
+              <div class="color-container">
+                <dorel-color-switcher
+                  colors-data="[[ showcaseData.child_products ]]"
+                  gtm-action="switch-color"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-child="dorel-color-switcher"
+                  gtm-child-index="0"></dorel-color-switcher>
+              </div>
+            </template>
+            <!--// color switcher -->
+
+            <!-- Actions -->
+            <div class="actions">
+              <template
+                is="dom-if"
+                if="[[ _showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
+                <dorel-cta
+                  type="primary"
+                  title="{{ localize('Find_a_Store') }}"
+                  on-click="_openLightbox"
+                  link=""
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="click"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="1">
+                  {{ localize('Find_a_Store') }}
+                </dorel-cta>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ !_showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
+
+                <dorel-cta
+                  type="primary"
+                  title="{{ localize('Find_a_Store') }}"
+                  link="[[_createStoreLocatorLink(storeLocatorPage)]]"
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="click"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="1">
+                  {{ localize('Find_a_Store') }}
+                </dorel-cta>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ _hasAccessories(showcaseData) ]]">
+                <dorel-cta
+                  type="link"
+                  title="{{ localize('View_Accessories') }}"
+                  on-click="_viewAccessories"
+                  size="medium"
+                  icon="dorel-icons:expand-more"
+                  gtm-action="scroll-to-accessories"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  {{ localize('View_Accessories') }}
+                </dorel-cta>
+              </template>
+            </div>
+
+            <div class="award-section">
+              <template is="dom-repeat" items="[[ showcaseData.award_list ]]" as="awardImageUrl">
+                <div class="award">
+                  <iron-image class="award__image"
+                  fade="true"
+                  sizing="contain"
+                  src$="[[ awardImageUrl ]]"></iron-image>
+                </div>
+              </template>
+            </div>
+            <!--// Actions -->
+          </dorel-layout-column>
+
+        </dorel-layout-row>
+
+      </dorel-layout-container>
+    </template>
+
+    <div class="clear"></div>
+
+    <dorel-product-lead-lightbox
+      app-cache="[[appCache]]"
+      product-sku="[[showcaseData.sku]]"></dorel-product-lead-lightbox>
   </template>
-  <template
-  is="dom-if"
-  if="[[ _hasValue(showcaseData.size.value) ]]">
-  <li>
-    <div class="label">[[ showcaseData.size.label ]]:</div>
-    [[ showcaseData.size.value ]]
-  </li>
-</template>
-</ul>
-<!--// Product Specs -->
 
-<!-- expandable text description -->
-<template
-is="dom-if"
-if="[[ _hasValue(showcaseData.description.value) ]]">
-<dorel-expandable-content content="[[ showcaseData.description.value ]]"></dorel-expandable-content>
-</template>
-<!-- expandable text description  -->
-
-<!-- color switcher -->
-<template
-is="dom-if"
-if="[[ showcaseData.child_products.length ]]">
-<div class="color-container">
-  <dorel-color-switcher
-  colors-data="[[ showcaseData.child_products ]]"
-  gtm-action="switch-color"
-  gtm-parent="[[ gtmParent ]]"
-  gtm-parent-index="[[ gtmParentIndex ]]"
-  gtm-child="dorel-color-switcher"
-  gtm-child-index="0"></dorel-color-switcher>
-</div>
-</template>
-<!--// color switcher -->
-
-<!-- Actions -->
-<div class="actions">
-
-  <template
-  is="dom-if"
-  if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
-  <dorel-cta
-  type="primary"
-  title="{{ localize('Find_a_Store') }}"
-  link="[[ storeLocatorPage.link ]]"
-  size="medium"
-  icon="dorel-icons:chevron-right"
-  gtm-action="click"
-  gtm-parent="[[ gtmParent ]]"
-  gtm-parent-index="[[ gtmParentIndex ]]"
-  gtm-cta-index="1">
-  {{ localize('Find_a_Store') }}
-</dorel-cta>
-</template>
-
-<template
-is="dom-if"
-if="[[ _hasAccessories(showcaseData) ]]">
-<dorel-cta
-type="link"
-title="{{ localize('View_Accessories') }}"
-on-click="_viewAccessories"
-size="medium"
-icon="dorel-icons:expand-more"
-gtm-action="scroll-to-accessories"
-gtm-parent="[[ gtmParent ]]"
-gtm-parent-index="[[ gtmParentIndex ]]"
-gtm-cta-index="0">
-{{ localize('View_Accessories') }}
-</dorel-cta>
-</template>
-</div>
-
-<div class="award-section">
-  <template is="dom-repeat" items="[[ showcaseData.award_list ]]" as="awardImageUrl">
-    <div class="award">
-      <iron-image class="award__image"
-      fade="true"
-      sizing="contain"
-      src$="[[ awardImageUrl ]]"></iron-image>
-    </div>
-  </template>
-</div>
-<!--// Actions -->
-</dorel-layout-column>
-
-</dorel-layout-row>
-
-</dorel-layout-container>
-</template>
-<div class="clear"></div>
-</template>
-
-<script>
+  <script>
     Polymer({
       is: 'dorel-section-product-showcase',
 
@@ -319,7 +350,7 @@ gtm-cta-index="0">
 
       },
 
-      behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
+      behaviors: [ConditionalBehaviors, TemplateBehaviors, DorelMultilingualBehavior],
 
       listeners: {
         'colorUpdated': '_changeSlider'
@@ -330,19 +361,14 @@ gtm-cta-index="0">
       ],
 
       ready: function () {
-        //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
-        var pages = this.get('appCache.collect.pages');
+        // init for the appCacche options
+        this._defineOptionModels(this.get('appCache'));
 
-        var storeLocatorPage = pages.find(function (page) {
-          return page.template === 'store-locator';
-        });
-        this.set('storeLocatorPage', storeLocatorPage);
-        if (storeLocatorPage) {
-          this.set('storeLocatorPage.store_locator_button', true);
-        }
+        // init for the slider?
         var parentProduct = this.get('showcaseData');
+
         if(parentProduct && parentProduct.child_products && parentProduct.child_products.length) {
-            this._setSlider(parentProduct.child_products[0]);
+          this._setSlider(parentProduct.child_products[0]);
         }
       },
 
@@ -376,8 +402,7 @@ gtm-cta-index="0">
       },
 
       /**
-       * @name _hasAccessories
-       * @description check if a the accessories are defined
+       * check if a the accessories are defined
        * and if the toggle is enabled in WP
        *
        * @return Boolean
@@ -387,23 +412,43 @@ gtm-cta-index="0">
       },
 
       /**
-       * @name _hasStoreLocator
-       * @description check if a store-locator page is defined and
+       * check if a store-locator page is defined and
        * if the toggle is enabled in WP
+       *
+       * @param {object} the storeLocator pageObject
+       * @param {boolean} the hatchToggle value
        *
        * @return Boolean
        */
-      _hasStoreLocator: function (page) {
-        page = (typeof page !== 'undefined' && page !== '');
-        return Boolean(page);
+      _showStoreLocatorLightbox: function (pageObject, hatchToggle) {
+        var showLightBox = (typeof pageObject !== 'undefined' && pageObject !== '' && hatchToggle);
+
+        return Boolean(showLightBox);
       },
 
       /**
-       * @name _viewAccessories
-       * @description scroll to the accesory section
-       * */
-      _viewAccessories: function (event) {
+       * scroll to the accesory section
+       */
+      _viewAccessories: function () {
         this.accessoryScrollHandler = !this.accessoryScrollHandler;
+      },
+
+      /**
+       * handle of the click on the details links
+       */
+      _openLightbox: function () {
+        var lightbox = this.$$('dorel-product-lead-lightbox');
+        lightbox.open();
+      },
+
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      _createStoreLocatorLink: function(pageObject) {
+        var urlArr = window.location.href.split('/');
+        return urlArr[0] + '//' + urlArr[2] + '/' + urlArr[3] + '/' + pageObject.post_name;
       }
     });
   </script>
