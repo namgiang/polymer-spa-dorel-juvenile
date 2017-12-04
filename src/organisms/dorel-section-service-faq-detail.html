@@ -1,9 +1,13 @@
 <link rel="import" href="../molecules/dorel-nav-tabs.html">
-<link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../atoms/dorel-accordeon-item.html">
 
 <dom-module id="dorel-section-service-faq-detail">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       dorel-nav-tabs {
         margin: 0;
         float: left;
@@ -40,14 +44,14 @@
         is="dom-repeat"
         items="[[ questions ]]"
         as="faq">
-        <dorel-accordion-item
+        <dorel-accordeon-item
           auto-scroll="true"
           heading="[[ faq.question ]]"
           opened$="[[ faq.opened ]]"
           question-id$="[[ faq.id ]]"
           on-click="_addToQueryParams">
           <p>[[ faq.answer ]]</p>
-        </dorel-accordion-item>
+        </dorel-accordeon-item>
       </template>
     </div>
   </template>
@@ -232,7 +236,7 @@
       /**
        * @onClick
        * @name _addToQueryParams
-       * @description update the queryParams when an accordion is clicked
+       * @description update the queryParams when an accordeon is clicked
        */
       _addToQueryParams: function (e) {
         var questionId = e.currentTarget.getAttribute('question-id');
