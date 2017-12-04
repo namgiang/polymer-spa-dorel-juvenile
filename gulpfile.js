@@ -76,6 +76,7 @@ gulp.task('build:es5', function () {
             babelrc: false,
             presets: [
               ['env', {
+                'modules': false,
                 'targets': {
                   'browsers': ['ie 11']
                 }
@@ -108,7 +109,7 @@ gulp.task('build:es5', function () {
           })))
           .pipe(gulpif(/\.js$/, babel({
             babelrc: false,
-            presets: ['env']
+            presets: [ [ 'env', { modules: false } ] ]
           })))
           .pipe(gulpif(/\.js$/, uglify()))
 
