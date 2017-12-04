@@ -194,58 +194,59 @@
         </template><!--// dom-repeat -->
       </div>
     </section><!--// .timeline -->
-
   </template>
+
   <script>
-    Polymer({
-      is: 'dorel-timeline',
-      properties: {
+    class DorelTimeline extends Polymer.Element {
 
-        /**
-         * @attribute
-         * @description all moments in time
-         */
-        moments: {
-          type: Array,
-          value: []
-        },
+      static get is() { return 'dorel-timeline'; }
 
-        /**
-         * @attribute
-         * @description the time in milliseconds it progresses in time
-         */
-        interval: {
-          type: Number,
-          value: 1000
-        },
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @description all moments in time
+           */
+          moments: {
+            type: Array,
+            value: []
+          },
 
-        /**
-         * @attribute
-         * @description the amount the animation is repeated
-         */
-        maxIterations: {
-          type: Number,
-          value: 5
-        },
+          /**
+           * @attribute
+           * @description the time in milliseconds it progresses in time
+           */
+          interval: {
+            type: Number,
+            value: 1000
+          },
 
-        /**
-         * @attribute
-         * @description defines the overall status
-         * (true is animation is running, false is animation is off)
-         */
-        status: {
-          type: Boolean,
-          value: true
+          /**
+           * @attribute
+           * @description the amount the animation is repeated
+           */
+          maxIterations: {
+            type: Number,
+            value: 5
+          },
+
+          /**
+           * @attribute
+           * @description defines the overall status
+           * (true is animation is running, false is animation is off)
+           */
+          status: {
+            type: Boolean,
+            value: true
+          }
         }
-      },
+      }
 
-      /**
-       * @name ready
-       * @description on ready event to set the right values and start
-       * the animation
-       */
-      ready: function() {
-        var moments = this.get('moments');
+      ready() {
+        super.ready();
+
+        let moments = this.get('moments');
+
         if(typeof moments === 'undefined' || !moments.length) return;
 
         // reset all active values per moment
@@ -253,31 +254,32 @@
 
         // start the timeline
         this.start();
-      },
+      }
 
       /**
        * @name start
        * @description starts the animation with the given parameters
        */
-      start: function() {
-        var self = this;
-        var moments = this.get('moments');
-        var totalMoments = moments.length;
-        var count = 0;
-        var currentIteration = 1;
-        var maxIterations = Number(this.get('maxIterations'));
+      start() {
+        const self = this;
+        const maxIterations = Number(this.get('maxIterations'));
+
+        let moments = this.get('moments');
+        let totalMoments = moments.length;
+        let count = 0;
+        let currentIteration = 1;
 
         // interval for setting active states
-        this.set('animation', setInterval(function() {
+        this.set('animation', setInterval(() => {
 
           // when the count is equal, reset the active states
           if(count === totalMoments) {
-            for(var i = 0; i < totalMoments; i++) {
-              if(moments[i].active) {
-                moments[i].active = false;
-                count = 0;
-              }
-            }
+
+            moments = moments.map(moment => {
+              moment.active = false;
+              count = 0;
+              return moment;
+            });
 
             // break out of the interval when the max has been reached
             if(currentIteration === maxIterations) {
@@ -298,63 +300,61 @@
         }, Number(this.get('interval'))));
 
         this.set('status', true);
-      },
+      }
 
       /**
-       * @name stop
-       * @description stops the animation (clears the interval)
+       * stops the animation (clears the interval)
        */
-      stop: function() {
+      stop() {
         clearInterval(this.get('animation'));
         this.set('status', false);
         this._resetMoments(this.get('moments'));
-      },
+      }
 
       /**
-       * @name _resetMoments
-       * @description sets the active value for all moments to false
+       * sets the active value for all moments to false
+       *
+       * @param {array} contains all moments in the timeline
        */
-      _resetMoments: function(moments) {
-        for(var i = 0; i < moments.length; i++) {
-          moments[i].active = false;
-        }
+      _resetMoments(moments) {
+        moments = moments.map(moment => {
+          moment.active = false;
+          return moment;
+        });
 
-        // force update the dom-repeat (hack, polymer workaround)
         this._updateMoments(moments);
-      },
+      }
 
       /**
-       * @name _updateMoments
-       * @description workaround for updating the data of the dom-repeat
-       * (Polymer bug)
+       * workaround for updating the data of the dom-repeat (Polymer bug)
        *
-       * @param - model - Object
+       * @param {Object} initial moments array that the dom-repeat uses
        */
-      _updateMoments: function(model) {
-        var newMoments = JSON.parse(JSON.stringify(model));
+      _updateMoments(model) {
+        const newMoments = JSON.parse(JSON.stringify(model));
         this.set('moments', newMoments);
-      },
+      }
 
       /**
-       * @name _isActive
-       * @description returns the String 'active' when the val argument is true
-       *
-       * @param - val - String
-       * @returns - String
+       * toggles the animation
        */
-      _isActive: function(val) {
-        return (typeof val === 'undefined' || !val) ? '' : 'active';
-      },
-
-      /**
-       * @name _toggleTimeline
-       * @description toggles the animation
-       */
-      _toggleTimeline: function() {
-        var status = this.get('status');
+      _toggleTimeline() {
+        const status = this.get('status');
         (typeof status !== 'undefined' && status) ? this.stop() : this.start();
       }
-    });
-  </script>
 
+      /**
+       * returns the String 'active' when the val argument is true
+       *
+       * @param {string} containing a value to be checked for active state
+       * @returns {string} with a class or empty string if value is false
+       */
+      _isActive(val) {
+        return (typeof val === 'undefined' || !val) ? '' : 'active';
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelTimeline.is, DorelTimeline);
+  </script>
 </dom-module>
