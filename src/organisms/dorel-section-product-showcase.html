@@ -1,9 +1,14 @@
 <link rel="import" href="../molecules/dorel-expandable-content.html">
 <link rel="import" href="../molecules/dorel-showcase-slider.html">
+<link rel="import" href="../molecules/dorel-product-lead-lightbox.html">
 
 <dom-module id="dorel-section-product-showcase">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+      
      dorel-layout-column {
         margin-top: 0;
       }
@@ -138,6 +143,11 @@
       }
     </style>
 
+    <dorel-wp-collect-templates
+      app-cache="[[appCache]]"
+      template-type="page-store-locator.php"
+      response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <template
@@ -145,7 +155,6 @@
       if="[[ showcaseData ]]">
       <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
                               tablet-medium$="{{ breakpoints.tabletMedium }}">
-
         <dorel-layout-row align="center">
 
           <!-- Column -->
@@ -225,11 +234,29 @@
             <div class="actions">
               <template
                 is="dom-if"
-                if="[[ _hasStoreLocator(storeLocatorPage.link) ]]">
+                if="[[ _showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
                 <dorel-cta
                   type="primary"
                   title="{{ localize('Find_a_Store') }}"
-                  link="[[ storeLocatorPage.link ]]"
+                  on-click="_openLightbox"
+                  link=""
+                  size="medium"
+                  icon="dorel-icons:chevron-right"
+                  gtm-action="click"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="1">
+                  {{ localize('Find_a_Store') }}
+                </dorel-cta>
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[ !_showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
+                <dorel-cta
+                  type="primary"
+                  title="{{ localize('Find_a_Store') }}"
+                  link="[[_createStoreLocatorLink(storeLocatorPage)]]"
                   size="medium"
                   icon="dorel-icons:chevron-right"
                   gtm-action="click"
@@ -272,11 +299,15 @@
           </dorel-layout-column>
 
         </dorel-layout-row>
-
       </dorel-layout-container>
     </template>
 
     <div class="clear"></div>
+
+    <dorel-product-lead-lightbox
+      app-cache="[[appCache]]"
+      product-sku="[[showcaseData.sku]]"
+      store-locator-link="[[_createStoreLocatorLink(storeLocatorPage)]]"></dorel-product-lead-lightbox>
   </template>
 
   <script>
@@ -321,7 +352,7 @@
 
       },
 
-      behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
+      behaviors: [ConditionalBehaviors, TemplateBehaviors, DorelMultilingualBehavior],
 
       listeners: {
         'colorUpdated': '_changeSlider'
@@ -332,19 +363,14 @@
       ],
 
       ready: function () {
-        //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
-        var pages = this.get('appCache.collect.pages');
+        // init for the appCacche options
+        this._defineOptionModels(this.get('appCache'));
 
-        var storeLocatorPage = pages.find(function (page) {
-          return page.template === 'store-locator';
-        });
-        this.set('storeLocatorPage', storeLocatorPage);
-        if (storeLocatorPage) {
-          this.set('storeLocatorPage.store_locator_button', true);
-        }
+        // init for the slider?
         var parentProduct = this.get('showcaseData');
+
         if(parentProduct && parentProduct.child_products && parentProduct.child_products.length) {
-            this._setSlider(parentProduct.child_products[0]);
+          this._setSlider(parentProduct.child_products[0]);
         }
       },
 
@@ -378,8 +404,7 @@
       },
 
       /**
-       * @name _hasAccessories
-       * @description check if a the accessories are defined
+       * check if a the accessories are defined
        * and if the toggle is enabled in WP
        *
        * @return Boolean
@@ -389,23 +414,43 @@
       },
 
       /**
-       * @name _hasStoreLocator
-       * @description check if a store-locator page is defined and
+       * check if a store-locator page is defined and
        * if the toggle is enabled in WP
+       *
+       * @param {object} the storeLocator pageObject
+       * @param {boolean} the hatchToggle value
        *
        * @return Boolean
        */
-      _hasStoreLocator: function (page) {
-        page = (typeof page !== 'undefined' && page !== '');
-        return Boolean(page);
+      _showStoreLocatorLightbox: function (pageObject, hatchToggle) {
+        var showLightBox = (typeof pageObject !== 'undefined' && pageObject !== '' && hatchToggle);
+
+        return Boolean(showLightBox);
       },
 
       /**
-       * @name _viewAccessories
-       * @description scroll to the accesory section
-       * */
-      _viewAccessories: function (event) {
+       * scroll to the accesory section
+       */
+      _viewAccessories: function () {
         this.accessoryScrollHandler = !this.accessoryScrollHandler;
+      },
+
+      /**
+       * handle of the click on the details links
+       */
+      _openLightbox: function () {
+        var lightbox = this.$$('dorel-product-lead-lightbox');
+        lightbox.open();
+      },
+
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      _createStoreLocatorLink: function(pageObject) {
+        var urlArr = window.location.href.split('/');
+        return urlArr[0] + '//' + urlArr[2] + '/' + urlArr[3] + '/' + pageObject.post_name;
       }
     });
   </script>
