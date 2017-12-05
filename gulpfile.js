@@ -33,17 +33,17 @@ const log_file = fs.createWriteStream(__dirname + '/build/log/' + new Date().toI
 const log_stdout = process.stdout;
 const log_stderr = process.stderr;
 
-console.log = function(d) { //
+console.log = (d) => { //
   log_file.write(util.format(d) + '\n');
   log_stdout.write(util.format(d) + '\n');
 };
 
-console.error = function(d) { //
+console.error = (d) => { //
   log_file.write(util.format(d) + '\n');
   log_stdout.write(util.format(d) + '\n');
 };
 
-console.warn = function(d) { //
+console.warn = (d) => { //
   log_file.write(util.format(d) + '\n');
   log_stdout.write(util.format(d) + '\n');
 };
