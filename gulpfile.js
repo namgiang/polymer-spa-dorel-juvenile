@@ -16,6 +16,7 @@ const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const imagemin = require('gulp-imagemin');
 const mergeStream = require('merge-stream');
+const mkdirp = require('mkdirp');
 const polymerBuild = require('polymer-build');
 const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
@@ -29,24 +30,28 @@ const swPrecacheConfig = require('./sw-precache-config.js');
 const polymerJson = require('./polymer.json');
 const polymerProject = new polymerBuild.PolymerProject(polymerJson);
 
-const log_file = fs.createWriteStream(__dirname + '/build/log/' + new Date().toISOString() + '.txt', {flags : 'w'});
-const log_stdout = process.stdout;
-const log_stderr = process.stderr;
+mkdirp(__dirname + '/build/log/', (err) => {
+    if (err) console.error(err)
+    else console.log('Log directory created!')
+    const log_file = fs.createWriteStream(__dirname + '/build/log/' + new Date().toISOString() + '.txt', {flags : 'w'});
+    const log_stdout = process.stdout;
+    const log_stderr = process.stderr;
 
-console.log = (d) => { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
-
-console.error = (d) => { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
-
-console.warn = (d) => { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
+    console.log = (d) => { //
+      log_file.write(util.format(d) + '\n');
+      log_stdout.write(util.format(d) + '\n');
+    };
+    
+    console.error = (d) => { //
+      log_file.write(util.format(d) + '\n');
+      log_stdout.write(util.format(d) + '\n');
+    };
+    
+    console.warn = (d) => { //
+      log_file.write(util.format(d) + '\n');
+      log_stdout.write(util.format(d) + '\n');
+    };
+});
 
 /**
  * Waits for the given ReadableStream
