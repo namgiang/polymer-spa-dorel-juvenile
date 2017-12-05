@@ -59,9 +59,7 @@
          */
         menuItems: {
           type: Array,
-          value: function () {
-            return [];
-          }
+          value: []
         },
 
       },
@@ -88,10 +86,8 @@
       },
 
       _closePreviousDropdown: function () {
-        var menuItems = this.get('menuItems');
-        var openDropdownIndex = menuItems.findIndex(function (item) {
-          return item.opened;
-        });
+        var menuItems = this.get('menuItems') || [];
+        var openDropdownIndex = menuItems.findIndex( (item) => item.opened );
         if (openDropdownIndex > -1) {
           this.set('menuItems.' + openDropdownIndex + '.opened', false);
         }
