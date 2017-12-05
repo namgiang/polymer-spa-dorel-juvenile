@@ -1,0 +1,183 @@
+<link rel="import" href="./behaviors/single/dorel-merge-arrays-behavior.html">
+
+<dom-module id="dorel-wp-collect-page">
+  <template>
+    <iron-ajax
+      id="collectPage"
+      handle-as="json"
+      on-response=""></iron-ajax>
+  </template>
+
+  <script>
+
+    class DorelWpCollectPage extends Polymer.mixinBehaviors([MergeArraysBehavior], Polymer.Element) {
+      static get is() {
+        return 'dorel-wp-collect-page';
+      }
+
+      static get properties() {
+        return {
+
+          /**
+           * `appCache` the application cache
+           */
+          appCache: {
+            type: Object
+          }
+        }
+      }
+
+      /**
+       * public method to retrieve a page
+       * @name getPageBySlug
+       * @description public method that returns
+       * @param slug - String
+       * @param path - String (optional)
+       */
+      async getPageBySlug(slug, path) {
+        const cachedPages = this.appCache ? this.appCache.collect.pages : [];
+        const pageFromCache = cachedPages.find(page => {
+          return path ? this.cleanUrlToPath(page.link) === this._cleanString(path) : page.slug === slug;
+        });
+        if(pageFromCache) {
+          return pageFromCache;
+        } else {
+          let result = await this._getWpPageBySlug(slug);
+          if(result.length) {
+            return result[0];
+          } else {
+            return null;
+          }
+        }
+      }
+
+      /**
+       * public method to retrieve a page
+       * @name getPageBySlug
+       * @description public method that returns
+       * @param slug - String
+       */
+      async getPageById(id) {
+        const cachedPages = this.appCache ? this.appCache.collect.pages : [];
+        const pageFromCache = cachedPages.find(page => page.id === id);
+        if(pageFromCache) {
+          return pageFromCache;
+        } else {
+          let result = await this._getWpPageById(id);
+          return result;
+        }
+      }
+
+      /**
+       * private method to retrieve a page
+       * @name getPageBySlug
+       * @description public
+       * @param slug - String
+       */
+      async _getWpPageBySlug(slug) {
+        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
+        const collectPageEl = this.$.collectPage;
+        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?slug=${slug}`;
+        let json = await collectPageEl.generateRequest().completes;
+        const pages = json.__data.response || [];
+        pages.map(page => {
+          page.template = page.template.slice(0, -4).replace('page-', '');
+          return page;
+        });
+        if(pages.length) {
+          this.updateAppCache(pages);
+        }
+        return pages;
+      }
+
+      async _getWpPageById(id) {
+        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
+        const collectPageEl = this.$.collectPage;
+        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages/${id}`;
+        let json = await collectPageEl.generateRequest().completes;
+        const page = json.__data.response || [];
+        page.template = page.template.slice(0, -4).replace('page-', '');
+        if(page && page.length) {
+          this.updateAppCache([page]);
+        }
+        return page;
+      }
+
+      /**
+       * public method to retrieve pages
+       * @name getChildrenByParentId
+       * @description public method that returns child pages based on the id of the parent page
+       * @param id - Number
+       */
+      async getChildrenByParentId(id) {
+        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
+        const collectPageEl = this.$.collectPage;
+        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?parent=${id}`;
+        let json = await collectPageEl.generateRequest().completes;
+        const pages = json.__data.response || [];
+        pages.map(page => {
+          page.template = page.template.slice(0, -4).replace('page-', '');
+          return page;
+        });
+        if(pages.length) {
+          this.updateAppCache(pages);
+        }
+        return pages;
+      }
+
+      /**
+       * public method to retrieve pages
+       * @name getChildrenByParentId
+       * @description public method that returns child pages based on the id of the parent page
+       * @param template - String
+       */
+      async getPageByTemplate(template) {
+        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
+        const collectPageEl = this.$.collectPage;
+        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?template=${template}`;
+        let json = await collectPageEl.generateRequest().completes;
+        const pages = json.__data.response || [];
+        pages.map(page => {
+          page.template = page.template.slice(0, -4).replace('page-', '');
+          return page;
+        });
+        if(pages.length) {
+          this.updateAppCache(pages);
+        }
+        return pages;
+      }
+
+      updateAppCache(pages) {
+        const oldPages = this.appCache.collect.pages || [];
+        const updatedPages = this._mergeArrays(oldPages, pages, 'id');
+
+        this.dispatchEvent(new CustomEvent('setAppCache', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            path: 'collect.pages',
+            value: updatedPages
+          }
+        }));
+      }
+
+      cleanUrlToPath(url) {
+        const urlArray = url.split('/');
+        const path = urlArray.slice(3).join('/');
+        return this._cleanString(path);
+      }
+
+      _cleanString(string) {
+        const path = (this._stripQueryStringAndHashFromPath(string)).toLowerCase();
+        return path.replace(/[\/\[\]\&]+|/g, '');
+      }
+
+      _stripQueryStringAndHashFromPath(url) {
+        return url.split("?")[0].split("#")[0];
+      }
+    };
+
+    customElements.define(DorelWpCollectPage.is, DorelWpCollectPage);
+
+  </script>
+</dom-module>

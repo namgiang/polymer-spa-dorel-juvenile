@@ -6,7 +6,7 @@ var customerSupportMock = {
       "social_media_text": "@MaxiCosi"
     }
   ],
-  "bynder_image_id": "7F84BD5F-551A-4DA5-8532AB44763439AA",
+  "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
   "email_support": [{
     "email_address": "support@test.nl",
     "sub_title": "Reply in 2 days",

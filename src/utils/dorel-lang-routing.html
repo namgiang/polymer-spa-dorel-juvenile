@@ -1,0 +1,131 @@
+<link rel="import" href="./dorel-routing.html">
+
+<dom-module id="dorel-lang-routing">
+  <template>
+    <app-route
+      route="{{ route }}"
+      pattern="/:language"
+      tail="{{ tail }}"></app-route>
+
+    <dorel-routing
+      app-cache="[[ appCache ]]"
+      route="[[ tail ]]"
+      category-page="{{ categoryPage }}"
+      previous-states="{{ previousStates }}"
+      current-page="{{ currentPage }}">
+
+    </dorel-routing>
+  </template>
+
+  <script>
+
+    class DorelLangRouting extends Polymer.Element {
+      static get is() {
+        return 'dorel-lang-routing';
+      }
+
+      static get properties() {
+        return {
+
+          /**
+           * `appCache` the application cache
+           */
+          appCache: {
+            type: Object
+          },
+
+          /**
+           * @name route
+           * @description defines the current route
+           */
+          route: {
+            type: Object
+          },
+
+          /**
+           * @name tail
+           * @description the route minus the first segment (lang)
+           */
+          tail: {
+            type: Object
+          },
+
+          /**
+           * @name currentPage
+           * @description the currentPage will be used to select page
+           */
+          currentPage: {
+            type: Object,
+            notify: true
+          },
+
+          /**
+           * @name previousStates
+           * @description will remember up to 5 previous states of the application
+           */
+          previousStates: {
+            type: Array,
+            notify: true,
+            value: []
+          }
+        }
+      }
+
+      static get observers () {
+        return [
+          '_routeChanged(route)',
+          '_currentRouteChanged(route)'
+        ]
+      }
+
+      /**
+       * @observer
+       * @name _routeChanged
+       * @description on url/route change check the lang segment
+       * @param route - Object
+       */
+       _routeChanged(route) {
+         if(!route) {
+           return;
+         }
+
+         const pathArray = route.path.split('/').filter(function(item) {
+           return item && item.length;
+         });
+
+         //if pathArray does NOT exists it means there is no locale so redirect to default locale
+         if(!pathArray || !pathArray.length) {
+           return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/';
+         }
+
+         //if conditions are true it means the first segment is not a lang segment so prepend default segment
+         if(pathArray[0].length !== 5 || pathArray[0].length && pathArray[0][2] !== '-') {
+           return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/' + path + '/';
+         }
+       }
+
+       /**
+        * @observer
+        * @name _currentRouteChanged
+        * @description on url/route save the state to the previous states
+        * @param route - Object
+        */
+       _currentRouteChanged(route) {
+         const previousStates = this.get('previousStates');
+         if(previousStates.length >= 5) {
+           this.splice('previousStates', -1 ,1);
+         }
+         this.unshift('previousStates', route);
+         const previousState = previousStates[1] || { path: '/' };
+
+         this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+           path: 'previousState',
+           value: previousState
+         }}));
+       }
+    };
+
+  customElements.define(DorelLangRouting.is, DorelLangRouting);
+
+  </script>
+</dom-module>

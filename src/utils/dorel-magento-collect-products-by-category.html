@@ -168,6 +168,14 @@
       _setCurrentProducts: function(products) {
         this.set('retrievingProducts', false);
         this.fire('newProducts', { products: products, category: this.get('productCategory') });
+        this.dispatchEvent(new CustomEvent('newProducts', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            products: products,
+            category: this.get('productCategory')
+          }
+        }));
       },
 
       /**
