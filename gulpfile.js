@@ -11,6 +11,7 @@
 'use strict';
 
 const del = require('del');
+const git = require('git-rev-sync');
 const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const imagemin = require('gulp-imagemin');
@@ -21,9 +22,31 @@ const uglify = require('gulp-uglify');
 const htmlmin = require('gulp-htmlmin');
 const cleanCSS = require('gulp-clean-css');
 
+const fs = require('fs');
+const util = require('util');
+
 const swPrecacheConfig = require('./sw-precache-config.js');
 const polymerJson = require('./polymer.json');
 const polymerProject = new polymerBuild.PolymerProject(polymerJson);
+
+const log_file = fs.createWriteStream(__dirname + '/build/log/' + new Date().toISOString() + '.txt', {flags : 'w'});
+const log_stdout = process.stdout;
+const log_stderr = process.stderr;
+
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+
+console.error = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+
+console.warn = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
 
 /**
  * Waits for the given ReadableStream
@@ -147,7 +170,10 @@ gulp.task('build:es5', function () {
       })
       .then(() => {
         // You did it!
-        console.log('Build complete!');
+        console.log(git.long());
+        console.log(git.branch());
+        console.log('ES5 Build complete!');
+
         resolve();
       });
   });
