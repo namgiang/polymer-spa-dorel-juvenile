@@ -43,6 +43,7 @@
         display: flex;
         align-items: center;
         color: var(--theme-color-monochrome-7);
+        outline: none;
       }
 
       .link::selection {
@@ -131,7 +132,7 @@
       </template>
 
       <template is="dom-if" if="[[ mainItem.dropdown ]]">
-        <div on-click="openDropdown"
+        <div on-click="toggleDropdown"
           tabindex="0"
           class="link"
           gtm-parent="dorel-navigation-main"
@@ -222,11 +223,7 @@
         this.clickOutsideListen();
       },
 
-      onClickOutside: function() {
-        this.openDropdown();
-      },
-
-      openDropdown: function(event) {
+      toggleDropdown: function(event) {
         this.fire('toggleDropdown', { value: this.get('index') });
       },
 

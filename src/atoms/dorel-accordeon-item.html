@@ -12,10 +12,6 @@
         float: left;
       }
 
-      :host:last-child {
-        border-bottom: var(--theme-accordeon-item-border);
-      }
-
       .accordeon-toggle {
         display: flex;
         flex-direction: row;
@@ -28,37 +24,21 @@
       [small] .accordeon-toggle {
         min-height: var(--theme-accordeon-heading-height-small);
       }
+
       .accordeon-toggle:focus, .accordeon-toggle:hover
       {
         color: var(--theme-accordeon-hover-color);
         outline: none;
       }
 
-
       .accordeon-heading {
         @apply(--theme-accordeon-heading);
         margin: 0;
-        transition: color .3s ease;
-      }
-
-      [icon] .accordeon-heading {
-        padding-left: 3.25em !important;
-      }
-
-      [icon] .accordeon-content {
-        padding-left: 1.75em;
-      }
-
-      .accordeon-heading:focus {
-        outline: none;
-      }
-
-      .accordeon-heading:hover {
-        color: var(--theme-color-text-link-active);
+        transition: color .3s;
       }
 
       .accordeon-container {
-        background-color: var(--theme-color-monochrome-2);
+        background-color: var(--theme-accordeon-background-color);
         border-radius: var(--theme-border-radius-1);
         position: relative;
         float: left;
@@ -66,7 +46,13 @@
         transition: background-color .3s ease;
         margin-bottom: var(--theme-accordeon-item-bottom-margin);
         border-top: var(--theme-accordeon-item-border);
+        border-bottom: var(--theme-accordeon-item-border);
       }
+      [opened].accordeon-container {
+        background-color: var(--theme-accordeon-background-color-open);
+      }
+
+
       .accordeon-content {
         padding: 0 .75em 1.5em .75em;
         float: left;
@@ -75,13 +61,13 @@
       }
 
       .accordeon-icon {
+        margin-top: -2px;
         transition: .3s ease color, .3s ease transform;
-        pointer-events: none;
       }
 
       .left-icon {
-        left: 1em;
-        right: inherit;
+        margin-top: -2px;
+        margin-right: 1em;
       }
 
       .accordeon-icon[opened] {
@@ -108,11 +94,7 @@
         margin-bottom: var(--theme-accordeon-item-bottom-margin-small);
       }
 
-      .accordeon-container[opened][small] .accordeon-heading {
-        font-weight: var(--theme-font-weight);
-      }
-
-      [light] {
+      [light], [light][opened] {
         background-color: var(--theme-color-white);
       }
 
@@ -123,7 +105,6 @@
          light$="[[ light ]]"
          small$="[[ small ]]"
          opened$="[[ opened ]]"
-         icon$="[[ icon.length ]]"
          tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <template
         is="dom-if"
@@ -141,7 +122,7 @@
               gtm-cta-index$="[[ index ]]">
         <h2 class="accordeon-heading">
           <template is="dom-if" if="[[ icon.length ]]">
-            <iron-icon class="left-icon accordeon-icon" icon="[[ icon ]]"></iron-icon>
+            <iron-icon class="left-icon" icon="[[ icon ]]"></iron-icon>
           </template>
           [[ heading ]]
         </h2>
