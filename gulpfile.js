@@ -72,7 +72,17 @@ gulp.task('build:es5', function () {
             minifyCSS: true,
             uglifyJS: true
           })))
-          .pipe(gulpif(/\.js$/, babel()))
+          .pipe(gulpif(/\.js$/, babel({
+            babelrc: false,
+            presets: [
+              ['env', {
+                'modules': false,
+                'targets': {
+                  'browsers': ['ie 11']
+                }
+              }]
+            ]
+          })))
           .pipe(gulpif(/\.js$/, uglify()))
 
           // Uncomment these lines to add a few more example optimizations to your source files.
@@ -97,7 +107,10 @@ gulp.task('build:es5', function () {
             minifyCSS: true,
             uglifyJS: true
           })))
-          .pipe(gulpif(/\.js$/, babel()))
+          .pipe(gulpif(/\.js$/, babel({
+            babelrc: false,
+            presets: [ [ 'env', { modules: false } ] ]
+          })))
           .pipe(gulpif(/\.js$/, uglify()))
 
           .pipe(dependenciesStreamSplitter.rejoin());

@@ -1,61 +1,80 @@
 <link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
 
-<dom-module id="dorel-accordion-item">
+<dom-module id="dorel-accordeon-item">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
         width: 100%;
         float: left;
       }
 
-      .accordion-heading {
-        @apply(--theme-paragraph-text);
-        max-width: 100%;
-        margin-top: 0;
-        padding: 1.5em 1.5em 1.5em .75em;
-        transition: color .3s ease;
-        color: var(--theme-color-text-link);
+      :host:last-child {
+        border-bottom: var(--theme-accordeon-item-border);
       }
 
-      [icon] .accordion-heading {
-        padding-left: 3.25em !important;
+      .accordeon-toggle {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1.5em 0 0.75em;
+        min-height: var(--theme-accordeon-heading-height);
+        cursor: pointer;
       }
-
-      [icon] .accordion-content {
-        padding-left: 1.75em;
+      [small] .accordeon-toggle {
+        min-height: var(--theme-accordeon-heading-height-small);
       }
-
-      .accordion-heading:focus {
+      .accordeon-toggle:focus, .accordeon-toggle:hover
+      {
+        color: var(--theme-accordeon-hover-color);
         outline: none;
       }
 
-      .accordion-heading:hover {
-        cursor: pointer;
+
+      .accordeon-heading {
+        @apply(--theme-accordeon-heading);
+        margin: 0;
+        transition: color .3s ease;
+      }
+
+      [icon] .accordeon-heading {
+        padding-left: 3.25em !important;
+      }
+
+      [icon] .accordeon-content {
+        padding-left: 1.75em;
+      }
+
+      .accordeon-heading:focus {
+        outline: none;
+      }
+
+      .accordeon-heading:hover {
         color: var(--theme-color-text-link-active);
       }
 
-      .accordion-container {
+      .accordeon-container {
         background-color: var(--theme-color-monochrome-2);
         border-radius: var(--theme-border-radius-1);
         position: relative;
         float: left;
         width: 100%;
         transition: background-color .3s ease;
-        margin-bottom: 1.5em;
+        margin-bottom: var(--theme-accordeon-item-bottom-margin);
+        border-top: var(--theme-accordeon-item-border);
       }
-
-      .accordion-content {
+      .accordeon-content {
         padding: 0 .75em 1.5em .75em;
         float: left;
         width: 100%;
         box-sizing: border-box;
       }
 
-      .accordion-icon {
-        position: absolute;
-        top: 1.5em;
-        right: 1em;
-        color: var(--theme-color-text-link);
+      .accordeon-icon {
         transition: .3s ease color, .3s ease transform;
         pointer-events: none;
       }
@@ -65,57 +84,42 @@
         right: inherit;
       }
 
-      .accordion-heading:focus + .accordion-icon,
-      .accordion-heading:hover + .accordion-icon,
-      .accordion-heading:hover .accordion-icon {
-        color: var(--theme-color-text-link-active);
-      }
-
-      .accordion-icon[opened] {
+      .accordeon-icon[opened] {
         transform: rotate(180deg);
       }
 
-      [tablet-medium-up] .accordion-content {
+      [tablet-medium-up] .accordeon-content {
         padding: 0 1.5em 1.5em 1.5em;
       }
 
-      [tablet-medium-up] .accordion-heading  {
+      [tablet-medium-up] .accordeon-heading  {
         padding: 1.5em;
       }
 
-      [small] .accordion-heading {
+      [small] .accordeon-heading {
         padding: 0.75rem;
       }
 
-      [small] .accordion-content {
+      [small] .accordeon-content {
         padding: 0 .75rem .75rem .75rem;
       }
 
-       .accordion-container[small] {
-         margin-bottom: .75em;
-       }
-
-      .accordion-container[opened][small] .accordion-heading {
-        font-weight: var(--theme-font-weight);
+      [small].accordeon-container {
+        margin-bottom: var(--theme-accordeon-item-bottom-margin-small);
       }
 
-      [small] .accordion-icon {
-        top: .75rem;
-        right: 0.5rem;
+      .accordeon-container[opened][small] .accordeon-heading {
+        font-weight: var(--theme-font-weight);
       }
 
       [light] {
         background-color: var(--theme-color-white);
       }
 
-      [small] {
-        margin-bottom: .75em;
-      }
-
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <div class="accordion-container"
+    <div class="accordeon-container"
          light$="[[ light ]]"
          small$="[[ small ]]"
          opened$="[[ opened ]]"
@@ -124,28 +128,30 @@
       <template
         is="dom-if"
         if="[[ heading.length ]]">
-        <h2 class="accordion-heading"
-            id="accordion"
-            aria-expanded="false"
-            tabindex="0"
-            role="button"
-            aria-controls$="#collapse"
-            data-selector$="#collapse"
-            on-click="_toggleCollapse"
-            gtm-parent="[[ gtmParent ]]"
-            gtm-parent-index="[[ gtmParentIndex ]]"
-            gtm-cta-index$="[[ index ]]">
+        <div class="accordeon-toggle"
+              id="accordeon"
+              aria-expanded="false"
+              tabindex="0"
+              role="button"
+              aria-controls$="#collapse"
+              data-selector$="#collapse"
+              on-click="_toggleCollapse"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-cta-index$="[[ index ]]">
+        <h2 class="accordeon-heading">
           <template is="dom-if" if="[[ icon.length ]]">
-            <iron-icon class="left-icon accordion-icon" icon="[[ icon ]]"></iron-icon>
+            <iron-icon class="left-icon accordeon-icon" icon="[[ icon ]]"></iron-icon>
           </template>
           [[ heading ]]
         </h2>
-        <iron-icon class="accordion-icon"
+        <iron-icon class="accordeon-icon"
                    opened$="[[ opened ]]"
                    icon="dorel-icons:expand-more"></iron-icon>
+                   </div>
       </template>
       <iron-collapse id="collapse" opened="{{ opened }}">
-        <div class="accordion-content">
+        <div class="accordeon-content">
           <slot></slot>
         </div>
       </iron-collapse>
@@ -153,11 +159,11 @@
   </template>
   <script>
     Polymer({
-      is: 'dorel-accordion-item',
+      is: 'dorel-accordeon-item',
       properties: {
         /**
          * @name heading
-         * @description Title of the accordion heading
+         * @description Title of the accordeon heading
          */
         heading: {
           type: String,
@@ -174,7 +180,7 @@
 
         /**
          * @name small
-         * @description Small variation of the accordion
+         * @description Small variation of the accordeon
          */
         small: {
           type: Boolean
@@ -182,7 +188,7 @@
 
         /**
          * @name light
-         * @description Small variation of the accordion
+         * @description Small variation of the accordeon
          */
         light: {
           type: Boolean
@@ -190,7 +196,7 @@
 
         /**
          * @name opened
-         * @description State of the accordion
+         * @description State of the accordeon
          */
         opened: {
           type: Boolean,
@@ -201,7 +207,7 @@
 
         /**
          * @name autoScroll
-         * @description If set to true, the window will scroll accordion is opened outside of the viewport
+         * @description If set to true, the window will scroll accordeon is opened outside of the viewport
          */
         autoScroll: {
           type: Boolean,
@@ -214,7 +220,7 @@
       },
       /**
        * @name _isInViewport
-       * @description Checks if the accordion item is visible in the viewport
+       * @description Checks if the accordeon item is visible in the viewport
        **/
       _isInViewport: function (domElement) {
         // Retrieve the bounding box and position of the DOM element
@@ -238,16 +244,16 @@
       _openedStateChanged: function () {
         var self = this;
         setTimeout(function () {
-          //Accessing the accordion here through shadowroot queryselect because it's dynamically created
-          var accordionDomElement = self.shadowRoot.querySelector('#accordion');
-          var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordionDomElement);
+          //Accessing the accordeon here through shadowroot queryselect because it's dynamically created
+          var accordeonDomElement = self.shadowRoot.querySelector('#accordeon');
+          var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordeonDomElement);
 
 
           // If the item is opened, and it's not in the viewport
           if (shouldScroll) {
             // Make sure the item is visible by scrolling/jumping to it
 
-            var elementRect = accordionDomElement.getBoundingClientRect();
+            var elementRect = accordeonDomElement.getBoundingClientRect();
             var absoluteElementTop = elementRect.top + window.pageYOffset;
             var middle = absoluteElementTop - (window.innerHeight / 2);
 
@@ -273,7 +279,7 @@
 
       /**
        * @name _toggleCollapse
-       * @description collapses the right accordion
+       * @description collapses the right accordeon
        *
        */
       _toggleCollapse: function (e) {
@@ -283,12 +289,12 @@
         // Toggle the aria expanded boolean
         e.target.setAttribute('aria-expanded', !ariaExpanded);
 
-        var accordion = this.$.collapse;
+        var accordeon = this.$.collapse;
         // check state
-        var state = accordion.classList.contains('iron-collapse-opened');
+        var state = accordeon.classList.contains('iron-collapse-opened');
 
         // toggle collapse
-        accordion.toggle();
+        accordeon.toggle();
 
         // event tracking
         this._eventTracking(e, e.target, state);
@@ -299,7 +305,7 @@
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function (event, selector, accordionState) {
+      _eventTracking: function (event, selector, accordeonState) {
 
         var gtmCtaIndex = selector.getAttribute('gtm-cta-index');
 
@@ -307,22 +313,22 @@
          * Tracking on click for cta
          */
         var events = {
-          action: 'toggle-accordion',
-          component: 'accordion',
+          action: 'toggle-accordeon',
+          component: 'accordeon',
           structure: {
             name: this.gtmParent,
             index: Number(this.gtmParentIndex) + 1,
             event: {
-              name: 'accordion-heading',
+              name: 'accordeon-heading',
               index: Number(gtmCtaIndex) + 1,
-              state: (accordionState) ? 'closed' : 'open'
+              state: (accordeonState) ? 'closed' : 'open'
             }
           },
           element: selector.innerHTML,
           event: 'polymer_event',
           things: {
-            'currentState': (accordionState) ? 'open' : 'closed',
-            'targetState': (accordionState) ? 'closed' : 'open'
+            'currentState': (accordeonState) ? 'open' : 'closed',
+            'targetState': (accordeonState) ? 'closed' : 'open'
           }
         };
 

@@ -4,6 +4,7 @@
 <link rel="import" href="../molecules/navigation/dorel-main-menu-mobile.html">
 <link rel="import" href="../molecules/navigation/dorel-main-menu-desktop.html">
 
+
 <dom-module id="dorel-header" mobile-menu-opened$="{{ mobileMenuOpened }}">
   <template>
     <style>
@@ -13,21 +14,17 @@
         width: 100%;
         display: block;
       }
-
+      .menu-wrapper {
+        background-color: var(--theme-color-white);
+      }
       header {
+        display: block;
         transition: transform .3s ease;
-        float: left;
-        width: 100%;
         position: fixed;
         top: 0;
         left: 0;
         z-index: 100;
         width: 100%;
-        background-color: white;
-      }
-
-      .desktop-header {
-        background-color: var(--theme-color-monochrome-1);
       }
 
       header::after {
@@ -41,22 +38,25 @@
         transition: transform 0.20s ease;
 
         /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.13+0,0+100 */
-        background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%);
       }
 
       .header-items {
-        background-color: var(--theme-color-white);
+        @apply(--theme-top-menu-items);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         box-sizing: border-box;
         transition: .15s ease padding;
-        padding-top: .75em;
-        padding-bottom: .75em;
       }
 
-      .header-item-menu {
-        order: 1;
+      [tablet-medium-up] .header-items {
+        @apply(--theme-top-menu-items-tablet);
+      }
+
+      [desktop-small-up] .header-items {
+        @apply(--theme-top-menu-items-desktop);
       }
 
       .header-toolbar {
@@ -75,14 +75,21 @@
         top: calc(50% - 15px);
         right: .75em;
         z-index: 1000;
-        color: var(--theme-color-text-link);
+        color: var(--theme-hamburger-color);
         cursor: pointer;
         transition: .25s ease color, .15s ease top;
       }
 
       #hamburger:hover, #hamburger:focus {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-hamburger-color-hover);
       }
+
+      #hamburger[is-open] .icon-toggle-menu.close-icon
+      {display:inline-flex;}
+
+      #hamburger[is-open] .icon-toggle-menu.hamburger-icon,
+      #hamburger .icon-toggle-menu.close-icon
+      {display:none;}
 
       .icon-toggle-menu {
         width: 1.25em;
@@ -90,27 +97,12 @@
         font-size: 1.5rem;
       }
 
-      .header-item-logo {
-        margin-top: var(--theme-header-logo-top);
-        transition: transform 0.20s ease;
-        float: left;
-      }
-
-      :host-context([mobile-menu-opened]) .header-item-logo {
-        transform: translate(-256px, 0);
-      }
-
-      :host-context([mobile-menu-opened]) [desktop-small-up] .header-item-logo {
-        transform: translate(0, 0);
-      }
-
       [desktop-small-up][compact-menu] header {
         transform: translateY(-3em);
       }
 
       [tablet-medium-up] #hamburger {
-        top: 2em;
-        right: 1.25em;
+        @apply(--theme-hamburger-medum-up);
       }
 
       .header-wrapper[tablet-medium-up] {
@@ -118,18 +110,9 @@
       }
 
       .header-wrapper[desktop-small-up] {
-        height: var(--theme-header-wrapper-small-up);
+        height: var(--theme-header-wrapper-desktop-small-up);
       }
 
-      [desktop-small-up] .header-item-menu {
-        float: right;
-        padding: var(--theme-header-item-padding) 0;
-      }
-
-      [desktop-small-up] .header-items {
-        padding-top: var(--theme-header-items-top-bottom-padding);
-        padding-bottom: var(--theme-header-items-top-bottom-padding);
-      }
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -144,19 +127,14 @@
               <dorel-multilingual-select-language current-language="{{ currentLanguage }}"
                                                   continents-data="[[ continentsData ]]"></dorel-multilingual-select-language>
             </dorel-layout-container>
-
           </template>
-
-          <dorel-layout-container class="header-items">
-            <div class="header-item header-item-logo">
-              <div>
-                <a href="/" aria-label="Maxi Cosi"
-                   on-click="_logoClicked">
+          <dorel-layout-container class="menu-wrapper">
+            <div class="header-items">
+              <div class="header-item-logo">
+                <a href="/" aria-label="[[ brandName ]]" on-click="_logoClicked">
                   <dorel-logo brand-name="[[ brandName ]]"></dorel-logo>
                 </a>
               </div>
-            </div>
-            <nav class="header-item header-item-menu">
               <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
                 <dorel-main-menu-desktop
                   menu-items="[[ appCache.mainMenu ]]"
@@ -174,29 +152,17 @@
                   current-language="[[ currentLanguage ]]"
                   mobile-menu-opened="{{ mobileMenuOpened }}"></dorel-main-menu-mobile>
               </template>
-            </nav>
-            <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
 
-              <div id="hamburger">
-                <template
-                  is="dom-if"
-                  if="{{ !mobileMenuOpened }}">
-                  <iron-icon class="icon-toggle-menu"
-                             icon="dorel-icons:menu"
-                             on-click="_toggleMobileMenu"
-                             aria-label="menu"></iron-icon>
-                </template>
-                <template
-                  is="dom-if"
-                  if="{{ mobileMenuOpened }}">
-                  <iron-icon class="icon-toggle-menu"
-                             icon="dorel-icons:close"
-                             on-click="_toggleMobileMenu"
-                             aria-label="menu"></iron-icon>
-                </template>
-              </div>
-            </template>
+              <template is="dom-if" if="[[ !breakpoints.desktopSmallUp ]]">
+                <div id="hamburger" on-click="_toggleMobileMenu" is-open$="[[ mobileMenuOpened ]]">
+                  <iron-icon class="icon-toggle-menu hamburger-icon" icon="dorel-icons:menu" aria-label="menu"></iron-icon>
+                  <iron-icon class="icon-toggle-menu close-icon" icon="dorel-icons:close" aria-label="close menu"></iron-icon>
+                </div>
+              </template>
+
+            </div>
           </dorel-layout-container>
+        </div>
       </header>
     </div>
   </template>
@@ -356,6 +322,17 @@
 
         // send event to tracking
         this.fire('setAppCache', {value: event, path: 'events'});
+      },
+
+      /**
+       * template helper
+       * @name _rootUrl
+       * @description creates the root with the currentLanguage
+       * @param currentLanguage - Object
+       * @returns String
+       */
+      _rootUrl: function(currentLanguage) {
+        return `${window.location.origin}/${currentLanguage.path}/`;
       }
 
     });

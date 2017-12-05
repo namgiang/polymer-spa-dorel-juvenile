@@ -5,6 +5,10 @@
 <dom-module id="dorel-section-product-showcase">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+      
      dorel-layout-column {
         margin-top: 0;
       }
@@ -151,7 +155,6 @@
       if="[[ showcaseData ]]">
       <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
                               tablet-medium$="{{ breakpoints.tabletMedium }}">
-
         <dorel-layout-row align="center">
 
           <!-- Column -->
@@ -250,7 +253,6 @@
               <template
                 is="dom-if"
                 if="[[ !_showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
-
                 <dorel-cta
                   type="primary"
                   title="{{ localize('Find_a_Store') }}"
@@ -297,7 +299,6 @@
           </dorel-layout-column>
 
         </dorel-layout-row>
-
       </dorel-layout-container>
     </template>
 
@@ -305,7 +306,8 @@
 
     <dorel-product-lead-lightbox
       app-cache="[[appCache]]"
-      product-sku="[[showcaseData.sku]]"></dorel-product-lead-lightbox>
+      product-sku="[[showcaseData.sku]]"
+      store-locator-link="[[_createStoreLocatorLink(storeLocatorPage)]]"></dorel-product-lead-lightbox>
   </template>
 
   <script>
@@ -361,10 +363,16 @@
       ],
 
       ready: function () {
-        // init for the appCacche options
-        this._defineOptionModels(this.get('appCache'));
-
-        // init for the slider?
+        //TODO: TO BE REMOVED AFTER IMPLEMENTING STORE PRODUCT FINDER
+        // var pages = this.get('appCache.collect.pages');
+        //
+        // var storeLocatorPage = pages.find(function (page) {
+        //   return page.template === 'store-locator';
+        // });
+        // this.set('storeLocatorPage', storeLocatorPage);
+        // if (storeLocatorPage) {
+        //   this.set('storeLocatorPage.store_locator_button', true);
+        // }
         var parentProduct = this.get('showcaseData');
 
         if(parentProduct && parentProduct.child_products && parentProduct.child_products.length) {

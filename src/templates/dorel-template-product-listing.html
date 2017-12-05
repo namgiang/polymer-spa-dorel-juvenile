@@ -7,6 +7,10 @@
 <dom-module id="dorel-template-product-listing">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
         float: left;
         width: 100%;
@@ -48,7 +52,7 @@
           <template
             is="dom-if"
             if="[[leftSidebar.productSubCategories.toggle]]">
-            <dorel-accordion-item heading="{{ localize('Subcategories') }}"
+            <dorel-accordeon-item heading="{{ localize('Subcategories') }}"
                                   opened
                                   small
                                   gtm-parent="[[ gtmParent ]]"
@@ -56,13 +60,13 @@
               <dorel-category-submenu
                 items="[[leftSidebar.productSubCategories.sub_categories]]">
               </dorel-category-submenu>
-            </dorel-accordion-item>
+            </dorel-accordeon-item>
           </template>
 
           <template
             is="dom-if"
             if="[[leftSidebar.filters.toggle]]">
-            <dorel-accordion-item heading="{{ localize('Filters') }}"
+            <dorel-accordeon-item heading="{{ localize('Filters') }}"
                                   opened
                                   small
                                   gtm-parent="[[ gtmParent ]]"
@@ -72,7 +76,7 @@
                 retrieving-products="[[ retrievingProducts ]]"
                 product-data="[[ products ]]">
               </dorel-category-filter>
-            </dorel-accordion-item>
+            </dorel-accordeon-item>
           </template>
         </dorel-layout-column>
         <!--// Sidebar --->

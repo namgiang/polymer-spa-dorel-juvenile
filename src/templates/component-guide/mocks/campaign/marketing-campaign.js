@@ -38,7 +38,7 @@ var marketingCampaignMock = {
     "meta_description": "",
     "hero_header": [
       {
-        "bynder_background_image": "7F84BD5F-551A-4DA5-8532AB44763439AA",
+        "bynder_background_image": CONFIG.BYNDER_DEFAULT_IMAGE,
         "title": "Meet Maxi Cosi strollers",
         "sub_title": "We carry the future",
         "cta_href": null,
@@ -96,7 +96,7 @@ var marketingCampaignMock = {
         "slides": [
           {
             "type": "video",
-            "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
             "video_id": 'jMhg9IHDJPU',
             "content": {
               "title": 'Full width video with text',
@@ -105,7 +105,7 @@ var marketingCampaignMock = {
           },
           {
             "acf_fc_layout": "image",
-            "bynder_image_id": "7F84BD5F-551A-4DA5-8532AB44763439AA",
+            "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
             "content": {
               "title": "This is a title",
               "description": "This is a description"
@@ -113,7 +113,7 @@ var marketingCampaignMock = {
           },
           {
             "type": "video",
-            "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+            "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
             "video_id": '_4IRMYuE1hI',
             "content": {
               "title": 'Full width video with text',

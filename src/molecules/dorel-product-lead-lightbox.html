@@ -5,7 +5,6 @@
 <link rel="import" href="../../node_modules/neon-animation/web-animations.html">
 <link rel="import" href="../../node_modules/iron-image/iron-image.html">
 
-
 <link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
 <link rel="import" href="../utils/dorel-hatch-collect.html">
 
@@ -231,39 +230,77 @@
           <paper-dialog-scrollable>
 
             <template is="dom-if"
+                      if="[[_hasStoreLocatorLink(storeLocatorLink)]]">
+              <dorel-layout-container>
+                <dorel-layout-row align="center">
+                  <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                    <h3 class="lightbox-title">{{localize('Find_a_Store')}}</h3>
+                    <dorel-cta
+                        type="primary"
+                        title="{{ localize('Find_a_Store') }}"
+                        on-click="[[_goToStoreLocator]]"
+                        link="[[storeLocatorLink]]"
+                        size="medium"
+                        icon="dorel-icons:chevron-right"
+                        gtm-action="click"
+                        gtm-parent="[[ gtmParent ]]"
+                        gtm-parent-index="[[ gtmParentIndex ]]"
+                        gtm-cta-index="1">
+                        {{ localize('Find_a_Store') }}
+                    </dorel-cta>
+                  </dorel-layout-column>
+                </dorel-layout-row>
+              </dorel-layout-container>
+            </template>
+
+            <template is="dom-if"
                       if="[[thirdPartyOptions.hatch.toggle]]">
-              <h3 class="lightbox-title">{{ localize('product_lead_lightbox#hatch-title') }}</h3>
-              <div class="hatch-item">
-                <template is="dom-repeat"
-                          items="[[hatch.retailers.retailer]]"
-                          as="retailer">
-                  <div class="hatch-column">
-                    <img src$="[[retailer.logo]]">
-                  </div>
+              <dorel-layout-container>
+                <dorel-layout-row align="center">
+                  <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                    <h3 class="lightbox-title">{{localize('product_lead_lightbox#hatch-title')}}</h3>
+                    <div class="hatch-item">
+                      <template is="dom-if"
+                                if="[[hatch.retailers.retailer.length]]">
+                        <template is="dom-repeat"
+                                  items="[[hatch.retailers.retailer]]"
+                                  as="retailer">
+                          <div class="hatch-column">
+                            <img src$="[[retailer.logo]]">
+                          </div>
 
-                  <template
-                    is="dom-if"
-                    if="[[_showStockColumn(thirdPartyOptions.hatch.show_stock)]]">
+                          <template
+                            is="dom-if"
+                            if="[[_showStockColumn(thirdPartyOptions.hatch.show_stock)]]">
 
-                    <template is="dom-if" if="[[ _checkStock(retailer.stock_qty) ]]">
-                      <div class="hatch-column in-stock">
-                        <iron-icon class="in-stock__icon" icon="dorel-icons:check"></iron-icon> {{ localize('product_lead_lightbox#in-stock') }}
-                      </div>
-                    </template>
+                            <template is="dom-if" if="[[ _checkStock(retailer.stock_qty) ]]">
+                              <div class="hatch-column in-stock">
+                                <iron-icon class="in-stock__icon" icon="dorel-icons:check"></iron-icon> {{ localize('product_lead_lightbox#in-stock') }}
+                              </div>
+                            </template>
 
-                    <template is="dom-if" if="[[ !_checkStock(retailer.stock_qty) ]]">
-                      <div class="hatch-column out-of-stock">
-                        {{ localize('product_lead_lightbox#out-of-stock') }}
-                      </div>
-                    </template>
+                            <template is="dom-if" if="[[ !_checkStock(retailer.stock_qty) ]]">
+                              <div class="hatch-column out-of-stock">
+                                {{ localize('product_lead_lightbox#out-of-stock') }}
+                              </div>
+                            </template>
 
-                  </template><!--// dom-if thirdPartyOptions.hatch.show_stock -->
+                          </template><!--// dom-if thirdPartyOptions.hatch.show_stock -->
 
-                  <div class="hatch-column">
-                    <a class="cta" href="[[retailer.purchase_link]]"><iron-icon class="cta__icon" icon="dorel-icons:chevron-right"></iron-icon></a>
-                  </div>
-                </template><!--// dom-repeat retailers -->
-              </div>
+                          <div class="hatch-column">
+                            <a class="cta" href="[[retailer.purchase_link]]"><iron-icon class="cta__icon" icon="dorel-icons:chevron-right"></iron-icon></a>
+                          </div>
+                        </template><!--// dom-repeat retailers -->
+                      </template>
+
+                      <template is="dom-if"
+                                if="[[!hatch.retailers.retailer.length]]">
+                        <p>{{ localize('product_lead_lightbox#no-retailers') }}</p>
+                      </template>
+                    </div>
+                  </dorel-layout-column>
+                </dorel-layout-row>
+              </dorel-layout-container>
             </template><!--// dom-if hatch.toggle -->
           </paper-dialog-scrollable>
         </div>
@@ -291,6 +328,10 @@
           thirdPartyOptions: {
             type: Object,
             value: () => ({})
+          },
+
+          storeLocatorLink: {
+            type: String
           }
         }
       }
@@ -329,6 +370,20 @@
        */
       _checkStock(stockQuantity) {
         return (typeof stockQuantity !== 'undefined' && stockQuantity > 0);
+      }
+
+      /**
+       * Checks to see if there is a store locator link
+       *
+       * @param {string} store locator link set on the attribute
+       * @returns {boolean}
+       */
+      _hasStoreLocatorLink(link) {
+        return (typeof link !== 'undefined' || link !== '');
+      }
+
+      _goToStoreLocator() {
+        this.$.lightbox.close();
       }
     }
 
