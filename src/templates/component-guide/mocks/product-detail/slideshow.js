@@ -2,7 +2,7 @@ var slideshowMock = {
   "slides": [
       {
         "type": "video",
-        "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+        "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
         "video_id": 'A3PDXmYoF5U',
         "content": {
           "title": 'Full width video with text',
@@ -11,7 +11,7 @@ var slideshowMock = {
       },
       {
         "type": "image",
-        "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+        "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
         "content": {
           "title": 'Full width image',
           "description": 'This is a full width image with text'
@@ -19,7 +19,7 @@ var slideshowMock = {
       },
       {
         "type": "image",
-        "bynder_image_id": '7F84BD5F-551A-4DA5-8532AB44763439AA',
+        "bynder_image_id": CONFIG.BYNDER_DEFAULT_IMAGE,
       }
   ]
 };

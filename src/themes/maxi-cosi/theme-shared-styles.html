@@ -1,7 +1,3 @@
-<!-- NOTE: This is new, for the design refactor and the component guide -->
-<!--  Shared style brand naming conventions:
-      Name strings can only contain lower-case, alphabetic values and dashes to separate words:
-      maxi-cosi, dorel, quinny, safety-first -->
 <dom-module id="theme-shared-styles">
   <template>
     <custom-style>
@@ -40,16 +36,75 @@
 
           --theme-color-active: var(--theme-brand-color-1);
 
+          /*
+          * Logo variables
+          */
+          --theme-logo-width: 14em; /* mobile */
+          --theme-logo-height: 3em;
+          --theme-logo-tablet-width: 18.5em;;
+          --theme-logo-tablet-height: 4.5em;;
+          --theme-logo-desktop-width: 18.5em;
+          --theme-logo-desktop-height:  4.5em;
+          --theme-logo: url('/assets/images/logos/logo-maxi-cosi.svg') no-repeat center center;
+          --theme-logo-alternative: url('/assets/images/logos/logo-maxi-cosi-alternative.svg') no-repeat center center;
+
           /* ------------------------------------------------
            * Header, Menu
            */
           --theme-header-wrapper: 4.5em;
           --theme-header-wrapper-medium-up: 6em;
           --theme-header-wrapper-small-up: 10.5em;
-          --theme-header-items-top-bottom-padding: 1.5em;
-          --theme-header-item-padding: .75em;
-          --theme-header-logo-top: 0;
+          --theme-header-wrapper-desktop-small-up: 10.5em;
+
           --theme-menu-offset: 10.5rem;
+
+          --theme-top-menu-items: {
+            background-color: var(--theme-color-white);
+            height: var(--theme-header-wrapper);
+            padding-left: 1rem;
+            padding-right: 20px;
+          }
+
+          --theme-top-menu-items-tablet: {
+            height: var(--theme-header-wrapper-medium-up);
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+          }
+
+          --theme-top-menu-items-desktop: {
+            height: 7.5em;
+          }
+
+          --theme-main-menu-item: {
+            @apply(--theme-typography-2);
+          }
+
+
+          --theme-main-menu-text-link-color-active: var(--theme-color-text-link-active);
+          --theme-main-menu-dropdown-icon: {
+            margin-left: 0.2rem;
+          }
+
+          --theme-hamburger-color: var(--theme-color-text-link);
+          --theme-hamburger-color-hover: var(--theme-color-text-link-active);
+
+          --theme-hamburger-medium-up: {
+            top: 2em;
+            right: 1.25em;
+          }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           /* ------------------------------------------------
            * Grid
@@ -139,6 +194,11 @@
           /* ------------------------------------------------
            * Typography
            */
+
+          --theme-header-text-transform: {
+              text-transform: none;
+          }
+
           --theme-base-font-size: 16px;
           --theme-base-paragraph-width: 640px; /*560px; */
           --theme-font-weight: 400;
@@ -240,6 +300,16 @@
           --theme-paragraph-text: {
             @apply(--theme-typography-2);
             max-width: var(--theme-base-paragraph-width);
+          };
+
+          --theme-typography-ui: {
+            font-size: 0.875em; /* 14px */
+            margin-top: 1.714em; /* 24px */
+            min-height: 3.428em; /* 48px */
+            margin-bottom: 0;
+            text-transform: uppercase;
+            font-weight: var(--theme-font-weight-bold);
+            font-family: var(--theme-font);
           };
 
           /*
@@ -387,14 +457,6 @@
 
           --theme-button: {
             line-height: 1.5em;
-            -webkit-box-align: center;
-            -webkit-flex-align: center;
-            -ms-flex-align: center;
-            -webkit-align-items: center;
-            display: -webkit-flex;
-            display: -moz-flex;
-            display: -ms-flexbox;
-            display: -o-flex;
             display: flex;
             align-items: center;
             border-radius: var(--theme-button-border-radius);
@@ -403,6 +465,9 @@
             text-decoration: none;
             box-sizing: border-box;
             float: left;
+
+
+
           };
 
           --theme-button-medium: {
@@ -426,6 +491,7 @@
 
           --theme-button-inverted: {
             background-color: var(--theme-color-white);
+
           };
 
           --theme-link-inverted: {
@@ -453,6 +519,13 @@
             border-right: 0;
           };
 
+          --theme-button-link-hover: {
+
+
+
+
+          };
+
           --theme-button-link-active: {
             background-color: transparent;
             border-color: transparent;
@@ -470,26 +543,62 @@
             background-color: var(--theme-color-monochrome-1);
           };
 
+          --theme-button-label: {
+
+          }
+
           --theme-button-icon: {
             height: 1.5em;
             width: 1.5em;
             padding: 0 .5em;
             border: 0px;
+
+
+
           };
 
-          /* Not used, but necessary to reset icon style */
+          --theme-button-icon-left: {
+
+
+          };
+
           --theme-button-primary-icon: {
+          /* Not used, but necessary to reset icon style */
           };
+
           --theme-button-secondary-icon: {
+
           };
+
           --theme-button-tertiary-icon: {
+
           };
+
           --theme-button-link-icon: {
+
           };
+
           --theme-button-icon-active: {
+
           };
+
           --theme-button-link-icon-active: {
+
           };
+
+          /*
+          * Accordeon
+          */
+          --theme-accordeon-heading: {
+            @apply(--theme-paragraph-text);
+            color: var(--theme-color-text-link);
+          }
+          --theme-accordeon-heading-height: 4.5em;
+          --theme-accordeon-heading-height-small: 3em;
+          --theme-accordeon-hover-color: var(--theme-color-text-link-active);
+          --theme-accordeon-item-bottom-margin: 1.5em;
+          --theme-accordeon-item-bottom-margin-small: 0.75em;
+          --theme-accordeon-item-border: none;
 
           /*
           * Form inputs
@@ -593,16 +702,6 @@
           --theme-footer-text-color: var(--theme-color-white);
           --theme-footer-icon-color: var(--theme-brand-color-1);
 
-          /*
-          * Logo variables
-          */
-
-          --theme-logo-width: 18.5em;
-          --theme-logo-height: 4.5em;
-          --theme-logo-mobile-width: 14em;
-          --theme-logo-mobile-height: 3em;
-          --theme-logo: url('/assets/images/logos/logo-maxi-cosi.svg') no-repeat center center;
-          --theme-logo-alternative: url('/assets/images/logos/logo-maxi-cosi-alternative.svg') no-repeat center center;
 
           --max-width-limit: 1280px;
 
