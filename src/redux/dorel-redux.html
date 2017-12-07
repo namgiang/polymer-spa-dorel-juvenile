@@ -3,12 +3,13 @@
 <script src="../../node_modules/reselect/dist/reselect.js"></script>
 
 
-<link rel="import" href="./actions/image-actions.html">
+<link rel="import" href="./actions/actions-combiner.html">
 <link rel="import" href="./middleware/thunk.html">
 
 <!-- import reducers -->
 <link rel="import" href="./reducers/image-reducer.html">
 <link rel="import" href="./reducers/page-reducer.html">
+<link rel="import" href="./reducers/route-reducer.html">
 
 <!-- import selectors -->
 <link rel="import" href="./selectors/image-selector.html">
@@ -29,7 +30,8 @@
     // Combine all the reducers
     const rootReducer = Redux.combineReducers({
       images: imageReducer,
-      pages: pageReducer
+      pages: pageReducer,
+      route: routeReducer
     });
 
     const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -61,8 +63,7 @@
         }
       }
     }
-
-    /* @mixinFunction */
-    ReduxMixin = Polymer.dedupingMixin(actionsMixin);
+      /* @mixinFunction */
+    window.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
 }());
 </script>

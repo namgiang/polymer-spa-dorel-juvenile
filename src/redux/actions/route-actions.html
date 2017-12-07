@@ -1,0 +1,63 @@
+<script>
+(function() {
+
+function addRouteToState(route) {
+  return {
+    type: 'SET_CURRENT_ROUTE',
+    payload: route
+  }
+}
+
+function addCurrentRouteToPreviousRoutes(oldRoute) {
+  delete oldRoute.previousRoutes;
+  return  {
+    type: 'ADD_ROUTE_TO_PREVIOUS_ROUTES',
+    payload: oldRoute
+  }
+}
+
+
+function setRoute(route) {
+  if(route.__queryParams) {
+    route.queryParams = route.__queryParams;
+    delete route.__queryParams;
+  }
+  return (dispatch, getState) => {
+    const oldRoute = getState().route.currentRoute;
+    if(oldRoute && oldRoute.url) {
+      dispatch(addCurrentRouteToPreviousRoutes(oldRoute))
+    }
+    dispatch(addRouteToState(route))
+  }
+}
+
+function setCurrentPage(page) {
+  return {
+    type: 'SET_CURRENT_PAGE',
+    payload: page
+  }
+}
+
+function setProductCategoryPage(page) {
+  return {
+    type: 'SET_PRODUCT_CATEGORY_PAGE',
+    payload: page
+  }
+}
+
+function setCurrentLanguage(language) {
+  return {
+    type: 'SET_CURRENT_LANGUAGE',
+    payload: language
+  }
+}
+
+routeActions = {
+  setRoute,
+  setCurrentPage,
+  setProductCategoryPage,
+  setCurrentLanguage
+}
+
+}());
+</script>
