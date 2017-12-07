@@ -6,6 +6,10 @@
       switch (action.type) {
 
         case 'REQUEST_IMAGE':
+          const image = state.find(image => image.id === action.payload.id);
+          if(image) {
+            return state;
+          }
           const tempImage = { id: action.payload.id, isLoading: true, notAvailable: false }
           return [...state, tempImage]
 

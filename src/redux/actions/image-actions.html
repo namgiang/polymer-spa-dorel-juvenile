@@ -31,7 +31,6 @@ function handleErrors(response) {
 
 function fetchImage(id) {
   return dispatch => {
-    dispatch(requestImage(id))
     const params = retrieveMedia(id);
     return fetch(params.requestUrl, params.init)
       .then(handleErrors)
@@ -48,7 +47,7 @@ function shouldFetchImage(state, id) {
   } else if (image.isLoading) {
     return false
   } else {
-    return !image.notAvailable
+    return image.notAvailable;
   }
 }
 
@@ -58,6 +57,7 @@ function fetchImageById(id) {
   return (dispatch, getState) => {
     if (shouldFetchImage(getState(), id)) {
       // Dispatch a thunk from thunk!
+      dispatch(requestImage(id))
       return dispatch(fetchImage(id))
     } else {
       // Let the calling code know there's nothing to wait for.
@@ -75,7 +75,7 @@ function imageNotAvailable(id) {
   }
 }
 
-actions = {
+imageActions = {
   fetchImage,
   fetchImageById
 }

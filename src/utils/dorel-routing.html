@@ -1,18 +1,25 @@
 <link rel="import" href="./dorel-wp-collect-page.html">
+<link rel="import" href="./behaviors/single/dorel-merge-arrays-behavior.html">
 
 <dom-module id="dorel-routing">
   <template>
 
+    <app-route
+      route="[[ fullRoute ]]"
+      pattern="/:language"
+      tail="{{ route }}"></app-route>
+
     <dorel-wp-collect-page
       id="collectPageEl"
-      app-cache="[[ appCache ]]">
+      app-cache="[[ appCache ]]"
+      pages="[[ pages ]]">
     </dorel-wp-collect-page>
 
   </template>
 
   <script>
 
-    class DorelRouting extends Polymer.Element {
+    class DorelRouting extends ReduxMixin(Polymer.mixinBehaviors([MergeArraysBehavior], Polymer.Element)) {
       static get is() {
         return 'dorel-routing';
       }
@@ -20,46 +27,70 @@
       static get properties() {
         return {
 
+          appCache: Object,
+
           /**
-           * `appCache` the application cache
+           * @name fullRoute
+           * @description defines the current route
            */
-          appCache: {
-            type: Object
-          },
+          fullRoute: Object,
 
           /**
            * @name route
-           * @description defines the current route
+           * @description without the first segment (lang)
            */
-          route: {
-            type: Object
-          },
+          route: Object,
 
           /**
            * @name currentPage
            * @description the currentPage will be used to select page
            */
-          currentPage: {
-            type: Object,
-            notify: true
-          },
+          currentPage: Object,
+
 
           /**
-           * @name categoryPage
-           * @description will be used for setting the category
+           * @name pages
+           * @description the pages
            */
-          categoryPage: {
-            type: Object,
-            notify: true
+          pages: {
+            type: Array,
+            statePath: 'pages'
           }
         }
       }
 
       static get observers () {
         return [
-          '_routePageChanged(route)',
+          '_langChanged(fullRoute)',
+          '_routePageChanged(route)'
         ]
       }
+
+      /**
+       * @observer
+       * @name _langChanged
+       * @description on url/route change check the lang segment
+       * @param route - Object
+       */
+       _langChanged(route) {
+         if(!route) {
+           return;
+         }
+
+         const pathArray = route.path.split('/').filter(function(item) {
+           return item && item.length;
+         });
+
+         //if pathArray does NOT exists it means there is no locale so redirect to default locale
+         if(!pathArray || !pathArray.length) {
+           return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/';
+         }
+
+         //if conditions are true it means the first segment is not a lang segment so prepend default segment
+         if(pathArray[0].length !== 5 || pathArray[0].length && pathArray[0][2] !== '-') {
+           return this._setPageNotFound();
+         }
+       }
 
       /**
        * @observer
@@ -73,36 +104,16 @@
         // if the route is undefined
         if (typeof route === 'undefined' || !route || !route.path) return;
 
-        const pathArray = route.path.split('/').filter(function(item) {
-          return item && item.length;
-        });
-
-        // Matches the page to the component guide template
-        if (route.path.indexOf('component-guide') !== -1) {
-          this.currentPage = {
-            template: 'component-guide'
-          };
-          // break
-          return;
-        }
-
         // get the a clean last segment of the route.path
         const lastSegment = route.path.match(/([^\/]*)\/*$/).pop();
         const slug = lastSegment && lastSegment !== '' ? lastSegment : 'home';
-
-        // if last segment is undefined or empty string set to home, all others to segment
-        if(pathArray.length === 1) {
-         this.set('page', 'home');
-        } else {
-         this.set('page', slug || 'home');
-        }
 
         this.routeToPath(route, slug);
       }
 
       /**
        * @name routeToPath
-       * @description will route to the path based on the slug
+       * @description will change route to the path based on the slug
        * @param route - Object
        * @param slug - String
        */
@@ -110,6 +121,17 @@
         const url = (window.location.origin + route.path);
         const fullUrl = url.slice(-1) === '/' ? url : url + '/';
         const pageLink = route.prefix + route.path;
+
+        const newRoute = Object.assign({}, { ...route, url: fullUrl })
+        this.dispatch('setRoute', newRoute);
+
+        // Matches the page to the component guide template
+        if (route.path.indexOf('component-guide') !== -1) {
+          this.currentPage = {
+            template: 'component-guide'
+          };
+          return this.dispatch('setCurrentPage', this.currentPage);
+        }
 
         const currentPage = await this.$.collectPageEl.getPageBySlug(slug, pageLink);
 
@@ -134,15 +156,17 @@
               template: productDetailTemplate
             };
           }
-          this.set('categoryPage', parent);
+          this.dispatch('setProductCategoryPage', parent);
         } else {
-          this.set('categoryPage', parent);
+          this.dispatch('setProductCategoryPage', parent);
         }
 
         // when the page cannot be matched, it is always the 404
         if (typeof this.currentPage === 'undefined') {
-          this._setPageNotFound();
+          return this._setPageNotFound();
         }
+
+        this.dispatch('setCurrentPage', this.currentPage);
       }
 
       /**
@@ -161,6 +185,7 @@
             meta_description: '404 - This page does not exist'
           }
         };
+        this.dispatch('setCurrentPage', this.currentPage);
       }
 
     };
