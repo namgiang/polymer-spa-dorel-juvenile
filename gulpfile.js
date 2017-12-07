@@ -80,7 +80,8 @@ gulp.task('build:es5', function () {
                 'targets': {
                   'browsers': ['ie 11']
                 }
-              }]
+              }],
+              'stage-3'
             ]
           })))
           .pipe(gulpif(/\.js$/, uglify()))
@@ -109,7 +110,7 @@ gulp.task('build:es5', function () {
           })))
           .pipe(gulpif(/\.js$/, babel({
             babelrc: false,
-            presets: [ [ 'env', { modules: false } ] ]
+            presets: [ [ 'env', { modules: false } ],  'stage-3' ]
           })))
           .pipe(gulpif(/\.js$/, uglify()))
 
