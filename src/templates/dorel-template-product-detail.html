@@ -9,7 +9,7 @@
 <link rel="import" href="../utils/dorel-magento-collect-product-by-sku.html">
 <link rel="import" href="dorel-template-404.html">
 
-<dom-module id="dorel-product-detail">
+<dom-module id="dorel-template-product-detail">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -166,32 +166,28 @@
   </template>
 
   <script>
-    class DorelProductDetail extends Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element) {
+    class DorelTemplateProductDetail extends Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element) {
 
-      static get is() { return 'dorel-product-detail'; }
+      static get is() { return 'dorel-template-product-detail'; }
 
       static get properties() {
         return {
           /**
-           * @attribute
-           * @name templateData
-           * @description the data coming from ACF/Wordpress which is delegated to the page builder
+           * the data coming from ACF/Wordpress which is delegated to the page builder
            */
           templateData: {
             type: String
           },
 
           /**
-           * @name routeData
-           * @description the route data contains the last segment under productName
+           * the route data contains the last segment under productName
            */
           routeData: {
             type: Object
           },
 
           /**
-           * @name accessoryScrollHandler
-           * @description the offset to the accessory section
+           * the offset to the accessory section
            **/
           accessoryScrollHandler: {
             type: Boolean,
@@ -200,9 +196,7 @@
           },
 
           /**
-           * @attribute
-           * @name category
-           * @description the category that will be used by product-collect
+           * the category that will be used by product-collect
            */
           category: {
             type: Number,
@@ -210,18 +204,14 @@
           },
 
           /**
-           * @attribute
-           * @name colorMap
-           * @description the colorMapping that will be used by product-collect
+           * the colorMapping that will be used by product-collect
            */
           colorMap: {
             type: Array
           },
 
           /**
-           * @attribute
-           * @name loaded
-           * @description a Boolean that will be used to show or hide the page
+           * a Boolean that will be used to show or hide the page
            */
           retrievingProduct: {
             type: Boolean,
@@ -229,9 +219,7 @@
           },
 
           /**
-           * @attribute
-           * @name product
-           * @description the current product
+           * the current product object
            */
           product: {
             type: Object,
@@ -239,10 +227,7 @@
           },
 
           /**
-           * @attribute
-           * @name appCache
-           * @description the temporary cache of the application,
-           * contains data that used to be contained by the globalsManager
+           * the temporary cache of the application, contains data that used to be contained by the globalsManager
            */
           appCache: {
             type: Object
@@ -250,12 +235,19 @@
         }
       }
 
+      /**
+       * conditional check to show the product header, part of business logic. If no bynder background image exists don't show the header at all
+       *
+       * @param {object} contains all product header info (title, subtitle, image)
+       * @returns {boolean}
+       */
       _shouldShowHeader(productHeader) {
-        return (typeof productHeader !== 'undefined');
+        // bynder_background_image an be null, empty string or undefined
+        return (typeof productHeader !== 'undefined' && typeof productHeader.bynder_background_image !== 'undefined' && productHeader.bynder_background_image !== '' && productHeader.bynder_background_image);
       }
     }
 
     // Register the x-custom element with the browser
-    customElements.define(DorelProductDetail.is, DorelProductDetail);
+    customElements.define(DorelTemplateProductDetail.is, DorelTemplateProductDetail);
   </script>
 </dom-module>
