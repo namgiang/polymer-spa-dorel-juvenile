@@ -122,7 +122,8 @@
         const fullUrl = url.slice(-1) === '/' ? url : url + '/';
         const pageLink = route.prefix + route.path;
 
-        const newRoute = Object.assign({}, { ...route, url: fullUrl })
+        const newRoute = route;
+        newRoute.url = fullUrl;
         this.dispatch('setRoute', newRoute);
 
         // Matches the page to the component guide template
