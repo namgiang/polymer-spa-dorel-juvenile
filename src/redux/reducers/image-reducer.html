@@ -6,18 +6,16 @@
       switch (action.type) {
 
         case 'REQUEST_IMAGE':
-          const image = state.find(image => image.id === action.payload.id);
-          if(image) {
-            return state;
-          }
-          const tempImage = { id: action.payload.id, isLoading: true, notAvailable: false }
-          return [...state, tempImage]
+          return [...state, { id: action.payload.id, isLoading: true, notAvailable: false }]
 
         case 'ADD_IMAGE':
-          return state.map((image) => {
-            return image.id === action.payload.id ?
-              Object.assign(image, {...action.payload.image, isLoading: false}) : image;
-          });
+          return [
+            ...state.filter((image) => image.id !== action.payload.image.id),
+            {
+              ...action.payload.image,
+              isLoading: false
+            }
+          ];
 
         case 'IMAGE_NOT_AVAILABLE':
           return state.map((image) => {

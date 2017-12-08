@@ -10,28 +10,21 @@
 <link rel="import" href="./reducers/image-reducer.html">
 <link rel="import" href="./reducers/page-reducer.html">
 <link rel="import" href="./reducers/route-reducer.html">
+<link rel="import" href="./reducers/menu-reducer.html">
+<link rel="import" href="./reducers/product-reducer.html">
 
 <!-- import selectors -->
 <link rel="import" href="./selectors/image-selector.html">
 
 <script>
   (function() {
-
-    // Set the initialState
-    const initialState = {
-      images: [],
-      pages: []
-    };
-
-    const pages = (state = [], action) => {
-      return [ ...state ];
-    };
-
     // Combine all the reducers
     const rootReducer = Redux.combineReducers({
       images: imageReducer,
       pages: pageReducer,
-      route: routeReducer
+      route: routeReducer,
+      menu: menuReducer,
+      product: productReducer
     });
 
     const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -64,6 +57,6 @@
       }
     }
       /* @mixinFunction */
-    window.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
+    ReduxMixin = Polymer.dedupingMixin(actionsMixin);
 }());
 </script>
