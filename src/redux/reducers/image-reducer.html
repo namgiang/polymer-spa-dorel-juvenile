@@ -6,21 +6,19 @@
       switch (action.type) {
 
         case 'REQUEST_IMAGE':
-          return [...state, { id: action.payload.id, isLoading: true, notAvailable: false }]
+          state.push({ id: action.payload.id, isLoading: true, notAvailable: false });
+          return state.map(image => image);
 
         case 'ADD_IMAGE':
-          return [
-            ...state.filter((image) => image.id !== action.payload.image.id),
-            {
-              ...action.payload.image,
-              isLoading: false
-            }
-          ];
+          return state.map((image) => {
+            return image.id === action.payload.id ?
+              Object.assign({}, action.payload.image, { isLoading: false }) : image;
+          });
 
         case 'IMAGE_NOT_AVAILABLE':
           return state.map((image) => {
             return image.id === action.payload.id ?
-              Object.assign({}, {...image, isLoading: false, notAvailable: true }) : image;
+              Object.assign({}, image, { isLoading: false, notAvailable: true }) : image;
           });
 
         default:

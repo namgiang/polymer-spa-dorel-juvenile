@@ -5,8 +5,8 @@
     pageReducer = (state = initial, action) => {
       switch (action.type) {
         case 'ADD_PAGE':
-          return [...state, action.payload];
-      // Return the state, nothing changed.
+          state.push(action.payload);
+          return state.map(image => image);
       default:
         return state;
       }
