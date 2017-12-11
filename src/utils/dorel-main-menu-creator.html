@@ -10,6 +10,7 @@
     </dorel-magento-collect-products-by-category>
 
     <dorel-wp-collect-page
+      pages="[[ pages ]]"
       app-cache="[[ appCache ]]"
       id="collectPageEl">
     </dorel-wp-collect-page>
@@ -17,21 +18,31 @@
   </template>
 
   <script>
-  class DorelMainMenuCreator extends Polymer.Element {
+  class DorelMainMenuCreator extends ReduxMixin(Polymer.Element) {
     static get is() {
       return 'dorel-main-menu-creator';
     }
 
     static get properties() {
       return {
+
         /**
          * @attribute
          * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
+         * @description pages
          */
         appCache: {
           type: Object
+        },
+
+        /**
+         * @attribute
+         * @name pages
+         * @description pages
+         */
+        pages: {
+          type: Array,
+          statePath: 'pages'
         }
       }
     }
@@ -55,6 +66,9 @@
         path: 'mainMenu',
         value: mainMenu
       }}));
+
+      this.dispatch('addMenu', mainMenu);
+
     }
 
     async _createLinks(menuItems) {
@@ -155,6 +169,7 @@
         path: 'mainMenu',
         value: mainMenu
       }}));
+      this.dispatch('addMenu', mainMenu);
     }
 
     cleanUrlToPath(url) {

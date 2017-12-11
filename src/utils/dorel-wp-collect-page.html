@@ -10,7 +10,7 @@
 
   <script>
 
-    class DorelWpCollectPage extends Polymer.mixinBehaviors([MergeArraysBehavior], Polymer.Element) {
+    class DorelWpCollectPage extends ReduxMixin(Polymer.mixinBehaviors([MergeArraysBehavior], Polymer.Element)) {
       static get is() {
         return 'dorel-wp-collect-page';
       }
@@ -18,12 +18,10 @@
       static get properties() {
         return {
 
-          /**
-           * `appCache` the application cache
-           */
-          appCache: {
-            type: Object
-          }
+          pages: Array,
+
+          appCache: Object
+
         }
       }
 
@@ -35,7 +33,7 @@
        * @param path - String (optional)
        */
       async getPageBySlug(slug, path) {
-        const cachedPages = this.appCache ? this.appCache.collect.pages : [];
+        const cachedPages = this.pages ? this.pages : [];
         const pageFromCache = cachedPages.find(page => {
           return path ? this.cleanUrlToPath(page.link) === this._cleanString(path) : page.slug === slug;
         });
@@ -58,7 +56,7 @@
        * @param slug - String
        */
       async getPageById(id) {
-        const cachedPages = this.appCache ? this.appCache.collect.pages : [];
+        const cachedPages = this.pages ? this.pages : [];
         const pageFromCache = cachedPages.find(page => page.id === id);
         if(pageFromCache) {
           return pageFromCache;
@@ -82,11 +80,9 @@
         const pages = json.__data.response || [];
         pages.map(page => {
           page.template = page.template.slice(0, -4).replace('page-', '');
+          this.dispatch('addPage', page);
           return page;
         });
-        if(pages.length) {
-          this.updateAppCache(pages);
-        }
         return pages;
       }
 
@@ -98,7 +94,7 @@
         const page = json.__data.response || [];
         page.template = page.template.slice(0, -4).replace('page-', '');
         if(page && page.length) {
-          this.updateAppCache([page]);
+          this.dispatch('addPage', page);
         }
         return page;
       }
@@ -117,11 +113,9 @@
         const pages = json.__data.response || [];
         pages.map(page => {
           page.template = page.template.slice(0, -4).replace('page-', '');
+          this.dispatch('addPage', page);
           return page;
         });
-        if(pages.length) {
-          this.updateAppCache(pages);
-        }
         return pages;
       }
 
@@ -139,26 +133,10 @@
         const pages = json.__data.response || [];
         pages.map(page => {
           page.template = page.template.slice(0, -4).replace('page-', '');
+          this.dispatch('addPage', page);
           return page;
         });
-        if(pages.length) {
-          this.updateAppCache(pages);
-        }
         return pages;
-      }
-
-      updateAppCache(pages) {
-        const oldPages = this.appCache.collect.pages || [];
-        const updatedPages = this._mergeArrays(oldPages, pages, 'id');
-
-        this.dispatchEvent(new CustomEvent('setAppCache', {
-          bubbles: true,
-          composed: true,
-          detail: {
-            path: 'collect.pages',
-            value: updatedPages
-          }
-        }));
       }
 
       cleanUrlToPath(url) {
