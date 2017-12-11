@@ -1,8 +1,6 @@
 <link rel="import" href="../../../node_modules/app-route/app-location.html">
 <link rel="import" href="../../../node_modules/app-route/app-route.html">
-
 <link rel="import" href="../../utils/behaviors/bundled/dorel-main-menu-behaviors.html">
-
 <link rel="import" href="dorel-main-menu-item.html">
 
 <dom-module id="dorel-main-menu-desktop">
@@ -61,9 +59,7 @@
          */
         menuItems: {
           type: Array,
-          value: function () {
-            return [];
-          }
+          value: []
         },
 
       },
@@ -80,7 +76,6 @@
 
       _toggleDropdown: function (event) {
         var indexItem = event.detail.value;
-
         var currentValue = this.get('menuItems.' + indexItem + '.opened');
         if (!currentValue) {
           this._closePreviousDropdown();
@@ -91,26 +86,17 @@
       },
 
       _closePreviousDropdown: function () {
-        var menuItems = this.get('menuItems');
-        if(typeof menuItems === 'undefined' || !menuItems.length) return;
-
-        var previousDropdownIndex = menuItems.findIndex(function (item) {
-          return item.opened === true;
-        });
-        if (typeof previousDropdownIndex === 'undefined' || previousDropdownIndex < 0) {
-          return;
+        var menuItems = this.get('menuItems') || [];
+        var openDropdownIndex = menuItems.findIndex( (item) => item.opened );
+        if (openDropdownIndex > -1) {
+          this.set('menuItems.' + openDropdownIndex + '.opened', false);
         }
-        this.removeOpenedDropdown(previousDropdownIndex);
       },
 
       routeChanged: function (route) {
         if (route) {
           this._closePreviousDropdown();
         }
-      },
-
-      removeOpenedDropdown: function (indexItem) {
-        this.set('menuItems.' + indexItem + '.opened', false);
       },
 
       onClickOutside: function () {
