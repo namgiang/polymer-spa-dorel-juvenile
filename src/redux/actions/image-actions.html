@@ -1,0 +1,84 @@
+<link rel="import" href="../services/image-service.html">
+
+<script>
+(function() {
+
+function requestImage(id) {
+  return {
+    type: 'REQUEST_IMAGE',
+    payload: {
+      id
+    }
+  }
+}
+
+function addImage(id, image) {
+  return {
+    type: 'ADD_IMAGE',
+    payload: {
+      id,
+      image
+    }
+  }
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+function fetchImage(id) {
+  return dispatch => {
+    const params = retrieveMedia(id);
+    return fetch(params.requestUrl, params.init)
+      .then(handleErrors)
+      .then(response => response.json())
+      .then(json => dispatch(addImage(id, json)))
+      .catch(() => dispatch(imageNotAvailable(id)))
+  }
+}
+
+function shouldFetchImage(state, id) {
+  const image = state.images.find(image => image.id === id);
+  if (!image) {
+    return true
+  } else if (image.isLoading) {
+    return false
+  } else {
+    return image.notAvailable;
+  }
+}
+
+function fetchImageById(id) {
+  // This is useful for avoiding a network request if
+  // a cached value is already available.
+  return (dispatch, getState) => {
+    if (shouldFetchImage(getState(), id)) {
+      // Dispatch a thunk from thunk!
+      dispatch(requestImage(id))
+      return dispatch(fetchImage(id))
+    } else {
+      // Let the calling code know there's nothing to wait for.
+      return Promise.resolve()
+    }
+  }
+}
+
+function imageNotAvailable(id) {
+  return {
+    type: 'IMAGE_NOT_AVAILABLE',
+    payload: {
+      id
+    }
+  }
+}
+
+imageActions = {
+  fetchImage,
+  fetchImageById
+}
+
+}());
+</script>

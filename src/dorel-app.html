@@ -35,7 +35,7 @@
 <link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
-<link rel="import" href="utils/dorel-lang-routing.html">
+<link rel="import" href="utils/dorel-routing.html">
 <link rel="import" href="utils/dorel-product-category-manager.html">
 <link rel="import" href="utils/dorel-brand-manager.html">
 <link rel="import" href="utils/dorel-main-menu-creator.html">
@@ -127,13 +127,10 @@
       id="metaManager">
     </dorel-meta-manager>
 
-    <dorel-lang-routing
+    <dorel-routing
       app-cache="[[ appCache ]]"
-      route="[[ route ]]"
-      category-page="{{ categoryPage }}"
-      previous-states="{{ previousStates }}"
-      current-page="{{ currentPage }}">
-    </dorel-lang-routing>
+      full-route="[[ route ]]">
+    </dorel-routing>
 
     <dorel-product-category-manager
       category-page="[[ categoryPage ]]"
@@ -267,100 +264,99 @@
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
-    Polymer({
-      is: 'dorel-app',
+    class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([appCacheBehavior], Polymer.Element)) {
 
-      ready: function () {
-        window.app = this;
-      },
+      static get is() {
+        return 'dorel-app';
+      }
 
-      /**
-       * @name properties
-       * @description all properties this component uses
-       */
-      properties: {
+      static get properties() {
+        return {
+          /**
+           * @name route
+           * @description defines the current route
+           */
+          route: {
+            type: String
+          },
 
-        /**
-         * @name route
-         * @description defines the current route
-         */
-        route: {
-          type: String
-        },
+          /**
+           * @name page
+           * @description define the current page
+           */
+          page: {
+            type: String,
+            notify: true,
+            readOnly: false,
+          },
 
-        /**
-         * @name page
-         * @description define the current page
-         */
-        page: {
-          type: String,
-          notify: true,
-          readOnly: false,
-        },
+          mobileMenuOpened: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          },
 
-        mobileMenuOpened: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false
-        },
+          /**
+           * @name brand
+           * @description The currently selected brand
+           */
+          brand: {
+            type: Object,
+            value: function () {
+              return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+            }
+          },
 
-        /**
-         * @name brand
-         * @description The currently selected brand
-         */
-        brand: {
-          type: Object,
-          value: function () {
-            return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+          /**
+           * @name brandNames
+           * @description available brand names (from config), used for switching between brands
+           */
+          brandNames: {
+            type: Array,
+            value: function () {
+              return CONFIG.AVAILABLE_BRANDS;
+            }
+          },
+
+          /**
+           * @name currentPage
+           * @description defines the currentPage
+           */
+          currentPage: {
+            type: Object,
+            statePath: 'route.currentPage'
+          },
+
+          category: {
+            type: Number,
+            statePath: 'product.productCatogory'
           }
-        },
+        };
+      }
 
-        /**
-         * @name brandNames
-         * @description available brand names (from config), used for switching between brands
-         */
-        brandNames: {
-          type: Array,
-          value: function () {
-            return CONFIG.AVAILABLE_BRANDS;
-          }
-        },
+      static get observers () {
+        return [
+          '_pageChanged(currentPage)',
+          '_brandChanged(brand)'
+        ]
+      }
 
-        /**
-         * @name currentPage
-         * @description defines the currentPage
-         */
-        currentPage: {
-          type: Object
-        },
+      constructor() {
+        super();
+      }
 
-        categoryPage: {
-          type: Object
-        },
-
-        category: {
-          type: Number
-        },
-
-      },
-
-      behaviors: [appCacheBehavior],
-
-      /**
-       * @name observers
-       * @description observe if a function is called
-       */
-      observers: [
-        '_pageChanged(currentPage)',
-        '_brandChanged(brand)'
-      ],
-
-      created: function () {
+      connectedCallback() {
+        super.connectedCallback();
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
-      },
+      }
+
+      ready() {
+        super.ready();
+        window.app = this;
+      }
 
       /**
        * @observer
@@ -369,8 +365,8 @@
        * or retrieve it all the way.
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function (currentPage) {
-        if (typeof currentPage === 'undefined' || currentPage === '' || !currentPage) {
+      _pageChanged(currentPage) {
+        if (typeof currentPage === 'undefined' || currentPage === '' || !currentPage || !currentPage.template) {
           return;
         }
 
@@ -386,14 +382,14 @@
 
         // tracking of the pageload
         this._eventTracking();
-      },
+      }
 
       /**
        * @name _ensureLazyLoaded
        * @description if the load is completed we will add the resources
        * the service worker will kick in after that.
        */
-      _ensureLazyLoaded: function () {
+      _ensureLazyLoaded() {
         var self = this;
 
         // scroll up when a page is changed
@@ -416,23 +412,23 @@
             });
           });
         }
-      },
+      }
 
       /**
        * @name _removeLoadPlaceholder
        * @description removes loading spinner and placeholders before the page is loaded
        */
-      _removeLoadPlaceholder: function () {
+      _removeLoadPlaceholder() {
         var placeholder = document.getElementById('load-placeholder');
         placeholder.remove();
-      },
+      }
 
       /**
        * @name _eventTracking
        * @description this is for pageload tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function () {
+      _eventTracking() {
         var globalsObj = this.get('appCache');
         var globalsCopy = Object.assign({}, globalsObj);
 
@@ -453,12 +449,12 @@
         };
 
         this.fire('setAppCache', {value: event, path: 'events'});
-      },
+      }
 
 
-      shouldShow: function (currentPage) {
+      shouldShow(currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
-      },
+      }
 
       /**
        * @observer
@@ -466,7 +462,7 @@
        * @description the brand was changed, imports the right styles and triggers a change in shared styles
        * @param brand - Object - the object containing the brand index and label
        */
-      _brandChanged: function (brand) {
+      _brandChanged(brand) {
         //TODO: This doesn't work well in Polymer 2, hardcoded the maxicosi style for now.
         /*var self = this;
 
@@ -502,6 +498,7 @@
          });*/
       }
 
-    });
+  };
+  customElements.define(DorelApp.is, DorelApp);
   </script>
 </dom-module>
