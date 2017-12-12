@@ -1,19 +1,14 @@
-<script src="../../node_modules/oauth-signature/dist/oauth-signature.js"></script>
+<link rel="import" href="../redux/dorel-redux.html">
+
 <dom-module id="dorel-bynder-collect-media">
   <template>
-    <iron-ajax
-      id="collect"
-      content-type="application/json"
-      method="get"
-      handle-as="json"
-      on-error="_mediaError"
-      on-response="_mediaResponse"></iron-ajax>
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-bynder-collect-media',
-      properties: {
+  class DorelBynderCollectMedia extends ReduxMixin(Polymer.Element) {
+    static get is() { return 'dorel-bynder-collect-media'; }
+    static get properties() {
+      return {
         /**
          * @name mediaId
          * @description The Bynder media ID used to retrieve assets
@@ -29,126 +24,42 @@
          */
         mediaContent: {
           type: Object,
-          notify: true,
+          statePath: function(state) {
+            return this._findImageFromState(state);
+          },
+          notify: true
         }
-      },
-      /**
-       * @name _getRandomSequence
-       * @description Generates a random sequence of characters based on a given length
-       */
-      _getRandomSequence: function (length) {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      };
+    }
 
-        for (var i = 0; i < length; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
+    /**
+     * state observer
+     * @name findImageFromState
+     * @description Everytime the state change it will return according to the conditionals
+     */
+    _findImageFromState(state) {
+      if(state && state.images && state.images.length && this.mediaId) {
+        const image = state.images.find(image => image.id === this.mediaId && image.isLoading === false)
+        if(image && this.mediaContent && this.mediaContent.id !== this.mediaId) {
+          return Object.assign({}, image);
+        } else {
+          return {};
         }
-
-        return text;
-      },
-      /**
-       * @name _getTimestamp
-       * @description Generates a timestamp
-       */
-      _getTimestamp: function () {
-        return Math.floor((new Date()).getTime() / 1000);
-      },
-      /**
-       * @name _getSignature
-       * @description Generates an OAuth1 signature
-       */
-      _getSignature: function (httpMethod, url, parameters, consumerSecret, tokenSecret) {
-        // generates a RFC 3986 encoded, BASE64 encoded HMAC-SHA1 hash
-        var rfcEncodedSignature = oauthSignature.generate(httpMethod, url, parameters, consumerSecret, tokenSecret);
-        return rfcEncodedSignature;
-      },
-      /**
-       * @name _oauthParametersToString
-       * @description Given a dictionary of parameters and an OAuth1 signature, this will reformat into a header string
-       */
-      _oauthParametersToString: function (parameters, signature) {
-        var authString = 'OAuth ';
-        parameters['oauth_signature'] = signature;
-
-        for (var item in parameters) {
-          var key = item;
-          var value = parameters[item];
-          authString += key + '="' + value + '",';
-        }
-
-        return authString;
-      },
-      /**
-       * @name _onMediaIdChange
-       * @description Requests a Bynder asset
-       */
-      _onMediaIdChange: function () {
-        if (this.mediaId && typeof this.mediaId !== 'undefined' && this.mediaId.length > 0) {
-          this._retrieveMedia();
-        }
-        else {
-          this.mediaContent = {};
-        }
-      },
-      /**
-       * @name _retrieveMedia
-       * @description Requests a Bynder asset
-       */
-      _retrieveMedia: function () {
-
-        // Initialise all of the variables needed for the request
-        var consumerKey = CONFIG.BYNDER_CONSUMER_KEY;
-        var consumerSecret = CONFIG.BYNDER_CONSUMER_KEY_SECRET;
-        var tokenKey = CONFIG.BYNDER_TOKEN_KEY;
-        var tokenKeySecret = CONFIG.BYNDER_TOKEN_KEY_SECRET;
-        var requestUrl = [CONFIG.BYNDER_API_URL, 'media', this.mediaId, '?versions=1'].join('/');
-        var httpMethod = 'GET';
-        var nonce = this._getRandomSequence(11);
-        var timestamp = this._getTimestamp();
-
-        // Set the header parameters, needed for the request and as input for generating the signature
-        var parameters = {
-          oauth_consumer_key: consumerKey,
-          oauth_token: tokenKey,
-          oauth_nonce: nonce,
-          oauth_timestamp: timestamp,
-          oauth_signature_method: "HMAC-SHA1",
-          oauth_version: "1.0",
-          versions: "1"
-        };
-
-        // Create the OAuth signature
-        var oauth_signature = this._getSignature(httpMethod, requestUrl, parameters, consumerSecret, tokenKeySecret);
-        //Generate the header string
-        var authString = this._oauthParametersToString(parameters, oauth_signature);
-
-        var params = {
-          'Authorization': authString,
-          'Accept': "*/*",
-        };
-
-        // Set the iron-ajax parameters and request data
-        var collect = this.$.collect;
-        collect.headers = params;
-        collect.url = requestUrl;
-        collect.generateRequest();
-      },
-      /**
-       * @name _mediaError
-       * @description Handles Bynder error responses
-       */
-      _mediaError: function (response) {
-        console.log('Error retrieving Bynder media:');
-        console.log(response);
-      },
-      /**
-       * @name _mediaResponse
-       * @description Handles Bynder responses
-       */
-      _mediaResponse: function (response) {
-        this.mediaContent = response.detail.response;
       }
-    });
+    }
+
+    /**
+     * @name _onMediaIdChange
+     * @description if the mediaId changes it will dispatch a action
+     */
+    _onMediaIdChange() {
+     if (this.mediaId) {
+        this.dispatch('fetchImageById', this.mediaId);
+      }
+    }
+
+  }
+  customElements.define(DorelBynderCollectMedia.is, DorelBynderCollectMedia);
   </script>
 
 </dom-module>
