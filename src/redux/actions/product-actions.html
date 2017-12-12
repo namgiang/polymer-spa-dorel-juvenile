@@ -1,28 +1,83 @@
 <script>
 (function() {
 
-function setProductCategory(categoryPage) {
-  return (dispatch) => {
-    if(!categoryPage || !categoryPage.acf || categoryPage.template !== 'product-listing') {
-      return dispatch(addProductCategory(-1));
+function requestProduct(id) {
+  return (dispatch, getState) => {
+    if (shouldFetchProduct(getState(), id)) {
+      dispatch(makeProductRequest(id))
+      return dispatch(fetchProduct(getState(), id))
     } else {
-      const categoryPicker = categoryPage.acf.magento_category_picker;
-      const category = typeof categoryPicker === 'string' ? parseInt(categoryPicker) : categoryPicker;
-      return dispatch(addProductCategory(category));
+      return Promise.resolve()
     }
   }
 }
 
-function addProductCategory(category) {
+function makeProductRequest(id) {
   return {
-    type: 'ADD_PRODUCT_CATEGORY',
-    payload: category
+    type: 'REQUEST_PRODUCT',
+    payload: id
   }
 }
 
+function fetchProduct(state, id) {
+  return dispatch => {
+    const currentLanguageCode = state.route.currentLanguage.languageCode;
+    const init = { method: 'GET', mode: 'cors', cache: 'default' };
+    const url = `${CONFIG.ECOM_URL}/rest/V1/dorel/product/${id}?language=${currentLanguageCode}`;
+    return fetch(url, init)
+      .then(handleErrors)
+      .then(response => response.json())
+      .then(json => dispatch(requestProductSucces(id, json)))
+      .catch(() => dispatch(requestProductFailed(id)))
+  }
+}
+
+function shouldFetchProduct(state, id) {
+  const product = state.product.products.find(product => product.url_key === id);
+  if (!product) {
+    return true;
+  } else if (product.isLoading) {
+    return false;
+  } else {
+    return product.notAvailable;
+  }
+}
+
+function requestProductSucces(id, products) {
+  return {
+    type: 'REQUEST_PRODUCT_SUCCES',
+    payload: products[0]
+  }
+
+}
+
+function requestProductFailed(id) {
+  return {
+    type: 'REQUEST_PRODUCT_FAILED',
+    payload: id
+  }
+}
+
+function setProductCategoryPage(categoryPage) {
+  if(!categoryPage || !categoryPage.acf || categoryPage.template !== 'product-listing') {
+    return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: -1 }
+  } else {
+    const categoryPicker = categoryPage.acf.magento_category_picker;
+    const category = typeof categoryPicker === 'string' ? parseInt(categoryPicker) : categoryPicker;
+    return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: category }
+  }
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
 
 productActions = {
-  setProductCategory
+  requestProduct,
+  setProductCategoryPage,
 }
 
 }());

@@ -12,9 +12,9 @@ function requestImage(id) {
   }
 }
 
-function addImage(id, image) {
+function requestImageSucces(id, image) {
   return {
-    type: 'ADD_IMAGE',
+    type: 'REQUEST_IMAGE_SUCCES',
     payload: {
       id,
       image
@@ -35,8 +35,8 @@ function fetchImage(id) {
     return fetch(params.requestUrl, params.init)
       .then(handleErrors)
       .then(response => response.json())
-      .then(json => dispatch(addImage(id, json)))
-      .catch(() => dispatch(imageNotAvailable(id)))
+      .then(json => dispatch(requestImageSucces(id, json)))
+      .catch(() => dispatch(requestImageFailed(id)))
   }
 }
 
@@ -66,9 +66,9 @@ function fetchImageById(id) {
   }
 }
 
-function imageNotAvailable(id) {
+function requestImageFailed(id) {
   return {
-    type: 'IMAGE_NOT_AVAILABLE',
+    type: 'REQUEST_IMAGE_FAILED',
     payload: {
       id
     }

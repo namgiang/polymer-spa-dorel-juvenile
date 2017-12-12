@@ -1,20 +1,45 @@
 <script>
   (function() {
     const initial = {
-      items: [],
-      productCatogory: -1
+      products: [],
+      productCategoryPage: -1
     };
 
     productReducer = (state = initial, action) => {
+      let products = [];
       switch (action.type) {
-        case 'ADD_PRODUCT':
-          return state;
+        case 'REQUEST_PRODUCT':
+          const tempProduct = {
+            url: action.payload,
+            sku: action.payload,
+            isLoading: true,
+            isNotAvailable: false
+          };
+          state.products.push(tempProduct);
+          return Object.assign({}, state, {
+            products: state.products
+          });
 
-        case 'ADD_PRODUCTS':
-          return state;
+        case 'REQUEST_PRODUCT_SUCCES':
+          return Object.assign({}, state, {
+            products: state.products.map(product => {
+              return product.sku === action.payload.sku || product.url === action.payload.url ?
+                Object.assign({}, action.payload, { isLoading: false, notAvailable: false }) : product;
+            })
+          });
 
-        case 'ADD_PRODUCT_CATEGORY':
-          return state;
+        case 'REQUEST_PRODUCT_FAILED':
+          return Object.assign({}, state, {
+            products: state.products.map(product => {
+              return product.sku === action.payload || product.url === action.payload ?
+                Object.assign({}, product, { isLoading: false, notAvailable: true }) : product;
+            })
+          });
+
+        case 'ADD_PRODUCT_CATEGORY_PAGE':
+          return Object.assign({}, state, {
+            productCategoryPage: action.payload
+          });
 
       default:
         return state;

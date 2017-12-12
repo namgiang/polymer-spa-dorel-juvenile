@@ -2,7 +2,6 @@
   (function() {
     const initial = {
       isLoading: false,
-      currentPage: {},
       currentRoute: {},
       currentLanguage: {},
       previousRoutes: []
@@ -17,16 +16,15 @@
             currentRoute: Object.assign({}, action.payload)
           });
 
+        case 'CURRENT_ROUTE_SET':
+          return Object.assign({}, state, {
+            isLoading: false,
+          });
+
         case 'ADD_ROUTE_TO_PREVIOUS_ROUTES':
           state.previousRoutes.push(action.payload);
           return Object.assign({}, state, {
             previousRoutes: state.previousRoutes.map(route => route)
-          });
-
-        case 'SET_CURRENT_PAGE':
-          return Object.assign({}, state, {
-            isLoading: false,
-            currentPage: Object.assign({}, action.payload)
           });
 
         case 'SET_CURRENT_LANGUAGE':

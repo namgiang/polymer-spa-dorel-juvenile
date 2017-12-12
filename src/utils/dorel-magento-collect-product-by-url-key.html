@@ -1,5 +1,5 @@
 
-<dom-module id="dorel-magento-collect-product-by-sku">
+<dom-module id="dorel-magento-collect-product-by-url-key">
   <template>
 
     <iron-ajax
@@ -12,63 +12,68 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-magento-collect-product-by-sku',
+    class DorelMagentoCollectProductByUrlKey extends ReduxMixin(Polymer.Element) {
 
-      properties: {
+      static get is() {
+        return 'dorel-magento-collect-product-by-url-key';
+      }
+      
+      static get properties() {
+        return {
+          /**
+           * @name category
+           * @description this category is inherit by the parent and
+           * will be used in the filter for the call to the magento end-point
+           */
+          category: {
+            type: Number,
+            value: 0
+          },
 
-        /**
-         * @name category
-         * @description this category is inherit by the parent and
-         * will be used in the filter for the call to the magento end-point
-         */
-        category: {
-          type: Number,
-          value: 0
-        },
+          /**
+           * @name productName
+           * @description productName represents the id (sku) of a product
+           */
+          productName: {
+            type: String
+          },
 
-        /**
-         * @name productName
-         * @description productName represents the id (sku) of a product
-         */
-        productName: {
-          type: String
-        },
+          /**
+           * @name currentProduct
+           * @description currentProduct will be used to send the correct data to the parent
+           */
+          currentProduct: {
+            type: Object,
+            notify: true
+          },
 
-        /**
-         * @name currentProduct
-         * @description currentProduct will be used to send the correct data to the parent
-         */
-        currentProduct: {
-          type: Object,
-          notify: true
-        },
+          /**
+           * @name retrievingProduct
+           * @description loading indicator true if it is loading
+           */
+          retrievingProduct: {
+            type: Boolean,
+            notify: true,
+            value: false
+          },
 
-        /**
-         * @name retrievingProduct
-         * @description loading indicator true if it is loading
-         */
-        retrievingProduct: {
-          type: Boolean,
-          notify: true,
-          value: false
-        },
+          /**
+           * @attribute
+           * @name appCache
+           * @description the temporary cache of the application,
+           * contains data that used to be contained by the globalsManager
+           */
+          appCache: {
+            type: Object
+          }
+        };
+      }
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
-        }
-
-      },
-
-      observers: [
-        '_init(productName, appCache.currentLanguage)'
-      ],
+      static get observers() {
+        return [
+          '_init(productName, appCache.currentLanguage)'
+        ]
+      }
 
       /**
        * @name _init
@@ -78,7 +83,7 @@
        * @param token - String
        * @param colorMap - Array
        */
-      _init: function(productName, currentLanguage) {
+      _init(productName, currentLanguage) {
         // if category or productName is empty we can't make the call return
         if(!productName || !currentLanguage) {
           return;
@@ -101,26 +106,26 @@
         } else {
           return this._getProduct(productName);
         }
-      },
+      }
 
       /**
        * @name _getProduct
        * @description make call to end-point to retreive product
        * @param category - Number
        */
-      _getProduct: function(productName) {
+      _getProduct(productName) {
         var productsEl = this.$.product;
         var currentLanguageCode = this.get('appCache.currentLanguage.languageCode');
         productsEl.url = CONFIG.ECOM_URL + '/rest/V1/dorel/product/' + productName + '?language=' + currentLanguageCode;
         productsEl.generateRequest();
-      },
+      }
 
       /**
        * @name _productResponse
        * @description response of the _getProduct call;
        * @param response
        */
-      _productResponse: function(response) {
+      _productResponse(response) {
         //set newProducts Array from response
         var response = response.detail.response || [];
         var newProducts = response.map(function(product) {
@@ -137,14 +142,14 @@
         } else {
           return this._setProducts(newProducts)
         }
-      },
+      }
 
       /**
        * @name _setProducts
        * @description will merge the old and new products and remove the duplicates and set the global products
        * @param newProducts - Array
        */
-      _setProducts: function(newProducts) {
+      _setProducts(newProducts) {
         //set the current product with the first Object from Array
         this._setCurrentProduct(newProducts[0]);
 
@@ -154,8 +159,11 @@
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
         var products = this._mergeArrays(oldProducts, newProducts);
         // set new array of products in the global saved products
-        this.fire('setAppCache', { value: products, path: 'product.products' });
-      },
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          value: products,
+          path: 'product.products'
+        }}));
+      }
 
       /**
        * @name _mergeArrays
@@ -163,29 +171,33 @@
        * @param array1 - Array
        * @param array2 - Array
        */
-      _mergeArrays: function(array1, array2) {
+      _mergeArrays(array1, array2) {
         //check if item exists else filter it before merging arrays (oldProducts / newProducts)
         return array1.concat(array2.filter(function(item, index) {
             return array1.some(function(oldItem) {
               return oldItem.id === item.id;
             });
         }));
-      },
+      }
 
       /**
        * @name _setCurrentProduct
        * @description this method will set global current product;
        * @param product - Object
        */
-      _setCurrentProduct: function(product) {
+      _setCurrentProduct(product) {
         //set current product in appCache so meta-data will be set
-        this.fire('setAppCache', { value: product, path: 'current.product' });
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          value: product,
+          path: 'current.product'
+        }}));
+
         //set current product so it will be available for parent
         this.set('currentProduct', product);
         //set retrievingProduct to false so parent will know that product is retrieved
         this.set('retrievingProduct', false);
       }
-
-    });
+    }
+    customElements.define(DorelMagentoCollectProductByUrlKey.is, DorelMagentoCollectProductByUrlKey);
   </script>
 </dom-module>
