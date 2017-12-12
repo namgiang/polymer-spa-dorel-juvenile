@@ -215,7 +215,8 @@
           product: {
             type: Object,
             statePath: function(state) {
-              return state.product.products.find(product => product.url === this.routeData.productName)
+              const product = state.product.products.find(product => product.url === this.routeData.productName);
+              return product ? product : { isLoading: true };
             }
           },
 
@@ -253,7 +254,7 @@
        * @returns Boolean
        */
       _shouldShowProduct(product) {
-        return product.notAvailable === false && product.isLoading === false;
+        return product && product.notAvailable === false && product.isLoading === false;
       }
 
       /**

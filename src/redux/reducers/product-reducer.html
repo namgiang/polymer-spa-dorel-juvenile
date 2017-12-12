@@ -2,6 +2,7 @@
   (function() {
     const initial = {
       products: [],
+      requestedCategories: [],
       productCategoryPage: -1
     };
 
@@ -9,15 +10,14 @@
       let products = [];
       switch (action.type) {
         case 'REQUEST_PRODUCT':
-          const tempProduct = {
+          state.products.push({
             url: action.payload,
             sku: action.payload,
             isLoading: true,
             isNotAvailable: false
-          };
-          state.products.push(tempProduct);
+          });
           return Object.assign({}, state, {
-            products: state.products
+            products: state.products.map(product => product)
           });
 
         case 'REQUEST_PRODUCT_SUCCES':
@@ -33,6 +33,45 @@
             products: state.products.map(product => {
               return product.sku === action.payload || product.url === action.payload ?
                 Object.assign({}, product, { isLoading: false, notAvailable: true }) : product;
+            })
+          });
+
+        case 'REQUEST_PRODUCT_SUCCESS':
+          return Object.assign({}, state, {
+            products: state.products.map(product => {
+              return product.sku === action.payload.sku || product.url === action.payload.url ?
+                Object.assign({}, action.payload, { isLoading: false, notAvailable: false }) : product;
+            })
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORY':
+          state.requestedCategories.push({
+            id: action.payload,
+            isLoading: true,
+            notAvailable: false
+          });
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => category)
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORY_SUCCESS':
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => {
+              return category.id === action.payload.category ?
+                Object.assign({}, category, { isLoading: false }) : category;
+            }),
+            products: state.products.concat(action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: false });
+            })).filter(newItem => {
+              return !state.products.some(oldItem => oldItem.id === newItem.id || oldItem.url === newItem.url)
+            })
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORY_FAILED':
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => {
+              return category.id === action.payload.category ?
+                Object.assign({}, category, { isLoading: false, isNotAvailable: true }) : category;
             })
           });
 
