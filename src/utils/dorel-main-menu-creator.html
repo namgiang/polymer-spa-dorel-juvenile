@@ -151,7 +151,8 @@
 
       var category = value.detail.category;
       // create a new mainMenu and append
-      var mainMenu = this.get('appCache.mainMenu').map(function(menuItem) {
+      var oldMenu = this.get('appCache.mainMenu') || [];
+      var mainMenu = oldMenu.map(function(menuItem) {
         if(menuItem.category_id === category) {
           menuItem.sub_category_items = products.map(function(product) {
             var newItem = {
