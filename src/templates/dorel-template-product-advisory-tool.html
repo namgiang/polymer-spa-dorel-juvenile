@@ -2,8 +2,6 @@
 <link rel="import" href="../organisms/dorel-car-fitting-selection.html">
 <link rel="import" href="../organisms/dorel-car-fitting-results.html">
 
-<link rel="import" href="../utils/dorel-magento-collect-product-by-url-key.html">
-
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
@@ -29,13 +27,6 @@
 
     <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
 
-    <dorel-magento-collect-product-by-url-key
-      app-cache="[[ appCache ]]"
-      current-product="{{ productData }}"
-      product-name="{{ requestedProductName }}"
-      retrieving-product="{{ retrievingProduct }}">
-    </dorel-magento-collect-product-by-url-key>
-
     <dorel-car-fitting-nav
       app-cache="[[ appCache ]]"
       load-complete="[[ loadComplete ]]"
@@ -60,7 +51,7 @@
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingSelection }}">
     </dorel-car-fitting-selection>
-    
+
    <dorel-car-fitting-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingAddCar.isCurrent ]]"
@@ -82,11 +73,11 @@
   <script>
     /* global Polymer */
     /* global customElements */
-    class DorelTemplateProductAdvisoryTool extends Polymer.Element {
+    class DorelTemplateProductAdvisoryTool extends ReduxMixin(Polymer.Element) {
       static get is() {
         return 'dorel-template-product-advisory-tool';
       }
-      
+
       static get properties() {
         return {
           stepController: {
@@ -105,13 +96,14 @@
           },
           currentStepTitle: String,
           currentProgress: Number,
+          requestedProductName: String,
           productData: {
             type: Object,
-            value: () => {
-              return {}
+            statePath: function(state) {
+              const product = state.product.products.find(product => product.url === this.requestedProductName)
+              return product ? product : { isLoading: true };
             }
           },
-          requestedProductName: String,
           stepData: {
             type: Object,
             value: () => {
@@ -133,7 +125,7 @@
                     form: {
                       form_groups: [
                         {
-                          label: 'car_fitting_selection#brand_input_label', 
+                          label: 'car_fitting_selection#brand_input_label',
                           default_option: {
                             label: 'Choose a brand',
                             value: ''
@@ -188,7 +180,7 @@
                     form: {
                       form_groups: [
                         {
-                          label: 'car_fitting_selection#brand_input_label', 
+                          label: 'car_fitting_selection#brand_input_label',
                           default_option: {
                             label: 'Choose a brand',
                             value: ''
@@ -257,10 +249,23 @@
 
       static get observers() {
         return [
-            'setCurrentStep(stepController.currentStep)'
+            'setCurrentStep(stepController.currentStep)',
+            '_productNameChanged(requestedProductName)'
         ];
       }
-      
+
+      /**
+       * @name _productNameChanged
+       * @description if the productName changes dispatch an action to retrieve product
+       * @param product - Object
+       * @returns Boolean
+       */
+      _productNameChanged(productName) {
+        if(productName) {
+          this.dispatch('requestProduct', productName);
+        }
+      }
+
       error(message) {
         console.error(message);
       }
