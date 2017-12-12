@@ -1,7 +1,7 @@
 <link rel="import" href="../organisms/dorel-car-fitting-nav.html">
 <link rel="import" href="../organisms/dorel-car-fitting-selection.html">
 <link rel="import" href="../organisms/dorel-car-fitting-results.html">
-
+<link rel="import" href="../organisms/dorel-car-fitting-product-selector.html">
 <link rel="import" href="../utils/dorel-magento-collect-product-by-sku.html">
 
 <dom-module id="dorel-template-product-advisory-tool">
@@ -53,21 +53,27 @@
       tail="{{ subroute }}">
     </app-route>
 
-   <dorel-car-fitting-selection
+    <dorel-car-fitting-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingSelection.isCurrent ]]"
       product-name="[[ productData.sku ]]"
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingSelection }}">
     </dorel-car-fitting-selection>
-    
-   <dorel-car-fitting-selection
+
+    <dorel-car-fitting-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingAddCar.isCurrent ]]"
       product-name="[[ productData.sku ]]"
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingAddCar }}">
     </dorel-car-fitting-selection>
+
+    <dorel-car-fitting-product-selector
+      hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
+      product-data="{{ productData }}"
+      car-data="{{ carData }}">
+    </dorel-car-fitting-product-selector>
 
     <dorel-car-fitting-results
       car-data="{{ carData }}"
@@ -86,7 +92,7 @@
       static get is() {
         return 'dorel-template-product-advisory-tool';
       }
-      
+
       static get properties() {
         return {
           stepController: {
@@ -133,7 +139,7 @@
                     form: {
                       form_groups: [
                         {
-                          label: 'car_fitting_selection#brand_input_label', 
+                          label: 'car_fitting_selection#brand_input_label',
                           default_option: {
                             label: 'Choose a brand',
                             value: ''
@@ -188,7 +194,7 @@
                     form: {
                       form_groups: [
                         {
-                          label: 'car_fitting_selection#brand_input_label', 
+                          label: 'car_fitting_selection#brand_input_label',
                           default_option: {
                             label: 'Choose a brand',
                             value: ''
@@ -260,7 +266,7 @@
             'setCurrentStep(stepController.currentStep)'
         ];
       }
-      
+
       error(message) {
         console.error(message);
       }
