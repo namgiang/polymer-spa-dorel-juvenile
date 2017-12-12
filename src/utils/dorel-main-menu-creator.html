@@ -57,27 +57,29 @@
       this.addEventListener('newProducts', this._setMenuProducts);
     }
 
-    async _createMenuDataModel(mainMenu) {
+    _createMenuDataModel(mainMenu) {
       if(!mainMenu) {
         return;
       }
-      var mainMenu = await this._createLinks(mainMenu);
-      this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-        path: 'mainMenu',
-        value: mainMenu
-      }}));
-
+      new Promise((resolve, reject) => {
+        resolve(this._createLinks(mainMenu));
+      }).then(mainMenu => {
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          path: 'mainMenu',
+          value: mainMenu
+        }}));
+        return this.dispatch('addMenu', mainMenu);
+      });
       this.dispatch('addMenu', mainMenu);
-
     }
 
     async _createLinks(menuItems) {
-      const promises = menuItems.map(async(item) => {
-        let page = await this.$.collectPageEl.getPageById(item.page_object.ID);
-        if(!page) {
-          return false;
-        }
-        return await this._createMenuItem(item, page);
+      const promises = menuItems.map((item) => {
+        return new Promise((resolve, reject) => {
+          resolve(this.$.collectPageEl.getPageById(item.page_object.ID));
+        }).then((page) => {
+          return this._createMenuItem(item, page);
+        });
       });
       const links = await Promise.all(promises);
       return links;
@@ -88,12 +90,12 @@
       item.link = this.cleanUrlToPath(page.link);
       item.opened = false;
       if(item.dropdown === true && item.dropdown_items && item.dropdown_items.length) {
-        const promises = await item.dropdown_items.map(async (_item) => {
-          let page = await this.$.collectPageEl.getPageById(_item.page_object.ID);
-          if(!page) {
-            return false;
-          }
-          return await this._createMenuItem(_item, page);
+        const promises = item.dropdown_items.map((_item) => {
+          return new Promise((resolve, reject) => {
+            resolve(this.$.collectPageEl.getPageById(_item.page_object.ID));
+          }).then((page) => {
+            return this._createMenuItem(_item, page);
+          });
         });
         const dropdown_items = await Promise.all(promises);
         item.dropdown_items = dropdown_items;
@@ -149,7 +151,8 @@
 
       var category = value.detail.category;
       // create a new mainMenu and append
-      var mainMenu = this.get('appCache.mainMenu').map(function(menuItem) {
+      var oldMenu = this.get('appCache.mainMenu') || [];
+      var mainMenu = oldMenu.map(function(menuItem) {
         if(menuItem.category_id === category) {
           menuItem.sub_category_items = products.map(function(product) {
             var newItem = {
