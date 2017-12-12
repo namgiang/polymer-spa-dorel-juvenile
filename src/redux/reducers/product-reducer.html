@@ -62,9 +62,9 @@
             }),
             products: state.products.concat(action.payload.products.map(product => {
               return Object.assign({}, product, { isLoading: false, notAvailable: false });
-            })).filter(newItem => {
+            }).filter(newItem => {
               return !state.products.some(oldItem => oldItem.id === newItem.id || oldItem.url === newItem.url)
-            })
+            }))
           });
 
         case 'REQUEST_PRODUCTS_BY_CATEGORY_FAILED':
