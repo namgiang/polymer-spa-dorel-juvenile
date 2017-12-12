@@ -10,43 +10,46 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-multilingual-manager',
+    class DorelMultilingualManager extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'dorel-multilingual-manager'
+      }
 
-      properties: {
+      static get properties() {
+        return {
+          /**
+           * @name continentsData
+           * @description will contain data that includes domain countries and languages
+           */
+          continentsData: {
+            type: Array,
+            notify: true
+          },
 
-        /**
-         * @name continentsData
-         * @description will contain data that includes domain countries and languages
-         */
-        continentsData: {
-          type: Array,
-          notify: true
-        },
-
-        /**
-         * @name currentLanguage
-         * @description current state (language and country) of the application
-         * TODO: Need be connected to the route in the mutlilingual epic
-         */
-        currentLanguage: {
-          type: Object,
-          value: {}
-        },
+          /**
+           * @name currentLanguage
+           * @description current state (language and country) of the application
+           */
+          currentLanguage: {
+            type: Object,
+            value: {}
+          },
 
 
-        route: {
-          type: Object
-        }
+          route: {
+            type: Object
+          }
+        };
+      }
 
-      },
+      static get observers() {
+        return [
+          'routeChanged(route)',
+          'setCurrent(continentsData)'
+        ]
+      }
 
-      observers: [
-        'routeChanged(route)',
-        'setCurrent(continentsData)'
-      ],
-
-      routeChanged: function(route) {
+      routeChanged(route) {
         var urlSegments = route.path.split('/').filter(function(segment) {
           return segment && segment !== '';
         });
@@ -63,24 +66,34 @@
         var language = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[1] : CONFIG.LOCALE.COUNTRY_CODE;
 
         if(this._isCountryOrLanguageChanged(country, language)) {
-            this.fire('setAppCache', { path: 'currentLanguage' , value: {
-              countryCode: country,
-              languageCode: language,
-              path: firstUrlSegment
-            } });
-        }
-      },
+          const currentLanguage = {
+            countryCode: country,
+            languageCode: language,
+            path: firstUrlSegment
+          };
 
-      _isCountryOrLanguageChanged: function(country, language) {
+          this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+            path: 'currentLanguage',
+            value: currentLanguage
+          }}));
+
+          this.dispatch('setCurrentLanguage', currentLanguage);
+        }
+      }
+
+      _isCountryOrLanguageChanged(country, language) {
         var currentLanguage = this.get('currentLanguage');
         return !Boolean(currentLanguage && currentLanguage.languageCode === language && currentLanguage.countryCode === country);
-      },
+      }
 
-      setCurrent: function(continentsData) {
+      setCurrent(continentsData) {
         if(!continentsData || !continentsData.length) {
           return;
         }
         var currentLanguage = this.get('currentLanguage');
+        if(!currentLanguage) {
+          return;
+        }
         var continent = this.continentsData.find(function(continent) {
           return continent.countries.some(function(country) {
             return country.iso === currentLanguage.countryCode;
@@ -105,11 +118,14 @@
           country: country,
           language: language
         });
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          path: 'currentLanguage',
+          value: extendedCurrentLanguage
+        }}));
 
-        this.fire('setAppCache', { path: 'currentLanguage' , value: extendedCurrentLanguage });
-      },
-
-
-    });
+        this.dispatch('setCurrentLanguage', extendedCurrentLanguage);
+      }
+    };
+    customElements.define(DorelMultilingualManager.is, DorelMultilingualManager);
   </script>
 </dom-module>

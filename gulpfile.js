@@ -58,7 +58,7 @@ gulp.task('build:es5', function () {
       log_file.write(util.format(d) + '\n');
       log_stdout.write(util.format(d) + '\n');
     };
-    
+
     console.warn = (d) => { //
       log_file.write(util.format(d) + '\n');
       log_stdout.write(util.format(d) + '\n');
@@ -154,7 +154,7 @@ gulp.task('build:es5', function () {
       // This will bundle dependencies into your fragments so you can lazy
       // load them.
       buildStream = buildStream.pipe(polymerProject.bundler());
-      
+
       buildStream = buildStream.pipe(polymerProject.addCustomElementsEs5Adapter())
 
       // Okay, time to pipe to the build directory
@@ -185,7 +185,7 @@ gulp.task('build:es5', function () {
 });
 
 gulp.task('build:es6', function(done) {
-  
+
   mkdirp(__dirname + '/build/log/', (err) => {
     if (err) console.error(err)
     else console.log('Log directory created!')
