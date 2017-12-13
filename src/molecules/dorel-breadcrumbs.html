@@ -71,7 +71,8 @@
             itemprop="itemListElement" itemscope
             itemtype="http://schema.org/ListItem">
           <a itemprop="item" href="[[ breadcrumb.url ]]">
-          <span itemprop="name">[[ breadcrumb.label ]]</span></a>
+            <span itemprop="name">[[ breadcrumb.label ]]</span>
+          </a>
           <meta itemprop="position" content="[[ setIndex(index) ]]" />
         </li>
       </template>
@@ -163,8 +164,9 @@
       _getUrl: function(index, array) {
         var newArray = array.filter(function(path, _index) {
           return Boolean(_index <= index)
-        })
-        return newArray.join('/');
+        });
+
+        return (index === 1) ? newArray.join('/') + '/' : newArray.join('/');
       },
 
       /**
