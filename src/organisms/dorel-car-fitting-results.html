@@ -169,6 +169,18 @@
         padding-left: 0.5rem;
         font-weight: bold;
       }
+      .tether {
+        position: absolute;
+        width: 150px;
+        height: auto;
+        border-radius: 10px;
+        /*padding: 25px;*/
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        display: none;
+        @apply(--theme-typography-1);
+      }
       .fit-title {
         margin-left: 0.5rem;
       }
@@ -291,13 +303,18 @@
       <template is="dom-repeat" items="[[ car.result.carseat_positions ]]" as="seat" restamp="true">
         <div id="car_[[ carIndex ]]_seat_[[ seat.seat_position ]]_notification" class="notification">
           <div class="effect7">
-            <object data="/assets/images/car-fitting/icon_orange.svg" type="image/svg+xml"></object>
+            <object data="/assets/images/car-fitting/icon_[[ seat.icon ]].svg" type="image/svg+xml"></object>
             <strong class="notification-title">Safety warning</strong>
             <ul>
               <template is="dom-repeat" items="[[ seat.notices ]]" as="notification" restamp="true">
                 <li>[[ localize(notification) ]]</li>
               </template>
             </ul>
+          </div>
+        </div>
+        <div id="car_[[ carIndex ]]_seat_[[ seat.seat_position ]]_tether" class="tether">
+          <div class="effect7">
+            <img src="/assets/images/car-fitting/[[ seat.top_tether_position ]].jpeg">
           </div>
         </div>
       </template>
@@ -397,6 +414,8 @@
               svgCarNode.attr({
                 opacity: 0
               });
+              svgCarNode.select('#small_car').attr({'visibility': 'hidden'});
+              svgCarNode.select('#normal_car').attr({'visibility': 'hidden'});
               const seats = ['1', '2', '3', '4', '5', '6', '7'];
               for(var seat in seats) {
                 const seatNode = svgCarNode.select(`#seat_${seats[seat]}`);
@@ -410,11 +429,22 @@
                   svgCarNode.select(`#seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
                 }
               }
+              svgCarNode.select(`#${data.car_body_configuration}`).attr({'visibility': 'visible'});
               data.carseat_positions.forEach(function(item) {
                 if(item.icon === 'green') {
                   self.iconsUsed.icon_green.used = true;
                   svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
                   svgCarNode.select(`#seat_${item.seat_position} #icon_green`).attr({'visibility': 'visible'});
+                  const greenIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_green #hover_area`);
+                  const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
+                  greenIcon.mousemove(function(event) {
+                    notice.style.left = `${event.clientX + 20}px`;
+                    notice.style.top = `${event.clientY - 80}px`;
+                    notice.style.display = 'block';
+                  });
+                  greenIcon.mouseout(function(event) {
+                    notice.style.display = 'none';
+                  });
                 }
                 if(item.icon === 'red') {
                   self.iconsUsed.icon_red.used = true;
@@ -436,9 +466,19 @@
                     notice.style.display = 'none';
                   });
                 }
-                if(item.icon === 'tether') {
-                  this.iconsUsed.icon_top_tether.used = true;
+                if(item.top_tether_position !== '') {
+                  self.iconsUsed.icon_top_tether.used = true;
                   svgCarNode.select(`#seat_${item.seat_position} #icon_tether`).attr({'visibility': 'visible'});
+                  const tetherIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_tether #hover_area`);
+                  const tether = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_tether`);
+                  tetherIcon.mousemove(function(event) {
+                    tether.style.left = `${event.clientX + 20}px`;
+                    tether.style.top = `${event.clientY - 80}px`;
+                    tether.style.display = 'block';
+                  });
+                  tetherIcon.mouseout(function(event) {
+                    tether.style.display = 'none';
+                  });
                 }
               });
               self.set('iconsUsed2', self.renderLegend());
@@ -453,7 +493,7 @@
               const container = this.shadowRoot.querySelector(`#svg_container_${carIndex}`);
               container.innerHTML = `<svg id="car_${carIndex}" class="svg_node"></svg>`;
               svgCarNode = Snap(this.shadowRoot.querySelector(`#car_${carIndex}`));
-              Snap.load(`/assets/images/car-fitting/${data.car_body_configuration}.svg`, onSVGLoaded);
+              Snap.load(`/assets/images/car-fitting/car_graphics.svg`, onSVGLoaded);
             }, 0);
           }
         }

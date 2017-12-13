@@ -1,7 +1,7 @@
 <link rel="import" href="../organisms/dorel-car-fitting-nav.html">
 <link rel="import" href="../organisms/dorel-car-fitting-selection.html">
 <link rel="import" href="../organisms/dorel-car-fitting-results.html">
-
+<link rel="import" href="../organisms/dorel-car-fitting-product-selector.html">
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
@@ -44,7 +44,7 @@
       tail="{{ subroute }}">
     </app-route>
 
-   <dorel-car-fitting-selection
+    <dorel-car-fitting-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingSelection.isCurrent ]]"
       product-name="[[ productData.sku ]]"
@@ -59,6 +59,12 @@
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingAddCar }}">
     </dorel-car-fitting-selection>
+
+    <dorel-car-fitting-product-selector
+      hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
+      product-data="{{ productData }}"
+      car-data="{{ carData }}">
+    </dorel-car-fitting-product-selector>
 
     <dorel-car-fitting-results
       car-data="{{ carData }}"
