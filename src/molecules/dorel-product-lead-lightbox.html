@@ -230,7 +230,7 @@
           <paper-dialog-scrollable>
 
             <template is="dom-if"
-                      if="[[_hasStoreLocatorLink(storeLocatorLink)]]">
+                      if="[[_hasStoreLocatorPage(storeLocatorPage)]]">
               <dorel-layout-container>
                 <dorel-layout-row align="center">
                   <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
@@ -239,7 +239,7 @@
                         type="primary"
                         title="{{ localize('Find_a_Store') }}"
                         on-click="[[_goToStoreLocator]]"
-                        link="[[storeLocatorLink]]"
+                        link="[[_createStoreLocatorLink(storeLocatorPage)]]"
                         size="medium"
                         icon="dorel-icons:chevron-right"
                         gtm-action="click"
@@ -309,7 +309,7 @@
   </template>
 
   <script>
-    class DorelProductLeadLightbox extends Polymer.mixinBehaviors([DorelMultilingualBehavior, TemplateBehaviors, OverlayBehavior], Polymer.Element) {
+    class DorelProductLeadLightbox extends Polymer.mixinBehaviors([DorelMultilingualBehavior, TemplateBehaviors, OverlayBehavior, ConditionalBehaviors], Polymer.Element) {
 
       static get is() { return 'dorel-product-lead-lightbox'; }
 
@@ -330,8 +330,9 @@
             value: () => ({})
           },
 
-          storeLocatorLink: {
-            type: String
+          storeLocatorPageObject: {
+            type: Object,
+            value: () => ({})
           }
         }
       }
@@ -379,9 +380,34 @@
        * @returns {boolean}
        */
       _hasStoreLocatorLink(link) {
+        debugger;
         return (typeof link !== 'undefined' || link !== '');
       }
 
+      /**
+       * Checks to see if there is a store locator page
+       *
+       * @param {string} store locator link set on the attribute
+       * @returns {boolean}
+       */
+      _hasStoreLocatorPage(pageObject) {
+        return (typeof pageObject !== 'undefined' && pageObject !== '' && this._hasProperties(pageObject));
+      }
+
+      /**
+       * creates the link for the store locator with the given page object
+       *
+       * @param {string} the complete storeLocator pageObject
+       * @return {string} newly formed url of the link
+       */
+      _createStoreLocatorLink(pageObject) {
+        var urlArr = window.location.href.split('/');
+        return urlArr[0] + '//' + urlArr[2] + '/' + urlArr[3] + '/' + pageObject.post_name;
+      }
+
+      /**
+       * when the store locator link is clicked close the modal
+       */
       _goToStoreLocator() {
         this.$.lightbox.close();
       }
