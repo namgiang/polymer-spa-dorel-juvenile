@@ -209,7 +209,10 @@ gulp.task('build:es6', function(done) {
     };
   });
 
-  gulp.src('./**/*', '!./build')
+  gulp.src([
+    './**/*',
+    '!./build'
+  ])
   .pipe(gulp.dest('build/es6'))
   .on('end', () => console.log('ES6 Build complete!'));
   done();
