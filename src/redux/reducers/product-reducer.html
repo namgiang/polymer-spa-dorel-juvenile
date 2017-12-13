@@ -75,6 +75,39 @@
             })
           });
 
+        case 'REQUEST_PRODUCTS_BY_SKU':
+          const tempProducts = action.payload.map(sku => {
+            return Object.assign({}, {
+              sku: sku,
+              isLoading: true,
+              notAvailable: false
+            });
+          })
+          return Object.assign({}, state, {
+            products: state.products.concat(tempProducts).filter(newItem => {
+              return !state.products.some(oldItem => oldItem.sku === newItem.sku && newItem.isLoading)
+            })
+          });
+
+        case 'REQUEST_PRODUCTS_BY_SKU_SUCCESS':
+
+          return Object.assign({}, state, {
+            products: action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: false })
+            }).concat(state.products.filter(newItem => {
+              return !state.products.some(oldItem => oldItem.sku === newItem.sku && oldItem.isLoading)
+            }))
+          });
+
+        case 'REQUEST_PRODUCTS_BY_SKU_FAILED':
+          return Object.assign({}, state, {
+            products: action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: true })
+            }).concat(state.products.filter(newItem => {
+              return !state.products.some(oldItem => oldItem.sku === newItem.sku && oldItem.isLoading)
+            }))
+          });
+
         case 'ADD_PRODUCT_CATEGORY_PAGE':
           return Object.assign({}, state, {
             productCategoryPage: action.payload
