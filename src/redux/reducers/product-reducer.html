@@ -101,8 +101,8 @@
 
         case 'REQUEST_PRODUCTS_BY_SKU_FAILED':
           return Object.assign({}, state, {
-            products: action.payload.products.map(product => {
-              return Object.assign({}, product, { isLoading: false, notAvailable: true })
+            products: action.payload.map(sku => {
+              return Object.assign({}, { sku, isLoading: false, notAvailable: true })
             }).concat(state.products.filter(newItem => {
               return !state.products.some(oldItem => oldItem.sku === newItem.sku && oldItem.isLoading)
             }))
