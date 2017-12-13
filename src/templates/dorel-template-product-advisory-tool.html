@@ -2,8 +2,6 @@
 <link rel="import" href="../organisms/dorel-car-fitting-selection.html">
 <link rel="import" href="../organisms/dorel-car-fitting-results.html">
 <link rel="import" href="../organisms/dorel-car-fitting-product-selector.html">
-<link rel="import" href="../utils/dorel-magento-collect-product-by-sku.html">
-
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
@@ -28,13 +26,6 @@
     </style>
 
     <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
-
-    <dorel-magento-collect-product-by-sku
-      app-cache="[[ appCache ]]"
-      current-product="{{ productData }}"
-      product-name="{{ requestedProductName }}"
-      retrieving-product="{{ retrievingProduct }}">
-    </dorel-magento-collect-product-by-sku>
 
     <dorel-car-fitting-nav
       app-cache="[[ appCache ]]"
@@ -61,7 +52,7 @@
       step-data="{{ stepData.carFittingSelection }}">
     </dorel-car-fitting-selection>
 
-    <dorel-car-fitting-selection
+   <dorel-car-fitting-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingAddCar.isCurrent ]]"
       product-name="[[ productData.sku ]]"
@@ -88,7 +79,7 @@
   <script>
     /* global Polymer */
     /* global customElements */
-    class DorelTemplateProductAdvisoryTool extends Polymer.Element {
+    class DorelTemplateProductAdvisoryTool extends ReduxMixin(Polymer.Element) {
       static get is() {
         return 'dorel-template-product-advisory-tool';
       }
@@ -111,13 +102,14 @@
           },
           currentStepTitle: String,
           currentProgress: Number,
+          requestedProductName: String,
           productData: {
             type: Object,
-            value: () => {
-              return {}
+            statePath: function(state) {
+              const product = state.product.products.find(product => product.url === this.requestedProductName)
+              return product ? product : { isLoading: true };
             }
           },
-          requestedProductName: String,
           stepData: {
             type: Object,
             value: () => {
@@ -263,8 +255,21 @@
 
       static get observers() {
         return [
-            'setCurrentStep(stepController.currentStep)'
+            'setCurrentStep(stepController.currentStep)',
+            '_productNameChanged(requestedProductName)'
         ];
+      }
+
+      /**
+       * @name _productNameChanged
+       * @description if the productName changes dispatch an action to retrieve product
+       * @param product - Object
+       * @returns Boolean
+       */
+      _productNameChanged(productName) {
+        if(productName) {
+          this.dispatch('requestProduct', productName);
+        }
       }
 
       error(message) {

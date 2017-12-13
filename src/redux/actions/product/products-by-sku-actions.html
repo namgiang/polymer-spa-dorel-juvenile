@@ -1,0 +1,77 @@
+<script>
+(function() {
+
+
+  function requestProductsBySku(skuList) {
+    return (dispatch, getState) => {
+      const remainingSku = skuList.filter(sku => {
+         return !getState().product.products.some(product => {
+           return product.sku === sku;
+         })
+      });
+      if (remainingSku) {
+        dispatch(makeProductsRequest(remainingSku))
+        return dispatch(fetchProductsBySku(getState(), remainingSku))
+      } else {
+        return Promise.resolve()
+      }
+    }
+  }
+
+  function makeProductsRequest(skuList) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_SKU',
+      payload: skuList
+    }
+  }
+
+  function fetchProductsBySku(state, skuList) {
+    const skuString = skuList.join(',');
+    return dispatch => {
+      const currentLanguageCode = state.route.currentLanguage.languageCode;
+      const init = { method: 'GET', mode: 'cors', cache: 'default' };
+      //TODO ADD LANGUAGE if end-point supports it - &language=${currentLanguageCode}  
+      const url = `${CONFIG.ECOM_URL}/rest/V1/dorel/productcollection?sku_list=${skuString}`;
+      return fetch(url, init)
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(json => dispatch(requestProductsSucces(skuList, json)))
+        .catch(() => dispatch(requestProductsFailed(skuList)))
+    }
+  }
+
+  function requestProductsSucces(sku, products) {
+    if(products.length) {
+      return {
+        type: 'REQUEST_PRODUCTS_BY_SKU_SUCCESS',
+        payload: {
+          products,
+          sku
+        }
+      }
+    } else {
+      return (dispatch) => {
+        return dispatch(requestProductsFailed(sku))
+      }
+    }
+  }
+
+  function requestProductsFailed(sku) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_SKU_FAILED',
+      payload: sku
+    }
+  }
+
+  function handleErrors(response) {
+      if (!response.ok) {
+          throw Error(response.statusText);
+      }
+      return response;
+  }
+
+  productBySkuActions = {
+    requestProductsBySku
+  }
+}());
+</script>

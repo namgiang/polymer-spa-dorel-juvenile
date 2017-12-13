@@ -6,7 +6,6 @@
 <link rel="import" href="../organisms/dorel-section-product-showcase.html">
 <link rel="import" href="../organisms/dorel-section-product-video.html">
 <link rel="import" href="../organisms/dorel-section-product-usps.html">
-<link rel="import" href="../utils/dorel-magento-collect-product-by-sku.html">
 <link rel="import" href="dorel-template-404.html">
 
 <dom-module id="dorel-template-product-detail">
@@ -61,12 +60,6 @@
 
     </style>
 
-    <dorel-magento-collect-product-by-sku
-      product-name="[[ routeData.productName ]]"
-      current-product="{{ product }}"
-      app-cache="[[ appCache ]]"
-      retrieving-product="{{ retrievingProduct }}"></dorel-magento-collect-product-by-sku>
-
     <!-- define routing for products -->
     <app-route
       route="{{ route }}"
@@ -74,9 +67,9 @@
       data="{{ routeData }}"
       tail="{{ subroute }}"></app-route>
 
-    <template is="dom-if" if="[[ retrievingProduct ]]">
+    <template is="dom-if" if="[[ product.isLoading ]]">
       <div class="loading-wrapper">
-        <dorel-loader loading="[[ retrievingProduct ]]"></dorel-loader>
+        <dorel-loader loading="[[ product.isLoading ]]"></dorel-loader>
       </div>
     </template>
 
@@ -84,13 +77,13 @@
 
       <template
         is="dom-if"
-        if="[[ _isProductNotSet(product, retrievingProduct) ]]">
+        if="[[ product.notAvailable ]]">
         <dorel-template-404 name="404"></dorel-template-404>
       </template>
 
       <template
         is="dom-if"
-        if="[[ _isProductSet(product, retrievingProduct) ]]">
+        if="[[ _shouldShowProduct(product) ]]">
 
         <template
           is="dom-if"
@@ -166,7 +159,7 @@
   </template>
 
   <script>
-    class DorelTemplateProductDetail extends Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element) {
+    class DorelTemplateProductDetail extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element)) {
 
       static get is() { return 'dorel-template-product-detail'; }
 
@@ -211,19 +204,14 @@
           },
 
           /**
-           * a Boolean that will be used to show or hide the page
-           */
-          retrievingProduct: {
-            type: Boolean,
-            value: true
-          },
-
-          /**
            * the current product object
            */
           product: {
             type: Object,
-            value: {}
+            statePath: function(state) {
+              const product = state.product.products.find(product => product.url === this.routeData.productName);
+              return product ? product : { isLoading: true };
+            }
           },
 
           /**
@@ -233,6 +221,34 @@
             type: Object
           }
         }
+      }
+
+      static get observers() {
+        return [
+          '_productNameChanged(routeData.productName)'
+        ]
+      }
+
+      /**
+       * @name _productNameChanged
+       * @description if the productName changes dispatch an action to retrieve product
+       * @param product - Object
+       * @returns Boolean
+       */
+      _productNameChanged(productName) {
+        if(productName) {
+          this.dispatch('requestProduct', productName);
+        }
+      }
+
+      /**
+       * @name _shouldShowProduct
+       * @description template helper method (polymer dom-if cant handle 2 expressions)
+       * @param product - Object
+       * @returns Boolean
+       */
+      _shouldShowProduct(product) {
+        return product && product.notAvailable === false && product.isLoading === false;
       }
 
       /**
