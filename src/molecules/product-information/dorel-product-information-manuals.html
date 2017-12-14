@@ -1,3 +1,5 @@
+<link rel="import" href="../../utils/behaviors/single/dorel-multilingual-behavior.html">
+
 <dom-module id="dorel-product-information-manuals">
   <template>
     <style>
@@ -16,8 +18,10 @@
         margin-right: 1.5em;
       }
     </style>
-    <template is="dom-repeat" items="[[ data.manuals ]]">
-      <dorel-cta title="[[ item.Link_text ]]"
+    <template
+      is="dom-repeat"
+      items="[[ data.manuals ]]">
+      <dorel-cta title=""
                  type="link"
                  link="[[ item.Link_url ]]"
                  size="medium"
@@ -28,28 +32,43 @@
                  gtm-child="dorel-section-hero"
                  gtm-child-index="[[ index ]]"
                  gtm-cta-index="0">
-        [[ item.Link_text ]]
+        {{ _defineLinkText(item.Link_text) }}
       </dorel-cta>
     </template>
-
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-product-information-manuals',
-      properties: {
-        /**
-         * @attribute
-         * @name data
-         * @description Content data
-         */
-        data: {
-          type: Object,
-          value: function () {
-            return {};
+    class DorelProductInformationManuals extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+
+      static get is() { return 'dorel-product-information-manuals'; }
+
+      static get properties() {
+        return {
+          /**
+           * Content data
+           */
+          data: {
+            type: Object,
+            value: () => ({})
           }
         }
       }
-    });
+
+      /**
+       * retrieve the translated linkt text if it exists in the GMT, otherwise fallback to the salsify link text
+       *
+       * @param {string} the original salsify link text
+       * @return {string} the translated link text or the original salsify link text if it doesn't exist
+       */
+      _defineLinkText(linkTxt) {
+        let altLinkTxt = linkTxt.split(' ').join('_').toLowerCase();
+        let transTxt = this.localize(`product_information_manuals#${altLinkTxt}`);
+
+        return (typeof transTxt !== 'undefined' && transTxt !== '') ? transTxt : linkTxt;
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelProductInformationManuals.is, DorelProductInformationManuals);
   </script>
 </dom-module>
