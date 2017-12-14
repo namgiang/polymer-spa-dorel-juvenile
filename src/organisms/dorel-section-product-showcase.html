@@ -179,7 +179,7 @@
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.age.value) ]]">
                 <li>
-                  <div class="label">[[ showcaseData.age.label ]]:</div>
+                  <div class="label">{{localize('showcase#approximate_age')}}:</div>
                   [[ showcaseData.age.value ]]
                 </li>
               </template>
@@ -188,7 +188,7 @@
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.max_weight.value) ]]">
                 <li>
-                  <div class="label">[[ showcaseData.max_weight.label ]]:</div>
+                  <div class="label">{{localize('showcase#weight_class')}}:</div>
                   [[ showcaseData.max_weight.value ]]
                 </li>
               </template>
@@ -197,7 +197,7 @@
                 is="dom-if"
                 if="[[ _hasValue(showcaseData.size.value) ]]">
                 <li>
-                  <div class="label">[[ showcaseData.size.label ]]:</div>
+                  <div class="label">{{localize('showcase#length_class')}}:</div>
                   [[ showcaseData.size.value ]]
                 </li>
               </template>
@@ -232,6 +232,7 @@
 
             <!-- Actions -->
             <div class="actions">
+
               <template
                 is="dom-if"
                 if="[[ _showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
@@ -252,7 +253,7 @@
 
               <template
                 is="dom-if"
-                if="[[ !_showStoreLocatorLightbox(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
+                if="[[ _showStoreLocatorCta(storeLocatorPage, thirdPartyOptions.hatch.toggle) ]]">
                 <dorel-cta
                   type="primary"
                   title="{{ localize('Find_a_Store') }}"
@@ -307,7 +308,7 @@
     <dorel-product-lead-lightbox
       app-cache="[[appCache]]"
       product-sku="[[showcaseData.sku]]"
-      store-locator-link="[[_createStoreLocatorLink(storeLocatorPage)]]"></dorel-product-lead-lightbox>
+      store-locator-page="[[storeLocatorPage]]"></dorel-product-lead-lightbox>
   </template>
 
   <script>
@@ -406,10 +407,21 @@
        * check if a the accessories are defined
        * and if the toggle is enabled in WP
        *
+       * @param {object} all data needed for the showcase
        * @return Boolean
        */
       _hasAccessories: function (showcaseData) {
         return Boolean(showcaseData && showcaseData.related_products && showcaseData.related_products.length);
+      },
+
+      /**
+       * check to see if a store locator page is set and returns a boolean
+       *
+       * @param {object} the page object containing the store locator page
+       * @return Boolean
+       */
+      _showStoreLocatorCta: function(pageObject, hatchToggle) {
+        return (typeof pageObject !== 'undefined' && pageObject !== '' && this._hasProperties(pageObject) && !hatchToggle);
       },
 
       /**
@@ -422,9 +434,7 @@
        * @return Boolean
        */
       _showStoreLocatorLightbox: function (pageObject, hatchToggle) {
-        var showLightBox = (typeof pageObject !== 'undefined' && pageObject !== '' && hatchToggle);
-
-        return Boolean(showLightBox);
+        return Boolean(typeof pageObject !== 'undefined' && pageObject !== '' && hatchToggle);
       },
 
       /**
