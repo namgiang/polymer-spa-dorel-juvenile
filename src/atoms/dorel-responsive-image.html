@@ -13,7 +13,13 @@
         background-position: 50% 50%;
         background-repeat: no-repeat;
         background-size: cover;
+        opacity: 1;
+        transition: opacity 0.2s ease;
         background-color: var(--image-background-color);
+      }
+
+      iron-image[is-loading] {
+        opacity: 0;
       }
 
       /*  The following styling determines the aspect ratios for the images.
@@ -62,10 +68,15 @@
 
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <div class="image-wrapper">
+
+    </div>
     <iron-image sizing="cover"
                 fade="true"
+                pre-load
                 title$="[[ alt ]]"
                 alt$="[[ alt ]]"
+                is-loading$="[[ isLoading ]]"
                 placeholder$="[[ currentImagePlaceholder ]]"
                 src$="[[ currentImageSource ]]"
                 image-type$="[[ imageType ]]"
@@ -139,6 +150,16 @@
         imageType: {
           type: String,
           value: 'wide-screen',
+          reflectToAttribute: true
+        },
+        /**
+         * @attribute
+         * @name isLoading
+         * @description Indicator that image is loading
+         */
+        isLoading: {
+          type: Boolean,
+          value: true,
           reflectToAttribute: true
         },
         /**

@@ -1,6 +1,4 @@
 <link rel="import" href="../../../node_modules/app-layout/app-drawer/app-drawer.html">
-
-<link rel="import" href="../../atoms/dorel-accordeon-item.html">
 <link rel="import" href="../../utils/behaviors/bundled/dorel-main-menu-behaviors.html">
 
 <dom-module id="dorel-main-menu-mobile">
@@ -182,12 +180,12 @@
 
               <template is="dom-if" if="[[ mainItem.dropdown ]]">
                 <li>
-                  <dorel-accordeon-item
+                  <dorel-accordion-item
                     small
                     light
                     opened="[[ mainItem.opened ]]"
                     id$="[[ mainItem.id ]]"
-                    on-click="_openAccordeon"
+                    on-click="_openAccordion"
                     heading="[[ mainItem.title ]]">
 
                     <template is="dom-if" if="[[ checkIfCategoryItems(mainItem) ]]">
@@ -234,7 +232,7 @@
                       </template>
                     </ul>
 
-                  </dorel-accordeon-item>
+                  </dorel-accordion-item>
                 </li>
               </template>
             </template>
@@ -290,14 +288,14 @@
       behaviors: [MainMenuBehavior, MatchUrlBehavior],
 
       /**
-       * @name _openAccordeon
-       * @description handles a accordeon click
+       * @name _openAccordion
+       * @description handles a accordion click
        * @param event - Object
        */
-      _openAccordeon: function (event) {
-        var accordeonId = Number(Polymer.dom(event).localTarget.id);
+      _openAccordion: function (event) {
+        var accordionId = Number(Polymer.dom(event).localTarget.id);
         var newMenuItems = this.get('menuItems').map(function (menuItem) {
-          menuItem.opened = menuItem.id === accordeonId && !menuItem.opened ? true : false;
+          menuItem.opened = menuItem.id === accordionId && !menuItem.opened ? true : false;
           return Object.assign({}, menuItem);
         });
         this.set('menuItems', newMenuItems);

@@ -1,83 +1,93 @@
 <link rel="import" href="dorel-responsive-image.html">
-<link rel="import" href="../utils/dorel-bynder-collect-media.html">
 
 <dom-module id="dorel-bynder-responsive-image">
   <template>
-    <!-- Handles the ajax call and returns the bynder data -->
-    <dorel-bynder-collect-media media-id="[[ mediaId ]]"
-                                media-content="{{ mediaContent }}"></dorel-bynder-collect-media>
     <section class="section">
       <dorel-responsive-image image-type="[[ imageType ]]"
+                              is-loading="[[ mediaContent.isLoading ]]"
                               image-sources="[[ imageSources ]]"
                               alt="[[ alt ]]"></dorel-responsive-image>
     </section>
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-bynder-responsive-image',
-      properties: {
-        /**
-         * @name mediaId
-         * @description The ID used to retrieve the asset from Bynder
-         */
-        mediaId: {
-          type: String
-        },
-        /**
-         * @attribute
-         * @name imageType
-         * @description Image types, defaults to wide-screen and can be set to full-screen
-         */
-        imageType: {
-          type: String,
-          value: 'wide-screen',
-          reflectToAttribute: true
-        },
-        /**
-         * @name mediaContent
-         * @description data coming from Bynder.
-         */
-        mediaContent: {
-          type: Object,
-          notify: true,
-          observer: '_onMediaContentChanged'
-        },
-        /**
-         * @name imageSources
-         * @description Various image derivatives and their source
-         */
-        imageSources: {
-          type: Object,
-          notify: true
-        },
-        /**
-         * @name derivativeMapping
-         * @description The Dorel defined derivatives and the corresponding Bynder asset
-         * Note: This is subject to change once we get the correct derivatives.
-         */
-        derivativeMapping: {
-          type: Object,
-          value: function () {
-            return {
-              'placeholder': 'mini',
-              'small-portrait': 'Widescreen Small portrait',
-              'small-landscape': 'Widescreen Small landscape',
-              'large-portrait': 'Widescreen Retina portrait',
-              'large-landscape': 'Widescreen Retina landscape'
+    class DorelBynderResponsiveImage extends ReduxMixin(Polymer.Element) {
+      static get is() { return 'dorel-bynder-responsive-image'; }
+      static get properties() {
+        return {
+          /**
+           * @name mediaId
+           * @description The ID used to retrieve the asset from Bynder
+           */
+          mediaId: {
+            type: String,
+            observer: '_onMediaIdChanged'
+          },
+          /**
+           * @attribute
+           * @name imageType
+           * @description Image types, defaults to wide-screen and can be set to full-screen
+           */
+          imageType: {
+            type: String,
+            value: 'wide-screen',
+            reflectToAttribute: true
+          },
+          /**
+           * @name mediaContent
+           * @description data coming from Bynder.
+           */
+          mediaContent: {
+            type: Object,
+            statePath: function(state) {
+              const mediaContent = state.images.find(item => item.id === this.mediaId);
+              return mediaContent ? mediaContent : {isLoading: true};
+            },
+            observer: '_onMediaContentChanged'
+          },
+          /**
+           * @name imageSources
+           * @description Various image derivatives and their source
+           */
+          imageSources: {
+            type: Object,
+            notify: true
+          },
+          /**
+           * @name derivativeMapping
+           * @description The Dorel defined derivatives and the corresponding Bynder asset
+           * Note: This is subject to change once we get the correct derivatives.
+           */
+          derivativeMapping: {
+            type: Object,
+            value: function () {
+              return {
+                'placeholder': 'mini',
+                'small-portrait': 'Widescreen Small portrait',
+                'small-landscape': 'Widescreen Small landscape',
+                'large-portrait': 'Widescreen Retina portrait',
+                'large-landscape': 'Widescreen Retina landscape'
+              }
             }
+          },
+          alt: {
+            type: String,
+            value: ''
           }
-        },
-        alt: {
-          type: String,
-          value: ''
+        };
+      }
+
+      _onMediaIdChanged(mediaId) {
+        if(mediaId) {
+          this.dispatch('fetchImageById', mediaId);
         }
-      },
+      }
+
       /**
        * @name _getDefaultImageSources
        * @description Returns a dictionary with the given derivative labels and a default Bynder image
        */
-      _getDefaultImageSources: function (mediaContent) {
+      _getDefaultImageSources(mediaContent) {
         var imageSources = {};
 
         if (mediaContent.hasOwnProperty('thumbnails')) {
@@ -91,13 +101,14 @@
           imageSources['placeholder'] = mediaContent.thumbnails.mini;
         }
         return imageSources;
-      },
+      }
+
       /**
        * @name _setMappedImageSources
        * @description Returns a dictionary in which the default images have been replaced
        * with the correct Bynder derivative (if it exists)
        */
-      _getMappedImageSources: function (imageSources, mediaContent) {
+      _getMappedImageSources(imageSources, mediaContent) {
 
         if (mediaContent.hasOwnProperty('thumbnails')) {
           var bynderDerivatives = mediaContent.thumbnails;
@@ -113,12 +124,12 @@
         }
 
         return imageSources;
-      },
+      }
       /**
        * @name _getImageSources
        * @description Maps the Bynder data into an object that is compatible with dorel-responsive-image
        */
-      _onMediaContentChanged: function () {
+      _onMediaContentChanged() {
         // Initialise the image sources
         if (typeof this.mediaContent !== 'undefined' && this.mediaContent.hasOwnProperty('thumbnails')) {
           // First create a default image sources dictionary
@@ -134,6 +145,7 @@
           this.imageSources = {};
         }
       }
-    });
+    }
+    customElements.define(DorelBynderResponsiveImage.is, DorelBynderResponsiveImage);
   </script>
 </dom-module>
