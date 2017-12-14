@@ -32,7 +32,7 @@ var basicComponents = [
     filePath: "dorel-component-guide-images.html"
   },
   {
-    title: "Accordeons",
-    filePath: "dorel-component-guide-accordeons.html"
+    title: "Accordions",
+    filePath: "dorel-component-guide-accordions.html"
   }
 ];
