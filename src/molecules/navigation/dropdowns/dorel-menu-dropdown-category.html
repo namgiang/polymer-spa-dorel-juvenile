@@ -121,7 +121,7 @@
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
                      gtm-cta-index="0">
-            {{ localize('All') }} [[ mainItem.title ]]
+            {{ localize('All') }} [[ _toLowercase(mainItem.title) ]]
 
           </dorel-cta>
         </dorel-layout-column>
@@ -230,6 +230,10 @@
         return dropdownItems.filter(function (item, index) {
           return index < 4 ? true : false;
         })
+      },
+
+      _toLowercase: function(text) {
+        return text.toLowerCase();
       }
 
     });
