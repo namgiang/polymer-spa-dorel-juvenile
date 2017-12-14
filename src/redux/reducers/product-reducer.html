@@ -60,10 +60,10 @@
               return category.id === action.payload.category ?
                 Object.assign({}, category, { isLoading: false }) : category;
             }),
-            products: state.products.concat(action.payload.products.map(product => {
-              return Object.assign({}, product, { isLoading: false, notAvailable: false });
-            }).filter(newItem => {
-              return !state.products.some(oldItem => oldItem.id === newItem.id || oldItem.url === newItem.url)
+            products: action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: false })
+            }).concat(state.products.filter(oldItem => {
+              return !action.payload.products.some(newItem => oldItem.sku === newItem.sku)
             }))
           });
 
@@ -94,8 +94,8 @@
           return Object.assign({}, state, {
             products: action.payload.products.map(product => {
               return Object.assign({}, product, { isLoading: false, notAvailable: false })
-            }).concat(state.products.filter(newItem => {
-              return !state.products.some(oldItem => oldItem.sku === newItem.sku && oldItem.isLoading)
+            }).concat(state.products.filter(oldItem => {
+              return !action.payload.products.some(newItem => oldItem.sku === newItem.sku && oldItem.isLoading)
             }))
           });
 

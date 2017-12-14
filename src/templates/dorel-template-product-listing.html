@@ -125,7 +125,9 @@
           products: {
             type: Array,
             statePath: function(state) {
-              return state.product.products.filter(product => product.categories.indexOf(this.category))
+              return state.product.products.filter(product => {
+                return product && product.categories && product.categories.indexOf(this.category) > -1 ? true : false;
+              });
             }
           },
 

@@ -6,20 +6,50 @@
 function requestImage(id) {
   return {
     type: 'REQUEST_IMAGE',
+    payload: id
+  }
+}
+
+function requestImageSucces(images) {
+  return {
+    type: 'REQUEST_IMAGES_SUCCES',
+    payload: images
+  }
+}
+
+function requestImageFailed(ids, error) {
+  return {
+    type: 'REQUEST_IMAGES_FAILED',
     payload: {
-      id
+      ids,
+      error
     }
   }
 }
 
-function requestImageSucces(id, image) {
-  return {
-    type: 'REQUEST_IMAGE_SUCCES',
-    payload: {
-      id,
-      image
+function fetchImageById(id) {
+  return (dispatch, getState) => {
+    if (shouldFetchImage(getState(), id)) {
+      dispatch(requestImage(id))
+      return dispatch(startFetching());
+    } else {
+      return Promise.resolve();
     }
   }
+}
+
+const fetchImages = debounce((dispatch, getState) => {
+  const ids = getState().image.images.filter(image => image.isLoading).map(image_ => image_.id).join(',');
+  return bynder.getMediaList({
+    ids,
+    versions: '1'
+  })
+  .then(data => dispatch(requestImageSucces(data)))
+  .catch(error => dispatch(requestImageFailed(ids, error)))
+}, 500)
+
+const startFetching = () => (dispatch, getState) => {
+  fetchImages(dispatch, getState)
 }
 
 function handleErrors(response) {
@@ -29,19 +59,8 @@ function handleErrors(response) {
     return response;
 }
 
-function fetchImage(id) {
-  return dispatch => {
-    const params = retrieveMedia(id);
-    return fetch(params.requestUrl, params.init)
-      .then(handleErrors)
-      .then(response => response.json())
-      .then(json => dispatch(requestImageSucces(id, json)))
-      .catch(() => dispatch(requestImageFailed(id)))
-  }
-}
-
 function shouldFetchImage(state, id) {
-  const image = state.images.find(image => image.id === id);
+  const image = state.image.images.find(image => image.id === id);
   if (!image) {
     return true
   } else if (image.isLoading) {
@@ -51,32 +70,22 @@ function shouldFetchImage(state, id) {
   }
 }
 
-function fetchImageById(id) {
-  // This is useful for avoiding a network request if
-  // a cached value is already available.
-  return (dispatch, getState) => {
-    if (shouldFetchImage(getState(), id)) {
-      // Dispatch a thunk from thunk!
-      dispatch(requestImage(id))
-      return dispatch(fetchImage(id))
-    } else {
-      // Let the calling code know there's nothing to wait for.
-      return Promise.resolve()
-    }
-  }
-}
-
-function requestImageFailed(id) {
-  return {
-    type: 'REQUEST_IMAGE_FAILED',
-    payload: {
-      id
-    }
-  }
-}
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
 
 imageActions = {
-  fetchImage,
   fetchImageById
 }
 
