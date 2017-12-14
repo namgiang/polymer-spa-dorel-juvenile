@@ -35,13 +35,7 @@
       .car-selection, .car-display {
         width: auto;
         height: auto;
-        /*background-color: var(--theme-color-monochrome-2);*/
-        border-radius: var(--theme-button-border-radius);
         cursor: pointer;
-      }
-
-      .car-display {
-        background-color: var(--theme-color-monochrome-2);
       }
 
       .display-container {
@@ -49,11 +43,24 @@
         margin-top: 1.4rem;
       }
 
-      .category-card {
+      .category-card-sel {
         padding: 1rem 1.5rem 1rem 1.5rem;
-        width: auto;
+        width: 100%;
         color: var(--theme-brand-color-2);
         font-size: var(--theme-typography-3_-_font-size);
+        height: 3rem;
+        background-color: var(--theme-color-monochrome-2);
+        border-radius: var(--theme-button-border-radius);
+      }
+      
+      .category-card-res {
+        padding: 1rem 1.5rem 1rem 1.5rem;
+        width: 100%;
+        color: var(--theme-color-monochrome-2);
+        font-size: var(--theme-typography-2_-_font-size);
+        height: 3rem;
+        background-color: var(--theme-brand-color-2);
+        border-radius: var(--theme-button-border-radius);
       }
 
       .edit-card h3 {
@@ -75,7 +82,7 @@
         --iron-icon-width: 38px;
         color: var(--theme-brand-color-1);
       }
-      
+
       .step-title {
         font-size: var(--theme-typography-5_-_font-size);
         line-height: var(--theme-typography-5_-_line-height);
@@ -95,12 +102,12 @@
                   <h1 class="step-title">[[ localize(stepData.main_section.title) ]]</h1>
                   <div class="car-display">
                     <div class="display-container" on-tap="selectAge" data-args="1">
-                      <div id="category-card-sel-1" class="category-card" data-args="1">
+                      <div id="category-card-sel-1" class="category-card-sel" data-args="1">
                         [[ localize('car_fitting_age_selection#baby') ]]
                         <br>
                         <small data-args="1">[[ localize('car_fitting_age_selection#age_cat_1') ]]</small>
                       </div>
-                      <div id="category-card-res-1" class="category-card" data-args="1" hidden>
+                      <div id="category-card-res-1" class="category-card-res" data-args="1" hidden>
                         [[ localize('car_fitting_age_selection#baby_selected') ]]
                         <br>
                         <small data-args="1"></small>
@@ -109,12 +116,12 @@
                   </div>
                   <div class="car-display">
                     <div class="display-container" on-tap="selectAge" data-args="2">
-                      <div class="category-card" data-args="2">
+                      <div id="category-card-sel-2" class="category-card-sel" data-args="2">
                         [[ localize('car_fitting_age_selection#toddler') ]]
                         <br>
                         <small data-args="2">[[ localize('car_fitting_age_selection#age_cat_2') ]]</small>
                       </div>
-                      <div id="category-card-res-2" class="category-card" data-args="2" hidden>
+                      <div id="category-card-res-2" class="category-card-res" data-args="2" hidden>
                         [[ localize('car_fitting_age_selection#toddler_selected') ]]
                         <br>
                         <small data-args="1"></small>
@@ -123,12 +130,12 @@
                   </div>
                   <div class="car-display">
                     <div class="display-container" on-tap="selectAge" data-args="3">
-                      <div class="category-card" data-args="3">
+                      <div id="category-card-sel-3" class="category-card-sel" data-args="3">
                         [[ localize('car_fitting_age_selection#child') ]]
                         <br>
                         <small data-args="3">[[ localize('car_fitting_age_selection#age_cat_3') ]]</small>
                       </div>
-                      <div id="category-card-res-3" class="category-card" data-args="3" hidden>
+                      <div id="category-card-res-3" class="category-card-res" data-args="3" hidden>
                         [[ localize('car_fitting_age_selection#child_selected') ]]
                         <br>
                         <small data-args="1"></small>
@@ -201,16 +208,45 @@
         this.set('stepData.isCurrent', false);
         this.set('stepController.currentStep', this.stepData.nextStep);
       }
-      
+
       selectAge(e) {
         const categoryTmp = e.target.getAttribute('data-args').split(',');
         const category = Number(categoryTmp);
-        console.log(category)
         this.set('ageCategory.category', category);
         this.set('ageCategory.label', `car_fitting_age_selection#age_cat_${category}`);
-        const item = this.shadowRoot.querySelector(`#category-card-sel-${category}`);
-        const selected = this.shadowRoot.querySelector(`#category-card-res-${category}`);
-        
+        const item_1 = this.shadowRoot.querySelector('#category-card-sel-1');
+        const selected_1 = this.shadowRoot.querySelector('#category-card-res-1');
+        const item_2 = this.shadowRoot.querySelector('#category-card-sel-2');
+        const selected_2 = this.shadowRoot.querySelector('#category-card-res-2');
+        const item_3 = this.shadowRoot.querySelector('#category-card-sel-3');
+        const selected_3 = this.shadowRoot.querySelector('#category-card-res-3');
+
+        function reset() {
+          selected_1.setAttribute('hidden', '');
+          selected_2.setAttribute('hidden', '');
+          selected_3.setAttribute('hidden', '');
+          item_1.removeAttribute('hidden');
+          item_2.removeAttribute('hidden');
+          item_3.removeAttribute('hidden');
+        }
+
+        switch (category) {
+          case 1:
+            reset();
+            item_1.setAttribute('hidden', '');
+            selected_1.removeAttribute('hidden');
+            break;
+          case 2:
+            reset();
+            item_2.setAttribute('hidden', '');
+            selected_2.removeAttribute('hidden');
+            break;
+          case 3:
+            reset();
+            item_3.setAttribute('hidden', '');
+            selected_3.removeAttribute('hidden');
+            break;
+        }
       }
     }
 
