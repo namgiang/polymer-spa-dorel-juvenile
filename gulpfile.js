@@ -186,31 +186,42 @@ gulp.task('build:es5', function () {
 
 gulp.task('build:es6', function(done) {
 
-  mkdirp(__dirname + '/build/log/', (err) => {
-    if (err) console.error(err)
-    else console.log('Log directory created!')
-    const log_file = fs.createWriteStream(__dirname + '/build/log/es6-' + new Date().toISOString() + '.txt', {flags : 'w'});
-    const log_stdout = process.stdout;
-    const log_stderr = process.stderr;
+  const buildDirectory = 'build/es6';
 
-    console.log = (d) => { //
-      log_file.write(util.format(d) + '\n');
-      log_stdout.write(util.format(d) + '\n');
-    };
+  // Okay, so first thing we do is clear the build directory
+  console.log(`Deleting ${buildDirectory} directory...`);
 
-    console.error = (d) => { //
-      log_file.write(util.format(d) + '\n');
-      log_stdout.write(util.format(d) + '\n');
-    };
+  del([buildDirectory])
+    .then(() => {
+      mkdirp(__dirname + '/build/log/', (err) => {
+        if (err) console.error(err)
+        else console.log('Log directory created!')
+        const log_file = fs.createWriteStream(__dirname + '/build/log/es6-' + new Date().toISOString() + '.txt', {flags : 'w'});
+        const log_stdout = process.stdout;
+        const log_stderr = process.stderr;
 
-    console.warn = (d) => { //
-      log_file.write(util.format(d) + '\n');
-      log_stdout.write(util.format(d) + '\n');
-    };
-  });
+        console.log = (d) => { //
+          log_file.write(util.format(d) + '\n');
+          log_stdout.write(util.format(d) + '\n');
+        };
 
-  gulp.src('./**/*', '!./build')
-  .pipe(gulp.dest('build/es6'))
-  .on('end', () => console.log('ES6 Build complete!'));
-  done();
+        console.error = (d) => { //
+          log_file.write(util.format(d) + '\n');
+          log_stdout.write(util.format(d) + '\n');
+        };
+
+        console.warn = (d) => { //
+          log_file.write(util.format(d) + '\n');
+          log_stdout.write(util.format(d) + '\n');
+        };
+      });
+
+      gulp.src([
+        './**/*',
+        '!./{build,build/**}'
+      ])
+      .pipe(gulp.dest(`./${buildDirectory}`))
+      .on('end', () => console.log('ES6 Build complete!'));
+      done();
+    });
 });

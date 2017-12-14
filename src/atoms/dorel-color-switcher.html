@@ -59,7 +59,6 @@
         border-radius: 2em;
         pointer-events: none;
       }
-
     </style>
 
     <dorel-category-filter-manager
@@ -79,18 +78,18 @@
             items="[[ colorsData ]]"
             as="item"
             filter="[[ _filterChildProducts(filters.*) ]]">
-            <li class$="list-group-item {{ _isCurrentColor(currentName, item.color.name) }}">
+            <li class$="list-group-item {{ _isCurrentColor(currentName, item.collection_colour_theme_name.name) }}">
 
               <template is="dom-if" if="[[ _checkType(item, 'hex') ]]">
                 <span on-click="_changeCurrentColor"
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.color.name ]]"
+                      color-name$="[[ item.collection_colour_theme_name.name ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]"
-                      style$="background-color: [[ item.color.value ]];"></span>
+                      style$="background-color: [[ item.collection_colour_theme_name.value ]];"></span>
               </template>
 
               <template is="dom-if" if="[[ _checkType(item, 'image') ]]">
@@ -98,11 +97,11 @@
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.color.name ]]"
+                      color-name$="[[ item.collection_colour_theme_name.name ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]">
-                  <img src="[[ item.color.value ]]" class="image-color" />
+                  <img src="[[ item.collection_colour_theme_name.value ]]" class="image-color" />
                 </span>
               </template>
             </li>
@@ -200,7 +199,7 @@
           return;
         }
         this.set('currentImage', newColor.images.image);
-        this.set('currentName', newColor.color.name);
+        this.set('currentName', newColor.collection_colour_theme_name.name);
       },
 
       /**
@@ -280,7 +279,7 @@
        * @returns Boolean
        */
       _checkType: function(item, type) {
-        return Boolean(item && item.color && item.color.type === type);
+        return Boolean(item && item.collection_colour_theme_name && item.collection_colour_theme_name.type === type);
       },
     });
   </script>
