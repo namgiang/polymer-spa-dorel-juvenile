@@ -1,0 +1,237 @@
+<dom-module id="dorel-slide-selector">
+  <template>
+    <style is="custom-style">
+      :host {
+        --slide-wrapper-x: 0px;
+        --slide-width: calc(( var(--max-width-limit) - 3rem) / 3 - 2rem) ;
+      }
+
+      .slideshow {
+        position: relative;
+        overflow: hidden;
+        height: 12em;
+        width: 100%;
+      }
+
+      .slide {
+        position: relative;
+        display: inline-block;
+        width: var(--slide-width);
+        height: 10rem;
+        margin: 1rem;
+        background-color: var(--theme-color-white);
+        padding: 1rem;
+        font-size: 1rem;
+        border: 3px solid transparent;
+        box-sizing: border-box;
+        box-shadow: 4px 4px 24px -6px var(--theme-color-monochrome-5);
+        border-radius: var(--theme-border-radius-1);
+      }
+
+      .slide[selected] {
+        box-shadow: none;
+        border-color: var(--theme-brand-color-1);
+      }
+
+      .slide[selected]::after {
+        position: absolute;
+        display: inline-block;
+        border: 1.5rem solid transparent;
+        border-bottom: 0;
+        border-top: 1rem solid var(--theme-brand-color-1);
+        content: ' ';
+        bottom: -1rem;
+        left: calc(( var(--slide-width) / 2) - 1.5rem);
+      }
+
+      #slideWrapper {
+        position: absolute;
+        transform: translate(var(--slide-wrapper-x), 0);
+        left: 0;
+        font-size: 0;
+        white-space: nowrap;
+        width: auto;
+        display: inline-block;
+        transition: transform .3s ease-in-out;
+      }
+
+      dorel-layout-row {
+        position: relative;
+        height: 12em;
+        background-color: rgba(0, 0, 0, 0.1)
+      }
+
+      .control-item {
+        position: absolute;
+        transform: translate(0, -50%) scale(0);
+        transform-origin: right;
+        top: 50%;
+        right: 0;
+        background-color: var(--theme-color-monochrome-4);
+        height: 4rem;
+        width: 2rem;
+        z-index: 10;
+        border-radius: var(--theme-button-border-radius) 0 0 var(--theme-button-border-radius);
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        cursor: pointer;
+        box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.15);
+        pointer-events: none;
+        opacity: 0.6;
+        transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+      }
+
+      .control-item[enabled] {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translate(0, -50%) scale(1);
+        opacity: 0.8;
+      }
+
+      .control-item--previous {
+        right: auto;
+        left: 0;
+        border-radius: 0 var(--theme-button-border-radius) var(--theme-button-border-radius) 0;
+        transform-origin: left;
+      }
+
+      [tablet-medium-up] .control-item {
+        height: 6rem;
+        width: 3rem;
+      }
+
+      [desktop-small-up] .control-item {
+        height: 9rem;
+        width: 4.5rem;
+      }
+
+      .control-item:hover {
+        background-color: var(--theme-color-monochrome-2);
+        box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.25);
+        opacity: 1;
+      }
+
+      .control-item__icon {
+        width: 3rem;
+        height: 3rem;
+        transition: color 0.2s;
+        color: var(--theme-color-monochrome-1);
+      }
+
+      .control-item:hover .control-item__icon {
+        color: var(--theme-color-monochrome-5);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="slideshow" desktop-small-up$="{{ breakpoints.desktopSmallUp }}" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+
+      <div class="control-item control-item--next" on-click="moveNext" enabled$="{{ nextEnabled }}">
+        <iron-icon class="control-item__icon" icon="dorel-icons:chevron-right"></iron-icon>
+      </div>
+      <div class="control-item control-item--previous" on-click="movePrevious" enabled$="{{ previousEnabled }}">
+        <iron-icon class="control-item__icon" icon="dorel-icons:chevron-left"></iron-icon>
+      </div>
+
+      <dorel-layout-container>
+        <dorel-layout-row>
+          <div id="slideWrapper">
+            <template is="dom-repeat" items="[[ slides ]]">
+              <div class="slide" selected$="[[ item.selected ]]">
+                [[ item.value ]]
+              </div>
+            </template>
+          </div>
+        </dorel-layout-row>
+
+      </dorel-layout-container>
+
+    </section>
+
+  </template>
+  <script>
+
+    class DorelSlideSelector extends Polymer.Element {
+      static get is() {
+        return 'dorel-slide-selector';
+      }
+
+      static get properties() {
+        return {
+          slides: {
+            type: Array,
+            value: []
+          },
+          selectedIndex: {
+            type: Number,
+            value: 0,
+            observer: '_selectedIndexChange'
+          },
+          nextEnabled: {
+            type: Boolean,
+            computed: 'checkNext(selectedIndex, slides)'
+          },
+          previousEnabled: {
+            type: Boolean,
+            computed: 'checkPrevious(selectedIndex)'
+          },
+        }
+      }
+
+      _selectedIndexChange() {
+        const e = new CustomEvent('selected-index-change', { detail: this.get('selectedIndex')});
+        this.dispatchEvent(e);
+      }
+
+      ready() {
+        super.ready();
+        const slides = [];
+        for (let i = 0; i < 6; i++) {
+          slides.push({ value: i, selected: false });
+        }
+        this.set('slides', slides);
+        this.set('slides.0.selected', true);
+      }
+
+      checkNext(index, slides) {
+        return index < slides.length -1;
+      }
+
+      checkPrevious(index) {
+        return index > 0;
+      }
+
+      moveNext() {
+        this.moveToIndex(this.get('selectedIndex') + 1);
+      }
+
+      movePrevious() {
+        this.moveToIndex(this.get('selectedIndex') - 1);
+      }
+
+      moveToIndex(index) {
+        const slideCount = this.get('slides').length;
+        if (index < 0 || index > slideCount -1 || slideCount === 0) {
+          return
+        }
+        const currentIndex = this.get('selectedIndex');
+        this.set('slides.' + currentIndex + '.selected', false);
+        this.set('slides.' + index + '.selected', true);
+        this.set('selectedIndex', index);
+
+        const shiftLeft = this.$.slideWrapper.getBoundingClientRect().width * index / slideCount;
+        this.updateStyles({ '--slide-wrapper-x': '-' + shiftLeft + 'px' });
+      }
+
+      isSelected(index) {
+        return this.get('selectedIndex') === index;
+      }
+
+    }
+
+    customElements.define(DorelSlideSelector.is, DorelSlideSelector);
+  </script>;
+
+</dom-module>

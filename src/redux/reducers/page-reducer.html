@@ -1,12 +1,24 @@
 <script>
   (function() {
-    const initial = [];
+    const initial = {
+      pages: [],
+      currentPage: {}
+    };
 
     pageReducer = (state = initial, action) => {
       switch (action.type) {
         case 'ADD_PAGE':
-          state.push(action.payload);
-          return state.map(image => image);
+          const pages = state.pages || [];
+          pages.push(action.payload);
+          return Object.assign({}, state, {
+            pages
+          });
+
+        case 'SET_CURRENT_PAGE':
+          return Object.assign({}, state, {
+            currentPage: Object.assign({}, action.payload)
+          });
+
       default:
         return state;
       }

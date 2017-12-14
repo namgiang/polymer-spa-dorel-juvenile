@@ -9,13 +9,13 @@
           state.push({ id: action.payload.id, isLoading: true, notAvailable: false });
           return state.map(image => image);
 
-        case 'ADD_IMAGE':
+        case 'REQUEST_IMAGE_SUCCES':
           return state.map((image) => {
             return image.id === action.payload.id ?
               Object.assign({}, action.payload.image, { isLoading: false }) : image;
           });
 
-        case 'IMAGE_NOT_AVAILABLE':
+        case 'REQUEST_IMAGE_FAILED':
           return state.map((image) => {
             return image.id === action.payload.id ?
               Object.assign({}, image, { isLoading: false, notAvailable: true }) : image;

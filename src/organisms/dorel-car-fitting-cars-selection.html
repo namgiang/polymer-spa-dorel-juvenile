@@ -1,5 +1,5 @@
 <link rel="import" href="../molecules/dorel-car-details-form.html">
-<dom-module id="dorel-car-fitting-selection">
+<dom-module id="dorel-car-fitting-cars-selection">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -87,6 +87,11 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container>
       <dorel-layout-row align="middle">
+        <dorel-layout-column desktop-column-span="1" tablet-column-span="1" mobile-column-span="1" align="left">
+          <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+              Back
+          </dorel-cta>
+        </dorel-layout-column>
         <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left">
             <dorel-layout-row>
                 <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
@@ -122,7 +127,9 @@
                                 size="medium"
                                 icon="dorel-icons:plus"
                                 on-tap="addCar"
-                                id="add_button" disabled>
+                                id="add_button"
+                                disabled
+                                hidden$="[[ stepData.hide_buttons ]]">
                       [[  localize(stepData.main_section.secondary_cta) ]]
                     </dorel-cta>
                   </dorel-layout-column>
@@ -132,7 +139,9 @@
                                 link=""
                                 size="medium"
                                 on-tap="nextStep"
-                                id="next_button" disabled>
+                                id="next_button"
+                                disabled
+                                hidden$="[[ stepData.hide_buttons ]]">
                       [[  localize(stepData.main_section.primary_cta) ]]
                     </dorel-cta>
                   </dorel-layout-column>
@@ -173,9 +182,9 @@
     /* global Polymer */
     /* global customElements */
     /* global DorelMultilingualBehavior */
-    class DorelCarFittingSelection extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+    class DorelCarFittingCarsSelection extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
       static get is() {
-        return 'dorel-car-fitting-selection';
+        return 'dorel-car-fitting-cars-selection';
       }
 
       static get properties() {
@@ -191,27 +200,8 @@
 
       static get observers() {
         return [
-            'updateButtons(carData.*)'
+            'updateStep(carData.*)'
         ];
-      }
-
-      updateButtons() {
-        if(this.carData.length > 0 && this.carData[0].result) {
-          this.$.next_button.removeAttribute('disabled');
-          this.$.add_button.removeAttribute('disabled');
-        } else {
-          this.$.next_button.setAttribute('disabled', true);
-          this.$.add_button.setAttribute('disabled', true);
-        }
-      }
-
-      nextStep() {
-        this.set('stepData.isCurrent', false);
-        this.set('stepController.currentStep', this.stepData.nextStep);
-      }
-
-      hasBynderImage(id) {
-        return Boolean(id && id.length);
       }
 
       addCar() {
@@ -219,10 +209,6 @@
           result: null,
           form: Object.create(this.stepData.main_section.form)
         });
-      }
-
-      editCar(event) {
-        this.set(`carData.${event.model.index}.result`, null);
       }
 
       deleteCar(event) {
@@ -234,16 +220,58 @@
         }
       }
 
+      editCar(event) {
+        this.set(`carData.${event.model.index}.result`, null);
+      }
+
+      hasBynderImage(id) {
+        return Boolean(id && id.length);
+      }
+
       incrementIndex(index) {
         return (Number(index) + 1);
       }
-      
+
+      nextStep() {
+        this.set('stepData.isCurrent', false);
+        this.set('stepController.currentStep', this.stepData.nextStep);
+      }
+
       ready() {
         super.ready();
-        this.addCar();
+        console.log(this.ageCategory);
+        if(this.carData.length < 1) this.addCar();
+      }
+      
+      shouldShow(step) {
+        let show;
+        if(this.stepController.currentStep && this.stepController.currentStep === step) {
+          show = true;
+        } else {
+          show = false;
+        }
+        return show; 
+      }
+
+      previousStep() {
+        this.set('stepData.isCurrent', false);
+        this.set('stepController.currentStep', this.stepData.previousStep);
+      }
+
+      updateStep() {
+        if(this.carData.length > 0 && this.carData[0].result) {
+          if(this.stepController.currentStep === 'carFittingSelection') {
+            this.nextStep();
+          }
+          this.$.next_button.removeAttribute('disabled');
+          this.$.add_button.removeAttribute('disabled');
+        } else {
+          this.$.next_button.setAttribute('disabled', true);
+          this.$.add_button.setAttribute('disabled', true);
+        }
       }
     }
 
-    customElements.define(DorelCarFittingSelection.is, DorelCarFittingSelection);
+    customElements.define(DorelCarFittingCarsSelection.is, DorelCarFittingCarsSelection);
   </script>
 </dom-module>
