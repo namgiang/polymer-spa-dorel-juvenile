@@ -1,5 +1,6 @@
 <link rel="import" href="../organisms/dorel-car-fitting-nav.html">
-<link rel="import" href="../organisms/dorel-car-fitting-selection.html">
+<link rel="import" href="../organisms/dorel-car-fitting-age-selection.html">
+<link rel="import" href="../organisms/dorel-car-fitting-cars-selection.html">
 <link rel="import" href="../organisms/dorel-car-fitting-results.html">
 <link rel="import" href="../organisms/dorel-car-fitting-product-selector.html">
 <dom-module id="dorel-template-product-advisory-tool">
@@ -44,23 +45,33 @@
       tail="{{ subroute }}">
     </app-route>
 
-    <dorel-car-fitting-selection
+    <dorel-car-fitting-age-selection
+      age-category="{{ ageCategory }}"
+      car-data="{{ carData }}"
+      hidden$="[[ !stepData.carFittingAgeSelection.isCurrent ]]"
+      product-name="[[ productData.sku ]]"
+      step-controller="{{ stepController  }}"
+      step-data="{{ stepData.carFittingAgeSelection }}">
+    </dorel-car-fitting-age-selection>
+
+    <dorel-car-fitting-cars-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingSelection.isCurrent ]]"
       product-name="[[ requestedProductName ]]"
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingSelection }}">
-    </dorel-car-fitting-selection>
+    </dorel-car-fitting-cars-selection>
 
-   <dorel-car-fitting-selection
+   <dorel-car-fitting-cars-selection
       car-data="{{ carData }}"
       hidden$="[[ !stepData.carFittingAddCar.isCurrent ]]"
       product-name="[[ requestedProductName ]]"
       step-controller="{{ stepController  }}"
       step-data="{{ stepData.carFittingAddCar }}">
-    </dorel-car-fitting-selection>
+    </dorel-car-fitting-cars-selection>
 
     <dorel-car-fitting-product-selector
+      age-category="{{ ageCategory }}"
       hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
       product-data="{{ productData }}"
       car-data="{{ carData }}">
@@ -86,6 +97,15 @@
 
       static get properties() {
         return {
+          ageCategory: {
+            type: Object,
+            value: () => {
+              return {
+                category: 0,
+                label: ''
+              }
+            }
+          },
           stepController: {
             type: Object,
             value: () => {
@@ -110,18 +130,73 @@
               return product ? product : { isLoading: true };
             }
           },
+          requestedProductName: String,
           stepData: {
             type: Object,
             value: () => {
               return {
+                carFittingAgeSelection: {
+                  isCurrent: false,
+                  stepName: 'carFittingAgeSelection',
+                  stepNumber: 1,
+                  nextStep: 'carFittingSelection',
+                  previousStep: null,
+                  title: 'car_fitting_age_selection#step_title',
+                  hide_buttons: false,
+                  main_section: {
+                    section_type: 'car-details-form',
+                    title: 'car_fitting_age_selection#main_section_title',
+                    primary_cta: 'car_fitting_age_selection#primary_cta',
+                    secondary_cta: 'car_fitting_selection#secondary_cta',
+                    car_display_label: 'car_fitting_selection#car_display_label',
+                    form: {
+                      form_groups: [
+                        {
+                          label: 'car_fitting_selection#brand_input_label',
+                          default_option: {
+                            label: 'Choose a brand',
+                            value: ''
+                          },
+                          options: []
+                        },
+                        {
+                          label: 'car_fitting_selection#model_input_label',
+                          default_option: {
+                            label: 'Choose a model',
+                            value: ''
+                          },
+                          options: []
+                        },
+                        {
+                          label: 'car_fitting_selection#type_input_label',
+                          default_option: {
+                            label: 'Choose a type',
+                            value: ''
+                          },
+                          options: []
+                        }
+                      ]
+                    }
+                  },
+                  sub_section: {
+                    title: '',
+                    notification_1: 'car_fitting_age_selection#sub_section_notification_1',
+                    notification_2: 'car_fitting_age_selection#sub_section_notification_2',
+                    background_image_id: CONFIG.BYNDER_DEFAULT_IMAGE
+                  },
+                  options: {
+                    next: 'Show results',
+                    previous: 'Back'
+                  }
+                },
                 carFittingSelection: {
                   isCurrent: false,
                   stepName: 'carFittingSelection',
                   stepNumber: 1,
                   nextStep: 'carFittingAddCar',
-                  previousStep: null,
+                  previousStep: 'carFittingAgeSelection',
                   title: 'car_fitting_selection#step_title',
-                  hide_buttons: true,
+                  hide_buttons: false,
                   main_section: {
                     section_type: 'car-details-form',
                     title: 'car_fitting_selection#main_section_title',
@@ -293,7 +368,7 @@
         if(this.queryParams && this.queryParams.productName) {
           this.set('requestedProductName', this.queryParams.productName);
           setTimeout(function(){
-            this.set('stepController.currentStep', 'carFittingSelection');
+            this.set('stepController.currentStep', 'carFittingAgeSelection');
           }.bind(this), 0);
         } else {
           this.error('Missing \'productName\' query parameter');
