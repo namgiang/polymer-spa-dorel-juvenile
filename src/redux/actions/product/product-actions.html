@@ -1,0 +1,28 @@
+<link rel="import" href="./product-by-url-key-actions.html">
+<link rel="import" href="./products-by-category-actions.html">
+<link rel="import" href="./products-by-sku-actions.html">
+
+<script>
+(function() {
+
+function setProductCategoryPage(categoryPage) {
+  if(!categoryPage || !categoryPage.acf || categoryPage.template !== 'product-listing') {
+    return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: -1 }
+  } else {
+    const categoryPicker = categoryPage.acf.magento_category_picker;
+    const category = typeof categoryPicker === 'string' ? parseInt(categoryPicker) : categoryPicker;
+    return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: category }
+  }
+}
+
+productActions = Object.assign({},
+  productByUrlKeyActions,
+  productByCategoryActions,
+  productBySkuActions,
+  {
+    setProductCategoryPage
+  }
+);
+
+}());
+</script>

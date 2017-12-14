@@ -2,7 +2,6 @@
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-category-submenu.html">
 <link rel="import" href="../organisms/dorel-category-filter.html">
-<link rel="import" href="../utils/dorel-magento-collect-products-by-category.html">
 
 <dom-module id="dorel-template-product-listing">
   <template>
@@ -22,13 +21,6 @@
         margin-top: 0;
       }
     </style>
-
-    <dorel-magento-collect-products-by-category
-      category="[[ templateData.acf.magento_category_picker ]]"
-      app-cache="[[ appCache ]]"
-      retrieving-products="{{ retrievingProducts }}"
-      products="{{ products }}"></dorel-magento-collect-products-by-category>
-
 
     <!-- section-header -->
     <template
@@ -105,99 +97,94 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'dorel-template-product-listing',
+    class DorelTemplateProductListing extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
 
-      properties: {
+      static get is() {
+        return 'dorel-template-product-listing';
+      }
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the application cache
-         */
-        appCache: {
-          type: Object
-        },
+      static get properties() {
+        return {
 
-        /**
-         * @attribute
-         * @name templateData
-         * @description the data coming from ACF/Wordpress which is delegated to the page builder
-         */
-        templateData: {
-          type: Object,
-          value: function () {
-            return {};
+          /**
+           * @attribute
+           * @name templateData
+           * @description the data coming from ACF/Wordpress which is delegated to the page builder
+           */
+          templateData: {
+            type: Object,
+            statePath: 'page.currentPage',
+            observer: '_defineComponentModels'
           },
-          observer: '_defineComponentModels'
-        },
 
-        /**
-         * @attribute
-         * @name products
-         * @description the data coming from the collect-products component
-         */
-        products: {
-          type: Array,
-          value: []
-        },
+          /**
+           * @attribute
+           * @name products
+           * @description the data coming from the collect-products component
+           */
+          products: {
+            type: Array,
+            statePath: function(state) {
+              return state.product.products.filter(product => product.categories.indexOf(this.category))
+            }
+          },
 
-        /**
-         * @attribute
-         * @name category
-         * @description inherit by parent will be used by collect-products
-         */
-        category: {
-          type: Number,
-          value: 0
-        },
+          /**
+           * @attribute
+           * @name category
+           * @description inherit by parent will be used by collect-products
+           */
+          category: {
+            type: Number,
+            observer: '_categoryChanged'
+          },
 
-        /**
-         * @attribute
-         * @name sort
-         * @description define the default sorting type/order of the product listing
-         */
-        sort: {
-          type: Object,
-          value: function () {
-            return {
-              type: 'name',
-              order: 'asc'
-            };
-          }
-        },
+          /**
+           * @attribute
+           * @name sort
+           * @description define the default sorting type/order of the product listing
+           */
+          sort: {
+            type: Object,
+            value: function () {
+              return {
+                type: 'name',
+                order: 'asc'
+              };
+            }
+          },
 
-        /**
-         * @attribute
-         * @name category
-         * @description a loading indicator from the collect-products component
-         * if products are retrieved it will set Boolean to false
-         * if products are being retrieved it will set Boolean to true
-         * initial value is true because component does not have products initially
-         */
-        retrievingProducts: {
-          type: Boolean,
-          value: true
-        },
+          /**
+           * @attribute
+           * @name category
+           * @description a loading indicator from the collect-products component
+           * if products are retrieved it will set Boolean to false
+           * if products are being retrieved it will set Boolean to true
+           * initial value is true because component does not have products initially
+           */
+          retrievingProducts: {
+            type: Boolean,
+            statePath: function(state) {
+              const category = state.product.requestedCategories.find(category => category.id === this.category);
+              return category ? category.isLoading : true;
+            }
+          },
 
-        renderedCount: Number,
+          renderedCount: Number,
 
-        heroHeaderData: Object,
+          heroHeaderData: Object,
 
-        leftSidebar: Object
+          leftSidebar: Object
 
-      },
+        };
+      }
 
-      behaviors: [TemplateBehaviors, DorelMultilingualBehavior],
-
-      listeners: {
-        'newProducts': '_setProducts'
-      },
-
-      _setProducts: function (event) {
-        this.set('products', event.detail.products);
-        this.set('retrievingProducts', false);
-      },
-    });
+      _categoryChanged(category) {
+        if(category && category > -1) {
+          this.dispatch('requestProductsByCategory', category);
+        }
+      }
+    }
+    customElements.define(DorelTemplateProductListing.is, DorelTemplateProductListing);
   </script>
 </dom-module>

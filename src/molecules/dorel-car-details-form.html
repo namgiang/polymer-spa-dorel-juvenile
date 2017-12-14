@@ -356,15 +356,20 @@
        * @param response - Object
        */
       _carConfigResponse: function(event) {
+        const result = event.detail.response;
+        const brand_name = this._findValue(this.values, 'car_brand_name');
+        const model_type = this._findValue(this.values, 'model_type');
+        const introduction_year = this._findValue(this.values, 'introduction_year');
+        result.brand_id = this._findValue(this.values, 'car_brand_id');
+        result.model_name = this._findValue(this.values, 'model_name');
+        result.doors = this._findValue(this.values, 'doors');
+        result.introduction_year = introduction_year;
+        result.brand_name = brand_name;
+        result.model_type = model_type;
         if (event.detail.response.message === 'success') {
           this.set('carData.result', event.detail.response);        
         } else {
-          const brand_name = this._findValue(this.values, 'car_brand_name');
-          const model_type = this._findValue(this.values, 'model_type');
-          const introduction_year = this._findValue(this.values, 'introduction_year');
-          const result = {
-            car_information_label: `${brand_name}, ${model_type}, ${introduction_year }`
-          };
+          result.car_information_label = `${brand_name}, ${model_type}, ${introduction_year }`;
           this.set('carData.result', result);  
         }
         this.set('carData.active', false);
