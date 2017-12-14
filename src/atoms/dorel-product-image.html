@@ -1,0 +1,55 @@
+<dom-module id="dorel-product-image">
+  <template>
+    <style>
+      :host {
+        display: flex;
+      }
+      iron-image {
+        height: 100%;
+        width: 100%;
+        flex: 1;
+      }
+    </style>
+    <iron-image
+      sizing="[[ sizing ]]"
+      fade="true"
+      preload
+      src$="[[ _getCorrectSize(imageUrl) ]]"></iron-image>
+  </template>
+
+  <script>
+    class DorelProductImage extends Polymer.Element {
+      static get is() { return 'dorel-product-image'; }
+      static get properties() {
+        return {
+          /**
+           * @name sizing
+           * @description sizing for the iron image
+           */
+          sizing: {
+            type: String,
+            value: 'contain'
+          },
+          /**
+           * @name imageUrl
+           * @description The Image Url
+           */
+          imageUrl: {
+            type: String
+          }
+        };
+      }
+
+      _getCorrectSize(imageUrl) {
+        if(!imageUrl || !imageUrl.length) {
+          return;
+        }
+        const parameters = 'c_limit,h_684,q_70';
+        const lastSegment = imageUrl.split('/').pop();
+        return `${imageUrl.split('/').map(segment => segment === lastSegment ? parameters : segment).join('/')}/${lastSegment}`;
+      }
+
+    }
+    customElements.define(DorelProductImage.is, DorelProductImage);
+  </script>
+</dom-module>
