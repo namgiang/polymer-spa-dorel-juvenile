@@ -1,6 +1,6 @@
 <link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
 
-<dom-module id="dorel-accordeon-item">
+<dom-module id="dorel-accordion-item">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -12,55 +12,55 @@
         float: left;
       }
 
-      .accordeon-toggle {
+      .accordion-toggle {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         padding: 0 1.5em 0 0.75em;
-        min-height: var(--theme-accordeon-heading-height);
+        min-height: var(--theme-accordion-heading-height);
         cursor: pointer;
       }
-      [small] .accordeon-toggle {
-        min-height: var(--theme-accordeon-heading-height-small);
+      [small] .accordion-toggle {
+        min-height: var(--theme-accordion-heading-height-small);
       }
 
-      .accordeon-toggle:focus, .accordeon-toggle:hover
+      .accordion-toggle:focus, .accordion-toggle:hover
       {
-        color: var(--theme-accordeon-hover-color);
+        color: var(--theme-accordion-hover-color);
         outline: none;
       }
 
-      .accordeon-heading {
-        @apply(--theme-accordeon-heading);
+      .accordion-heading {
+        @apply(--theme-accordion-heading);
         margin: 0;
         transition: color .3s;
       }
 
-      .accordeon-container {
-        background-color: var(--theme-accordeon-background-color);
+      .accordion-container {
+        background-color: var(--theme-accordion-background-color);
         border-radius: var(--theme-border-radius-1);
         position: relative;
         float: left;
         width: 100%;
         transition: background-color .3s ease;
-        margin-bottom: var(--theme-accordeon-item-bottom-margin);
-        border-top: var(--theme-accordeon-item-border);
-        border-bottom: var(--theme-accordeon-item-border);
+        margin-bottom: var(--theme-accordion-item-bottom-margin);
+        border-top: var(--theme-accordion-item-border);
+        border-bottom: var(--theme-accordion-item-border);
       }
-      [opened].accordeon-container {
-        background-color: var(--theme-accordeon-background-color-open);
+      [opened].accordion-container {
+        background-color: var(--theme-accordion-background-color-open);
       }
 
 
-      .accordeon-content {
+      .accordion-content {
         padding: 0 .75em 1.5em .75em;
         float: left;
         width: 100%;
         box-sizing: border-box;
       }
 
-      .accordeon-icon {
+      .accordion-icon {
         margin-top: -2px;
         transition: .3s ease color, .3s ease transform;
       }
@@ -70,28 +70,28 @@
         margin-right: 1em;
       }
 
-      .accordeon-icon[opened] {
+      .accordion-icon[opened] {
         transform: rotate(180deg);
       }
 
-      [tablet-medium-up] .accordeon-content {
+      [tablet-medium-up] .accordion-content {
         padding: 0 1.5em 1.5em 1.5em;
       }
 
-      [tablet-medium-up] .accordeon-heading  {
+      [tablet-medium-up] .accordion-heading  {
         padding: 1.5em;
       }
 
-      [small] .accordeon-heading {
+      [small] .accordion-heading {
         padding: 0.75rem;
       }
 
-      [small] .accordeon-content {
+      [small] .accordion-content {
         padding: 0 .75rem .75rem .75rem;
       }
 
-      [small].accordeon-container {
-        margin-bottom: var(--theme-accordeon-item-bottom-margin-small);
+      [small].accordion-container {
+        margin-bottom: var(--theme-accordion-item-bottom-margin-small);
       }
 
       [light], [light][opened] {
@@ -101,7 +101,7 @@
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <div class="accordeon-container"
+    <div class="accordion-container"
          light$="[[ light ]]"
          small$="[[ small ]]"
          opened$="[[ opened ]]"
@@ -109,8 +109,8 @@
       <template
         is="dom-if"
         if="[[ heading.length ]]">
-        <div class="accordeon-toggle"
-              id="accordeon"
+        <div class="accordion-toggle"
+              id="accordion"
               aria-expanded="false"
               tabindex="0"
               role="button"
@@ -120,19 +120,19 @@
               gtm-parent="[[ gtmParent ]]"
               gtm-parent-index="[[ gtmParentIndex ]]"
               gtm-cta-index$="[[ index ]]">
-        <h2 class="accordeon-heading">
+        <h2 class="accordion-heading">
           <template is="dom-if" if="[[ icon.length ]]">
             <iron-icon class="left-icon" icon="[[ icon ]]"></iron-icon>
           </template>
           [[ heading ]]
         </h2>
-        <iron-icon class="accordeon-icon"
+        <iron-icon class="accordion-icon"
                    opened$="[[ opened ]]"
                    icon="dorel-icons:expand-more"></iron-icon>
                    </div>
       </template>
       <iron-collapse id="collapse" opened="{{ opened }}">
-        <div class="accordeon-content">
+        <div class="accordion-content">
           <slot></slot>
         </div>
       </iron-collapse>
@@ -140,11 +140,11 @@
   </template>
   <script>
     Polymer({
-      is: 'dorel-accordeon-item',
+      is: 'dorel-accordion-item',
       properties: {
         /**
          * @name heading
-         * @description Title of the accordeon heading
+         * @description Title of the accordion heading
          */
         heading: {
           type: String,
@@ -161,7 +161,7 @@
 
         /**
          * @name small
-         * @description Small variation of the accordeon
+         * @description Small variation of the accordion
          */
         small: {
           type: Boolean
@@ -169,7 +169,7 @@
 
         /**
          * @name light
-         * @description Small variation of the accordeon
+         * @description Small variation of the accordion
          */
         light: {
           type: Boolean
@@ -177,7 +177,7 @@
 
         /**
          * @name opened
-         * @description State of the accordeon
+         * @description State of the accordion
          */
         opened: {
           type: Boolean,
@@ -188,7 +188,7 @@
 
         /**
          * @name autoScroll
-         * @description If set to true, the window will scroll accordeon is opened outside of the viewport
+         * @description If set to true, the window will scroll accordion is opened outside of the viewport
          */
         autoScroll: {
           type: Boolean,
@@ -201,7 +201,7 @@
       },
       /**
        * @name _isInViewport
-       * @description Checks if the accordeon item is visible in the viewport
+       * @description Checks if the accordion item is visible in the viewport
        **/
       _isInViewport: function (domElement) {
         // Retrieve the bounding box and position of the DOM element
@@ -225,16 +225,16 @@
       _openedStateChanged: function () {
         var self = this;
         setTimeout(function () {
-          //Accessing the accordeon here through shadowroot queryselect because it's dynamically created
-          var accordeonDomElement = self.shadowRoot.querySelector('#accordeon');
-          var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordeonDomElement);
+          //Accessing the accordion here through shadowroot queryselect because it's dynamically created
+          var accordionDomElement = self.shadowRoot.querySelector('#accordion');
+          var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordionDomElement);
 
 
           // If the item is opened, and it's not in the viewport
           if (shouldScroll) {
             // Make sure the item is visible by scrolling/jumping to it
 
-            var elementRect = accordeonDomElement.getBoundingClientRect();
+            var elementRect = accordionDomElement.getBoundingClientRect();
             var absoluteElementTop = elementRect.top + window.pageYOffset;
             var middle = absoluteElementTop - (window.innerHeight / 2);
 
@@ -260,7 +260,7 @@
 
       /**
        * @name _toggleCollapse
-       * @description collapses the right accordeon
+       * @description collapses the right accordion
        *
        */
       _toggleCollapse: function (e) {
@@ -270,12 +270,12 @@
         // Toggle the aria expanded boolean
         e.target.setAttribute('aria-expanded', !ariaExpanded);
 
-        var accordeon = this.$.collapse;
+        var accordion = this.$.collapse;
         // check state
-        var state = accordeon.classList.contains('iron-collapse-opened');
+        var state = accordion.classList.contains('iron-collapse-opened');
 
         // toggle collapse
-        accordeon.toggle();
+        accordion.toggle();
 
         // event tracking
         this._eventTracking(e, e.target, state);
@@ -286,7 +286,7 @@
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function (event, selector, accordeonState) {
+      _eventTracking: function (event, selector, accordionState) {
 
         var gtmCtaIndex = selector.getAttribute('gtm-cta-index');
 
@@ -294,22 +294,22 @@
          * Tracking on click for cta
          */
         var events = {
-          action: 'toggle-accordeon',
-          component: 'accordeon',
+          action: 'toggle-accordion',
+          component: 'accordion',
           structure: {
             name: this.gtmParent,
             index: Number(this.gtmParentIndex) + 1,
             event: {
-              name: 'accordeon-heading',
+              name: 'accordion-heading',
               index: Number(gtmCtaIndex) + 1,
-              state: (accordeonState) ? 'closed' : 'open'
+              state: (accordionState) ? 'closed' : 'open'
             }
           },
           element: selector.innerHTML,
           event: 'polymer_event',
           things: {
-            'currentState': (accordeonState) ? 'open' : 'closed',
-            'targetState': (accordeonState) ? 'closed' : 'open'
+            'currentState': (accordionState) ? 'open' : 'closed',
+            'targetState': (accordionState) ? 'closed' : 'open'
           }
         };
 

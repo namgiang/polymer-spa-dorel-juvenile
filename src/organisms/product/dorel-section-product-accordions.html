@@ -1,12 +1,10 @@
-<link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
-<link rel="import" href="../utils/dorel-magento-collect-custom-data.html">
-<link rel="import" href="../atoms/dorel-accordeon-item.html">
-<link rel="import" href="../molecules/product-information/dorel-product-information-topic.html">
-<link rel="import" href="../molecules/product-information/dorel-product-information-faq.html">
-<link rel="import" href="../molecules/product-information/dorel-product-information-manuals.html">
-<link rel="import" href="../molecules/product-information/dorel-product-information-specifications.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-topic.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-faq.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-manuals.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-specifications.html">
+<link rel="import" href="../../utils/dorel-magento-collect-custom-data.html">
 
-<dom-module id="dorel-section-product-accordeons">
+<dom-module id="dorel-section-product-accordions">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -23,29 +21,30 @@
         padding: 3em 0;
       }
     </style>
+
     <dorel-magento-collect-custom-data
       product-id="[[ productId ]]"
       app-cache="[[ appCache ]]"
-      data="{{ accordeonsData }}"
-      type="accordeons"></dorel-magento-collect-custom-data>
+      data="{{ accordionsData }}"
+      type="accordions"></dorel-magento-collect-custom-data>
 
     <template
       is="dom-if"
-      if="[[ accordeonsData.accordions.length ]]">
+      if="[[ accordionsData.accordions.length ]]">
 
       <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
       <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
         <dorel-layout-row align="center">
           <dorel-layout-column desktop-column-span="8" tablet-column-span="12" mobile-column-span="12">
-            <div class="accordeon">
+            <div class="accordion">
 
               <template
                 is="dom-repeat"
-                items="[[ accordeonsData.accordions ]]">
+                items="[[ accordionsData.accordions ]]">
 
-                <dorel-accordeon-item
-                  heading="[[ item.heading ]]"
+                <dorel-accordion-item
+                  heading="[[_defineHeading(item.accordion_type)]]"
                   gtm-parent="[[ gtmParent ]]"
                   gtm-parent-index="[[ gtmParentIndex ]]"
                   gtm-cta-index$="[[ index ]]">
@@ -78,7 +77,7 @@
                   </template>
 
                   <!--// Product Information Specifications -->
-                </dorel-accordeon-item>
+                </dorel-accordion-item>
               </template>
             </div>
           </dorel-layout-column>
@@ -86,41 +85,47 @@
       </dorel-layout-container>
     </template>
   </template>
+
   <script>
-    Polymer({
-      is: 'dorel-section-product-accordeons',
-      behaviors: [PageBuilderBehavior],
-      properties: {
+    class DorelSectionProductAccordions extends Polymer.mixinBehaviors([PageBuilderBehavior, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element) {
 
-        productId: {
-          type: Number
-        },
+      static get is() { return 'dorel-section-product-accordions'; }
 
-        /**
-         * @attribute
-         * @name accordeonsData
-         * @description coming from the page-builder this data object is filled
-         * with ACF/Wordpress data about the component
-         */
-        accordeonsData: {
-          type: Object,
-          value: function () {
-            return {};
+      static get properties() {
+        return {
+          productId: {
+            type: Number
+          },
+
+          /**
+           * @attribute
+           * @name accordionsData
+           * @description coming from the page-builder this data object is filled
+           * with ACF/Wordpress data about the component
+           */
+          accordionsData: {
+            type: Object,
+            value: () => ({})
+          },
+
+          /**
+           * @attribute
+           * @name appCache
+           * @description the temporary cache of the application,
+           * contains data that used to be contained by the globalsManager
+           */
+          appCache: {
+            type: Object
           }
-        },
-
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
         }
-      },
+      }
 
-      behaviors: [TemplateBehaviors]
-    });
+      _defineHeading(type) {
+        return this.localize(`product_accordions#${type}`);
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelSectionProductAccordions.is, DorelSectionProductAccordions);
   </script>
 </dom-module>
