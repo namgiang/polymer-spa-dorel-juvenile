@@ -1,103 +1,19 @@
-<script src="../../../node_modules/oauth-signature/dist/oauth-signature.js"></script>
-
 <script>
-(function() {
-
-  /**
-   * @name _getRandomSequence
-   * @description Generates a random sequence of characters based on a given length
-   */
-  const _getRandomSequence = (length) => {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (var i = 0; i < length; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-
-    return text;
-  }
-  /**
-   * @name _getTimestamp
-   * @description Generates a timestamp
-   */
-  const _getTimestamp = () => {
-    return Math.floor((new Date()).getTime() / 1000);
-  }
-  /**
-   * @name _getSignature
-   * @description Generates an OAuth1 signature
-   */
-  const _getSignature = (httpMethod, url, parameters, consumerSecret, tokenSecret) => {
-    // generates a RFC 3986 encoded, BASE64 encoded HMAC-SHA1 hash
-    var rfcEncodedSignature = oauthSignature.generate(httpMethod, url, parameters, consumerSecret, tokenSecret);
-    return rfcEncodedSignature;
-  }
-  /**
-   * @name _oauthParametersToString
-   * @description Given a dictionary of parameters and an OAuth1 signature, this will reformat into a header string
-   */
-  const _oauthParametersToString = (parameters, signature) => {
-    var authString = 'OAuth ';
-    parameters['oauth_signature'] = signature;
-
-    for (var item in parameters) {
-      var key = item;
-      var value = parameters[item];
-      authString += key + '="' + value + '",';
-    }
-
-    return authString;
-  }
-
-  /**
-   * @name _retrieveMedia
-   * @description Requests a Bynder asset
-   */
-  retrieveMedia = (id) => {
-
-    // Initialise all of the variables needed for the request
-    var consumerKey = CONFIG.BYNDER_CONSUMER_KEY;
-    var consumerSecret = CONFIG.BYNDER_CONSUMER_KEY_SECRET;
-    var tokenKey = CONFIG.BYNDER_TOKEN_KEY;
-    var tokenKeySecret = CONFIG.BYNDER_TOKEN_KEY_SECRET;
-    var requestUrl = [CONFIG.BYNDER_API_URL, 'media', id, '?versions=1'].join('/');
-    var httpMethod = 'GET';
-    var nonce = _getRandomSequence(11);
-    var timestamp = _getTimestamp();
-
-    // Set the header parameters, needed for the request and as input for generating the signature
-    var parameters = {
-      oauth_consumer_key: consumerKey,
-      oauth_token: tokenKey,
-      oauth_nonce: nonce,
-      oauth_timestamp: timestamp,
-      oauth_signature_method: "HMAC-SHA1",
-      oauth_version: "1.0",
-      versions: "1"
-    };
-
-    // Create the OAuth signature
-    var oauth_signature = _getSignature(httpMethod, requestUrl, parameters, consumerSecret, tokenKeySecret);
-    //Generate the header string
-    var authString = _oauthParametersToString(parameters, oauth_signature);
-
-    var headers = {
-      'Authorization': authString,
-      'Accept': "*/*",
-    };
-
-    const init = {
-      headers,
-      method: 'GET',
-      mode: 'cors',
-      cache: 'default'
-    }
-
-    return {
-      requestUrl,
-      init,
-    }
-  }
-}());
+const BynderSDK = Bynder.default;
+var consumerKey = CONFIG.BYNDER_CONSUMER_KEY;
+var consumerSecret = CONFIG.BYNDER_CONSUMER_KEY_SECRET;
+var tokenKey = CONFIG.BYNDER_TOKEN_KEY;
+var tokenKeySecret = CONFIG.BYNDER_TOKEN_KEY_SECRET;
+// var requestUrl = [CONFIG.BYNDER_API_URL, 'media', id, '?versions=1'].join('/');
+bynder = new BynderSDK({
+    consumer: {
+        public: consumerKey,
+        secret: consumerSecret
+    },
+    accessToken: {
+        public: tokenKey,
+        secret: tokenKeySecret
+    },
+    baseURL: CONFIG.BYNDER_API_URL
+});
 </script>

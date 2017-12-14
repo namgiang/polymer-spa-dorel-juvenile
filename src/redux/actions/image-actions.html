@@ -29,14 +29,24 @@ function handleErrors(response) {
     return response;
 }
 
-function fetchImage(id) {
+function fetchImage(ids) {
+  debugger;
   return dispatch => {
-    const params = retrieveMedia(id);
-    return fetch(params.requestUrl, params.init)
-      .then(handleErrors)
-      .then(response => response.json())
-      .then(json => dispatch(addImage(id, json)))
-      .catch(() => dispatch(imageNotAvailable(id)))
+    return bynder.getMediaList({
+      ids,
+      versions: '1'
+    })
+    .then((data) => {
+      debugger;
+    })
+    .catch((error) => {
+      debugger;
+    });
+    // return fetch(params.requestUrl, params.init)
+    //   .then(handleErrors)
+    //   .then(response => response.json())
+    //   .then(json => dispatch(addImage(id, json)))
+    //   .catch(() => dispatch(imageNotAvailable(id)))
   }
 }
 
@@ -58,7 +68,10 @@ function fetchImageById(id) {
     if (shouldFetchImage(getState(), id)) {
       // Dispatch a thunk from thunk!
       dispatch(requestImage(id))
-      return dispatch(fetchImage(id))
+      setTimeout(function() {
+        const ids = getState().images.filter(image => image.isLoading).map(image => image.id).join(',');
+        return dispatch(fetchImage(ids))
+      }, 1000);
     } else {
       // Let the calling code know there's nothing to wait for.
       return Promise.resolve()
