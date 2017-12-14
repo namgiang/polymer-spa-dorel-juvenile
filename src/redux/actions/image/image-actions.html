@@ -1,0 +1,93 @@
+<link rel="import" href="../../services/image-service.html">
+
+<script>
+(function() {
+
+function requestImage(id) {
+  return {
+    type: 'REQUEST_IMAGE',
+    payload: id
+  }
+}
+
+function requestImageSucces(images) {
+  return {
+    type: 'REQUEST_IMAGES_SUCCES',
+    payload: images
+  }
+}
+
+function requestImageFailed(ids, error) {
+  return {
+    type: 'REQUEST_IMAGES_FAILED',
+    payload: {
+      ids,
+      error
+    }
+  }
+}
+
+function fetchImageById(id) {
+  return (dispatch, getState) => {
+    if (shouldFetchImage(getState(), id)) {
+      dispatch(requestImage(id))
+      return dispatch(startFetching());
+    } else {
+      return Promise.resolve();
+    }
+  }
+}
+
+const fetchImages = debounce((dispatch, getState) => {
+  const ids = getState().image.images.filter(image => image.isLoading).map(image_ => image_.id).join(',');
+  return bynder.getMediaList({
+    ids,
+    versions: '1'
+  })
+  .then(data => dispatch(requestImageSucces(data)))
+  .catch(error => dispatch(requestImageFailed(ids, error)))
+}, 500)
+
+const startFetching = () => (dispatch, getState) => {
+  fetchImages(dispatch, getState)
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+function shouldFetchImage(state, id) {
+  const image = state.image.images.find(image => image.id === id);
+  if (!image) {
+    return true
+  } else if (image.isLoading) {
+    return false
+  } else {
+    return image.notAvailable;
+  }
+}
+
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+imageActions = {
+  fetchImageById
+}
+
+}());
+</script>
