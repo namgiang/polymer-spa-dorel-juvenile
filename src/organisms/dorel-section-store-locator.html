@@ -105,7 +105,7 @@
     <template is="dom-if" if="[[ _hasProps(templateData) ]]">
       <google-maps-api id="api"
                        api-key="[[ apiKey ]]"
-                       language="[[ language ]]"
+                       language="[[ localeCode ]]"
                        on-api-load="_mapApiLoaded"></google-maps-api>
     </template>
 
@@ -119,7 +119,7 @@
     <section class="section-store-locator" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <div class="store-locator-map">
         <div class="store-overlay">
-          <h2 class="store-title">Enter a Location</h2>
+          <h2 class="store-title">[[localize('store_locator#store-title')]]</h2>
           <form is="iron-form" method="get" action="/" id="store-locator-form">
 
             <!-- <dorel-input-select label="Select a country"
@@ -128,7 +128,7 @@
                                 disabled></dorel-input-select> -->
 
             <dorel-input id="address-input"
-                         label="Type in address"
+                         label="[[localize('store_locator#address-from-label')]]"
                          value="{{ addressInput }}"
                          error-message="{{ addressError }}"
                          invalid$="{{ addressInvalid }}"
@@ -147,8 +147,7 @@
                 gtm-action="submit-stores"
                 gtm-parent="[[ gtmParent ]]"
                 gtm-parent-index="[[ gtmParentIndex ]]"
-                gtm-cta-index="0">Find Stores
-              </dorel-cta>
+                gtm-cta-index="0">[[localize('store_locator#find-stores-cta')]]</dorel-cta>
             </h2>
           </form>
 
@@ -157,7 +156,7 @@
           <template is="dom-if" if="[[ apiLoaded ]]">
             <google-map
               id="googleMap"
-              language="[[ language ]]"
+              language="[[ localeCode ]]"
               map="{{ map }}"
               disable-zoom="[[ disableZoom ]]"
               api-key="[[ apiKey ]]"
@@ -290,7 +289,7 @@
           }
         },
 
-        language: {
+        localeCode: {
           type: String,
           value: CONFIG.LOCALE.LANGUAGE
         },
@@ -403,6 +402,8 @@
         }
       },
 
+      behaviors: [DorelMultilingualBehavior],
+
       /**
        * @name listeners
        * @description listens to all different fires
@@ -444,7 +445,7 @@
         this.autocomplete = new google.maps.places.AutocompleteService();
 
         // build up the countries arr for the countries dropdown
-        this.countriesEndPoint = this.get('appCache.dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.language;
+        this.countriesEndPoint = this.get('appCache.dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.localeCode;
       },
 
       /**
@@ -726,11 +727,11 @@
         // zero results error
         switch (error) {
           case 'ZERO_RESULTS':
-            this.addressError = 'No results found for this address!';
+            this.addressError = this.localize('store_locator#zero-results');
             break;
 
           case 'ADDRESS_EMPTY':
-            this.addressError = 'This field cannot be empty';
+            this.addressError = this.localize('store_locator#address-empty');
             break;
         }
 
