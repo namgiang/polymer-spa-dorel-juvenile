@@ -72,25 +72,31 @@
        * @description on url/route change check the lang segment
        * @param route - Object
        */
-       _langChanged(route) {
-         if(!route) {
-           return;
-         }
+      _langChanged(route) {
+        if(!route) {
+          return;
+        }
 
-         const pathArray = route.path.split('/').filter(function(item) {
-           return item && item.length;
-         });
+        const pathArray = route.path.split('/').filter(function(item) {
+          return item && item.length;
+        });
 
-         //if pathArray does NOT exists it means there is no locale so redirect to default locale
-         if(!pathArray || !pathArray.length) {
-           return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/';
-         }
+        //if pathArray does NOT exists it means there is no locale so redirect to default locale
+        if(!pathArray || !pathArray.length || typeof CONFIG.LOCALE.CODE === 'undefined') {
 
-         //if conditions are true it means the first segment is not a lang segment so prepend default segment
-         if(pathArray[0].length !== 5 || pathArray[0].length && pathArray[0][2] !== '-') {
-           return this._setPageNotFound();
-         }
-       }
+          // important!!!!!! fix for IE11
+          if (!window.location.origin) {
+            window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+          }
+
+          return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/';
+        }
+
+        //if conditions are true it means the first segment is not a lang segment so prepend default segment
+        if(pathArray[0].length !== 5 || pathArray[0].length && pathArray[0][2] !== '-') {
+          return this._setPageNotFound();
+        }
+      }
 
       /**
        * @observer
@@ -100,7 +106,7 @@
        * which will change the iron-pages selected
        * @param route - Object
        */
-       _routePageChanged(route) {
+      _routePageChanged(route) {
         // if the route is undefined
         if (typeof route === 'undefined' || !route || !route.path) return;
 
