@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en" datetime="$datetime" version="$version">
 <head>
-  <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
   <!-- todo: app title, description, favicon, appname, webapp -->
@@ -18,12 +18,19 @@
 
   <!-- all config/constants needed for the app -->
   <script type="text/javascript" src="/app-config.js"></script>
-  <script type="text/javascript" src="/assets/js/bundle.js"></script>
   <script type="text/javascript" src="/node_modules/webcomponentsjs/webcomponents-loader.js"></script>
   <!-- <script type="text/javascript" src="/node_modules/babel-polyfill/dist/polyfill.min.js"></script> -->
+
+  <!-- TODO: should be removed or altered to maek use of Babel's polyfill -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.js"></script>
+  <script type="text/javascript" src="/node_modules/@bynder/bynder-js-sdk/dist/bundle.js"></script>
 
   <script>
+    // important!!!!!! fix for IE11
+    if (!window.location.origin) {
+      window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+    }
+
     // include shared styles (THEME)
     if (CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND]) {
       var brandObj = CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
