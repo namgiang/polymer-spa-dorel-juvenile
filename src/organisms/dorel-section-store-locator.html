@@ -247,189 +247,186 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-section-store-locator',
 
-      properties: {
-        /**
-         * @attribute
-         * @name templateData
-         * @description all data needed to build up a certain component
-         */
-        templateData: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
-        /**
-         * @attribute
-         * @name addressInput
-         * @description Address used in the input field
-         */
-        addressInput: {
-          type: String,
-          value: '',
-          notify: true
-        },
-        apiLoaded: {
-          type: Boolean,
-          value: false,
-          observer: '_initStoreLocator'
-        },
-
-        /**
-         * @name _form
-         * @description the form used for the a11y-keys submit
-         */
-        _form: {
-          type: Object,
-          value: function () {
-            return document.querySelector('#store-locator-form');
-          }
-        },
-
-        localeCode: {
-          type: String,
-          value: CONFIG.LOCALE.LANGUAGE
-        },
-
-        /**
-         * @name apiKey
-         * @description the api key for google maps
-         */
-        apiKey: {
-          type: String,
-          value: 'AIzaSyBYMyWp_Ex0Vti2UUDNOs979yVJ5sts1iA'
-        },
-
-        /**
-         * @name disableZoom
-         * @description attribute to define if the user is able
-         * to zoom by scroll-wheel or not
-         */
-        disableZoom: {
-          type: Boolean,
-          value: true
-        },
-
-        /**
-         * @name mapLoaded
-         * @description defines if the map is loaded
-         */
-        mapLoaded: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * @name countriesArr
-         * @description the array is used for the countries select dropdown.
-         * currently the countries array is build up by the stores array.
-         * This is done in the _retrieveCountries.
-         *
-         * TODO: retrieve from api
-         */
-        countriesResponse: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
-
-        /**
-         * @name countryStoresArr
-         * @description Defines the array that holds the information for the
-         * selected country and address combination within a certain radius.
-         * It is used in a dom-repeat to place the markers.
-         *
-         * TODO: retrieve from api
-         */
-        countryStoresArr: {
-          type: Array,
-          value: []
-        },
-
-        /**
-         * @name selectedCountry
-         * @description The country that is selected through the dropdown. A
-         * default value is also specified here
-         *
-         */
-        selectedCountry: {
-          type: Object,
-          value: {
-            label: CONFIG.LOCALE.COUNTRY_NAME.charAt(0).toUpperCase() + CONFIG.LOCALE.COUNTRY_NAME.slice(1), // Capitalize first letter of the COUNTRY_NAME constant
-            value: CONFIG.LOCALE.COUNTRY_CODE
-          }
-        },
-
-        /**
-         * @name addressInvalid
-         * @description defines if the entered address is invalid
-         */
-        addressInvalid: {
-          type: Boolean,
-          value: false
-        },
-
-        /**
-         * @name styles
-         * @description default styles and hiding of certain default pins
-         */
-        styles: {
-          type: Array,
-          value: [
-            {
-              featureType: 'poi',
-              stylers: [{visibility: 'off'}]
-            },
-            {
-              featureType: 'transit',
-              stylers: [{visibility: 'off'}]
+    class DorelSectionStoreLocator extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-section-store-locator';
+      }
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name templateData
+           * @description all data needed to build up a certain component
+           */
+          templateData: {
+            type: Object,
+            value: function () {
+              return {};
             }
-          ]
-        },
+          },
+          /**
+           * @attribute
+           * @name addressInput
+           * @description Address used in the input field
+           */
+          addressInput: {
+            type: String,
+            value: '',
+            notify: true
+          },
+          apiLoaded: {
+            type: Boolean,
+            value: false,
+            observer: '_initStoreLocator'
+          },
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
-        }
-      },
+          /**
+           * @name _form
+           * @description the form used for the a11y-keys submit
+           */
+          _form: {
+            type: Object,
+            value: function () {
+              return document.querySelector('#store-locator-form');
+            }
+          },
 
-      behaviors: [DorelMultilingualBehavior],
+          localeCode: {
+            type: String,
+            value: CONFIG.LOCALE.LANGUAGE
+          },
 
-      /**
-       * @name listeners
-       * @description listens to all different fires
-       */
-      listeners: {
-        // google-map-ready is fired from the google-map element
-        'google-map-ready': '_mapLoaded'
-      },
+          /**
+           * @name apiKey
+           * @description the api key for google maps
+           */
+          apiKey: {
+            type: String,
+            value: 'AIzaSyBYMyWp_Ex0Vti2UUDNOs979yVJ5sts1iA'
+          },
 
-      /**
-       * @name observers
-       * @description observe if the requested parameters are changed
-       */
-      observers: [
-        '_setMapZoom(mapLoaded, geometry)',
-        '_setMapFocus(mapLoaded, selectedCountry)'
-      ],
+          /**
+           * @name disableZoom
+           * @description attribute to define if the user is able
+           * to zoom by scroll-wheel or not
+           */
+          disableZoom: {
+            type: Boolean,
+            value: true
+          },
+
+          /**
+           * @name mapLoaded
+           * @description defines if the map is loaded
+           */
+          mapLoaded: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * @name countriesArr
+           * @description the array is used for the countries select dropdown.
+           * currently the countries array is build up by the stores array.
+           * This is done in the _retrieveCountries.
+           *
+           * TODO: retrieve from api
+           */
+          countriesResponse: {
+            type: Object,
+            value: function () {
+              return {};
+            }
+          },
+
+          /**
+           * @name countryStoresArr
+           * @description Defines the array that holds the information for the
+           * selected country and address combination within a certain radius.
+           * It is used in a dom-repeat to place the markers.
+           *
+           * TODO: retrieve from api
+           */
+          countryStoresArr: {
+            type: Array,
+            value: []
+          },
+
+          /**
+           * @name selectedCountry
+           * @description The country that is selected through the dropdown. A
+           * default value is also specified here
+           *
+           */
+          selectedCountry: {
+            type: Object,
+            value: {
+              label: CONFIG.LOCALE.COUNTRY_NAME.charAt(0).toUpperCase() + CONFIG.LOCALE.COUNTRY_NAME.slice(1), // Capitalize first letter of the COUNTRY_NAME constant
+              value: CONFIG.LOCALE.COUNTRY_CODE
+            }
+          },
+
+          /**
+           * @name addressInvalid
+           * @description defines if the entered address is invalid
+           */
+          addressInvalid: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * @name styles
+           * @description default styles and hiding of certain default pins
+           */
+          styles: {
+            type: Array,
+            value: [
+              {
+                featureType: 'poi',
+                stylers: [{visibility: 'off'}]
+              },
+              {
+                featureType: 'transit',
+                stylers: [{visibility: 'off'}]
+              }
+            ]
+          },
+
+          /**
+           * @attribute
+           * @name appCache
+           * @description the temporary cache of the application,
+           * contains data that used to be contained by the globalsManager
+           */
+          appCache: {
+            type: Object
+          }
+        };
+      }
+
+      ready () {
+        super.ready()
+        this.addEventListener('google-map-ready', this._mapLoaded);
+      }
+
+
+      static get observers() {
+        return [
+          '_setMapZoom(mapLoaded, geometry)',
+          '_setMapFocus(mapLoaded, selectedCountry)'
+        ]
+      }
 
       /**
        * @name _mapApiLoaded
        * @description this is fired when the google-map-api on-api-load attribute
        * is fired. It indicates that the google map api is ready to use
        */
-      _mapApiLoaded: function () {
+      _mapApiLoaded() {
         this.apiLoaded = true;
-      },
+      }
 
       /**
        * @name _initStoreLocator
@@ -437,7 +434,7 @@
        * to show the countries in the dropdown and setup the maps focus. Setting the
        * maps focus will only work if a country is preselected (this.selectedCountry)
        */
-      _initStoreLocator: function (apiLoaded) {
+      _initStoreLocator(apiLoaded) {
         if (typeof apiLoaded === 'undefined' || !apiLoaded) return;
 
         // create the geocoder object
@@ -446,7 +443,7 @@
 
         // build up the countries arr for the countries dropdown
         this.countriesEndPoint = this.get('appCache.dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.localeCode;
-      },
+      }
 
       /**
        * @listener
@@ -456,11 +453,11 @@
        * map variable is set and accessable. The mapLoaded is used to define
        * the zooming in _setMapZoom.
        */
-      _mapLoaded: function () {
+      _mapLoaded() {
 
         // set the variable which we use in the _setMapZoom
         this.mapLoaded = true;
-      },
+      }
 
       /**
        * @name _setMapFocus
@@ -469,7 +466,7 @@
        *
        * @param selectedCountry - String - contains the country's name
        */
-      _setMapFocus: function (mapLoaded, selectedCountry) {
+      _setMapFocus(mapLoaded, selectedCountry) {
 
         // check if there is a value for the geocoder and selectedCountry
         if (!mapLoaded ||
@@ -492,7 +489,7 @@
           self.geometry = geometry;
         });
 
-      },
+      }
 
       /**
        * @observer
@@ -503,14 +500,14 @@
        * @param loaded - Boolean - if the map is loaded or not (_mapLoaded)
        * @param geometry - Object - the geometry object of google maps (_retrieveGeocode)
        */
-      _setMapZoom: function (loaded, geometry) {
+      _setMapZoom(loaded, geometry) {
 
         // check if both are set and defined
         if (!loaded || typeof geometry === 'undefined') return;
 
         // use the maps object to fit the bounds with the geometry
         this.map.fitBounds(geometry.viewport);
-      },
+      }
 
       /**
        * @name _countriesLoaded
@@ -518,9 +515,9 @@
        *
        * @param data - Object - the complete stores list (coming from the backend)
        */
-      _countriesLoaded: function (data) {
+      _countriesLoaded(data) {
         this.countriesResponse = data.detail.response;
-      },
+      }
 
       /**
        * @name _storesLoaded
@@ -528,7 +525,7 @@
        *
        * @param data - Object - the complete stores list (coming from the backend)
        */
-      _storesLoaded: function (data) {
+      _storesLoaded(data) {
         // if no results are retrieved, handle error handling
         if (!data.detail.response.results.length) {
           this._handleErrors('ZERO_RESULTS');
@@ -552,7 +549,7 @@
 
         // fit the map to our bounds
         this.map.fitBounds(bounds);
-      },
+      }
 
       /**
        * @name _submitLocator
@@ -560,7 +557,7 @@
        *
        * @param e - EventObject - contains the click event
        */
-      _submitLocator: function (event) {
+      _submitLocator(event) {
 
         //Prevents the enter key from submitting the form, which triggers a page navigation
         if (typeof event.detail.keyboardEvent !== 'undefined') {
@@ -619,7 +616,7 @@
 
         });
 
-      },
+      }
 
       /**
        * @name _retrieveGeocode
@@ -629,7 +626,7 @@
        *
        * @param address - String - the address or country to find the geocode for
        */
-      _retrieveGeocode: function (address) {
+      _retrieveGeocode(address) {
 
         // reference this
         var self = this;
@@ -654,7 +651,7 @@
           });
 
         });
-      },
+      }
 
       /**
        * @name _retrieveSuggestions
@@ -662,7 +659,7 @@
        *
        * @param query - String - the address to get predictions for
        */
-      _retrieveSuggestions: function (query) {
+      _retrieveSuggestions(query) {
 
         // reference this
         var self = this;
@@ -689,7 +686,7 @@
 
         });
 
-      },
+      }
 
       /**
        * @name _isDisabled
@@ -698,9 +695,9 @@
        *
        * @param val - String - the value we need to evaluate to set or not
        */
-      _isDisabled: function (val) {
+      _isDisabled(val) {
         return typeof val === 'undefined' || val === '';
-      },
+      }
 
       /**
        * @name _defineStoreType
@@ -709,11 +706,11 @@
        * @param vip - Boolean - is this a VIP store or not
        * @returns image url - String - pin image
        */
-      _defineStoreType: function (vip) {
+      _defineStoreType(vip) {
         var markerUrl = '/assets/images/markers/';
 
         return (typeof vip === 'undefined' || !vip) ? markerUrl + 'shop-marker.png' : markerUrl + 'vip-marker.png';
-      },
+      }
 
       /**
        * @name _handleErrors
@@ -722,7 +719,7 @@
        *
        * @param error - String - the error code to process and translate
        */
-      _handleErrors: function (error) {
+      _handleErrors(error) {
 
         // zero results error
         switch (error) {
@@ -738,13 +735,13 @@
         // set the invalid attribute to show error styling
         this.$['address-input'].invalid = true;
         this.addressInvalid = true;
-      },
+      }
 
       /**
        * @name _hasProps
        * @description check if the observed data model has properties
        */
-      _hasProps: function (dataObj) {
+      _hasProps(dataObj) {
         // define dataEmpty variable to check wheter the dorelEvt object is empty or not
         var hasProps = false;
 
@@ -755,6 +752,9 @@
 
         return hasProps;
       }
-    });
+
+    };
+
+  customElements.define(DorelSectionStoreLocator.is, DorelSectionStoreLocator);
   </script>
 </dom-module>
