@@ -137,7 +137,7 @@
               </div>
               <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
                 <dorel-main-menu-desktop
-                  menu-items="[[ appCache.mainMenu ]]"
+                  menu-items="[[ mainMenu ]]"
                   route="[[ route ]]"
                   mobile-menu-opened="{{ mobileMenuOpened }}"
                   compact-menu="[[ compactMenu ]]"
@@ -146,7 +146,7 @@
 
               <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
                 <dorel-main-menu-mobile
-                  menu-items="[[ appCache.mainMenu ]]"
+                  menu-items="[[ mainMenu ]]"
                   route="[[ route ]]"
                   continents-data="[[ continentsData ]]"
                   current-language="[[ currentLanguage ]]"
@@ -167,121 +167,125 @@
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-header',
-      behaviors: [
-        Polymer.IronScrollTargetBehavior
-      ],
-      properties: {
-        /**
-         * @name currentLanguage
-         * @description Object containing currently selected country and language
-         */
-        currentLanguage: {
-          type: Object
-        },
-        /**
-         * @name continentsData
-         * @description Array containing the continents (and country, language data)
-         */
-        continentsData: {
-          type: Array,
-        },
-        /**
-         * @attribute
-         * @name compactMenu
-         * @description Makes the menu compact
-         */
-        compactMenu: {
-          type: Boolean,
-          value: false,
-        },
+    class DorelHeader extends ReduxMixin(Polymer.mixinBehaviors([Polymer.IronScrollTargetBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-header'
+      }
+      static get properties() {
+        return {
+          /**
+           * @name currentLanguage
+           * @description Object containing currently selected country and language
+           */
+          currentLanguage: {
+            type: Object,
+            statePath: 'route.currentLanguage'
+          },
+          /**
+           * @name continentsData
+           * @description Array containing the continents (and country, language data)
+           */
+          continentsData: {
+            type: Array,
+          },
+          /**
+           * @attribute
+           * @name compactMenu
+           * @description Makes the menu compact
+           */
+          compactMenu: {
+            type: Boolean,
+            value: false,
+          },
 
-        /**
-         * @attribute
-         * @name brandName
-         * @description defines the brand of the page
-         */
-        brandName: {
-          type: String
-        },
+          /**
+           * @attribute
+           * @name brandName
+           * @description defines the brand of the page
+           */
+          brandName: {
+            type: String
+          },
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description defines the brand of the page
-         */
-        appCache: {
-          type: Object
-        },
+          /**
+           * @attribute
+           * @name mainMenu
+           * @description the mainMenu
+           */
+          mainMenu: {
+            type: Array,
+            statePath: 'menu.items'
+          },
 
-        /**
-         * @attribute
-         * @name loadComplete
-         * @description is set within the dorel-app when all info is loaded
-         */
-        loadComplete: {
-          type: Boolean
-        },
+          /**
+           * @attribute
+           * @name loadComplete
+           * @description is set within the dorel-app when all info is loaded
+           */
+          loadComplete: {
+            type: Boolean
+          },
 
-        /**
-         * @attribute
-         * @name page
-         * @description defines the current page in string format
-         */
-        page: {
-          type: String
-        },
+          /**
+           * @attribute
+           * @name page
+           * @description defines the current page in string format
+           */
+          page: {
+            type: String
+          },
 
-        /**
-         * @exposed
-         * @name submenuOpened
-         * @description defines if one of the submenu's should be opened or closed
-         */
-        subMenuOpened: {
-          type: Boolean
-        },
+          /**
+           * @exposed
+           * @name submenuOpened
+           * @description defines if one of the submenu's should be opened or closed
+           */
+          subMenuOpened: {
+            type: Boolean
+          },
 
-        /**
-         * @name route
-         * @description the route of the application
-         */
-        route: {
-          type: Object
-        },
+          /**
+           * @name route
+           * @description the route of the application
+           */
+          route: {
+            type: Object
+          },
 
 
-        /**
-         * @exposed
-         * @name mobileMenuOpened
-         * @description defines if the mobile menu (drawer) should be opened or closed
-         */
-        mobileMenuOpened: {
-          type: Boolean,
-          reflectToAttribute: true,
-          notify: true
-        }
-      },
+          /**
+           * @exposed
+           * @name mobileMenuOpened
+           * @description defines if the mobile menu (drawer) should be opened or closed
+           */
+          mobileMenuOpened: {
+            type: Boolean,
+            reflectToAttribute: true,
+            notify: true
+          }
+        };
+      }
 
       /**
-       * @name attached
+       * @name connectedCallback
        * @description Event handler for scrolling behaviour
        * */
-      attached: function () {
+      connectedCallback() {
+        super.connectedCallback();
         this._scrollHandler();
-      },
+      }
       /**
        * @name _scrollHandler
        * @description Handler for scrolling. Determines if the header should be compact or expanded
        * */
-      _scrollHandler: function () {
+      _scrollHandler() {
         this.compactMenu = this._scrollTop > 50;
-      },
+      }
       /**
        * @name _logoClicked
        * @description handle the clicks on the logo
        */
-      _logoClicked: function (event) {
+      _logoClicked(event) {
         var event = {
           action: 'switch',
           component: 'logo',
@@ -293,15 +297,19 @@
           }
         };
 
-        // track this event
-        this.fire('setAppCache', {value: event, path: 'events'});
-      },
+        // send event to tracking
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          value: event,
+          path: 'events'
+        }}));
+
+      }
 
       /**
        * @name _toggleMobileMenu
        * @description handler for toggling the mobile menu
        */
-      _toggleMobileMenu: function (event) {
+      _toggleMobileMenu(event) {
 
         // submenu (desktop) will always be false
         this.subMenuOpened = false;
@@ -319,10 +327,12 @@
             'toState': this.mobileMenuOpened ? 'open' : 'close'
           }
         };
-
         // send event to tracking
-        this.fire('setAppCache', {value: event, path: 'events'});
-      },
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          value: event,
+          path: 'events'
+        }}));
+      }
 
       /**
        * template helper
@@ -331,10 +341,11 @@
        * @param currentLanguage - Object
        * @returns String
        */
-      _rootUrl: function(currentLanguage) {
+      _rootUrl(currentLanguage) {
         return `${window.location.origin}/${currentLanguage.path}/`;
       }
+    };
 
-    });
+  customElements.define(DorelHeader.is, DorelHeader);
   </script>
 </dom-module>

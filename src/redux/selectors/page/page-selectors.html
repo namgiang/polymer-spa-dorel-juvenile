@@ -1,0 +1,18 @@
+<script>
+(function() {
+
+const getPage = state => state.page.currentPage;
+const getPages = state => state.page.pages;
+
+const selectedPage = Reselect.createSelector([getPage, getPages],
+    (currentPage, pages) => {
+      return pages.find(page => page.id === currentPage.id);
+    }
+  );
+
+pageSelectors = {
+  selectedPage
+}
+
+}());
+</script>
