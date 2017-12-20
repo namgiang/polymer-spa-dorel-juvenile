@@ -82,8 +82,9 @@
         });
 
         //if pathArray does NOT exists it means there is no locale so redirect to default locale
-        if(!pathArray || !pathArray.length || typeof CONFIG.LOCALE.CODE === 'undefined') {
-          return window.location.href = window.location.origin + '/' + CONFIG.LOCALE.CODE + '/';
+        if(!pathArray || !pathArray.length || typeof CONFIG === 'undefined') {
+          const localeCode = CONFIG.LOCALE.CODE || 'uk-en';
+          return window.location.href = `${window.location.origin}/${localeCode}/`;
         }
 
         //if conditions are true it means the first segment is not a lang segment so prepend default segment
