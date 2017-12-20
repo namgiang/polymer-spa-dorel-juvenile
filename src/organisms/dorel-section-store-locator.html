@@ -325,9 +325,7 @@
             statePath: function(state) {
               const { route } = state;
               const address = route && route.currentRoute.queryParams.address;
-              if(address) {
-                this.addressInput = address;
-              }
+              this.addressInput = address ? address : '';
               return address ? address : '';
             }
           },
@@ -577,7 +575,8 @@
         }
         this.callLocator();
         //remove queryParams address
-        window.history.replaceState(null, null, window.location.pathname);
+        window.history.pushState({}, null, window.location.pathname);
+        window.dispatchEvent(new CustomEvent('location-changed'));
       }
 
 
