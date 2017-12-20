@@ -122,11 +122,6 @@
           <h2 class="store-title">[[localize('store_locator#store-title')]]</h2>
           <form is="iron-form" method="get" action="/" id="store-locator-form">
 
-            <!-- <dorel-input-select label="Select a country"
-                                options="[[ countriesResponse.results ]]"
-                                selected="{{ selectedCountry }}"
-                                disabled></dorel-input-select> -->
-
             <dorel-input id="address-input"
                          label="[[localize('store_locator#address-from-label')]]"
                          value="{{ addressInput }}"
@@ -325,6 +320,18 @@
             value: false
           },
 
+          address: {
+            type: String,
+            statePath: function(state) {
+              const { route } = state;
+              const address = route && route.currentRoute.queryParams.address;
+              if(address) {
+                this.addressInput = address;
+              }
+              return address ? address : '';
+            }
+          },
+
           /**
            * @name countriesArr
            * @description the array is used for the countries select dropdown.
@@ -487,7 +494,13 @@
 
           // saved too use it for the _setMapZoom observer
           self.geometry = geometry;
+
+          // submit the form if the addressInput is filled
+          if(self.addressInput.length) {
+            self.callLocator();
+          }
         });
+
 
       }
 
@@ -558,13 +571,22 @@
        * @param e - EventObject - contains the click event
        */
       _submitLocator(event) {
-
         //Prevents the enter key from submitting the form, which triggers a page navigation
         if (typeof event.detail.keyboardEvent !== 'undefined') {
           event.detail.keyboardEvent.preventDefault();
         }
+        this.callLocator();
+        //remove queryParams address
+        window.history.replaceState(null, null, window.location.pathname);
+      }
 
-        if (typeof this.addressInput === 'undefined' || this.address === this.addressInput) return;
+
+      /**
+       * @name callLocator
+       * @description call and set the pointers on the map
+       */
+      callLocator() {
+        if (typeof this.addressInput === 'undefined') return;
 
         // handle the validation of the input and errors when the input is empty
         if (this.addressInput === '') {
@@ -603,19 +625,14 @@
             self.storesEndPoint = self.get('appCache.dioApiUrl') + '/retailers?brandName=maxi_cosi' + storeParams;
 
           }, function (error) {
-
             // handle off the errors
             self._handleErrors(error);
-
           });
 
         }, function (error) {
-
           // handle off the errors
           self._handleErrors(error);
-
         });
-
       }
 
       /**
