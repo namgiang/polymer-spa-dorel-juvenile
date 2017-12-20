@@ -64,13 +64,8 @@
       new Promise((resolve, reject) => {
         resolve(this._createLinks(mainMenu));
       }).then(mainMenu => {
-        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-          path: 'mainMenu',
-          value: mainMenu
-        }}));
         return this.dispatch('addMenu', mainMenu);
       });
-      this.dispatch('addMenu', mainMenu);
     }
 
     async _createLinks(menuItems) {
@@ -151,7 +146,7 @@
 
       var category = value.detail.category;
       // create a new mainMenu and append
-      var oldMenu = this.get('appCache.mainMenu') || [];
+      var oldMenu = this.getState().menu.items || [];
       var mainMenu = oldMenu.map(function(menuItem) {
         if(menuItem.category_id === category) {
           menuItem.sub_category_items = products.map(function(product) {
@@ -167,11 +162,6 @@
         }
         return Object.assign({}, menuItem);
       });
-
-      this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-        path: 'mainMenu',
-        value: mainMenu
-      }}));
       this.dispatch('addMenu', mainMenu);
     }
 
