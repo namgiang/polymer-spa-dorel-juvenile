@@ -124,6 +124,17 @@
 
         const newRoute = route;
         newRoute.url = fullUrl;
+
+        //make sure that there are no queryParams is the url
+        if(!window.location.search || !window.location.search.length) {
+          //reset the queryParams (bug: app-route does not do it)
+          newRoute.__queryParams = {};
+        } else {
+          const search = window.location.search.substring(1);
+          const newParams = JSON.parse(`{"${decodeURI(`${search}`.replace(/&/g, "\",\"").replace(/=/g,"\":\""))}"}`);
+          //make sure the search is applied to the querParams
+          newRoute.__queryParams = Object.assign({}, newParams, newRoute.__queryParams);
+        }
         this.dispatch('setRoute', newRoute);
 
         // Matches the page to the component guide template
