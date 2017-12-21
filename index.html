@@ -24,6 +24,18 @@
   <script type="text/javascript" src="/node_modules/babel-polyfill/dist/polyfill.min.js"></script>
   <script type="text/javascript" src="/node_modules/dorel/fetch/fetch.js"></script>
 
+  <script type="text/javascript">
+    if (window.CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND]) {
+      var brandObj = CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+      var brand = brandObj.label.toLowerCase();
+      var themeUrl = '/src/themes/' + brand + '.html';
+      var themeImport = document.createElement('link');
+      themeImport.setAttribute("rel", "import");
+      themeImport.setAttribute("href", themeUrl);
+      document.head.appendChild(themeImport);
+    }
+  </script>
+
   <!-- Main style -->
   <style>
     html {
@@ -115,7 +127,7 @@
 
 </head>
 <body unresolved>
-
+<!--
   <div id="load-placeholder">
     <div class="spinner-wrapper">
       <div class="spinner">
@@ -123,7 +135,7 @@
         <div class="double-bounce2"></div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <dorel-app>
     <!-- Any content here is removed when the app is loaded -->
