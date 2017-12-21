@@ -40,7 +40,6 @@ function waitFor(stream) {
 }
 
 gulp.task('build:es5', function () {
-  /*
   return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
   mkdirp(__dirname + '/build/log/', (err) => {
     if (err) console.error(err)
@@ -182,8 +181,6 @@ gulp.task('build:es5', function () {
       resolve();
     });
   });
-  */
-  return;
 });
 
 gulp.task('build:es6', function(done) {
@@ -195,7 +192,6 @@ gulp.task('build:es6', function(done) {
 
   del([buildDirectory])
     .then(() => {
-      /*
       mkdirp(__dirname + '/build/log/', (err) => {
         if (err) console.error(err)
         else console.log('Log directory created!')
@@ -218,7 +214,6 @@ gulp.task('build:es6', function(done) {
           log_stdout.write(util.format(d) + '\n');
         };
       });
-      */
       gulp.src([
         './**/*',
         '!./{build,build/**}'
