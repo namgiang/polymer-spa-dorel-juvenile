@@ -4,6 +4,7 @@
 <link rel="import" href="../../node_modules/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../../node_modules/neon-animation/web-animations.html">
 <link rel="import" href="../../node_modules/iron-image/iron-image.html">
+<link rel="import" href="../atoms/dorel-input.html">
 
 <link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
 <link rel="import" href="../utils/dorel-hatch-collect.html">
@@ -23,7 +24,7 @@
         left: 0;
         height: 100vh;
         width: 100vw;
-        margin: 0;
+        margin: 0 auto;
         max-width: none !important;
         max-height: none !important;
         z-index: 10000 !important;
@@ -35,6 +36,15 @@
         flex-basis: 100%;
       }
 
+      [tablet-medium-up] paper-dialog {
+        left: 50% !important;
+        max-width: 580px !important;
+        transform: translate(-50%, 0);
+        padding: 1rem 0.5rem 0.5rem;
+        max-height: 320px !important;
+        height: 100% !important;
+      }
+
       paper-dialog-scrollable {
         float: left;
         width: 100%;
@@ -43,6 +53,7 @@
 
       .lightbox-title {
         @apply(--theme-typography-5);
+        color: var(--theme-color-text-link);
         width: 100%;
         margin-top: 0;
         padding: 0 !important;
@@ -192,6 +203,56 @@
         float: left;
       }
 
+      .layout-column {
+      }
+
+      .search-form {
+        position: relative;
+      }
+
+      .search-form__submit {
+        position: absolute;
+        top: 14px;
+        right: 10px;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: var(--theme-color-monochrome-3);
+        cursor: pointer;
+      }
+
+      .search-form__submit[enabled] {
+        color: var(--theme-color-text-link);
+      }
+
+      .search-form__input {
+         max-height: 53px;
+      }
+
+      .search-form__submit[enabled]:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .close-icon {
+        color: var(--theme-color-text-link);
+        position: absolute;
+        right: 0.5rem;
+        top: -1rem;
+        cursor: pointer;
+        --iron-icon-width: 30px;
+        --iron-icon-height: 30px;
+        z-index: 1;
+      }
+
+      [tablet-medium-up] .close-icon {
+        right: 1rem;
+        top: 0.5rem;
+      }
+
+      .close-icon:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -202,6 +263,7 @@
       tier="[[thirdPartyOptions.hatch.tier]]"></dorel-hatch-collect>
 
     <section class="section-product-lead-lightbox"
+             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
              desktop-small$="{{ breakpoints.desktopSmall }}"
              desktop-large$="{{ breakpoints.desktopLarge }}"
              >
@@ -212,42 +274,33 @@
                     on-iron-overlay-opened="_disableDocumentScrolling"
                     on-iron-overlay-closed="_restoreDocumentScrolling">
         <div class="lightbox-wrapper layout horizontal">
-          <dorel-cta
-            class="close-dialog-cta"
-            type="link"
-            link=""
-            size="medium"
-            icon="dorel-icons:close"
-            dialog-confirm autofocus
-            gtm-action="close-accessory-lightbox"
-            gtm-parent="[[ gtmParent ]]"
-            gtm-parent-index="[[ gtmParentIndex ]]"
-            gtm-child="[[ gtmChild ]]"
-            gtm-child-index="[[ gtmChildIndex ]]"
-            gtm-cta-index="0">
-            {{localize('Close')}}
-          </dorel-cta>
+          <iron-icon
+            dialog-confirm
+            autofocus
+            class="close-icon"
+            icon="dorel-icons:close">
+          </iron-icon>
           <paper-dialog-scrollable>
 
             <template is="dom-if"
                       if="[[_hasStoreLocatorPage(storeLocatorPage)]]">
               <dorel-layout-container>
                 <dorel-layout-row align="center">
-                  <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                  <dorel-layout-column class="layout-column" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
                     <h3 class="lightbox-title">{{localize('Find_a_Store')}}</h3>
-                    <dorel-cta
-                        type="primary"
-                        title="{{ localize('Find_a_Store') }}"
-                        on-click="[[_goToStoreLocator]]"
-                        link="[[_createStoreLocatorLink(storeLocatorPage)]]"
-                        size="medium"
-                        icon="dorel-icons:chevron-right"
-                        gtm-action="click"
-                        gtm-parent="[[ gtmParent ]]"
-                        gtm-parent-index="[[ gtmParentIndex ]]"
-                        gtm-cta-index="1">
-                        {{ localize('Find_a_Store') }}
-                    </dorel-cta>
+                    <form id="search-location" class="search-form" on-submit="_submitForm">
+                      <dorel-input id="address-input"
+                                   name="address"
+                                   class="search-form__input"
+                                   value="{{ addressInput }}"
+                                   placeholder="{{ localize('product_lead_lightbox#address-placeholder') }}"
+                                   invalid$="{{ !addressInput.length }}">
+                       </dorel-input>
+                       <button role="submit" class="search-form__submit" enabled$="{{ addressInput.length }}">
+                         <iron-icon icon="dorel-icons:location"></iron-icon>
+                       </button>
+                    </form>
+
                   </dorel-layout-column>
                 </dorel-layout-row>
               </dorel-layout-container>
@@ -330,9 +383,13 @@
             value: () => ({})
           },
 
-          storeLocatorPageObject: {
+          storeLocatorPage: {
             type: Object,
             value: () => ({})
+          },
+
+          addressInput: {
+            type: String
           }
         }
       }
@@ -340,6 +397,18 @@
       ready() {
         super.ready();
         this._defineOptionModels(this.get('appCache'));
+      }
+
+      _submitForm(event) {
+        event.preventDefault();
+        if (!this.addressInput || !this.addressInput.length) {
+          this.addressInvalid = true;
+          return;
+        }
+        this.$.lightbox.close();
+        const url = this._createStoreLocatorLink(this.storeLocatorPage);
+        window.history.pushState({ address: this.addressInput }, null, `${url}?address=${this.addressInput}`);
+        window.dispatchEvent(new CustomEvent('location-changed'));
       }
 
       /**
@@ -380,7 +449,6 @@
        * @returns {boolean}
        */
       _hasStoreLocatorLink(link) {
-        debugger;
         return (typeof link !== 'undefined' || link !== '');
       }
 
@@ -403,13 +471,6 @@
       _createStoreLocatorLink(pageObject) {
         var urlArr = window.location.href.split('/');
         return urlArr[0] + '//' + urlArr[2] + '/' + urlArr[3] + '/' + pageObject.post_name;
-      }
-
-      /**
-       * when the store locator link is clicked close the modal
-       */
-      _goToStoreLocator() {
-        this.$.lightbox.close();
       }
     }
 
