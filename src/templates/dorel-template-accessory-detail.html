@@ -1,3 +1,4 @@
+<link rel="import" href="./dorel-template-product-detail.html">
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/dorel-section-slideshow.html">
 <link rel="import" href="../organisms/product/dorel-section-product-accessories.html">
@@ -134,7 +135,7 @@
   </template>
 
   <script>
-    class DorelTemplateAccessoryDetail extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element)) {
+    class DorelTemplateAccessoryDetail extends DorelTemplateProductDetail {
 
       static get is() { return 'dorel-template-accessory-detail'; }
 
@@ -218,52 +219,6 @@
         };
       }
 
-      static get observers() {
-        return [
-          '_productNameChanged(routeData.productName)'
-        ]
-      }
-
-      /**
-       * @name _productNameChanged
-       * @description if the productName changes dispatch an action to retrieve product
-       * @param product - Object
-       * @returns Boolean
-       */
-      _productNameChanged(productName) {
-        if(productName) {
-          this.dispatch('requestProduct', productName);
-        }
-      }
-
-      /**
-       * @name _shouldShowProduct
-       * @description template helper method (polymer dom-if cant handle 2 expressions)
-       * @param product - Object
-       * @returns Boolean
-       */
-      _shouldShowProduct(product) {
-        return product && product.notAvailable === false && product.isLoading === false;
-      }
-
-      /**
-       * @function
-       * @name _getSlideshowData
-       * @description wrap the array 'slides' in an object, temp add video to that array
-       */
-      _getSlideshowData(product) {
-        // add video_section to slides
-        if (product.video_section && product.video_section.video_id) {
-          var slides = [];
-          slides.push({
-            type: 'video',
-            content: product.video_section.content,
-            video_id : product.video_section.video_id,
-            bynder_image_id : product.video_section.bynder_image_id,
-          });
-        }
-        return { slides: slides };
-      }
     }
     customElements.define(DorelTemplateAccessoryDetail.is, DorelTemplateAccessoryDetail);
 
