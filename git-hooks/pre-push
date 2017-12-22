@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+yarn build
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}√${NC} build successful..."
+  echo -e "${GREEN}-->${NC} Thumbs up! Approving push..."
+  exit 0
+else
+  echo -e "${RED}Error:${NC} build failed..."
+  echo -e "       Please check the code and/or build output for errors..."
+  echo -e "${RED}-->${NC} Rejecting push..."
+  exit 1
+fi
