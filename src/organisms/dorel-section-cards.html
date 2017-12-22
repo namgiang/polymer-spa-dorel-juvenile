@@ -31,7 +31,9 @@
     </style>
 
     <dorel-layout-container light-background$="[[ lightBackground ]]">
-      <dorel-titling title="[[ cardsData.title ]]" description="[[ cardsData.description ]]"></dorel-titling>
+      <dorel-titling
+        title="[[ cardsData.title ]]"
+        description="[[ cardsData.description ]]"></dorel-titling>
       <template
         is="dom-if"
         if="[[ cardsData.cards.length ]]">
@@ -57,71 +59,77 @@
         </dorel-layout-row>
       </template>
     </dorel-layout-container>
-
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-section-cards',
+    class DorelSectionCards extends Polymer.Element {
 
-      properties: {
-        /**
-         * @attribute
-         * @name lightBackground
-         * @description Light background for the section
-         */
-        lightBackground: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * @attribute
-         * @name compact
-         * @description If compact, the section will show 3 cards on a row instead of 2
-         */
-        compact: {
-          type: Boolean,
-          value: false,
-        },
-        /**
-         * @attribute
-         * @name ctaType
-         * @description CTA type which will appear in the card
-         */
-        ctaType: {
-          type: String,
-          value: 'primary',
-        },
-        /**
-         * @attribute
-         * @name cardsData
-         * @description all data needed for the cards defined in ACF/Wordpress
-         */
-        cardsData: {
-          type: Object,
-          value: function () {
-            return {};
+      static get is() { return 'dorel-section-cards'; }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name lightBackground
+           * @description Light background for the section
+           */
+          lightBackground: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * @attribute
+           * @name compact
+           * @description If compact, the section will show 3 cards on a row instead of 2
+           */
+          compact: {
+            type: Boolean,
+            value: false,
+          },
+
+          /**
+           * @attribute
+           * @name ctaType
+           * @description CTA type which will appear in the card
+           */
+          ctaType: {
+            type: String,
+            value: 'primary',
+          },
+
+          /**
+           * @attribute
+           * @name cardsData
+           * @description all data needed for the cards defined in ACF/Wordpress
+           */
+          cardsData: {
+            type: Object,
+            value: () => ({})
+          },
+
+          /**
+           * @name desktopColSpan
+           * @description computed property depending on compact attribute
+           */
+          desktopColSpan: {
+            type: Number,
+            computed: '_computeColSpan(compact)'
           }
-        },
-        /**
-         * @name desktopColSpan
-         * @description computed property depending on compact attribute
-         */
-        desktopColSpan: {
-          type: Number,
-          computed: '_computeColSpan(compact)'
-        },
-      },
+        }
+      }
 
       /**
-       * @name computeColSpan
-       * @description Returns a column span depending on the compactness of the section
+       * Returns a column span depending on the compactness of the section
+       *
+       * @param {boolean} show the compact version of the cards (2 or 3 cards)
+       * @return {number} returns the column span
        */
-      _computeColSpan: function (compact) {
+      _computeColSpan(compact) {
         return compact ? 4 : 6;
       }
-    });
+    }
 
+    customElements.define(DorelSectionCards.is, DorelSectionCards);
   </script>
-
 </dom-module>
