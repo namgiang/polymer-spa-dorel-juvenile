@@ -1,5 +1,3 @@
-<link rel="import" href="../../utils/dorel-magento-collect-custom-data.html">
-
 <dom-module id="dorel-section-product-usps">
   <template>
     <style>
@@ -41,12 +39,6 @@
       }
 
     </style>
-
-    <dorel-magento-collect-custom-data
-      product-id="[[ productId ]]"
-      data="{{ uspsData }}"
-      app-cache="[[ appCache ]]"
-      type="usps"></dorel-magento-collect-custom-data>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
@@ -97,36 +89,55 @@
 
   </template>
   <script>
-    Polymer({
-      is: 'dorel-section-product-usps',
-      properties: {
+    class DorelSectionProductUsps extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors], Polymer.Element)) {
+      static get is() {
+        return 'dorel-section-product-usps';
+      }
 
-        productId: {
-          type: Number
-        },
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name productId
+           * @description coming from the currentProduct passed by parent
+           */
+          productId: {
+            type: String,
+            observer: '_productIdChanged'
+          },
 
-        /**
-         * @attribute
-         * @name uspsData
-         * @description coming from the page-builder this data object is filled
-         * with ACF/Wordpress data about the component
-         */
-        uspsData: {
-          type: Object
-        },
+          /**
+           * @attribute
+           * @name uspsData
+           * @description coming from the page-builder this data object is filled
+           * with ACF/Wordpress data about the component
+           */
+          uspsData: {
+            type: Object,
+            statePath: function(state) {
+              if(!this.productId || !state.modules.usps.length) {
+                return { isLoading: true };
+              }
+              return state.modules.usps.find(item => {
+                return item.productId === this.productId && !item.isLoading && !item.isNotAvailable;
+              });
+            }
+          }
+        };
+      }
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
+      /**
+       * observer
+       * @name _productIdChanged
+       * @description everytime the observer is trigger it will dispatch the requestModule action
+       */
+      _productIdChanged(productId) {
+        if(!productId || !productId.length) {
+          return;
         }
-      },
-
-      behaviors: [ConditionalBehaviors]
-    });
+        this.dispatch('requestModule', { productId, type: 'usps' });
+      }
+    }
+    customElements.define(DorelSectionProductUsps.is, DorelSectionProductUsps);
   </script>
 </dom-module>
