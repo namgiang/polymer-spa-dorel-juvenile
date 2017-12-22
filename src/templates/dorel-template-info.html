@@ -101,7 +101,8 @@
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
               <div class="max-width-container">
-                <dorel-wysiwyg-html html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
+                <dorel-wysiwyg-html
+                  html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
               </div>
             </template>
             <!--// dorel wysiwyg content-->
@@ -144,7 +145,9 @@
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
               <div class="video-container">
-                <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
+                <dorel-video-wrap
+                  video-id="[[ component.video_id ]]"
+                  video-type="youtube"></dorel-video-wrap>
               </div>
             </template>
             <!-- dorel video wrap -->
@@ -153,57 +156,68 @@
             <template
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
-
               <dorel-hubspot
                 hubspot-loaded="[[ appCache.collect.options.hubspot_loaded ]]"
                 portal-id="[[ appCache.collect.options.hubspot_portal_id ]]"
                 form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
-
             </template>
             <!--// dorel section hubspot -->
+
+            <!-- dorel video wrap -->
+            <template
+              is="dom-if"
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_cards') ]]">
+              <dorel-section-cards
+                cards-data="[[component]]"
+                cta-type="secondary"
+                compact="true"
+                light-background="true"></dorel-section-cards>
+            </template>
+            <!-- dorel video wrap -->
 
           </template>
         </template>
       </dorel-layout-container>
-
-
     </section>
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-template-info',
+    class DorelTemplateInfo extends Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element) {
 
-      properties: {
+      static get is() { return 'dorel-template-info'; }
 
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
-
-        /**
-         * @attribute
-         * @name templateData
-         * @description the data coming from ACF/Wordpress which is delegated to the page builder
-         */
-        templateData: {
-          type: Object,
-          value: function () {
-            return {};
+      static get properties() {
+        return {
+          /**
+           * TODO: refactor to redux
+           */
+          appCache: {
+            type: Object,
+            value: () => ({})
           },
-          observer: '_defineComponentModels'
-        },
 
-        /**
-         * @name homeHeaderData
-         * @description the data model used for the hero header component
-         */
-        heroHeaderData: Object,
-      },
+          /**
+           * @attribute
+           * @name templateData
+           * @description the data coming from ACF/Wordpress which is delegated to the page builder
+           */
+          templateData: {
+            type: Object,
+            value: () => ({}),
+            observer: '_defineComponentModels'
+          },
 
-      behaviors: [TemplateBehaviors]
-    });
+          /**
+           * @name homeHeaderData
+           * @description the data model used for the hero header component
+           */
+          heroHeaderData: {
+            type: Object,
+            value: () => ({})
+          }
+        }
+      }
+    }
+    customElements.define(DorelTemplateInfo.is, DorelTemplateInfo);
   </script>
 </dom-module>
