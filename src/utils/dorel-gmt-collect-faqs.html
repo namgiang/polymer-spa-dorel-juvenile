@@ -10,46 +10,53 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-gmt-collect-faqs',
-      properties: {
+    class DorelGmtCollectFaqs extends ReduxMixin(Polymer.mixinBehaviors([MergeArraysBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-gmt-collect-faqs';
+      }
 
-        /**
-         * @attribute
-         * @name endpointSegments
-         * @description the segments that are added behind the GMT url, separate
-         * multiple segments with '/'
-         */
-        endpointSegments: {
-          type: String,
-        },
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name endpointSegments
+           * @description the segments that are added behind the GMT url, separate
+           * multiple segments with '/'
+           */
+          endpointSegments: {
+            type: String,
+          },
 
-        /**
-         * @name endPoint
-         * @description the full endpoint url that iron-ajax uses to do the call
-         * to the GMT
-         */
-        endPoint: {
-          type: String
-        },
+          /**
+           * @name endPoint
+           * @description the full endpoint url that iron-ajax uses to do the call
+           * to the GMT
+           */
+          endPoint: {
+            type: String
+          },
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the cache of the application will contain the currentLanguage
-         */
-        appCache: {
-          type: Object
-        }
-      },
+          /**
+           * @attribute
+           * @name appCache
+           * @description the cache of the application will contain the currentLanguage
+           */
+          appCache: {
+            type: Object
+          },
 
-      behaviors: [
-        MergeArraysBehavior
-      ],
+          currentLanguage: {
+            type: Object,
+            statePath: 'route.currentLanguage'
+          }
+        };
+      }
 
-      observers: [
-        '_defineEndpoint(endpointSegments, appCache.currentLanguage)'
-      ],
+      static get observers() {
+        return [
+          '_defineEndpoint(endpointSegments, currentLanguage)'
+        ];
+      }
 
       /**
        * @observer
@@ -57,30 +64,34 @@
        * @description will check if the endpointSegments are changed and creates an
        * endpoint url, which will do the api call automatically
        */
-      _defineEndpoint: function(segments, currentLanguage) {
+      _defineEndpoint(segments, currentLanguage) {
         if(!segments || !currentLanguage || !currentLanguage.languageCode) {
           return;
         }
 
         // set the endPoint variable which will kick off the iron-ajax
         this.set('endPoint', CONFIG.DIO_API_URL + '/service-topics/' + segments + '&translations=1&iso_code=' + currentLanguage.languageCode);
-      },
+      }
 
       /**
        * @name _faqsLoaded
        * @description when the endpoint gives a response we set the apiResponse,
        * which will reflect to the attribute
        */
-      _faqsLoaded: function(data) {
-        var response = data.detail.response;
+      _faqsLoaded(data) {
+        const response = data.detail.response;
 
-        if(typeof response !== 'undefined') {
-          var faqsGlobals = this.get('appCache.faqs') || [];
-          var faqs = this._mergeArrays(faqsGlobals, response, 'id');
+        if(response) {
+          const faqsGlobals = this.get('appCache.faqs') || [];
+          const faqs = this._mergeArrays(faqsGlobals, response, 'id');
 
-          this.fire('setAppCache', { value: faqs, path: 'faqs' });
+          this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+            value: faqs,
+            path: 'faqs'
+          }}));
         }
       }
-    });
+    }
+    customElements.define(DorelGmtCollectFaqs.is, DorelGmtCollectFaqs);
   </script>
 </dom-module>

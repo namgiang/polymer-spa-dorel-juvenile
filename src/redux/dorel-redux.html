@@ -7,6 +7,7 @@
 <link rel="import" href="./middleware/thunk.html">
 
 <!-- import reducers -->
+<link rel="import" href="./reducers/config-reducer.html">
 <link rel="import" href="./reducers/image-reducer.html">
 <link rel="import" href="./reducers/page-reducer.html">
 <link rel="import" href="./reducers/route-reducer.html">
@@ -20,11 +21,12 @@
   (function() {
     // Combine all the reducers
     const rootReducer = Redux.combineReducers({
+      config: configReducer,
       image: imageReducer,
-      page: pageReducer,
-      route: routeReducer,
       menu: menuReducer,
-      product: productReducer
+      page: pageReducer,
+      product: productReducer,
+      route: routeReducer
     });
 
     const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

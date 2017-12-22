@@ -8,17 +8,18 @@
   </template>
 
   <script>
-    class DorelWpCollectTemplates extends Polymer.Element {
+    class DorelWpCollectTemplates extends ReduxMixin(Polymer.Element) {
 
       static get is() { return 'dorel-wp-collect-templates'; }
 
       static get properties() {
         return {
           /**
-           * `appCache` the application cache
+           * `wpUrl` the wordpress endpoint
            */
-          appCache: {
-            type: Object
+          wpUrl: {
+            type: String,
+            statePath: 'config.wpUrl'
           },
 
           /**
@@ -36,13 +37,21 @@
             type: Object,
             value: () => ({}),
             notify: true // propagate upward
+          },
+
+          /**
+           * currentLanguage of the redux state
+           */
+          currentLanguage: {
+            type: Object,
+            statePath: 'route.currentLanguage'
           }
         }
       }
 
       static get observers() {
         return [
-          '_init(appCache.wpUrl, appCache.currentLanguage)'
+          '_init(wpUrl, currentLanguage)'
         ]
       }
 
@@ -68,6 +77,7 @@
         const response = (typeof templateType !== 'undefined' && templateType !== '') ? data.detail.response[0] : data.detail.response;
 
         this.set('response', response);
+        this.dispatch('addPage', response);
       }
     }
 

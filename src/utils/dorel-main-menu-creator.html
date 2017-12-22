@@ -6,12 +6,12 @@
 
     <dorel-magento-collect-products-by-category
       app-cache="[[ appCache ]]"
+      current-language="[[ currentLanguage ]]"
       id="products">
     </dorel-magento-collect-products-by-category>
 
     <dorel-wp-collect-page
       pages="[[ pages ]]"
-      app-cache="[[ appCache ]]"
       id="collectPageEl">
     </dorel-wp-collect-page>
 
@@ -43,6 +43,16 @@
         pages: {
           type: Array,
           statePath: 'pages'
+        },
+
+        /**
+         * @attribute
+         * @name currentLanguage
+         * @description the currentLanguage from the redux state
+         */
+        currentLanguage: {
+          type: Object,
+          statePath: 'route.currentLanguage'
         }
       }
     }
@@ -112,7 +122,7 @@
       });
       if(!childPages || childPages.length < 2) {
         var category = this._getMagentoCategoryId(page);
-        this.$.products.getProducts(category, this.get('appCache.currentLanguage'));
+        this.$.products.getProducts(category, this.currentLanguage);
       } else {
         return childPages;
       }
