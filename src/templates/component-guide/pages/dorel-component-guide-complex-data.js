@@ -36,8 +36,8 @@ var complexComponents = [
     filePath: "dorel-component-guide-video.html"
   },
   {
-    title: "Text Image Block",
-    filePath: "dorel-component-guide-text-image-block.html"
+    title: "Content Block",
+    filePath: "dorel-component-guide-content-block.html"
   },
   {
     title: "Marketing Campaign",
