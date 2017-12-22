@@ -3,7 +3,8 @@
     const initial = {
       products: [],
       requestedCategories: [],
-      productCategoryPage: -1
+      productCategoryPage: -1,
+      currentProduct: 'none',
     };
 
     productReducer = (state = initial, action) => {
@@ -111,6 +112,11 @@
         case 'ADD_PRODUCT_CATEGORY_PAGE':
           return Object.assign({}, state, {
             productCategoryPage: action.payload
+          });
+
+        case 'SET_CURRENT_PRODUCT':
+          return Object.assign({}, state, {
+            currentProduct: action.payload
           });
 
       default:

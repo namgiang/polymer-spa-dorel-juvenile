@@ -15,12 +15,21 @@ function setProductCategoryPage(categoryPage) {
   }
 }
 
+function setCurrentProduct(currentProduct) {
+  if(!currentProduct) {
+    return { type: 'SET_CURRENT_PRODUCT', payload: 'none' }
+  } else {
+    return { type: 'SET_CURRENT_PRODUCT', payload: currentProduct }
+  }
+}
+
 productActions = Object.assign({},
   productByUrlKeyActions,
   productByCategoryActions,
   productBySkuActions,
   {
-    setProductCategoryPage
+    setProductCategoryPage,
+    setCurrentProduct
   }
 );
 
