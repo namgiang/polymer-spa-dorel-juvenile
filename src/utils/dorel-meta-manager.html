@@ -115,7 +115,7 @@
        * @param titleSuffix - String
        */
       _defineMetaTitle(titleSuffix) {
-        const configBrand = this.brandName;
+        const configBrand = this.get('brandName');
         // replace every dash with a space
         let titlePrefix = configBrand.replace(/-/g, ' ');
 
@@ -126,7 +126,7 @@
         titlePrefix = titlePrefix.replace(/\b\w/g, ((item) => item.toUpperCase()));
 
         // merge the title prefix and suffix and separate by dash
-        return titlePrefix.concat(titleSuffix ? ' - ' + titleSuffix : '');
+        return titlePrefix.concat(titleSuffix ? ` - ${titleSuffix}` : '');
       }
 
       /**
