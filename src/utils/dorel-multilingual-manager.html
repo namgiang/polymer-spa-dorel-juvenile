@@ -32,7 +32,7 @@
            */
           currentLanguage: {
             type: Object,
-            value: {}
+            statePath: 'route.currentLanguage'
           },
 
 
@@ -50,11 +50,11 @@
       }
 
       routeChanged(route) {
-        var urlSegments = route.path.split('/').filter(function(segment) {
+        const urlSegments = route.path.split('/').filter(function(segment) {
           return segment && segment !== '';
         });
 
-        var firstUrlSegment;
+        let firstUrlSegment;
 
         if(!urlSegments || !urlSegments.length || urlSegments[0].length !== 5) {
           firstUrlSegment = CONFIG.LOCALE.CODE;
@@ -62,8 +62,8 @@
           firstUrlSegment = urlSegments && urlSegments.length ? urlSegments[0] : CONFIG.LOCALE.CODE;
         }
 
-        var country = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[0] : CONFIG.LOCALE.LANGUAGE;
-        var language = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[1] : CONFIG.LOCALE.COUNTRY_CODE;
+        const country = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[0] : CONFIG.LOCALE.LANGUAGE;
+        const language = firstUrlSegment && firstUrlSegment.split('-').length > 1 ? firstUrlSegment.split('-')[1] : CONFIG.LOCALE.COUNTRY_CODE;
 
         if(this._isCountryOrLanguageChanged(country, language)) {
           const currentLanguage = {
@@ -73,17 +73,12 @@
             path: firstUrlSegment
           };
 
-          this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-            path: 'currentLanguage',
-            value: currentLanguage
-          }}));
-
           this.dispatch('setCurrentLanguage', currentLanguage);
         }
       }
 
       _isCountryOrLanguageChanged(country, language) {
-        var currentLanguage = this.get('currentLanguage');
+        const currentLanguage = this.get('currentLanguage');
         return !Boolean(currentLanguage && currentLanguage.languageCode === language && currentLanguage.countryCode === country);
       }
 
@@ -103,27 +98,22 @@
         if(!continent) {
           return;
         }
-        var country = continent.countries.find(function(country) {
+        const country = continent.countries.find(function(country) {
           return country.iso === currentLanguage.countryCode;
         });
         if(!country) {
           return;
         }
-        var language = country.languages.find(function(language) {
+        const language = country.languages.find(function(language) {
           return language.iso_code === currentLanguage.languageCode;
         });
         if(!language) {
           return;
         }
-        var extendedCurrentLanguage = Object.assign(currentLanguage, {
+        const extendedCurrentLanguage = Object.assign(currentLanguage, {
           country: country,
           language: language
         });
-        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-          path: 'currentLanguage',
-          value: extendedCurrentLanguage
-        }}));
-
         this.dispatch('setCurrentLanguage', extendedCurrentLanguage);
       }
     };

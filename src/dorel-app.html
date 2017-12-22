@@ -30,13 +30,9 @@
 <!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
 <link rel="import" href="utils/dorel-gmt-collect-faqs.html">
-<link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
-<link rel="import" href="utils/dorel-wp-collect-pages.html">
 <link rel="import" href="utils/dorel-wp-collect-options.html">
-<link rel="import" href="utils/dorel-wp-collect-widgets.html">
 <link rel="import" href="utils/dorel-wp-collect-templates.html">
 <link rel="import" href="utils/dorel-multilingual-manager.html">
-<link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
 <link rel="import" href="utils/dorel-routing.html">
 <link rel="import" href="utils/dorel-brand-manager.html">
@@ -95,14 +91,10 @@
 
     <dorel-multilingual-manager
       route="[[ route ]]"
-      current-language="[[ appCache.currentLanguage ]]"
       continents-data="{{ continentsData }}"></dorel-multilingual-manager>
 
-    <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-page app-cache="[[ appCache ]]"></dorel-wp-collect-page>
-
     <!-- collect the options pages -->
-    <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
+    <dorel-wp-collect-options wp-url="[[ wpUrl ]]" current-language="[[ currentLanguage ]]"></dorel-wp-collect-options>
 
     <!-- create datamodel for the main menu -->
     <dorel-main-menu-creator app-cache="[[ appCache ]]"></dorel-main-menu-creator>
@@ -171,7 +163,6 @@
 
         <dorel-template-store-locator
           name="store-locator"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-store-locator>
 
         <dorel-template-marketing-campaign
@@ -241,7 +232,7 @@
         id="footer"
         app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ appCache.currentLanguage ]]">
+        current-language="[[ currentLanguage ]]">
       </dorel-footer>
     </template>
 
@@ -319,9 +310,31 @@
             statePath: 'page.currentPage'
           },
 
+          /**
+           * @name category
+           * @description the current category of a product listing page
+           */
+          currentLanguage: {
+            type: Object,
+            statePath: 'route.currentLanguage'
+          },
+
+          /**
+           * @name category
+           * @description the current category of a product listing page
+           */
           category: {
             type: Number,
             statePath: 'product.productCategoryPage'
+          },
+
+          /**
+           * @name wpUrl
+           * @description the wordpress endpoint
+           */
+          wpUrl: {
+            type: String,
+            statePath: 'config.wpUrl'
           }
         };
       }

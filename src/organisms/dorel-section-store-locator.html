@@ -401,12 +401,12 @@
 
           /**
            * @attribute
-           * @name appCache
-           * @description the temporary cache of the application,
-           * contains data that used to be contained by the globalsManager
+           * @name dioApiUrl
+           * @description the endpoint of the dorel api
            */
-          appCache: {
-            type: Object
+          dioApiUrl: {
+            type: String,
+            statePath: 'config.dioApiUrl'
           }
         };
       }
@@ -447,7 +447,7 @@
         this.autocomplete = new google.maps.places.AutocompleteService();
 
         // build up the countries arr for the countries dropdown
-        this.countriesEndPoint = this.get('appCache.dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.localeCode;
+        this.countriesEndPoint = this.get('dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.localeCode;
       }
 
       /**
@@ -621,7 +621,7 @@
             storeParams += '&radius=' + 5;
 
             // set the endpoint, when set the api call will automatically commence
-            self.storesEndPoint = self.get('appCache.dioApiUrl') + '/retailers?brandName=maxi_cosi' + storeParams;
+            self.storesEndPoint = self.get('dioApiUrl') + '/retailers?brandName=maxi_cosi' + storeParams;
 
           }, function (error) {
             // handle off the errors
