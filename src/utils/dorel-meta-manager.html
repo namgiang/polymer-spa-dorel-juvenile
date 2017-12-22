@@ -152,11 +152,21 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
       }
 
+      /**
+       * @selector
+       * @name _setCurrentProduct
+       * @description will return a object based on the conditionals.
+       * @param state - Object | the redux state
+       * @returns Object
+       */
       _setCurrentProduct(state) {
+        // If the acf exist on the currentPage it is not a pdp page so return a empty object
         if(state.page.currentPage && state.page.currentPage.acf) {
           return {};
         }
+        // find the product from state
         const currentProduct = state.product.products.find(product => product.url === state.product.currentProduct && state.product.currentProduct !== 'none');
+        // if the product exists and it is not loading or notAvailable
         if(currentProduct && currentProduct.isLoading === false && currentProduct.notAvailable === false) {
           return currentProduct;
         } else {
@@ -164,6 +174,12 @@
         }
       }
 
+      /**
+       * observer
+       * @name _productMetaData
+       * @description will set the meta data from the product if a currentProduct is set
+       * @param product - Object
+       */
       _productMetaData(product) {
         //inital current.product is not set so it will return
         if(!product || !Object.keys(product).length) {
