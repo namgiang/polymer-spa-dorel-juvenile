@@ -50,9 +50,7 @@
       }
 
       routeChanged(route) {
-        const urlSegments = route.path.split('/').filter(function(segment) {
-          return segment && segment !== '';
-        });
+        const urlSegments = route.path.split('/').filter(segment => segment && segment !== '');
 
         let firstUrlSegment;
 
@@ -86,27 +84,21 @@
         if(!continentsData || !continentsData.length) {
           return;
         }
-        var currentLanguage = this.get('currentLanguage');
+        const currentLanguage = this.get('currentLanguage');
         if(!currentLanguage) {
           return;
         }
-        var continent = this.continentsData.find(function(continent) {
-          return continent.countries.some(function(country) {
-            return country.iso === currentLanguage.countryCode;
-          });
+        var continent = this.continentsData.find((continent) => {
+          return continent.countries.some(country => country.iso === currentLanguage.countryCode);
         });
         if(!continent) {
           return;
         }
-        const country = continent.countries.find(function(country) {
-          return country.iso === currentLanguage.countryCode;
-        });
+        const country = continent.countries.find(country => country.iso === currentLanguage.countryCode);
         if(!country) {
           return;
         }
-        const language = country.languages.find(function(language) {
-          return language.iso_code === currentLanguage.languageCode;
-        });
+        const language = country.languages.find(language => language.iso_code === currentLanguage.languageCode);
         if(!language) {
           return;
         }
