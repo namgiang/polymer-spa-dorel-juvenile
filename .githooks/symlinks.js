@@ -25,7 +25,6 @@ module.exports = class Symlinks {
   }
 
   createSymlinks() {
-    console.log(this.hooksArr);
     // create a symbolic link for each hookItem in hookArr
     this.hooksArr.forEach(hookItem => {
 
