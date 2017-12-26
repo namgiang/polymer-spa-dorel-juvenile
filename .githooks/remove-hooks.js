@@ -1,4 +1,4 @@
-const cs = require('./symlinks/symlinks.js');
-const csObj = new cs('../.git/hooks', './');
+const cs = require('./symlinks.js');
+const csObj = new cs('.git/hooks', './.githooks/hooks');
 
 csObj.removeSymlinks();
