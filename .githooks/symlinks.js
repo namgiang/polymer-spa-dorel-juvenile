@@ -14,7 +14,7 @@ module.exports = class Symlinks {
   _setHooksArr() {
     return this.customHooks.reduce((newArr, item, currentIndex) => {
       const newObj = {
-        src: `${this.gitHooksDir}/${item}`,
+        src: `../../${this.gitHooksDir}/${item}`,
         dest: `${this.gitDir}/${item.replace('hook_', '')}`
       };
 
@@ -58,7 +58,6 @@ module.exports = class Symlinks {
       this.fs.lstat(hookItem.dest, (err, stats) => {
         // symlink doesn't exist, so we create it
         if (err) {
-
           console.log(`${hookItem.src} -> ${hookItem.dest} \n -> symlink doesn't exists...`);
           return err;
         }
