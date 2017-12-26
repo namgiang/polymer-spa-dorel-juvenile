@@ -14,7 +14,7 @@ module.exports = class Symlinks {
   _setHooksArr() {
     return this.customHooks.reduce((newArr, item, currentIndex) => {
       const newObj = {
-        src: item,
+        src: `${__dirname}/hooks/${item}`,
         dest: `${this.gitDir}/${item.replace('hook_', '')}`
       };
 
@@ -25,7 +25,7 @@ module.exports = class Symlinks {
   }
 
   createSymlinks() {
-
+    console.log(this.hooksArr);
     // create a symbolic link for each hookItem in hookArr
     this.hooksArr.forEach(hookItem => {
 
