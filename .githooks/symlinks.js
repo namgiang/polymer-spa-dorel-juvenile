@@ -14,7 +14,7 @@ module.exports = class Symlinks {
   _setHooksArr() {
     return this.customHooks.reduce((newArr, item, currentIndex) => {
       const newObj = {
-        src: `${__dirname}/hooks/${item}`,
+        src: `${this.gitHooksDir}/${item}`,
         dest: `${this.gitDir}/${item.replace('hook_', '')}`
       };
 
