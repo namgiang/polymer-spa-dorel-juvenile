@@ -39,10 +39,6 @@
       }
     </style>
 
-    <dorel-gmt-collect-faqs
-      app-cache="[[ appCache ]]"
-      endpoint-segments="categories?featured_items=1&items=1"></dorel-gmt-collect-faqs>
-
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
@@ -74,16 +70,16 @@
           <!--// section-products-support -->
 
           <!-- section-service-overview -->
-          <template
+          <!-- <template
             is="dom-if"
-            if="[[servicesOverviewFaq.services_faq]]">
+            if="[[servicesOverviewFaq.services_faq]]"> -->
             <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
               <dorel-section-service-faq-overview
-                app-cache="[[appCache]]"
+                faq-detail-pages="[[ faqDetailPages ]]"
                 template-data="[[servicesOverviewFaq]]"
-                faq-categories="[[appCache.faqs]]"></dorel-section-service-faq-overview>
+                faq-categories="[[ faqs ]]"></dorel-section-service-faq-overview>
             </dorel-layout-column>
-          </template>
+          <!-- </template> -->
           <!--// section-service-overview -->
 
           <!-- section-service-support -->
@@ -143,6 +139,20 @@
             observer: '_defineComponentModels'
           },
 
+          faqDetailPages: {
+            type: Array,
+            statePath: function(state) {
+              return state.page.pages.filter(page => {
+                  return page.template === 'faq-detail';
+              });
+            },
+          },
+
+          faqs: {
+            type: Array,
+            statePath: 'gmt.faq.faqs'
+          },
+
           /**
            * @name homeHeaderData
            * @description the data model used for the hero header component
@@ -167,6 +177,14 @@
            */
           customerSupportOptions: Object
         };
+      }
+
+      ready() {
+        super.ready();
+        this.dispatch('requestFaqsByCategory', {
+          category: -1,
+          url: `categories?featured_items=1&items=1`
+        });
       }
     }
     customElements.define(DorelTemplateFaqOverview.is, DorelTemplateFaqOverview);
