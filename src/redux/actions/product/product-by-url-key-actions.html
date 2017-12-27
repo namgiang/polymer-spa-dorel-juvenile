@@ -43,17 +43,6 @@ function shouldFetchProduct(state, url_key) {
   }
 }
 
-function requestProductsByCategory(category) {
-  return (dispatch, getState) => {
-    if (shouldFetchCategory(getState(), category)) {
-      dispatch(makeProductRequest(url_key))
-      return dispatch(fetchProduct(getState(), url_key))
-    } else {
-      return Promise.resolve()
-    }
-  }
-}
-
 function requestProductSucces(url_key, products) {
   if(products.length) {
     return {

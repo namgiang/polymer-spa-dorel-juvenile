@@ -1,5 +1,4 @@
 <link rel="import" href="../../molecules/dorel-product-feature.html">
-<link rel="import" href="../../utils/dorel-magento-collect-custom-data.html">
 <link rel="import" href="../../utils/behaviors/single/dorel-multilingual-behavior.html">
 
 <dom-module id="dorel-section-product-features">
@@ -19,11 +18,6 @@
         margin-top: 1.5em;
       }
     </style>
-    <dorel-magento-collect-custom-data
-      product-id="[[ productId ]]"
-      data="{{ featuresData }}"
-      app-cache="[[ appCache ]]"
-      type="features"></dorel-magento-collect-custom-data>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
@@ -96,106 +90,122 @@
     </template>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-section-product-features',
-      properties: {
+    class DorelSectionProductFeatures extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-section-product-features';
+      }
 
-        productId: {
-          type: Number
-        },
-        /**
-         * @attribute
-         * @name maxShown
-         * @description The maximum number to show on mobile, the rest will be expandable
-         */
-        maxShown: {
-          type: Number,
-          value: 5
-        },
-        /**
-         * @attribute
-         * @name featuresData
-         * @description coming from the page-builder this data object is filled
-         * with ACF/Wordpress data about the component
-         */
-        featuresData: {
-          type: Object,
-          value: function () {
-            return {};
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name productId
+           * @description coming from the currentProduct passed by parent
+           */
+          productId: {
+            type: String,
+            observer: '_productIdChanged'
+          },
+          /**
+           * @attribute
+           * @name maxShown
+           * @description The maximum number to show on mobile, the rest will be expandable
+           */
+          maxShown: {
+            type: Number,
+            value: 5
+          },
+          /**
+           * @attribute
+           * @name featuresData
+           * @description coming from the page-builder this data object is filled
+           * with ACF/Wordpress data about the component
+           */
+          featuresData: {
+            type: Object,
+            statePath: function(state) {
+              if(!this.productId || !state.modules.features.length) {
+                return { isLoading: true, features: [] };
+              }
+              return state.modules.features.find(item => {
+                return item.productId === this.productId && !item.isLoading && !item.isNotAvailable;
+              });
+            }
+          },
+          /**
+           * @attribute
+           * @name expanded
+           * @description boolean that for expanding/collapsing on mobile
+           */
+          expanded: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * @attribute
+           * @name initialContent
+           * @description Initially shown content, will be shortened
+           */
+          initialContent: {
+            type: String,
+            computed: '_computeInitialContent(featuresData)'
+          },
+          /**
+           * @attribute
+           * @name restContent
+           * @description Rest content, shown when component is expanded
+           */
+          restContent: {
+            type: String,
+            computed: '_computeRestContent(featuresData)'
           }
-        },
-        /**
-         * @attribute
-         * @name expanded
-         * @description boolean that for expanding/collapsing on mobile
-         */
-        expanded: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * @attribute
-         * @name initialContent
-         * @description Initially shown content, will be shortened
-         */
-        initialContent: {
-          type: String,
-          computed: '_computeInitialContent(featuresData)'
-        },
-        /**
-         * @attribute
-         * @name restContent
-         * @description Rest content, shown when component is expanded
-         */
-        restContent: {
-          type: String,
-          computed: '_computeRestContent(featuresData)'
-        },
+        };
+      }
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
+      /**
+       * observer
+       * @name _productIdChanged
+       * @description everytime the observer is trigger it will dispatch the requestModule action
+       */
+      _productIdChanged(productId) {
+        if(!productId || !productId.length) {
+          return;
         }
-      },
-      behaviors: [ConditionalBehaviors, DorelMultilingualBehavior],
+        this.dispatch('requestModule', { productId, type: 'features' });
+      }
 
       /**
        * @name _computeInitialContent
        * @description Splits the content on mobile if there are too many items
        */
-      _computeInitialContent: function (featuresData) {
+      _computeInitialContent(featuresData) {
         if (featuresData && featuresData.features && featuresData.features.length > this.maxShown) {
           return featuresData.features.slice(0, this.maxShown);
         }
-
         return featuresData.features;
-      },
+      }
 
       /**
        * @name _computeRestContent
        * @description Splits the content on mobile if there are too many items
        */
-      _computeRestContent: function (featuresData) {
+      _computeRestContent(featuresData) {
         if (featuresData && featuresData.features && featuresData.features.length > this.maxShown) {
           return featuresData.features.slice(this.maxShown);
         }
 
         return [];
-      },
+      }
 
       /**
        * @name _toggle
        * @description expands/collapses content
        * **/
-      _toggle: function () {
+      _toggle() {
         this.$$("#collapse").toggle();
         this.expanded = !this.expanded;
       }
-    });
+    };
+    customElements.define(DorelSectionProductFeatures.is, DorelSectionProductFeatures);
   </script>
 </dom-module>
