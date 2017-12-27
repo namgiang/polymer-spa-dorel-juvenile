@@ -30,7 +30,6 @@
 <!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
 <link rel="import" href="utils/dorel-gmt-collect-faqs.html">
-<link rel="import" href="utils/dorel-wp-collect-options.html">
 <link rel="import" href="utils/dorel-wp-collect-templates.html">
 <link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
@@ -93,11 +92,8 @@
       route="[[ route ]]"
       continents-data="{{ continentsData }}"></dorel-multilingual-manager>
 
-    <!-- collect the options pages -->
-    <dorel-wp-collect-options wp-url="[[ wpUrl ]]" current-language="[[ currentLanguage ]]"></dorel-wp-collect-options>
-
     <!-- create datamodel for the main menu -->
-    <dorel-main-menu-creator app-cache="[[ appCache ]]"></dorel-main-menu-creator>
+    <dorel-main-menu-creator></dorel-main-menu-creator>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
@@ -356,6 +352,8 @@
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
+        //get the initial options from wordpress
+        this.dispatch('fetchOptions');
       }
 
       ready() {

@@ -1,9 +1,15 @@
 <script>
   (function() {
-    const initial = { wpUrl: CONFIG.CMS_URL, dioApiUrl: CONFIG.DIO_API_URL, };
+    const initial = { wpUrl: CONFIG.CMS_URL, dioApiUrl: CONFIG.DIO_API_URL };
 
     configReducer = (state = initial, action) => {
       switch (action.type) {
+        case 'ADD_OPTIONS_SUCCESS':
+          return Object.assign({}, state, action.payload);
+
+        case 'ADD_OPTIONS_FAILED':
+          return Object.assign({}, state);
+
         default:
           return state;
       }

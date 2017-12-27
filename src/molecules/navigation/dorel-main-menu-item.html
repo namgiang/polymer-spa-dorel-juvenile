@@ -158,7 +158,7 @@
               main-item="[[ mainItem ]]"
               opened="[[ opened ]]"
               route="[[ route ]]"
-              featured-items="[[ mainItem.sub_category_items ]]"
+              featured-items="[[ _contentSwitch(mainItem, products) ]]"
               dropdown-items="[[ mainItem.dropdown_items ]]">
             </dorel-menu-dropdown-category>
           </div>
@@ -170,71 +170,131 @@
 
   </template>
   <script>
-    /**
-     * TODO: doc comments to add!
-     **/
-    Polymer({
-      is: 'dorel-main-menu-item',
-      properties: {
+    class DorelMainMenuItem extends ReduxMixin(Polymer.mixinBehaviors([MainMenuBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-main-menu-item';
+      }
 
-        /**
-         * @name mainItem
-         * @description
-         */
-        mainItem: {
-          type: Object
-        },
+      static get properties() {
+        return {
 
-        /**
-         * @name index
-         * @description index of the dom-repeat used for the gtm
-         */
-        index: {
-          type: Number
-        },
+          /**
+           * @name mainItem
+           * @description
+           */
+          mainItem: {
+            type: Object
+          },
 
-        /**
-         * @name isActive
-         * @description determines if menu item is active
-         */
-        isActive: {
-          type: Boolean,
-          reflectToAttribute: true
-        },
+          /**
+           * @name index
+           * @description index of the dom-repeat used for the gtm
+           */
+          index: {
+            type: Number
+          },
 
-        /**
-         * @name route
-         * @description current route / url of the application
-         */
-        route: {
-          type: Object
-        },
-      },
+          /**
+           * @name isActive
+           * @description determines if menu item is active
+           */
+          isActive: {
+            type: Boolean,
+            reflectToAttribute: true
+          },
 
-      behaviors: [MainMenuBehavior],
+          /**
+           * @name products
+           * @description will return products based on the category of the mainItem
+           */
+          products: {
+            type: Array,
+            statePath: function(state) {
+              return state.product.products.filter((product, index) => {
+                return !(product.categories && product.categories.indexOf(this.mainItem.category_id));
+              }).map((product) => {
+                return this.subCategoryItemMold(product);
+              }).filter((item, index) => index < 5);
+            }
+          },
+
+          /**
+           * @name route
+           * @description current route / url of the application
+           */
+          route: {
+            type: Object
+          }
+        };
+      }
+
+      /**
+       * template helper
+       * @name _contentSwitch
+       * @description determines what data is passed down to the child component
+       * if the productSwitch is not true it will set the default pages (sub_category_items) created by the menu-creator component
+       * else it will return the products
+       * @param mainItem - Object
+       * @param products - Array
+       * @returns Array
+       */
+      _contentSwitch(mainItem, products) {
+        if(mainItem && !mainItem.productSwitch) {
+          return mainItem.sub_category_items;
+        } else {
+          return products;
+        }
+      }
 
       /**
        * @name clickmainItem
        * @description closes the mobile menu and calls _emitGtmEvent
        * @param event - Object
        */
-      clickMainItem: function(event) {
+      clickMainItem(event) {
         this._emitGtmEvent(event);
         this.clickOutsideListen();
-      },
+      }
 
-      toggleDropdown: function(event) {
-        this.fire('toggleDropdown', { value: this.get('index') });
-      },
+      /**
+       * @name toggleDropdown
+       * @description if a dropdown is clicked it will dispatch a event with the index
+       * @param event - Object
+       */
+      toggleDropdown(event) {
+        this.dispatchEvent(new CustomEvent('toggleDropdown', { bubbles: true, composed: true, detail: {
+          value: this.get('index')
+        }}));
+      }
 
-      getClasses: function(mainItem) {
+      /**
+       * @name getClasses
+       * @description template helper that will determine the classes that will be added
+       * @param mainItem - Object
+       */
+      getClasses(mainItem) {
         if(this.checkDropdownType(mainItem, 'category')) {
           return 'menu-item category';
         }
         return 'menu-item';
-      },
+      }
 
-    });
-
+      /**
+       * @name subCategoryItemMold
+       * @description a function that returns a suitable data model for a subcategory item
+       * @param product - Object
+       * @returns Object
+       */
+      subCategoryItemMold(product) {
+        return {
+          id: Number(product.id),
+          link: this.mainItem.link + product.url,
+          thumbnail_url: product.child_products ? product.child_products[0].images.image : product.images.image, 
+          title: product.name ? product.name.value : '',
+          sub_title: product.header_section.sub_title
+        };
+      }
+    }
+    customElements.define(DorelMainMenuItem.is, DorelMainMenuItem);
   </script>
 </dom-module>

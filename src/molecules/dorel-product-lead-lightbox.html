@@ -362,17 +362,13 @@
   </template>
 
   <script>
-    class DorelProductLeadLightbox extends Polymer.mixinBehaviors([DorelMultilingualBehavior, TemplateBehaviors, OverlayBehavior, ConditionalBehaviors], Polymer.Element) {
+    class DorelProductLeadLightbox extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior, TemplateBehaviors, OverlayBehavior, ConditionalBehaviors], Polymer.Element)) {
 
       static get is() { return 'dorel-product-lead-lightbox'; }
 
       // Declare properties for the element's public API
       static get properties() {
         return {
-          appCache: {
-            type: Object
-          },
-
           productSku: {
             type: String,
             value: ''
@@ -396,7 +392,7 @@
 
       ready() {
         super.ready();
-        this._defineOptionModels(this.get('appCache'));
+        this._defineOptionModels(this.getState().config);
       }
 
       _submitForm(event) {

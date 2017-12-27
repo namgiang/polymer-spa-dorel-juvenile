@@ -193,7 +193,7 @@
             <!-- dom-repeat social channels -->
             <template
               is="dom-repeat"
-              items="[[ appCache.collect.options.social_channels ]]"
+              items="[[ config.social_channels ]]"
               as="socialChannel">
               <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
                  on-click="_socialClick">
@@ -289,55 +289,73 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-footer',
+    class DorelFooter extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element)) {
 
-      properties: {
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object,
-          observer: '_defineOptionModels'
-        },
+      static get is() {
+        return 'dorel-footer';
+      }
 
-        footerOptions: Object,
 
-        /**
-         * @name currentLanguage
-         * @description Object containing currently selected country and language
-         */
-        'currentLanguage': {
-          type: Object,
-        },
-        /**
-         * @name continentsData
-         * @description Object containing the continents (and country, language data)
-         */
-        continentsData: {
-          type: Array
-        }
-      },
+      static get properties() {
+        return {
+          /**
+           * `config`
+           */
+          config: {
+            type: Object,
+            statePath: 'config',
+            observer: '_defineOptionModels'
+          },
+
+          footerOptions: Object,
+
+          /**
+           * @name currentLanguage
+           * @description Object containing currently selected country and language
+           */
+          currentLanguage: {
+            type: Object,
+          },
+
+          /**
+           * @name continentsData
+           * @description Object containing the continents (and country, language data)
+           */
+          continentsData: {
+            type: Array
+          }
+        };
+      }
 
       /**
-       * Listen to all clicks inside the component to define an
-       * accordion click
+       * @name ready
+       * @description because the footer widget areas are placed
+       * at runtime the normal ready function doesn't have access
+       * to all elements.
        */
-      listeners: {
-        'click': 'accordionClick',
-      },
-
-      behaviors: [TemplateBehaviors],
+      ready() {
+        super.ready();
+        this.addEventListener('click', this.accordionClick);
+        setTimeout(function () {
+          var footerMenuLink = this.root.querySelectorAll('.footer-menu a');
+          // add eventListeners
+          for (var i = 0, len = footerMenuLink.length; i < len; i++) {
+            footerMenuLink[i].addEventListener('click', function (event) {
+              this._eventTracking(event, 'switch');
+            }.bind(this));
+          }
+        }.bind(this));
+      }
 
       /**
        * @name _socialClick
        * @description handle the click event on a social link
        */
-      _socialClick: function (event) {
+      _socialClick (event) {
 
         // event tracking when a social link is clicked
         this._eventTracking(event, 'social');
-      },
+      }
 
       /**
        * @name accordionClick
@@ -347,7 +365,7 @@
        * @todo add click event listeners like with the footer-links,
        * use attributes to open/close
        */
-      accordionClick: function (event) {
+      accordionClick (event) {
 
         // return when not clicked on the footer-heading
         if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined'
@@ -363,13 +381,13 @@
 
         // track open/closing of accordion
         this._eventTracking(event, 'accordionToggle');
-      },
+      }
 
       /**
        * @name _getCopyrightYearRange
        * @description returns the copyright range as a string based on a starting year and the current year
        */
-      _getCopyrightYearRange: function (startYear) {
+      _getCopyrightYearRange (startYear) {
 
         // if no startYear is defined jump out
         if (typeof startYear === 'undefined' || startYear === '' || startYear === null) return;
@@ -392,34 +410,14 @@
 
         // Return the range as a string
         return yearRange.join(' - ');
-      },
+      }
 
-      /**
-       * @name __ready
-       * @description because the footer widget areas are placed
-       * at runtime the normal ready function doesn't have access
-       * to all elements.
-       */
-      ready: function () {
-
-        // define footer links for tracking,
-        // must be in timeout because we are looking for elements in a dom-if / dom-repeat
-        setTimeout(function () {
-          var footerMenuLink = this.root.querySelectorAll('.footer-menu a');
-          // add eventListeners
-          for (var i = 0, len = footerMenuLink.length; i < len; i++) {
-            footerMenuLink[i].addEventListener('click', function (event) {
-              this._eventTracking(event, 'switch');
-            }.bind(this));
-          }
-        }.bind(this));
-      },
 
       /**
        * @name _eventTracking
        * @description sets the right properties for event tracking
        */
-      _eventTracking: function (event, type) {
+      _eventTracking(event, type) {
 
         /**
          * build up the tracking eventData
@@ -429,7 +427,6 @@
           component: 'footer',
           event: 'polymer_event'
         };
-
 
         /**
          * Check the type and handle accordingly
@@ -484,10 +481,13 @@
 
             break;
         }
-
         // send event data to tracking function
-        this.fire('setAppCache', {value: eventData, path: 'events'});
+        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
+          value: eventData,
+          path: 'events'
+        }}));
       }
-    });
+    }
+    customElements.define(DorelFooter.is, DorelFooter);
   </script>
 </dom-module>
