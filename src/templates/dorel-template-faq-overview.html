@@ -41,6 +41,8 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
+    <dorel-wp-collect-page id="collect"></dorel-wp-collect-page>
+
     <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
 
       <!-- section-hero-header -->
@@ -70,16 +72,16 @@
           <!--// section-products-support -->
 
           <!-- section-service-overview -->
-          <!-- <template
+          <template
             is="dom-if"
-            if="[[servicesOverviewFaq.services_faq]]"> -->
+            if="[[servicesOverviewFaq.services_faq]]">
             <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
               <dorel-section-service-faq-overview
                 faq-detail-pages="[[ faqDetailPages ]]"
                 template-data="[[servicesOverviewFaq]]"
                 faq-categories="[[ faqs ]]"></dorel-section-service-faq-overview>
             </dorel-layout-column>
-          <!-- </template> -->
+          </template>
           <!--// section-service-overview -->
 
           <!-- section-service-support -->
@@ -110,16 +112,13 @@
       }
       static get properties() {
         return {
-          /**
-           * `appCache` the application cache
-           */
-          appCache: {
-            type: Object,
-            value: function () {
-              return {};
-            }
-          },
 
+
+          /**
+           * @attribute
+           * @name config
+           * @description the config of the redux state
+           */
           config: {
             type: Object,
             statePath: 'config',
@@ -139,6 +138,11 @@
             observer: '_defineComponentModels'
           },
 
+          /**
+           * @attribute
+           * @name faqDetailPages
+           * @description all the pages where the template has the `faq-detail` value
+           */
           faqDetailPages: {
             type: Array,
             statePath: function(state) {
@@ -185,6 +189,9 @@
           category: -1,
           url: `categories?featured_items=1&items=1`
         });
+
+        // get child pages
+        this.$.collect.getChildrenByParentId(this.pageId);
       }
     }
     customElements.define(DorelTemplateFaqOverview.is, DorelTemplateFaqOverview);
