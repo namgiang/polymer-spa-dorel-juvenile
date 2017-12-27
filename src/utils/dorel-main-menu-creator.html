@@ -21,15 +21,6 @@
 
         /**
          * @attribute
-         * @name appCache
-         * @description pages
-         */
-        appCache: {
-          type: Object
-        },
-
-        /**
-         * @attribute
          * @name pages
          * @description pages
          */
@@ -46,18 +37,24 @@
         currentLanguage: {
           type: Object,
           statePath: 'route.currentLanguage'
+        },
+
+        /**
+         * @attribute
+         * @name mainMenuOptions
+         * @description the menu items from the initial options
+         * with this data the menu is generated
+         */
+        mainMenuOptions: {
+          type: Array,
+          statePath: 'config.main_menu'
         }
       }
     }
     static get observers () {
       return [
-      '_createMenuDataModel(appCache.collect.options.main_menu)'
+      '_createMenuDataModel(mainMenuOptions)'
       ]
-    }
-
-    ready () {
-      super.ready()
-      // this.addEventListener('newProducts', this._setMenuProducts);
     }
 
     _createMenuDataModel(mainMenu) {
@@ -102,7 +99,7 @@
       }
       if(item.dropdown_type === 'category') {
         let sub_category_items = await this._getSubCategoryItems(page);
-        if(sub_category_items && sub_category_items.length < 2) { 
+        if(sub_category_items && sub_category_items.length < 2) {
           item.productSwitch = true;
           const category = this._getMagentoCategoryId(page);
           this.dispatch('requestProductsByCategory', category);

@@ -54,7 +54,7 @@
 
       static get observers() {
         return [
-          '_defineEndpoint(endpointSegments, currentLanguage)'
+          '_defineEndpoint(endpointSegments)'
         ];
       }
 
@@ -64,7 +64,8 @@
        * @description will check if the endpointSegments are changed and creates an
        * endpoint url, which will do the api call automatically
        */
-      _defineEndpoint(segments, currentLanguage) {
+      _defineEndpoint(segments) {
+        const currentLanguage = this.currentLanguage;
         if(!segments || !currentLanguage || !currentLanguage.languageCode) {
           return;
         }

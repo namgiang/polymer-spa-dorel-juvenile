@@ -92,7 +92,7 @@
             if="[[_toggleObject(templateData.acf.customer_support_toggle, customerSupportOptions)]]">
             <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
               <dorel-customer-support
-                social-link="[[ _getFacebookLink(appCache.collect.options.social_channels) ]]"
+                social-link="[[ _getFacebookLink(config.social_channels) ]]"
                 template-data="[[customerSupportOptions]]"></dorel-customer-support>
             </dorel-layout-column>
           </template>
@@ -107,61 +107,69 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-template-faq-overview',
-      properties: {
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
+    class DorelTemplateFaqOverview extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors, SocialBehavior], Polymer.Element)) {
+
+      static get is() {
+        return 'dorel-template-faq-overview';
+      }
+      static get properties() {
+        return {
+          /**
+           * `appCache` the application cache
+           */
+          appCache: {
+            type: Object,
+            value: function () {
+              return {};
+            }
           },
-          observer: '_defineOptionModels'
-        },
 
-        /**
-         * @attribute
-         * @name templateData
-         * @description all data needed to build up a certain component
-         */
-        templateData: {
-          type: Object,
-          value: function () {
-            return {};
+          config: {
+            type: Object,
+            statePath: 'config',
+            observer: '_defineOptionModels'
           },
-          observer: '_defineComponentModels'
-        },
 
-        /**
-         * @name homeHeaderData
-         * @description the data model used for the hero header component
-         */
-        heroHeader: Array,
+          /**
+           * @attribute
+           * @name templateData
+           * @description all data needed to build up a certain component
+           */
+          templateData: {
+            type: Object,
+            value: function () {
+              return {};
+            },
+            observer: '_defineComponentModels'
+          },
 
-        /**
-         * @name productsOverviewFaq
-         * @description the data model used for the products overview faq component
-         */
-        productsOverviewFaq: Array,
+          /**
+           * @name homeHeaderData
+           * @description the data model used for the hero header component
+           */
+          heroHeader: Array,
 
-        /**
-         * @name servicesOverviewFaq
-         * @description the data model used for the services overview faq component
-         */
-        servicesOverviewFaq: Array,
+          /**
+           * @name productsOverviewFaq
+           * @description the data model used for the products overview faq component
+           */
+          productsOverviewFaq: Array,
 
-        /**
-         * @name customerSupportOptions
-         * @description the data model used for the customer support component
-         */
-        customerSupportOptions: Object
-      },
+          /**
+           * @name servicesOverviewFaq
+           * @description the data model used for the services overview faq component
+           */
+          servicesOverviewFaq: Array,
 
-      behaviors: [TemplateBehaviors, SocialBehavior]
-    });
-
+          /**
+           * @name customerSupportOptions
+           * @description the data model used for the customer support component
+           */
+          customerSupportOptions: Object
+        };
+      }
+    }
+    customElements.define(DorelTemplateFaqOverview.is, DorelTemplateFaqOverview);
   </script>
 
 </dom-module>

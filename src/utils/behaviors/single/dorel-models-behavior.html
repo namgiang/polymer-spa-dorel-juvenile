@@ -89,23 +89,23 @@
       }
     },
 
-    _defineOptionModels: function(appCache) {
-      if (!this._hasProperties(appCache)
-        || !this._hasProperties(appCache.collect)
-        || !this._hasProperties(appCache.collect.options)) return;
+    _defineOptionModels: function(config) {
+      if (!this._hasProperties(config)) {
+        return;
+      }
 
       // SET CUSTOMER SUPPORT OPTIONS
-      if(typeof appCache.collect.options.customer_support !== 'undefined') {
-        this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+      if(config.customer_support && config.customer_support.length) {
+        this.set('customerSupportOptions', config.customer_support[0]);
       }
 
       // SET FOOTER OPTIONS
-      if(typeof appCache.collect.options.footer !== 'undefined') {
-        this.set('footerOptions', appCache.collect.options.footer[0]);
+      if(config.footer && config.footer.length) {
+        this.set('footerOptions', config.footer[0]);
       }
 
-      if(typeof appCache.collect.options.third_party !== 'undefined') {
-        this.set('thirdPartyOptions', appCache.collect.options.third_party[0]);
+      if(config.third_party && config.third_party.length) {
+        this.set('thirdPartyOptions', config.third_party[0]);
       }
     }
   };

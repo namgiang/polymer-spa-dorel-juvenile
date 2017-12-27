@@ -211,7 +211,7 @@
             type: Array,
             statePath: function(state) {
               return state.product.products.filter((product, index) => {
-                return !(product.categories.indexOf(this.mainItem.category_id));
+                return !(product.categories && product.categories.indexOf(this.mainItem.category_id));
               }).map((product) => {
                 return this.subCategoryItemMold(product);
               }).filter((item, index) => index < 5);
@@ -289,7 +289,7 @@
         return {
           id: Number(product.id),
           link: this.mainItem.link + product.url,
-          thumbnail_url: product.child_products[0].images.image,
+          thumbnail_url: product.child_products ? product.child_products[0].images.image : product.images.image, 
           title: product.name ? product.name.value : '',
           sub_title: product.header_section.sub_title
         };

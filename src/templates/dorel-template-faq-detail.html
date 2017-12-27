@@ -103,7 +103,7 @@
               if="[[ templateData.acf.customer_support_toggle ]]">
               <dorel-customer-support
                 compact="true"
-                social-link="[[ _getFacebookLink(appCache.collect.options.social_channels) ]]"
+                social-link="[[ _getFacebookLink(config.social_channels) ]]"
                 template-data="[[customerSupportOptions]]"></dorel-customer-support>
             </template>
             <!--// customer support -->
@@ -114,75 +114,91 @@
     </dorel-layout-container>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-template-faq-detail',
 
-      properties: {
+  class DorelTemplateFaqDetail extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors, SocialBehavior], Polymer.Element)) {
 
-        /**
-         * @name routeData
-         * @description the route data contains the faq category slug
-         * that is after faq in the url ([domain]/faq/:category-slug).
-         * This is used to check if the application retrieved this category
-         * already in the cache, otherwise it will retrieve the information
-         */
-        routeData: {
-          type: Object
-        },
+      static get is() {
+        return 'dorel-template-faq-detail';
+      }
 
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
+      static get properties() {
+        return {
+
+          /**
+           * @name routeData
+           * @description the route data contains the faq category slug
+           * that is after faq in the url ([domain]/faq/:category-slug).
+           * This is used to check if the application retrieved this category
+           * already in the cache, otherwise it will retrieve the information
+           */
+          routeData: {
+            type: Object
           },
-          observer: '_defineOptionModels'
-        },
 
-        /**
-         * @attribute
-         * @name templateData
-         * @description the data coming from ACF/Wordpress which is delegated to the page builder
-         */
-        templateData: {
-          type: Object,
-          value: function () {
-            return {};
+          /**
+           * @attribute
+           * @name config
+           * @description the config from the redux store
+           */
+          config: {
+            type: Object,
+            statePath: 'config',
+            observer: '_defineOptionModels'
           },
-          observer: '_defineComponentModels'
-        },
 
-        /**
-         * @name faqPromo
-         * @description faqPromo contains the information for the promo section
-         * that is part of the right sidebar when enabled in WP
-         */
-        faqPromo: Object,
+          /**
+           * @attribute
+           * @name appCache
+           * @description the temporary cache of the application,
+           * contains data that used to be contained by the globalsManager
+           */
+          appCache: {
+            type: Object,
+            value: function () {
+              return {};
+            }
+          },
 
-        /**
-         * @name faqDetail
-         * @description faqDetail contains the information for the faq detail
-         * component to show its sub categories and all questions/answers
-         */
-        faqDetail: Object,
+          /**
+           * @attribute
+           * @name templateData
+           * @description the data coming from ACF/Wordpress which is delegated to the page builder
+           */
+          templateData: {
+            type: Object,
+            value: function () {
+              return {};
+            },
+            observer: '_defineComponentModels'
+          },
 
-        /**
-         * @name customerSupportOptions
-         * @description all customer support settings extracted from collect.options
-         */
-        customerSupportOptions: Object
-      },
+          /**
+           * @name faqPromo
+           * @description faqPromo contains the information for the promo section
+           * that is part of the right sidebar when enabled in WP
+           */
+          faqPromo: Object,
 
-      behaviors: [TemplateBehaviors, SocialBehavior],
+          /**
+           * @name faqDetail
+           * @description faqDetail contains the information for the faq detail
+           * component to show its sub categories and all questions/answers
+           */
+          faqDetail: Object,
 
-      observers: [
-        '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
-      ],
+          /**
+           * @name customerSupportOptions
+           * @description all customer support settings extracted from the config
+           */
+          customerSupportOptions: Object
+        };
+      }
+
+      static get observers() {
+        return [
+          '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
+        ];
+      }
 
       /**
        * @observer
@@ -193,7 +209,7 @@
        *
        * @param newSlug - string - the category slug
        */
-      _setFaqDetail: function (faqGlobals, routeData, categoryId) {
+      _setFaqDetail(faqGlobals, routeData, categoryId) {
         if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
 
         var categoryId = Number(categoryId);
@@ -207,14 +223,14 @@
           this.set('faqDetail', inCache);
         }
 
-      },
+      }
 
       /**
        * @helper
        * @name _findInCache
        * @description find a provided detail slug in the cached faqs
        */
-      _findInCache: function (detailCategory) {
+      _findInCache(detailCategory) {
         var faqCache = this.get('appCache.faqs');
         // if no length, return false (no match can be found either way)
         if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
@@ -222,20 +238,20 @@
         return faqCache.find(function (category) {
           return category.id === detailCategory;
         });
-      },
+      }
 
       /**
        * @helper
        * @name _retrieveCategoryById
        * @description set the endpoint-segments for the gmt-collect
        */
-      _setEndpointSegments: function (catId) {
-        if (typeof catId === 'undefined') return;
+      _setEndpointSegments(catId) {
+        if (typeof catId === 'undefined' || isNaN(catId)) return;
 
         this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_items=1&sub_categories=1');
       }
-    });
-
+    }
+    customElements.define(DorelTemplateFaqDetail.is, DorelTemplateFaqDetail);
   </script>
 
 </dom-module>
