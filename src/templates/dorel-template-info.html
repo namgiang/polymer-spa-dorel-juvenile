@@ -101,7 +101,8 @@
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
               <div class="max-width-container">
-                <dorel-wysiwyg-html html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
+                <dorel-wysiwyg-html
+                  html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
               </div>
             </template>
             <!--// dorel wysiwyg content-->
@@ -123,16 +124,18 @@
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_image') ]]">
               <div class="image-container">
-                <dorel-bynder-image media-id="[[ component.bynder_image ]]"
-                                    derivative-identifier="Fullscreen Retina landscape"
-                                    mobile-derivative-identifier="Fullscreen Small landscape"
-                                    alt="[[ component.image_alt ]]"
-                                    mobile-width="100%"
-                                    mobile-height="18em"
-                                    tablet-width="100%"
-                                    tablet-height="27em"
-                                    width="56em"
-                                    height="31.5em"></dorel-bynder-image>
+                <dorel-bynder-image
+                  media-id="[[ component.bynder_image ]]"
+                  derivative-identifier="Fullscreen Retina landscape"
+                  mobile-derivative-identifier="Fullscreen Small landscape"
+                  alt="[[ component.image_alt ]]"
+                  mobile-width="100%"
+                  mobile-height="18em"
+                  tablet-width="100%"
+                  tablet-height="27em"
+                  sizing="contain"
+                  width="56em"
+                  height="31.5em"></dorel-bynder-image>
               </div>
             </template>
             <!--// dorel bynder image -->
@@ -142,7 +145,9 @@
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
               <div class="video-container">
-                <dorel-video-wrap video-id="[[ component.video_id ]]" video-type="youtube"></dorel-video-wrap>
+                <dorel-video-wrap
+                  video-id="[[ component.video_id ]]"
+                  video-type="youtube"></dorel-video-wrap>
               </div>
             </template>
             <!-- dorel video wrap -->
@@ -151,20 +156,28 @@
             <template
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
-
               <dorel-hubspot
                 hubspot-loaded="[[ config.hubspot_loaded ]]"
                 portal-id="[[ config.hubspot_portal_id ]]"
                 form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
-
             </template>
             <!--// dorel section hubspot -->
+
+            <!-- dorel video wrap -->
+            <template
+              is="dom-if"
+              if="[[ _isPageComponent(component.acf_fc_layout, 'section_cards') ]]">
+              <dorel-section-cards
+                cards-data="[[component]]"
+                cta-type="secondary"
+                compact="true"
+                light-background="true"></dorel-section-cards>
+            </template>
+            <!-- dorel video wrap -->
 
           </template>
         </template>
       </dorel-layout-container>
-
-
     </section>
   </template>
 
@@ -196,17 +209,18 @@
            */
           templateData: {
             type: Object,
-            value: function () {
-              return {};
-            },
+            value: () => ({}),
             observer: '_defineComponentModels'
           },
 
-        /**
-         * @name homeHeaderData
-         * @description the data model used for the hero header component
-         */
-         heroHeaderData: Object,
+          /**
+           * @name homeHeaderData
+           * @description the data model used for the hero header component
+           */
+          heroHeaderData: {
+            type: Object,
+            value: () => ({})
+          }
        };
      }
    }
