@@ -21,7 +21,6 @@
 <link rel="import" href="atoms/layout/dorel-layout-row.html">
 
 <!-- SHARED BEHAVIORS -->
-<link rel="import" href="utils/behaviors/specific/dorel-app-cache-behavior.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-conditional-behaviors.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
 <link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
@@ -29,7 +28,6 @@
 <link rel="import" href="utils/behaviors/single/dorel-gtm-behavior.html">
 
 <!-- Load the magento authentication eagerly -->
-<link rel="import" href="utils/dorel-magento-auth.html">
 <link rel="import" href="utils/dorel-wp-collect-templates.html">
 <link rel="import" href="utils/dorel-multilingual-manager.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
@@ -98,7 +96,7 @@
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
 
-    <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
+    <dorel-third-party></dorel-third-party>
 
     <dorel-brand-manager
       query-params="[[ queryParams ]]"
@@ -109,13 +107,11 @@
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
       current-page="[[ currentPage ]]"
-      app-cache="[[ appCache ]]"
       route="[[ route ]]"
       id="metaManager">
     </dorel-meta-manager>
 
     <dorel-routing
-      app-cache="[[ appCache ]]"
       full-route="[[ route ]]">
     </dorel-routing>
 
@@ -147,12 +143,10 @@
 
         <dorel-template-info
           name="info"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-info>
 
         <dorel-template-info-overview
           name="info-overview"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-info-overview>
 
         <dorel-template-store-locator
@@ -161,7 +155,6 @@
 
         <dorel-template-marketing-campaign
           name="marketing-campaign"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-marketing-campaign>
 
         <dorel-template-products
@@ -172,44 +165,38 @@
         <dorel-template-product-detail
           name="product-detail"
           route="[[ subroute ]]"
-          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-detail>
 
         <dorel-template-accessory-detail
           name="accessory-detail"
           route="[[ subroute ]]"
-          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-accessory-detail>
 
         <dorel-template-product-listing
           name="product-listing"
           route="[[ subroute ]]"
-          app-cache="[[ appCache ]]"
           category="[[ category ]]"></dorel-template-product-listing>
 
         <dorel-template-faq-overview
           name="faq-overview"
-          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-overview>
 
         <dorel-template-faq-detail
           name="faq-detail"
-          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-detail>
 
         <dorel-template-product-advisory-tool
           name="product-advisory-tool"
-          app-cache="[[ appCache ]]"
           brand-name="[[ brand.label ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
         <dorel-template-component-guide
           name="component-guide"
-          app-cache="[[ appCache ]]"
+          grid="[[ grid ]]"
           brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
@@ -224,14 +211,12 @@
       if="[[ shouldShow(currentPage) ]]">
       <dorel-footer
         id="footer"
-        app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
         current-language="[[ currentLanguage ]]">
       </dorel-footer>
     </template>
 
     <dorel-grid-overlay
-      app-cache="[[ appCache ]]"
       available-brands="{{ brandNames }}"
       selected-brand="{{ brand }}"
       page-route-path="{{ route.path }}"></dorel-grid-overlay>
@@ -241,7 +226,7 @@
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
-    class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([appCacheBehavior, GtmBehavior], Polymer.Element)) {
+    class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([GtmBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-app';
