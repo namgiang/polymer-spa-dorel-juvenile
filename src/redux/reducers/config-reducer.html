@@ -1,6 +1,14 @@
 <script>
   (function() {
-    const initial = { wpUrl: CONFIG.CMS_URL, dioApiUrl: CONFIG.DIO_API_URL, eCom_Url: CONFIG.ECOM_URL };
+    const initial = {
+      wpUrl: CONFIG.CMS_URL,
+      dioApiUrl: CONFIG.DIO_API_URL,
+      eComUrl: CONFIG.ECOM_URL,
+      grid: {
+        horizontal: false,
+        vertical: false
+      }
+    };
 
     configReducer = (state = initial, action) => {
       switch (action.type) {
@@ -9,6 +17,20 @@
 
         case 'ADD_OPTIONS_FAILED':
           return Object.assign({}, state);
+
+        case 'SET_VERTICAL_GRID':
+          return Object.assign({}, state, {
+            grid: Object.assign({}, state.grid, {
+              vertical: !state.grid.vertical
+            })
+          });
+
+        case 'SET_HORIZONTAL_GRID':
+          return Object.assign({}, state, {
+            grid: Object.assign({}, state.grid, {
+              horizontal: !state.grid.horizontal
+            })
+          });
 
         default:
           return state;
