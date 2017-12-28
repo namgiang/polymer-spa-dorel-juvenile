@@ -45,6 +45,7 @@
      */
     Polymer({
       is: 'dorel-back-to-top',
+      behaviors: [GtmBehavior],
       properties: {
         scrollDuration: {
           type: Number,
@@ -96,18 +97,15 @@
         // Initialises the animation loop. Bind 'this' to the function, so that the properties are still accessible
         window.requestAnimationFrame(this._scrollAnimationHandler.bind(this));
 
-        var event = {
+        const event = {
           action: 'click',
           component: 'back-to-top',
           element: event.target,
           event: 'polymer_event'
         };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(event);
       }
     });
   </script>
 
 </dom-module>
-
-
