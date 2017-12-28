@@ -1,6 +1,8 @@
 <link rel="import" href="../atoms/dorel-back-to-top.html">
 <link rel="import" href="../icons/dorel-icons-social.html">
 <link rel="import" href="../molecules/dorel-multilingual-select-language.html">
+<link rel="import" href="../utils/dorel-category-filter-manager.html">
+<link rel="import" href="../utils/behaviors/single/dorel-gtm-behavior.html">
 
 <dom-module id="dorel-footer">
   <template>
@@ -289,7 +291,7 @@
   </template>
 
   <script>
-    class DorelFooter extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element)) {
+    class DorelFooter extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors, GtmBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-footer';
@@ -482,10 +484,8 @@
             break;
         }
         // send event data to tracking function
-        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-          value: eventData,
-          path: 'events'
-        }}));
+        this._dispatchGtmEvent(eventData);
+
       }
     }
     customElements.define(DorelFooter.is, DorelFooter);

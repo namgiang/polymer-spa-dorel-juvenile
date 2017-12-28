@@ -26,6 +26,7 @@
 <link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
 <link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
 <link rel="import" href="utils/behaviors/single/dorel-social-behavior.html">
+<link rel="import" href="utils/behaviors/single/dorel-gtm-behavior.html">
 
 <!-- Load the magento authentication eagerly -->
 <link rel="import" href="utils/dorel-magento-auth.html">
@@ -96,8 +97,6 @@
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
-
-    <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
 
     <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
 
@@ -242,7 +241,7 @@
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
-    class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([appCacheBehavior], Polymer.Element)) {
+    class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([appCacheBehavior, GtmBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-app';
@@ -431,26 +430,23 @@
        * more info http://bit.ly/2nb6I7G
        */
       _eventTracking() {
-        var globalsObj = this.get('appCache');
-        var globalsCopy = Object.assign({}, globalsObj);
-
-
+        const state = this.getState();
+        const url = state.route.currentRoute.url;
         /**
          * Tracking on pageload
          */
-        var event = {
+        const event = {
           action: 'loaded',
           component: 'page',
           element: this,
           event: 'polymer_event',
           things: {
-            'currentPage': (typeof globalsCopy.current.page === 'undefined') ?
-              document.URL : globalsCopy.current.page,
-            'globals': globalsCopy
+            'currentPage': (typeof url === 'undefined') ?
+              document.URL : url,
+            'globals': state
           }
         };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(event);
       }
 
 

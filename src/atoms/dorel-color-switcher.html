@@ -116,7 +116,7 @@
     Polymer({
       is: 'dorel-color-switcher',
 
-      behaviors: [DorelMultilingualBehavior],
+      behaviors: [DorelMultilingualBehavior, GtmBehavior],
 
 
       properties: {
@@ -215,7 +215,7 @@
           this.fire('colorUpdated', color);
         }
 
-        var element = Polymer.dom(event).localTarget;
+        const element = Polymer.dom(event).localTarget;
 
         this.newColorImage = event.target.getAttribute('color-image');
         this.newColorName = event.target.getAttribute('color-name');
@@ -224,7 +224,7 @@
         this.gtmChild = event.target.getAttribute('gtm-child');
         this.gtmCtaIndex = event.target.getAttribute('gtm-cta-index');
 
-        var structure = {
+        const structure = {
           name: this.gtmParent,
           index: Number(this.gtmParentIndex) + 1,
           child: {
@@ -239,7 +239,7 @@
           }
         };
 
-        var event = {
+        const newEvent = {
           action: this.gtmAction ? this.gtmAction : 'click',
           component: 'color-switcher',
           structure: structure,
@@ -251,7 +251,7 @@
           }
         };
 
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(newEvent);
 
         this.currentImage = this.newColorImage;
         this.currentName = this.newColorName;
