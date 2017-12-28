@@ -54,11 +54,6 @@
       }
     </style>
 
-    <!-- retrieving the faq detail if we haven't retrieved it yet -->
-    <dorel-gmt-collect-faqs
-      app-cache="[[ appCache ]]"
-      endpoint-segments="[[ gmtEndpointSegment ]]"></dorel-gmt-collect-faqs>
-
     <app-route
       route="{{ route }}"
       pattern="/:faqCategory"
@@ -184,7 +179,16 @@
            * @description faqDetail contains the information for the faq detail
            * component to show its sub categories and all questions/answers
            */
-          faqDetail: Object,
+          faqDetail: {
+            type: Object,
+            statePath: function(state) {
+              return state.gmt.faq.faqs.find(faq => faq.id === this.categoryId);
+            }
+          },
+
+          categoryId: {
+            type: Number
+          },
 
           /**
            * @name customerSupportOptions
@@ -196,7 +200,7 @@
 
       static get observers() {
         return [
-          '_setFaqDetail(appCache.faqs, routeData, templateData.acf.gmt_category_selector)'
+          '_setFaqDetail(routeData, templateData.acf.gmt_category_selector)'
         ];
       }
 
@@ -209,46 +213,19 @@
        *
        * @param newSlug - string - the category slug
        */
-      _setFaqDetail(faqGlobals, routeData, categoryId) {
-        if (typeof faqGlobals === 'undefined' && routeData === 'undefined' || categoryId === 'undefined') return;
+      _setFaqDetail(routeData, categoryId) {
+        if (typeof routeData === 'undefined' || categoryId === 'undefined') return;
 
-        var categoryId = Number(categoryId);
-        var inCache = this._findInCache(categoryId);
+        this.set('categoryId', Number(categoryId));
 
-        if (typeof inCache === 'undefined' || !inCache) {
-          // initiate a new gmt collect
-          this._setEndpointSegments(categoryId);
-        } else {
-          // set the faqDetail retrieved from the cache
-          this.set('faqDetail', inCache);
+        if(!this.categoryId) {
+          return;
         }
 
-      }
-
-      /**
-       * @helper
-       * @name _findInCache
-       * @description find a provided detail slug in the cached faqs
-       */
-      _findInCache(detailCategory) {
-        var faqCache = this.get('appCache.faqs');
-        // if no length, return false (no match can be found either way)
-        if (typeof faqCache === 'undefined' || typeof detailCategory === 'undefined' || !faqCache.length) return false;
-
-        return faqCache.find(function (category) {
-          return category.id === detailCategory;
+        this.dispatch('requestFaqsByCategory', {
+          category: this.categoryId,
+          url: `categories/${this.categoryId}?items=1&featured_items=1&sub_categories=1`
         });
-      }
-
-      /**
-       * @helper
-       * @name _retrieveCategoryById
-       * @description set the endpoint-segments for the gmt-collect
-       */
-      _setEndpointSegments(catId) {
-        if (typeof catId === 'undefined' || isNaN(catId)) return;
-
-        this.set('gmtEndpointSegment', 'categories/' + catId + '?items=1&featured_items=1&sub_categories=1');
       }
     }
     customElements.define(DorelTemplateFaqDetail.is, DorelTemplateFaqDetail);
