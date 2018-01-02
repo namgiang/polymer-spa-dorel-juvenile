@@ -61,8 +61,8 @@
           <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
             <iron-image sizing="[[ sizing ]]"
                         fade="true"
-                        title$="[[ alt ]]"
-                        alt$="[[ alt ]]"
+                        title$="[[ imageAlt ]]"
+                        alt$="[[ imageAlt ]]"
                         placeholder$="[[ imagePlaceholder ]]"
                         src$="[[ imageSource ]]"></iron-image>
           </template>
@@ -71,8 +71,8 @@
           <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
             <iron-image sizing="[[ sizing ]]"
                         fade="true"
-                        title$="[[ alt ]]"
-                        alt$="[[ alt ]]"
+                        title$="[[ imageAlt ]]"
+                        alt$="[[ imageAlt ]]"
                         placeholder$="[[ imagePlaceholder ]]"
                         src$="[[ mobileImageSource ]]"></iron-image>
           </template>
@@ -81,10 +81,10 @@
 
       <template is="dom-if" if="[[ renderImage ]]">
         <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
-          <img id="myImage" src="[[ imageSource ]]" alt="[[ alt ]]">
+          <img id="myImage" src="[[ imageSource ]]" alt="[[ imageAlt ]]">
         </template>
         <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
-          <img id="myImage" src="[[ mobileImageSource ]]" alt="[[ alt ]]">
+          <img id="myImage" src="[[ mobileImageSource ]]" alt="[[ imageAlt ]]">
         </template>
       </template>
 
@@ -102,6 +102,7 @@
             type: String,
             value: 'cover'
           },
+
           /**
            * @name mobileWidth
            * @description The width for displaying the image on mobile (set as a css property)
@@ -110,6 +111,7 @@
             type: String,
             value: '16em'
           },
+
           /**
            * @name renderImage
            * @description The component will render an image tag instead of a container with background-image
@@ -118,6 +120,7 @@
             type: Boolean,
             value: false
           },
+
           /**
            * @name mobileHeight
            * @description The height for displaying the image on mobile (set as a css property)
@@ -126,6 +129,7 @@
             type: String,
             value: '9em'
           },
+
           /**
            * @name tabletWidth
            * @description The width for displaying the image on tablet (set as a css property)
@@ -134,6 +138,7 @@
             type: String,
             value: '16em'
           },
+
           /**
            * @name tabletHeight
            * @description The height for displaying the image on tablet (set as a css property)
@@ -142,6 +147,7 @@
             type: String,
             value: '9em'
           },
+
           /**
            * @name width
            * @description The width for displaying the image (set as a css property)
@@ -150,6 +156,7 @@
             type: String,
             value: '16em'
           },
+
           /**
            * @name height
            * @description The height for displaying the image (set as a css property)
@@ -158,6 +165,7 @@
             type: String,
             value: '9em'
           },
+
           /**
            * @name mediaId
            * @description The ID used to retrieve the asset from Bynder
@@ -166,6 +174,7 @@
             type: String,
             observer: '_onMediaIdChanged'
           },
+
           /**
            * @name mediaContent
            * @description data coming from Bynder.
@@ -178,6 +187,7 @@
             },
             observer: '_onMediaContentChanged'
           },
+
           /**
            * @name derivativeIdentifier
            * @description The identifier to retrieve the correct derivative
@@ -211,6 +221,7 @@
           mobileImageSource: {
             type: String,
           },
+
           /**
            * @name imagePlaceholder
            * @description The image placeholder for the image
@@ -218,11 +229,12 @@
           imagePlaceholder: {
             type: String,
           },
+
           /**
            * @name alt
            * @description Alt attribute for SEO
            */
-          alt: {
+          imageAlt: {
             type: String,
             value: ''
           }
@@ -254,11 +266,11 @@
        */
       _onMediaContentChanged() {
         if (typeof this.mediaContent !== 'undefined' && this.mediaContent.hasOwnProperty('thumbnails')) {
+
           // Set the Bynder description to this component's alt properties, if no alt is given
-          if(this.alt === '')
-          {
-            this.alt = this.mediaContent.description;
-          }
+          const imageAlt = (typeof this.get('imageAlt') !== 'undefined' || this.get('imageAlt') !== '') ? this.get('imageAlt') : this.mediaContent.description;
+
+          this.set('imageAlt', imageAlt);
 
           var bynderDerivatives = this.mediaContent.thumbnails;
           this.imagePlaceholder = bynderDerivatives.mini;

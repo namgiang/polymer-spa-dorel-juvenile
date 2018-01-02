@@ -3,16 +3,18 @@
 <dom-module id="dorel-bynder-responsive-image">
   <template>
     <section class="section">
-      <dorel-responsive-image image-type="[[ imageType ]]"
-                              is-loading="[[ mediaContent.isLoading ]]"
-                              image-sources="[[ imageSources ]]"
-                              alt="[[ alt ]]"></dorel-responsive-image>
+      <dorel-responsive-image
+        image-type="[[imageType]]"
+        is-loading="[[mediaContent.isLoading]]"
+        image-sources="[[imageSources]]"
+        alt="[[imageAlt]]"></dorel-responsive-image>
     </section>
   </template>
 
   <script>
     class DorelBynderResponsiveImage extends ReduxMixin(Polymer.Element) {
       static get is() { return 'dorel-bynder-responsive-image'; }
+
       static get properties() {
         return {
           /**
@@ -23,6 +25,7 @@
             type: String,
             observer: '_onMediaIdChanged'
           },
+
           /**
            * @attribute
            * @name imageType
@@ -33,18 +36,20 @@
             value: 'wide-screen',
             reflectToAttribute: true
           },
+
           /**
            * @name mediaContent
            * @description data coming from Bynder.
            */
           mediaContent: {
             type: Object,
-            statePath: function(state) {
+            statePath: function (state) {
               const mediaContent = state.image.images.find(item => item.id === this.mediaId);
               return mediaContent ? mediaContent : {isLoading: true};
             },
             observer: '_onMediaContentChanged'
           },
+
           /**
            * @name imageSources
            * @description Various image derivatives and their source
@@ -53,6 +58,7 @@
             type: Object,
             notify: true
           },
+
           /**
            * @name derivativeMapping
            * @description The Dorel defined derivatives and the corresponding Bynder asset
@@ -60,17 +66,19 @@
            */
           derivativeMapping: {
             type: Object,
-            value: function () {
-              return {
-                'placeholder': 'mini',
-                'small-portrait': 'Widescreen Small portrait',
-                'small-landscape': 'Widescreen Small landscape',
-                'large-portrait': 'Widescreen Retina portrait',
-                'large-landscape': 'Widescreen Retina landscape'
-              }
-            }
+            value: () => ({
+              'placeholder': 'mini',
+              'small-portrait': 'Widescreen Small portrait',
+              'small-landscape': 'Widescreen Small landscape',
+              'large-portrait': 'Widescreen Retina portrait',
+              'large-landscape': 'Widescreen Retina landscape'
+            })
           },
-          alt: {
+
+          /**
+           * attribute containing the alternate text coming from WP
+           */
+          imageAlt: {
             type: String,
             value: ''
           }
@@ -86,6 +94,7 @@
       /**
        * @name _getDefaultImageSources
        * @description Returns a dictionary with the given derivative labels and a default Bynder image
+       * TODO: refactor for loop
        */
       _getDefaultImageSources(mediaContent) {
         var imageSources = {};
@@ -107,6 +116,7 @@
        * @name _setMappedImageSources
        * @description Returns a dictionary in which the default images have been replaced
        * with the correct Bynder derivative (if it exists)
+       * TODO: refactor for loop
        */
       _getMappedImageSources(imageSources, mediaContent) {
 
@@ -139,9 +149,10 @@
           this.imageSources = this._getMappedImageSources(sources, this.mediaContent);
 
           // Set the Bynder description to this component's alt property
-          this.alt = this.mediaContent.description;
-        }
-        else {
+          const imageAlt = (typeof this.get('imageAlt') !== 'undefined' || this.get('imageAlt') !== '') ? this.get('imageAlt') : this.mediaContent.description;
+
+          this.set('imageAlt', imageAlt);
+        } else {
           this.imageSources = {};
         }
       }
