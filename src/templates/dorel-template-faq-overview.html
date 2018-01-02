@@ -39,11 +39,9 @@
       }
     </style>
 
-    <dorel-gmt-collect-faqs
-      app-cache="[[ appCache ]]"
-      endpoint-segments="categories?featured_items=1&items=1"></dorel-gmt-collect-faqs>
-
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <dorel-wp-collect-page id="collect"></dorel-wp-collect-page>
 
     <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
 
@@ -79,9 +77,9 @@
             if="[[servicesOverviewFaq.services_faq]]">
             <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
               <dorel-section-service-faq-overview
-                app-cache="[[appCache]]"
+                faq-detail-pages="[[ faqDetailPages ]]"
                 template-data="[[servicesOverviewFaq]]"
-                faq-categories="[[appCache.faqs]]"></dorel-section-service-faq-overview>
+                faq-categories="[[ faqs ]]"></dorel-section-service-faq-overview>
             </dorel-layout-column>
           </template>
           <!--// section-service-overview -->
@@ -92,7 +90,7 @@
             if="[[_toggleObject(templateData.acf.customer_support_toggle, customerSupportOptions)]]">
             <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
               <dorel-customer-support
-                social-link="[[ _getFacebookLink(appCache.collect.options.social_channels) ]]"
+                social-link="[[ _getFacebookLink(config.social_channels) ]]"
                 template-data="[[customerSupportOptions]]"></dorel-customer-support>
             </dorel-layout-column>
           </template>
@@ -107,61 +105,96 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-template-faq-overview',
-      properties: {
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
+    class DorelTemplateFaqOverview extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors, SocialBehavior], Polymer.Element)) {
+
+      static get is() {
+        return 'dorel-template-faq-overview';
+      }
+      static get properties() {
+        return {
+
+
+          /**
+           * @attribute
+           * @name config
+           * @description the config of the redux state
+           */
+          config: {
+            type: Object,
+            statePath: 'config',
+            observer: '_defineOptionModels'
           },
-          observer: '_defineOptionModels'
-        },
 
-        /**
-         * @attribute
-         * @name templateData
-         * @description all data needed to build up a certain component
-         */
-        templateData: {
-          type: Object,
-          value: function () {
-            return {};
+          /**
+           * @attribute
+           * @name templateData
+           * @description all data needed to build up a certain component
+           */
+          templateData: {
+            type: Object,
+            value: function () {
+              return {};
+            },
+            observer: '_defineComponentModels'
           },
-          observer: '_defineComponentModels'
-        },
 
-        /**
-         * @name homeHeaderData
-         * @description the data model used for the hero header component
-         */
-        heroHeader: Array,
+          /**
+           * @attribute
+           * @name faqDetailPages
+           * @description all the pages where the template has the `faq-detail` value
+           */
+          faqDetailPages: {
+            type: Array,
+            statePath: function(state) {
+              return state.page.pages.filter(page => {
+                  return page.template === 'faq-detail';
+              });
+            },
+          },
 
-        /**
-         * @name productsOverviewFaq
-         * @description the data model used for the products overview faq component
-         */
-        productsOverviewFaq: Array,
+          faqs: {
+            type: Array,
+            statePath: 'gmt.faq.faqs'
+          },
 
-        /**
-         * @name servicesOverviewFaq
-         * @description the data model used for the services overview faq component
-         */
-        servicesOverviewFaq: Array,
+          /**
+           * @name homeHeaderData
+           * @description the data model used for the hero header component
+           */
+          heroHeader: Array,
 
-        /**
-         * @name customerSupportOptions
-         * @description the data model used for the customer support component
-         */
-        customerSupportOptions: Object
-      },
+          /**
+           * @name productsOverviewFaq
+           * @description the data model used for the products overview faq component
+           */
+          productsOverviewFaq: Array,
 
-      behaviors: [TemplateBehaviors, SocialBehavior]
-    });
+          /**
+           * @name servicesOverviewFaq
+           * @description the data model used for the services overview faq component
+           */
+          servicesOverviewFaq: Array,
 
+          /**
+           * @name customerSupportOptions
+           * @description the data model used for the customer support component
+           */
+          customerSupportOptions: Object
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.dispatch('requestFaqsByCategory', {
+          category: -1,
+          url: `categories?featured_items=1&items=1`
+        });
+
+        // get child pages
+        this.$.collect.getChildrenByParentId(this.pageId);
+      }
+    }
+    customElements.define(DorelTemplateFaqOverview.is, DorelTemplateFaqOverview);
   </script>
 
 </dom-module>

@@ -2,44 +2,50 @@
   <template>
     <template
       is="dom-if"
-      if="[[ appCache.collect.options.zendesk_loaded ]]">
+      if="[[ config.zendesk_loaded ]]">
       <dorel-zendesk
-        zendesk-loaded="[[ appCache.collect.options.zendesk_loaded ]]"></dorel-zendesk>
+        zendesk-loaded="[[ config.zendesk_loaded ]]"></dorel-zendesk>
     </template>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-third-party',
+    class DorelThirdParty extends ReduxMixin(Polymer.Element) {
 
-      properties: {
-      //hubspot-toggle="[[ appCache.collect.options.hubspot_toggle ]]"
-      //hubspot-portal-id="[[ appCache.Dorel.collect.options.hubspot_portal_id ]]"
-      //zendesk-toggle="[[ globals.Dorel.collect.options.zendesk_toggle ]]"
-      //zendesk-host="[[ globals.Dorel.collect.options.zendesk_host ]]"
-        appCache: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
-        /**
-         * @name hubspotScriptSrc
-         * @description the third-party source of the JavaScript
-         * non-minified: //js.hsforms.net/forms/v2-legacy.js
-         * minified: //js.hsforms.net/forms/v2.js
-         */
-        hubspotScriptSrc: {
-          type: String,
-          value: '//js.hsforms.net/forms/v2.js'
-        },
-      },
+      static get is() {
+        return 'dorel-third-party';
+      }
 
-      observers: [
-        '_initHubspot(appCache.collect.options.hubspot_toggle, appCache.collect.options.hubspot_portal_id, hubspotScriptSrc)',
-        '_initZendesk(appCache.collect.options.zendesk_toggle, appCache.collect.options.zendesk_host)'
-      ],
+      static get properties() {
+        return {
 
-      /** 
+          /**
+           * @name config
+           * @description the config from the redux state
+           */
+          config: {
+            type: Object,
+            statePath: 'config'
+          },
+          /**
+           * @name hubspotScriptSrc
+           * @description the third-party source of the JavaScript
+           * non-minified: //js.hsforms.net/forms/v2-legacy.js
+           * minified: //js.hsforms.net/forms/v2.js
+           */
+          hubspotScriptSrc: {
+            type: String,
+            value: '//js.hsforms.net/forms/v2.js'
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_initHubspot(config.hubspot_toggle, config.hubspot_portal_id, hubspotScriptSrc)',
+          '_initZendesk(config.zendesk_toggle, config.zendesk_host)'
+        ];
+      }
+
+      /**
        * @name _initHubSpot
        * @description adds the Hubspot JavaScript to the head and imports the
        * dorel-hubspot component
@@ -48,14 +54,14 @@
        * @parameter hubspotPortalId String - the portal id of hubspot
        * @parameter hubspotScriptSrc String - the source of the hubspot javascript
        */
-      _initHubspot: function(hubspotToggle, hubspotPortalId, hubspotScriptSrc) {
+      _initHubspot(hubspotToggle, hubspotPortalId, hubspotScriptSrc) {
 
         // make sure the toggle, portalId, src are set/true and if the script isn't included yet
         if ( typeof hubspotToggle === 'undefined' || !hubspotToggle ||
           typeof hubspotPortalId === 'undefined' || hubspotPortalId === '' ||
           typeof hubspotScriptSrc === 'undefined' ||
           this._scriptExists(hubspotScriptSrc) ) return;
-          
+
         var self = this;
 
         // create script tag
@@ -69,14 +75,13 @@
           // import the dorel-hubspot component, needs to be async FALSE!!!!!
           self.importHref(
             self.resolveUrl('../atoms/dorel-hubspot.html'), function() {
-              self.fire('setAppCache', { value: true, path: 'collect.options.hubspot_loaded'});
-
+              self.dispatch('addOption', { hubspot_loaded: true });
             }, null, false
           );
         };
-      },
+      }
 
-      /** 
+      /**
        * @name _initZenDesk
        * @description adds the Zendesk JavaScript to the head and imports the
        * dorel-zendesk component
@@ -84,11 +89,11 @@
        * @parameter zendeskToggle Boolean - indicates wheter the toggle is set in WP
        * @parameter zendeskHost String - the portal id of Zendesk
        */
-      _initZendesk: function(zendeskToggle, zendeskHost) {
+      _initZendesk(zendeskToggle, zendeskHost) {
         if ( typeof zendeskToggle === 'undefined' || !zendeskToggle ||
           typeof zendeskHost === 'undefined' || zendeskHost === '') return;
 
-        /** 
+        /**
          * This is the Zendesk script that needs to be included to make it work
          * Please refer to http://bit.ly/2ps5eto for more information
          */
@@ -109,19 +114,19 @@
         // import the dorel-hubspot component
         self.importHref(
           self.resolveUrl('../atoms/dorel-zendesk.html'), function() {
-            self.fire('setAppCache', { value: true, path: 'collect.options.zendesk_loaded'});
+            self.dispatch('addOption', { zendesk_loaded: true });
           }, null, true
         );
-      },
+      }
 
-      /** 
+      /**
        * @name _scriptExists
-       * @description check if the script tag with the defined url is included 
+       * @description check if the script tag with the defined url is included
        * already in the application
        *
        * @parameter String - url string
        */
-      _scriptExists: function(url) {
+      _scriptExists(url) {
         // select all scripts
         var scripts = document.getElementsByTagName('script');
 
@@ -133,6 +138,7 @@
         // return false if no match is found
         return false;
       }
-    });
+    }
+    customElements.define(DorelThirdParty.is, DorelThirdParty);
   </script>
 </dom-module>

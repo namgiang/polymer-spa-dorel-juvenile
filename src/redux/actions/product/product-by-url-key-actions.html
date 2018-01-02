@@ -23,7 +23,7 @@ function fetchProduct(state, url_key) {
   return dispatch => {
     const currentLanguageCode = state.route.currentLanguage.languageCode;
     const init = { method: 'GET', mode: 'cors', cache: 'default' };
-    const url = `${CONFIG.ECOM_URL}/rest/V1/dorel/product/${url_key}?language=${currentLanguageCode}`;
+    const url = `${state.config.eComUrl}/rest/V1/dorel/product/${url_key}?language=${currentLanguageCode}`;
     return fetch(url, init)
       .then(handleErrors)
       .then(response => response.json())
@@ -40,17 +40,6 @@ function shouldFetchProduct(state, url_key) {
     return false;
   } else {
     return product.notAvailable;
-  }
-}
-
-function requestProductsByCategory(category) {
-  return (dispatch, getState) => {
-    if (shouldFetchCategory(getState(), category)) {
-      dispatch(makeProductRequest(url_key))
-      return dispatch(fetchProduct(getState(), url_key))
-    } else {
-      return Promise.resolve()
-    }
   }
 }
 

@@ -20,7 +20,14 @@
 
           pages: Array,
 
-          appCache: Object
+          wpUrl: {
+            type: String,
+            statePath: 'config.wpUrl'
+          },
+
+          currentLanguage: {
+            statePath: 'route.currentLanguage'
+          }
 
         }
       }
@@ -73,9 +80,8 @@
        * @param slug - String
        */
       async _getWpPageBySlug(slug) {
-        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
         const collectPageEl = this.$.collectPage;
-        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?slug=${slug}`;
+        collectPageEl.url = `${this.wpUrl}${this.currentLanguage.path}/wp-json/wp/v2/pages?slug=${slug}`;
         let json = await collectPageEl.generateRequest().completes;
         const pages = json.__data.response || [];
         pages.map(page => {
@@ -87,9 +93,8 @@
       }
 
       async _getWpPageById(id) {
-        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
         const collectPageEl = this.$.collectPage;
-        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages/${id}`;
+        collectPageEl.url = `${this.wpUrl}${this.currentLanguage.path}/wp-json/wp/v2/pages/${id}`;
         let json = await collectPageEl.generateRequest().completes;
         const page = json.__data.response || [];
         page.template = page.template.slice(0, -4).replace('page-', '');
@@ -106,9 +111,8 @@
        * @param id - Number
        */
       async getChildrenByParentId(id) {
-        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
         const collectPageEl = this.$.collectPage;
-        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?parent=${id}`;
+        collectPageEl.url = `${this.wpUrl}${this.currentLanguage.path}/wp-json/wp/v2/pages?parent=${id}`;
         let json = await collectPageEl.generateRequest().completes;
         const pages = json.__data.response || [];
         pages.map(page => {
@@ -126,9 +130,8 @@
        * @param template - String
        */
       async getPageByTemplate(template) {
-        const currentLanguage = (this.appCache.currentLanguage && this.appCache.currentLanguage.length ? this.appCache.currentLanguage + '/' : '');
         const collectPageEl = this.$.collectPage;
-        collectPageEl.url = `${this.appCache.wpUrl}${currentLanguage}wp-json/wp/v2/pages?template=${template}`;
+        collectPageEl.url = `${this.wpUrl}${this.currentLanguage}/wp-json/wp/v2/pages?template=${template}`;
         let json = await collectPageEl.generateRequest().completes;
         const pages = json.__data.response || [];
         pages.map(page => {
@@ -140,6 +143,9 @@
       }
 
       cleanUrlToPath(url) {
+        if(!url) {
+          return url;
+        }
         const urlArray = url.split('/');
         const path = urlArray.slice(3).join('/');
         return this._cleanString(path);

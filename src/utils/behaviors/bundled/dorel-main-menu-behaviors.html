@@ -2,6 +2,7 @@
 <link rel="import" href="../single/dorel-get-deep-array-items-behavior.html">
 <link rel="import" href="../single/dorel-click-outside-element-behavior.html">
 <link rel="import" href="../single/dorel-window-scroll-behavior.html">
+<link rel="import" href="../single/dorel-gtm-behavior.html">
 
 <script>
 /**
@@ -90,6 +91,8 @@
      */
     _emitGtmEvent: function (event) {
       var element = Polymer.dom(event).localTarget;
+      var parent = element.parentNode;
+      var href = element.href ? element.href : parent.href;
       var event = {
         action: 'click',
         component: 'navigation',
@@ -101,10 +104,10 @@
         event: 'polymer_event',
         things: {
           'currentPage': document.URL,
-          'targetPage': element.href
+          'targetPage': href
         }
       };
-      this.fire('setAppCache', {value: event, path: 'events'});
+      this._dispatchGtmEvent(event);
     },
   }
 
@@ -112,6 +115,7 @@
  * @polymerBehavior
  */
   MainMenuBehavior = [
+    GtmBehavior,
     MatchUrlBehavior,
     getDeepArrayItemsBehavior,
     clickOutsideBehavior,

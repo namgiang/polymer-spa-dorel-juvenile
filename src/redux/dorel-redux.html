@@ -7,11 +7,14 @@
 <link rel="import" href="./middleware/thunk.html">
 
 <!-- import reducers -->
+<link rel="import" href="./reducers/config-reducer.html">
+<link rel="import" href="./reducers/gmt-reducer.html">
 <link rel="import" href="./reducers/image-reducer.html">
-<link rel="import" href="./reducers/page-reducer.html">
-<link rel="import" href="./reducers/route-reducer.html">
 <link rel="import" href="./reducers/menu-reducer.html">
+<link rel="import" href="./reducers/modules-reducer.html">
+<link rel="import" href="./reducers/page-reducer.html">
 <link rel="import" href="./reducers/product-reducer.html">
+<link rel="import" href="./reducers/route-reducer.html">
 
 <!-- import selectors -->
 <link rel="import" href="./selectors/selector-combiner.html">
@@ -20,11 +23,14 @@
   (function() {
     // Combine all the reducers
     const rootReducer = Redux.combineReducers({
+      config: configReducer,
+      gmt: gmtReducer,
       image: imageReducer,
-      page: pageReducer,
-      route: routeReducer,
       menu: menuReducer,
-      product: productReducer
+      modules: modulesReducer,
+      page: pageReducer,
+      product: productReducer,
+      route: routeReducer
     });
 
     const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

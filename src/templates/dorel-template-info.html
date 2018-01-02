@@ -158,8 +158,8 @@
               is="dom-if"
               if="[[ _isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
               <dorel-hubspot
-                hubspot-loaded="[[ appCache.collect.options.hubspot_loaded ]]"
-                portal-id="[[ appCache.collect.options.hubspot_portal_id ]]"
+                hubspot-loaded="[[ config.hubspot_loaded ]]"
+                portal-id="[[ config.hubspot_portal_id ]]"
                 form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
             </template>
             <!--// dorel section hubspot -->
@@ -183,18 +183,18 @@
   </template>
 
   <script>
-    class DorelTemplateInfo extends Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element) {
+    class DorelTemplateInfo extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element)) {
 
-      static get is() { return 'dorel-template-info'; }
+      static get is() {
+        return 'dorel-template-info';
+      }
 
       static get properties() {
         return {
-          /**
-           * TODO: refactor to redux
-           */
-          appCache: {
+
+          config: {
             type: Object,
-            value: () => ({})
+            statePath: 'config'
           },
 
           /**
@@ -216,9 +216,9 @@
             type: Object,
             value: () => ({})
           }
-        }
-      }
-    }
-    customElements.define(DorelTemplateInfo.is, DorelTemplateInfo);
+       };
+     }
+   }
+   customElements.define(DorelTemplateInfo.is, DorelTemplateInfo);
   </script>
 </dom-module>
