@@ -36,6 +36,15 @@
            */
           imageUrl: {
             type: String
+          },
+
+          /**
+           * @name height
+           * @description the desired height of the image
+           * if set it will be used retrieve correct size
+           */
+          height: {
+            type: Number,
           }
         };
       }
@@ -44,7 +53,7 @@
         if(!imageUrl || !imageUrl.length) {
           return;
         }
-        const parameters = 'c_limit,h_684,q_70';
+        const parameters = `c_limit,h_${this.height ? this.height : 684},q_70`;
         const lastSegment = imageUrl.split('/').pop();
         return `${imageUrl.split('/').map(segment => segment === lastSegment ? parameters : segment).join('/')}/${lastSegment}`;
       }
