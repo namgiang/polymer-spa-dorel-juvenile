@@ -286,12 +286,14 @@
        * @returns Object
        */
       subCategoryItemMold(product) {
+        // determines if the product has childproducts and sets either the single or the first childproduct
+        const selected = product.child_products ? product.child_products[0] : product;
         return {
           id: Number(product.id),
           link: this.mainItem.link + product.url,
-          thumbnail_url: product.child_products ? product.child_products[0].images.image : product.images.image, 
+          thumbnail_url: selected.images ? selected.images.image : '',
           title: product.name ? product.name.value : '',
-          sub_title: product.header_section.sub_title
+          sub_title: selected.header_section ? selected.header_section.sub_title : ''
         };
       }
     }
