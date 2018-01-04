@@ -78,14 +78,14 @@
             items="[[ colorsData ]]"
             as="item"
             filter="[[ _filterChildProducts(filters.*) ]]">
-            <li class$="list-group-item {{ _isCurrentColor(currentName, item.collection_colour_theme_name.name) }}">
+            <li class$="list-group-item {{ _isCurrentColor(currentName, item.collection_colour_theme_name.value) }}">
 
               <template is="dom-if" if="[[ _checkType(item, 'hex') ]]">
                 <span on-click="_changeCurrentColor"
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.name ]]"
+                      color-name$="[[ item.collection_colour_theme_name.value ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]"
@@ -97,12 +97,23 @@
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.name ]]"
+                      color-name$="[[ item.collection_colour_theme_name.value ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]">
                   <img src="[[ item.collection_colour_theme_name.value ]]" class="image-color" />
                 </span>
+              </template>
+
+              <template is="dom-if" if="[[ _noHexOrSwatch(item) ]]">
+                <span on-click="_changeCurrentColor"
+                      role="button"
+                      tabindex="0"
+                      color-image$="[[ item.images.image ]]"
+                      color-name$="[[ item.collection_colour_theme_name.value ]]"
+                      gtm-action$="[[ gtmAction ]]"
+                      gtm-child$="[[ gtmChild ]]"
+                      gtm-cta-index$="[[ index ]]"></span>
               </template>
             </li>
           </template>
@@ -113,113 +124,114 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-color-switcher',
+    class DorelColorSwitcher extends Polymer.mixinBehaviors([DorelMultilingualBehavior, GtmBehavior], Polymer.Element) {
 
-      behaviors: [DorelMultilingualBehavior, GtmBehavior],
+      static get is() { return 'dorel-color-switcher'; }
 
+      static get properties() {
+        return {
+          /**
+           * `colorsData` holds all colors of a root product
+           */
+          colorsData: {
+            type: Array,
+            value: []
+          },
 
-      properties: {
-
-        /**
-         * @attribute
-         * @name colorsData
-         * @description holds all colors
-         */
-        colorsData: {
-          type: Array,
-          value: []
-        },
-
-        /**
-         * @attribute
-         * @name currentImage
-         * @description by default isset to the first array item
-         */
-        currentImage: {
-          type: String,
-          value: '',
-          notify: true
-        },
-
-        colors: {
-          type: String,
-        },
-
-        filters: {
-          type: Array
-        },
-
-        currentColorBlock: {
-          type: Boolean
+          /**
+           * by default isset to the first array item (first child product image)
+           */
+          currentImage: {
+            type: String,
+            value: '',
+            notify: true
+          }
         }
-      },
+      }
 
       /**
-       * @name _filterChildProducts
-       * @description a filter that is used by the template
+       * a filter that is used by the template
        * Additional functionality is to call _setCurrentColor whenever the filters change
        * to select a color that is included in the filtered colors
-       * @param filters - Array - filters inerited by parent => from the queryParams
+       *
+       * @param {array} filters inherited by parent => from the queryParams
+       * @returns {object} product object
        */
-      _filterChildProducts: function (filters) {
-        var self = this;
-        var currentColorSelected = false;
-        return function (color) {
+      _filterChildProducts(filters) {
+        const colorsData = this.get('colorsData');
+        let currentColorSelected = false;
+
+        return (color) => {
+
           // if no filters are applied return true
           if (!filters || !filters.base || !filters.base.length) {
-            self._setCurrentColor(self.colorsData[0]);
+            this._setCurrentColor(colorsData[0]);
             return true;
           }
+
           // if there is no product return false
           if (!color) {
             return false;
           }
-          var showProduct = self.$.categoryManager.shouldShowProduct(color, filters);
-          if (showProduct === true && currentColorSelected === false) {
-            var selectedColor = self.colorsData.find(function (_color) {
+
+          const showProduct = this.$.categoryManager.shouldShowProduct(color, filters);
+
+          if (showProduct && !currentColorSelected) {
+            const selectedColor = colorsData.find(function (_color) {
               return _color.sku === color.sku;
             });
+
             if (selectedColor) {
-              self._setCurrentColor(selectedColor);
+              this._setCurrentColor(selectedColor);
               currentColorSelected = true;
             }
           }
+
           return showProduct;
         };
-      },
+      }
 
       /**
-       * @name _setCurrentColor
-       * @description will set currentImage and currentName
+       * will set currentImage and currentName]
+       *
        * @param newColor - Object
        */
-      _setCurrentColor: function (newColor) {
-        if (!newColor) {
-          return;
-        }
+      _setCurrentColor(newColor) {
+        if (!newColor) return;
+
         this.set('currentImage', newColor.images.image);
-        this.set('currentName', newColor.collection_colour_theme_name.name);
-      },
+        this.set('currentName', newColor.collection_colour_theme_name.value);
+      }
 
       /**
-       * @onTap
-       * @name _changeCurrentColor
-       * @description when a color is clicked it will change the current values
+       * when a color is clicked it will change the current values
        *
        * @param e - Object - the clicked object/target
        */
-      _changeCurrentColor: function (event) {
+      _changeCurrentColor(event) {
         var color = event.model.item;
+
         if(typeof color !== 'undefined') {
-          this.fire('colorUpdated', color);
+          this.dispatchEvent(
+            new CustomEvent('colorUpdated', {
+              bubbles: true,
+              composed: true,
+              detail: color
+            })
+          );
         }
 
         const element = Polymer.dom(event).localTarget;
 
-        this.newColorImage = event.target.getAttribute('color-image');
-        this.newColorName = event.target.getAttribute('color-name');
+        // define the new color values
+        this.set('newColorImage', event.target.getAttribute('color-image'));
+        this.set('newColorName', event.target.getAttribute('color-name'));
 
+        // set the current color values with the new color values
+        this.set('currentImage', this.get('newColorImage'));
+        this.set('currentName', this.get('newColorName'));
+
+        // TODO: recheck gtm here
         this.gtmAction = event.target.getAttribute('gtm-action');
         this.gtmChild = event.target.getAttribute('gtm-child');
         this.gtmCtaIndex = event.target.getAttribute('gtm-cta-index');
@@ -252,36 +264,43 @@
         };
 
         this._dispatchGtmEvent(newEvent);
-
-        this.currentImage = this.newColorImage;
-        this.currentName = this.newColorName;
-      },
+      }
 
       /**
-       * @name _isCurrentColor
-       * @description check if the item is the current one to set the active
+       * check if the item is the current one to set the active
        * class on the list-item
        *
        * @param current - String - the current color name
        * @param name - String - the name of the color item
        * @returns String - active or empty string
        */
-      _isCurrentColor: function (current, name) {
+      _isCurrentColor(current, name) {
         return (current === name) ? 'active' : '';
-      },
+      }
 
       /**
-       * template helper method
-       * @name _checkType
-       * @description will return a boolean based on the item and the type
+       * will return a boolean based on the item and the type
+       *
        * @param item - Object
        * @param type - string
        * @returns Boolean
        */
-      _checkType: function(item, type) {
+      _checkType(item, type) {
         return Boolean(item && item.collection_colour_theme_name && item.collection_colour_theme_name.type === type);
-      },
-    });
-  </script>
+      }
 
+      /**
+       * will return a boolean based on the item and if the type doesn't exist
+       *
+       * @param {object} the color item object containing value, order, type and label
+       * @returns {boolean} returns true when the type doesn't exist
+       */
+      _noHexOrSwatch(item) {
+        return Boolean(item && item.collection_colour_theme_name && !item.collection_colour_theme_name.type);
+      }
+    }
+
+    // Register the x-custom element with the browser
+    customElements.define(DorelColorSwitcher.is, DorelColorSwitcher);
+  </script>
 </dom-module>
