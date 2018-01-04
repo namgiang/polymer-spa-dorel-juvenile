@@ -1,0 +1,253 @@
+<link rel="import" href="../../node_modules/google-youtube/google-youtube.html">
+<link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+<dom-module id="dorel-youtube-video">
+  <template>
+    <style is="custom-style">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        position: relative;
+        overflow: hidden;
+
+        --video-border-radius: 10px;
+
+        --google-youtube-container: {
+          position: relative;
+          padding-bottom: 56.25%;
+          height: 0 !important;
+          max-height: 0 !important;
+          overflow: hidden;
+          border-radius: var(--video-border-radius);
+        };
+
+        --google-youtube-iframe: {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        };
+      }
+
+      google-youtube {
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity .3s ease;
+      }
+
+      [playing] google-youtube {
+        opacity: 1;
+      }
+
+      dorel-bynder-responsive-image {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        opacity: 1;
+        transition: opacity .3s ease;
+      }
+
+      [playing] dorel-bynder-responsive-image {
+        opacity: 0;
+      }
+    </style>
+    <section>
+      <slot id="content"></slot>
+      <div playing$="[[ playing ]]">
+        <google-youtube id="googleYouTube"
+                        playsupported="{{ playSupported }}"
+                        video-id="[[ videoId ]]"
+                        state="{{ state }}"
+                        currenttime="{{ currentTime }}"
+                        currenttimeformatted="{{ currentTimeFormatted }}"
+                        duration="{{ duration }}"
+                        durationformatted="{{ durationFormatted }}"
+                        fractionloaded="{{ fractionLoaded }}"
+                        volume="{{ volume }}"
+                        playbackrate="{{ playbackRate }}"
+                        playbackquality="{{ playbackQuality }}"
+                        playbackstarted="{{ playbackstarted }}"
+                        width="100vw"
+                        chromeless="true"
+                        modestbranding="0"
+                        autoplay="{{ autoplay }}"
+                        on-google-youtube-state-change="handleStateChange"
+                        on-google-youtube-error="handleYouTubeError">
+        </google-youtube>
+
+        <template is="dom-if"
+                  if="[[ videoError ]]">
+          An error occurred while playing your video. Check the video id or try again.
+        </template>
+
+        <dorel-bynder-responsive-image
+          media-id="[[ thumbnail ]]" image-type="[[ imageType ]]"></dorel-bynder-responsive-image>
+      </div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'dorel-youtube-video',
+    properties: {
+      thumbnail: {
+        type: String
+      },
+      videoId: {
+        type: String,
+      },
+      playSupported: {
+        type: Boolean
+      },
+      state: {
+        type: Number
+      },
+      currentTime: {
+        type: Number
+      },
+      currentTimeFormatted: {
+        type: String
+      },
+      duration: {
+        type: Number
+      },
+      durationFormatted: {
+        type: String
+      },
+      fractionLoaded: {
+        type: Number
+      },
+      volume: {
+        type: Number
+      },
+      playbackRate: {
+        type: Number
+      },
+      playbackQuality: {
+        type: String
+      },
+      playbackstarted: {
+        type: Boolean
+      },
+      isHero: {
+        type: Boolean,
+        value: false
+      },
+      playing: {
+        type: Boolean,
+        reflectToAttribute: true
+      },
+      imageType: {
+        type: String,
+        value: 'full-screen'
+      },
+      videoError: {
+        type: Boolean,
+        value: false,
+        notify: true
+      }
+    },
+
+    listeners: {
+      'tap': '_pauseAfterTap'
+    },
+
+    /**
+     * @name handleStateChange
+     * @description loop video
+     */
+    handleStateChange: function (ev) {
+      //Restart the video when it's ended
+      if (this.state === 0) {
+        this.playing = true;
+        this.$.googleYouTube.play();
+      }
+    },
+
+    /**
+     * @name handleYouTubeError
+     * @description show console message on error
+     */
+    handleYouTubeError: function (ev) {
+      // console.error('YouTube playback error', ev.detail);
+      this.set('videoError', true);
+    },
+
+    /**
+     * @name play
+     * @description public function to play video
+    */
+    play: function () {
+      this.playing = true;
+      this.$.googleYouTube.seekTo(0);
+      this.$.googleYouTube.play();
+    },
+
+    /**
+     * @name stop
+     * @description public function to stop video
+    */
+    stop: function () {
+      this.playing = false;
+      this.$.googleYouTube.pause();
+      this.$.googleYouTube.seekTo(0);
+    },
+
+    /**
+     * @name pause
+     * @description public function to pause video
+    */
+    pause: function () {
+      this.$.googleYouTube.pause();
+    },
+
+    /**
+     * @name resume
+     * @description public function to resume video afterpause
+    */
+    resume: function () {
+      if (this.state === -1) {
+        this.playing = true;
+        this.$.googleYouTube.seekTo(0);
+      }
+      this.$.googleYouTube.play();
+    },
+
+    /**
+     * @name _pauseAfterTap
+     * @description private function for instantly (faster then stop) stopping the video after tap if a cta dialog-dimiss or dialog-confirm is seen
+     */
+    _pauseAfterTap: function (event) {
+      var path = Polymer.dom(event).path;
+      for (var i = 0, l = path.indexOf(this); i < l; i++) {
+        var target = path[i];
+        if (target.hasAttribute && (target.hasAttribute('dialog-dismiss') || target.hasAttribute('dialog-confirm'))) {
+          this.$.googleYouTube.pause();
+        }
+      }
+    },
+
+    /**
+     * @name on ready
+     * @description add event listener for muting video when hero
+     */
+    ready: function (ev) {
+      if (this.isHero) {
+        this.updateStyles({
+          '--video-border-radius': 0
+        })
+      }
+      this.$.googleYouTube.addEventListener('google-youtube-ready', function () {
+        if (this.isHero) {
+          this.$.googleYouTube.mute();
+        }
+      }.bind(this));
+    }
+  });
+</script>

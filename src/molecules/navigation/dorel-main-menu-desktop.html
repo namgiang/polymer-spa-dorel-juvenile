@@ -1,51 +1,40 @@
-<link rel="import" href="../../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../../bower_components/app-route/app-route.html">
-
+<link rel="import" href="../../../node_modules/app-route/app-location.html">
+<link rel="import" href="../../../node_modules/app-route/app-route.html">
 <link rel="import" href="../../utils/behaviors/bundled/dorel-main-menu-behaviors.html">
-
 <link rel="import" href="dorel-main-menu-item.html">
 
 <dom-module id="dorel-main-menu-desktop">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :root {
         font-family: var(--theme-font);
       }
 
       :host {
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
-        justify-content: center;
       }
 
-      .main-menu {
+      #mainmenu {
         list-style-type: none;
         margin: 0;
         padding: 0;
-        display: -ms-flexbox;
-        display: -webkit-flex;
         display: flex;
-        justify-content: center;
       }
 
       .main-menu__item {
         margin-left: 1.5rem;
-        display: -ms-flexbox;
-        display: -webkit-flex;
-        display: flex;
-        -ms-flex-direction: column;
-        -webkit-flex-direction: column;
-        flex-direction: column;
       }
     </style>
 
-    <ul class="main-menu" id="mainmenu">
+    <ul id="mainmenu">
       <template is="dom-repeat" items="[[ menuItems ]]" as="mainMenuItem" index-as="index">
         <li class="main-menu__item" dropdown-opened$="[[ mainMenuItem.dropdown ]]">
           <dorel-main-menu-item
             main-item="[[ mainMenuItem ]]"
-            is-dropdown="[[ mainMenuItem.dropdown ]]"
             opened="[[ mainMenuItem.opened ]]"
             route="[[ route ]]"
             is-active="[[ checkIfActive(mainMenuItem.link, route) ]]"
@@ -57,7 +46,9 @@
 
   </template>
   <script>
-
+    /**
+     * TODO: doc comments to add!
+     **/
     Polymer({
       is: 'dorel-main-menu-desktop',
       properties: {
@@ -68,14 +59,12 @@
          */
         menuItems: {
           type: Array,
-          value: function () {
-            return [];
-          }
+          value: []
         },
 
       },
 
-      behaviors: [MainMenuBehavior],
+      behaviors: [MainMenuBehavior, MatchUrlBehavior],
 
       observers: [
         'routeChanged(route)'
@@ -87,7 +76,6 @@
 
       _toggleDropdown: function (event) {
         var indexItem = event.detail.value;
-
         var currentValue = this.get('menuItems.' + indexItem + '.opened');
         if (!currentValue) {
           this._closePreviousDropdown();
@@ -98,26 +86,17 @@
       },
 
       _closePreviousDropdown: function () {
-        var menuItems = this.get('menuItems');
-        if(typeof menuItems === 'undefined' || !menuItems.length) return;
-
-        var previousDropdownIndex = menuItems.findIndex(function (item) {
-          return item.opened === true;
-        });
-        if (typeof previousDropdownIndex === 'undefined' || previousDropdownIndex < 0) {
-          return;
+        var menuItems = this.get('menuItems') || [];
+        var openDropdownIndex = menuItems.findIndex( (item) => item.opened );
+        if (openDropdownIndex > -1) {
+          this.set('menuItems.' + openDropdownIndex + '.opened', false);
         }
-        this.removeOpenedDropdown(previousDropdownIndex);
       },
 
       routeChanged: function (route) {
         if (route) {
           this._closePreviousDropdown();
         }
-      },
-
-      removeOpenedDropdown: function (indexItem) {
-        this.set('menuItems.' + indexItem + '.opened', false);
       },
 
       onClickOutside: function () {

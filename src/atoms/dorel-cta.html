@@ -1,20 +1,17 @@
+<link rel="import" href="../utils/behaviors/single/dorel-gtm-behavior.html">
+
 <dom-module id="dorel-cta">
   <template>
     <style include="iron-flex">
-
-      section {
-        margin-top: var(--button-margin-spacing, 0);
-      }
-
-      /* 
-       * CTA - Default states 
+      /*
+       * CTA - Default states
        */
 
       /* aplies to all type of cta's (both button and regular link) */
       .theme-cta {
         @apply(--theme-button);
         @apply(--theme-button-primary);
-        @apply(--theme-button-small);
+        @apply(--theme-button-medium);
         width: 100%;
       }
 
@@ -34,8 +31,17 @@
         @apply(--theme-button-link);
       }
 
-      .theme-cta--inverted {
+      .theme-cta--primary.inverted {
         @apply(--theme-button-inverted);
+      }
+
+      .theme-cta--link.inverted {
+        @apply(--theme-link-inverted);
+      }
+
+      .theme-cta--link.dorel-cta.inverted:hover {
+        @apply(--theme-link-inverted);
+        opacity: 0.8;
       }
 
       .theme-cta--inverted .theme-cta__icon {
@@ -47,12 +53,12 @@
       }
 
       .theme-cta--link .theme-cta__icon {
-        padding-right: 0;
         @apply(--theme-button-link-icon);
+        padding-right: 0;
       }
 
-      /* 
-       * CTA - Hover and focus states 
+      /*
+       * CTA - Hover and focus states
        */
 
       .theme-cta:hover, .theme-cta:focus {
@@ -65,8 +71,7 @@
 
       .theme-cta--primary:hover, .theme-cta--primary:focus,
       .theme-cta--secondary:hover, .theme-cta--secondary:focus,
-      .theme-cta--tertiary:hover, .theme-cta--tertiary:focus,
-      .theme-cta--inverted:hover, .theme-cta--inverted:focus {
+      .theme-cta--tertiary:hover, .theme-cta--tertiary:focus {
         @apply(--theme-button-active);
       }
 
@@ -74,17 +79,14 @@
         @apply(--theme-button-link-active);
       }
 
-      .theme-cta--link:hover .theme-cta__icon, .theme-cta--link:focus .theme-cta__icon {
+      .theme-cta--link:hover .theme-cta__icon,
+      .theme-cta--link:focus .theme-cta__icon {
         @apply(--theme-button-link-icon-active);
       }
 
-      /* 
-       * CTA - Sizes 
+      /*
+       * CTA - Sizes
        */
-
-      .theme-cta--small {
-        @apply(--theme-button-small);
-      }
 
       .theme-cta--medium {
         @apply(--theme-button-medium);
@@ -99,11 +101,12 @@
         padding: 0;
       }
 
-      /* 
-       * CTA - Content 
+      /*
+       * CTA - Content
        */
 
       .theme-cta__content {
+        @apply(--theme-button-label);
         -webkit-box-align: center;
         -webkit-flex-align: center;
         -ms-flex-align: center;
@@ -113,18 +116,20 @@
         padding: 0 0 0 0.75em;
       }
 
-      /* 
-       * CTA - Icon styling 
+      /*
+       * CTA - Icon styling
        */
 
       .theme-cta__icon {
         @apply(--theme-button-icon);
       }
 
-      .theme-cta--primary .theme-cta__icon {
+      .theme-cta--primary .theme-cta__icon,
+      .theme-cta--primary.inverted:hover .theme-cta__icon {
         @apply(--theme-button-primary-icon);
       }
 
+      .theme-cta--primary.inverted .theme-cta__icon,
       .theme-cta--secondary .theme-cta__icon {
         @apply(--theme-button-secondary-icon);
       }
@@ -133,18 +138,10 @@
         @apply(--theme-button-tertiary-icon);
       }
 
-      .theme-cta--small .theme-cta__icon {
-        @apply(--theme-button-icon-small);
-      }
-
       .theme-cta__icon--left {
         width: 3em;
         height: 2.5em;
         margin: 0;
-      }
-
-      :host([no-margin]) a {
-        margin-top: 0 !important;
       }
 
       :host([rotate]) a {
@@ -179,11 +176,29 @@
 
       :host([type="link"]) .theme-cta__icon {
         border-left: 0;
+        border-right: 0;
+        margin-left: 0;
+        margin-right: 0;
       }
 
+      /*
+       * Left aligned icons
+       */
+      :host([left-align-icon]) .theme-cta {
+        flex-direction: row-reverse;
+      }
 
-      /* 
-       * Responsive Behaviour 
+      :host([left-align-icon]) .theme-cta__icon {
+        @apply(--theme-button-icon-left);
+        padding: 0 .5em 0 0.25em;
+      }
+
+      :host([left-align-icon]) .theme-cta__content {
+        padding: 0 .5em 0 0;
+      }
+
+      /*
+       * Responsive Behaviour
        */
 
       [tablet-medium-up] .theme-cta__icon--left {
@@ -204,7 +219,7 @@
       <a href$="[[ link ]]"
          title$="[[ title ]]"
          target$="[[ target ]]"
-         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]]"
+         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]] [[ invertedCssClass ]]"
          tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
          target$="[[ _isExternal(linkTarget) ]]"
          gtm-action$="[[ gtmAction ]]"
@@ -221,7 +236,7 @@
           <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
         </template>
 
-        <span class="theme-cta__content"><content id="content"></content></span>
+        <span class="theme-cta__content"><slot id="content"></slot></span>
 
         <template
           is="dom-if"
@@ -236,7 +251,6 @@
   <script>
     Polymer({
       is: 'dorel-cta',
-
       properties: {
 
         /**
@@ -280,13 +294,23 @@
          */
         type: {
           type: String,
-          value: 'primary',
+          value: 'primary'
+        },
+
+        /**
+         * @attribute
+         * @name inverted
+         * @description for CTA on a dark background. Only implemented for types 'primary' and 'link'
+         */
+        inverted: {
+          type: Boolean,
+          value: false
         },
 
         /**
          * @attribute
          * @name size
-         * @description defines the size of the CTA. Currently 'small', 'medium' and 'large' are supported
+         * @description defines the size of the CTA. Currently 'medium' and 'large' are supported
          */
         size: {
           type: String,
@@ -300,7 +324,7 @@
          */
         icon: {
           type: String,
-          value: 'dorel-icons:chevron-right',
+          value: 'dorel-icons:chevron-right'
         },
 
         /**
@@ -310,20 +334,41 @@
          * Use the dorel-iconset icons here. For example: dorel-icons:chevron-right
          */
         extraIcon: {
-          type: String,
+          type: String
         },
 
+        /**
+         * @attribute
+         * @name disabled
+         * @description Sets the disabled state of the CTA
+         */
         disabled: {
           type: Boolean
+        },
+
+        /**
+         * @attribute
+         * leftAlignIcon
+         * @description Aligns the main icon to the left of the button label
+         */
+
+        leftAlignIcon: {
+          type: Boolean
+        },
+
+        invertedCssClass: {
+          type: String,
+          computed: '_getInvertedStyle(inverted)'
         }
       },
+
+      behaviors: [GtmBehavior],
 
       /**
        * @name clickCTA
        * @description handle the click on a cta link, very important for Analytics!!!!!!
        */
       _clickCTA: function (event) {
-
         // retarget to the right element to get its attributes
         if (Polymer.dom(event).rootTarget.tagName === 'A') {
           var element = Polymer.dom(event).rootTarget;
@@ -346,7 +391,7 @@
             event: {
               name: 'call-to-action',
               type: this.type,
-              text: this.$.content.getDistributedNodes()[0].textContent,
+              text: this.getContentChildNodes()[0].textContent,
               index: Number(this.gtmCtaIndex) + 1,
             }
           }
@@ -354,7 +399,7 @@
           structure.event = {
             name: 'call-to-action',
             type: this.type,
-            text: this.$.content.getDistributedNodes()[0].textContent,
+            text: this.getContentChildNodes()[0].textContent,
             index: Number(this.gtmCtaIndex) + 1
           }
         }
@@ -373,8 +418,7 @@
             'targetPage': element.href
           }
         };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(event);
       },
 
       /**
@@ -384,7 +428,12 @@
       _isExternal: function (linkTarget) {
         return (typeof linkTarget === 'undefined' || !linkTarget) ?
           '_self' : '_blank';
+      },
+
+      _getInvertedStyle: function(inverted) {
+        return inverted ? 'inverted' : '';
       }
+
     });
   </script>
 

@@ -1,6 +1,9 @@
 <dom-module id="dorel-product-feature">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
 
       .feature-image {
         width: 8em;
@@ -8,6 +11,8 @@
         float: left;
         margin: auto;
         display: block;
+        border-radius: var(--theme-border-radius-1);
+        overflow: hidden;
       }
 
       .feature-title {
@@ -61,12 +66,10 @@
           <template
             is="dom-if"
             if="[[ _hasValue(featureData.image) ]]">
-            <iron-image class="feature-image"
+            <dorel-product-image class="feature-image"
                         sizing="contain"
-                        fade="true"
-                        preload
-                        src$="[[ featureData.image ]]">
-            </iron-image>
+                        image-url="[[ featureData.image ]]">
+            </dorel-product>
           </template>
           <div class="feature-content">
             <template

@@ -1,0 +1,66 @@
+<link rel="import" href="../molecules/dorel-slide-selector.html">
+
+<dom-module id="dorel-car-fitting-product-selector">
+  <template>
+    <style is="custom-style">
+
+    </style>
+    <section>
+      <div>
+        <dorel-slide-selector id="productSelector" selectedIndex="[[selectedIndex]]"></dorel-slide-selector>
+        <h1>Age Categgory: [[ ageCategory.category ]]<h1>
+        <strong>[[ localize(ageCategory.label) ]]</strong>
+      </div>
+    </section>
+  </template>
+  <script>
+    class DorelCarFittingProductSelector extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+
+      static get is() {
+        return 'dorel-car-fitting-product-selector';
+      }
+
+      static get properties() {
+        return {
+          carData: {
+            type: Object,
+            value: {}
+          },
+          productData: {
+            type: Object,
+            value: {}
+          },
+          selectedIndex: {
+            type: Number,
+            value: 0,
+          }
+        }
+      }
+
+      ready() {
+        super.ready()
+        // get carseat products compatible with this car
+
+
+
+
+        this.$.productSelector.addEventListener('selected-index-change', this._handleSelectionChange);
+      }
+
+      _handleSelectionChange(ev) {
+        console.log('yes something changed', ev.detail)
+      }
+
+/*
+      opel: 48
+
+
+
+*/
+
+    }
+
+    customElements.define(DorelCarFittingProductSelector.is, DorelCarFittingProductSelector);
+  </script>;
+
+</dom-module>

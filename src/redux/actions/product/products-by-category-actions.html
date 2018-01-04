@@ -1,0 +1,81 @@
+<script>
+(function() {
+
+
+  function requestProductsByCategory(category) {
+    return (dispatch, getState) => {
+      if (shouldFetchCategory(getState(), category)) {
+        dispatch(makeProductsRequest(category))
+        return dispatch(fetchProductsByCategory(getState(), category))
+      } else {
+        return Promise.resolve()
+      }
+    }
+  }
+
+  function makeProductsRequest(category) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_CATEGORY',
+      payload: category
+    }
+  }
+
+  function fetchProductsByCategory(state, category) {
+    return dispatch => {
+      const currentLanguageCode = state.route.currentLanguage.languageCode;
+      const init = { method: 'GET', mode: 'cors', cache: 'default' };
+      const url = `${state.config.eComUrl}/rest/V1/dorel/category/${category}/product?language=${currentLanguageCode}`;
+      return fetch(url, init)
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(json => dispatch(requestProductsSucces(category, json)))
+        .catch(() => dispatch(requestProductsFailed(category)))
+    }
+  }
+
+  function shouldFetchCategory(state, category) {
+    const existingCategory = state.product.requestedCategories.find(category_ => category_.id === category);
+    if (!existingCategory) {
+      return true;
+    } else if (existingCategory.isLoading) {
+      return false;
+    } else {
+      return existingCategory.notAvailable;
+    }
+  }
+
+  function requestProductsSucces(category, products) {
+    if(products.length) {
+      return {
+        type: 'REQUEST_PRODUCTS_BY_CATEGORY_SUCCESS',
+        payload: {
+          products,
+          category
+        }
+      }
+    } else {
+      return (dispatch) => {
+        return dispatch(requestProductsFailed(category))
+      }
+    }
+  }
+
+  function requestProductsFailed(category) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_CATEGORY_FAILED',
+      payload: category
+    }
+  }
+
+  function handleErrors(response) {
+      if (!response.ok) {
+          throw Error(response.statusText);
+      }
+      return response;
+  }
+
+  productByCategoryActions = {
+    requestProductsByCategory
+  }
+}());
+</script>

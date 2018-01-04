@@ -1,0 +1,143 @@
+<dom-module id="dorel-section-product-usps">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        margin: 3em 0;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-layout-row {
+        margin-top: 0
+      }
+
+      .usp-title {
+        @apply(--theme-typography-3);
+        float: left;
+        width: 100%;
+      }
+
+      .usp-description {
+        float: left;
+        margin: .75em 0;
+      }
+
+      .usp-image {
+        width: 100%;
+        float: left;
+        height: 12em;
+        border-radius: var(--theme-border-radius-1);
+        overflow: hidden;
+      }
+
+      [tablet-medium-up] dorel-layout-row {
+        margin-top: 1.5em;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <dorel-titling title="[[ uspsData.title ]]" description="[[ uspsData.description ]]"></dorel-titling>
+      <template
+        is="dom-if"
+        if="[[ uspsData.usps.length ]]">
+        <dorel-layout-row>
+          <template
+            is="dom-repeat"
+            items="[[ uspsData.usps ]]"
+            as="usp">
+            <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
+              <div class="usp">
+                <template
+                  is="dom-if"
+                  if="[[ _hasValue(usp.image) ]]">
+                  <dorel-product-image
+                    class="usp-image"
+                    sizing="cover"
+                    image-url="[[ usp.image ]]">
+                  </dorel-product-image>
+                </template>
+
+                <div class="usp-content">
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.title) ]]">
+                    <h3 class="usp-title">[[ usp.title ]]</h3>
+                  </template>
+
+                  <template
+                    is="dom-if"
+                    if="[[ _hasValue(usp.description) ]]">
+                    <div class="usp-description">
+                      <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </dorel-layout-column>
+
+          </template>
+        </dorel-layout-row>
+      </template>
+    </dorel-layout-container>
+
+
+  </template>
+  <script>
+    class DorelSectionProductUsps extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors], Polymer.Element)) {
+      static get is() {
+        return 'dorel-section-product-usps';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name productId
+           * @description coming from the currentProduct passed by parent
+           */
+          productId: {
+            type: String,
+            observer: '_productIdChanged'
+          },
+
+          /**
+           * @attribute
+           * @name uspsData
+           * @description coming from the page-builder this data object is filled
+           * with ACF/Wordpress data about the component
+           */
+          uspsData: {
+            type: Object,
+            statePath: function(state) {
+              if(!this.productId || !state.modules.usps.length) {
+                return { isLoading: true };
+              }
+              return state.modules.usps.find(item => {
+                return item.productId === this.productId && !item.isLoading && !item.isNotAvailable;
+              });
+            }
+          }
+        };
+      }
+
+      /**
+       * observer
+       * @name _productIdChanged
+       * @description everytime the observer is trigger it will dispatch the requestModule action
+       */
+      _productIdChanged(productId) {
+        if(!productId || !productId.length) {
+          return;
+        }
+        this.dispatch('requestModule', { productId, type: 'usps' });
+      }
+    }
+    customElements.define(DorelSectionProductUsps.is, DorelSectionProductUsps);
+  </script>
+</dom-module>

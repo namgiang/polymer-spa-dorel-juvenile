@@ -5,6 +5,7 @@
 <link rel="import" href="../../atoms/dorel-checkbox.html">
 <link rel="import" href="../../atoms/dorel-slider.html">
 <link rel="import" href="../../atoms/dorel-radio-group.html">
+<link rel="import" href="utils/dorel-code-snippet.html">
 
 <dom-module id="dorel-component-guide-forms">
   <template>
@@ -12,7 +13,7 @@
       form {
         float: left;
         width: 75%;
-        margin-top: 1.5em;
+        margin: .75em 0;
       }
 
       dorel-input {
@@ -25,18 +26,9 @@
         clear: both;
       }
 
-      dorel-color-checkbox {
-        margin-bottom: 1.5em;
-        float: left;
-      }
-
       dorel-slider {
         width: 50%;
         float: left;
-      }
-
-      dorel-radio-group {
-        margin-top: 1.5em;
       }
 
       .color-checkboxes dorel-checkbox {
@@ -56,77 +48,89 @@
       <p>A radio button group, based on the paper-radio-group.
         <br>The currently selected option: <i>[[ radioSelected ]]</i>
       </p>
-      <dorel-radio-group options="[[ radioOptions ]]"
-                         selected="{{ radioSelected }}">
-      </dorel-radio-group>
+      <dorel-code-snippet>
+        <dorel-radio-group options="[[ radioOptions ]]"
+                           selected="{{ radioSelected }}">
+        </dorel-radio-group>
+      </dorel-code-snippet>
       <hr>
       <h2 class="class-for-h2">Checkboxes</h2>
       <p>A regular checkbox accepting a <i>label</i> and a <i>checked</i> value in its attributes</p>
-      <form>
-        <dorel-checkbox label="Regular checkbox"></dorel-checkbox>
-        <dorel-checkbox label="Checked checkbox" checked="true"></dorel-checkbox>
-      </form>
+      <dorel-code-snippet>
+        <form>
+          <dorel-checkbox label="Regular checkbox"></dorel-checkbox>
+          <dorel-checkbox label="Checked checkbox" checked="true"></dorel-checkbox>
+        </form>
+      </dorel-code-snippet>
       <hr>
       <h2 class="class-for-h2">Colored Checkboxes</h2>
       <p>
         A colored checkbox, based on a regular checkbox. An additional color code can be passed to this component, using
         it's <i>color-code</i> attribute.
       </p>
-      <form class="color-checkboxes">
-        <dorel-checkbox color-code="#a31e22"></dorel-checkbox>
-        <dorel-checkbox color-code="#e15b50"></dorel-checkbox>
-        <dorel-checkbox color-code="#ffbe5f"></dorel-checkbox>
-        <dorel-checkbox color-code="#008eb4"></dorel-checkbox>
-        <dorel-checkbox color-code="#013d54"></dorel-checkbox>
-      </form>
+      <dorel-code-snippet>
+        <form class="color-checkboxes">
+          <dorel-checkbox color-code="#a31e22"></dorel-checkbox>
+          <dorel-checkbox color-code="#e15b50"></dorel-checkbox>
+          <dorel-checkbox color-code="#ffbe5f"></dorel-checkbox>
+          <dorel-checkbox color-code="#008eb4"></dorel-checkbox>
+          <dorel-checkbox color-code="#013d54"></dorel-checkbox>
+        </form>
+      </dorel-code-snippet>
       <hr>
       <h2 class="class-for-h2">Slider</h2>
       <p>The slider based on the paper-slider component</p>
-      <form>
-        <dorel-slider snaps max="8"
-                      max-markers="8"
-                      step="1"
-                      slider-value="2"></dorel-slider>
-      </form>
+      <dorel-code-snippet>
+        <form>
+          <dorel-slider snaps max="8"
+                        max-markers="8"
+                        step="1"
+                        slider-value="2"></dorel-slider>
+        </form>
+      </dorel-code-snippet>
       <hr>
       <h2 class="class-for-h2">Input Fields</h2>
-      <form>
-        <dorel-input label="Regular input field"></dorel-input>
-        <dorel-input label="Required input field" required></dorel-input>
-
-        <dorel-input label="Invalid input field"
-                     error-message="testing this" invalid></dorel-input>
-
-        <dorel-input label="Disabled input field" disabled></dorel-input>
-      </form>
+      <dorel-code-snippet>
+        <form>
+          <dorel-input label="Regular input field"></dorel-input>
+          <dorel-input label="Required input field" required></dorel-input>
+          <dorel-input label="Invalid input field"
+                       error-message="testing this" invalid></dorel-input>
+          <dorel-input label="Disabled input field" disabled></dorel-input>
+        </form>
+      </dorel-code-snippet>
       <hr>
       <h2 class="class-for-h2">Textarea Fields</h2>
-      <form>
-        <dorel-input-textarea label="Regular Textarea"></dorel-input-textarea>
-        <dorel-input-textarea label="Required Textarea"
-                              required></dorel-input-textarea>
-        <dorel-input-textarea label="Invalid Textarea"
-                              error-message="testing this"
-                              invalid></dorel-input-textarea>
-        <dorel-input-textarea label="Disabled Textarea"
-                              disabled></dorel-input-textarea>
-      </form>
+      <dorel-code-snippet>
+        <form>
+          <dorel-input-textarea label="Regular Textarea"></dorel-input-textarea>
+          <dorel-input-textarea label="Required Textarea"
+                                required></dorel-input-textarea>
+          <dorel-input-textarea label="Invalid Textarea"
+                                error-message="testing this"
+                                invalid></dorel-input-textarea>
+          <dorel-input-textarea label="Disabled Textarea"
+                                disabled></dorel-input-textarea>
+        </form>
+      </dorel-code-snippet>
       <hr>
       <h2 class="class-for-h2">Select Input Fields</h2>
-      <form>
-        <dorel-input-select label="Regular Select Input"
-                            options="[[ selectOptions ]]"></dorel-input-select>
-        <dorel-input-select label="Required Select Input"
-                            options="[[ selectOptions ]]"
-                            required></dorel-input-select>
-        <dorel-input-select label="Invalid Select Input"
-                            options="[[ selectOptions ]]"
-                            error-message="Please select an option"
-                            invalid></dorel-input-select>
-        <dorel-input-select label="Disabled Select Input"
-                            options="[[ selectOptions ]]"
-                            disabled></dorel-input-select>
-      </form>
+      <dorel-code-snippet>
+        <form>
+          <dorel-input-select label="Regular Select Input"
+                              options="[[ selectOptions ]]"></dorel-input-select>
+          <dorel-input-select label="Required Select Input"
+                              options="[[ selectOptions ]]"
+                              required></dorel-input-select>
+          <dorel-input-select label="Invalid Select Input"
+                              options="[[ selectOptions ]]"
+                              error-message="Please select an option"
+                              invalid></dorel-input-select>
+          <dorel-input-select label="Disabled Select Input"
+                              options="[[ selectOptions ]]"
+                              disabled></dorel-input-select>
+        </form>
+      </dorel-code-snippet>
     </dorel-layout-container>
   </template>
   <script>

@@ -2,21 +2,20 @@
 
 <dom-module id="dorel-template-store-locator">
   <template>
-    
-    <template 
+
+    <template
       is="dom-if"
       if="[[templateData.acf.hero_header.length]]">
-      <dorel-section-header 
+      <dorel-section-header
         section-header-data="[[heroHeader]]"
         text-header="true"></dorel-section-header>
-        
+
       <dorel-section-page-nav
         breadcrumbs-toggle="true"></dorel-section-page-nav>
     </template>
 
     <dorel-section-store-locator
       template-data="[[ templateData ]]"
-      app-cache="[[ appCache ]]"
       gtm-parent="dorel-section-store-locator"
       gtm-parent-index="0"></dorel-section-store-locator>
   </template>
@@ -26,16 +25,6 @@
       is: 'dorel-template-store-locator',
 
       properties: {
-
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
-        },
 
         /**
          * @attribute
@@ -57,7 +46,7 @@
         heroHeaderData: Object
       },
 
-      behaviors: [TemplateBehaviors]
+      behaviors: [TemplateBehaviors, DorelMultilingualBehavior]
     });
   </script>
 </dom-module>

@@ -7,6 +7,10 @@
 <dom-module id="dorel-template-component-guide">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       paper-menu {
         min-height: 3em;
       }
@@ -20,8 +24,7 @@
 
     <!-- Only show toolbar when subpages are shown -->
     <template is="dom-if" if="[[ subrouteData.pageName ]]">
-      <dorel-component-toolbar app-cache="[[ appCache ]]"
-                               brand="{{ brand }}"
+      <dorel-component-toolbar brand="{{ brand }}"
                                available-brands="{{ availableBrands }}">
       </dorel-component-toolbar>
     </template>
@@ -36,8 +39,7 @@
       <dorel-component-guide-basic route="{{ subroute }}" brand="{{ brand }}"
                                    page="basic"></dorel-component-guide-basic>
       <dorel-component-guide-complex route="{{ subroute }}"
-                                     page="complex"
-                                     app-cache="[[ appCache ]]"></dorel-component-guide-complex>
+                                     page="complex"></dorel-component-guide-complex>
     </iron-pages>
   </template>
 
@@ -45,12 +47,6 @@
     Polymer({
       is: 'dorel-template-component-guide',
       properties: {
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
         /**
          * @name brand
          * @description defines the brand
@@ -68,20 +64,7 @@
           type: Array,
           value: []
         }
-      },
-      /**
-       * @name _routeChanged
-       * @description Observer callback for the route.
-       * Fallback for when users don't access the component with a trailing slah in the url.
-       * Trailing slash is needed for navigation to subpages
-       */
-      /*_routeChanged: function (changedRoute) {
-
-        if (changedRoute.path === '') {
-          this.set('route.path', '/');
-        }
-
-      }*/
+      }
     });
   </script>
 </dom-module>

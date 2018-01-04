@@ -1,8 +1,11 @@
-<dom-module id="dorel-menu-dropdown-default" opened$="[[ opened]]">
+<dom-module id="dorel-menu-dropdown-default">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
 
-      :host {
+      section {
         position: absolute;
         background-color: var(--theme-color-monochrome-1);
         bottom: -.75em;
@@ -23,13 +26,13 @@
         max-width: 17rem;
       }
 
-      :host-context([opened]) {
+      section[opened] {
         transform: translate(-50%, 100%) scaleY(1);
         visibility: visible;
         transition: all 0.15s 0s;
       }
 
-      :host .dropdown-menu {
+      .dropdown-menu {
         opacity: 0;
         transition: all 0.15s 0s;
       }
@@ -41,7 +44,7 @@
         padding: .75em 1.5em
       }
 
-      :host-context([opened]) .dropdown-menu {
+      section[opened] .dropdown-menu {
         opacity: 1;
         transition: opacity 0.15s 0.15s;
       }
@@ -84,24 +87,26 @@
       }
     </style>
 
-    <ul class="dropdown-menu" id="dropdownMenu">
-      <template is="dom-repeat" items="[[ dropdownItems ]]" as="menuItem">
-        <li class="dropdown-menu-item" is-active$="[[ checkIfActive(menuItem.link, route) ]]">
-          <a on-click="clickMenuItem"
-             class="link"
-             gtm-parent="dorel-navigation-main"
-             gtm-parent-index="[[ index ]]"
-             href="[[ menuItem.link ]]">
-            [[ menuItem.title ]]
-          </a>
-        </li>
-      </template>
-    </ul>
+    <section opened$="[[ opened]]">
+      <ul class="dropdown-menu" id="dropdownMenu">
+        <template is="dom-repeat" items="[[ dropdownItems ]]" as="menuItem">
+          <li class="dropdown-menu-item" is-active$="[[ checkIfActive(menuItem.link, route) ]]">
+            <a on-click="clickMenuItem"
+               class="link"
+               gtm-parent="dorel-navigation-main"
+               gtm-parent-index="[[ index ]]"
+               href="[[ menuItem.link ]]">
+              [[ menuItem.title ]]
+            </a>
+          </li>
+        </template>
+      </ul>
+    </section>
+
 
   </template>
 
   <script>
-
     Polymer({
       is: 'dorel-menu-dropdown-default',
       properties: {
@@ -115,6 +120,15 @@
           value: function () {
             return [];
           }
+        },
+
+        /**
+         * @name open
+         * @description open state of the dropdown
+         */
+        open: {
+          type: Boolean,
+          value: false
         },
 
         /**
@@ -139,7 +153,7 @@
 
       },
 
-      behaviors: [MainMenuBehavior],
+      behaviors: [MainMenuBehavior, MatchUrlBehavior],
 
       /**
        * @name clickMenuItem

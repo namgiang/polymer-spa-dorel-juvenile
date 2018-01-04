@@ -1,0 +1,127 @@
+<link rel="import" href="../../node_modules/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../node_modules/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../node_modules/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../node_modules/neon-animation/web-animations.html">
+<link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
+
+<dom-module id="dorel-youtube-lightbox">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      .lightbox-wrapper {
+        @apply(--layout-center-justified);
+        position: relative;
+        float: left;
+        width: 100%;
+        height: 100%;
+        padding: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        border-radius: 1em;
+      }
+
+      .close-dialog-cta {
+        position: absolute;
+        padding: 0;
+        margin: 0;
+        top: 0em;
+        right: 1em;
+        z-index: 1;
+      }
+
+      paper-dialog {
+        top: 0;
+        left: 0;
+        height: auto;
+        width: auto;
+        margin: 0;
+        max-width: none !important;
+        max-height: none !important;
+        z-index: 10000 !important;
+        position: fixed;
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+      }
+
+      /*
+      * Responsive behaviour
+      */
+      [desktop-small-up] paper-dialog {
+        -ms-flex-preferred-size: calc(var(--theme-column-width) * 9);
+        flex-basis: calc(var(--theme-column-width) * 9);
+        width: calc(var(--theme-column-width) * 9);
+        max-width: calc(var(--theme-column-width) * 9);
+        top: 12.5%;
+        left: 12.5%;
+        height: auto;
+        border-radius: var(--theme-border-radius-2);
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="section-product-accessory-lightbox"
+             desktop-small-up$="[[ breakpoints.desktopSmallUp ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      <paper-dialog id="lightbox"
+                    with-backdrop="true"
+                    entry-animation="fade-in-animation"
+                    exit-animation="fade-out-animation"
+                    on-iron-overlay-opened="_disableDocumentScrolling"
+                    on-iron-overlay-closed="_restoreDocumentScrolling">
+        <div class="lightbox-wrapper layout horizontal">
+          <dorel-youtube-video id="videoplayer" autoplay="0" volume="50" video-id="[[ video_id ]]"
+            thumbnail="[[ heroHeaderData.bynder_background_image ]]">
+            <dorel-cta
+              class="close-dialog-cta"
+              type="link"
+              link=""
+              size="medium"
+              icon="dorel-icons:close"
+              dialog-confirm autofocus
+              gtm-action="close-accessory-lightbox"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-child="[[ gtmChild ]]"
+              gtm-child-index="[[ gtmChildIndex ]]"
+              gtm-cta-index="0">
+              {{ localize('Close') }}
+            </dorel-cta>
+          </dorel-youtube-video>
+        </div>
+      </paper-dialog>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-youtube-lightbox',
+
+      behaviors: [ConditionalBehaviors, OverlayBehavior, DorelMultilingualBehavior],
+
+      /**
+       * @name open
+       * @description public function that opens the lightbox dialog
+       */
+      open: function (event) {
+        this.$.lightbox.open();
+        this.$.videoplayer.play();
+      },
+
+      /**
+       * @name on ready
+       * @description add event listener for stoping video when overlay is closed
+       */
+      ready: function() {
+        this.$.lightbox.addEventListener('iron-overlay-closed', function(event) {
+          this.$.videoplayer.stop();
+        }.bind(this));
+      }
+    });
+  </script>
+
+</dom-module>

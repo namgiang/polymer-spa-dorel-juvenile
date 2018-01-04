@@ -1,11 +1,14 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-route/app-location.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../node_modules/polymer/polymer.html">
+<link rel="import" href="../node_modules/app-route/app-location.html">
+<link rel="import" href="../node_modules/app-route/app-route.html">
+<link rel="import" href="../node_modules/iron-ajax/iron-ajax.html">
+<link rel="import" href="../node_modules/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../node_modules/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../node_modules/iron-media-query/iron-media-query.html">
+<link rel="import" href="../node_modules/iron-pages/iron-pages.html">
+
+<!-- IMPORT REDUX -->
+<link rel="import" href="./redux/dorel-redux.html">
 
 <!-- Header has priority for perceived initial load -->
 <link rel="import" href="organisms/dorel-header.html">
@@ -21,19 +24,14 @@
 <link rel="import" href="utils/behaviors/bundled/dorel-conditional-behaviors.html">
 <link rel="import" href="utils/behaviors/bundled/dorel-template-behaviors.html">
 <link rel="import" href="utils/behaviors/single/dorel-multilingual-behavior.html">
+<link rel="import" href="utils/behaviors/single/dorel-social-behavior.html">
+<link rel="import" href="utils/behaviors/single/dorel-gtm-behavior.html">
 
 <!-- Load the magento authentication eagerly -->
-<link rel="import" href="utils/dorel-magento-auth.html">
-<link rel="import" href="utils/dorel-gmt-collect-faqs.html">
-<link rel="import" href="utils/dorel-wp-collect-menu-locations.html">
-<link rel="import" href="utils/dorel-wp-collect-pages.html">
-<link rel="import" href="utils/dorel-wp-collect-options.html">
-<link rel="import" href="utils/dorel-wp-collect-widgets.html">
+<link rel="import" href="utils/dorel-wp-collect-templates.html">
 <link rel="import" href="utils/dorel-multilingual-manager.html">
-<link rel="import" href="utils/dorel-wp-collect-categories.html">
 <link rel="import" href="utils/dorel-meta-manager.html">
-<link rel="import" href="utils/dorel-main-routing.html">
-<link rel="import" href="utils/dorel-product-category-manager.html">
+<link rel="import" href="utils/dorel-routing.html">
 <link rel="import" href="utils/dorel-brand-manager.html">
 <link rel="import" href="utils/dorel-main-menu-creator.html">
 
@@ -45,71 +43,37 @@
 <link rel="import" href="organisms/dorel-section-heroes.html">
 <link rel="import" href="organisms/dorel-section-cards.html">
 
+<link rel="import" href="molecules/dorel-image-lightbox.html">
+
 <!-- Since 'home' is the default route, eagerly load it. -->
 <link rel="import" href="templates/dorel-template-home.html">
 
 <link rel="import" href="atoms/dorel-grid-overlay.html">
 
-<!-- 
-* TODO: 
-* These should only be included conditionally, based on the app-config.js AVAILABLE_BRANDS
--->
-<link rel="import" href="themes/theme-maxi-cosi-shared-styles.html">
-<link rel="import" href="themes/theme-dorel-shared-styles.html">
-<link rel="import" href="themes/theme-quinny-shared-styles.html">
-
 <dom-module id="dorel-app" mobile-menu-opened$="{{ mobileMenuOpened }}">
   <template>
-    <style>
-      /*
-       * Application wide styling
-       * - Will define standard styling for components
-       */
-      :host {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        @apply(--theme-typography-2);
-        margin: 0;
-        --primary-color: var(--theme-brand-color-1);
-        color: var(--theme-color-black);
-        display: block;
-        min-height: 100vh;
-        min-width: 100vw;
-      }
+    <custom-style>
+      <style include="theme-shared-styles"></style>
 
-      #main, #footer {
-        transition: transform 0.20s ease;
-      }
-
-      :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
-        transform: translate(-256px, 0);
-      }
-
-      @media screen and (min-width: 1025px) {
-        :host-context([mobile-menu-opened]) #main, :host-context([mobile-menu-opened]) #footer {
-          transform: translate(0, 0);
+      <style is="custom-style">
+        :host > * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          @apply(--theme-typography-2);
+          margin: 0;
+          color: var(--theme-color-black);
         }
-      }
 
-      :root {
-        /* global input colors */
-        --paper-input-container-underline: {
-          border-bottom: 2px solid var(--theme-brand-color-1);
-        };
+        main {
+          min-height: calc(100vh - 155px);
+        }
 
-      }
-
-      main {
-        min-height: calc(100vh - 155px);
-      }
-
-      iron-pages {
-        margin: 0 auto;
-        min-height: 100vh;
-      }
-
-    </style>
-
+        iron-pages {
+          margin: 0 auto;
+          min-height: 100vh;
+        }
+      </style>
+    </custom-style>
     <!-- define routing -->
     <app-location route="{{ route }}"></app-location>
 
@@ -126,32 +90,15 @@
 
     <dorel-multilingual-manager
       route="[[ route ]]"
-      current-language="[[ appCache.currentLanguage ]]"
-      continents-data="{{ continentsData }}">
-    </dorel-multilingual-manager>
-
-
-    <!-- retrieve all menu items from wordpress (uses rest api menus plugin) -->
-    <dorel-wp-collect-menu-locations app-cache="[[ appCache ]]"></dorel-wp-collect-menu-locations>
-
-    <!-- collect all pages from wordpress -->
-    <dorel-wp-collect-pages app-cache="[[ appCache ]]"></dorel-wp-collect-pages>
-
-    <!-- collect the options pages -->
-    <dorel-wp-collect-options app-cache="[[ appCache ]]"></dorel-wp-collect-options>
+      continents-data="{{ continentsData }}"></dorel-multilingual-manager>
 
     <!-- create datamodel for the main menu -->
-    <dorel-main-menu-creator app-cache="[[ appCache ]]"></dorel-main-menu-creator>
-
-    <!-- collect the widgets from wordpress (uses rest api sidebars plugin) -->
-    <dorel-wp-collect-widgets app-cache="[[ appCache ]]"></dorel-wp-collect-widgets>
+    <dorel-main-menu-creator></dorel-main-menu-creator>
 
     <!-- analytics -->
     <google-tag-manager cid="GTM-TW3TM86"></google-tag-manager>
 
-    <dorel-gtm-events gtm-data="[[ appCache ]]"></dorel-gtm-events>
-
-    <dorel-third-party app-cache="[[ appCache ]]"></dorel-third-party>
+    <dorel-third-party></dorel-third-party>
 
     <dorel-brand-manager
       query-params="[[ queryParams ]]"
@@ -162,32 +109,21 @@
     <dorel-meta-manager
       brand-name="[[ brand.label ]]"
       current-page="[[ currentPage ]]"
-      app-cache="[[ appCache ]]"
       route="[[ route ]]"
       id="metaManager">
     </dorel-meta-manager>
 
-    <dorel-main-routing
-      app-cache="[[ appCache ]]"
-      route="[[ route ]]"
-      category-page="{{ categoryPage }}"
-      previous-states="{{ previousStates }}"
-      current-page="{{ currentPage }}">
-    </dorel-main-routing>
+    <dorel-routing
+      full-route="[[ route ]]">
+    </dorel-routing>
 
-    <dorel-product-category-manager
-      category-page="[[ categoryPage ]]"
-      sort="{{ sort }}"
-      category="{{ category }}">
-    </dorel-product-category-manager>
+    <dorel-image-lightbox></dorel-image-lightbox>
 
     <template is="dom-if" if="[[ shouldShow(currentPage) ]]">
       <dorel-header
-        app-cache="[[ appCache ]]"
         load-complete="[[ loadComplete ]]"
         route="[[ route ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ appCache.currentLanguage ]]"
         mobile-menu-opened="{{ mobileMenuOpened }}"
         page="[[ page ]]"
         brand-name="[[ brand.label ]]">
@@ -201,9 +137,9 @@
                   selected="[[ currentPage.template ]]"
                   attr-for-selected="name">
 
-        <dorel-template-product-category-about
-          name="product-category-about"
-          template-data="[[ currentPage ]]"></dorel-template-product-category-about>
+        <dorel-template-product-about
+          name="product-about"
+          template-data="[[ currentPage ]]"></dorel-template-product-about>
 
         <dorel-template-home
           name="home"
@@ -211,18 +147,19 @@
 
         <dorel-template-info
           name="info"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-info>
 
         <dorel-template-info-overview
           name="info-overview"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-info-overview>
 
         <dorel-template-store-locator
           name="store-locator"
-          app-cache="[[ appCache ]]"
           template-data="[[ currentPage ]]"></dorel-template-store-locator>
+
+        <dorel-template-marketing-campaign
+          name="marketing-campaign"
+          template-data="[[ currentPage ]]"></dorel-template-marketing-campaign>
 
         <dorel-template-products
           name="products"
@@ -232,38 +169,38 @@
         <dorel-template-product-detail
           name="product-detail"
           route="[[ subroute ]]"
-          app-cache="[[ appCache ]]"
           category="[[ category ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-detail>
 
-        <dorel-template-product-category
-          name="product-category"
+        <dorel-template-accessory-detail
+          name="accessory-detail"
           route="[[ subroute ]]"
-          app-cache="[[ appCache ]]"
           category="[[ category ]]"
-          template-data="[[ currentPage ]]"></dorel-template-product-category>
+          template-data="[[ currentPage ]]"></dorel-template-accessory-detail>
+
+        <dorel-template-product-listing
+          name="product-listing"
+          route="[[ subroute ]]"
+          category="[[ category ]]"></dorel-template-product-listing>
 
         <dorel-template-faq-overview
           name="faq-overview"
-          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-overview>
 
         <dorel-template-faq-detail
           name="faq-detail"
-          app-cache="[[ appCache ]]"
           route="[[ subroute ]]"
           template-data="[[ currentPage ]]"></dorel-template-faq-detail>
 
         <dorel-template-product-advisory-tool
           name="product-advisory-tool"
-          app-cache="[[ appCache ]]"
           brand-name="[[ brand.label ]]"
           template-data="[[ currentPage ]]"></dorel-template-product-advisory-tool>
 
         <dorel-template-component-guide
           name="component-guide"
-          app-cache="[[ appCache ]]"
+          grid="[[ grid ]]"
           brand="{{ brand }}"
           available-brands="{{ brandNames }}"
           route="{{ subroute }}"></dorel-template-component-guide>
@@ -278,14 +215,12 @@
       if="[[ shouldShow(currentPage) ]]">
       <dorel-footer
         id="footer"
-        app-cache="[[ appCache ]]"
         continents-data="[[ continentsData ]]"
-        current-language="[[ appCache.currentLanguage ]]">
+        current-language="[[ currentLanguage ]]">
       </dorel-footer>
     </template>
 
     <dorel-grid-overlay
-      app-cache="[[ appCache ]]"
       available-brands="{{ brandNames }}"
       selected-brand="{{ brand }}"
       page-route-path="{{ route.path }}"></dorel-grid-overlay>
@@ -295,158 +230,123 @@
     // performance logging
     window.performance && performance.mark && performance.mark('dorel-app - before register');
 
-    Polymer({
-      is: 'dorel-app',
+    class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([GtmBehavior], Polymer.Element)) {
 
-      /**
-       * @name properties
-       * @description all properties this component uses
-       */
-      properties: {
+      static get is() {
+        return 'dorel-app';
+      }
 
-        /**
-         * @name route
-         * @description defines the current route
-         */
-        route: {
-          type: String
-        },
+      static get properties() {
+        return {
+          /**
+           * @name route
+           * @description defines the current route
+           */
+          route: {
+            type: String
+          },
 
-        /**
-         * @name page
-         * @description define the current page
-         */
-        page: {
-          type: String,
-          notify: true,
-          readOnly: false,
-        },
+          /**
+           * @name page
+           * @description define the current page
+           */
+          page: {
+            type: String,
+            notify: true,
+            readOnly: false,
+          },
 
-        mobileMenuOpened: {
-          type: Boolean,
-          reflectToAttribute: true,
-          value: false
-        },
+          mobileMenuOpened: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          },
 
-        /**
-         * @name brand
-         * @description The currently selected brand
-         */
-        brand: {
-          type: Object,
-          value: function () {
-            return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+          /**
+           * @name brand
+           * @description The currently selected brand
+           */
+          brand: {
+            type: Object,
+            value: function () {
+              return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
+            }
+          },
+
+          /**
+           * @name brandNames
+           * @description available brand names (from config), used for switching between brands
+           */
+          brandNames: {
+            type: Array,
+            value: function () {
+              return CONFIG.AVAILABLE_BRANDS;
+            }
+          },
+
+          /**
+           * @name currentPage
+           * @description defines the currentPage
+           */
+          currentPage: {
+            type: Object,
+            statePath: 'page.currentPage'
+          },
+
+          /**
+           * @name category
+           * @description the current category of a product listing page
+           */
+          currentLanguage: {
+            type: Object,
+            statePath: 'route.currentLanguage'
+          },
+
+          /**
+           * @name category
+           * @description the current category of a product listing page
+           */
+          category: {
+            type: Number,
+            statePath: 'product.productCategoryPage'
+          },
+
+          /**
+           * @name wpUrl
+           * @description the wordpress endpoint
+           */
+          wpUrl: {
+            type: String,
+            statePath: 'config.wpUrl'
           }
-        },
+        };
+      }
 
-        /**
-         * @name brandNames
-         * @description available brand names (from config), used for switching between brands
-         */
-        brandNames: {
-          type: Array,
-          value: function () {
-            return CONFIG.AVAILABLE_BRANDS;
-          }
-        },
+      static get observers () {
+        return [
+          '_pageChanged(currentPage)',
+          '_brandChanged(brand)'
+        ]
+      }
 
-        /**
-         * @name currentPage
-         * @description defines the currentPage
-         */
-        currentPage: {
-          type: Object
-        },
+      constructor() {
+        super();
+      }
 
-        categoryPage: {
-          type: Object
-        },
-
-        category: {
-          type: Number
-        },
-
-        /**
-         * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
-         */
-        appCache: {
-          type: Object
-        },
-
-      },
-
-      /**
-       * @name observers
-       * @description observe if a function is called
-       */
-      observers: [
-        '_pageChanged(currentPage)'
-      ],
-
-      created: function () {
+      connectedCallback() {
+        super.connectedCallback();
         window.performance && performance.mark && performance.mark('dorel-app.created');
 
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
-      },
+        //get the initial options from wordpress
+        this.dispatch('fetchOptions');
+      }
 
-      listeners: {
-        'setAppCache': '_setAppCache'
-      },
-
-      _setAppCache: function (event) {
-        if(!this.get('appCache')) {
-          this._setInitialAppCache();
-        }
-        var data = event.detail;
-        var path = data.path;
-        var value = data.value;
-        if (data && path) {
-          this.set('appCache.' + path, value);
-        }
-      },
-
-      _setInitialAppCache: function() {
-        if(this.get('appCache')) {
-          return
-        }
-        var appCache = {
-          wpUrl: CONFIG.CMS_URL, // DONE
-          dioApiUrl: CONFIG.DIO_API_URL, // marnix
-          collect: {}, // marnix
-          current: {}, // DONE
-          product: {
-            products: [], // aron | DONE
-            attributes: {
-              accordions: [], // aron | DONE
-              features: [], // aron | DONE
-              usps: [] // aron | DONE
-            },
-            retrievedCategories: [], // aron | DONE
-            auth: {
-              token: '', // aron | DONE
-              timestamp: '' // // aron | DONE
-            },
-            colorMap: [] // aron | DONE
-          },
-          faqs: [], // aron | DONE
-          events: {}, // DONE
-          grid: { // DONE
-            horizontal: false,
-            vertical: false
-          },
-          previousState: {}
-        };
-
-        this.set('appCache', appCache);
-      },
-
-      ready: function () {
-        this._setInitialAppCache();
-      },
+      ready() {
+        super.ready();
+        window.app = this;
+      }
 
       /**
        * @observer
@@ -455,8 +355,8 @@
        * or retrieve it all the way.
        * @param currentPage - Object - the previous page
        */
-      _pageChanged: function (currentPage) {
-        if (typeof currentPage === 'undefined' || currentPage === '') {
+      _pageChanged(currentPage) {
+        if (typeof currentPage === 'undefined' || currentPage === '' || !currentPage || !currentPage.template) {
           return;
         }
 
@@ -472,14 +372,14 @@
 
         // tracking of the pageload
         this._eventTracking();
-      },
+      }
 
       /**
        * @name _ensureLazyLoaded
        * @description if the load is completed we will add the resources
        * the service worker will kick in after that.
        */
-      _ensureLazyLoaded: function () {
+      _ensureLazyLoaded() {
         var self = this;
 
         // scroll up when a page is changed
@@ -502,50 +402,90 @@
             });
           });
         }
-      },
+      }
 
       /**
        * @name _removeLoadPlaceholder
        * @description removes loading spinner and placeholders before the page is loaded
        */
-      _removeLoadPlaceholder: function () {
-        var placeholder = document.getElementById('load-placeholder');
-        placeholder.remove();
-      },
+      _removeLoadPlaceholder() {
+        // var placeholder = document.getElementById('load-placeholder');
+        // placeholder.remove();
+      }
 
       /**
        * @name _eventTracking
        * @description this is for pageload tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function () {
-        var globalsObj = this.get('appCache');
-        var globalsCopy = Object.assign({}, globalsObj);
-
-
+      _eventTracking() {
+        const state = this.getState();
+        const url = state.route.currentRoute.url;
         /**
          * Tracking on pageload
          */
-        var event = {
+        const event = {
           action: 'loaded',
           component: 'page',
           element: this,
           event: 'polymer_event',
           things: {
-            'currentPage': (typeof globalsCopy.current.page === 'undefined') ?
-              document.URL : globalsCopy.current.page,
-            'globals': globalsCopy
+            'currentPage': (typeof url === 'undefined') ?
+              document.URL : url,
+            'globals': state
           }
         };
+        this._dispatchGtmEvent(event);
+      }
 
-        this.fire('setAppCache', { value: event, path: 'events' });
-      },
 
-
-      shouldShow: function (currentPage) {
+      shouldShow(currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
 
-    });
+      /**
+       * @observer
+       * @name _brandChanged
+       * @description the brand was changed, imports the right styles and triggers a change in shared styles
+       * @param brand - Object - the object containing the brand index and label
+       */
+      _brandChanged(brand) {
+        //TODO: This doesn't work well in Polymer 2, hardcoded the maxicosi style for now.
+        /*var self = this;
+
+         // Create the brand identifier string
+         self.brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
+         // Create the brand path using the brand identifier string
+         self.brandThemeUrl = 'themes/' + self.brandTheme + '.html';
+
+         // First import and load the theme
+         this.importHref(this.resolveUrl(self.brandThemeUrl), function () {
+         //Removed the current shared style from the dom, if it exists.
+         var currentSharedStyle = this.shadowRoot.querySelector('#brand-shared-style');
+
+         if (currentSharedStyle !== null) {
+         currentSharedStyle.parentNode.removeChild(currentSharedStyle);
+         }
+
+         // Build up the right DOM elements to use the stule.
+         var domModuleChild = document.createElement('style');
+         domModuleChild.setAttribute('include', self.brandTheme);
+
+         var domModule = document.createElement('custom-style');
+         domModule.setAttribute('id', 'brand-shared-style');
+         domModule.appendChild(domModuleChild);
+
+         // Add the style to the DOM
+         this.shadowRoot.appendChild(domModule);
+
+         //Render the styles
+         console.log('Rendering new styles');
+         //Polymer.updateStyles();
+         //Polymer.dom.flush();
+         });*/
+      }
+
+  };
+  customElements.define(DorelApp.is, DorelApp);
   </script>
 </dom-module>

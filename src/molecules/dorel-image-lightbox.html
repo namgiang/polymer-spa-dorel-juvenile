@@ -1,0 +1,123 @@
+<dom-module id="dorel-image-lightbox">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        z-index: 99999999;
+      }
+      .overlay {
+        position: fixed;
+        display: block;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0, 0.4);
+        visibility: hidden;
+        opacity: 0;
+        padding: 1.5rem;
+        box-sizing: border-box;
+        transition: 0.35s;
+        cursor: pointer;
+        cursor: zoom-out;
+      }
+      .overlay[active] {
+        opacity: 1;
+        visibility: visible;
+      }
+      .image {
+        width: 100%;
+        height: calc(100vh - 3rem);
+        margin: auto;
+        float: none;
+        display: block;
+      }
+    </style>
+    <div class="overlay" id="imageLightboxOverlay" active$="[[ active ]]" on-click="handleClick">
+      <template is="dom-if" if="[[ productImageUrl ]]">
+        <dorel-product-image
+          class="image"
+          sizing="contain"
+          height="[[ windowHeight ]]"
+          image-url="{{ productImageUrl }}">
+        </dorel-product-image>
+      </template>
+    </div>
+  </template>
+windowOnScrollBehavior
+  <script>
+
+    class DorelImageLightbox extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'dorel-image-lightbox';
+      }
+
+      static get properties() {
+        return {
+
+
+          /**
+           * @name active
+           * @description determines if the lightbox is shown
+           */
+          active: {
+            type: Boolean,
+            reflectToAttribute: true,
+            statePath: 'image.imageLightbox.active'
+          },
+
+          /**
+           * @name isProductImage
+           * @description determines if the lightbox image contains a product image
+           */
+          isProductImage: {
+            type: Boolean,
+            statePath: function(state) {
+              return state.image.imageLightbox.productImageUrl.length > 0 ? true : false;
+            }
+          },
+
+          /**
+           * @name productImageUrl
+           * @description determines if the lightbox image a product image if true,
+           */
+          productImageUrl: {
+            type: String,
+            reflectToAttribute: true,
+            statePath: 'image.imageLightbox.productImageUrl'
+          },
+
+          /**
+           * @name bynderId
+           * @description determines if the lightbox image a product image if true,
+           */
+          bynderId: {
+            type: Number,
+            reflectToAttribute: true,
+            statePath: 'image.imageLightbox.bynderId'
+          },
+
+          windowHeight: {
+            type: Number,
+            value: function() {
+              return window.innerHeight;
+            }
+          }
+        }
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('click', this._onClick);
+      }
+
+      _onClick() {
+        this.dispatch('resetImageLightbox');
+      }
+
+    };
+
+  customElements.define(DorelImageLightbox.is, DorelImageLightbox);
+
+  </script>
+</dom-module>

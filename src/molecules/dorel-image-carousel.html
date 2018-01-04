@@ -1,0 +1,165 @@
+<link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
+
+<dom-module id="dorel-image-carousel">
+  <template>
+    <style is="custom-style">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        --theme-border-radius: 0
+      }
+
+      .simple-slider-slide:focus {
+        outline: none;
+      }
+
+      l2t-paper-slider {
+        outline: none;
+        cursor: pointer;
+        --paper-slide-height: auto;
+      }
+
+      l2t-paper-slider[lightbox-mode] {
+        cursor: pointer;
+        cursor: zoom-in;
+      }
+
+      l2t-paper-slider .slider__image {
+        height: 20rem;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      [tablet-medium-up] l2t-paper-slider .slider__image {
+        height: 28rem;
+      }
+
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section
+      desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+      <l2t-paper-slider
+          id="simpleSlider"
+          position="{{ position }}"
+          hide-nav
+          lightbox-mode$="[[ lightboxMode ]]"
+          total-slides="[[ slides.length ]]">
+        <template is="dom-repeat" items="[[ slides ]]">
+          <paper-slide>
+
+            <dorel-product-image
+              class="slider__image"
+              image-url="[[ item.image_url ]]">
+            </dorel-product-image>
+
+          </paper-slide>
+        </template>
+      </l2t-paper-slider>
+    </section>
+
+  </template>
+
+  <script>
+
+    class DorelImageCarousel extends ReduxMixin(Polymer.Element) {
+      static get is() {
+        return 'dorel-image-carousel';
+      }
+
+      static get properties() {
+        return {
+
+          /**
+           * @attribute
+           * @name slides
+           * @description Array of slides to show
+           */
+          slides: {
+            type: Array
+          },
+
+          /**
+           * @attribute
+           * @name position
+           * @description active position that is set by the l2t-paper-slider
+           */
+          position: {
+            type: Number
+          },
+
+          /**
+           * @attribute
+           * @name breakpoints
+           * @description breakpoints of the dorel-media-manager component
+           */
+          breakpoints: {
+            type: Object
+          },
+
+          /**
+           * @attribute
+           * @name lightboxMode
+           * @description lightboxMode will add a clickhandler that will show the image in a lightbox
+           * default is false
+           */
+          lightboxMode: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          }
+
+        }
+      }
+
+      static get observers() {
+        return [
+          '_updatePosition(position)'
+        ]
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('click', this._onClick)
+      }
+
+      /**
+       * observer
+       * @name _updatePosition
+       * @description Everytime the position of the active slide of the l2t-paper-slider changes
+       * fire a event updatePosition with the index of the active slide
+       * @param position - Number
+       */
+      _updatePosition(position) {
+        let ev = new CustomEvent('updatePosition', {bubbles: true, composed: true, detail: {position: position}});
+        this.dispatchEvent(ev);
+      }
+
+      /**
+       * @name moveSliderTo
+       * @description will call the public method `movePos` of the l2t-paper-slider with the index as argument
+       * this will set the slide of l2t-paper-slider
+       * @param index - Number
+       */
+      moveSliderTo(index) {
+        this.$.simpleSlider.movePos(index);
+      }
+
+      _onClick(event) {
+        if(!this.lightboxMode) {
+          return
+        }
+        const productImageUrl = this.slides[this.position].image_url;
+        this.dispatch('setImageLightbox', { active: true, productImageUrl })
+      }
+
+    };
+
+    customElements.define(DorelImageCarousel.is, DorelImageCarousel);
+
+  </script>
+</dom-module>

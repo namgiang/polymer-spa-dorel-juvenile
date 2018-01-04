@@ -4,25 +4,29 @@
 <dom-module id="dorel-category-listing">
   <template>
     <style>
-
-      .category-listing {
-        margin-left: 0;
-        box-sizing: border-box;
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
       }
 
+      dorel-layout-row {
+        margin-top: -1.5em;
+      }
       dorel-loader {
         padding-top: 12em;
         float: left;
       }
 
       .no-products {
+        border-radius: var(--theme-border-radius-2);
+        background-color: var(--theme-color-monochrome-2);
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-top: 1.5em;
-        background-color: #f9f9f9;
+        padding: 3em;
       }
+
     </style>
 
     <dorel-category-filter-manager
@@ -30,7 +34,7 @@
       filters="{{ filters }}">
     </dorel-category-filter-manager>
 
-    <dorel-layout-row>
+    <dorel-layout-row align="left">
       <template
         is="dom-repeat"
         items="[[ products ]]"
@@ -53,9 +57,7 @@
       </template>
       <dorel-loader loading="[[ retrievingProducts ]]"></dorel-loader>
       <template is="dom-if" if="{{ checkIfProductsAreEmpty(renderedCount, retrievingProducts) }}">
-        <div class="no-products">
-          {{ localize('0_Results') }}
-        </div>
+        <div class="no-products">0 {{ localize('Results') }}</div>
       </template>
     </dorel-layout-row>
   </template>

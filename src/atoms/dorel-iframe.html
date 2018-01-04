@@ -1,0 +1,137 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.15/iframeResizer.min.js"></script>
+
+<dom-module id="dorel-iframe">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        display: block;
+        float: left;
+        width: 100%;
+      }
+
+      :host([focused]) {
+        outline: none;
+      }
+
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      label {
+        @apply(--theme-form-input-label);
+      }
+
+      select {
+        @apply(--theme-form-select);
+      }
+
+      :host([invalid]) select {
+        @apply(--theme-form-input-error);
+      }
+
+      :host([invalid]) label {
+        @apply(--theme-form-input-error-label);
+      }
+
+      select:hover, :host([invalid]) select:hover {
+        @apply(--theme-form-select-active);
+      }
+
+      :host([disabled]) select {
+        @apply(--theme-form-input-disabled);
+        @apply(--theme-form-select-disabled);
+      }
+
+      :host([disabled]) label {
+        @apply(--theme-form-input-disabled-label);
+      }
+
+      :host([required]) label:after {
+        content: "*";
+        margin-left: .125em;
+      }
+
+      #iframe-id {width: 1px;min-width: 100%;}
+
+    </style>
+
+    <div id="iframe-wrap"></div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'dorel-iframe',
+    properties: {
+
+      /**
+       * @attribute
+       * @name url
+       * @description the url of the iframe
+       */
+      url: {
+        type: String,
+        value: ''
+      },
+
+      /**
+       * @attribute
+       * @name scrolling
+       * @description enable or disable scrolling of the iframe
+       */
+      scrolling: {
+        type: Boolean,
+        value: true
+      },
+
+      /**
+       * @attribute
+       * @name frameborder
+       * @description enable or disable the border of the iframe
+       */
+      frameborder: {
+        type: Boolean,
+        value: false
+      },
+
+      /**
+       * @attribute
+       * @name width
+       * @description define the width of the iframe
+       */
+      width: {
+        type: String,
+        value: '100%'
+      }
+    },
+
+    /**
+     * Inherits behaviour form Iron Form elements
+     */
+    behaviors: [
+      Polymer.IronFormElementBehavior,
+    ],
+
+    /**
+     * @description when the component is ready it will create
+     * the iframe with the given parameters as attributes
+     */
+    ready: function() {
+      var iframe = document.createElement('iframe');
+      var wrap = this.$['iframe-wrap'];
+
+      iframe.src = this.get('url');
+      iframe.id = 'iframe-id';
+      iframe.setAttribute('width', this.get('width'));
+      iframe.setAttribute('height', this.get('height'));
+      iframe.setAttribute('frameborder', this.get('frameborder'));
+      iframe.setAttribute('scrolling', this.get('scrolling'));
+
+      wrap.appendChild(iframe);
+    }
+  });
+</script>

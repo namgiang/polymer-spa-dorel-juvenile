@@ -1,0 +1,49 @@
+<script>
+  (function() {
+    const initial = {
+      images: [],
+      imageLightbox: {
+        active: false,
+        bynderId: -1,
+        productImageUrl: ''
+      }
+    };
+
+    imageReducer = (state = initial, action) => {
+      switch (action.type) {
+
+        case 'REQUEST_IMAGE':
+          state.images.push({ id: action.payload, isLoading: true, notAvailable: false });
+          return Object.assign({}, state, {
+            images: state.images.map(image => image)
+          });
+
+        case 'REQUEST_IMAGES_SUCCES':
+          return Object.assign({}, state, {
+            images: action.payload.map(image => {
+              return Object.assign({}, image, { isLoading: false, notAvailable: false })
+            }).concat(state.images.filter(oldItem => {
+              return !action.payload.some(newItem => oldItem.id === newItem.id && oldItem.isLoading)
+            }))
+          })
+
+        case 'REQUEST_IMAGES_FAILED':
+          return state;
+
+        case 'RESET_IMAGE_LIGHTBOX':
+          return Object.assign({}, state, {
+            imageLightbox: { active: false, bynderId: -1, productImageUrl: '' }
+          })
+
+        case 'SET_IMAGE_LIGHTBOX':
+          return Object.assign({}, state, {
+            imageLightbox: action.payload
+          })
+
+        default:
+          return state;
+      }
+    };
+
+}());
+</script>

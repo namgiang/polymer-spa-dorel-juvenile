@@ -1,0 +1,282 @@
+<link rel="import" href="../../node_modules/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../node_modules/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../node_modules/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+<link rel="import" href="../molecules/dorel-logo.html">
+
+<dom-module id="dorel-car-fitting-nav">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      .header-wrapper {
+        height: 4.5em;
+        float: left;
+        width: 100%;
+        display: block;
+      }
+
+      header {
+        position: relative;
+        float: left;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        width: 100%;
+        background-color: white;
+      }
+
+      header::before {
+        content: "";
+        position: absolute;
+        bottom: -.75em;
+        left: 0;
+        height: .75em;
+        z-index: 2;
+        width: 100%;
+
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+0,000000+100&0.13+0,0+100 */
+        background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#21000000', endColorstr='#00000000', GradientType=0); /* IE6-9 */
+      }
+
+      .header-items {
+        @apply(--max-width-container);
+        @apply(--layout-vertical);
+        background-color: var(--theme-color-white);
+        box-sizing: border-box;
+        transition: .15s ease padding;
+        padding: .75em;
+      }
+
+      .header-item-menu {
+        order: 1;
+      }
+
+      .icon-toggle-menu {
+        width: 1.25em;
+        height: 1.25em;
+        font-size: 1.5rem;
+      }
+
+      .header-item-logo {
+        order: 4;
+        /* center the logo */
+        @apply(--layout-horizontal);
+      }
+
+      .header-flex {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+      }
+ 
+      .page-title-box {
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+ 
+      .page-title {
+        @apply(--theme-typography-4);
+        color: var(--theme-brand-color-1);
+        margin-left: 4.6em;
+      }
+
+      .header-item-close {
+        order: 5;
+        display: flex;
+        align-content: center;
+      }
+
+      .header-item-close a {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-icon {
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .icon-close-page {
+        --iron-icon-width:	1.5em;
+        --iron-icon-height: 1.5em;
+        color: var(--theme-color-text-link);
+      }
+
+       .icon-back {
+         --iron-icon-width:	1.5em;
+         --iron-icon-height: 1.5em;
+        transform: scale(-1);
+      }
+
+      [tablet-medium-up] .icon-close-page {
+        --iron-icon-width:	2.25em;
+        --iron-icon-height: 2.25em;
+      }
+
+      .header-icon:hover {
+        color: var(--theme-color-text-link-active);
+      }
+
+      .flex-row {
+        display: flex;
+      }
+
+      .header-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-item-logo {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+      }
+
+      [desktop-small-up] .header-item-logo {
+        flex: auto;
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      /* Responsive Behaviour */
+      [tablet-medium-up] .header-items {
+        padding-left: 1.5em;
+        padding-right: 1.5em;
+      }
+
+      [tablet-medium-up] #hamburger {
+        top: 2em;
+        right: 1.25em;
+      }
+
+      [compact-menu][tablet-medium-up] #hamburger {
+        top: 1.25em;
+      }
+
+      .header-wrapper[desktop-small-up] {
+        height: 7.5em;
+      }
+
+      [desktop-small-up] .header-item-logo {
+        order: 1;
+        flex: 1;
+      }
+
+      [desktop-small-up] .header-item-menu {
+        @apply(--layout-wrap);
+        order: 4;
+        padding: .75em 0;
+      }
+
+      [desktop-small-up] .header-items {
+        /* layout horizontal header-main */
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        padding: 1.5em;
+      }
+
+      [desktop-small-up] .header-contain-main-elements {
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div class="spacing"></div>
+
+    <div class="header-wrapper"
+         tablet-small-up$="{{  breakpoints.tabletSmallUp }}"
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         desktop-small-up$="{{ breakpoints.desktopSmallUp }}"
+         compact-menu$="{{ compactMenu }}">
+      <header>
+        <div class="header-items">
+          <template is="dom-if" if="{{ breakpoints.desktopSmallUp }}">
+            <div class="header-item header-item-logo">
+              <div class="header-flex">
+                <a href="/" aria-label="Maxi Cosi"
+                   on-click="_logoClicked">
+                  <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
+                </a>
+                <h2 class="page-title">[[ localize(pageTitle) ]]</h2>
+              </div>
+            </div>
+
+            <div class="header-item header-item-close">
+              <a href="[[ productUrl ]]">
+                <iron-icon class="header-icon icon-close-page"
+                           icon="dorel-icons:close"></iron-icon>
+              </a>
+            </div>
+          </template>
+
+          <template is="dom-if" if="{{ !breakpoints.desktopSmallUp }}">
+            <div class="flex-row">
+              <template is="dom-if" if="{{ shouldShow(previous) }}">
+                <div class="header-item header-item-back">
+                  <iron-icon class="header-icon icon-back"
+                             on-click="previousStep"
+                             icon="dorel-icons:chevron-right"></iron-icon>
+                </div>
+              </template>
+              <div class="header-item header-item-logo">
+                <div class="header-flex">
+                  <a href="/" aria-label="Maxi Cosi"
+                     on-click="_logoClicked">
+                    <dorel-logo brand-name="[[ brandName ]]" compact-menu="[[ compactMenu ]]"></dorel-logo>
+                  </a>
+                </div>
+              </div>
+
+              <div class="header-item header-item-close">
+                <a href="[[ productUrl ]]">
+                <iron-icon class="header-icon icon-close-page"
+                           icon="dorel-icons:close"></iron-icon>
+                </a>
+              </div>
+            </div>
+          </template>
+        </div>
+        <dorel-progress value="[[ progress ]]"></dorel-progress>
+      </header>
+    </div>
+  </template>
+  <script>
+    /* global Polymer */
+    /* global customElements */
+    /* global DorelMultilingualBehavior */
+    class DorelCarFittingNav extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+      static get is() {
+        return 'dorel-car-fitting-nav';
+      }
+
+      static get properties() {
+        return {
+          productUrl: {
+            type: String,
+            computed: 'getProductUrl(productName)'
+          }
+        };
+      }
+
+      getProductUrl(productName) {
+        var origin = window.location.origin;
+        var locale = window.location.href.split('/')[3];
+        console.log(`${origin}/${locale}/car-seats/${productName}`);
+        return `${origin}/${locale}/car-seats/${productName}`;
+      }
+    }
+
+    customElements.define(DorelCarFittingNav.is, DorelCarFittingNav);
+  </script>
+</dom-module>

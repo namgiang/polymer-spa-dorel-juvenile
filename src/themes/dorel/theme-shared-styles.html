@@ -1,0 +1,625 @@
+<!-- NOTE: This is new, for the design refactor and the component guide -->
+<!--  Shared style brand naming conventions:
+      Name strings can only contain lower-case, alphabetic values and dashes to separate words:
+      maxi-cosi, dorel, quinny, safety-first -->
+<dom-module id="theme-shared-styles">
+  <template>
+    <custom-style>
+    <style is="custom-style">
+
+      :host {
+
+        /* ------------------------------------------------
+         * Color
+         */
+
+        /* Brand colors */
+        --theme-brand-color-1: #0072CE;
+        --theme-brand-color-2: #0072CE;
+        --theme-brand-color-3: #0072CE;
+
+        --theme-brand-complementary-color-1: #0072CE;
+        --theme-brand-complementary-color-2: #ED8B00;
+        --theme-brand-complementary-color-3: #B1B3B3;
+
+        /* Brand proximity colors
+         * the lighter the background, the more important
+         * the foreground information will be */
+
+        /* Utility colors */
+        --theme-color-monochrome-1: #FFFFFF;
+        --theme-color-monochrome-2: #EEEEEE;
+        --theme-color-monochrome-3: #BDBDBD;
+        --theme-color-monochrome-4: #9E9E9E;
+        --theme-color-monochrome-5: #757575;
+        --theme-color-monochrome-6: #616161;
+        --theme-color-monochrome-7: #424242;
+
+        --theme-color-white: var(--theme-color-monochrome-1);
+        --theme-color-black: var(--theme-color-monochrome-7);
+        --theme-color-error: red;
+        --theme-color-active: var(--theme-brand-complementary-color-1);
+
+        /* ------------------------------------------------
+         * Header, Menu
+         */
+        --theme-header-wrapper: 4.5em;
+        --theme-header-wrapper-medium-up: 6em;
+        --theme-header-wrapper-small-up: 10.5em;
+        --theme-header-items-top-bottom-padding: 1.5em;
+        --theme-header-item-padding: .75em;
+        --theme-header-logo-top: 0;
+        --theme-menu-offset: 10.5rem;
+
+        /* ------------------------------------------------
+         * Grid
+         */
+        --theme-columns: 12;
+        --theme-column-width: 8.33333333%;
+
+        /* Spacing for side margins */
+        --theme-gutter: 1.5em;
+        --theme-gutter-mobile: 1em;
+
+
+        /* A single row */
+        --theme-grid-row: {
+          box-sizing: border-box;
+          display: -ms-flexbox;
+          display: -webkit-box;
+          display: flex;
+          -ms-flex: 0 1 auto;
+          -webkit-box-flex: 0;
+          flex: 0 1 auto;
+          -ms-flex-direction: row;
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+          flex-direction: row;
+          -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+        };
+
+        --theme-grid-row-margins: {
+          margin-right: -0.75em;
+          margin-left: -0.75em;
+        };
+
+        --theme-grid-row-mobile-margins: {
+          margin-right: -0.125em;
+          margin-left: -0.125em;
+        };
+
+        /* Modifier for mobile screens */
+        --theme-grid-row-mobile: {
+          margin-right: -.5em;
+          margin-left: -.5em;
+        };
+
+        /* Sizing */
+        --theme-grid-column: {
+          box-sizing: border-box;
+          -ms-flex: 0 0 auto;
+          -webkit-box-flex: 0;
+          flex: 0 0 auto;
+          padding-right: .75em;
+          padding-left: .75em;
+          margin-top: 1.5em;
+        };
+
+        /* Modifier for mobile screens */
+        --theme-grid-column-mobile: {
+          padding-right: .375em;
+          padding-left: .375em;
+        };
+
+        /* Creating columns
+          When specifying a column, you can specify the width as such:
+
+          -ms-flex-preferred-size: calc( var(--theme-column-width) * 2 );
+          flex-basis: calc( var(--theme-column-width) * 2 );
+          max-width:  calc( var(--theme-column-width) * 2 );
+
+          Replace the 2 with the number of columns you need
+
+          Containers made up of columns should always have an inner size
+          (--theme-column-container-size or --theme-column-container-size-mobile)
+        */
+
+        /* Ofsetting columns
+          When offseint a column, you can specify the offset width as such:
+          margin-left: calc( var(--theme-column-width) * 2 );
+
+          Replace the 2 with the number of columns you need
+        */
+
+        /* ------------------------------------------------
+         * Typography
+         */
+        --theme-base-font-size: 16px;
+        --theme-base-paragraph-width: 640px; /*560px; */
+        --theme-font-weight: 400;
+        --theme-font-weight-light: 300;
+        --theme-font-weight-bold: 600;
+
+        --theme-font: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+
+        --theme-typography-normal: {
+          font-weight: var(--theme-font-weight);
+        };
+
+        --theme-typography-light: {
+          font-weight: var(--theme-font-weight-light);
+        };
+
+        --theme-text-shadow: -1.5px 1.5px 10px rgba(0, 0, 0, 0.375);
+
+        /*
+          Base font: 16px
+          Line height 23px
+          Sizes: 48, 40, 32, 28, 24, 20, 16, 14;
+
+          https://drewish.com/tools/vertical-rhythm/
+        */
+
+        --theme-typography-8: {
+          font-size: 3.0000em; /* 48px */
+          line-height: 1.0000em; /* 48px */
+          margin-top: 0.5000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-7: {
+          font-size: 2.5000em; /* 40px */
+          line-height: 1.2000em; /* 48px */
+          margin-top: 0.6000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-6: {
+          font-size: 2.0000em; /* 32px */
+          line-height: 1.5000em; /* 48px */
+          margin-top: 0.7500em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-5: {
+          font-size: 1.7500em; /* 28px */
+          line-height: 1.7143em; /* 48px */
+          margin-top: 0.8571em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-4: {
+          font-size: 1.5000em; /* 24px */
+          line-height: 1.0000em; /* 24px */
+          margin-top: 1.0000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-3: {
+          font-size: 1.2500em; /* 20px */
+          line-height: 1.2000em; /* 24px */
+          margin-top: 1.2000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-2: {
+          font-size: 1.0000em; /* 16px */
+          line-height: 1.5000em; /* 24px */
+          margin-top: 1.5000em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-typography-1: {
+          font-size: 0.8750em; /* 14px */
+          line-height: 1.7143em; /* 24px */
+          margin-top: 1.7143em;
+          margin-bottom: 0.0000em;
+          font-weight: var(--theme-font-weight);
+          font-family: var(--theme-font);
+        };
+
+        --theme-paragraph-text: {
+          @apply(--theme-typography-2);
+          max-width: var(--theme-base-paragraph-width);
+        };
+
+        /*
+          * Typography colors
+          */
+        --theme-color-text-link: var(--theme-brand-complementary-color-2);
+        --theme-color-text-link-active: var(--theme-color-active);
+
+        --theme-text-link: {
+          color: var(--theme-color-text-link);
+          text-decoration: none;
+          transition: color .3s ease, border-bottom .3s ease;
+          border-bottom: 1px solid var(--theme-color-monochrome-2);
+        };
+
+        --theme-text-link-active: {
+          color: var(--theme-color-active);
+          border-bottom: 1px solid var(--theme-color-active);
+        };
+
+        /*
+         * Textual elements
+         */
+        --theme-blockquotes-mobile: {
+          @apply(--theme-typography-3);
+          color: var(--theme-brand-color-1);
+          border-left: .125em solid var(--theme-brand-color-1);
+          max-width: var(--theme-base-paragraph-width);
+          font-style: italic;
+          margin-left: 0;
+          padding-left: 0.5em;
+        };
+
+        --theme-blockquotes-desktop: {
+          @apply(--theme-blockquotes-mobile);
+          @apply(--theme-typography-5);
+        };
+
+        --theme-list: {
+          @apply(--theme-paragraph-text);
+          max-width: var(--theme-base-paragraph-width);
+          padding-left: 0;
+          list-style: none;
+          counter-reset: item;
+        };
+
+        --theme-list-item: {
+          margin-top: .5em;
+          padding-left: 1.25em;
+          position: relative;
+        };
+
+        --theme-ordered-list-bullet: {
+          @apply(--theme-typography-3);
+          color: var(--theme-brand-color-1);
+          content: counter(item);
+          counter-increment: item;
+          margin-right: .5em;
+          margin-top: 0;
+          float: left;
+          position: absolute;
+          left: 0;
+        };
+
+        --theme-unordered-list-bullet: {
+          content: '';
+          float: left;
+          display: inline-block;
+          margin-right: 1em;
+          width: .375em;
+          height: .375em;
+          margin-top: .6em;
+          border-radius: .5em;
+          background-color: var(--theme-brand-color-1);
+          position: absolute;
+          left: 0;
+        };
+
+        --theme-code: {
+          max-width: var(--theme-base-paragraph-width);
+          background-color: var(--theme-color-monochrome-2);
+          border: 1px solid var(--theme-color-monochrome-3);
+          width: 100%;
+          float: left;
+          overflow-x: scroll;
+          overflow-y: hidden;
+          display: block;
+          word-wrap: normal;
+          padding: 1.5rem;
+          margin: 1.5em 0 0 0;
+          box-sizing: border-box;
+          white-space: normal;
+        };
+
+        --theme-code-pre: {
+          white-space: pre-line;
+          font-family: monospace, monospace;
+          margin: 0;
+          float: left;
+        };
+
+        --theme-figcaption: {
+          @apply(--theme-typography-1);
+          width: 100%;
+          text-align: center;
+          font-style: italic;
+          margin: 0.85715em 0;
+        };
+
+        /* Tables */
+        --theme-table: {
+          @apply(--theme-typography-1);
+          background-color: var(--theme-color-monochrome-2);
+          margin-top: 1.75em;
+          line-height: 1.5em;
+          padding: 1.75em;
+          clear: both;
+          float: left;
+        };
+
+        --theme-table-row: {
+          box-shadow: inset 0 -1px 0 0 var(--theme-color-monochrome-3);
+        };
+
+        --theme-table-elements: {
+          line-height: 1.5em;
+          height: 1.5em;
+          padding: 0 1.5em 0 0;
+          text-align: left;
+          font-weight: normal;
+        };
+
+        /* Rounded Edges */
+        --theme-border-radius-0: 0;
+        --theme-border-radius-1: 0;
+        --theme-border-radius-2: 0;
+        --theme-border-radius-3: 0;
+
+        /* Buttons & CTA's */
+        --theme-primary-button-color: var(--theme-brand-complementary-color-2);
+        --theme-secondary-button-color: var(--theme-color-white);
+        --theme-tertiary-button-color: var(--theme-brand-complementary-color-3);
+
+        --theme-button-border-radius: var(--theme-border-radius-1);
+
+        --theme-button: {
+          line-height: 1.5em;
+          margin: 0;
+          -webkit-box-align: center;
+          -webkit-flex-align: center;
+          -ms-flex-align: center;
+          -webkit-align-items: center;
+          display: -webkit-flex;
+          display: -moz-flex;
+          display: -ms-flexbox;
+          display: -o-flex;
+          display: flex;
+          align-items: center;
+          padding: .625em 0;
+          border-radius: var(--theme-button-border-radius);
+          border: 2px solid transparent;
+          transition: background-color .3s ease, color .3s ease, border-color .3s ease, fill .3s ease, opacity .3s ease;
+          text-decoration: none;
+          box-sizing: border-box;
+          float: left;
+          width: 100%;
+        };
+
+        --theme-button-medium: {
+          @apply(--theme-typography-2);
+          padding: .625em 0;
+          margin-top: 0;
+        };
+
+        --theme-button-large: {
+          @apply(--theme-typography-3);
+          padding: .325em 0;
+          text-align: center;
+          margin-top: 0;
+        };
+
+        --theme-button-primary: {
+          color: var(--theme-color-white);
+          fill: var(--theme-color-white);
+          background-color: var(--theme-brand-complementary-color-2);
+        };
+
+        --theme-button-inverted: {
+          background-color: var(--theme-color-white);
+        };
+
+        --theme-button-secondary: {
+          color: var(--theme-brand-color-2);
+          fill: var(--theme-brand-color-2);
+          border: 2px solid var(--theme-brand-color-2);
+          background-color: var(--theme-color-white);
+        };
+
+        --theme-button-tertiary: {
+          background-color: var(--theme-tertiary-button-color);
+          color: var(--theme-color-white);
+          fill: var(--theme-color-white);
+        };
+
+        --theme-button-link: {
+          background-color: transparent;
+          color: var(--theme-color-text-link);
+          fill: var(--theme-color-text-link);
+          border-left: 0;
+          border-right: 0;
+        };
+
+        --theme-button-link-active: {
+          background-color: transparent;
+          border-color: transparent;
+          color: var(--theme-color-active);
+          fill: var(--theme-color-active);
+        };
+
+        --theme-button-active: {
+          background-color: var(--theme-color-active);
+          border-color: var(--theme-color-active);
+          color: var(--theme-color-white);
+        };
+
+        --theme-button-icon: {
+          height: 1.5em;
+          width: 1.5em;
+          padding: 0 .5em;
+        };
+
+        /*
+        * Form inputs
+        */
+
+        --theme-form-input-radius: var(--theme-border-radius-1);
+        --theme-form-input: {
+          @apply(--theme-paragraph-text);
+          color: var(--theme-color-black);
+          border: 1px solid var(--theme-color-monochrome-3);
+          border-radius: var(--theme-form-input-radius);
+          transition: border-color .3s ease;
+          float: left;
+          width: 100%;
+          margin-top: 0.375em;
+          margin-bottom: 1.5em;
+          min-height: 2.625em;
+          height: 2.625em;
+          padding: 0 .5em;
+          box-sizing: border-box;
+        };
+
+        --theme-form-input-active: {
+          border-color: var(--theme-color-active);
+        };
+
+        --theme-form-input-disabled: {
+          border-color: var(--theme-color-monochrome-2);
+          color: var(--theme-color-monochrome-2);
+          cursor: not-allowed;
+        };
+
+        --theme-form-input-disabled-label: {
+          color: var(--theme-color-monochrome-3);
+        };
+
+        --theme-form-input-error: {
+          border-color: var(--theme-color-error);
+          margin-bottom: 0; /* The error label takes care of the margins */
+        };
+
+        --theme-form-input-error-label: {
+          color: var(--theme-color-error);
+        };
+
+        --theme-form-input-error-message: {
+          @apply(--theme-typography-1);
+          color: var(--theme-color-error);
+          margin-top: 0;
+          float: left;
+          width: 100%;
+          margin-bottom: 1.625em;
+        };
+
+        --theme-form-input-label: {
+          @apply(--theme-typography-3);
+          color: var(--theme-brand-color-1);
+          float: left;
+          width: 100%;
+          margin: 0;
+          pointer-events: none;
+        };
+
+        --theme-form-select: {
+          @apply(--theme-form-input);
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          padding-right: 20px;
+          background: rgba(255,255,255,1) url('/assets/icons/chevron-down.svg') no-repeat 98% 50%;
+          transition: color .3s ease, border-color .3s ease;
+        };
+
+        --theme-form-select-disabled: {
+          background: rgba(255,255,255,1) url('/assets/icons/chevron-down-disabled.svg') no-repeat 98% 50%;
+        };
+
+        --theme-form-select-active: {
+          border-color: var(--theme-color-active);
+          color: var(--theme-color-active);
+        };
+
+        --theme-form-textarea: {
+          @apply(--theme-form-input);
+          min-height: 5.7em;
+          margin-bottom: 1.45em;
+        };
+
+        /*
+        * Form checkboxes
+        */
+        --theme-checkbox-background-color: var(--theme-color-white);
+        --theme-checkbox-border-color: var(--theme-color-monochrome-3);
+        --theme-checkbox-hover-color: var(--theme-brand-color-1);
+        --theme-checkbox-check-color: var(--theme-brand-color-1);
+
+        /*
+        * Footer variables
+        */
+        --theme-footer-background-color: var(--theme-brand-color-1);
+        --theme-footer-header-color: var(--theme-color-white);
+        --theme-footer-header-weight: 600;
+        --theme-footer-text-color: var(--theme-color-white);
+        --theme-footer-icon-color: var(--theme-color-monochrome-3);
+
+        /*
+        * Logo variables
+        */
+
+        --theme-logo-width: 18.5em;
+        --theme-logo-height: 4.5em;
+        --theme-logo-mobile-width: 14em;
+        --theme-logo-mobile-height: 3em;
+        --theme-logo: url('/assets/images/logos/logo-dorel.svg') no-repeat center center;
+        --theme-logo-alternative: url('/assets/images/logos/logo-dorel.svg') no-repeat center center;
+
+        --max-width-limit: 1280px;
+
+        --max-width-container: {
+          max-width: var(--max-width-limit);
+          margin-left: auto;
+          margin-right: auto;
+        };
+
+        --max-width-host: {
+          width: 100%;
+          float: left;
+          display: -ms-flexbox;
+          display: -webkit-flex;
+          display: flex;
+        };
+
+        /*
+        * Material design overwrites
+        */
+        --paper-menu: {
+          cursor: pointer;
+        };
+
+        --paper-menu-selected-item: {
+          color: var(--theme-brand-color-1);
+          font-weight: var(--theme-font-weight);
+        };
+
+        --paper-menu-focused-item: {
+          background-color: var(--theme-color-monochrome-2);
+          font-weight: var(--theme-font-weight);
+        };
+
+        --paper-menu-focused-item-after: {
+          background-color: var(--theme-color-monochrome-2);
+          font-weight: var(--theme-font-weight);
+        }
+      }
+    </style>
+    </custom-style>
+  </template>
+</dom-module>

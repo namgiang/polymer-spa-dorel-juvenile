@@ -1,6 +1,10 @@
 <dom-module id="dorel-customer-support">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
         float: left;
         width: 100%;
@@ -65,6 +69,8 @@
       }
 
       .contact-method {
+        @apply(--theme-typography-2);
+        margin: 0;
         padding: .75em 0;
       }
 
@@ -84,8 +90,8 @@
       }
 
       dorel-cta {
-        width: auto;
         float: right;
+        margin-top: 1.5em;
       }
 
       dorel-bynder-image {
@@ -146,24 +152,28 @@
              tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
 
       <template is="dom-if" if="[[ compact ]]">
-        <dorel-bynder-image media-id$="[[ templateData.bynder_image_id ]]"
-                            derivative-identifier="Fullscreen Small portrait"
-                            mobile-width="6em"
-                            mobile-height="6em"
-                            tablet-width="6em"
-                            tablet-height="6em"
-                            width="6em"
-                            height="6em"></dorel-bynder-image>
+        <dorel-bynder-image
+          media-id$="[[ templateData.bynder_image_id ]]"
+          image-alt="[[ templateData.bynder_image_alt_text ]]"
+          derivative-identifier="Fullscreen Small portrait"
+          mobile-width="6em"
+          mobile-height="6em"
+          tablet-width="6em"
+          tablet-height="6em"
+          width="6em"
+          height="6em"></dorel-bynder-image>
       </template>
       <template is="dom-if" if="[[ !compact ]]">
-        <dorel-bynder-image media-id$="[[ templateData.bynder_image_id ]]"
-                            derivative-identifier="Fullscreen Small portrait"
-                            mobile-width="6em"
-                            mobile-height="6em"
-                            tablet-width="10em"
-                            tablet-height="10em"
-                            width="10em"
-                            height="10em"></dorel-bynder-image>
+        <dorel-bynder-image
+          media-id$="[[ templateData.bynder_image_id ]]"
+          image-alt="[[ templateData.bynder_image_alt_text ]]"
+          derivative-identifier="Fullscreen Small portrait"
+          mobile-width="6em"
+          mobile-height="6em"
+          tablet-width="10em"
+          tablet-height="10em"
+          width="10em"
+          height="10em"></dorel-bynder-image>
       </template>
 
       <div class="text-container">
@@ -179,7 +189,7 @@
           <li>
             <span class="contact-method">
               <iron-icon class="contact-icon" icon="dorel-icons:facebook"></iron-icon>
-              <a href="[[ _getFacebookLink(templateData.social_channels) ]]" target="_blank" class="contact-method-title">[[ socialSupport.title ]]</a>
+              <a href="[[ socialLink ]]" target="_blank" class="contact-method-title">[[ socialSupport.title ]]</a>
               <span class="contact-method-description">[[ socialSupport.sub_title ]]</span>
             </span>
           </li>
@@ -223,6 +233,7 @@
   <script>
     Polymer({
       is: 'dorel-customer-support',
+
       properties: {
 
         /**
@@ -248,6 +259,12 @@
         },
 
         /**
+         * @name socialLink
+         * @description the data model used for the social support
+         */
+        socialLink: String,
+
+        /**
          * @name socialSupport
          * @description the data model used for the social support
          */
@@ -266,23 +283,7 @@
         callCenterSupport: Object
       },
 
-      behaviors: [TemplateBehaviors],
-
-      /**
-       * @attribute
-       * @name _getFacebookLink
-       * @description retrieves the facebook href from the social channels options to
-       * be set on the href of the customer support social link
-       */
-      _getFacebookLink: function(socialChannels) {
-        if(typeof socialChannels === 'undefined' || !socialChannels.length) return;
-
-        var facebookChannel = socialChannels.find(function(channel) {
-          return channel.social_media_icon === 'facebook';
-        });
-
-        return facebookChannel.social_media_href;
-      }
+      behaviors: [TemplateBehaviors]
     });
 
   </script>

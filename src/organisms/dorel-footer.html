@@ -1,10 +1,16 @@
 <link rel="import" href="../atoms/dorel-back-to-top.html">
-<link rel="import" href="../atoms/dorel-icons-social.html">
+<link rel="import" href="../icons/dorel-icons-social.html">
 <link rel="import" href="../molecules/dorel-multilingual-select-language.html">
+<link rel="import" href="../utils/dorel-category-filter-manager.html">
+<link rel="import" href="../utils/behaviors/single/dorel-gtm-behavior.html">
 
 <dom-module id="dorel-footer">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
         background-color: var(--theme-footer-background-color);
         float: left;
@@ -14,6 +20,12 @@
 
       dorel-layout-row {
         position: relative;
+      }
+
+      .footer-info, dorel-layout-column {
+        float: left;
+        width: 100%;
+        margin: 0;
       }
 
       /**
@@ -32,6 +44,7 @@
 
       .footer-disclaimer {
         margin-top: 1.5em;
+        float: left;
       }
 
       /**
@@ -79,11 +92,14 @@
       .footer-back-to-top {
         padding: 1.5rem 0 0 0;
         width: 100%;
+        float: left;
       }
 
       .footer-menu ul {
         padding: 0;
         margin: 0 0 1.5em 0;
+        list-style: none;
+
       }
 
       .footer-menu {
@@ -95,45 +111,15 @@
         padding: 0;
       }
 
-      .footer-menu.open {
-        max-height: 1000px !important;
-      }
-
       /* lists not enumerated */
-      .footer-menu li {
-        padding: .75em 0;
-        list-style-type: none;
+      dorel-accordion-item dorel-cta  {
+        float: left;
+        width: 100%;
+        margin-top: 0;
+        margin-left: 1.5em;
       }
 
-      .footer-menu a:hover, .footer-menu a:focus {
-        color: var(--theme-color-white);
-      }
-
-      .footer-menu .footer-heading::before {
-        content: '';
-        position: absolute;
-        bottom: 2rem;
-        right: .75rem;
-        width: .75rem;
-        height: .75rem;
-        border-bottom: 2px solid var(--theme-white);
-        border-left: 2px solid var(--theme-white);
-        -webkit-transform: rotate(-45deg);
-        -ms-transform: rotate(-45deg);
-        transform: rotate(-45deg);
-        -ms-transform-origin: center;
-        -webkit-transform-origin: center;
-        transform-origin: center;
-        transition: transform .3s ease;
-      }
-
-      .footer-menu.open .footer-heading::before {
-        -webkit-transform: rotate(135deg) translate(0.375rem, -0.375rem);
-        -ms-transform: rotate(135deg) translate(0.375rem, -0.375rem);
-        transform: rotate(135deg) translate(0.375rem, -0.375rem);
-      }
-
-      [tablet-medium-up] .footer-heading {
+      .footer-heading {
         @apply(--theme-typography-2);
         color: var(--theme-footer-header-color);
         font-weight: var(--theme-footer-header-weight);
@@ -143,37 +129,15 @@
         height: auto;
       }
 
-      .footer-disclaimer,
-      .footer-info,
-      .footer-back-to-top {
-        float: left;
-        width: 100%;
-      }
-
-      [tablet-medium-up] .footer-disclaimer,
-      [tablet-medium-up] .footer-info,
-      [tablet-medium-up] .footer-back-to-top {
-        float: none;
-        width: auto;
-      }
-
-      [tablet-medium-up] .footer-info {
-        margin-top: 1.5em;
-      }
-
-      [tablet-medium-up] ul {
+      .footer-menu ul {
         margin: .75em 0;
       }
 
-      [tablet-medium-up] li {
+      .footer-menu li {
         padding: 0;
       }
 
-      [tablet-medium-up] .footer-menu .footer-heading::before {
-        display: none;
-      }
-
-      [tablet-medium-up] .footer-menu {
+      .footer-menu {
         @apply(--theme-grid-column);
         padding: 0 var(--theme-grid-gutter);
         float: left;
@@ -187,7 +151,7 @@
         margin-top: 1.5em;
       }
 
-      [desktop-small-up] .footer-menu {
+      .footer-menu {
         -ms-flex-preferred-size: calc(var(--theme-column-width) * 2);
         -webkit-flex-basis: calc(var(--theme-column-width) * 2);
         flex-basis: calc(var(--theme-column-width) * 2);
@@ -215,18 +179,12 @@
         margin: 0;
       }
 
-      [tablet-medium-up] .footer-menu {
-        border-bottom: 0px;
-      }
-
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <footer tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
             desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
-
 
       <dorel-layout-container>
         <dorel-layout-row align="center">
@@ -237,7 +195,7 @@
             <!-- dom-repeat social channels -->
             <template
               is="dom-repeat"
-              items="[[ appCache.collect.options.social_channels ]]"
+              items="[[ config.social_channels ]]"
               as="socialChannel">
               <a class="footer-media-link" href="[[ socialChannel.social_media_href ]]"
                  on-click="_socialClick">
@@ -256,35 +214,63 @@
           </div>
         </dorel-layout-row>
 
-
         <dorel-layout-row align="left">
-          <dorel-layout-column id="footer-widget-area" class="footer-info"
-                               desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-            <!-- widget areas are inserted here -->
-            <template
-              is="dom-repeat"
-              items="[[footerOptions.footer_menus]]"
-              as="menu">
-              <div class="footer-menu">
-                <h3 class="footer-heading">[[menu.title]]</h3>
-
+          <div id="footer-widget-area" class="footer-info">
+            <!-- Mobile footer menu (accordions) -->
+            <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
                 <template
-                  is="dom-if"
-                  if="[[menu.items.length]]">
-                  <ul>
+                  is="dom-repeat"
+                  items="[[footerOptions.footer_menus]]"
+                  as="menu">
+                  <dorel-accordion-item heading="[[ menu.title ]]" small light>
                     <template
-                      is="dom-repeat"
-                      items="[[menu.items]]"
-                      as="item">
-                      <li>
-                        <a href="[[item.link]]">[[item.title]]</a>
-                      </li>
+                      is="dom-if"
+                      if="[[menu.items.length]]">
+                      <template
+                        is="dom-repeat"
+                        items="[[menu.items]]"
+                        as="item">
+                        <dorel-cta title="[[item.title]"
+                                   type="link"
+                                   link="[[item.link]]"
+                                   size="medium"
+                                   icon="">
+                          [[item.title]]
+                        </dorel-cta>
+                      </template>
                     </template>
-                  </ul>
+                  </dorel-accordion-item>
                 </template>
-              </div>
+              </dorel-layout-column>
             </template>
-          </dorel-layout-column>
+            <!-- Desktop footer menu -->
+            <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+              <template
+                is="dom-repeat"
+                items="[[footerOptions.footer_menus]]"
+                as="menu">
+                <div class="footer-menu">
+                  <h3 class="footer-heading">[[menu.title]]</h3>
+                  <template
+                    is="dom-if"
+                    if="[[menu.items.length]]">
+                    <ul>
+                      <template
+                        is="dom-repeat"
+                        items="[[menu.items]]"
+                        as="item">
+                        <li>
+                          <a href="[[item.link]]">[[item.title]]</a>
+                        </li>
+                      </template>
+                    </ul>
+                  </template>
+                </div>
+              </template>
+            </template>
+
+          </div>
         </dorel-layout-row>
 
         <div class="footer-disclaimer">
@@ -305,206 +291,73 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-footer',
+    class DorelFooter extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors, GtmBehavior], Polymer.Element)) {
 
-      properties: {
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object,
-          observer: '_defineOptionModels'
-        },
+      static get is() {
+        return 'dorel-footer';
+      }
 
-        footerOptions: Object,
 
-        /**
-         * @name currentLanguage
-         * @description Object containing currently selected country and language
-         * TODO: This is temporarily filled with  dummy data, connect to API later
-         */
-        'currentLanguage': {
-          type: Object,
-          value: {
-            'country': 'Belgium',
-            'language': 'Dutch',
-            'countryCode': 'be',
-          }
-        },
-        /**
-         * @name continentsData
-         * @description Object containing the continents (and country, language data)
-         * TODO: This is temporarily filled with  dummy data, connect to API later
-         */
-        continentsData: {
-          type: Array,
-          value: [{
-            title: 'Europe', countries: [
-              {
-                countryCode: 'at',
-                title: 'Austria',
-                languages: [
-                  {language: 'German', id: 0},
-                ]
-              }, {
-                countryCode: 'be',
-                title: 'Belgium',
-                languages: [
-                  {language: 'Dutch', id: 0},
-                  {language: 'French', id: 1},
-                ]
-              }, {
-                countryCode: 'cz',
-                title: 'Czech Republic',
-                languages: [
-                  {language: 'Czech', id: 0}
-                ]
-              }
-            ]
+      static get properties() {
+        return {
+          /**
+           * `config`
+           */
+          config: {
+            type: Object,
+            statePath: 'config',
+            observer: '_defineOptionModels'
           },
-            {
-              title: 'North America', countries: [
-              {
-                countryCode: 'ca',
-                title: 'Canada',
-                languages: [
-                  {language: 'English', id: 0},
-                  {language: 'French', id: 1},
-                ]
-              }, {
-                countryCode: 'mx',
-                title: 'Mexico',
-                languages: [
-                  {language: 'Spanish', id: 0},
-                ]
-              }, {
-                countryCode: 'us',
-                title: 'United States',
-                languages: [
-                  {language: 'English', id: 0},
-                ]
-              }
-            ]
-            },
-            {
-              title: 'South America', countries: [
-              {
-                countryCode: 'at',
-                title: 'Austria',
-                languages: [
-                  {language: 'German', id: 0},
-                ]
-              }, {
-                countryCode: 'be',
-                title: 'Belgium',
-                languages: [
-                  {language: 'Dutch', id: 0},
-                  {language: 'French', id: 1},
-                ]
-              }, {
-                countryCode: 'cz',
-                title: 'Czech Republic',
-                languages: [
-                  {language: 'Czech', id: 0}
-                ]
-              }
-            ]
-            },
-            {
-              title: 'Asia Pacific', countries: [
-              {
-                countryCode: 'at',
-                title: 'Austria',
-                languages: [
-                  {language: 'German', id: 0},
-                ]
-              }, {
-                countryCode: 'be',
-                title: 'Belgium',
-                languages: [
-                  {language: 'Dutch', id: 0},
-                  {language: 'French', id: 1},
-                ]
-              }, {
-                countryCode: 'cz',
-                title: 'Czech Republic',
-                languages: [
-                  {language: 'Czech', id: 0}
-                ]
-              }
-            ]
-            },
-            {
-              title: 'Middle East', countries: [
-              {
-                countryCode: 'at',
-                title: 'Austria',
-                languages: [
-                  {language: 'German', id: 0},
-                ]
-              }, {
-                countryCode: 'be',
-                title: 'Belgium',
-                languages: [
-                  {language: 'Dutch', id: 0},
-                  {language: 'French', id: 1},
-                ]
-              }, {
-                countryCode: 'cz',
-                title: 'Czech Republic',
-                languages: [
-                  {language: 'Czech', id: 0}
-                ]
-              }
-            ]
-            },
-            {
-              title: 'Africa', countries: [
-              {
-                countryCode: 'at',
-                title: 'Austria',
-                languages: [
-                  {language: 'German', id: 0},
-                ]
-              }, {
-                countryCode: 'be',
-                title: 'Belgium',
-                languages: [
-                  {language: 'Dutch', id: 0},
-                  {language: 'French', id: 1},
-                ]
-              }, {
-                countryCode: 'cz',
-                title: 'Czech Republic',
-                languages: [
-                  {language: 'Czech', id: 0}
-                ]
-              }
-            ]
-            }]
-        },
-      },
+
+          footerOptions: Object,
+
+          /**
+           * @name currentLanguage
+           * @description Object containing currently selected country and language
+           */
+          currentLanguage: {
+            type: Object,
+          },
+
+          /**
+           * @name continentsData
+           * @description Object containing the continents (and country, language data)
+           */
+          continentsData: {
+            type: Array
+          }
+        };
+      }
 
       /**
-       * Listen to all clicks inside the component to define an
-       * accordion click
+       * @name ready
+       * @description because the footer widget areas are placed
+       * at runtime the normal ready function doesn't have access
+       * to all elements.
        */
-      listeners: {
-        'click': 'accordionClick',
-      },
-
-      behaviors: [TemplateBehaviors],
+      ready() {
+        super.ready();
+        this.addEventListener('click', this.accordionClick);
+        setTimeout(function () {
+          var footerMenuLink = this.root.querySelectorAll('.footer-menu a');
+          // add eventListeners
+          for (var i = 0, len = footerMenuLink.length; i < len; i++) {
+            footerMenuLink[i].addEventListener('click', function (event) {
+              this._eventTracking(event, 'switch');
+            }.bind(this));
+          }
+        }.bind(this));
+      }
 
       /**
        * @name _socialClick
        * @description handle the click event on a social link
        */
-      _socialClick: function (event) {
+      _socialClick (event) {
 
         // event tracking when a social link is clicked
         this._eventTracking(event, 'social');
-      },
+      }
 
       /**
        * @name accordionClick
@@ -514,7 +367,7 @@
        * @todo add click event listeners like with the footer-links,
        * use attributes to open/close
        */
-      accordionClick: function (event) {
+      accordionClick (event) {
 
         // return when not clicked on the footer-heading
         if (typeof Polymer.dom(event).rootTarget.parentNode === 'undefined'
@@ -530,13 +383,13 @@
 
         // track open/closing of accordion
         this._eventTracking(event, 'accordionToggle');
-      },
+      }
 
       /**
        * @name _getCopyrightYearRange
        * @description returns the copyright range as a string based on a starting year and the current year
        */
-      _getCopyrightYearRange: function (startYear) {
+      _getCopyrightYearRange (startYear) {
 
         // if no startYear is defined jump out
         if (typeof startYear === 'undefined' || startYear === '' || startYear === null) return;
@@ -559,36 +412,14 @@
 
         // Return the range as a string
         return yearRange.join(' - ');
-      },
+      }
 
-      /**
-       * @name __ready
-       * @description because the footer widget areas are placed
-       * at runtime the normal ready function doesn't have access
-       * to all elements.
-       */
-      ready: function () {
-        var self = this;
-
-        // define footer links for tracking
-        var footerMenuLink = this.$$('#footer-widget-area').querySelectorAll('.footer-menu a');
-
-        // hookup click handlers for every link
-        for (var i = 0, len = footerMenuLink.length; i < len; i++) {
-          // add eventListener for link
-          footerMenuLink[i].addEventListener('click', function (event) {
-
-            // start tracking when clicked
-            self._eventTracking(event, 'switch');
-          });
-        }
-      },
 
       /**
        * @name _eventTracking
        * @description sets the right properties for event tracking
        */
-      _eventTracking: function (event, type) {
+      _eventTracking(event, type) {
 
         /**
          * build up the tracking eventData
@@ -598,7 +429,6 @@
           component: 'footer',
           event: 'polymer_event'
         };
-
 
         /**
          * Check the type and handle accordingly
@@ -653,10 +483,11 @@
 
             break;
         }
-
         // send event data to tracking function
-        this.fire('setAppCache', {value: eventData, path: 'events'});
+        this._dispatchGtmEvent(eventData);
+
       }
-    });
+    }
+    customElements.define(DorelFooter.is, DorelFooter);
   </script>
 </dom-module>

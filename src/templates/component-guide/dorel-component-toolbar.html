@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../../node_modules/paper-toggle-button/paper-toggle-button.html">
 <!--<link rel="import" href="../../atoms/dorel-input-select.html"> -->
 
 <dom-module id="dorel-component-toolbar">
@@ -33,16 +33,15 @@
 
       dorel-cta {
         float: left;
-        width: auto;
-        margin-top: -1.5em;
       }
     </style>
     <dorel-layout-container>
       <dorel-cta title="Back to overview"
-                 type="inverted"
+                 inverted
                  link="[[ backLink ]]"
                  size="medium"
-                 icon="dorel-icons:overview">
+                 left-align-icon
+                 icon="dorel-icons:chevron-left">
         Back to overview
       </dorel-cta>
       <!-- NOTE: this is a select box for selecting brands. Switched off now because we can change brands through the overview
@@ -50,70 +49,76 @@
                           options="[[ availableBrands ]]"
                           selected="{{ brand }}"></dorel-input-select> -->
 
-      <paper-toggle-button noink
-                           checked$="[[ appCache.grid.vertical ]]"
-                           on-click="_setVerticalRhythm">
-        Vertical Rhythm
-      </paper-toggle-button>
-      <paper-toggle-button noink
-                           checked$="[[ appCache.grid.horizontal ]]"
-                           on-click="_setHorizontalGrid">
-        Horizontal Grid
-      </paper-toggle-button>
+      <template is="dom-if" if="[[ grid ]]">
+        <paper-toggle-button noink
+                             checked$="[[ grid.vertical ]]"
+                             on-click="_setVerticalRhythm">
+          Vertical Rhythm
+        </paper-toggle-button>
+        <paper-toggle-button noink
+                             checked$="[[ grid.horizontal ]]"
+                             on-click="_setHorizontalGrid">
+          Horizontal Grid
+        </paper-toggle-button>
+      </template>
+
     </dorel-layout-container>
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-component-toolbar',
-      properties: {
-        appCache: {
-          type: Object,
-          value: function () {
-            return {}
-          }
-        },
-        /**
-         * @name brand
-         * @description defines the brand
-         */
-        brand: {
-          type: Object,
-          notify: true,
-          readOnly: false
-        },
-        /**
-         * @name availableBrands
-         * @description List of available brands
-         */
-        availableBrands: {
-          type: Array,
-          value: []
-        },
+    class DorelComponentToolbar extends ReduxMixin(Polymer.Element) {
 
-        backLink: {
-          type: String,
-          value: function() {
-            return '/' + CONFIG.LOCALE.CODE + '/component-guide/';
+      static get is() {
+        return 'dorel-component-toolbar';
+      }
+      static get properties() {
+        return {
+          grid: {
+            type: Object,
+            statePath: 'config.grid'
+          },
+          /**
+           * @name brand
+           * @description defines the brand
+           */
+          brand: {
+            type: Object,
+            notify: true,
+            readOnly: false
+          },
+          /**
+           * @name availableBrands
+           * @description List of available brands
+           */
+          availableBrands: {
+            type: Array,
+            value: []
+          },
+
+          backLink: {
+            type: String,
+            statePath: function(state) {
+              return '/' + state.route.currentLanguage.path + '/component-guide/';
+            }
           }
-        }
-      },
+        };
+      }
+
       /**
        * @name _setVerticalRhythm
        * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
        */
-      _setVerticalRhythm: function () {
-        var vertical = this.appCache.grid.vertical;
-        this.fire('setAppCache', {value: !vertical, path: 'grid.vertical'});
-      },
+      _setVerticalRhythm() {
+        this.dispatch('setVertivalGrid');
+      }
       /**
        * @name _setHorizontalGrid
        * @description Toggles the horizontal grid global variable (and it's connected overlay component)
        */
-      _setHorizontalGrid: function () {
-        var horizontal = this.appCache.grid.horizontal;
-        this.fire('setAppCache', {value: !horizontal, path: 'grid.horizontal'});
-      },
-    });
+      _setHorizontalGrid() {
+        this.dispatch('setHorizontalGrid');
+      }
+    }
+    customElements.define(DorelComponentToolbar.is, DorelComponentToolbar);
   </script>
 </dom-module>

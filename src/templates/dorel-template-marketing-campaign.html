@@ -1,0 +1,158 @@
+<link rel="import" href="../organisms/dorel-section-hero-header.html">
+<link rel="import" href="../organisms/dorel-section-content-block.html">
+<link rel="import" href="../organisms/dorel-section-feature-block.html">
+<link rel="import" href="../organisms/dorel-timeline.html">
+
+<dom-module id="dorel-template-marketing-campaign">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      section {
+        padding-bottom: 1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      section[tablet-medium-up] {
+        padding-bottom: 3em;
+      }
+
+      .title {
+        @apply(--theme-typography-5);
+        color: var(--theme-brand-color-1);
+        width: 100%;
+        text-align: center;
+      }
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-7);
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <!-- HERO HEADER -->
+      <dorel-section-hero-header
+        align="left"
+        hero-header-data="[[heroHeader]]"></dorel-section-hero-header>
+      <!--// HERO HEADER -->
+
+      <template
+        is="dom-repeat"
+        items="[[ templateData.acf.page_builder ]]"
+        as="component"
+        targetFramerate="1000">
+
+        <!-- content_block -->
+        <template
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'content_block') ]]">
+          <dorel-layout-container>
+            <dorel-layout-row>
+              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                <dorel-section-content-block
+                  block-data="[[component]]"
+                  component-count="[[_getComponentCount()]]"></dorel-section-content-block>
+              </dorel-layout-column>
+            </dorel-layout-row>
+          </dorel-layout-container>
+        </template>
+        <!--// content_block -->
+
+
+        <!-- feature_block -->
+        <template
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'feature_block') ]]">
+          <dorel-section-feature-block
+            block-data="[[component]]"></dorel-section-feature-block>
+        </template>
+        <!--// feature_block -->
+
+        <!-- carousel_block -->
+        <template
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'carousel_block') ]]">
+          <dorel-section-slideshow
+            slideshow-data="[[component]]"
+            gtm-parent="dorel-section-product-video"
+            gtm-parent-index="3"></dorel-section-slideshow>
+        </template>
+        <!--// carousel_block -->
+
+        <template
+          is="dom-if"
+          if="[[ _isPageComponent(component.acf_fc_layout, 'timeline') ]]">
+          <dorel-layout-container>
+            <dorel-layout-row>
+              <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                <h2 class="title">[[component.title]]</h2>
+                <dorel-timeline
+                  interval="[[component.animation_interval]]"
+                  max-iterations="[[component.animation_amount]]"
+                  moments="[[component.timeline_moments]]"></dorel-timeline>
+              </dorel-layout-column>
+            </dorel-layout-row>
+          </dorel-layout-container>
+        </template>
+
+      </template><!--// dom-repeat -->
+
+    </section><!--// section -->
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-template-marketing-campaign',
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name templateData
+         * @description all data needed to build up a certain component
+         */
+        templateData: {
+          type: Object,
+          value: function() {
+            return {};
+          },
+          observer: '_defineComponentModels'
+        },
+
+        /**
+         * @name homeHeaderData
+         * @description the data model used for the hero header component
+         */
+        heroHeader: Object,
+
+        /**
+         * @name componentCount
+         * @description keeps track of a component number to change alignment
+         */
+        componentCount: {
+          type: Number,
+          value: 0
+        }
+      },
+
+      behaviors: [TemplateBehaviors],
+
+      /**
+       * @name _getComponentCount
+       * @description counts a certain component (content_block) to align left or right
+       * in the child component
+       */
+      _getComponentCount: function() {
+        this.set('componentCount', this.get('componentCount')+1);
+        return this.componentCount;
+      }
+
+    });
+  </script>
+</dom-module>

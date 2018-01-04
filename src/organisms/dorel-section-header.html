@@ -3,6 +3,10 @@
 <dom-module id="dorel-section-header">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       .section-header {
         width: 100%;
         display: flex;
@@ -41,13 +45,17 @@
 
       dorel-layout-row {
         height: 100%;
+        display: flex;
+        align-items: initial;
       }
 
       dorel-layout-column {
-        position: relative;
-        margin: 0;
         display: flex;
         align-items: flex-end;
+      }
+
+      dorel-bynder-responsive-image {
+        width: 100%;
       }
 
       .content {
@@ -64,7 +72,8 @@
       }
 
       [text-header] {
-        min-width: 100vw;
+        /* display: block; */
+        /* min-width: 100vw; */
         padding-top: 4.5em;
       }
 
@@ -97,7 +106,8 @@
              desktop-large$="[[ breakpoints.desktopLarge ]]">
       <template is="dom-if" if="[[ !textHeader ]]">
         <dorel-bynder-responsive-image
-          media-id="[[ sectionHeaderData.bynder_background_image ]]"></dorel-bynder-responsive-image>
+          media-id="[[ sectionHeaderData.bynder_background_image ]]"
+          image-alt="[[ sectionHeaderData.bynder_image_alt_text ]]"></dorel-bynder-responsive-image>
       </template>
       <dorel-layout-container>
         <dorel-layout-row align="left">

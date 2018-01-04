@@ -1,25 +1,21 @@
 <link rel="import" href="dorel-component-guide-shared-styles.html">
+<link rel="import" href="utils/dorel-code-snippet.html">
 
 <dom-module id="dorel-component-guide-buttons">
   <template>
     <style include="dorel-component-guide-shared-styles">
       dorel-cta {
         float: left;
-        margin-right: 1.5em;
+        margin: .75em 1.5em .75em 0;
       }
 
       dorel-layout-column {
         margin-top: 0;
       }
 
-      .container-standout dorel-cta {
-        margin-top: -1.5em;
-      }
-
       .container-standout {
         margin-top: 1.5em;
       }
-
 
       /*
        * both interactions in interaction CTA's should have the same *static* width
@@ -35,6 +31,15 @@
       .component-guide-width-180 {
         width: 180px;
       }
+
+      .demo-stacked-cta {
+        float: left;
+        width: 100%;
+      }
+
+      .demo-stacked-cta dorel-cta {
+        margin: 0;
+      }
     </style>
     <dorel-layout-container>
       <h1 class="class-for-h1">Call to actions</h1>
@@ -42,7 +47,6 @@
         Call to actions should always clearly communicate an action. Wether it's primarily navigating to another page,
         or an interactive action on the same page.
       </p>
-
       <hr>
       <h2 class="class-for-h2">Styles</h2>
       <p>
@@ -50,30 +54,104 @@
       </p>
       <dorel-layout-row align="left">
         <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-          <dorel-cta title="Call to action"
-                     type="primary"
-                     link=""
-                     size="medium"
-                     icon="dorel-icons:chevron-right">
-            Primary Call to Action
-          </dorel-cta>
-          <dorel-cta title="Call to action"
-                     type="secondary"
-                     link=""
-                     size="medium"
-                     icon="dorel-icons:chevron-right">
-            Secondary Call to Action
-          </dorel-cta>
-          <dorel-cta title="Call to action"
-                     type="link"
-                     link=""
-                     size="medium"
-                     icon="dorel-icons:chevron-right">
-            Regular Call to Action
-          </dorel-cta>
+          <dorel-code-snippet>
+            <dorel-cta title="Call to action"
+                       type="primary"
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              Primary Call to Action
+            </dorel-cta>
+
+            <dorel-cta title="Call to action"
+                       type="secondary"
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              Secondary Call to Action
+            </dorel-cta>
+
+            <dorel-cta title="Call to action"
+                       type="link"
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              Regular Call to Action
+            </dorel-cta>
+          </dorel-code-snippet>
         </dorel-layout-column>
       </dorel-layout-row>
-
+      <hr>
+      <h2 class="class-for-h2">Left aligned icons</h2>
+      <p>
+        In some cases, left-aligned icons will be needed for CTA's.
+        This might be needed for back navigation, or when stacking CTA's and the icons need to align nicely.
+      </p>
+      <dorel-layout-row align="left">
+        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+          <dorel-code-snippet>
+            <dorel-cta title="Call to action"
+                       left-align-icon
+                       type="primary"
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:chevron-left">
+              Primary Call to Action
+            </dorel-cta>
+            <dorel-cta title="Call to action"
+                       type="secondary"
+                       left-align-icon
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:chevron-left">
+              Secondary Call to Action
+            </dorel-cta>
+            <dorel-cta title="Call to action"
+                       type="link"
+                       left-align-icon
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:chevron-left">
+              Regular Call to Action
+            </dorel-cta>
+          </dorel-code-snippet>
+        </dorel-layout-column>
+      </dorel-layout-row>
+      <hr>
+      <p>Make sure to left-align your cta icons when stacking. This aligns the icons nicely underneath each other:</p>
+      <div class="demo-stacked-cta">
+        <dorel-cta title="Call to action"
+                   type="link"
+                   left-align-icon
+                   link=""
+                   size="medium"
+                   no-margin
+                   icon="dorel-icons:file-download">
+          Left align
+        </dorel-cta>
+      </div>
+      <div class="demo-stacked-cta">
+        <dorel-cta title="Call to action"
+                   type="link"
+                   left-align-icon
+                   link=""
+                   size="medium"
+                   no-margin
+                   icon="dorel-icons:file-download">
+          Your icons
+        </dorel-cta>
+      </div>
+      <div class="demo-stacked-cta">
+        <dorel-cta title="Call to action"
+                   type="link"
+                   left-align-icon
+                   link=""
+                   size="medium"
+                   no-margin
+                   icon="dorel-icons:file-download">
+          When stacking CTA's
+        </dorel-cta>
+      </div>
 
       <hr>
 
@@ -175,13 +253,24 @@
       <dorel-layout-row align="left">
         <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12"
                              class="container-standout dark-bg">
-          <dorel-cta title="Watch movie"
-                     type="inverted"
-                     link=""
-                     size="medium"
-                     icon="dorel-icons:play-circle-outline">
-            Watch movie
-          </dorel-cta>
+          <dorel-code-snippet>
+            <dorel-cta title="Watch movie"
+                       inverted
+                       link=""
+                       size="medium"
+                       icon="dorel-icons:play-circle-outline">
+              Watch movie
+            </dorel-cta>
+
+            <dorel-cta title="read more"
+              type="link"
+              inverted
+              link=""
+              icon="dorel-icons:expand-more">
+              read more
+            </dorel-cta>
+
+          </dorel-code-snippet>
         </dorel-layout-column>
       </dorel-layout-row>
 
@@ -190,62 +279,64 @@
       <h2 class="class-for-h2">Disabled cta's</h2>
       <dorel-layout-row align="left">
         <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-          <dorel-cta title="This is disabled because of x and y"
-                     type="primary"
-                     link=""
-                     size="medium"
-                     disabled
-                     icon="dorel-icons:chevron-right">
-            Call to Action
-          </dorel-cta>
-          <dorel-cta title="This is disabled because of x and y"
-                     type="secondary"
-                     link=""
-                     disabled
-                     size="medium"
-                     icon="dorel-icons:chevron-right">
-            Call to Action
-          </dorel-cta>
-          <dorel-cta title="This is disabled because of x and y"
-                     type="link"
-                     link=""
-                     disabled
-                     size="medium"
-                     icon="dorel-icons:chevron-right">
-            Call to Action
-          </dorel-cta>
-          <dorel-cta title="This is disabled because of x and y"
-                     type="cart-add"
-                     link=""
-                     disabled
-                     size="medium"
-                     icon="dorel-icons:cart">
-            Add to cart
-          </dorel-cta>
-          <dorel-cta title="This is disabled because of x and y"
-                     type="link"
-                     link=""
-                     disabled
-                     size="medium"
-                     icon="dorel-icons:plus">
-            Read more
-          </dorel-cta>
+          <dorel-code-snippet>
+            <dorel-cta title="This is disabled because of x and y"
+                       type="primary"
+                       link=""
+                       size="medium"
+                       disabled
+                       icon="dorel-icons:chevron-right">
+              Call to Action
+            </dorel-cta>
+            <dorel-cta title="This is disabled because of x and y"
+                       type="secondary"
+                       link=""
+                       disabled
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              Call to Action
+            </dorel-cta>
+            <dorel-cta title="This is disabled because of x and y"
+                       type="link"
+                       link=""
+                       disabled
+                       size="medium"
+                       icon="dorel-icons:chevron-right">
+              Call to Action
+            </dorel-cta>
+            <dorel-cta title="This is disabled because of x and y"
+                       type="cart-add"
+                       link=""
+                       disabled
+                       size="medium"
+                       icon="dorel-icons:cart">
+              Add to cart
+            </dorel-cta>
+            <dorel-cta title="This is disabled because of x and y"
+                       type="link"
+                       link=""
+                       disabled
+                       size="medium"
+                       icon="dorel-icons:plus">
+              Read more
+            </dorel-cta>
+          </dorel-code-snippet>
         </dorel-layout-column>
       </dorel-layout-row>
 
 
       <hr>
       <h2 class="class-for-h2">Section cta's</h2>
-
-      <dorel-cta title="Call to action"
-                 type="tertiary"
-                 link=""
-                 size="medium"
-                 icon="dorel-icons:chevron-right">
-        Section Call to Action
-      </dorel-cta>
-
-
+      <dorel-code-snippet>
+        <dorel-cta title="Call to action"
+                   type="tertiary"
+                   extra-icon="dorel-icons:play-circle-outline"
+                   link=""
+                   size="large"
+                   icon="dorel-icons:chevron-right">
+          Section Call to Action
+        </dorel-cta>
+      </dorel-code-snippet>
     </dorel-layout-container>
   </template>
   <script>

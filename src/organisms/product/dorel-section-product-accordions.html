@@ -1,0 +1,138 @@
+<link rel="import" href="../../molecules/product-information/dorel-product-information-topic.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-faq.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-manuals.html">
+<link rel="import" href="../../molecules/product-information/dorel-product-information-specifications.html">
+
+<dom-module id="dorel-section-product-accordions">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      dorel-layout-container {
+        padding: 1.5em 0;
+        float: left;
+        width: 100%;
+      }
+
+      dorel-layout-container[tablet-medium-up] {
+        padding: 3em 0;
+      }
+    </style>
+
+    <template
+      is="dom-if"
+      if="[[ accordionsData.accordions.length ]]">
+
+      <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+      <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+        <dorel-layout-row align="center">
+          <dorel-layout-column desktop-column-span="8" tablet-column-span="12" mobile-column-span="12">
+            <div class="accordion">
+
+              <template
+                is="dom-repeat"
+                items="[[ accordionsData.accordions ]]">
+
+                <dorel-accordion-item
+                  heading="[[_defineHeading(item.accordion_type)]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index$="[[ index ]]">
+
+                  <!-- Product Information Basic -->
+                  <template
+                    is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'topic') ]]">
+                    <dorel-product-information-topic data="[[ item ]]"></dorel-product-information-topic>
+                  </template>
+                  <!--// Product Information Basic -->
+
+                  <!-- Product Information FAQ -->
+                  <template
+                    is="dom-if"
+                    if="[[ _isPageComponent(item.accordion_type, 'faq') ]]">
+                    <dorel-product-information-faq data="[[ item ]]"></dorel-product-information-faq>
+                  </template>
+                  <!--// Product Information FAQ -->
+
+                  <!-- Product Information Manuals -->
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'manuals') ]]">
+                    <dorel-product-information-manuals data="[[ item ]]"></dorel-product-information-manuals>
+                  </template>
+                  <!--// Product Information Manuals -->
+
+                  <!-- Product Information Specifications -->
+                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'specifications') ]]">
+                    <dorel-product-information-specifications
+                      data="[[ item ]]"></dorel-product-information-specifications>
+                  </template>
+
+                  <!--// Product Information Specifications -->
+                </dorel-accordion-item>
+              </template>
+            </div>
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
+    </template>
+  </template>
+
+  <script>
+    class DorelSectionProductAccordions extends ReduxMixin(Polymer.mixinBehaviors([PageBuilderBehavior, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
+
+      static get is() { return 'dorel-section-product-accordions'; }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name productId
+           * @description coming from the currentProduct passed by parent
+           */
+          productId: {
+            type: String,
+            observer: '_productIdChanged'
+          },
+
+          /**
+           * @attribute
+           * @name accordionsData
+           * @description coming from the page-builder this data object is filled
+           * with ACF/Wordpress data about the component
+           */
+          accordionsData: {
+            type: Object,
+            statePath: function(state) {
+              if(!this.productId || !state.modules.accordions.length) {
+                return { isLoading: true };
+              }
+              return state.modules.accordions.find(item => {
+                return item.productId === this.productId && !item.isLoading && !item.isNotAvailable;
+              });
+            }
+          }
+        }
+      }
+
+      /**
+       * observer
+       * @name _productIdChanged
+       * @description everytime the observer is trigger it will dispatch the requestModule action
+       */
+      _productIdChanged(productId) {
+        if(!productId || !productId.length) {
+          return;
+        }
+        this.dispatch('requestModule', { productId, type: 'accordions' });
+      }
+
+      _defineHeading(type) {
+        return this.localize(`product_accordions#${type}`);
+      }
+    }
+
+    customElements.define(DorelSectionProductAccordions.is, DorelSectionProductAccordions);
+  </script>
+</dom-module>

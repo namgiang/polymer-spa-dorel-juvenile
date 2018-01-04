@@ -1,9 +1,13 @@
-<link rel="import" href="../atoms/dorel-accordion-item.html">
+<link rel="import" href="../../node_modules/iron-selector/iron-selector.html">
+
 <dom-module id="dorel-section-service-faq-overview">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
-        --button-margin-spacing: -1.5em;
         float: left;
         width: 100%
         margin-bottom: 3em;
@@ -33,14 +37,6 @@
         width: 100%;
       }
 
-      paper-item {
-        height: 3em;
-      }
-
-      paper-menu {
-        padding: 0;
-      }
-
       .topic.iron-selected {
         background-color: var(--theme-color-monochrome-2);
         color: var(--theme-brand-color-2) !important;
@@ -67,6 +63,7 @@
 
       .topic:hover {
         color: var(--theme-brand-color-1);
+        cursor: pointer;
       }
 
       .topic-description {
@@ -82,39 +79,39 @@
       }
 
       ul {
+        @apply(--theme-list);
         margin: 0;
         padding: 0;
         list-style: none;
       }
 
-      /* TODO: List styles will be added when the info pages are updated, this should be replaced later */
+      li {
+        @apply(--theme-list-item);
+      }
+
       li::before {
-        content: "• ";
-        padding-right: .5em;
-        color: var(--theme-brand-color-2);
+        @apply(--theme-unordered-list-bullet);
+        background-color: var(--theme-color-text-link);
       }
 
       li:first-child {
         padding-top: 0;
-      }
-
-      li {
-        padding-top: 1.5em;
+        margin-top: 0;
       }
 
       a {
         text-decoration: none;
-        color: var(--theme-brand-color-2);
+        color: var(--theme-color-text-link);
         transition: .3s ease color;
       }
 
       a:visited {
         text-decoration: none;
-        color: var(--theme-brand-color-2);
+        color: var(--theme-color-text-link);
       }
 
       a:hover {
-        color: var(--theme-brand-color-1);
+        color: var(--theme-color-text-link-active);
       }
 
       dorel-section-service-faq-promo {
@@ -125,6 +122,7 @@
 
       dorel-cta {
         float: right;
+        margin-top: 1.5em;
       }
 
       .title {
@@ -135,11 +133,11 @@
 
       [tablet-medium-up] .title {
         @apply(--theme-typography-7);
-        margin-top: 0;
       }
 
       [tablet-medium-up] .desktop-topics-row {
         margin-top: 3em;
+        margin-bottom: 3em;
       }
 
     </style>
@@ -163,11 +161,8 @@
 
           <!-- Desktop Service Topic Listing -->
           <template is="dom-if" if="[[ breakpoints.desktopSmallUp ]]">
-
             <div class="topic-select">
-              <paper-menu attr-for-selected="name"
-                          selected="{{ selectedTopic }}">
-
+              <iron-selector attr-for-selected="name" selected="{{ selectedTopic }}">
                 <template
                   is="dom-repeat"
                   items="[[ faqCategories ]]"
@@ -183,8 +178,7 @@
                     <iron-icon class="icon-right" icon="dorel-icons:chevron-right"></iron-icon>
                   </div>
                 </template>
-
-              </paper-menu>
+              </iron-selector>
             </div>
 
             <div class="topic-display">
@@ -201,14 +195,14 @@
                   <!--// dom-if featured -->
                   <template
                     is="dom-if"
-                    if="[[ category.featured_questions.length ]]">
+                    if="[[ category.featured_items.length ]]">
                     <div class="topic-listing" name$="[[ index ]]">
                       <ul>
 
                         <!-- dom-repeat featured -->
                         <template
                           is="dom-repeat"
-                          items="[[ category.featured_questions ]]"
+                          items="[[ category.featured_items ]]"
                           as="featured">
 
                           <li>
@@ -332,12 +326,6 @@
     Polymer({
       is: 'dorel-section-service-faq-overview',
       properties: {
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object
-        },
 
         selectedTopic: {
           type: String,
@@ -346,6 +334,10 @@
 
         templateData: {
           type: Object
+        },
+
+        faqDetailPages: {
+          type: Array
         },
 
         /**
@@ -372,7 +364,7 @@
         if (typeof newVal === 'undefined' || newVal === oldVal) return;
 
         // retrieve the faqDetailPages from Wordpress
-        var detailPages = this._getFaqDetailPages();
+        var detailPages = this.faqDetailPages;
 
         /**
          * TLDR: Add detail page data to the faq category (detail link/promo data)
@@ -400,28 +392,8 @@
           }); // faqCategories foreach
 
         }); // detailPages foreach
-      },
-
-      /**
-       * @name _getFaqDetailPages
-       * @description return all the faq detail pages from WP
-       * @returns Array of page objects
-       */
-      _getFaqDetailPages: function () {
-        var wpPages = this.get('appCache.collect.pages');
-
-        if (typeof wpPages === 'undefined') return [];
-
-        // filter out the detailPages from WP
-        var faqPages = wpPages.filter(function (page) {
-          return page.template === 'faq-detail';
-        });
-
-        // return the faqDetailPages
-        return faqPages;
       }
     });
-
   </script>
 
 </dom-module>

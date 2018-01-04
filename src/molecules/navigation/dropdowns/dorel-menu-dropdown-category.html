@@ -1,15 +1,19 @@
 <link rel="import" href="../dropdown-items/dorel-dropdown-card.html">
 
-<dom-module id="dorel-menu-dropdown-category" opened$="[[ opened]]">
+<dom-module id="dorel-menu-dropdown-category">
   <template>
     <style>
-      :host {
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      dorel-layout-container {
         width: 100%;
         margin: 0;
-        position: absolute;
+        position: fixed;
         left: 0;
-        transform: translate(0, -100%) scaleY(1);
-        top: var(--theme-menu-offset);
+        transform: translate(0, -100%);
+        top: 0;
         z-index: -5;
         opacity: 1;
         visibility: hidden;
@@ -23,11 +27,10 @@
         -moz-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
         box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.13);
         padding-bottom: 1.5em;
-
       }
 
-      :host-context([opened]) {
-        transform: translate(0, 0) scaleY(1);
+      dorel-layout-container[opened] {
+        transform: translate(0, 0);
         top: var(--theme-menu-offset);
         opacity: 1;
         visibility: visible;
@@ -56,8 +59,15 @@
         margin-top: 0;
       }
 
+      dorel-layout-column {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        flex-direction: column;
+      }
     </style>
-    <dorel-layout-container>
+    <dorel-layout-container opened$="[[ opened ]]" id="menu-dropdown">
       <dorel-layout-row align="right">
         <template
           is="dom-repeat"
@@ -111,7 +121,7 @@
                      gtm-child="[[ gtmChild ]]"
                      gtm-child-index="[[ gtmChildIndex ]]"
                      gtm-cta-index="0">
-            {{ localize('All') }} [[ mainItem.title ]]
+            {{ localize('All') }} [[ _toLowercase(mainItem.title) ]]
 
           </dorel-cta>
         </dorel-layout-column>
@@ -120,7 +130,9 @@
 
   </template>
   <script>
-
+    /**
+     * TODO: doc comments to add!
+     **/
     Polymer({
       is: 'dorel-menu-dropdown-category',
       properties: {
@@ -138,7 +150,7 @@
 
         /**
          * @name featuredItems
-         * @description array of featurd links (subcategories or products)
+         * @description array of featured links (subcategories or products)
          */
         featuredItems: {
           type: Array,
@@ -169,11 +181,21 @@
          */
         route: {
           type: Object
+        },
+
+        /**
+         * @name opened
+         * @description opened state of the dropdown
+         */
+        opened: {
+          type: Boolean,
+          value: false,
+          notify: true
         }
 
       },
 
-      behaviors: [MainMenuBehavior, DorelMultilingualBehavior],
+      behaviors: [DorelMultilingualBehavior, MatchUrlBehavior],
 
 
       /**
@@ -208,6 +230,10 @@
         return dropdownItems.filter(function (item, index) {
           return index < 4 ? true : false;
         })
+      },
+
+      _toLowercase: function(text) {
+        return text.toLowerCase();
       }
 
     });

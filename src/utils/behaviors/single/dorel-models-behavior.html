@@ -1,5 +1,14 @@
 <script>
+/**
+ * @polymerBehavior
+ */
   ModelsBehavior = {
+
+    properties: {
+      pageId: {
+        type: Number
+      }
+    },
     /**
      * @name _defineComponentModels
      * @description since our ACF is set to define fixed fields for our Content Editors
@@ -13,6 +22,10 @@
     _defineComponentModels: function (templateData) {
       // check if the templateData has content
       if (!this._hasProperties(templateData)) return;
+
+      if(this.templateData.id) {
+        this.set('pageId', this.templateData.id);
+      }
 
       // ACF DEFINITIONS
       if (typeof templateData.acf !== 'undefined') {
@@ -86,19 +99,23 @@
       }
     },
 
-    _defineOptionModels: function(appCache) {
-      if (!this._hasProperties(appCache) 
-        || !this._hasProperties(appCache.collect)
-        || !this._hasProperties(appCache.collect.options)) return;
+    _defineOptionModels: function(config) {
+      if (!this._hasProperties(config)) {
+        return;
+      }
 
       // SET CUSTOMER SUPPORT OPTIONS
-      if(typeof appCache.collect.options.customer_support !== 'undefined') {
-        this.set('customerSupportOptions', appCache.collect.options.customer_support[0]);
+      if(config.customer_support && config.customer_support.length) {
+        this.set('customerSupportOptions', config.customer_support[0]);
       }
 
       // SET FOOTER OPTIONS
-      if(typeof appCache.collect.options.footer !== 'undefined') {
-        this.set('footerOptions', appCache.collect.options.footer[0]);
+      if(config.footer && config.footer.length) {
+        this.set('footerOptions', config.footer[0]);
+      }
+
+      if(config.third_party && config.third_party.length) {
+        this.set('thirdPartyOptions', config.third_party[0]);
       }
     }
   };

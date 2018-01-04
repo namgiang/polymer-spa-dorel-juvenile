@@ -1,0 +1,42 @@
+<script>
+  (function() {
+    const initial = {
+      usps: [],
+      features: [],
+      accordions: [],
+      topics: []
+    };
+
+    modulesReducer = (state = initial, action) => {
+      switch (action.type) {
+
+        case 'REQUEST_MODULE':
+          state[action.payload.type].push({
+            productId: action.payload.productId,
+            type: action.payload.type,
+            isLoading: true,
+            notAvailable: false
+          });
+          return Object.assign({}, state, {
+            [action.payload.type]: state[action.payload.type].map(item => item)
+          });
+
+        case 'REQUEST_MODULE_SUCCESS':
+          return Object.assign({}, state, {
+            [action.payload.type]: state[action.payload.type].map(item => {
+              return item.productId === action.payload.productId ? Object.assign(item, action.payload, { isLoading: false }) : item;
+            })
+          });
+
+        case 'REQUEST_MODULE_FAILED':
+          return Object.assign({}, state, {
+            [action.payload.type]: state[action.payload.type].map(item => {
+              return item.productId === action.payload.productId ? Object.assign(item, { isLoading: false, notAvailable: true }) : item;
+            })
+          });
+        default:
+          return state;
+      }
+    };
+}());
+</script>

@@ -1,0 +1,68 @@
+<link rel="import" href="../dorel-section-cards.html">
+
+<dom-module id="dorel-section-product-topics">
+  <template>
+    <template
+      is="dom-if"
+      if="[[topicData.cards.length]]">
+      <dorel-section-cards cards-data="[[ topicData ]]" compact></dorel-section-cards>
+    </template>
+
+  </template>
+  <script>
+    class DorelSectionProductTopics extends ReduxMixin(Polymer.mixinBehaviors([PageBuilderBehavior, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
+
+      static get is() {
+        return 'dorel-section-product-topics';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name productId
+           * @description coming from the currentProduct passed by parent
+           */
+          productId: {
+            type: String,
+            observer: '_productIdChanged'
+          },
+
+          /**
+           * @attribute
+           * @name topicData
+           * @description coming from the redux modules state
+           */
+          topicData: {
+            type: Object,
+            statePath: function(state) {
+              if(!this.productId || !state.modules.topics.length) {
+                return { isLoading: true, cards: [] };
+              }
+              const topic = state.modules.topics.find(item => {
+                return item.productId === this.productId && !item.isLoading && !item.isNotAvailable;
+              });
+              if(topic) {
+                // set cards because data model needs property `cards`
+                return Object.assign({}, topic, { cards: topic.Topics });
+              }
+            }
+          }
+        };
+      }
+
+      /**
+       * observer
+       * @name _productIdChanged
+       * @description everytime the observer is trigger it will dispatch the requestModule action
+       */
+      _productIdChanged(productId) {
+        if(!productId || !productId.length) {
+          return;
+        }
+        this.dispatch('requestModule', { productId, type: 'topics' });
+      }
+    }
+    customElements.define(DorelSectionProductTopics.is, DorelSectionProductTopics);
+  </script>
+</dom-module>

@@ -1,0 +1,22 @@
+<script>
+/**
+ * @polymerBehavior
+ */
+  SocialBehavior = {
+    /**
+     * @attribute
+     * @name _getFacebookLink
+     * @description retrieves the facebook href from the social channels options to
+     * be set on the href of the customer support social link
+     */
+    _getFacebookLink: function(socialChannels) {
+      if(typeof socialChannels === 'undefined' || !socialChannels.length) return;
+
+      var facebookChannel = socialChannels.find(function(channel) {
+        return channel.social_media_icon === 'facebook';
+      });
+
+      return facebookChannel.social_media_href;
+    }
+  };
+</script>

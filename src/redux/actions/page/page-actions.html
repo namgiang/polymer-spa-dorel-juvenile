@@ -1,0 +1,37 @@
+<script>
+(function() {
+
+function addPage(page) {
+  return {
+    type: 'ADD_PAGE',
+    payload: page
+  }
+}
+
+function currentRouteSet() {
+  return {
+    type: 'CURRENT_ROUTE_SET'
+  }
+}
+
+function addCurrentPage(page) {
+  return {
+    type: 'SET_CURRENT_PAGE',
+    payload: page
+  }
+}
+
+function setCurrentPage(page) {
+  return (dispatch, getState) => {
+    dispatch(addCurrentPage(page));
+    return dispatch(currentRouteSet());
+  }
+}
+
+pageActions = {
+  addPage,
+  setCurrentPage
+}
+
+}());
+</script>

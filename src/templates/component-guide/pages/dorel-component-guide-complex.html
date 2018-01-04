@@ -1,5 +1,8 @@
 <link rel="import" href="../dorel-component-guide-shared-styles.html">
 <link rel="import" href="../../../utils/behaviors/single/dorel-component-guide-behaviour.html">
+<link rel="import" href="../../../utils/behaviors/single/dorel-value-behavior.html">
+
+<script src="../pages/dorel-component-guide-complex-data.js"></script>
 
 <dom-module id="dorel-component-guide-complex">
   <template>
@@ -8,47 +11,38 @@
         float: left;
         width: 100%;
       }
-
     </style>
 
     <app-route
       route="{{ route }}"
-      pattern="/:componentName"
+      pattern="/:tabIndex"
       data="{{ subrouteData }}"></app-route>
     <section>
-
-      <!-- Important! The topic attribute should correspond with the template.-->
-      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
       <dorel-layout-container>
-        <paper-menu id="topics"
-                    selected="{{ subrouteData.componentName }}"
-                    attr-for-selected="topic">
-          <paper-item topic="home">Home</paper-item>
-          <paper-item topic="product-detail">Product Detail</paper-item>
-          <paper-item topic="product-widgets">Product Widgets</paper-item>
-          <paper-item topic="multilingual">Multilingual</paper-item>
-          <paper-item topic="category-about">Category About</paper-item>
-          <paper-item topic="service">Service</paper-item>
-          <paper-item topic="info-pages">Info Pages</paper-item>
-          <paper-item topic="cards">Cards</paper-item>
-        </paper-menu>
+        <dorel-nav-tabs title="title" selected="{{ subrouteData.tabIndex }}"
+                        tabs="[[ components ]]"></dorel-nav-tabs>
       </dorel-layout-container>
-      <!-- Important! The topic attribute should correspond with the template.-->
-      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
+
       <div class="component-guide-container">
         <iron-pages class="component-guide__content"
-                    selected="[[ subrouteData.componentName ]]"
+                    selected="[[ subrouteData.tabIndex ]]"
                     on-selected-changed="_pageSelected"
-                    attr-for-selected="topic">
-          <dorel-component-guide-home topic="home"></dorel-component-guide-home>
-          <dorel-component-guide-product-detail app-cache="[[ appCache ]]"
-                                                topic="product-detail"></dorel-component-guide-product-detail>
-          <dorel-component-guide-product-widgets topic="product-widgets"></dorel-component-guide-product-widgets>
-          <dorel-component-guide-multilingual topic="multilingual"></dorel-component-guide-multilingual>
-          <dorel-component-guide-category-about topic="category-about"></dorel-component-guide-category-about>
-          <dorel-component-guide-service topic="service"></dorel-component-guide-service>
-          <dorel-component-guide-info-pages topic="info-pages"></dorel-component-guide-info-pages>
-          <dorel-component-guide-cards topic="cards"></dorel-component-guide-cards>
+                    attr-for-selected="index">
+          <dorel-component-guide-home index="0"></dorel-component-guide-home>
+          <dorel-component-guide-product-detail index="1"></dorel-component-guide-product-detail>
+          <dorel-component-guide-product-widgets index="2"></dorel-component-guide-product-widgets>
+          <dorel-component-guide-multilingual index="3"></dorel-component-guide-multilingual>
+          <dorel-component-guide-category-about index="4"></dorel-component-guide-category-about>
+          <dorel-component-guide-service index="5"></dorel-component-guide-service>
+          <dorel-component-guide-info-pages index="6"></dorel-component-guide-info-pages>
+          <dorel-component-guide-cards index="7"></dorel-component-guide-cards>
+          <dorel-component-guide-video index="8"></dorel-component-guide-video>
+          <dorel-component-guide-content-block index="9"></dorel-component-guide-content-block>
+
+          <!-- pages that can contain video need to be restamped, otherwise video's (with sound) can keep playing in the background -->
+          <template is="dom-if" if="[[ _isValue(subrouteData.tabIndex, '10') ]]" restamp="true">
+            <dorel-component-guide-marketing-campaign index="10"></dorel-component-guide-marketing-campaign>
+          </template>
 
         </iron-pages>
       </div>
@@ -58,16 +52,16 @@
   <script>
     Polymer({
       is: 'dorel-component-guide-complex',
-      behaviors: [componentGuideBehavior],
+      observers: ['_navSelectChanged(subrouteData.tabIndex)'],
+      behaviors: [componentGuideBehavior, ValueBehavior],
       properties: {
-        appCache: {
-          type: Object,
+        components: {
+          type: Array,
           value: function () {
-            return {};
+            return complexComponents;
           }
-        },
+        }
       }
-
     });
   </script>
 </dom-module>

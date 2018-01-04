@@ -1,70 +1,55 @@
+<link rel="import" href="../utils/behaviors/single/dorel-gtm-behavior.html">
+
 <dom-module id="dorel-category-submenu">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       nav {
         width: 100%;
       }
-
-      .menu {
-        margin: .75rem 0 .75rem 0;
-        padding-left: 2em;
-      }
-
-      .menu-item {
-        min-height: 1.5rem;
-      }
-
-      .link {
-        @apply(--theme-typography-3);
-        color: var(--theme-color-monochrome-7);
-        text-decoration: none;
-      }
-
-      .link:hover {
-        @apply(--theme-text-link-active);
-        color:var(--theme-color-text-link-active);
-      }
-
-      [tablet-medium-up] .link {
-        @apply(--theme-typography-3);
-      }
-
-      [tablet-medium-up] .menu {
-        margin: .75rem 0 .75rem 0;
-        padding-left: 2em;
-      }
-
-      [desktop-small-up] .link {
-        @apply(--theme-typography-3);
-      }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <nav role="navigation"
-      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-      desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
-      <ul class="menu">
-        <template
-          is="dom-repeat"
-          items="[[ items ]]"
-          as="menuItem">
-            <li class="menu-item">
-              <a
-                class="link"
-                href="[[ getUrl(menuItem) ]]"
-                on-click="_menuItemTap"
-                gtm-parent="dorel-category-submenu"
-                gtm-parent-index="[[ index ]]">[[ menuItem.post_title ]]</a>
-            </li>
-        </template>
-      </ul>
+         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+         desktop-small-up$="{{ breakpoints.desktopSmallUp }}">
+
+      <template
+        is="dom-repeat"
+        items="[[ items ]]"
+        as="menuItem">
+        <dorel-cta title="[[ menuItem.post_title ]]"
+                   on-click="_menuItemTap"
+                   no-margin
+                   type="link"
+                   left-align-icon
+                   gtm-parent="dorel-category-submenu"
+                   gtm-parent-index="[[ index ]]"
+                   link="[[ getUrl(menuItem) ]]"
+                   size="medium"
+                   icon="dorel-icons:chevron-right">
+          [[ menuItem.post_title ]]
+        </dorel-cta>
+
+        <!--<a
+          class="link"
+          href="[[ getUrl(menuItem) ]]"
+          on-click="_menuItemTap"
+          gtm-parent="dorel-category-submenu"
+          gtm-parent-index="[[ index ]]">[[ menuItem.post_title ]]</a> -->
+      </template>
     </nav>
   </template>
   <script>
     Polymer({
       is: 'dorel-category-submenu',
+
+      behaviors: [GtmBehavior],
+
       properties: {
 
         /**
@@ -85,7 +70,7 @@
        * this is needed because we don't recieve the full url from wordpress
        * @returns String
        */
-      getUrl: function(menuItem) {
+      getUrl: function (menuItem) {
         var currentUrl = window.location.href.split('?')[0].split('#')[0];
         currentUrl = currentUrl.substr(-1) === '/' ? currentUrl : currentUrl + '/';
         return currentUrl + menuItem.post_name;
@@ -112,9 +97,7 @@
             'targetPage': element.href
           }
         };
-
-        // send event data to tracking function
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(event);
       }
     });
   </script>

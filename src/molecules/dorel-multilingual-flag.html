@@ -1,26 +1,30 @@
 <dom-module id="dorel-multilingual-flag">
-  <style>
-    :host {
-      --flag-width: 1.5em;
-      --flag-height: 1.125em;
-      --flag-border-radius: .125em;
-    }
-
-    section {
-      background-color: var(--theme-color-monochrome-3);
-      float: left;
-      width: var(--flag-width);
-      height: var(--flag-height);
-      border-radius: var(--flag-border-radius);
-      display: block;
-      background-size: contain;
-      background-repeat: no-repeat;
-      overflow: hidden;
-      border: 1px solid var(--theme-color-monochrome-2);
-    }
-
-  </style>
   <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        --flag-width: 1.5em;
+        --flag-height: 1.125em;
+        --flag-border-radius: .125em;
+      }
+  
+      section {
+        background-color: var(--theme-color-monochrome-3);
+        float: left;
+        width: var(--flag-width);
+        height: var(--flag-height);
+        border-radius: var(--flag-border-radius);
+        display: block;
+        background-size: contain;
+        background-repeat: no-repeat;
+        overflow: hidden;
+        border: 1px solid var(--theme-color-monochrome-2);
+      }
+  
+    </style>
     <section id="flag">
     </section>
   </template>
@@ -48,7 +52,7 @@
         if (this.countryCode !== '') {
           var flagSource = "url('/assets/images/flags/COUNTRY.svg')";
           flagSource = flagSource.replace('COUNTRY', this.countryCode);
-          this.$$('#flag').style.backgroundImage = flagSource;
+          this.$.flag.style.backgroundImage = flagSource;
         }
       },
       /**

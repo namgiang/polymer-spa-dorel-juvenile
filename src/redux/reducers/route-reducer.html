@@ -1,0 +1,41 @@
+<script>
+  (function() {
+    const initial = {
+      isLoading: false,
+      currentRoute: {},
+      currentLanguage: {},
+      previousRoutes: []
+    };
+
+    routeReducer = (state = initial, action) => {
+      switch (action.type) {
+
+        case 'SET_CURRENT_ROUTE':
+          return Object.assign({}, state, {
+            isLoading: true,
+            currentRoute: Object.assign({}, action.payload)
+          });
+
+        case 'CURRENT_ROUTE_SET':
+          return Object.assign({}, state, {
+            isLoading: false,
+          });
+
+        case 'ADD_ROUTE_TO_PREVIOUS_ROUTES':
+          state.previousRoutes.push(action.payload);
+          return Object.assign({}, state, {
+            previousRoutes: state.previousRoutes.map(route => route)
+          });
+
+        case 'SET_CURRENT_LANGUAGE':
+          return Object.assign({}, state, {
+            currentLanguage: Object.assign({}, action.payload)
+          });
+
+        default:
+          return state;
+      }
+    };
+
+}());
+</script>

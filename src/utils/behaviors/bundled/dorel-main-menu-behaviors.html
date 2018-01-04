@@ -2,9 +2,12 @@
 <link rel="import" href="../single/dorel-get-deep-array-items-behavior.html">
 <link rel="import" href="../single/dorel-click-outside-element-behavior.html">
 <link rel="import" href="../single/dorel-window-scroll-behavior.html">
+<link rel="import" href="../single/dorel-gtm-behavior.html">
 
 <script>
-  // Implement the extended behavior
+/**
+ * @polymerBehavior
+ */
   NewBehaviorImpl = {
 
     properties: {
@@ -32,11 +35,12 @@
        */
       opened: {
         type: Boolean,
-        reflectToAttribute: true
+        notify: true
       }
     },
 
     /**
+     * @polymerBehavior
      * @name checkIfCategoryItems
      * @description check if the mainItem has sub_category_items
      * @param mainItem - Object
@@ -47,6 +51,7 @@
     },
 
     /**
+     * @polymerBehavior
      * @name checkDropdownType
      * @description check if the mainItem has a certain dropdown_type
      * @param mainItem - Object
@@ -58,6 +63,7 @@
     },
 
     /**
+     * @polymerBehavior
      * @name isDropdownTypeCategory
      * @description check if the mainItem has dropdown_type of category
      * @param mainItem - Object
@@ -68,6 +74,7 @@
     },
 
     /**
+     * @polymerBehavior
      * @name isDropdownTypeCategory
      * @description check if the mainItem has dropdown
      * @param mainItem - Object
@@ -78,11 +85,14 @@
     },
 
     /**
+     * @polymerBehavior
      * @name _emitGtmEvent
      * @description handles all menu item clicks
      */
     _emitGtmEvent: function (event) {
       var element = Polymer.dom(event).localTarget;
+      var parent = element.parentNode;
+      var href = element.href ? element.href : parent.href;
       var event = {
         action: 'click',
         component: 'navigation',
@@ -94,15 +104,18 @@
         event: 'polymer_event',
         things: {
           'currentPage': document.URL,
-          'targetPage': element.href
+          'targetPage': href
         }
       };
-      this.fire('setAppCache', {value: event, path: 'events'});
+      this._dispatchGtmEvent(event);
     },
   }
 
-  // Define the behavior
+/**
+ * @polymerBehavior
+ */
   MainMenuBehavior = [
+    GtmBehavior,
     MatchUrlBehavior,
     getDeepArrayItemsBehavior,
     clickOutsideBehavior,

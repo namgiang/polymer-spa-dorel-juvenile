@@ -1,10 +1,11 @@
 <link rel="import" href="dorel-component-guide-shared-styles.html">
-<link rel="import" href="../../organisms/dorel-section-product-usps.html">
-<link rel="import" href="../../organisms/dorel-section-product-accessories.html">
-<link rel="import" href="../../organisms/dorel-section-product-features.html">
-<link rel="import" href="../../organisms/dorel-section-product-showcase.html">
-<link rel="import" href="../../organisms/dorel-section-product-video.html">
-<link rel="import" href="../../organisms/dorel-section-product-accordions.html">
+<link rel="import" href="../../organisms/product/dorel-section-product-usps.html">
+<link rel="import" href="../../organisms/product/dorel-section-product-accessories.html">
+<link rel="import" href="../../organisms/product/dorel-section-product-features.html">
+<link rel="import" href="../../organisms/product/dorel-section-product-showcase.html">
+<link rel="import" href="../../organisms/product/dorel-section-product-video.html">
+<link rel="import" href="../../organisms/product/dorel-section-product-accordions.html">
+<link rel="import" href="../../organisms/dorel-section-slideshow.html">
 
 <script src="mocks/product-detail/usps.js"></script>
 <script src="mocks/product-detail/features.js"></script>
@@ -12,15 +13,19 @@
 <script src="mocks/product-detail/product-showcase.js"></script>
 <script src="mocks/product-detail/videos.js"></script>
 <script src="mocks/product-detail/accordion.js"></script>
+<script src="mocks/product-detail/slideshow.js"></script>
 
 <dom-module id="dorel-component-guide-product-detail">
   <template>
     <style include="dorel-component-guide-shared-styles">
+
       dorel-section-product-accessories {
         margin-top: 1.5em;
       }
 
     </style>
+
+    <dorel-section-slideshow slideshow-data="[[ slideshowData ]]"></dorel-section-slideshow>
     <dorel-layout-container>
       <h1 class="class-for-h1">Product Detail Components</h1>
       <p>
@@ -30,8 +35,7 @@
       <h2 class="class-for-h2">Product Showcase</h2>
     </dorel-layout-container>
 
-    <dorel-section-product-showcase app-cache="[[ appCache ]]"
-                                    showcase-data="[[ productShowcaseData ]]"></dorel-section-product-showcase>
+    <dorel-section-product-showcase showcase-data="[[ productShowcaseData ]]"></dorel-section-product-showcase>
 
     <dorel-layout-container>
       <h2 class="class-for-h2">Product Features</h2>
@@ -67,19 +71,11 @@
       <h2 class="class-for-h2">Product Accordion</h2>
     </dorel-layout-container>
     <dorel-section-product-accordions accordions-data="[[ accordionsData ]]"></dorel-section-product-accordions>
-
-
   </template>
   <script>
     Polymer({
       is: 'dorel-component-guide-product-detail',
       properties: {
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
         brand: {
           type: String
         },
@@ -110,6 +106,10 @@
         accordionsData: {
           type: Object,
           value: accordionMock
+        },
+        slideshowData: {
+          type: Object,
+          value: slideshowMock
         }
       }
     });

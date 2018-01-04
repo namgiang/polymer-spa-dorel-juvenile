@@ -1,0 +1,78 @@
+<script>
+(function() {
+
+function requestProduct(url_key) {
+  return (dispatch, getState) => {
+    if (shouldFetchProduct(getState(), url_key)) {
+      dispatch(makeProductRequest(url_key))
+      return dispatch(fetchProduct(getState(), url_key))
+    } else {
+      return Promise.resolve()
+    }
+  }
+}
+
+function makeProductRequest(url_key) {
+  return {
+    type: 'REQUEST_PRODUCT',
+    payload: url_key
+  }
+}
+
+function fetchProduct(state, url_key) {
+  return dispatch => {
+    const currentLanguageCode = state.route.currentLanguage.languageCode;
+    const init = { method: 'GET', mode: 'cors', cache: 'default' };
+    const url = `${state.config.eComUrl}/rest/V1/dorel/product/${url_key}?language=${currentLanguageCode}`;
+    return fetch(url, init)
+      .then(handleErrors)
+      .then(response => response.json())
+      .then(json => dispatch(requestProductSucces(url_key, json)))
+      .catch(() => dispatch(requestProductFailed(url_key)))
+  }
+}
+
+function shouldFetchProduct(state, url_key) {
+  const product = state.product.products.find(product => product.url === url_key);
+  if (!product) {
+    return true;
+  } else if (product.isLoading) {
+    return false;
+  } else {
+    return product.notAvailable;
+  }
+}
+
+function requestProductSucces(url_key, products) {
+  if(products.length) {
+    return {
+      type: 'REQUEST_PRODUCT_SUCCESS',
+      payload: products[0]
+    }
+  } else {
+    return (dispatch) => {
+      return dispatch(requestProductFailed(url_key))
+    }
+  }
+}
+
+function requestProductFailed(url_key) {
+  return {
+    type: 'REQUEST_PRODUCT_FAILED',
+    payload: url_key
+  }
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+productByUrlKeyActions = {
+  requestProduct
+};
+
+}());
+</script>

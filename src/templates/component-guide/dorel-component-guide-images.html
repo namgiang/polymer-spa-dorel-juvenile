@@ -1,7 +1,7 @@
 <link rel="import" href="dorel-component-guide-shared-styles.html">
 <link rel="import" href="../../atoms/dorel-bynder-image.html">
 <link rel="import" href="../../atoms/dorel-bynder-responsive-image.html">
-
+<link rel="import" href="utils/dorel-code-snippet.html">
 <dom-module id="dorel-component-guide-images">
   <template>
     <style include="dorel-component-guide-shared-styles">
@@ -24,6 +24,7 @@
       }
 
       ul {
+        @apply(--theme-paragraph-text);
         float: left;
         width: 100%;
       }
@@ -41,7 +42,8 @@
         These allow settings for image sizes for mobile, tablets and larger screens.</p>
       <p>Derivatives are cropped in widescreen and fullscreen aspect ratios, which have a small and a retina
         version.</p>
-      <p>The Bynder derivative can be specified using the 'derivative-identifier' attribute, which currently accepts the
+      <h2 class="class-for-h2">Bynder Derivatives</h2>
+      <p>The Bynder derivative can be specified using the <i>'derivative-identifier'</i> attribute, which currently accepts the
         following values:</p>
       <ul>
         <li>Widescreen Small portrait</li>
@@ -56,53 +58,62 @@
         <li>webimage</li>
       </ul>
       <div class="image-container">
-        <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
-                            derivative-identifier="Fullscreen Small landscape"
-                            mobile-width="26em"
-                            mobile-height="18em"
-                            tablet-width="26em"
-                            tablet-height="18em"
-                            width="26em"
-                            height="18em"></dorel-bynder-image>
-        <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
-                            derivative-identifier="Fullscreen Small landscape"
-                            mobile-width="26em"
-                            mobile-height="18em"
-                            tablet-width="26em"
-                            tablet-height="18em"
-                            width="26em"
-                            height="18em"></dorel-bynder-image>
-        <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
-                            derivative-identifier="Fullscreen Small landscape"
-                            mobile-width="13em"
-                            mobile-height="9em"
-                            tablet-width="13em"
-                            tablet-height="9em"
-                            width="13em"
-                            height="9em"></dorel-bynder-image>
-        <dorel-bynder-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"
-                            derivative-identifier="Fullscreen Small landscape"
-                            mobile-width="6.5em"
-                            mobile-height="4.5em"
-                            tablet-width="6.5em"
-                            tablet-height="4.5em"
-                            width="6.5em"
-                            height="4.5em"></dorel-bynder-image>
+        <dorel-code-snippet>
+          <dorel-bynder-image media-id="[[  getDefaultImage() ]]"
+                              derivative-identifier="Fullscreen Small landscape"
+                              mobile-width="26em"
+                              mobile-height="18em"
+                              tablet-width="26em"
+                              tablet-height="18em"
+                              width="26em"
+                              height="18em"></dorel-bynder-image>
+          <dorel-bynder-image media-id="[[  getDefaultImage() ]]"
+                              derivative-identifier="Fullscreen Small landscape"
+                              mobile-width="26em"
+                              mobile-height="18em"
+                              tablet-width="26em"
+                              tablet-height="18em"
+                              width="26em"
+                              height="18em"></dorel-bynder-image>
+          <dorel-bynder-image media-id="[[  getDefaultImage() ]]"
+                              derivative-identifier="Fullscreen Small landscape"
+                              mobile-width="13em"
+                              mobile-height="9em"
+                              tablet-width="13em"
+                              tablet-height="9em"
+                              width="13em"
+                              height="9em"></dorel-bynder-image>
+          <dorel-bynder-image media-id="[[  getDefaultImage() ]]"
+                              derivative-identifier="Fullscreen Small landscape"
+                              mobile-width="6.5em"
+                              mobile-height="4.5em"
+                              tablet-width="6.5em"
+                              tablet-height="4.5em"
+                              width="6.5em"
+                              height="4.5em"></dorel-bynder-image>
+        </dorel-code-snippet>
       </div>
       <hr>
       <h2 class="class-for-h2">Full-screen Responsive Bynder Images</h2>
     </dorel-layout-container>
-    <dorel-bynder-responsive-image image-type="full-screen"
-                                   media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"></dorel-bynder-responsive-image>
+    <dorel-code-snippet>
+      <dorel-bynder-responsive-image image-type="full-screen"
+                                     media-id="[[  getDefaultImage() ]]"></dorel-bynder-responsive-image>
+    </dorel-code-snippet>
     <dorel-layout-container>
       <hr>
       <h2 class="class-for-h2">Wide-screen Responsive Bynder Images</h2>
     </dorel-layout-container>
-    <dorel-bynder-responsive-image media-id="7F84BD5F-551A-4DA5-8532AB44763439AA"></dorel-bynder-responsive-image>
+    <dorel-code-snippet>
+      <dorel-bynder-responsive-image media-id="[[  getDefaultImage() ]]"></dorel-bynder-responsive-image>
+    </dorel-code-snippet>
   </template>
   <script>
     Polymer({
       is: 'dorel-component-guide-images',
+      getDefaultImage: function() {
+        return CONFIG.BYNDER_DEFAULT_IMAGE;
+      }
     });
   </script>
 </dom-module>

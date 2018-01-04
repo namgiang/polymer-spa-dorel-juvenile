@@ -1,0 +1,48 @@
+<link rel="import" href="../dorel-component-guide-shared-styles.html">
+<link rel="import" href="../../../utils/behaviors/single/dorel-component-guide-behaviour.html">
+
+<dom-module id="dorel-component-guide-templates">
+  <template>
+    <style include="dorel-component-guide-shared-styles">
+      :host, iron-pages {
+        float: left;
+        width: 100%;
+      }
+
+    </style>
+
+    <app-route
+      route="{{ route }}"
+      pattern="/:componentName"
+      data="{{ subrouteData }}"></app-route>
+    <section>
+
+      <!-- Important! The topic attribute should correspond with the template.-->
+      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
+      <dorel-layout-container>
+        <paper-menu id="topics"
+                    selected="{{ subrouteData.componentName }}"
+                    attr-for-selected="topic">
+          <paper-item topic="home">Home</paper-item>
+        </paper-menu>
+      </dorel-layout-container>
+      <!-- Important! The topic attribute should correspond with the template.-->
+      <!-- So for topic="introduction", there should be a dorel-component-guide-introduction.html -->
+      <div class="component-guide-container">
+        <iron-pages class="component-guide__content"
+                    selected="[[ subrouteData.componentName ]]"
+                    on-selected-changed="_pageSelected"
+                    attr-for-selected="topic">
+          <dorel-component-guide-home topic="home"></dorel-component-guide-home>
+        </iron-pages>
+      </div>
+
+    </section>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-templates',
+      behaviors: [componentGuideBehavior, ValueBehavior]
+    });
+  </script>
+</dom-module>

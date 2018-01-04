@@ -3,6 +3,10 @@
   <template>
 
     <style include="iron-flex iron-flex-alignment">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       .back-to-top {
         width: 4.5em;
         height: 4.5em;
@@ -41,6 +45,7 @@
      */
     Polymer({
       is: 'dorel-back-to-top',
+      behaviors: [GtmBehavior],
       properties: {
         scrollDuration: {
           type: Number,
@@ -92,18 +97,15 @@
         // Initialises the animation loop. Bind 'this' to the function, so that the properties are still accessible
         window.requestAnimationFrame(this._scrollAnimationHandler.bind(this));
 
-        var event = {
+        const newEvent = {
           action: 'click',
           component: 'back-to-top',
           element: event.target,
           event: 'polymer_event'
         };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(newEvent);
       }
     });
   </script>
 
 </dom-module>
-
-

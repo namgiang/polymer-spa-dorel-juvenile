@@ -1,0 +1,154 @@
+<link rel="import" href="./dorel-template-product-detail.html">
+<link rel="import" href="../organisms/dorel-section-header.html">
+<link rel="import" href="../organisms/dorel-section-slideshow.html">
+<link rel="import" href="../organisms/product/dorel-section-product-accessories.html">
+<link rel="import" href="../organisms/product/dorel-section-product-accordions.html">
+<link rel="import" href="../organisms/product/dorel-section-product-showcase.html">
+
+<link rel="import" href="dorel-template-404.html">
+
+<dom-module id="dorel-template-accessory-detail">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        float: left;
+        width: 100%;
+      }
+
+      .loading-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100vh;
+      }
+
+      @-webkit-keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @-moz-keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+    </style>
+
+    <!-- define routing for products -->
+    <app-route
+      route="{{ route }}"
+      pattern="/:productName"
+      data="{{ routeData }}"
+      tail="{{ subroute }}"></app-route>
+
+    <template is="dom-if" if="[[ product.isLoading ]]">
+      <div class="loading-wrapper">
+        <dorel-loader loading="[[ product.isLoading ]]"></dorel-loader>
+      </div>
+    </template>
+
+    <div class="wrapper">
+
+      <template
+        is="dom-if"
+        if="[[ product.isNotAvailable ]]">
+        <dorel-template-404 name="404"></dorel-template-404>
+      </template>
+
+
+      <template
+        is="dom-if"
+        if="[[ _shouldShowProduct(product) ]]">
+
+        <template
+          is="dom-if"
+          if="[[ product.header_section ]]">
+          <dorel-section-header
+            section-header-data="[[ product.header_section ]]"
+            gtm-parent="dorel-section-header"
+            gtm-parent-index="0"></dorel-section-header>
+
+          <dorel-section-page-nav
+            breadcrumbs-toggle="true"></dorel-section-page-nav>
+        </template>
+
+        <dorel-section-product-showcase
+          accessory-scroll-handler="{{ accessoryScrollHandler }}"
+          showcase-data="[[ product ]]"
+          gtm-parent="dorel-section-product-showcase"
+          gtm-parent-index="1"></dorel-section-product-showcase>
+
+        <template
+          is="dom-if"
+          if="[[ product.slides.length ]]">
+          <dorel-section-slideshow
+            slideshow-data="[[ slideshowData ]]"
+            gtm-parent="dorel-section-product-video"
+            gtm-parent-index="3"></dorel-section-slideshow>
+        </template>
+
+        <!-- gerelateerde producten -->
+        <dorel-section-product-accessories
+          accessory-scroll-handler="{{ accessoryScrollHandler }}"
+          category="[[ category ]]"
+          related-products="[[ product.related_products ]]"
+          accessories-options="[[ product.related_product_section ]]"
+          gtm-parent="dorel-section-product-accessories"
+          gtm-parent-index="5"></dorel-section-product-accessories>
+
+        <dorel-section-product-accordions
+          product-id="[[ product.id ]]"
+          gtm-parent="dorel-section-product-accordion"
+          gtm-parent-index="4"></dorel-section-product-accordions>
+
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+    class DorelTemplateAccessoryDetail extends DorelTemplateProductDetail {
+
+      static get is() { return 'dorel-template-accessory-detail'; }
+
+      static get properties() {
+        return {
+
+          slideshowData: {
+            type: Object,
+            computed: '_getSlideshowData(product)'
+          }
+
+        };
+      }
+
+    }
+    customElements.define(DorelTemplateAccessoryDetail.is, DorelTemplateAccessoryDetail);
+
+  </script>
+</dom-module>

@@ -1,10 +1,14 @@
-<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../../node_modules/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../templates/component-guide/dorel-component-guide-shared-styles.html">
 
 <dom-module id="dorel-grid-overlay">
   <template>
     <style include="dorel-component-guide-shared-styles"></style>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       .vertical-rhythm {
         position: absolute;
         left: 0;
@@ -24,6 +28,7 @@
       }
 
       .horizontal-grid {
+        @apply(--max-width-container);
         position: fixed;
         left: 0;
         right: 0;
@@ -42,6 +47,12 @@
         opacity: 1;
       }
 
+      .row {
+        @apply(--theme-grid-row);
+        @apply(--theme-grid-row-mobile);
+        padding: 0 var(--theme-gutter-mobile);
+
+      }
 
       .column {
         @apply(--theme-grid-column);
@@ -75,10 +86,9 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <div tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-      <div class="vertical-rhythm" shown$="[[ appCache.grid.vertical ]]"></div>
-
-      <dorel-layout-container class="horizontal-grid" shown$="[[ appCache.grid.horizontal ]]">
-        <dorel-layout-row>
+      <div class="vertical-rhythm" shown$="[[ grid.vertical ]]"></div>
+      <div class="horizontal-grid" shown$="[[ grid.horizontal ]]">
+        <div class="row">
           <div class="column">
             <div class="column-content"></div>
           </div>
@@ -115,91 +125,90 @@
           <div class="column">
             <div class="column-content"></div>
           </div>
-        </dorel-layout-row>
-      </dorel-layout-container>
+        </div>
+      </div>
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-grid-overlay',
-      behaviors: [
-        Polymer.IronA11yKeysBehavior
-      ],
-      properties: {
-        keyEventTarget: {
-          type: Object,
-          value: function () {
-            return document.body;
+    class DorelGridOverlay extends ReduxMixin(Polymer.mixinBehaviors([Polymer.IronA11yKeysBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-grid-overlay';
+      }
+      static get properties() {
+        return {
+          keyEventTarget: {
+            type: Object,
+            value: function () {
+              return document.body;
+            }
+          },
+
+          pageRoutePath: {
+            type: Object,
+            notify: true,
+            readOnly: false,
+          },
+
+          grid: {
+            type: Object,
+            statePath: 'config.grid'
+          },
+
+          /**
+           * @name availableBrands
+           * @description Available brands to switch between
+           */
+          availableBrands: {
+            type: Array,
+            value: [],
+          },
+          /**
+           * @name selectedBrand
+           * @description Currently selected brand
+           */
+          selectedBrand: {
+            type: Object,
+            notify: true,
+            readOnly: false,
           }
-        },
-
-        pageRoutePath: {
-          type: Object,
-          notify: true,
-          readOnly: false,
-        },
-
-        appCache: {
-          type: Object,
-          value: function () {
-            return {}
-          }
-        },
-
-        /**
-         * @name availableBrands
-         * @description Available brands to switch between
-         */
-        availableBrands: {
-          type: Array,
-          value: [],
-        },
-        /**
-         * @name selectedBrand
-         * @description Currently selected brand
-         */
-        selectedBrand: {
-          type: Object,
-          notify: true,
-          readOnly: false,
-        }
-      },
+        };
+      }
       /**
        * Key bindings to trigger function, allowing control over the entire app
        * */
-      keyBindings: {
-        'shift+backspace': '_setVerticalRhythm',
-        'shift+enter': '_setHorizontalGrid',
-        //'shift+space': '_setPageToComponents'
-      },
+      get keyBindings() {
+        return {
+          'shift+backspace': '_setVerticalRhythm',
+          'shift+enter': '_setHorizontalGrid',
+          //'shift+space': '_setPageToComponents'
+        };
+      }
+
       /**
        * @name _setPageToComponents
        * @description Switch to the component guide page
        * */
-      _setPageToComponents: function () {
+      _setPageToComponents() {
         //TODO: This is a bit buggy but works (somehow fires of many events)
         this.pageRoutePath = 'component-guide/introduction/';
-      },
+      }
 
       /**
        * @name _setVerticalRhythm
        * @description Toggles the vertical rhythm global variable (and it's connected overlay component)
        */
-      _setVerticalRhythm: function () {
-        var vertical = this.appCache.grid.vertical;
-        console.log('first app Cache' + vertical);
-        this.fire('setAppCache', {value: !vertical, path: 'grid.vertical'});
-      },
+      _setVerticalRhythm() {
+        this.dispatch('setVertivalGrid');
+      }
       /**
        * @name _setHorizontalGrid
        * @description Toggles the horizontal grid global variable (and it's connected overlay component)
        */
-      _setHorizontalGrid: function () {
-        var horizontal = this.appCache.grid.horizontal;
-        console.log('first app Cache' + horizontal);
-        this.fire('setAppCache', {value: !horizontal, path: 'grid.horizontal'});
-      },
-    });
+      _setHorizontalGrid() {
+        this.dispatch('setHorizontalGrid');
+      }
+    }
+    customElements.define(DorelGridOverlay.is, DorelGridOverlay);
   </script>
 
 </dom-module>

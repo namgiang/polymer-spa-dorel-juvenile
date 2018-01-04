@@ -1,0 +1,55 @@
+<script>
+  (function() {
+    const initial = {
+      faq: {
+        faqs: [],
+        requestedCategories: []
+      }
+    };
+
+    gmtReducer = (state = initial, action) => {
+      switch (action.type) {
+
+        case 'REQUEST_FAQS_BY_CATEGORY':
+          state.faq.requestedCategories.push({
+            id: action.payload,
+            isLoading: true,
+            notAvailable: false
+          });
+          return Object.assign({}, state, {
+            faq: Object.assign({}, state.faq, {
+              requestedCategories: state.faq.requestedCategories
+            })
+          });
+
+        case 'REQUEST_FAQS_BY_CATEGORY_SUCCESS':
+          return Object.assign({}, state, {
+            faq: Object.assign({}, state.faq, {
+              requestedCategories: state.faq.requestedCategories.map(category => {
+                return category.id === action.payload.category ?
+                  Object.assign({}, category, { isLoading: false }) : category;
+              }),
+              faqs: action.payload.faqs.map(faq => {
+                return Object.assign({}, faq, { isLoading: false, notAvailable: false })
+              }).concat(state.faq.faqs.filter(oldItem => {
+                return !action.payload.faqs.some(newItem => oldItem.id === newItem.id)
+              }))
+            })
+          });
+
+        case 'REQUEST_FAQS_BY_CATEGORY_FAILED':
+          return Object.assign({}, state, {
+            faq: Object.assign({}, state.faq, {
+              requestedCategories: state.faq.requestedCategories.map(category => {
+                return category.id === action.payload.category ?
+                  Object.assign({}, category, { isLoading: false, isNotAvailable: true }) : category;
+              })
+            })
+          });
+
+        default:
+          return state;
+      }
+    };
+}());
+</script>

@@ -1,23 +1,24 @@
 <link rel="import" href="dropdowns/dorel-menu-dropdown-default.html">
 <link rel="import" href="dropdowns/dorel-menu-dropdown-category.html">
 
-<dom-module id="dorel-main-menu-item" is-dropdown$="[[ isDropdown ]]" is-active$="[[ isActive ]]">
+<dom-module id="dorel-main-menu-item">
   <template>
-    <style>
+    <style is="custom-style">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
         display: flex;
         flex-direction: row;
         justify-content: center;
         flex: 1;
         color: var(--theme-color-monochrome-7);
+        --iron-icon: transition: opacity 0.15s;
       }
 
       :host:hover {
-        color: var(--theme-color-text-link-active);
-      }
-
-      :host-context([is-active]) {
-        color: var(--theme-brand-color-2);
+        color: var(--theme-main-menu-text-link-color-active);
       }
 
       .menu-item {
@@ -27,6 +28,8 @@
         align-items: center;
         padding: 0.5rem 0.25rem;
         cursor: pointer;
+        height: 2em;
+        @apply(--theme-main-menu-item);
       }
 
       .menu-item.category {
@@ -34,13 +37,13 @@
       }
 
       .link {
-        @apply(--theme-typography-2);
         margin: 0;
         transition: color 0.2s;
         text-decoration: none;
         display: flex;
         align-items: center;
         color: var(--theme-color-monochrome-7);
+        outline: none;
       }
 
       .link::selection {
@@ -52,33 +55,40 @@
       }
 
       .menu-item:hover .link {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-main-menu-text-link-color-active);
       }
 
-      :host-context([is-active]) .link {
-        color: var(--theme-color-text-link-active);
+      [is-active] {
+        color: var(--theme-brand-color-2);
+      }
+
+      .link-text {
+        display: block;
+        position: relative;
+      }
+
+      [is-active] .link-text::after {
+        @apply(--theme-main-menu-selected-item-after)
+      }
+
+      [is-active] .link {
+        color: var(--theme-main-menu-text-link-color-active);
         cursor: default;
       }
 
-      :host-context([is-active]) .menu-item:hover .link {
-        color: var(--theme-color-text-link-active);
+      [is-active].menu-item:hover .link {
+        color: var(--theme-main-menu-text-link-color-active);
         cursor: default;
       }
 
       .menu-item__icon {
-        display: none;
-        margin-left: 0.2rem;
-        --iron-icon: transition: opacity 0.15s;
+        @apply(--theme-main-menu-dropdown-icon)
       }
 
       .menu-item:hover .menu-item__icon {
-        color: var(--theme-color-text-link-active);
+        color: var(--theme-main-menu-text-link-color-active);
       }
 
-      :host-context([is-dropdown]) .menu-item__icon {
-        display: flex;
-        flex: 1;
-      }
       .menu-item__icon[opened] {
         transform: scaleY(-1);
       }
@@ -110,24 +120,24 @@
       }
     </style>
 
-    <div class="menu-item" class$="{{ getClasses(mainItem) }}">
+    <div class="menu-item" class$="{{ getClasses(mainItem) }}" is-active$="[[ isActive ]]">
       <template is="dom-if" if="[[ !mainItem.dropdown ]]">
         <a on-click="clickMainItem"
           class="link"
           gtm-parent="dorel-navigation-main"
           gtm-parent-index="[[ index ]]"
           href="[[ mainItem.link ]]">
-          [[ mainItem.title ]]
+          <span class="link-text">[[ mainItem.title ]]</span>
         </a>
       </template>
 
       <template is="dom-if" if="[[ mainItem.dropdown ]]">
-        <div on-click="openDropdown"
+        <div on-click="toggleDropdown"
+          tabindex="0"
           class="link"
           gtm-parent="dorel-navigation-main"
           gtm-parent-index="[[ index ]]">
-          [[ mainItem.title ]]
-
+          <span class="link-text">[[ mainItem.title ]]</span>
           <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
         </div>
 
@@ -135,7 +145,7 @@
           <dorel-menu-dropdown-default
             index="[[ index ]]"
             main-item="[[ mainItem ]]"
-            opened$="[[ opened ]]"
+            opened="[[ opened ]]"
             route="[[ route ]]"
             dropdown-items="[[ mainItem.dropdown_items ]]">
           </dorel-menu-dropdown-default>
@@ -146,9 +156,9 @@
             <dorel-menu-dropdown-category
               index="[[ index ]]"
               main-item="[[ mainItem ]]"
-              opened$="[[ opened ]]"
+              opened="[[ opened ]]"
               route="[[ route ]]"
-              featured-items="[[ mainItem.sub_category_items ]]"
+              featured-items="[[ _contentSwitch(mainItem, products) ]]"
               dropdown-items="[[ mainItem.dropdown_items ]]">
             </dorel-menu-dropdown-category>
           </div>
@@ -160,83 +170,133 @@
 
   </template>
   <script>
+    class DorelMainMenuItem extends ReduxMixin(Polymer.mixinBehaviors([MainMenuBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-main-menu-item';
+      }
 
-    Polymer({
-      is: 'dorel-main-menu-item',
-      properties: {
+      static get properties() {
+        return {
 
-        /**
-         * @name mainItem
-         * @description
-         */
-        mainItem: {
-          type: Object
-        },
+          /**
+           * @name mainItem
+           * @description
+           */
+          mainItem: {
+            type: Object
+          },
 
-        /**
-         * @name index
-         * @description index of the dom-repeat used for the gtm
-         */
-        index: {
-          type: Number
-        },
+          /**
+           * @name index
+           * @description index of the dom-repeat used for the gtm
+           */
+          index: {
+            type: Number
+          },
 
-        /**
-         * @name isDropdown
-         * @description determines if menu item is a dropdown
-         */
-        isDropdown: {
-          type: Boolean,
-          reflectToAttribute: true
-        },
+          /**
+           * @name isActive
+           * @description determines if menu item is active
+           */
+          isActive: {
+            type: Boolean,
+            reflectToAttribute: true
+          },
 
-        /**
-         * @name isActive
-         * @description determines if menu item is active
-         */
-        isActive: {
-          type: Boolean,
-          reflectToAttribute: true
-        },
+          /**
+           * @name products
+           * @description will return products based on the category of the mainItem
+           */
+          products: {
+            type: Array,
+            statePath: function(state) {
+              return state.product.products.filter((product, index) => {
+                return !(product.categories && product.categories.indexOf(this.mainItem.category_id));
+              }).map((product) => {
+                return this.subCategoryItemMold(product);
+              }).filter((item, index) => index < 5);
+            }
+          },
 
-        /**
-         * @name route
-         * @description current route / url of the application
-         */
-        route: {
-          type: Object
+          /**
+           * @name route
+           * @description current route / url of the application
+           */
+          route: {
+            type: Object
+          }
+        };
+      }
+
+      /**
+       * template helper
+       * @name _contentSwitch
+       * @description determines what data is passed down to the child component
+       * if the productSwitch is not true it will set the default pages (sub_category_items) created by the menu-creator component
+       * else it will return the products
+       * @param mainItem - Object
+       * @param products - Array
+       * @returns Array
+       */
+      _contentSwitch(mainItem, products) {
+        if(mainItem && !mainItem.productSwitch) {
+          return mainItem.sub_category_items;
+        } else {
+          return products;
         }
-
-      },
-
-      behaviors: [MainMenuBehavior],
+      }
 
       /**
        * @name clickmainItem
        * @description closes the mobile menu and calls _emitGtmEvent
        * @param event - Object
        */
-      clickMainItem: function(event) {
+      clickMainItem(event) {
         this._emitGtmEvent(event);
         this.clickOutsideListen();
-      },
+      }
 
-      onClickOutside: function() {
-        this.openDropdown();
-      },
+      /**
+       * @name toggleDropdown
+       * @description if a dropdown is clicked it will dispatch a event with the index
+       * @param event - Object
+       */
+      toggleDropdown(event) {
+        this.dispatchEvent(new CustomEvent('toggleDropdown', { bubbles: true, composed: true, detail: {
+          value: this.get('index')
+        }}));
+      }
 
-      openDropdown: function(event) {
-        this.fire('toggleDropdown', { value: this.get('index') });
-      },
-
-      getClasses: function(mainItem) {
+      /**
+       * @name getClasses
+       * @description template helper that will determine the classes that will be added
+       * @param mainItem - Object
+       */
+      getClasses(mainItem) {
         if(this.checkDropdownType(mainItem, 'category')) {
           return 'menu-item category';
         }
         return 'menu-item';
-      },
+      }
 
-    });
-
+      /**
+       * @name subCategoryItemMold
+       * @description a function that returns a suitable data model for a subcategory item
+       * @param product - Object
+       * @returns Object
+       */
+      subCategoryItemMold(product) {
+        // determines if the product has childproducts and sets either the single or the first childproduct
+        const selected = product.child_products ? product.child_products[0] : product;
+        return {
+          id: Number(product.id),
+          link: this.mainItem.link + product.url,
+          thumbnail_url: selected.images ? selected.images.image : '',
+          title: product.name ? product.name.value : '',
+          sub_title: selected.header_section ? selected.header_section.sub_title : ''
+        };
+      }
+    }
+    customElements.define(DorelMainMenuItem.is, DorelMainMenuItem);
   </script>
 </dom-module>

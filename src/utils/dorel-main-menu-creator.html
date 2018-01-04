@@ -1,153 +1,145 @@
-<link rel="import" href="dorel-magento-collect-products-by-category.html">
+<link rel="import" href="./dorel-wp-collect-page.html">
 
 <dom-module id="dorel-main-menu-creator">
   <template>
-    <dorel-magento-collect-products-by-category
-      id="products">
-    </dorel-magento-collect-products-by-category>
+
+    <dorel-wp-collect-page
+      pages="[[ pages ]]"
+      id="collectPageEl">
+    </dorel-wp-collect-page>
 
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-main-menu-creator',
+  class DorelMainMenuCreator extends ReduxMixin(Polymer.Element) {
+    static get is() {
+      return 'dorel-main-menu-creator';
+    }
 
-      properties: {
+    static get properties() {
+      return {
 
         /**
          * @attribute
-         * @name appCache
-         * @description the temporary cache of the application,
-         * contains data that used to be contained by the globalsManager
+         * @name pages
+         * @description pages
          */
-        appCache: {
-          type: Object
+        pages: {
+          type: Array,
+          statePath: 'pages'
         },
 
-      },
+        /**
+         * @attribute
+         * @name currentLanguage
+         * @description the currentLanguage from the redux state
+         */
+        currentLanguage: {
+          type: Object,
+          statePath: 'route.currentLanguage'
+        },
 
-      observers: [
-        '_createMenuDataModel(appCache.collect.options, appCache.collect.pages)'
-      ],
-
-      listeners: {
-        'newProducts': '_setMenuProducts'
-      },
-
-      _createMenuDataModel: function(options, pages) {
-        if(!options || !options.main_menu || !pages) {
-          return;
+        /**
+         * @attribute
+         * @name mainMenuOptions
+         * @description the menu items from the initial options
+         * with this data the menu is generated
+         */
+        mainMenuOptions: {
+          type: Array,
+          statePath: 'config.main_menu'
         }
-        var mainMenu = this._createLinks(options.main_menu, pages);
-        this.fire('setAppCache', { value: mainMenu, path: 'mainMenu'});
-      },
+      }
+    }
+    static get observers () {
+      return [
+      '_createMenuDataModel(mainMenuOptions)'
+      ]
+    }
 
-      _createLinks: function(menuItems, pages) {
-        var self = this;
-        return menuItems.map(function(item) {
-          var page = self._getPage(pages, item.page_object.ID);
-          if(!page) {
-            return false;
-          }
-          return self._createMenuItem(item, page, pages);
-        })
-      },
+    _createMenuDataModel(mainMenu) {
+      if(!mainMenu) {
+        return;
+      }
+      new Promise((resolve, reject) => {
+        resolve(this._createLinks(mainMenu));
+      }).then(mainMenu => {
+        return this.dispatch('addMenu', mainMenu);
+      });
+    }
 
-      _getPage: function(pages, id) {
-        return pages.find(function(page) {
-          return page.id === id;
+    async _createLinks(menuItems) {
+      const promises = menuItems.map((item) => {
+        return new Promise((resolve, reject) => {
+          resolve(this.$.collectPageEl.getPageById(item.page_object.ID));
+        }).then((page) => {
+          return this._createMenuItem(item, page);
         });
-      },
+      });
+      const links = await Promise.all(promises);
+      return links;
+    }
 
-      _createMenuItem: function(item, page, pages) {
-        item.id = page.id;
-        item.link = page.link;
-        item.opened = false;
-        if(item.dropdown_type === 'category') {
-          item.category_id = this._getMagentoCategoryId(page);
-          item.sub_category_items = this._getSubCategoryItems(page, pages);
-        }
-        if(item.dropdown_items && item.dropdown_items.length) {
-          var self = this;
-          item.dropdown_items = item.dropdown_items.map(function(_item) {
-            var page = self._getPage(pages, _item.page_object.ID);
-            if(!page) {
-              return false;
-            }
-            return self._createMenuItem(_item, page, pages);
+   async _createMenuItem(item, page) {
+      item.id = page.id;
+      item.link = this.cleanUrlToPath(page.link);
+      item.opened = false;
+      if(item.dropdown === true && item.dropdown_items && item.dropdown_items.length) {
+        const promises = item.dropdown_items.map((_item) => {
+          return new Promise((resolve, reject) => {
+            resolve(this.$.collectPageEl.getPageById(_item.page_object.ID));
+          }).then((page) => {
+            return this._createMenuItem(_item, page);
           });
-        }
-        return Object.assign({}, item);
-      },
-
-      _getSubCategoryItems: function(page, pages) {
-        var childPages = this._getChildPages(page, pages);
-        var self = this;
-        var childPages = childPages.map(function(page) {
-          return self._getCategorySubMenuItems(page);
         });
-        //TODO change to false
-        if(!childPages || childPages.length < 2) {
-          var category = this._getMagentoCategoryId(page);
-          this.$.products.getProducts(category, this.get('appCache.currentLanguage'));
-        } else {
-          return childPages;
+        const dropdown_items = await Promise.all(promises);
+        item.dropdown_items = dropdown_items;
+      } else {
+        item.dropdown_items = [];
+      }
+      if(item.dropdown_type === 'category') {
+        let sub_category_items = await this._getSubCategoryItems(page);
+        if(sub_category_items && sub_category_items.length < 2) {
+          item.productSwitch = true;
+          const category = this._getMagentoCategoryId(page);
+          this.dispatch('requestProductsByCategory', category);
         }
-      },
+        item.category_id = this._getMagentoCategoryId(page);
+        item.sub_category_items = sub_category_items;
+      }
+      return Object.assign({}, item);
+    }
 
-      _getCategorySubMenuItems: function(page) {
-        if(!page) {
-          return {};
-        }
-        return {
-          id: page.id,
-          link: page.link,
-          thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
-          title: page.title.rendered
-        };
-      },
+    async _getSubCategoryItems(page) {
+      let allChildPages = await this.$.collectPageEl.getChildrenByParentId(page.id);
+      return allChildPages.map(page => {
+        return this._getCategorySubMenuItems(page);
+      });
+    }
 
-      _getChildPages: function(page, pages) {
-        return pages.filter(function(_page) {
-          return _page.parent === page.id;
-        });
-      },
+    _getCategorySubMenuItems(page) {
+      if(!page) {
+        return {};
+      }
+      return {
+        id: page.id,
+        link: this.cleanUrlToPath(page.link),
+        thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
+        title: page.title.rendered
+      };
+    }
 
-      _getMagentoCategoryId: function(page) {
-        return Number(page.acf.magento_category_picker);
-      },
+    _getMagentoCategoryId(page) {
+      return Number(page.acf.magento_category_picker);
+    }
 
-      _setMenuProducts: function(value) {
-        var products = value.detail.products;
-        if(!products.length) {
-          return;
-        }
+    cleanUrlToPath(url) {
+      const urlArray = url.split('/');
+      const path = '/' + urlArray.slice(3).join('/');
+      return path;
+    }
+  };
+  customElements.define(DorelMainMenuCreator.is, DorelMainMenuCreator);
 
-        // limit products in menu to 5
-        products = products.filter(function(product, index) {
-          return index <= 4;
-        });
-
-        var category = value.detail.category;
-        // create a new mainMenu and append
-        var mainMenu = this.get('appCache.mainMenu').map(function(menuItem) {
-          if(menuItem.category_id === category) {
-            menuItem.sub_category_items = products.map(function(product) {
-              var newItem = {
-                id: Number(product.id),
-                link: menuItem.link + product.url,
-                thumbnail_url: product.child_products[0].images.image,
-                title: product.name.value,
-                sub_title: product.header_section.sub_title
-              }
-              return newItem;
-            });
-          }
-          return Object.assign({}, menuItem);
-        });
-
-        this.fire('setAppCache', {value: mainMenu, path: 'mainMenu'});
-      },
-    });
   </script>
 </dom-module>

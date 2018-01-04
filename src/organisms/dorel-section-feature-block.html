@@ -1,0 +1,256 @@
+<link rel="import" href="../atoms/dorel-bynder-image.html">
+<link rel="import" href="../atoms/dorel-media-query.html">
+<link rel="import" href="../organisms/dorel-section-content-block.html">
+<link rel="import" href="../../node_modules/iron-icon/iron-icon.html">
+<link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
+
+<dom-module id="dorel-section-feature-block">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        float: left;
+        width:100%;
+      }
+
+      .feature-block {
+        display:block;
+        margin-top: 1.5rem;
+      }
+
+      .title {
+        @apply(--theme-typography-6);
+        color: var(--theme-color-white);
+        margin: 0;
+        text-shadow: var(--theme-text-shadow);
+        max-width: 800px;
+        display: inline-block;
+      }
+
+      .icon-item {
+        color: var(--theme-color-white);
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+      }
+      .icon-item iron-icon {
+        margin-right: 8px;
+        --iron-icon-height: 32px;
+        --iron-icon-width: 32px;
+      }
+
+      dorel-cta {
+        display: inline-block;
+        width:auto;
+        margin-top: 1.5em;
+      }
+
+      dorel-layout-row.on-image {
+        position: relative;
+        height: 100%;
+      }
+
+      dorel-layout-column.on-image {
+        position: absolute;
+        bottom: 1em;
+        width: 100%;
+        text-align: left;
+      }
+
+      [tablet-small] .title {
+        @apply(--theme-typography-7);
+        margin-top: 0;
+      }
+
+      [tablet-medium-up] .title {
+        @apply(--theme-typography-8);
+        font-size: 3.75em;
+        margin-top: 0;
+      }
+      .close-bar {
+        position: relative;
+        clear: both;
+      }
+      .close-bar::before {
+        position: absolute;
+        display: inline-block;
+        border: 1.5rem solid transparent;
+        border-top: 0;
+        border-bottom: 1.5rem  solid var(--theme-color-white);
+        content: ' ';
+        top: -1.5rem ;
+        left: 1rem
+      }
+
+      [tablet-small] .close-bar::before,
+      [tablet-medium-up] .close-bar::before {
+        border-left-width : 2rem;
+        border-right-width : 2rem;
+      }
+
+      .close-icon {
+        cursor: pointer;
+        float: right;
+      }
+    </style>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <section class="feature-block"
+             tablet-small$="[[ breakpoints.tabletSmall ]]"
+             tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+
+      <dorel-bynder-image
+        mobile-width="100%"
+        tablet-width="100%"
+        width="100%"
+        mobile-height="30rem"
+        tablet-height="30rem"
+        height="30rem"
+        media-id="[[ blockData.bynder_image ]]"
+        image-alt="[[blockData.bynder_image_alt_text]]"></dorel-bynder-image>
+
+      <dorel-layout-container>
+        <dorel-layout-row class="on-image">
+          <dorel-layout-column class="on-image" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+
+            <!-- TITLE -->
+            <template is="dom-if" if="[[ blockData.title ]]">
+              <h3 class="title">[[ blockData.title ]]</h3>
+            </template><!--// TITLE -->
+
+            <!-- USPS -->
+            <template is="dom-repeat" items="[[ blockData.usps ]]">
+              <div class="icon-item">
+                <template is="dom-if" if="[[ item.usp_icon ]]">
+                  <iron-icon icon="[[ item.usp_icon ]]"></iron-icon>
+                </template>
+
+                <template is="dom-if" if="[[ item.usp_text ]]">
+                  <span>[[ item.usp_text ]]</span>
+                </template>
+              </div>
+            </template><!--// USPS -->
+
+            <!-- CTA -->
+            <template is="dom-if" if="[[ blockData.cta_text ]]">
+              <div>
+                <dorel-cta
+                  title="[[ blockData.cta_text ]]"
+                  icon="dorel-icons:chevron-right"
+                  type="primary"
+                  inverted="[[ _isValue('inverted', blockData.cta_type) ]]"
+                  link="[[ blockData.cta_href ]]"
+                  gtm-parent="[[ gtmParent ]]"
+                  gtm-parent-index="[[ gtmParentIndex ]]"
+                  gtm-cta-index="0">
+                  [[ blockData.cta_text ]]
+                </dorel-cta>
+              </div>
+            </template><!--// CTA -->
+
+            <!-- READ MORE CTA -->
+            <template is="dom-if" if="[[ blockData.read_more_toggle ]]">
+              <template is="dom-if" if="[[!showMore]]">
+                <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-more">show more</dorel-cta>
+              </template>
+              <template is="dom-if" if="[[showMore]]">
+                <dorel-cta on-click="_toggleMore" type="link" inverted icon="dorel-icons:expand-less">show less</dorel-cta>
+              </template>
+            </template>
+            <!--// READ MORE CTA -->
+
+          </dorel-layout-column>
+        </dorel-layout-row>
+      </dorel-layout-container>
+    </section>
+
+    <section
+      tablet-small$="[[ breakpoints.tabletSmall ]]"
+      tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+    <template is="dom-if" if="[[ blockData.read_more_toggle ]]">
+
+      <!-- collapsable content -->
+      <iron-collapse opened="[[showMore]]">
+        <dorel-layout-container>
+          <dorel-layout-row class="close-bar">
+            <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+              <iron-icon on-click="_toggleMore" icon="dorel-icons:close" class="close-icon" tabindex="0"></iron-icon>
+            </dorel-layout-column>
+          </dorel-layout-row>
+        </dorel-layout-container>
+
+        <template is="dom-repeat" items="[[ blockData.read_more_section ]]">
+          <dorel-section-content-block
+            block-data="[[item]]"
+            component-count="[[_getComponentCount()]]"></dorel-section-content-block>
+        </template>
+      </iron-collapse>
+      <!--// collapsable content -->
+
+    </template>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-section-feature-block',
+
+      properties: {
+        /**
+         * @attribute
+         * @name blockData
+         * @description all data defined by ACF/Wordpress to build this component
+         */
+        blockData: {
+          type: Object,
+          value: () => { return {}; },
+          observer: '_defaultState'
+        },
+
+        showMore: {
+          type: Boolean,
+          value: false
+        },
+
+        componentCount: {
+          type: Number,
+          value: 0
+        },
+
+        breakpoints: {
+          type: Object,
+          value: () => {}
+        }
+
+
+      },
+
+      behaviors: [DorelMultilingualBehavior, ValueBehavior],
+
+      _toggleMore: function() {
+        this.set('showMore', !this.get('showMore'));
+      },
+
+      /**
+       * @name _defaultState
+       * @description defines the default state of the read more section
+       */
+      _defaultState: function(blockData) {
+        this.set('showMore', this.get('blockData.read_more_default_state'));
+      },
+
+      /**
+       * @name _getComponentCount
+       * @description counts a certain component (content_block) to align left or right
+       * in the child component
+       */
+      _getComponentCount: function() {
+        this.set('componentCount', this.get('componentCount') + 1);
+        return this.get('componentCount');
+      }
+    });
+  </script>
+</dom-module>

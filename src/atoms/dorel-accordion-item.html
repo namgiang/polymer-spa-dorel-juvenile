@@ -1,74 +1,76 @@
-<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
 
 <dom-module id="dorel-accordion-item">
   <template>
     <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
       :host {
         width: 100%;
+        float: left;
       }
 
-      .accordion-heading {
-        @apply(--theme-paragraph-text);
-        max-width: 100%;
-        margin-top: 0;
-        padding: 1.5em;
-        transition: color .3s ease;
-        color: var(--theme-color-text-link);
+      .accordion-toggle {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1.5em 0 0.75em;
+        min-height: var(--theme-accordion-heading-height);
+        cursor: pointer;
+      }
+      [small] .accordion-toggle {
+        min-height: var(--theme-accordion-heading-height-small);
       }
 
-      [icon] .accordion-heading {
-        padding-left: 3.25em;
-      }
-
-      .accordion-heading:focus {
+      .accordion-toggle:focus, .accordion-toggle:hover
+      {
+        color: var(--theme-accordion-hover-color);
         outline: none;
       }
 
-      .accordion-heading:hover {
-        cursor: pointer;
-        color: var(--theme-color-text-link-active);
+      .accordion-heading {
+        @apply(--theme-accordion-heading);
+        margin: 0;
+        transition: color .3s;
       }
 
       .accordion-container {
-        box-shadow: inset 0 -2px 0 0 var(--theme-color-monochrome-2);
+        background-color: var(--theme-accordion-background-color);
+        border-radius: var(--theme-border-radius-1);
         position: relative;
         float: left;
         width: 100%;
         transition: background-color .3s ease;
+        margin-bottom: var(--theme-accordion-item-bottom-margin);
+        border-top: var(--theme-accordion-item-border);
+        border-bottom: var(--theme-accordion-item-border);
+      }
+      [opened].accordion-container {
+        background-color: var(--theme-accordion-background-color-open);
       }
 
+
       .accordion-content {
-        padding: .75em 1.5em 0.75em 1.5em;
+        padding: 0 .75em 1.5em .75em;
         float: left;
         width: 100%;
         box-sizing: border-box;
       }
 
       .accordion-icon {
-        position: absolute;
-        top: 1.5em;
-        right: 1em;
-        color: var(--theme-color-text-link);
+        margin-top: -2px;
         transition: .3s ease color, .3s ease transform;
-        pointer-events: none;
       }
 
       .left-icon {
-        left: 1em;
-        right: inherit;
+        margin-top: -2px;
+        margin-right: 1em;
       }
 
-      .accordion-heading:focus + .accordion-icon,
-      .accordion-heading:hover + .accordion-icon,
-      .accordion-heading:hover .accordion-icon {
-        color: var(--theme-color-text-link-active);
-      }
-
-      .accordion-container[opened] .accordion-heading {
-        font-weight: 500;
-      }
-
-      .accordion-container[opened] .accordion-heading + .accordion-icon {
+      .accordion-icon[opened] {
         transform: rotate(180deg);
       }
 
@@ -76,49 +78,63 @@
         padding: 0 1.5em 1.5em 1.5em;
       }
 
-      :host-context([small]) .accordion-heading {
+      [tablet-medium-up] .accordion-heading  {
+        padding: 1.5em;
+      }
+
+      [small] .accordion-heading {
         padding: 0.75rem;
       }
 
-      :host-context([small]) .accordion-content {
-        padding: 0 .75rem;
+      [small] .accordion-content {
+        padding: 0 .75rem .75rem .75rem;
       }
 
-      :host-context([small]) .accordion-container[opened] .accordion-heading {
-        font-weight: var(--theme-font-weight);
+      [small].accordion-container {
+        margin-bottom: var(--theme-accordion-item-bottom-margin-small);
       }
 
-      :host-context([small]) .accordion-icon {
-        top: .75rem;
-        right: 0.5rem;
+      [light], [light][opened] {
+        background-color: var(--theme-color-white);
       }
 
     </style>
-    <div class="accordion-container" opened$="[[ opened ]]" icon$="[[ icon.length ]]">
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <div class="accordion-container"
+
+         light$="[[ light ]]"
+         small$="[[ small ]]"
+         opened$="[[ opened ]]"
+         tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <template
         is="dom-if"
         if="[[ heading.length ]]">
-        <h2 class="accordion-heading"
-            aria-expanded="false"
-            tabindex="0"
-            role="button"
-            aria-controls$="#collapse[[ index ]]"
-            data-selector$="#collapse[[ index ]]"
-            on-click="_toggleCollapse"
-            gtm-parent="[[ gtmParent ]]"
-            gtm-parent-index="[[ gtmParentIndex ]]"
-            gtm-cta-index$="[[ index ]]">
+        <div class="accordion-toggle"
+              id="accordion"
+              aria-expanded="false"
+              tabindex="0"
+              role="button"
+              aria-controls$="#collapse"
+              data-selector$="#collapse"
+              on-click="_toggleCollapse"
+              gtm-parent="[[ gtmParent ]]"
+              gtm-parent-index="[[ gtmParentIndex ]]"
+              gtm-cta-index$="[[ index ]]">
+        <h2 class="accordion-heading">
           <template is="dom-if" if="[[ icon.length ]]">
-            <iron-icon class="left-icon accordion-icon" icon="[[ icon ]]"></iron-icon>
+            <iron-icon class="left-icon" icon="[[ icon ]]"></iron-icon>
           </template>
           [[ heading ]]
         </h2>
         <iron-icon class="accordion-icon"
+                   opened$="[[ opened ]]"
                    icon="dorel-icons:expand-more"></iron-icon>
+                   </div>
       </template>
-      <iron-collapse id$="collapse[[ index ]]" opened="{{ opened }}">
-        <div class="accordion-content" id="accordion">
-          <content></content>
+      <iron-collapse id="collapse" opened="{{ opened }}">
+        <div class="accordion-content">
+          <slot></slot>
         </div>
       </iron-collapse>
     </div>
@@ -126,6 +142,7 @@
   <script>
     Polymer({
       is: 'dorel-accordion-item',
+      behaviors: [ GtmBehavior ],
       properties: {
         /**
          * @name heading
@@ -144,9 +161,20 @@
           value: ''
         },
 
+        /**
+         * @name small
+         * @description Small variation of the accordion
+         */
         small: {
-          type: Boolean,
-          reflectToAttribute: true
+          type: Boolean
+        },
+
+        /**
+         * @name light
+         * @description Small variation of the accordion
+         */
+        light: {
+          type: Boolean
         },
 
         /**
@@ -199,9 +227,8 @@
       _openedStateChanged: function () {
         var self = this;
         setTimeout(function () {
-          var accordionDomElement = self.$.accordion;
-          //this._scrollToItem(accordionDomElement);
-
+          //Accessing the accordion here through shadowroot queryselect because it's dynamically created
+          var accordionDomElement = self.shadowRoot.querySelector('#accordion');
           var shouldScroll = self.autoScroll && self.opened && !self._isInViewport(accordionDomElement);
 
 
@@ -245,13 +272,12 @@
         // Toggle the aria expanded boolean
         e.target.setAttribute('aria-expanded', !ariaExpanded);
 
-        var selector = e.target.dataset.selector;
-
+        var accordion = this.$.collapse;
         // check state
-        var state = (this.$$(selector).classList.contains('iron-collapse-opened'));
+        var state = accordion.classList.contains('iron-collapse-opened');
 
         // toggle collapse
-        this.$$(selector).toggle();
+        accordion.toggle();
 
         // event tracking
         this._eventTracking(e, e.target, state);
@@ -289,7 +315,7 @@
           }
         };
 
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(events);
       }
     });
   </script>

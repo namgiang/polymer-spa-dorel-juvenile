@@ -1,15 +1,14 @@
-<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../node_modules/iron-collapse/iron-collapse.html">
 
 <dom-module id="dorel-expandable-content">
   <template>
     <style>
-      :host {
-        --button-margin-spacing: -1.5em;
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
       }
 
       dorel-cta {
         float: left;
-        width: auto;
         clear: both;
       }
 
@@ -19,24 +18,28 @@
         float: none;
       }
 
-      #collapse {
+      iron-collapse {
         float: left;
         width: 100%;
       }
-
     </style>
 
-    <template is="dom-if" if="[[content]]">
+    <template is="dom-if"
+              if="[[excerpt]]">
+
       <section class="expandable-content">
         <!-- Short first description -->
-        <dorel-safe-html html="[[ initialContent ]]"></dorel-safe-html>
+        <dorel-safe-html html="[[ excerpt ]]"></dorel-safe-html>
         <!-- Expandable/Collapsible longer description (if available) -->
-        <template is="dom-if" if="[[ restContent ]]">
-          <iron-collapse id="collapse">
-            <dorel-safe-html html="[[ restContent  ]]"></dorel-safe-html>
+
+        <template is="dom-if" if="[[ description ]]">
+          <iron-collapse>
+            <dorel-safe-html html="[[ description  ]]"></dorel-safe-html>
           </iron-collapse>
-          <!-- Toggles expand and collapse -->
-          <template is="dom-if" if="[[ !expanded ]]">
+
+          <!-- toggle expand/collapse -->
+          <template is="dom-if"
+                    if="[[ !expanded ]]">
             <dorel-cta title="Read more"
                        on-click="_toggle"
                        type="link"
@@ -46,6 +49,7 @@
               {{ localize('Read_More') }}
             </dorel-cta>
           </template>
+
           <template is="dom-if" if="[[ expanded ]]">
             <dorel-cta title="Read less"
                        on-click="_toggle"
@@ -56,8 +60,11 @@
               {{ localize('Read_Less') }}
             </dorel-cta>
           </template>
+          <!--// toggle expand/collapse -->
+
         </template>
       </section>
+
     </template>
   </template>
 
@@ -68,18 +75,29 @@
 
       behaviors: [
         DorelMultilingualBehavior
-      ],      
-      
+      ],
 
       properties: {
         /**
          * @attribute
-         * @name content
-         * @description html content
+         * @name description
+         * @description html content excerpt sfrom mage
          */
-        content: {
-          type: Object
+        excerpt: {
+          type: String,
+          value: ''
         },
+
+        /**
+         * @attribute
+         * @name description
+         * @description html content long description from mage
+         */
+        description: {
+          type: String,
+          value: ''
+        },
+
         /**
          * @attribute
          * @name expanded
@@ -89,77 +107,18 @@
           type: Boolean,
           value: false,
         },
-        /**
-         * @attribute
-         * @name initialContent
-         * @description Initially shown content, will be shortened
-         */
-        initialContent: {
-          type: String,
-          computed: '_computeInitialContent(content)'
-        },
-        /**
-         * @attribute
-         * @name restContent
-         * @description Rest content, shown when component is expanded
-         */
-        restContent: {
-          type: String,
-          computed: '_computeRestContent(content)'
-        },
       },
 
-      /**
-       * @name _computeInitialContent
-       * @description Shortens the content if it's larger then character limit
-       * **/
-      _computeInitialContent: function (content) {
-        if(!content) {
-          return;
-        }
-        // Split the paragraphs in the content using a regular expression
-        var re = new RegExp('(<p>.*<\/p>)', 'g');
-        var splitContent = content.match(re);
-
-        // Return a shortened version of the content (only the first paragraph)
-        if (splitContent && splitContent.length > 1) {
-          return splitContent[0];
-        }
-
-        // Returns the original content
-        return content;
-      },
-
-      /**
-       * @name _computeRestContent
-       * @description The rest of the content
-       * **/
-      _computeRestContent: function (content) {
-
-        if(!content) {
-          return;
-        }
-        // Split the paragraphs in the content using a regular expression
-        var re = new RegExp('(<p>.*<\/p>)', 'g');
-        var splitContent = content.match(re);
-
-        // Content is only split when there are more paragraphs
-        if (splitContent && splitContent.length > 1) {
-          // Remove first element in split content
-          splitContent.shift();
-          // Concatenate entries and return on string of rest content
-          return splitContent.join('');
-        }
-      },
       /**
        * @name _toggle
        * @description expands/collapses content
        * **/
       _toggle: function () {
-        this.$$('#collapse').toggle();
+        this.$$('iron-collapse').toggle();
         this.expanded = !this.expanded;
       }
     });
 
   </script>
 </dom-module>
+

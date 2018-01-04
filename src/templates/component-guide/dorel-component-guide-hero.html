@@ -1,0 +1,52 @@
+<script src="mocks/heroes/heroes.js"></script>
+<script src="mocks/hero-header/hero-header.js"></script>
+
+<link rel="import" href="../../organisms/dorel-section-hero-header.html">
+<link rel="import" href="dorel-component-guide-shared-styles.html">
+
+<dom-module id="dorel-component-guide-hero">
+  <template>
+    <style include="dorel-component-guide-shared-styles"></style>
+    <style>
+      dorel-section-hero-header {
+        margin-top: 1.5em;
+      }
+
+      dorel-section-cta {
+        margin-top: 3em;
+        float: left;
+        width: 100%;
+      }
+    </style>
+
+    <dorel-layout-container>
+      <h1 class="class-for-h1">Section Heroes</h1>
+      <hr>
+    </dorel-layout-container>
+      <dorel-section-heroes heroes-data="[[ heroesData ]]"></dorel-section-heroes>
+  </template>
+
+  <hr>
+  <script>
+    Polymer({
+      is: 'dorel-component-guide-hero',
+      properties: {
+        brand: {
+          type: String
+        },
+        videoHeroData: {
+          type: Object,
+          value: heroHeaderVideoMock
+        },
+        heroHeaderData: {
+          type: Object,
+          value: heroHeaderMock
+        },
+        heroesData: {
+          type: Array,
+          value: heroesMock
+        },
+      }
+    });
+  </script>
+</dom-module>

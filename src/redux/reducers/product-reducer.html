@@ -1,0 +1,127 @@
+<script>
+  (function() {
+    const initial = {
+      products: [],
+      requestedCategories: [],
+      productCategoryPage: -1,
+      currentProduct: 'none',
+    };
+
+    productReducer = (state = initial, action) => {
+      let products = [];
+      switch (action.type) {
+        case 'REQUEST_PRODUCT':
+          state.products.push({
+            url: action.payload,
+            sku: action.payload,
+            isLoading: true,
+            isNotAvailable: false
+          });
+          return Object.assign({}, state, {
+            products: state.products.map(product => product)
+          });
+
+        case 'REQUEST_PRODUCT_SUCCES':
+          return Object.assign({}, state, {
+            products: state.products.map(product => {
+              return product.sku === action.payload.sku || product.url === action.payload.url ?
+                Object.assign({}, action.payload, { isLoading: false, notAvailable: false }) : product;
+            })
+          });
+
+        case 'REQUEST_PRODUCT_FAILED':
+          return Object.assign({}, state, {
+            products: state.products.map(product => {
+              return product.sku === action.payload || product.url === action.payload ?
+                Object.assign({}, product, { isLoading: false, notAvailable: true }) : product;
+            })
+          });
+
+        case 'REQUEST_PRODUCT_SUCCESS':
+          return Object.assign({}, state, {
+            products: state.products.map(product => {
+              return product.sku === action.payload.sku || product.url === action.payload.url ?
+                Object.assign({}, action.payload, { isLoading: false, notAvailable: false }) : product;
+            })
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORY':
+          state.requestedCategories.push({
+            id: action.payload,
+            isLoading: true,
+            notAvailable: false
+          });
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => category)
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORY_SUCCESS':
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => {
+              return category.id === action.payload.category ?
+                Object.assign({}, category, { isLoading: false }) : category;
+            }),
+            products: action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: false })
+            }).concat(state.products.filter(oldItem => {
+              return !action.payload.products.some(newItem => oldItem.sku === newItem.sku)
+            }))
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORY_FAILED':
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => {
+              return category.id === action.payload.category ?
+                Object.assign({}, category, { isLoading: false, isNotAvailable: true }) : category;
+            })
+          });
+
+        case 'REQUEST_PRODUCTS_BY_SKU':
+          const tempProducts = action.payload.map(sku => {
+            return Object.assign({}, {
+              sku: sku,
+              isLoading: true,
+              notAvailable: false
+            });
+          })
+          return Object.assign({}, state, {
+            products: state.products.concat(tempProducts).filter(newItem => {
+              return !state.products.some(oldItem => oldItem.sku === newItem.sku && newItem.isLoading)
+            })
+          });
+
+        case 'REQUEST_PRODUCTS_BY_SKU_SUCCESS':
+
+          return Object.assign({}, state, {
+            products: action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: false })
+            }).concat(state.products.filter(oldItem => {
+              return !action.payload.products.some(newItem => oldItem.sku === newItem.sku && oldItem.isLoading)
+            }))
+          });
+
+        case 'REQUEST_PRODUCTS_BY_SKU_FAILED':
+          return Object.assign({}, state, {
+            products: action.payload.map(sku => {
+              return Object.assign({}, { sku, isLoading: false, notAvailable: true })
+            }).concat(state.products.filter(newItem => {
+              return !state.products.some(oldItem => oldItem.sku === newItem.sku && oldItem.isLoading)
+            }))
+          });
+
+        case 'ADD_PRODUCT_CATEGORY_PAGE':
+          return Object.assign({}, state, {
+            productCategoryPage: action.payload
+          });
+
+        case 'SET_CURRENT_PRODUCT':
+          return Object.assign({}, state, {
+            currentProduct: action.payload
+          });
+
+      default:
+        return state;
+      }
+    };
+}());
+</script>

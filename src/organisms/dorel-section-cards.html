@@ -1,18 +1,21 @@
 <link rel="import" href="../molecules/dorel-card.html">
 <link rel="import" href="../molecules/dorel-titling.html">
 
-<dom-module id="dorel-section-cards" light-background$="[[ lightBackground ]]">
+<dom-module id="dorel-section-cards">
   <template>
     <style>
-      :host {
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      dorel-layout-container {
         background-color: var(--theme-color-monochrome-2);
-        margin: 1.5em 0 0 0;
-        padding: 1.5em 0 3em 0;
+        padding: 1.5em 0 4.5em 0;
         float: left;
         width: 100%;
       }
 
-      :host-context([light-background]) {
+      dorel-layout-container[light-background]  {
         background-color: var(--theme-color-monochrome-1);
       }
 
@@ -20,103 +23,113 @@
         height: 100%;
       }
 
+      dorel-titling {
+        margin: .75em 0;
+        float: left;
+        width: 100%;
+      }
     </style>
 
-    <dorel-layout-container>
-      <dorel-titling title="[[ cardsData.title ]]" description="[[ cardsData.description ]]"></dorel-titling>
+    <dorel-layout-container light-background$="[[ lightBackground ]]">
+      <dorel-titling
+        title="[[ cardsData.title ]]"
+        description="[[ cardsData.description ]]"></dorel-titling>
       <template
         is="dom-if"
         if="[[ cardsData.cards.length ]]">
         <!-- section title -->
 
         <dorel-layout-row>
-          <!-- Wide cards section -->
-          <template is="dom-if" if="[[ !compact ]]">
-            <template
-              is="dom-repeat"
-              items="[[ cardsData.cards ]]"
-              as="card">
-              <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="12">
-                <dorel-card
-                  card-data="[[ card ]]"
-                  cta-type="[[ ctaType ]]"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-child="dorel-card"
-                  gtm-child-index="[[ index ]]"></dorel-card>
-              </dorel-layout-column>
-            </template>
-          </template>
-
-          <!-- Compact cards section-->
-          <template is="dom-if" if="[[ compact ]]">
-            <template
-              is="dom-repeat"
-              items="[[ cardsData.cards ]]"
-              as="card">
-              <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
-                <dorel-card
-                  card-data="[[ card ]]"
-                  cta-type="[[ ctaType ]]"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-child="dorel-card"
-                  gtm-child-index="[[ index ]]"></dorel-card>
-              </dorel-layout-column>
-            </template>
+          <!-- cards section -->
+          <template is="dom-repeat" items="[[ cardsData.cards ]]" as="card">
+            <dorel-layout-column desktop-column-span$="[[ desktopColSpan ]]"
+                                 tablet-column-span="6"
+                                 mobile-column-span="12">
+              <dorel-card
+                light-background$="[[ !lightBackground ]]"
+                card-data="[[ card ]]"
+                cta-type="[[ ctaType ]]"
+                gtm-parent="[[ gtmParent ]]"
+                gtm-parent-index="[[ gtmParentIndex ]]"
+                gtm-child="dorel-card"
+                gtm-child-index="[[ index ]]">
+              </dorel-card>
+            </dorel-layout-column>
           </template>
         </dorel-layout-row>
       </template>
     </dorel-layout-container>
-
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-section-cards',
+    class DorelSectionCards extends Polymer.Element {
 
-      properties: {
-        /**
-         * @attribute
-         * @name lightBackground
-         * @description Light background for the section
-         */
-        lightBackground: {
-          type: Boolean,
-          value: false
-        },
-        /**
-         * @attribute
-         * @name compact
-         * @description If compact, the section will show 3 cards on a row instead of 2
-         */
-        compact: {
-          type: Boolean,
-          value: false,
-        },
-        /**
-         * @attribute
-         * @name ctaType
-         * @description CTA type which will appear in the card
-         */
-        ctaType: {
-          type: String,
-          value: 'primary',
-        },
-        /**
-         * @attribute
-         * @name cardsData
-         * @description all data needed for the cards defined in ACF/Wordpress
-         */
-        cardsData: {
-          type: Object,
-          value: function () {
-            return {};
+      static get is() { return 'dorel-section-cards'; }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name lightBackground
+           * @description Light background for the section
+           */
+          lightBackground: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * @attribute
+           * @name compact
+           * @description If compact, the section will show 3 cards on a row instead of 2
+           */
+          compact: {
+            type: Boolean,
+            value: false,
+          },
+
+          /**
+           * @attribute
+           * @name ctaType
+           * @description CTA type which will appear in the card
+           */
+          ctaType: {
+            type: String,
+            value: 'primary',
+          },
+
+          /**
+           * @attribute
+           * @name cardsData
+           * @description all data needed for the cards defined in ACF/Wordpress
+           */
+          cardsData: {
+            type: Object,
+            value: () => ({})
+          },
+
+          /**
+           * @name desktopColSpan
+           * @description computed property depending on compact attribute
+           */
+          desktopColSpan: {
+            type: Number,
+            computed: '_computeColSpan(compact)'
           }
         }
       }
-    });
 
+      /**
+       * Returns a column span depending on the compactness of the section
+       *
+       * @param {boolean} show the compact version of the cards (2 or 3 cards)
+       * @return {number} returns the column span
+       */
+      _computeColSpan(compact) {
+        return compact ? 4 : 6;
+      }
+    }
+
+    customElements.define(DorelSectionCards.is, DorelSectionCards);
   </script>
-
 </dom-module>
