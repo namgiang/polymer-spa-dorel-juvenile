@@ -17,7 +17,13 @@
 
       l2t-paper-slider {
         outline: none;
+        cursor: pointer;
         --paper-slide-height: auto;
+      }
+
+      l2t-paper-slider[lightbox-mode] {
+        cursor: pointer;
+        cursor: zoom-in;
       }
 
       l2t-paper-slider .slider__image {
@@ -41,6 +47,7 @@
           id="simpleSlider"
           position="{{ position }}"
           hide-nav
+          lightbox-mode$="[[ lightboxMode ]]"
           total-slides="[[ slides.length ]]">
         <template is="dom-repeat" items="[[ slides ]]">
           <paper-slide>
@@ -59,7 +66,7 @@
 
   <script>
 
-    class DorelImageCarousel extends Polymer.Element {
+    class DorelImageCarousel extends ReduxMixin(Polymer.Element) {
       static get is() {
         return 'dorel-image-carousel';
       }
@@ -94,6 +101,18 @@
             type: Object
           },
 
+          /**
+           * @attribute
+           * @name lightboxMode
+           * @description lightboxMode will add a clickhandler that will show the image in a lightbox
+           * default is false
+           */
+          lightboxMode: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          }
+
         }
       }
 
@@ -101,6 +120,11 @@
         return [
           '_updatePosition(position)'
         ]
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('click', this._onClick)
       }
 
       /**
@@ -123,6 +147,14 @@
        */
       moveSliderTo(index) {
         this.$.simpleSlider.movePos(index);
+      }
+
+      _onClick(event) {
+        if(!this.lightboxMode) {
+          return
+        }
+        const productImageUrl = this.slides[this.position].image_url;
+        this.dispatch('setImageLightbox', { active: true, productImageUrl })
       }
 
     };

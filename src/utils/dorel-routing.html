@@ -11,7 +11,6 @@
 
     <dorel-wp-collect-page
       id="collectPageEl"
-      app-cache="[[ appCache ]]"
       pages="[[ pages ]]">
     </dorel-wp-collect-page>
 
@@ -26,8 +25,6 @@
 
       static get properties() {
         return {
-
-          appCache: Object,
 
           /**
            * @name fullRoute
@@ -119,7 +116,7 @@
        * @param slug - String
        */
       async routeToPath(route, slug) {
-        const url = (window.location.origin + route.path);
+        const url = `${window.location.origin}${route.prefix}${route.path}`;
         const fullUrl = url.slice(-1) === '/' ? url : url + '/';
         const pageLink = route.prefix + route.path;
 

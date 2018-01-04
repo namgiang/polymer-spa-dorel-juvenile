@@ -1,0 +1,29 @@
+#!/bin/sh
+
+##
+# name: commit-msg
+# author: Marnix Harderwijk
+# description: setup git hook for commit messages
+##
+
+##
+# define echo colors
+##
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+##
+# checks the given commit message
+##
+test "" = "$(head -1 "$1" | grep -vE '^((fixup\!|squash\!) )?(DIO+\-[0-9]+:|NOJIRA:|Merge branch|Merge remote-tracking branch|Revert).+')" || {
+  echo "${RED}Error:${NC} Aborting due to invalid commit message."
+  echo "${RED}-->${NC} Commit message needs to be prefixed by either pull-request or JIRA number."
+  echo "    e.g. "DIO-123: you commit message" or "NOJIRA: you commit message""
+  echo "${RED}-->${NC} Rejected your commit..."
+  cat $1 | while read line; do
+    [ `expr "$line" : "^#"` -gt 0 ] && break
+    echo $line
+  done
+  exit 1
+}

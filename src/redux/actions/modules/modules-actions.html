@@ -1,0 +1,89 @@
+<script>
+(function() {
+
+const urlMapping = {
+  usps: '/rest/V1/dorel-uspbuilder/usplist?product_id=',
+  features: '/rest/V1/dorel-featurebuilder/featurelist?product_id=',
+  accordions: '/rest/V1/dorel-accordionbuilder/accordionlist?product_id=',
+  topics: '/rest/V1/dorel-topicbuilder/topiclist?product_id='
+};
+
+function requestModule(item) {
+  return (dispatch, getState) => {
+    if (shouldFetchModule(getState(), item)) {
+      dispatch(addModule(item))
+      return dispatch(fetchModule(getState(), item))
+    } else {
+      return Promise.resolve()
+    }
+  }
+}
+
+
+function fetchModule(state, item) {
+  return dispatch => {
+    const currentLanguageCode = state.route.currentLanguage.languageCode;
+    const init = { method: 'GET', mode: 'cors', cache: 'default' };
+    const url = `${CONFIG.ECOM_URL}${urlMapping[item.type]}${item.productId}&language=${currentLanguageCode}`;
+    return fetch(url, init)
+      .then(handleErrors)
+      .then(response => response.json())
+      .then(json => dispatch(requestModuleSuccess(item, json)))
+      .catch(() => dispatch(requestModuleFailed(item)))
+  }
+}
+
+function addModule(item) {
+  return {
+    type: 'REQUEST_MODULE',
+    payload: {
+      productId: item.productId,
+      type: item.type
+    }
+  }
+}
+
+function requestModuleSuccess(item, response) {
+  if(response.length) {
+    return {
+      type: 'REQUEST_MODULE_SUCCESS',
+      payload: Object.assign(item, response[0])
+    }
+  } else {
+    return (dispatch) => {
+      return dispatch(requestModuleFailed(item))
+    }
+  }
+}
+
+function requestModuleFailed(item) {
+  return {
+    type: 'REQUEST_MODULE_FAILED',
+    payload: item
+  }
+}
+
+function shouldFetchModule(state, item) {
+  const module = state.modules[item.type].find(item_ => item_.productId === item.productId);
+  if (!module) {
+    return true;
+  } else if (module.isLoading) {
+    return false;
+  } else {
+    return module.notAvailable;
+  }
+}
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+moduleActions = {
+  requestModule,
+}
+
+}());
+</script>

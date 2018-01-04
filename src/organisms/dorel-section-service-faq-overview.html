@@ -326,12 +326,6 @@
     Polymer({
       is: 'dorel-section-service-faq-overview',
       properties: {
-        /**
-         * `appCache` the application cache
-         */
-        appCache: {
-          type: Object
-        },
 
         selectedTopic: {
           type: String,
@@ -340,6 +334,10 @@
 
         templateData: {
           type: Object
+        },
+
+        faqDetailPages: {
+          type: Array
         },
 
         /**
@@ -366,7 +364,7 @@
         if (typeof newVal === 'undefined' || newVal === oldVal) return;
 
         // retrieve the faqDetailPages from Wordpress
-        var detailPages = this._getFaqDetailPages();
+        var detailPages = this.faqDetailPages;
 
         /**
          * TLDR: Add detail page data to the faq category (detail link/promo data)
@@ -394,28 +392,8 @@
           }); // faqCategories foreach
 
         }); // detailPages foreach
-      },
-
-      /**
-       * @name _getFaqDetailPages
-       * @description return all the faq detail pages from WP
-       * @returns Array of page objects
-       */
-      _getFaqDetailPages: function () {
-        var wpPages = this.get('appCache.collect.pages');
-
-        if (typeof wpPages === 'undefined') return [];
-
-        // filter out the detailPages from WP
-        var faqPages = wpPages.filter(function (page) {
-          return page.template === 'faq-detail';
-        });
-
-        // return the faqDetailPages
-        return faqPages;
       }
     });
-
   </script>
 
 </dom-module>

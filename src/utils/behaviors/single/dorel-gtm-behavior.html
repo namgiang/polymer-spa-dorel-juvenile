@@ -1,0 +1,40 @@
+<script>
+
+  /**
+   * @polymerBehavior
+   */
+  GtmBehavior = {
+    /**
+     * @name _dispatchGtmEvent
+     * @description This function will determine if the global dorel event click
+     * object is defined/changed. If so it will push the data to GA (tagmanager)
+     * in the format defined by Analytics department
+     * @param dorelEvt - Object
+     */
+    _dispatchGtmEvent: function(dorelEvt) {
+      // if the dorelEvt is not empty we will push data to gtm
+      if (this._hasProps(dorelEvt)) {
+        console.info(dorelEvt);
+        window.dataLayer = window.dataLayer || [];
+        // more info http://bit.ly/2nb6I7G
+        window.dataLayer.push(dorelEvt);
+      }
+    },
+
+    /**
+     * @name _hasProps
+     * @description check if the observed data model has properties
+     */
+    _hasProps: function(dataObj) {
+      // define dataEmpty variable to check wheter the dorelEvt object is empty or not
+      var hasProps = false;
+
+      // check for properties in the dorelEvt object
+      for (var prop in dataObj) {
+        hasProps = (dataObj.hasOwnProperty(prop)) ? true : false;
+      }
+
+      return hasProps;
+    }
+  };
+</script>

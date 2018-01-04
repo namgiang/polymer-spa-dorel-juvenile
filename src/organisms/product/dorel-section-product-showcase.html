@@ -144,7 +144,6 @@
     </style>
 
     <dorel-wp-collect-templates
-      app-cache="[[appCache]]"
       template-type="page-store-locator.php"
       response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
 
@@ -306,73 +305,72 @@
     <div class="clear"></div>
 
     <dorel-product-lead-lightbox
-      app-cache="[[appCache]]"
       product-sku="[[showcaseData.sku]]"
       store-locator-page="[[storeLocatorPage]]"></dorel-product-lead-lightbox>
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-section-product-showcase',
+    class DorelSectionProductShowcase extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
 
-      properties: {
+      static get is() {
+        return 'dorel-section-product-showcase';
+      }
 
-        appCache: {
-          type: Object,
-          value: function () {
-            return {};
+      static get properties() {
+        return {
+
+          config: {
+            type: Object,
+            statePath: 'config'
+          },
+
+          /**
+           * @attribute
+           * @name accessoryScrollHandler
+           * @description exposes the accessoryScrollHandler to other components
+           */
+          accessoryScrollHandler: {
+            type: Boolean,
+            notify: true
+          },
+
+          /**
+           * @attribute
+           * @name showcaseData
+           * @description the showcase data is defined as an attribute on this
+           * component
+           */
+          showcaseData: {
+            type: Object
+          },
+
+          slides: {
+            type: Array,
+            value: function() {
+              return [];
+            }
           }
-        },
+        };
+      }
 
-        /**
-         * @attribute
-         * @name accessoryScrollHandler
-         * @description exposes the accessoryScrollHandler to other components
-         */
-        accessoryScrollHandler: {
-          type: Boolean,
-          notify: true
-        },
+      static get observers() {
+        return [
+          '_showcaseDataChanged(showcaseData)'
+        ];
+      }
 
-        /**
-         * @attribute
-         * @name showcaseData
-         * @description the showcase data is defined as an attribute on this
-         * component
-         */
-        showcaseData: {
-          type: Object
-        },
-
-        slides: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        }
-
-      },
-
-      behaviors: [ConditionalBehaviors, TemplateBehaviors, DorelMultilingualBehavior],
-
-      listeners: {
-        'colorUpdated': '_changeSlider'
-      },
-
-      observers: [
-        '_showcaseDataChanged(showcaseData)'
-      ],
-
-      ready: function () {
+      ready() {
+        super.ready();
+        this.addEventListener('colorUpdated', this._changeSlider);
         // define third party model
-        this._defineOptionModels(this.get('appCache'));
+        this._defineOptionModels(this.config);
 
-        var parentProduct = this.get('showcaseData');
+        const parentProduct = this.get('showcaseData');
 
         if(parentProduct && parentProduct.child_products && parentProduct.child_products.length) {
           this._setSlider(parentProduct.child_products[0]);
         }
-      },
+      }
 
       /**
        * observer
@@ -380,9 +378,9 @@
        * @description everytime the product/showcaseData changes call setSlider to update the slider
        * @param showcaseData - Object
        */
-      _showcaseDataChanged: function(showcaseData) {
+      _showcaseDataChanged(showcaseData) {
          this._setSlider(showcaseData.child_products[0]);
-      },
+      }
 
       /**
        * listener
@@ -390,18 +388,18 @@
        * @description will listen to the colorUpdated event fired by the color-switcher component
        * @param Event - Object
        */
-      _changeSlider: function(event) {
+      _changeSlider(event) {
         this._setSlider(event.detail);
-      },
+      }
 
       /**
        * @name _setSlider
        * @description will set the active slides that are used by dorel-showcase-slider component
        * @param Product - Object
        */
-      _setSlider: function(product) {
+      _setSlider(product) {
         this.set('slides', product.slides);
-      },
+      }
 
       /**
        * check if a the accessories are defined
@@ -410,9 +408,9 @@
        * @param {object} all data needed for the showcase
        * @return Boolean
        */
-      _hasAccessories: function (showcaseData) {
+      _hasAccessories(showcaseData) {
         return Boolean(showcaseData && showcaseData.related_products && showcaseData.related_products.length);
-      },
+      }
 
       /**
        * check to see if a store locator page is set and returns a boolean
@@ -420,9 +418,9 @@
        * @param {object} the page object containing the store locator page
        * @return Boolean
        */
-      _showStoreLocatorCta: function(pageObject, hatchToggle) {
+      _showStoreLocatorCta(pageObject, hatchToggle) {
         return (typeof pageObject !== 'undefined' && pageObject !== '' && this._hasProperties(pageObject) && !hatchToggle);
-      },
+      }
 
       /**
        * check if a store-locator page is defined and
@@ -433,34 +431,35 @@
        *
        * @return Boolean
        */
-      _showStoreLocatorLightbox: function (pageObject, hatchToggle) {
+      _showStoreLocatorLightbox(pageObject, hatchToggle) {
         return Boolean(typeof pageObject !== 'undefined' && pageObject !== '' && hatchToggle);
-      },
+      }
 
       /**
        * scroll to the accesory section
        */
-      _viewAccessories: function () {
+      _viewAccessories() {
         this.accessoryScrollHandler = !this.accessoryScrollHandler;
-      },
+      }
 
       /**
        * handle of the click on the details links
        */
-      _openLightbox: function () {
-        var lightbox = this.$$('dorel-product-lead-lightbox');
+      _openLightbox() {
+        const lightbox = this.$$('dorel-product-lead-lightbox');
         lightbox.open();
-      },
+      }
 
       /**
        * @param {string} the complete storeLocatore pageObject
        *
        * @return {string} newly formed url of the link
        */
-      _createStoreLocatorLink: function(pageObject) {
-        var urlArr = window.location.href.split('/');
-        return urlArr[0] + '//' + urlArr[2] + '/' + urlArr[3] + '/' + pageObject.post_name;
+      _createStoreLocatorLink(pageObject) {
+        const urlArr = window.location.href.split('/');
+        return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}`;
       }
-    });
+    }
+    customElements.define(DorelSectionProductShowcase.is, DorelSectionProductShowcase);
   </script>
 </dom-module>

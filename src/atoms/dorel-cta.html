@@ -1,3 +1,5 @@
+<link rel="import" href="../utils/behaviors/single/dorel-gtm-behavior.html">
+
 <dom-module id="dorel-cta">
   <template>
     <style include="iron-flex">
@@ -249,7 +251,6 @@
   <script>
     Polymer({
       is: 'dorel-cta',
-
       properties: {
 
         /**
@@ -361,12 +362,13 @@
         }
       },
 
+      behaviors: [GtmBehavior],
+
       /**
        * @name clickCTA
        * @description handle the click on a cta link, very important for Analytics!!!!!!
        */
       _clickCTA: function (event) {
-
         // retarget to the right element to get its attributes
         if (Polymer.dom(event).rootTarget.tagName === 'A') {
           var element = Polymer.dom(event).rootTarget;
@@ -416,8 +418,7 @@
             'targetPage': element.href
           }
         };
-
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(event);
       },
 
       /**

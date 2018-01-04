@@ -102,6 +102,7 @@
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <div class="accordion-container"
+
          light$="[[ light ]]"
          small$="[[ small ]]"
          opened$="[[ opened ]]"
@@ -141,6 +142,7 @@
   <script>
     Polymer({
       is: 'dorel-accordion-item',
+      behaviors: [ GtmBehavior ],
       properties: {
         /**
          * @name heading
@@ -313,7 +315,7 @@
           }
         };
 
-        this.fire('setAppCache', {value: event, path: 'events'});
+        this._dispatchGtmEvent(events);
       }
     });
   </script>

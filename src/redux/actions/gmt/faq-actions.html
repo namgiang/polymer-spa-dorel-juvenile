@@ -1,0 +1,83 @@
+<script>
+(function() {
+
+
+  function requestFaqsByCategory(item) {
+    return (dispatch, getState) => {
+      if (shouldFetchCategory(getState(), item)) {
+        dispatch(makeFaqsRequest(item))
+        return dispatch(fetchFaqsByCategory(getState(), item))
+      } else {
+        return Promise.resolve()
+      }
+    }
+  }
+
+  function makeFaqsRequest(item) {
+    return {
+      type: 'REQUEST_FAQS_BY_CATEGORY',
+      payload: item.category
+    }
+  }
+
+  function fetchFaqsByCategory(state, item) {
+    return dispatch => {
+      const currentLanguageCode = state.route.currentLanguage.languageCode;
+      const init = { method: 'GET', mode: 'cors', cache: 'default' };
+      const url = `${state.config.dioApiUrl}/service-topics/${item.url}&translations=1&iso_code=${currentLanguageCode}`;
+      return fetch(url, init)
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(json => dispatch(requestFaqsSuccess(item.category, json)))
+        .catch(() => dispatch(requestFaqsFailed(item.category)))
+    }
+  }
+
+  function shouldFetchCategory(state, item) {
+    const existingCategory = state.gmt.faq.requestedCategories.find(category_ => category_.id === item.category) ||
+      state.gmt.faq.faqs.find(faq => faq.id === item.category);
+    if (!existingCategory) {
+      return true;
+    } else if (existingCategory.isLoading) {
+      return false;
+    } else {
+      return existingCategory.notAvailable;
+    }
+  }
+
+  function requestFaqsSuccess(category, faqs) {
+    if(faqs.length) {
+      return {
+        type: 'REQUEST_FAQS_BY_CATEGORY_SUCCESS',
+        payload: {
+          faqs,
+          category
+        }
+      }
+    } else {
+      return (dispatch) => {
+        return dispatch(requestFaqsFailed(category))
+      }
+    }
+  }
+
+  function requestFaqsFailed(category) {
+    return {
+      type: 'REQUEST_FAQS_BY_CATEGORY_FAILED',
+      payload: category
+    }
+  }
+
+  function handleErrors(response) {
+      if (!response.ok) {
+          throw Error(response.statusText);
+      }
+      return response;
+  }
+
+  gmtFaqActions = {
+    requestFaqsByCategory
+  };
+
+}());
+</script>

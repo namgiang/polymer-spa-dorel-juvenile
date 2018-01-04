@@ -289,7 +289,7 @@
 
           localeCode: {
             type: String,
-            value: CONFIG.LOCALE.LANGUAGE
+            statePath: 'route.currentLanguage.languageCode'
           },
 
           /**
@@ -366,9 +366,11 @@
            */
           selectedCountry: {
             type: Object,
-            value: {
-              label: CONFIG.LOCALE.COUNTRY_NAME.charAt(0).toUpperCase() + CONFIG.LOCALE.COUNTRY_NAME.slice(1), // Capitalize first letter of the COUNTRY_NAME constant
-              value: CONFIG.LOCALE.COUNTRY_CODE
+            statePath: function(state) {
+              return {
+                label: state.route.currentLanguage.country.name || '',
+                value: state.route.currentLanguage.country.iso || ''
+              }
             }
           },
 
@@ -401,12 +403,12 @@
 
           /**
            * @attribute
-           * @name appCache
-           * @description the temporary cache of the application,
-           * contains data that used to be contained by the globalsManager
+           * @name dioApiUrl
+           * @description the endpoint of the dorel api
            */
-          appCache: {
-            type: Object
+          dioApiUrl: {
+            type: String,
+            statePath: 'config.dioApiUrl'
           }
         };
       }
@@ -420,7 +422,7 @@
       static get observers() {
         return [
           '_setMapZoom(mapLoaded, geometry)',
-          '_setMapFocus(mapLoaded, selectedCountry)'
+          '_setMapFocus(mapLoaded)'
         ]
       }
 
@@ -447,7 +449,7 @@
         this.autocomplete = new google.maps.places.AutocompleteService();
 
         // build up the countries arr for the countries dropdown
-        this.countriesEndPoint = this.get('appCache.dioApiUrl') + '/retailers/countries?brandName=maxi_cosi&localeCode=' + this.localeCode;
+        this.set('countriesEndPoint', `${this.dioApiUrl}/retailers/countries?brandName=maxi_cosi&localeCode=${this.localeCode}`);
       }
 
       /**
@@ -471,35 +473,30 @@
        *
        * @param selectedCountry - String - contains the country's name
        */
-      _setMapFocus(mapLoaded, selectedCountry) {
+      _setMapFocus(mapLoaded) {
 
         // check if there is a value for the geocoder and selectedCountry
         if (!mapLoaded ||
-          typeof selectedCountry === 'undefined' ||
+          typeof this.selectedCountry === 'undefined' ||
           typeof this.geocoder === 'undefined') return;
 
-        // reference this
-        var self = this;
-
         // retrieve and set the maps variables
-        this._retrieveGeocode(selectedCountry.label).then(function (geometry) {
+        this._retrieveGeocode(this.selectedCountry.label).then((geometry) => {
 
           // used in the google-map attribute latitude
-          self.mapLat = geometry.location.lat();
+          this.mapLat = geometry.location.lat();
 
           // used in the google-map attribute longitude
-          self.mapLng = geometry.location.lng();
+          this.mapLng = geometry.location.lng();
 
           // saved too use it for the _setMapZoom observer
-          self.geometry = geometry;
+          this.geometry = geometry;
 
           // submit the form if the addressInput is filled
-          if(self.addressInput.length) {
-            self.callLocator();
+          if(this.addressInput.length) {
+            this.callLocator();
           }
         });
-
-
       }
 
       /**
@@ -610,10 +607,10 @@
         this.address = this.addressInput;
 
         // retrieve the suggestions by query
-        this.predictions = this._retrieveSuggestions(query).then(function (response) {
+        this.predictions = this._retrieveSuggestions(query).then((response) => {
 
           // retrieve the geocode to update the map
-          self._retrieveGeocode(response.description).then(function (geometry) {
+          this._retrieveGeocode(response.description).then((geometry) => {
             // define our api call
             var storeParams = '&lat=' + geometry.location.lat();
             storeParams += '&lng=' + geometry.location.lng();
@@ -621,16 +618,16 @@
             storeParams += '&radius=' + 5;
 
             // set the endpoint, when set the api call will automatically commence
-            self.storesEndPoint = self.get('appCache.dioApiUrl') + '/retailers?brandName=maxi_cosi' + storeParams;
+            this.storesEndPoint = this.get('dioApiUrl') + '/retailers?brandName=maxi_cosi' + storeParams;
 
-          }, function (error) {
+          }, (error) => {
             // handle off the errors
-            self._handleErrors(error);
+            this._handleErrors(error);
           });
 
-        }, function (error) {
+        }, (error) => {
           // handle off the errors
-          self._handleErrors(error);
+          this._handleErrors(error);
         });
       }
 

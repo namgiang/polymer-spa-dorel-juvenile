@@ -1,4 +1,3 @@
-
 <link rel="import" href="../organisms/dorel-section-header.html">
 <link rel="import" href="../organisms/product/dorel-section-product-accessories.html">
 <link rel="import" href="../organisms/product/dorel-section-product-accordions.html">
@@ -101,14 +100,12 @@
 
         <dorel-section-product-showcase
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
-          app-cache="[[ appCache ]]"
           showcase-data="[[ product ]]"
           gtm-parent="dorel-section-product-showcase"
           gtm-parent-index="1"></dorel-section-product-showcase>
 
         <dorel-section-product-usps
           product-id="[[ product.id ]]"
-          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-usps"
           gtm-parent-index="2"></dorel-section-product-usps>
 
@@ -123,13 +120,11 @@
 
         <dorel-section-product-features
           product-id="[[ product.id ]]"
-          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-features"
           gtm-parent-index="4"></dorel-section-product-features>
 
         <dorel-section-product-topics
           product-id="[[ product.id ]]"
-          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-topiclists"
           gtm-parent-index="6"></dorel-section-product-topics>
 
@@ -145,7 +140,6 @@
         <dorel-section-product-accessories
           accessory-scroll-handler="{{ accessoryScrollHandler }}"
           category="[[ category ]]"
-          app-cache="[[ appCache ]]"
           related-products="[[ product.related_products ]]"
           accessories-options="[[ product.related_product_section ]]"
           gtm-parent="dorel-section-product-accessories"
@@ -153,7 +147,6 @@
 
         <dorel-section-product-accordions
           product-id="[[ product.id ]]"
-          app-cache="[[ appCache ]]"
           gtm-parent="dorel-section-product-accordion"
           gtm-parent-index="4"></dorel-section-product-accordions>
       </template>
@@ -199,13 +192,6 @@
           },
 
           /**
-           * the colorMapping that will be used by product-collect
-           */
-          colorMap: {
-            type: Array
-          },
-
-          /**
            * the current product object
            */
           product: {
@@ -214,13 +200,6 @@
               const product = state.product.products.find(product => product.url === this.routeData.productName);
               return product ? product : { isLoading: true };
             }
-          },
-
-          /**
-           * the temporary cache of the application, contains data that used to be contained by the globalsManager
-           */
-          appCache: {
-            type: Object
           }
         }
       }
@@ -240,6 +219,7 @@
       _productNameChanged(productName) {
         if(productName) {
           this.dispatch('requestProduct', productName);
+          this.dispatch('setCurrentProduct', productName);
         }
       }
 

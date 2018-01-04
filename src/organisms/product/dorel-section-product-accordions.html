@@ -2,7 +2,6 @@
 <link rel="import" href="../../molecules/product-information/dorel-product-information-faq.html">
 <link rel="import" href="../../molecules/product-information/dorel-product-information-manuals.html">
 <link rel="import" href="../../molecules/product-information/dorel-product-information-specifications.html">
-<link rel="import" href="../../utils/dorel-magento-collect-custom-data.html">
 
 <dom-module id="dorel-section-product-accordions">
   <template>
@@ -21,12 +20,6 @@
         padding: 3em 0;
       }
     </style>
-
-    <dorel-magento-collect-custom-data
-      product-id="[[ productId ]]"
-      app-cache="[[ appCache ]]"
-      data="{{ accordionsData }}"
-      type="accordions"></dorel-magento-collect-custom-data>
 
     <template
       is="dom-if"
@@ -87,14 +80,20 @@
   </template>
 
   <script>
-    class DorelSectionProductAccordions extends Polymer.mixinBehaviors([PageBuilderBehavior, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element) {
+    class DorelSectionProductAccordions extends ReduxMixin(Polymer.mixinBehaviors([PageBuilderBehavior, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
 
       static get is() { return 'dorel-section-product-accordions'; }
 
       static get properties() {
         return {
+          /**
+           * @attribute
+           * @name productId
+           * @description coming from the currentProduct passed by parent
+           */
           productId: {
-            type: Number
+            type: String,
+            observer: '_productIdChanged'
           },
 
           /**
@@ -105,19 +104,28 @@
            */
           accordionsData: {
             type: Object,
-            value: () => ({})
-          },
-
-          /**
-           * @attribute
-           * @name appCache
-           * @description the temporary cache of the application,
-           * contains data that used to be contained by the globalsManager
-           */
-          appCache: {
-            type: Object
+            statePath: function(state) {
+              if(!this.productId || !state.modules.accordions.length) {
+                return { isLoading: true };
+              }
+              return state.modules.accordions.find(item => {
+                return item.productId === this.productId && !item.isLoading && !item.isNotAvailable;
+              });
+            }
           }
         }
+      }
+
+      /**
+       * observer
+       * @name _productIdChanged
+       * @description everytime the observer is trigger it will dispatch the requestModule action
+       */
+      _productIdChanged(productId) {
+        if(!productId || !productId.length) {
+          return;
+        }
+        this.dispatch('requestModule', { productId, type: 'accordions' });
       }
 
       _defineHeading(type) {
@@ -125,7 +133,6 @@
       }
     }
 
-    // Register the x-custom element with the browser
     customElements.define(DorelSectionProductAccordions.is, DorelSectionProductAccordions);
   </script>
 </dom-module>

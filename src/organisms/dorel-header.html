@@ -3,6 +3,7 @@
 <link rel="import" href="../molecules/dorel-logo.html">
 <link rel="import" href="../molecules/navigation/dorel-main-menu-mobile.html">
 <link rel="import" href="../molecules/navigation/dorel-main-menu-desktop.html">
+<link rel="import" href="../utils/behaviors/single/dorel-gtm-behavior.html">
 
 
 <dom-module id="dorel-header" mobile-menu-opened$="{{ mobileMenuOpened }}">
@@ -167,7 +168,7 @@
     </div>
   </template>
   <script>
-    class DorelHeader extends ReduxMixin(Polymer.mixinBehaviors([Polymer.IronScrollTargetBehavior], Polymer.Element)) {
+    class DorelHeader extends ReduxMixin(Polymer.mixinBehaviors([Polymer.IronScrollTargetBehavior, GtmBehavior], Polymer.Element)) {
       static get is() {
         return 'dorel-header'
       }
@@ -297,11 +298,7 @@
           }
         };
 
-        // send event to tracking
-        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-          value: event,
-          path: 'events'
-        }}));
+        this._dispatchGtmEvent(event);
 
       }
 
@@ -327,11 +324,8 @@
             'toState': this.mobileMenuOpened ? 'open' : 'close'
           }
         };
-        // send event to tracking
-        this.dispatchEvent(new CustomEvent('setAppCache', { bubbles: true, composed: true, detail: {
-          value: event,
-          path: 'events'
-        }}));
+
+        this._dispatchGtmEvent(event);
       }
 
       /**

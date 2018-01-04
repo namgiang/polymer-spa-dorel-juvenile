@@ -1,17 +1,10 @@
-<link rel="import" href="./dorel-magento-collect-products-by-category.html">
 <link rel="import" href="./dorel-wp-collect-page.html">
 
 <dom-module id="dorel-main-menu-creator">
   <template>
 
-    <dorel-magento-collect-products-by-category
-      app-cache="[[ appCache ]]"
-      id="products">
-    </dorel-magento-collect-products-by-category>
-
     <dorel-wp-collect-page
       pages="[[ pages ]]"
-      app-cache="[[ appCache ]]"
       id="collectPageEl">
     </dorel-wp-collect-page>
 
@@ -28,33 +21,40 @@
 
         /**
          * @attribute
-         * @name appCache
-         * @description pages
-         */
-        appCache: {
-          type: Object
-        },
-
-        /**
-         * @attribute
          * @name pages
          * @description pages
          */
         pages: {
           type: Array,
           statePath: 'pages'
+        },
+
+        /**
+         * @attribute
+         * @name currentLanguage
+         * @description the currentLanguage from the redux state
+         */
+        currentLanguage: {
+          type: Object,
+          statePath: 'route.currentLanguage'
+        },
+
+        /**
+         * @attribute
+         * @name mainMenuOptions
+         * @description the menu items from the initial options
+         * with this data the menu is generated
+         */
+        mainMenuOptions: {
+          type: Array,
+          statePath: 'config.main_menu'
         }
       }
     }
     static get observers () {
       return [
-      '_createMenuDataModel(appCache.collect.options.main_menu)'
+      '_createMenuDataModel(mainMenuOptions)'
       ]
-    }
-
-    ready () {
-      super.ready()
-      this.addEventListener('newProducts', this._setMenuProducts);
     }
 
     _createMenuDataModel(mainMenu) {
@@ -99,6 +99,11 @@
       }
       if(item.dropdown_type === 'category') {
         let sub_category_items = await this._getSubCategoryItems(page);
+        if(sub_category_items && sub_category_items.length < 2) {
+          item.productSwitch = true;
+          const category = this._getMagentoCategoryId(page);
+          this.dispatch('requestProductsByCategory', category);
+        }
         item.category_id = this._getMagentoCategoryId(page);
         item.sub_category_items = sub_category_items;
       }
@@ -107,15 +112,9 @@
 
     async _getSubCategoryItems(page) {
       let allChildPages = await this.$.collectPageEl.getChildrenByParentId(page.id);
-      const childPages = allChildPages.map(page => {
-        return this._getCategorySubMenuItems(page)
+      return allChildPages.map(page => {
+        return this._getCategorySubMenuItems(page);
       });
-      if(!childPages || childPages.length < 2) {
-        var category = this._getMagentoCategoryId(page);
-        this.$.products.getProducts(category, this.get('appCache.currentLanguage'));
-      } else {
-        return childPages;
-      }
     }
 
     _getCategorySubMenuItems(page) {
@@ -134,44 +133,13 @@
       return Number(page.acf.magento_category_picker);
     }
 
-    _setMenuProducts(value) {
-      const allProducts = value.detail.products;
-      if(!allProducts.length) {
-        return;
-      }
-      // limit products in menu to 5
-      const products = allProducts.filter((product, index) => {
-        return index <= 4
-      });
-
-      var category = value.detail.category;
-      // create a new mainMenu and append
-      var oldMenu = this.getState().menu.items || [];
-      var mainMenu = oldMenu.map(function(menuItem) {
-        if(menuItem.category_id === category) {
-          menuItem.sub_category_items = products.map(function(product) {
-            var newItem = {
-              id: Number(product.id),
-              link: menuItem.link + product.url,
-              thumbnail_url: product.child_products[0].images.image,
-              title: product.name ? product.name.value : '',
-              sub_title: product.header_section.sub_title
-            }
-            return newItem;
-          });
-        }
-        return Object.assign({}, menuItem);
-      });
-      this.dispatch('addMenu', mainMenu);
-    }
-
     cleanUrlToPath(url) {
       const urlArray = url.split('/');
       const path = '/' + urlArray.slice(3).join('/');
       return path;
     }
   };
-    customElements.define(DorelMainMenuCreator.is, DorelMainMenuCreator);
+  customElements.define(DorelMainMenuCreator.is, DorelMainMenuCreator);
 
   </script>
 </dom-module>
