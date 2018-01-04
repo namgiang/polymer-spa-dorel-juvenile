@@ -1,0 +1,120 @@
+<dom-module id="dorel-product-review-stars">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      .star {
+        display: inline-block;
+      }
+      .star iron-icon {
+        height: 1.2rem;
+        width: 1.2rem;
+        color: var(--theme-brand-color-1);
+      }
+      .star[large-mode] iron-icon {
+        height: 2rem;
+        width: 2rem;
+      }
+    </style>
+    <template is="dom-repeat" items="[[ stars ]]" as="star">
+      <div class="star" large-mode$="[[ largeMode ]]">
+        <template is="dom-if" if="[[ _shouldShow(star, 'half') ]]">
+          <iron-icon icon="dorel-icons:star-half"></iron-icon>
+        </template>
+        <template is="dom-if" if="[[ _shouldShow(star, 'empty') ]]">
+          <iron-icon icon="dorel-icons:star-empty"></iron-icon>
+        </template>
+        <template is="dom-if" if="[[ _shouldShow(star, 'full') ]]">
+          <iron-icon icon="dorel-icons:star-full"></iron-icon>
+        </template>
+    </template>
+
+  </template>
+
+  <script>
+
+    class DorelProductReviewStars extends Polymer.Element {
+      static get is() {
+        return 'dorel-product-review-stars';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name numberOfStars
+           * @description Config value that will determine the number of stars shown
+           * default is 5
+           */
+          numberOfStars: {
+            type: Number,
+            value: 5
+          },
+          /**
+           * @attribute
+           * @name percentage
+           * @description value that will be inherit by the parent. The percentage of the reviewed subject
+           */
+          percentage: {
+            type: Number,
+            value: 54,
+            observer: '_percentageChanged'
+          },
+          
+          /**
+           * @attribute
+           * @name stars
+           * @description will be generated based on the percentage and the number of start
+           * Array of objects. The type property of a object will determine what icon will be shown
+           */
+          stars: {
+            type: Array
+          },
+          
+          /**
+           * @attribute
+           * @name largeMode
+           * @description largeMode will increase the size of the stars 
+           * default is false
+           */
+          largeMode: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          },
+        }
+      }
+      
+      _percentageChanged(percentage) {        
+        this.stars = Array.apply(null, Array(this.numberOfStars)).map((value, index) => {
+          return Object.assign({}, { 
+              index, 
+              type: this._setStarType(index, percentage)
+            });
+        });
+      }
+      
+      _setStarType(index, reviewPercentage) {
+        const step = 100 / this.numberOfStars;
+        const amoumtOfCurrentStar = step * index;
+        // if review minus the step is bigger or equal to amoumtOfCurrentStar return true
+        if(reviewPercentage - step >= amoumtOfCurrentStar) {
+          return 'full';
+        }
+        if(reviewPercentage - amoumtOfCurrentStar > 0) {
+          return 'half'
+        } else {
+          return 'empty';
+        }
+      }
+      
+      _shouldShow(star, value) {
+        return star.type === value;
+      }
+    };
+
+  customElements.define(DorelProductReviewStars.is, DorelProductReviewStars);
+
+  </script>
+</dom-module>

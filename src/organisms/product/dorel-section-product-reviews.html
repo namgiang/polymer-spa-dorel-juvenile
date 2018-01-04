@@ -1,0 +1,55 @@
+<link rel="import" href="../../molecules/dorel-product-feature.html">
+<link rel="import" href="../../utils/behaviors/single/dorel-multilingual-behavior.html">
+<link rel="import" href="../../molecules/product-information/reviews/dorel-product-reviews.html">
+<link rel="import" href="../../molecules/product-information/reviews/dorel-product-review-total-summary.html">
+
+
+<dom-module id="dorel-section-product-reviews">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      dorel-layout-container {
+        margin: 3em 0;
+        float: left;
+        width: 100%;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <dorel-layout-container>
+      <dorel-titling title="{{localize('product_features#title')}}"></dorel-titling>
+
+      <dorel-layout-row>
+        
+        <dorel-layout-column desktop-column-span="3" mobile-column-span="12">
+          <dorel-product-review-total-summary></dorel-product-review-total-summary>
+        </dorel-layout-column>
+        
+        <dorel-layout-column desktop-column-span="9" mobile-column-span="12" style="background-color: blue;">
+          <dorel-product-reviews></dorel-product-reviews>
+        </dorel-layout-column>
+        
+      </dorel-layout-row>
+    </dorel-layout-container>
+  </template>
+  <script>
+    class DorelSectionProductReviews extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-section-product-reviews';
+      }
+
+      static get properties() {
+        return {
+
+
+        };
+      }
+
+    };
+    customElements.define(DorelSectionProductReviews.is, DorelSectionProductReviews);
+  </script>
+</dom-module>

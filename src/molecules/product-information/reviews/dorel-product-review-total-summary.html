@@ -1,0 +1,68 @@
+<link rel="import" href="dorel-product-review-stars.html">
+
+<dom-module id="dorel-product-review-total-summary">
+  <template>
+    <style>
+      .label {
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
+    </style>
+    <div>
+      <div>
+        <dorel-product-review-stars percentage="{{ reviewData.totalPercentage }}" large-mode="true"></dorel-product-review-stars>
+      </div>
+      <div>
+        Total Reviews: {{ reviewData.totalReviews }}
+      </div>
+      <template is="dom-repeat" items="[[ reviewData.subjects ]]" as="subject">
+        <div>
+          <span class="label">{{ subject.type }}</span><dorel-product-review-stars percentage="{{ subject.percentage }}"></dorel-product-review-stars>
+        </div>
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+
+    class DorelProductReviewTotalSummary extends Polymer.Element {
+      static get is() {
+        return 'dorel-product-review-total-summary';
+      }
+
+      static get properties() {
+        return {
+          reviewData: {
+            type: Object,
+            value: {
+              totalReviews: 56,
+              totalPercentage: 55,
+              subjects: [
+                {
+                  type: 'Ease of use',
+                  percentage: 70,
+                },
+                {
+                  type: 'Product quality',
+                  percentage: 54,
+                },
+                {
+                  type: 'Comfort',
+                  percentage: 19,
+                },
+                {
+                  type: 'Maintenance',
+                  percentage: 80,
+                }
+              ]
+            }
+          }
+        }
+      }
+    };
+
+  customElements.define(DorelProductReviewTotalSummary.is, DorelProductReviewTotalSummary);
+
+  </script>
+</dom-module>
