@@ -28,7 +28,14 @@
           })
 
         case 'REQUEST_IMAGES_FAILED':
-          return state;
+          return Object.assign({}, state, {
+            images: state.images.map(image => {
+              return action.payload.ids.indexOf(image.id) > -1 ? Object.assign({}, image, {
+                isLoading: false,
+                notAvailable: true
+              }) : image;
+            })
+          })
 
         case 'RESET_IMAGE_LIGHTBOX':
           return Object.assign({}, state, {
