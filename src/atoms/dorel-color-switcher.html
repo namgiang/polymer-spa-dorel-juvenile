@@ -78,14 +78,14 @@
             items="[[ colorsData ]]"
             as="item"
             filter="[[ _filterChildProducts(filters.*) ]]">
-            <li class$="list-group-item {{ _isCurrentColor(currentName, item.collection_colour_theme_name.value) }}">
+            <li class$="list-group-item {{ _isCurrentColor(currentName, item.collection_colour_theme_name.name) }}">
 
               <template is="dom-if" if="[[ _checkType(item, 'hex') ]]">
                 <span on-click="_changeCurrentColor"
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.value ]]"
+                      color-name$="[[ item.collection_colour_theme_name.name ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]"
@@ -97,7 +97,7 @@
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.value ]]"
+                      color-name$="[[ item.collection_colour_theme_name.name ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]">
@@ -110,7 +110,7 @@
                       role="button"
                       tabindex="0"
                       color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.value ]]"
+                      color-name$="[[ item.collection_colour_theme_name.name ]]"
                       gtm-action$="[[ gtmAction ]]"
                       gtm-child$="[[ gtmChild ]]"
                       gtm-cta-index$="[[ index ]]"></span>
@@ -200,7 +200,7 @@
         if (!newColor) return;
 
         this.set('currentImage', newColor.images.image);
-        this.set('currentName', newColor.collection_colour_theme_name.value);
+        this.set('currentName', newColor.collection_colour_theme_name.name);
       }
 
       /**
@@ -221,8 +221,6 @@
           );
         }
 
-        const element = Polymer.dom(event).localTarget;
-
         // define the new color values
         this.set('newColorImage', event.target.getAttribute('color-image'));
         this.set('newColorName', event.target.getAttribute('color-name'));
@@ -231,7 +229,8 @@
         this.set('currentImage', this.get('newColorImage'));
         this.set('currentName', this.get('newColorName'));
 
-        // TODO: recheck gtm here
+        /* TODO: recheck gtm here ------------ */
+        const element = Polymer.dom(event).localTarget;
         this.gtmAction = event.target.getAttribute('gtm-action');
         this.gtmChild = event.target.getAttribute('gtm-child');
         this.gtmCtaIndex = event.target.getAttribute('gtm-cta-index');
