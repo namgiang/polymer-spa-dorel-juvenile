@@ -10,7 +10,17 @@ function requestImage(id) {
   }
 }
 
-function requestImageSucces(images) {
+function sortSuccessAndFailed(ids, images) {
+  const imagesFailed = ids.split(',').filter((id) => !images.some(image => image.id === id));
+  return (dispatch, getState) => {
+    if(imagesFailed && imagesFailed.length) {
+      dispatch(requestImageFailed(imagesFailed, 'not available'));
+    }
+    return dispatch(requestImageSuccess(images));
+  };
+}
+
+function requestImageSuccess(images) {
   return {
     type: 'REQUEST_IMAGES_SUCCES',
     payload: images
@@ -44,7 +54,7 @@ const fetchImages = debounce((dispatch, getState) => {
     ids,
     versions: '1'
   })
-  .then(data => dispatch(requestImageSucces(data)))
+  .then(data => dispatch(sortSuccessAndFailed(ids, data)))
   .catch(error => dispatch(requestImageFailed(ids, error)))
 }, 500)
 
