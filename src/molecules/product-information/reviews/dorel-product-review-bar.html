@@ -1,0 +1,63 @@
+<dom-module id="dorel-product-review-bar">
+  <template>
+    <style>
+      #bar-wrapper {
+        background-color: var(--theme-color-monochrome-2);
+        display: block;
+        height: 10px;
+        width: 100%;
+      }
+
+      #bar-indicator {
+        background-color: var(--theme-brand-color-1);
+        display: block;
+        height: 10px;
+        width: 1px;
+      }
+    </style>
+
+    <div id="bar-wrapper">
+      <span id="bar-indicator"
+        style$="width: [[percentage]]%;"></span>
+    </div>
+  </template>
+
+  <script>
+    class DorelProductReviewBar extends Polymer.Element {
+
+      static get is() { return 'dorel-product-review-bar'; }
+
+      static get properties() {
+        return {
+          /**
+           * attribute to define the current rating
+           */
+          ratingAmount: {
+            type: Number,
+            value: 0,
+            observer: '_fillIndicator'
+          },
+
+          /**
+           * attribute to define the total amount of reviews
+           */
+          totalAmount: Number
+        }
+      }
+
+      /**
+       * after the ratingAmount changes determine the percentage & width
+       * of the bar indicator
+       *
+       * @param {number} the rating count of a certain rating
+       */
+      _fillIndicator(ratingAmount) {
+        const percentage = ratingAmount / this.get('totalAmount') * 100;
+
+        this.set('percentage', percentage);
+      }
+    }
+
+    customElements.define(DorelProductReviewBar.is, DorelProductReviewBar);
+  </script>
+</dom-module>
