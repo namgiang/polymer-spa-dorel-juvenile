@@ -44,6 +44,9 @@
           mediaContent: {
             type: Object,
             statePath: function (state) {
+              if (this.mediaContent && this.mediaContent.isLoading === false) {
+                return;
+              }
               const mediaContent = state.image.images.find(item => item.id === this.mediaId);
               return mediaContent ? mediaContent : {isLoading: true};
             },
@@ -87,7 +90,12 @@
 
       _onMediaIdChanged(mediaId) {
         if(mediaId) {
-          this.dispatch('fetchImageById', mediaId);
+          const mediaExist = this.getState().image.images.find(item => item.id === this.mediaId);
+          if (mediaExist) {
+            this.mediaContent = mediaExist;
+          } else {
+            this.dispatch('fetchImageById', mediaId);
+          }
         }
       }
 
