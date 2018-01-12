@@ -1,0 +1,60 @@
+<script>
+  (function() {
+    const initial = {
+      reviews: [],
+      currentReview: 'none',
+    };
+
+    reviewReducer = (state = initial, action) => {
+      switch (action.type) {
+
+        /**
+         * extends the reviews array with an object with the loading state for this sku
+         */
+        case 'REQUEST_REVIEWS':
+          state.reviews.push({
+            sku: action.payload,
+            isLoading: true,
+            isNotAvailable: false
+          });
+
+          return Object.assign({}, state, {
+            reviews: state.reviews.map(review => review)
+          });
+
+        /**
+         * adds the newly retrieved reviews object to the reviews appropiatly for this sku
+         */
+        case 'REQUEST_REVIEWS_SUCCESS':
+          return Object.assign({}, state, {
+            reviews: state.reviews.map(review => {
+              return review.sku === action.payload.results[0].page_id ?
+                Object.assign({}, {
+                  paging: action.payload.paging,
+                  sku: action.payload.results[0].page_id,
+                  rollup: action.payload.results[0].rollup,
+                  results: action.payload.results[0].reviews,
+                  isLoading: false,
+                  isNotAvailable: false,
+                }) : review;
+            })
+          });
+
+        /**
+         * when the request fails set the object in the reviews for the designated sku
+         */
+        case 'REQUEST_REVIEW_FAILED':
+          console.log('REQUEST_REVIEW_FAILED');
+          return Object.assign({}, state, {
+            products: state.reviews.map(product => {
+              return review.sku === action.payload.page_id ?
+                Object.assign({}, review, { isLoading: false, notAvailable: true }) : review;
+            })
+          });
+
+      default:
+        return state;
+      }
+    };
+}());
+</script>

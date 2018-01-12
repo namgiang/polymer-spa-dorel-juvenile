@@ -1,0 +1,143 @@
+<script>
+  (function() {
+
+    /**
+     * formulate the request
+     */
+    function requestReviews(product_sku, sorting) {
+      return (dispatch, getState) => {
+        if (shouldFetchReviews(getState(), product_sku)) {
+          dispatch(prepareReviewsRequest(product_sku))
+          return dispatch(fetchReviews(getState(), product_sku, sorting))
+        } else {
+          return Promise.resolve()
+        }
+      }
+    }
+
+    /**
+     * prepare the reducer info
+     */
+    function prepareReviewsRequest(product_sku) {
+      return {
+        type: 'REQUEST_REVIEWS',
+        payload: product_sku
+      }
+    }
+
+    /**
+     * retrieves the reviews for the defined product sku
+     *
+     * @param {object} the complete state
+     * @param {string} string version of the sku
+     * @param {string} sorting coming from the options page of WP
+     * @param {boolean} retrieves reviews of only reviews with images
+     */
+    function fetchReviews(state, product_sku, sorting, imageOnly) {
+      return dispatch => {
+        const locale = state.route.currentLanguage.languageCode;
+        const countryCode = state.route.currentLanguage.countryCode;
+        const prConfig = state.config.third_party[0].power_reviews;
+        const init = { method: 'GET', mode: 'cors', cache: 'default' };
+
+        /**
+         * example request for power reviews (url defined at app-config level):
+         * https://readservices-b2c.powerreviews.com/m/64172/l/en_GB/product/2d7c2112-7cc1-47cc-8b6f-2cc7cd0a9d95/reviews?apikey=38f8abea-6154-4785-9c17-fe7d24b4148c
+         */
+        // let url = `${state.config.reviewsUrl}/${prConfig.merchant_id}/l/${locale}_${countryCode.toUpperCase()}/product/${product_sku}/reviews?apikey=${prConfig.api_key}`;
+        let url = 'https://readservices-b2c.powerreviews.com/m/64172/l/en_GB/product/2d7c2112-7cc1-47cc-8b6f-2cc7cd0a9d95/reviews?apikey=38f8abea-6154-4785-9c17-fe7d24b4148c'
+
+        // when sorting is defined extend the api request url
+        if (sorting) {
+          url += `&sort=${sorting}`;
+        }
+
+        // when imageOnly is defined extend the api request url
+        if (imageOnly) {
+          url += `&image_only=true`;
+        }
+
+        // retrieve the reviews object for this sku and dispatch accordingly
+        return fetch(url, init)
+          .then(handleErrors)
+          .then(response => response.json())
+          .then(json => dispatch(requestReviewsSucces(product_sku, json)))
+          .catch(() => dispatch(requestReviewsFailed(product_sku)))
+      }
+    }
+
+    /**
+     * check if the application should even try to retrieve the reviews and if all data is present to do so
+     *
+     * @param {state} the complete state
+     * @param {string} string version of the sku
+     */
+    function shouldFetchReviews(state, product_sku) {
+      // if power reviews is disabled or one of the needed api criteria are empty, skip retrieval
+      if (!state.config.third_party[0].power_reviews.toggle
+        || !state.config.third_party[0].power_reviews.merchant_id
+        || !state.config.third_party[0].power_reviews.api_key) return;
+
+      const review = state.review.reviews.find(review => review.sku === product_sku);
+
+      if (!review) {
+        return true;
+      } else if (review.isLoading) {
+        return false;
+      } else {
+        return review.isNotAvailable;
+      }
+    }
+
+    /**
+     * set the right state when successfull
+     *
+     * @param {string} string version of the sku
+     * @param {object} object containing the reviews information for the requested sku
+     */
+    function requestReviewsSucces(product_sku, reviews) {
+      if(reviews.results.length) {
+        return {
+          type: 'REQUEST_REVIEWS_SUCCESS',
+          payload: reviews
+        }
+      } else {
+        return (dispatch) => {
+          return dispatch(requestReviewsFailed(product_sku))
+        }
+      }
+    }
+
+    /**
+     * set the right state when the request fails
+     *
+     * @param {string} string version of the sku
+     */
+    function requestReviewsFailed(product_sku) {
+      return {
+        type: 'REQUEST_REVIEWS_FAILED',
+        payload: product_sku
+      }
+    }
+
+    /**
+     * process the errors and log them in the console
+     *
+     * @param {string} response information of the request that fails
+     */
+    function handleErrors(response) {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+
+      return response;
+    }
+
+    /**
+     * Tiewrap all public functions to the actions
+     */
+    reviewsActions = {
+      requestReviews
+    };
+  }());
+</script>
