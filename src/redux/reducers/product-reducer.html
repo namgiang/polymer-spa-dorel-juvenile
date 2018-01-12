@@ -22,6 +22,7 @@
           });
 
         case 'REQUEST_PRODUCT_SUCCES':
+        case 'REQUEST_PRODUCT_SUCCESS':
           return Object.assign({}, state, {
             products: state.products.map(product => {
               return product.sku === action.payload.sku || product.url === action.payload.url ?
@@ -34,14 +35,6 @@
             products: state.products.map(product => {
               return product.sku === action.payload || product.url === action.payload ?
                 Object.assign({}, product, { isLoading: false, notAvailable: true }) : product;
-            })
-          });
-
-        case 'REQUEST_PRODUCT_SUCCESS':
-          return Object.assign({}, state, {
-            products: state.products.map(product => {
-              return product.sku === action.payload.sku || product.url === action.payload.url ?
-                Object.assign({}, action.payload, { isLoading: false, notAvailable: false }) : product;
             })
           });
 
