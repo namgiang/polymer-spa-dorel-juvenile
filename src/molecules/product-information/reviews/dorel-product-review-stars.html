@@ -17,17 +17,19 @@
         width: 2rem;
       }
     </style>
-    <template is="dom-repeat" items="[[ stars ]]" as="star">
+    <template
+      is="dom-repeat"
+      items="[[stars]]"
+      as="star">
       <div class="star" large-mode$="[[ largeMode ]]">
-        <template is="dom-if" if="[[ _shouldShow(star, 'half') ]]">
-          <iron-icon icon="dorel-icons:star-half"></iron-icon>
-        </template>
-        <template is="dom-if" if="[[ _shouldShow(star, 'empty') ]]">
-          <iron-icon icon="dorel-icons:star-empty"></iron-icon>
-        </template>
-        <template is="dom-if" if="[[ _shouldShow(star, 'full') ]]">
-          <iron-icon icon="dorel-icons:star-full"></iron-icon>
-        </template>
+        <iron-icon icon="dorel-icons:star-[[star.type]]"></iron-icon>
+      </div>
+    </template>
+
+    <template
+      is="dom-if"
+      if="[[showRating]]">
+      <span>[[rating]]</span>
     </template>
 
   </template>
@@ -41,80 +43,94 @@
 
       static get properties() {
         return {
+
           /**
-           * @attribute
-           * @name numberOfStars
-           * @description Config value that will determine the number of stars shown
-           * default is 5
-           */
-          numberOfStars: {
-            type: Number,
-            value: 5
-          },
-          /**
-           * @attribute
-           * @name percentage
-           * @description value that will be inherit by the parent. The percentage of the reviewed subject
-           */
-          percentage: {
-            type: Number,
-            value: 54,
-            observer: '_percentageChanged'
-          },
-          
-          /**
-           * @attribute
-           * @name stars
-           * @description will be generated based on the percentage and the number of start
-           * Array of objects. The type property of a object will determine what icon will be shown
-           */
-          stars: {
-            type: Array
-          },
-          
-          /**
-           * @attribute
-           * @name largeMode
-           * @description largeMode will increase the size of the stars 
-           * default is false
+           * largeMode will increase the size of the stars
            */
           largeMode: {
             type: Boolean,
             reflectToAttribute: true,
             value: false
           },
+
+          /**
+           * value that will determine the number of stars shown
+           */
+          numberOfStars: {
+            type: Number,
+            value: 5
+          },
+
+          /**
+           * value that will be inherit by the parent. The percentage of the reviewed subject
+           */
+          rating: {
+            type: Number,
+            value: 5,
+            observer: '_ratingChanged'
+          },
+
+          /**
+           * will be generated based on the percentage and the number of start
+           * Array of objects. The type property of a object will determine what icon will be shown
+           */
+          stars: {
+            type: Array
+          },
+
+          /**
+           * show the numeric rating next to the stars
+           */
+          showRating: {
+            type: Boolean,
+            value: false
+          }
+
         }
       }
-      
-      _percentageChanged(percentage) {        
-        this.stars = Array.apply(null, Array(this.numberOfStars)).map((value, index) => {
-          return Object.assign({}, { 
-              index, 
-              type: this._setStarType(index, percentage)
-            });
+
+      /**
+       * when the rating changes it is converted to an array and set to the stars variable
+       *
+       * @param {number} the rating of this review
+       */
+      _ratingChanged(rating) {
+        const stars = Array.apply(null, Array(this.get('numberOfStars'))).map((value, index) => {
+          return Object.assign({}, {
+            index,
+            type: this._setStarType(index, rating)
+          });
         });
+
+        this.set('stars', stars);
       }
-      
-      _setStarType(index, reviewPercentage) {
-        const step = 100 / this.numberOfStars;
+
+      /**
+       * calculates which stars are filled | half filled | empty. According
+       * to each stars index, the rating and the total number of stars
+       *
+       * @param {number} the index of the stars array item
+       * @param {number} the percentage of the current rating
+       * @return {string} css class to identify the star filler
+       */
+      _setStarType(index, rating) {
+        const percentage = rating/this.get('numberOfStars') * 100;
+        const step = 100 / this.get('numberOfStars');
         const amoumtOfCurrentStar = step * index;
+
         // if review minus the step is bigger or equal to amoumtOfCurrentStar return true
-        if(reviewPercentage - step >= amoumtOfCurrentStar) {
+        if(percentage - step >= amoumtOfCurrentStar) {
           return 'full';
         }
-        if(reviewPercentage - amoumtOfCurrentStar > 0) {
+
+        if(percentage - amoumtOfCurrentStar > 0) {
           return 'half'
         } else {
           return 'empty';
         }
       }
-      
-      _shouldShow(star, value) {
-        return star.type === value;
-      }
     };
 
-  customElements.define(DorelProductReviewStars.is, DorelProductReviewStars);
-
+    customElements.define(DorelProductReviewStars.is, DorelProductReviewStars);
   </script>
 </dom-module>
