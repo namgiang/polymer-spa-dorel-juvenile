@@ -1,0 +1,131 @@
+<link rel="import" href="dorel-product-review-stars.html">
+<link rel="import" href="dorel-product-review-bar.html">
+
+<dom-module id="dorel-product-review-total-summary">
+  <template>
+    <style>
+      dorel-product-review-stars {
+        margin-bottom: 1.5em;
+      }
+
+      #rating-overview {
+        padding-right: 1em;
+      }
+
+      #overview-short-summary {
+        margin-bottom: 1.5em;
+      }
+
+      #rating-distribution {
+        border: 1px solid var(--theme-brand-complementary-color-1);
+        border-radius: var(--theme-border-radius-0);
+        padding: 1.5em;
+      }
+
+      #distribution-histogram {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .distribution-title {
+        display: block;
+        margin-bottom: 1em;
+        font-size: var(--theme-typography-ui_-_font-size);
+        text-transform: var(--theme-typography-ui_-_text-transform);
+        font-weight: var(--theme-typography-ui_-_font-weight);
+        font-family: var(--theme-typography-ui_-_font-family);
+      }
+
+      .histogram-column {
+        flex: 0 1 auto;
+      }
+
+      .histogram-column-bar {
+        padding: 0 .5em;
+        flex: 2 1 auto;
+      }
+    </style>
+
+    <div id="rating-overview">
+      <div itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
+        <dorel-product-review-stars
+          large-mode
+          number-of-stars="[[numberOfStars]]"
+          rating="[[rating]]"></dorel-product-review-stars>
+
+        <div id="overview-short-summary">
+          <span itemprop="ratingValue">[[rating]]</span>
+          <span itemprop="reviewCount">([[localize('reviews_rating-overview#review-count')]] [[totalReviews]] [[localize('reviews_rating-overview#reviews')]])</span>
+        </div>
+
+        <template
+          is="dom-if"
+          if="[[ratingDistribution.length]]">
+          <div id="rating-distribution">
+            <span class="distribution-title">[[localize('reviews_rating-overview#distribution-title')]]</span>
+
+            <template
+              is="dom-repeat"
+              items="[[_reverseArr(ratingDistribution)]]">
+              <div id="distribution-histogram">
+                <span class="histogram-column histogram-column-star">[[_getStarCount(ratingDistribution, index)]] [[localize('reviews_rating-overview#stars')]]</span>
+                <span class="histogram-column histogram-column-bar">
+                  <dorel-product-review-bar
+                    rating-amount="[[item]]"
+                    total-amount="[[totalReviews]]"></dorel-product-review-bar>
+                </span>
+                <span class="histogram-column histogram-column-count">([[item]])</span>
+              </div>
+            </template>
+
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+
+    class DorelProductReviewTotalSummary extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+      static get is() {
+        return 'dorel-product-review-total-summary';
+      }
+
+      static get properties() {
+        return {
+          numberOfStars: Number,
+          rating: Number,
+          ratingDistribution: Array,
+          totalReviews: Number
+        }
+      }
+
+      /**
+       * reverse the array since the frontend needs to start with the
+       * highest rating first
+       *
+       * @param {array} the array to reverse
+       * @return {array} the reversed array
+       */
+      _reverseArr(arr) {
+        return arr.reverse();
+      }
+
+      /**
+       * show the current amount of stars within the repeat
+       *
+       * @param {array} the array containing the histogram
+       * @index {number} dom-repeat index
+       * @return {number} star count
+       */
+      _getStarCount(ratingDistribution, index) {
+        return ratingDistribution.length - index;
+      }
+    };
+
+    customElements.define(DorelProductReviewTotalSummary.is, DorelProductReviewTotalSummary);
+  </script>
+</dom-module>

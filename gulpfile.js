@@ -42,9 +42,9 @@ function waitFor(stream) {
 gulp.task('build:es5', function () {
   return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
   mkdirp(__dirname + '/build/log/', (err) => {
-    if (err) console.error(err)
-    else console.log('Log directory created!')
-    const log_file = fs.createWriteStream(__dirname + '/build/log/es5-' + new Date().toISOString() + '.txt', {flags : 'w'});
+    if (err) console.error(err);
+    else console.log('Log directory created!');    
+    const log_file = fs.createWriteStream(__dirname + '/build/log/es5-' + new Date().toISOString().replace(':', '-').replace('.', '-') + '.txt', {flags : 'w'});    
     const log_stdout = process.stdout;
     const log_stderr = process.stderr;
 
@@ -116,8 +116,9 @@ gulp.task('build:es5', function () {
         // .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
         // .pipe(gulpif(/\.html$/, htmlMinifier())) // Install gulp-html-minify to use
 
+        .pipe(gulpif('index.html', replace('$version', git.tag()))) 
         .pipe(gulpif('index.html', replace('$datetime', new Date().toISOString())))
-        .pipe(gulpif('index.html', replace('$version', git.short())))
+        .pipe(gulpif('index.html', replace('$commit', git.short())))
 
         // Remember, you need to rejoin any split inline code when you're done.
         .pipe(sourcesStreamSplitter.rejoin());
@@ -193,9 +194,9 @@ gulp.task('build:es6', function(done) {
   del([buildDirectory])
     .then(() => {
       mkdirp(__dirname + '/build/log/', (err) => {
-        if (err) console.error(err)
-        else console.log('Log directory created!')
-        const log_file = fs.createWriteStream(__dirname + '/build/log/es6-' + new Date().toISOString() + '.txt', {flags : 'w'});
+        if (err) console.error(err);
+        else console.log('Log directory created!');
+        const log_file = fs.createWriteStream(__dirname + '/build/log/es6-' + new Date().toISOString().replace(':', '-').replace('.', '-') + '.txt', {flags : 'w'});
         const log_stdout = process.stdout;
         const log_stderr = process.stderr;
 
@@ -218,8 +219,9 @@ gulp.task('build:es6', function(done) {
         './**/*',
         '!./{build,build/**}'
       ])
+      .pipe(gulpif('index.html', replace('$version', git.tag()))) 
       .pipe(gulpif('index.html', replace('$datetime', new Date().toISOString())))
-      .pipe(gulpif('index.html', replace('$version', git.short())))
+      .pipe(gulpif('index.html', replace('$commit', git.short())))
       .pipe(gulp.dest(`./${buildDirectory}`))
       .on('end', () => console.log('ES6 Build complete!'));
       done();

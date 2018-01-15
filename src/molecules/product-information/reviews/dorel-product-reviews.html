@@ -1,0 +1,67 @@
+<dom-module id="dorel-product-reviews">
+  <template>
+    <style>
+      time {
+        float: right;
+      }
+
+      .article-body {
+        margin-bottom: 1.5em;
+      }
+
+      footer {
+        margin-bottom: 1.5em;
+      }
+    </style>
+
+    <article>
+      <header>
+        <dorel-product-review-stars
+          rating="[[rating]]"
+          number-of-stars="[[numberOfStars]]"></dorel-product-review-stars>
+
+        <time datetime="[[millisecondsToDate(date)]]">
+          [[millisecondsToDate(date)]]
+          <meta itemprop="dateCreated" content="[[millisecondsToDate(date)]]">
+        </time>
+      </header>
+
+      <div class="article-body">
+        <h3>[[heading]]</h3>
+        <div>[[description]]</div>
+      </div>
+
+      <footer>
+        <span>[[author]], [[location]]</span>
+      </footer>
+    </article>
+  </template>
+
+  <script>
+
+    class DorelProductReviews extends ReduxMixin(Polymer.mixinBehaviors([MergeArraysBehavior, DateBehaviors], Polymer.Element)) {
+
+      static get is() {
+        return 'dorel-product-reviews';
+      }
+
+      static get properties() {
+        return {
+          heading: String,
+          description: String,
+          date: Number,
+          location: String,
+          author: String,
+          helpfulScore: Number,
+          helpfulVotes: Number,
+          notHelpfulVotes: Number,
+          ratingPercentage: Number,
+          numberOfStars: Number
+        }
+      }
+    };
+
+  customElements.define(DorelProductReviews.is, DorelProductReviews);
+
+  </script>
+</dom-module>
