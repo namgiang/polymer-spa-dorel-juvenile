@@ -6,6 +6,8 @@
 <link rel="import" href="../organisms/product/dorel-section-product-showcase.html">
 <link rel="import" href="../organisms/product/dorel-section-product-video.html">
 <link rel="import" href="../organisms/product/dorel-section-product-usps.html">
+<link rel="import" href="../organisms/product/dorel-section-product-reviews.html">
+
 
 <link rel="import" href="dorel-template-404.html">
 
@@ -149,6 +151,15 @@
           product-id="[[ product.id ]]"
           gtm-parent="dorel-section-product-accordion"
           gtm-parent-index="4"></dorel-section-product-accordions>
+
+        <template
+          is="dom-if"
+          if="[[_shouldShowReviews(reviewsConfig.toggle, reviewsConfig.merchant_id, reviewsConfig.api_key)]]">
+          <dorel-section-product-reviews
+            product-sku="[[product.sku]]"
+            reviews-sorting="[[reviewsConfig.sorting]]"
+            image-only="[[reviewsConfig.image_only]]"></dorel-section-product-reviews>
+        </template>
       </template>
     </div>
   </template>
@@ -200,6 +211,13 @@
               const product = state.product.products.find(product => product.url === this.routeData.productName);
               return product ? product : { isLoading: true };
             }
+          },
+
+          reviewsConfig: {
+            type: Object,
+            statePath: function(state) {
+              return state.config.third_party[0].power_reviews;
+            }
           }
         }
       }
@@ -243,9 +261,12 @@
         // bynder_background_image an be null, empty string or undefined
         return (typeof productHeader !== 'undefined' && typeof productHeader.bynder_background_image !== 'undefined' && productHeader.bynder_background_image !== '' && productHeader.bynder_background_image);
       }
+
+      _shouldShowReviews(toggle, merchantId, apiKey) {
+        return toggle && merchantId && apiKey;
+      }
     }
 
-    // Register the x-custom element with the browser
     customElements.define(DorelTemplateProductDetail.is, DorelTemplateProductDetail);
   </script>
 </dom-module>
