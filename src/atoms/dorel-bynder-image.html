@@ -182,7 +182,10 @@
           mediaContent: {
             type: Object,
             statePath: function(state) {
-              const mediaContent = state.image.images.find(item => item.id === this.mediaId);
+              if (this.mediaContent && this.mediaContent.isLoading === false && !this.get('mediaId')) {
+                return;
+              }
+              const mediaContent = state.image.images.find(item => item.id === this.get('mediaId'));
               return mediaContent ? mediaContent : {isLoading: true};
             },
             observer: '_onMediaContentChanged'
@@ -254,9 +257,20 @@
         this._setSize();
       }
 
+      /**
+       * @name _onMediaIdChanged
+       * @description Will set the mediaContent if the image is in the state
+       * else it will dispatch an action to retrieve a image
+       * @param mediaId - String
+       */
       _onMediaIdChanged(mediaId) {
         if(mediaId) {
-          this.dispatch('fetchImageById', mediaId);
+          const mediaExist = this.getState().image.images.find(item => item.id === mediaId);
+          if (mediaExist) {
+            this.mediaContent = mediaExist;
+          } else {
+            this.dispatch('fetchImageById', mediaId);
+          }
         }
       }
 

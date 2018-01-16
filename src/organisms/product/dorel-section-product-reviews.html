@@ -1,0 +1,125 @@
+<link rel="import" href="../../molecules/dorel-product-feature.html">
+<link rel="import" href="../../utils/behaviors/single/dorel-multilingual-behavior.html">
+<link rel="import" href="../../molecules/product-information/reviews/dorel-product-reviews.html">
+<link rel="import" href="../../molecules/product-information/reviews/dorel-product-review-total-summary.html">
+
+
+<dom-module id="dorel-section-product-reviews">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      dorel-layout-container {
+        margin: 3em 0;
+        float: left;
+        width: 100%;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+
+    <!-- api returns 200 always, but check if there are reviews before showing all html -->
+    <template
+      is="dom-if"
+      if="[[reviews.results.length]]">
+      <dorel-layout-container>
+        <dorel-titling title="[[localize('product_reviews#title')]]"></dorel-titling>
+
+        <dorel-layout-row>
+
+          <dorel-layout-column desktop-column-span="3" mobile-column-span="12">
+            <dorel-product-review-total-summary
+              number-of-stars="[[reviews.rollup.rating_histogram.length]]"
+              rating="[[reviews.rollup.average_rating]]"
+              rating-distribution="[[reviews.rollup.rating_histogram]]"
+              total-reviews="[[reviews.rollup.review_count]]"></dorel-product-review-total-summary>
+          </dorel-layout-column>
+
+          <dorel-layout-column desktop-column-span="9" mobile-column-span="12">
+            <template
+              is="dom-repeat"
+              items="[[reviews.results]]"
+              as="review">
+              <dorel-product-reviews
+                heading="[[review.details.headline]]"
+                description="[[review.details.comments]]"
+                date="[[review.details.created_date]]"
+                location="[[review.details.location]]"
+                author="[[review.details.nickname]]"
+                helpful-score="[[review.metrics.helpful_score]]"
+                helpful-votes="[[review.metrics.helpful_votes]]"
+                not-helpful-votes="[[review.metrics.not_helpful_votes]]"
+                rating="[[review.metrics.rating]]"
+                number-of-stars="[[reviews.rollup.rating_histogram.length]]"></dorel-product-reviews>
+            </template>
+          </dorel-layout-column>
+
+        </dorel-layout-row>
+      </dorel-layout-container>
+    </template>
+  </template>
+  <script>
+    class DorelSectionProductReviews extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
+      static get is() {
+        return 'dorel-section-product-reviews';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * the product object containing all info
+           */
+          productSku: {
+            type: String,
+            observer: '_productChanged'
+          },
+
+          /**
+           * the sorting of the reviews
+           */
+          reviewsSorting: {
+            type: String,
+            value: 'Newest'
+          },
+
+          /**
+           * when set show only reviews with images
+           */
+          imageOnly: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * all the reviews for this product
+           */
+          reviews: {
+            type: Array,
+            statePath: function(state) {
+              const review = state.review.reviews.find(review => review.sku === this.get('productSku'));
+              // const review = state.review.reviews.find(review => review.sku === '2d7c2112-7cc1-47cc-8b6f-2cc7cd0a9d95');
+
+              return review ? review : { isLoading: true };
+            }
+          }
+        };
+      }
+
+      /**
+       * when the productSku changes retrieve the correct reviews and add to the state
+       *
+       * @param {string} the sku of the product to retrieve
+       */
+      _productChanged(productSku) {
+        if (productSku) {
+          this.dispatch('requestReviews', productSku, this.get('reviewsSorting'));
+          // this.dispatch('requestReviews', '2d7c2112-7cc1-47cc-8b6f-2cc7cd0a9d95', this.get('reviewsSorting'), this.get('imageOnly'));
+        }
+      }
+    };
+
+    customElements.define(DorelSectionProductReviews.is, DorelSectionProductReviews);
+  </script>
+</dom-module>

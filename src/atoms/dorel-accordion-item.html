@@ -97,48 +97,54 @@
       [light], [light][opened] {
         background-color: var(--theme-color-white);
       }
-
     </style>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
     <div class="accordion-container"
-
-         light$="[[ light ]]"
-         small$="[[ small ]]"
-         opened$="[[ opened ]]"
-         tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+      light$="[[ light ]]"
+      small$="[[ small ]]"
+      opened$="[[ opened ]]"
+      tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
       <template
         is="dom-if"
         if="[[ heading.length ]]">
+
         <div class="accordion-toggle"
-              id="accordion"
-              aria-expanded="false"
-              tabindex="0"
-              role="button"
-              aria-controls$="#collapse"
-              data-selector$="#collapse"
-              on-click="_toggleCollapse"
-              gtm-parent="[[ gtmParent ]]"
-              gtm-parent-index="[[ gtmParentIndex ]]"
-              gtm-cta-index$="[[ index ]]">
-        <h2 class="accordion-heading">
-          <template is="dom-if" if="[[ icon.length ]]">
-            <iron-icon class="left-icon" icon="[[ icon ]]"></iron-icon>
-          </template>
-          [[ heading ]]
-        </h2>
-        <iron-icon class="accordion-icon"
-                   opened$="[[ opened ]]"
-                   icon="dorel-icons:expand-more"></iron-icon>
-                   </div>
+          id="accordion"
+          aria-expanded="false"
+          tabindex="0"
+          role="button"
+          aria-controls$="#collapse"
+          data-selector$="#collapse"
+          on-click="_toggleCollapse"
+          gtm-parent="[[ gtmParent ]]"
+          gtm-parent-index="[[ gtmParentIndex ]]"
+          gtm-cta-index$="[[ index ]]">
+          <h2 class="accordion-heading">
+            <template
+              is="dom-if"
+              if="[[ icon.length ]]">
+              <iron-icon class="left-icon" icon="[[ icon ]]"></iron-icon>
+            </template>
+            <dorel-safe-html html="[[ heading ]]"></dorel-safe-html>
+          </h2>
+          <iron-icon class="accordion-icon"
+            opened$="[[ opened ]]"
+            icon="dorel-icons:expand-more"></iron-icon>
+        </div>
+
       </template>
-      <iron-collapse id="collapse" opened="{{ opened }}">
+
+      <iron-collapse id="collapse"
+        opened="{{ opened }}">
         <div class="accordion-content">
           <slot></slot>
         </div>
       </iron-collapse>
     </div>
   </template>
+
   <script>
     Polymer({
       is: 'dorel-accordion-item',
