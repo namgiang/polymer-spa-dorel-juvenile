@@ -182,10 +182,10 @@
           mediaContent: {
             type: Object,
             statePath: function(state) {
-              if (this.mediaContent && this.mediaContent.isLoading === false) {
+              if (this.mediaContent && this.mediaContent.isLoading === false && !this.get('mediaId')) {
                 return;
               }
-              const mediaContent = state.image.images.find(item => item.id === this.mediaId);
+              const mediaContent = state.image.images.find(item => item.id === this.get('mediaId'));
               return mediaContent ? mediaContent : {isLoading: true};
             },
             observer: '_onMediaContentChanged'
