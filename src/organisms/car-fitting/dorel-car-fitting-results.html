@@ -1,6 +1,6 @@
-<link rel="import" href="../atoms/dorel-cta.html">
-<link rel="import" href="../atoms/dorel-bynder-image.html">
-<script src="../../node_modules/snapsvg/dist/snap.svg.js"></script>
+<script src="../../../node_modules/snapsvg/dist/snap.svg.js"></script>
+<link rel="import" href="../../atoms/dorel-cta.html">
+<link rel="import" href="../../atoms/dorel-bynder-image.html">
 
 <dom-module id="dorel-car-fitting-results">
   <template>
@@ -143,12 +143,12 @@
       .timeAgo {
         font-size: 11px;
       }
-      
+
       .content p {
         margin: 0;
         padding: 0;
       }
-      
+
       .notification {
         position: absolute;
         width: 270px;
@@ -162,7 +162,7 @@
         @apply(--theme-typography-1);
       }
       .notification ul {
-        margin-left: -1.4rem;        
+        margin-left: -1.4rem;
       }
       .notification-title {
         @apply(--theme-typography-3);
@@ -242,7 +242,7 @@
                     <br>
                     <object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
                     <strong class="fit-title">Fit</strong>
-                    <br> 
+                    <br>
                     <small class="image-message">[[stepData.main_section.info]]</small>
                     [[ loadImage(car.result, carIndex) ]]
                     <div id="svg_container_[[carIndex]]" class="svg_container"></div>
@@ -281,7 +281,7 @@
           </dorel-layout-row>
         </dorel-layout-column>
         <dorel-layout-column desktop-column-span="1" tablet-column-span="1" mobile-column-span="1" align="left">
-        </dorel-layout-column> 
+        </dorel-layout-column>
       </dorel-layout-row>
       <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]" restamp="true">
         <template is="dom-if" if="[[ hasBynderImage(stepData.sub_section.background_image_id) ]]">
@@ -330,7 +330,7 @@
       static get is() {
         return 'dorel-car-fitting-results';
       }
-      
+
       static get properties() {
         return {
           productImage: {
@@ -487,7 +487,7 @@
                 opacity: 100
               });
             }
-              
+
             setTimeout(() => {
               const svgOldCarNode = this.shadowRoot.querySelector(`#car_${carIndex}`);
               if(svgOldCarNode) svgOldCarNode.remove();
@@ -505,7 +505,7 @@
         this.set('stepController.currentStep', this.stepData.previousStep);
       }
     }
-    
+
     customElements.define(DorelCarFittingResults.is, DorelCarFittingResults);
-  </script>  
+  </script>
 </dom-module>
