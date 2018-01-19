@@ -1,10 +1,15 @@
 <script>
   (function() {
+
     const initial = {
       wpUrl: CONFIG.CMS_URL,
       dioApiUrl: CONFIG.DIO_API_URL,
       eComUrl: CONFIG.ECOM_URL,
       reviewsUrl: CONFIG.REVIEWS_URL,
+      cookie: {
+        cookies: [],
+        hasCookieNotification: true,
+      },
       grid: {
         horizontal: false,
         vertical: false
@@ -30,6 +35,25 @@
           return Object.assign({}, state, {
             grid: Object.assign({}, state.grid, {
               horizontal: !state.grid.horizontal
+            })
+          });
+
+        case 'SET_COOKIE':
+          return Object.assign({}, state, {
+            cookie: Object.assign({}, state.cookie, {
+              cookies: !state.cookie.cookies.some(cookie_ => cookie_.key === action.payload.key) ?
+                [...state.cookie.cookies, {
+                  key: action.payload.key,
+                  value: action.payload.value
+                }] : state.cookie.cookies.map(cookie => {
+                  if(cookie.key !== action.payload.key) {
+                    return cookie;
+                  }
+                  return {
+                    key: action.payload.key,
+                    value: action.payload.value
+                  }
+                })
             })
           });
 
