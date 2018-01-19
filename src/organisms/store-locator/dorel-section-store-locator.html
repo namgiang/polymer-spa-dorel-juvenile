@@ -10,6 +10,11 @@
 <dom-module id="dorel-section-store-locator">
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment">
+      h2, h3 {
+        font-size: 1em;
+        margin: 0;
+      }
+
       .heading {
         @apply(--theme-header-text-transform);
         display: block;
@@ -130,28 +135,33 @@
       tablet-medium-up$="{{breakpoints.tabletMediumUp}}">
       <div class="store-locator-map">
         <div class="store-overlay">
-          <span class="heading store-title">[[localize('store_locator#store-title')]]</span>
+          <h3 class="heading store-title">[[localize('store_locator#store-title')]]</h3>
+
           <form
             is="iron-form"
             method="get"
             action="/"
             id="store-locator-form">
-            <dorel-input
-              id="address-input"
-              label="[[localize('store_locator#address-from-label')]]"
-              value="{{addressInput}}"
-              error-message="{{addressError}}"
-              invalid$="{{addressInvalid}}"
-              disabled$="[[!selectedCountry]]"
-              required></dorel-input>
-            <dorel-cta
-              id="submit-button"
-              on-click="_submitLocator"
-              disabled$="{{_isDisabled(addressInput)}}"
-              type="primary"
-              link=""
-              size="medium"
-              icon="dorel-icons:chevron-right">[[localize('store_locator#find-stores-cta')]]</dorel-cta>
+            <h3>
+              <dorel-input
+                id="address-input"
+                label="[[localize('store_locator#address-from-label')]]"
+                value="{{addressInput}}"
+                error-message="{{addressError}}"
+                invalid$="{{addressInvalid}}"
+                disabled$="[[!selectedCountry]]"
+                required></dorel-input>
+            </h3>
+            <h2>
+              <dorel-cta
+                id="submit-button"
+                on-click="_submitLocator"
+                disabled$="{{_isDisabled(addressInput)}}"
+                type="primary"
+                link=""
+                size="medium"
+                icon="dorel-icons:chevron-right">[[localize('store_locator#find-stores-cta')]]</dorel-cta>
+            </h2>
           </form>
         </div>
 
