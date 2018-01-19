@@ -68,12 +68,12 @@
                                 desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
           <div class="dorel-cookie-notification__content">
             <p class="dorel-cookie-notification__paragraph">
-                We are using cookies to give you the best experience on our site. Cookies are filed stored in your browser and are used by most websites to help personalise your web experience. By continuing to use out website without changing the settings, you are agreeing to our use of cookies.
+              {{ localize('cookie_notification#content') }}
               <a class="dorel-cookie-notification__more-info"
-                href="/testjhes"
+                href="/should-be-added-by-wordpress-options-page"
                 target="_blank"
               >
-                More information
+              {{ localize('cookie_notification#link') }}
               </a>
             </p>
             <button
@@ -92,7 +92,7 @@
   <script>
     const COOKIE_AGREED_VALUE = 'userAgreedToTerms';
 
-    class DorelCookieNotification extends ReduxMixin(Polymer.Element) {
+    class DorelCookieNotification extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
       static get is() {
         return 'dorel-cookie-notification';
       }
