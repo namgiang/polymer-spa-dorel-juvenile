@@ -3,7 +3,7 @@
 <dom-module id="dorel-cookie-notification">
   <template>
     <style is="custom-style">
-      .dorel-cookie-notification {
+      :host {
         align-items: center;
         display: flex;
         justify-content: center;
@@ -12,7 +12,7 @@
         z-index: 99;
         background-color: var(--theme-color-monochrome-2);
       }
-      .dorel-cookie-notification::after {
+      :host::after {
         background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%);
         bottom: -.75em;
         content: "";
@@ -63,7 +63,6 @@
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <template is="dom-if" if="[[ shouldShowNofitication ]]">
-      <div class="dorel-cookie-notification">
         <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
                                 desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
           <div class="dorel-cookie-notification__content">
@@ -83,8 +82,8 @@
               <iron-icon class="dorel-cookie-notification__proceed-icon"
                 icon="dorel-icons:close"></iron-icon>
             </button>
-          </dorel-layout-container>
-        </div>
+          </div>
+        </dorel-layout-container>
       </template>
 
   </template>
