@@ -1,17 +1,19 @@
-<link rel="import" href="../../node_modules/google-map/google-map.html">
-<link rel="import" href="../../node_modules/google-map/google-map-marker.html">
-<link rel="import" href="../../node_modules/iron-a11y-keys/iron-a11y-keys.html">
-<link rel="import" href="../atoms/dorel-cta.html">
-<link rel="import" href="../organisms/dorel-section-store-locator-results.html">
-<link rel="import" href="../atoms/dorel-input.html">
-<link rel="import" href="../atoms/dorel-input-select.html">
-<link rel="import" href="../organisms/dorel-section-header.html">
+<link rel="import" href="../../../node_modules/google-map/google-map.html">
+<link rel="import" href="../../../node_modules/google-map/google-map-marker.html">
+<link rel="import" href="../../../node_modules/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../../atoms/dorel-cta.html">
+<link rel="import" href="../../atoms/dorel-input.html">
+<link rel="import" href="../../atoms/dorel-input-select.html">
+<link rel="import" href="../dorel-section-header.html">
+<link rel="import" href="dorel-section-store-locator-results.html">
 
 <dom-module id="dorel-section-store-locator">
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment">
-      h1, h2, h3, h4 {
+      h2,
+      .heading {
         @apply(--theme-header-text-transform);
+        display: block;
       }
 
       .section-store-locator,
@@ -119,9 +121,8 @@
     <section class="section-store-locator" tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
       <div class="store-locator-map">
         <div class="store-overlay">
-          <h2 class="store-title">[[localize('store_locator#store-title')]]</h2>
+          <span class="heading store-title">[[localize('store_locator#store-title')]]</span>
           <form is="iron-form" method="get" action="/" id="store-locator-form">
-
             <dorel-input id="address-input"
                          label="[[localize('store_locator#address-from-label')]]"
                          value="{{ addressInput }}"
