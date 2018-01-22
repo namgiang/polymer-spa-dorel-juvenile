@@ -1,0 +1,61 @@
+<link rel="import" href="../../../node_modules/polymer-redux/polymer-redux.html">
+<script src="../../../node_modules/redux/dist/redux.js"></script>
+<script src="../../../node_modules/reselect/dist/reselect.js"></script>
+
+
+<link rel="import" href="./actions/actions-combiner.html">
+<link rel="import" href="./middleware/thunk.html">
+
+<!-- import reducers -->
+<link rel="import" href="./reducers/config-reducer.html">
+<link rel="import" href="./reducers/gmt-reducer.html">
+<link rel="import" href="./reducers/image-reducer.html">
+<link rel="import" href="./reducers/menu-reducer.html">
+<link rel="import" href="./reducers/modules-reducer.html">
+<link rel="import" href="./reducers/page-reducer.html">
+<link rel="import" href="./reducers/product-reducer.html">
+<link rel="import" href="./reducers/route-reducer.html">
+<link rel="import" href="./reducers/review-reducer.html">
+
+<!-- import selectors -->
+<link rel="import" href="./selectors/selector-combiner.html">
+
+<script>
+  (function() {
+    // Combine all the reducers
+    const rootReducer = Redux.combineReducers({
+      config: configReducer,
+      gmt: gmtReducer,
+      image: imageReducer,
+      menu: menuReducer,
+      modules: modulesReducer,
+      page: pageReducer,
+      product: productReducer,
+      route: routeReducer,
+      review: reviewReducer
+    });
+
+    const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+      ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+      : Redux.compose;
+
+    const enhancer = composeEnhancers(
+      Redux.applyMiddleware(...middleware),
+    );
+
+    const store = Redux.createStore(rootReducer, enhancer);
+
+    const reduxMixin = PolymerRedux(store);
+
+    /* @mixinFunction */
+    const actionsMixin = (superClass) => {
+      return class extends reduxMixin(superClass) {
+        static get actions() {
+          return actions
+        }
+      }
+    }
+      /* @mixinFunction */
+    ReduxMixin = Polymer.dedupingMixin(actionsMixin);
+}());
+</script>
