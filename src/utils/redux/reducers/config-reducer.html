@@ -1,10 +1,26 @@
 <script>
   (function() {
+
     const initial = {
       wpUrl: CONFIG.CMS_URL,
       dioApiUrl: CONFIG.DIO_API_URL,
       eComUrl: CONFIG.ECOM_URL,
       reviewsUrl: CONFIG.REVIEWS_URL,
+      brand: CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND],
+      brands: CONFIG.AVAILABLE_BRANDS,
+      locale: {
+        code: CONFIG.LOCALE.CODE,
+        countryName: CONFIG.LOCALE.COUNTRY_NAME,
+        countryCode: CONFIG.LOCALE.COUNTRY_CODE,
+        linkAlt: CONFIG.LOCALE.LINK_ALT,
+        default: {
+          language: CONFIG.LOCALE.LANGUAGE
+        },
+      },
+      cookie: {
+        cookies: [],
+        hasCookieNotification: false,
+      },
       grid: {
         horizontal: false,
         vertical: false
@@ -30,6 +46,25 @@
           return Object.assign({}, state, {
             grid: Object.assign({}, state.grid, {
               horizontal: !state.grid.horizontal
+            })
+          });
+
+        case 'SET_COOKIE':
+          return Object.assign({}, state, {
+            cookie: Object.assign({}, state.cookie, {
+              cookies: !state.cookie.cookies.some(cookie_ => cookie_.key === action.payload.key) ?
+                [...state.cookie.cookies, {
+                  key: action.payload.key,
+                  value: action.payload.value
+                }] : state.cookie.cookies.map(cookie => {
+                  if(cookie.key !== action.payload.key) {
+                    return cookie;
+                  }
+                  return {
+                    key: action.payload.key,
+                    value: action.payload.value
+                  }
+                })
             })
           });
 
