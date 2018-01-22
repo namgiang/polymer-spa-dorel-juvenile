@@ -1,0 +1,185 @@
+<link rel="import" href="../../../node_modules/app-route/app-location.html">
+<link rel="import" href="../../../node_modules/app-route/app-route.html">
+
+<dom-module id="dorel-category-filter-manager">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+      }
+    </style>
+    <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-filter-manager',
+
+      properties: {
+        /**
+         * @name route
+         * @description this is passed by the app-route component
+         */
+        route: {
+          type: Object,
+          value: function() { return {}; }
+        },
+
+        /**
+         * @name filters
+         * @description Array of filters that will be passed to parent
+         */
+        filters: {
+          type: Array,
+          notify: true,
+          reflectToAttribute: true,
+          value: function() { return []; }
+        }
+      },
+
+      observers: [
+        '_getQueryParams(route, queryParams)'
+      ],
+
+      /**
+       * observer
+       * @name _getRoute
+       * @description will set the filters
+       * @param route - Object
+       * if the route changes it will check if there are queryParams in the route
+       * if there are queryParams it will loop over the queryParams and set the filters Array
+       */
+      _getQueryParams: function(route, queryParams) {
+        this.set('filters', []);
+        if(!queryParams || !Object.keys(queryParams).length) {
+          return;
+        }
+        var self = this;
+        var filters = Object.keys(queryParams).map(function(key, value) {
+          var filterItem = {};
+          if(queryParams[key].split(' ').length >= 2) {
+            filterItem.values = queryParams[key].split(' ').map(function(value) {
+              return { value: value };
+            });
+            filterItem.option = 'match-every';
+          } else {
+            filterItem.values = queryParams[key].split(',').map(function(value) {
+              return { value: value };
+            });
+            filterItem.option = 'match-some';
+          }
+          filterItem.key = key;
+          return filterItem;
+        });
+        self.set('filters', filters);
+      },
+
+      /**
+       * @name shouldShowProduct
+       * @description A public function that returns a Boolean
+       * @param product - Array
+       * @param filters - Array
+       * @returns Boolean if all the conditions are met return true too show the product
+       */
+      shouldShowProduct: function(product, filters) {
+        var self = this;
+
+        return filters.value.every(function(filter) {
+          var group = self._findFilterGroup(product, filter.key);
+          // if product has child_products check child_products too
+          if(product.child_products && product.child_products.length) {
+            return product.child_products.some(function(childProduct) {
+              return self.shouldShowProduct(childProduct, filters);
+            }) && self._resultByKey(filter.values, group.values, filter.key, group.type, filter.option);
+          } else {
+            return self._resultByKey(filter.values, group.values, filter.key, group.type, filter.option);
+          }
+        });
+      },
+
+      /**
+       * @name _resultByKey
+       * @description A helper method that will call a function depending on the key and the option
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @param key - String
+       * @returns Boolean
+       */
+      _resultByKey: function(filterValues, productValues, key, type, option) {
+        if(!productValues) {
+          return false;
+        }
+
+        if(option === 'match-every') {
+          return this._checkIfEveryValueMatches(filterValues, productValues);
+        } else if (type === 'slider') {
+          return this._checkIfValueIsBigger(filterValues, productValues);
+        } else {
+          return this._checkIfSomeValueMatches(filterValues, productValues);
+        }
+      },
+
+      /**
+       * @name _checkIfValueIsMatch
+       * @description A helper method that will check if some of the filterValues are bigger then some of the productValues
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @returns Boolean
+       */
+      _checkIfValueIsBigger: function(filterValues, productValues) {
+          return productValues.some(function(productValue) {
+            return filterValues.some(function(filterValue) {
+              return Number(filterValue.value) >= Number(productValue.value);
+            });
+          });
+      },
+
+      /**
+       * @name _checkIfSomeValueMatches
+       * @description A helper method that will check if some of the productValues match some of the filterValues
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @returns Boolean
+       */
+      _checkIfSomeValueMatches: function(filterValues, productValues) {
+        return productValues.some(function(productValue) {
+          return filterValues.some(function(filterValue) {
+            return filterValue.value === productValue.value.replace(/\s/g, '-');
+          })
+        });
+      },
+
+      /**
+       * @name _checkIfEveryValueMatches
+       * @description A helper method that will check if every of the filterValues match some of the productValues
+       * @param filterValues - Array
+       * @param productValues - Array
+       * @returns Boolean
+       */
+      _checkIfEveryValueMatches: function(filterValues, productValues) {
+        return filterValues.every(function(filterValue) {
+          return productValues.some(function(productValue) {
+            return productValue.value === filterValue.value;
+          })
+        });
+      },
+
+      /**
+       * @name _findInFilterGroup
+       * @description A helper method that finds a filterGroup on a product that matches the key
+       * @param product - Object
+       * @param key - String
+       * @returns Object
+       */
+      _findFilterGroup: function(product, key) {
+        if(!product || !product.filter_groups || !product.filter_groups.length) {
+          return {};
+        }
+        var group = product.filter_groups.find(function(item) {
+          return item.name === key;
+        });
+        return group ? group : {};
+      }
+    });
+
+  </script>
+
+</dom-module>

@@ -1,0 +1,95 @@
+<link rel="import" href="../../utils/behaviors/single/dorel-gtm-behavior.html">
+
+<dom-module id="dorel-category-submenu">
+  <template>
+    <style>
+      h2 {
+        font-size: 1em;
+      }
+      nav {
+        width: 100%;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{breakpoints}}"></dorel-media-query>
+
+    <nav
+      role="navigation"
+      tablet-medium-up$="{{breakpoints.tabletMediumUp}}"
+      desktop-small-up$="{{breakpoints.desktopSmallUp}}">
+      <template
+        is="dom-repeat"
+        items="[[items]]"
+        as="menuItem">
+        <h2>
+          <dorel-cta
+            title="[[menuItem.post_title]]"
+            on-click="_menuItemTap"
+            no-margin
+            type="link"
+            left-align-icon
+            link="[[getUrl(menuItem)]]"
+            size="medium"
+            icon="dorel-icons:chevron-right">[[menuItem.post_title]]</dorel-cta>
+        </h2>
+      </template>
+    </nav>
+  </template>
+  <script>
+    Polymer({
+      is: 'dorel-category-submenu',
+
+      behaviors: [GtmBehavior],
+
+      properties: {
+
+        /**
+         * @attribute
+         * @name items
+         * @description Array of menu items passed by the parent
+         * will be used by the template
+         */
+        items: {
+          type: Array
+        }
+
+      },
+
+      /**
+       * @name getUrl
+       * @description Used in template for building up the url
+       * this is needed because we don't recieve the full url from wordpress
+       * @returns String
+       */
+      getUrl: function (menuItem) {
+        var currentUrl = window.location.href.split('?')[0].split('#')[0];
+        currentUrl = currentUrl.substr(-1) === '/' ? currentUrl : currentUrl + '/';
+        return currentUrl + menuItem.post_name;
+      },
+
+      /**
+       * @name _menuItemTap
+       * @description handles all menu item clicks
+       */
+      _menuItemTap: function (event) {
+        var element = Polymer.dom(event).localTarget;
+
+        var event = {
+          action: 'click',
+          component: 'dorel-category-submenu',
+          structure: {
+            name: 'dorel-category-submenu-item',
+            index: Number(element.gtmParentIndex) + 1
+          },
+          element: element,
+          event: 'polymer_event',
+          things: {
+            'currentPage': document.URL,
+            'targetPage': element.href
+          }
+        };
+        this._dispatchGtmEvent(event);
+      }
+    });
+  </script>
+</dom-module>
