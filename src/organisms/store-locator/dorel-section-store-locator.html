@@ -385,8 +385,8 @@
             type: Object,
             statePath: function(state) {
               return {
-                label: state.route.currentLanguage.country.name || '',
-                value: state.route.currentLanguage.country.iso || ''
+                label: state.config.locale.countryName || '',
+                value: state.config.locale.countryCode || ''
               }
             }
           },
@@ -546,7 +546,10 @@
           return;
         }
 
-        const storesResponse = this.get('storesResponse', data.detail.response);
+        // define the stores response
+        this.set('storesResponse', data.detail.response);
+        const storesResponse = this.get('storesResponse');
+
         const bounds = new google.maps.LatLngBounds();
         const userLatLng = new google.maps.LatLng(storesResponse.originalLat, storesResponse.originalLng);
         bounds.extend(userLatLng);
