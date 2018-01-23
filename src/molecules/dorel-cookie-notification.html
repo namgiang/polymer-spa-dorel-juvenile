@@ -56,29 +56,46 @@
         color: var(--theme-color-text-link-active);
       }
     </style>
-
-    <template is="dom-if" if="[[ cookieNotificationEnabled ]]">
-      <iron-cookie name="{{ cookieName }}" value="{{ cookieValue }}" expires="30"></iron-cookie>
+    ---[[cookieNotificationEnabled]]---
+    <br>
+    ---[[cookieName]]---
+    <br>
+    ---[[cookieValue]]---
+    <template
+      is="dom-if"
+      if="[[cookieNotificationEnabled]]">
+      <iron-cookie
+        id="test"
+        name="[[cookieName]]"
+        value="[[cookieValue]]"></iron-cookie>
     </template>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <template is="dom-if" if="[[ shouldShowNofitication ]]">
-        <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
-                                desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
+
+    <template
+      is="dom-if"
+      if="[[shouldShowNofitication]]">
+        <dorel-layout-container
+          tablet-medium-up$="[[breakpoints.tabletMediumUp]]"
+          desktop-small-up$="[[breakpoints.desktopSmallUp]]">
           <div class="dorel-cookie-notification__content">
             <p class="dorel-cookie-notification__paragraph">
-              {{ localize('cookie_notification#content') }}
-              <a class="dorel-cookie-notification__more-info"
-                href="/should-be-added-by-wordpress-options-page"
-                target="_blank"
-              >
-              {{ localize('cookie_notification#link') }}
-              </a>
+              [[localize('cookie_notification#content')]]
+
+              <template
+                is="dom-if"
+                if="[[cookieInformationLink]]">
+                <a class="dorel-cookie-notification__more-info"
+                  href="[[cookieInformationLink]]"
+                  target="_blank"
+                >[[localize('cookie_notification#link')]]</a>
+              </template>
             </p>
+
             <button
               class="dorel-cookie-notification__proceed-btn"
-              on-click="_agreeToTerms"
-            >
+              on-click="_agreeToTerms">
               <iron-icon class="dorel-cookie-notification__proceed-icon"
                 icon="dorel-icons:close"></iron-icon>
             </button>
@@ -113,13 +130,37 @@
           /**
            * @attribute
            * @name cookieNotificationEnabled
-           * @description Determines if the cookie is enabled in wordpress
+           * @description Determines if the cookie is enabled in Wordpress
            * if false it should never show
            */
           cookieNotificationEnabled: {
             type: Boolean,
             statePath: function(state) {
-              return state.config.cookie.hasCookieNotification;
+              return state.config.cookie.toggle;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieInformationLink
+           * @description holds the link for more information defined in Wordpress
+           */
+          cookieInformationLink: {
+            type: String,
+            statePath: function(state) {
+              return state.config.cookie.information_link;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieExpiration
+           * @description defines how much days until the cookie expires
+           */
+          cookieExpiration: {
+            type: Number,
+            statePath: function(state) {
+              return state.config.cookie.expiration;
             }
           },
 
@@ -130,7 +171,8 @@
            * when the value will be set from this component it will automatically update the document.cookie
            */
           cookieValue: {
-            type: String,
+            type: Boolean,
+            value: false,
             observer: '_cookieValueChanged'
           },
 
@@ -144,11 +186,23 @@
           shouldShowNofitication: {
             type: Boolean,
             statePath(state) {
-              return this.cookieNotificationEnabled && !state.config.cookie.cookies
-                .some(cookie => cookie.key === this.cookieName && cookie.value === true);
+              const cookieVal = !state.config.cookie.cookies
+                .some(cookie => cookie.key === this.get('cookieName') && cookie.value === true);
+
+              if(!cookieVal) {
+                this.set('cookieValue', true);
+
+                return false;
+              } else if (cookieVal && this.get('cookieNotificationEnabled')) {
+                return true;
+              }
             }
           }
         }
+      }
+
+      _readCookie(newVal) {
+        this.dispatch('readCookie', { key: this.get('cookieName') });
       }
 
       /**
@@ -167,8 +221,11 @@
        * @param cookieValue - String
        **/
       _cookieValueChanged(cookieValue) {
-        const value = cookieValue === COOKIE_AGREED_VALUE ? true : false;
-        this.dispatch('setCookie', { key: this.cookieName, value });
+        console.log(cookieValue);
+        if (!cookieValue || cookieValue !== COOKIE_AGREED_VALUE) return;
+        console.log(this.cookieName, cookieValue);
+
+        this.dispatch('setCookie', { key: this.cookieName, cookieValue });
       }
 
     };
