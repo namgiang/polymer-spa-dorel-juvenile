@@ -56,11 +56,7 @@
         color: var(--theme-color-text-link-active);
       }
     </style>
-    ---[[cookieNotificationEnabled]]---
-    <br>
-    ---[[cookieName]]---
-    <br>
-    ---[[cookieValue]]---
+
     <template
       is="dom-if"
       if="[[cookieNotificationEnabled]]">
@@ -221,10 +217,7 @@
        * @param cookieValue - String
        **/
       _cookieValueChanged(cookieValue) {
-        console.log(cookieValue);
         if (!cookieValue || cookieValue !== COOKIE_AGREED_VALUE) return;
-        console.log(this.cookieName, cookieValue);
-
         this.dispatch('setCookie', { key: this.cookieName, cookieValue });
       }
 
