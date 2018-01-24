@@ -234,7 +234,8 @@
               if="[[showcaseData.child_products.length]]">
               <div class="color-container">
                 <dorel-color-switcher
-                  colors-data="[[showcaseData.child_products]]"></dorel-color-switcher>
+                  colors-data="[[showcaseData.child_products]]"
+                  current-child-sku="{{currentChildSku}}"></dorel-color-switcher>
               </div>
             </template>
             <!--// color switcher -->
@@ -243,6 +244,7 @@
               <template
                 is="dom-if"
                 if="[[_showStoreLocatorLightbox(storeLocatorPage, hatchOptions.toggle)]]">
+                <!-- HATCH CTA -->
                 <dorel-cta
                   type="primary"
                   title="[[localize('Find_a_Store')]]"
@@ -250,17 +252,23 @@
                   link=""
                   size="medium"
                   icon="dorel-icons:chevron-right">[[localize('Find_a_Store')]]</dorel-cta>
+                <dorel-product-lead-lightbox
+                  product-sku="[[currentChildSku]]"
+                  store-locator-page="[[storeLocatorPage]]"></dorel-product-lead-lightbox>
+                <!--// HATCH CTA -->
               </template>
 
               <template
                 is="dom-if"
                 if="[[_showStoreLocatorCta(storeLocatorPage, hatchOptions.toggle)]]">
+                <!-- STORELOCATOR CTA -->
                 <dorel-cta
                   type="primary"
                   title="[[localize('Find_a_Store')]]"
                   link="[[_createStoreLocatorLink(storeLocatorPage)]]"
                   size="medium"
                   icon="dorel-icons:chevron-right">[[localize('Find_a_Store')]]</dorel-cta>
+                <!--// STORELOCATOR CTA -->
               </template>
 
               <template
@@ -302,10 +310,6 @@
     </template>
 
     <div class="clear"></div>
-
-    <dorel-product-lead-lightbox
-      product-sku="[[showcaseData.sku]]"
-      store-locator-page="[[storeLocatorPage]]"></dorel-product-lead-lightbox>
   </template>
 
   <script>
@@ -459,6 +463,7 @@
       _openLightbox() {
         const lightbox = this.$$('dorel-product-lead-lightbox');
         lightbox.open();
+        this.lightboxOpened = !this.lightboxOpened;
       }
 
       /**

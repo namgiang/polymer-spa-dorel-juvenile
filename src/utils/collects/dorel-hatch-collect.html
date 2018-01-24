@@ -1,10 +1,14 @@
+<link rel="import" href="../../../node_modules/byutv-jsonp/byutv-jsonp.html">
+
 <dom-module id="dorel-hatch-collect">
   <template>
-    <iron-ajax
+    <byutv-jsonp
       id="hatch-collect"
-      url=""
-      handle-as="json"
-      on-response="_leadsGenerated"></iron-ajax>
+      params="[[params]]"
+      last-response="{{response}}"
+      sync="true"
+      on-error="_handleError"
+      debounce-duration="1000"></byutv-jsonp>
   </template>
 
   <script>
@@ -28,16 +32,14 @@
            * its available products
            */
           affiliateId: {
-            type: Number,
-            value: 52380
+            type: Number
           },
 
           /**
            * Product sku is an identifier for the product
            */
           productSku: {
-            type: Number,
-            value: 61708951
+            type: String
           },
 
           /**
@@ -69,8 +71,15 @@
            */
           response: {
             type: Object,
-            value: () => ({}),
             notify: true // propagate upward
+          },
+
+          /**
+           * Define the hatch API params
+           */
+          params: {
+            type: Object,
+            value: () => ({}),
           }
         }
       }
@@ -100,18 +109,24 @@
 
         const hatchEl = this.$['hatch-collect'];
 
-        hatchEl.url = `${endpointUrl}/affiliate/${affiliateId}/json/?mpn=${productSku}&region=${region}&sort=${sort}`;
+        hatchEl.url = `${endpointUrl}/affiliate/${affiliateId}/json`;
+
+        this.set('params', {
+          mpn: productSku,
+          region,
+          sort
+        });
 
         if(typeof this.get('tier') !== 'undefined' && this.get('tier') !== 'none') {
-          hatchEl.url += `&tier=${Number(this.get('tier'))}`
+          this.set('params.tier', Number(this.get('tier')));
         }
 
         // do the products call
         hatchEl.generateRequest();
       }
 
-      _leadsGenerated(data) {
-        this.set('response', data.detail.response.iceleads_interface);
+      _handleError(data) {
+        console.log('Error: ', data);
       }
     }
 
