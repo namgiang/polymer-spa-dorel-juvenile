@@ -260,6 +260,7 @@
     <dorel-hatch-collect
       response="{{hatch}}"
       affiliate-id="[[thirdPartyOptions.hatch.affiliate_id]]"
+      product-sku="[[productSku]]"
       sort="[[thirdPartyOptions.hatch.sort]]"
       tier="[[thirdPartyOptions.hatch.tier]]"></dorel-hatch-collect>
 
@@ -324,10 +325,10 @@
                     <h3 class="lightbox-title">[[localize('product_lead_lightbox#hatch-title')]]</h3>
                     <template
                       is="dom-if"
-                      if="[[hatch.retailers.retailer.length]]">
+                      if="[[hatch.iceleads_interface.retailers.retailer.length]]">
                       <template
                         is="dom-repeat"
-                        items="[[hatch.retailers.retailer]]"
+                        items="[[hatch.iceleads_interface.retailers.retailer]]"
                         as="retailer">
                         <div class="hatch-item">
                           <div class="hatch-column">
@@ -367,7 +368,7 @@
 
                     <template
                       is="dom-if"
-                      if="[[!hatch.retailers.retailer.length]]">
+                      if="[[!hatch.iceleads_interface.retailers.retailer.length]]">
                       <p>[[localize('product_lead_lightbox#no-retailers')]]</p>
                     </template>
                   </dorel-layout-column>
@@ -389,8 +390,7 @@
       static get properties() {
         return {
           productSku: {
-            type: String,
-            value: ''
+            type: String
           },
 
           thirdPartyOptions: {
