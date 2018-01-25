@@ -18,9 +18,9 @@
         },
       },
       cookie: {
-        cookies: [],
-        hasCookieNotification: false,
+        toggle: false
       },
+      cookies: [],
       grid: {
         horizontal: false,
         vertical: false
@@ -50,23 +50,35 @@
           });
 
         case 'SET_COOKIE':
-          return Object.assign({}, state, {
-            cookie: Object.assign({}, state.cookie, {
-              cookies: !state.cookie.cookies.some(cookie_ => cookie_.key === action.payload.key) ?
-                [...state.cookie.cookies, {
-                  key: action.payload.key,
-                  value: action.payload.value
-                }] : state.cookie.cookies.map(cookie => {
-                  if(cookie.key !== action.payload.key) {
-                    return cookie;
-                  }
-                  return {
-                    key: action.payload.key,
-                    value: action.payload.value
-                  }
-                })
+          const match = state.cookies.some(cookie_ => cookie_.key === action.payload.key);
+
+          // if no match was found
+          if (!match) {
+            state.cookies.push({
+              key: action.payload.key,
+              value: action.payload.value
+            });
+
+          // if a match was found
+          } else {
+            state.cookies = state.cookies.map(cookie => {
+              if(cookie.key !== action.payload.key) {
+                return cookie;
+              }
+              return {
+                key: action.payload.key,
+                value: action.payload.value
+              }
             })
+          }
+
+          // set the new cookies state
+          return Object.assign({}, state, {
+            cookies: state.cookies
           });
+
+        case 'READ_COOKIE':
+          const isSet = state.cookies.some(cookie => cookie.key === action.payload);
 
         default:
           return state;

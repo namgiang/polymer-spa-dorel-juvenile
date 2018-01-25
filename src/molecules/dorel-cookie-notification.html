@@ -1,4 +1,4 @@
-<link rel="import" href="../../node_modules/iron-cookie/iron-cookie.html">
+<link rel="import" href="../../node_modules/polymer-cookie/polymer-cookie.html">
 
 <dom-module id="dorel-cookie-notification">
   <template>
@@ -57,28 +57,40 @@
       }
     </style>
 
-    <template is="dom-if" if="[[ cookieNotificationEnabled ]]">
-      <iron-cookie name="{{ cookieName }}" value="{{ cookieValue }}" expires="30"></iron-cookie>
-    </template>
+    <polymer-cookie
+      id="cookie-element"
+      name="[[cookieName]]"
+      value="[[cookieValue]]"
+      time="[[cookieExpiration]]"
+      format="d">
+    </polymer-cookie>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <template is="dom-if" if="[[ shouldShowNofitication ]]">
-        <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
-                                desktop-small-up$="[[ breakpoints.desktopSmallUp ]]">
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
+
+    <template
+      is="dom-if"
+      if="[[shouldShowNofitication]]">
+        <dorel-layout-container
+          tablet-medium-up$="[[breakpoints.tabletMediumUp]]"
+          desktop-small-up$="[[breakpoints.desktopSmallUp]]">
           <div class="dorel-cookie-notification__content">
             <p class="dorel-cookie-notification__paragraph">
-              {{ localize('cookie_notification#content') }}
-              <a class="dorel-cookie-notification__more-info"
-                href="/should-be-added-by-wordpress-options-page"
-                target="_blank"
-              >
-              {{ localize('cookie_notification#link') }}
-              </a>
+              [[localize('cookie_notification#content')]]
+
+              <template
+                is="dom-if"
+                if="[[cookieInformationLink]]">
+                <a class="dorel-cookie-notification__more-info"
+                  href="[[cookieInformationLink]]"
+                  target="_blank"
+                >[[localize('cookie_notification#link')]]</a>
+              </template>
             </p>
+
             <button
               class="dorel-cookie-notification__proceed-btn"
-              on-click="_agreeToTerms"
-            >
+              on-click="_agreeToTerms">
               <iron-icon class="dorel-cookie-notification__proceed-icon"
                 icon="dorel-icons:close"></iron-icon>
             </button>
@@ -92,9 +104,8 @@
     const COOKIE_AGREED_VALUE = 'userAgreedToTerms';
 
     class DorelCookieNotification extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
-      static get is() {
-        return 'dorel-cookie-notification';
-      }
+
+      static get is() { return 'dorel-cookie-notification'; }
 
       static get properties() {
         return {
@@ -112,26 +123,49 @@
 
           /**
            * @attribute
-           * @name cookieNotificationEnabled
-           * @description Determines if the cookie is enabled in wordpress
-           * if false it should never show
-           */
-          cookieNotificationEnabled: {
-            type: Boolean,
-            statePath: function(state) {
-              return state.config.cookie.hasCookieNotification;
-            }
-          },
-
-          /**
-           * @attribute
            * @name cookieValue
            * @description cookieValue initialy will be set by the `iron-cookie` component
            * when the value will be set from this component it will automatically update the document.cookie
            */
           cookieValue: {
+            type: String
+          },
+
+          /**
+           * @attribute
+           * @name cookieNotificationEnabled
+           * @description Determines if the cookie is enabled in Wordpress
+           * if false it should never show
+           */
+          cookieNotificationEnabled: {
+            type: Boolean,
+            statePath: function(state) {
+              return state.config.cookie.toggle;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieInformationLink
+           * @description holds the link for more information defined in Wordpress
+           */
+          cookieInformationLink: {
             type: String,
-            observer: '_cookieValueChanged'
+            statePath: function(state) {
+              return state.config.cookie.information_link;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieExpiration
+           * @description defines how much days until the cookie expires
+           */
+          cookieExpiration: {
+            type: Number,
+            statePath: function(state) {
+              return state.config.cookie.expiration;
+            }
           },
 
           /**
@@ -143,12 +177,38 @@
            */
           shouldShowNofitication: {
             type: Boolean,
-            statePath(state) {
-              return this.cookieNotificationEnabled && !state.config.cookie.cookies
-                .some(cookie => cookie.key === this.cookieName && cookie.value === true);
+            statePath: function(state) {
+              const cookieVal = !state.config.cookies
+                .some(cookie => cookie.key === this.get('cookieName') && cookie.value === 'userAgreedToTerms');
+
+              if(!cookieVal) {
+                return false;
+              } else if (cookieVal && this.get('cookieNotificationEnabled')) {
+                return true;
+              }
             }
           }
         }
+      }
+
+      ready() {
+        super.ready();
+        this._readCookie();
+      }
+
+      _readCookie() {
+        const cookieEl = this.shadowRoot.querySelector('#cookie-element');
+        const cookieVal = cookieEl.readCookie();
+        const cookieName = this.get('cookieName');
+
+        // if cookieValue is not set or empty return
+        if (!cookieVal || cookieVal === '') return;
+
+        // set the main cookieValue
+        this.set('cookieValue', cookieVal);
+
+        // if cookieValue has a value add it to redux
+        this.dispatch('setCookie', { key: cookieName, value: cookieVal });
       }
 
       /**
@@ -156,21 +216,23 @@
        * @description will set the cookieValue on click
        **/
       _agreeToTerms() {
-        this.set('cookieValue', COOKIE_AGREED_VALUE);
-      }
+        const cookieValue = this.get('cookieValue');
 
-      /**
-       * Observer
-       * @name _cookieValueChanged
-       * @description will determine if the cookie value is equal to the cookie agreed value
-       * it will dispatch setCookie
-       * @param cookieValue - String
-       **/
-      _cookieValueChanged(cookieValue) {
-        const value = cookieValue === COOKIE_AGREED_VALUE ? true : false;
-        this.dispatch('setCookie', { key: this.cookieName, value });
-      }
+        // cookie should be an empty string since, if it isn't jump out
+        if (!cookieValue === '' || cookieValue === 'userAgreedToTerms') return;
 
+        const cookieEl = this.shadowRoot.querySelector('#cookie-element');
+
+        // setting the cookie correctly
+        this.set('cookieValue', 'userAgreedToTerms');
+        cookieEl.createCookie();
+
+        // setting the cookie in redux properly
+        const cookieVal = cookieEl.readCookie();
+        this.dispatch('setCookie', { key: this.get('cookieName'), value: cookieVal });
+
+        this.set('shouldShowNofitication', false);
+      }
     };
 
     customElements.define(DorelCookieNotification.is, DorelCookieNotification);
