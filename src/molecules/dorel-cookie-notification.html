@@ -1,4 +1,4 @@
-<link rel="import" href="../../node_modules/iron-cookie/iron-cookie.html">
+<link rel="import" href="../../node_modules/polymer-cookie/polymer-cookie.html">
 
 <dom-module id="dorel-cookie-notification">
   <template>
@@ -57,14 +57,13 @@
       }
     </style>
 
-    <template
-      is="dom-if"
-      if="[[cookieNotificationEnabled]]">
-      <iron-cookie
-        id="test"
-        name="[[cookieName]]"
-        value="[[cookieValue]]"></iron-cookie>
-    </template>
+    <polymer-cookie
+      id="cookie-element"
+      name="[[cookieName]]"
+      value="[[cookieValue]]"
+      time="[[cookieExpiration]]"
+      format="d">
+    </polymer-cookie>
 
     <dorel-media-query
       breakpoints="{{breakpoints}}"></dorel-media-query>
@@ -105,9 +104,8 @@
     const COOKIE_AGREED_VALUE = 'userAgreedToTerms';
 
     class DorelCookieNotification extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
-      static get is() {
-        return 'dorel-cookie-notification';
-      }
+
+      static get is() { return 'dorel-cookie-notification'; }
 
       static get properties() {
         return {
@@ -121,6 +119,16 @@
             type: String,
             readOnly: true,
             value: 'DorelCookieAgreement'
+          },
+
+          /**
+           * @attribute
+           * @name cookieValue
+           * @description cookieValue initialy will be set by the `iron-cookie` component
+           * when the value will be set from this component it will automatically update the document.cookie
+           */
+          cookieValue: {
+            type: String
           },
 
           /**
@@ -163,31 +171,17 @@
           /**
            * @attribute
            * @name cookieValue
-           * @description cookieValue initialy will be set by the `iron-cookie` component
-           * when the value will be set from this component it will automatically update the document.cookie
-           */
-          cookieValue: {
-            type: Boolean,
-            value: false,
-            observer: '_cookieValueChanged'
-          },
-
-          /**
-           * @attribute
-           * @name cookieValue
            * @description determines when the notification will be shown
            * if there is a key equal to the `cookieName` and if the value is true - will return false
            * else - will return true
            */
           shouldShowNofitication: {
             type: Boolean,
-            statePath(state) {
-              const cookieVal = !state.config.cookie.cookies
-                .some(cookie => cookie.key === this.get('cookieName') && cookie.value === true);
+            statePath: function(state) {
+              const cookieVal = !state.config.cookies
+                .some(cookie => cookie.key === this.get('cookieName') && cookie.value === 'userAgreedToTerms');
 
               if(!cookieVal) {
-                this.set('cookieValue', true);
-
                 return false;
               } else if (cookieVal && this.get('cookieNotificationEnabled')) {
                 return true;
@@ -197,8 +191,24 @@
         }
       }
 
-      _readCookie(newVal) {
-        this.dispatch('readCookie', { key: this.get('cookieName') });
+      ready() {
+        super.ready();
+        this._readCookie();
+      }
+
+      _readCookie() {
+        const cookieEl = this.shadowRoot.querySelector('#cookie-element');
+        const cookieVal = cookieEl.readCookie();
+        const cookieName = this.get('cookieName');
+
+        // if cookieValue is not set or empty return
+        if (!cookieVal || cookieVal === '') return;
+
+        // set the main cookieValue
+        this.set('cookieValue', cookieVal);
+
+        // if cookieValue has a value add it to redux
+        this.dispatch('setCookie', { key: cookieName, value: cookieVal });
       }
 
       /**
@@ -206,21 +216,23 @@
        * @description will set the cookieValue on click
        **/
       _agreeToTerms() {
-        this.set('cookieValue', COOKIE_AGREED_VALUE);
-      }
+        const cookieValue = this.get('cookieValue');
 
-      /**
-       * Observer
-       * @name _cookieValueChanged
-       * @description will determine if the cookie value is equal to the cookie agreed value
-       * it will dispatch setCookie
-       * @param cookieValue - String
-       **/
-      _cookieValueChanged(cookieValue) {
-        if (!cookieValue || cookieValue !== COOKIE_AGREED_VALUE) return;
-        this.dispatch('setCookie', { key: this.cookieName, cookieValue });
-      }
+        // cookie should be an empty string since, if it isn't jump out
+        if (!cookieValue === '' || cookieValue === 'userAgreedToTerms') return;
 
+        const cookieEl = this.shadowRoot.querySelector('#cookie-element');
+
+        // setting the cookie correctly
+        this.set('cookieValue', 'userAgreedToTerms');
+        cookieEl.createCookie();
+
+        // setting the cookie in redux properly
+        const cookieVal = cookieEl.readCookie();
+        this.dispatch('setCookie', { key: this.get('cookieName'), value: cookieVal });
+
+        this.set('shouldShowNofitication', false);
+      }
     };
 
     customElements.define(DorelCookieNotification.is, DorelCookieNotification);
