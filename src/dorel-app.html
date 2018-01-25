@@ -80,7 +80,8 @@
     </custom-style>
 
     <!-- define routing -->
-    <app-location route="{{route}}"></app-location>
+    <app-location
+      route="{{route}}"></app-location>
     <app-route
       route="{{route}}"
       pattern="/:language"
@@ -121,7 +122,9 @@
 
     <dorel-image-lightbox></dorel-image-lightbox>
 
-    <template is="dom-if" if="[[shouldShow(currentPage)]]">
+    <template
+      is="dom-if"
+      if="[[shouldShow(currentPage)]]">
       <dorel-header
         load-complete="[[loadComplete]]"
         route="[[route]]"
@@ -131,6 +134,7 @@
         brand-name="[[brand.label]]">
       </dorel-header>
     </template>
+
     <main id="main" role="main">
       <dorel-cookie-notification></dorel-cookie-notification>
 
@@ -270,9 +274,7 @@
            */
           brand: {
             type: Object,
-            value: function () {
-              return CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND];
-            }
+            statePath: 'config.brand'
           },
 
           /**
@@ -281,9 +283,7 @@
            */
           brandNames: {
             type: Array,
-            value: function () {
-              return CONFIG.AVAILABLE_BRANDS;
-            }
+            statePath: 'config.brands'
           },
 
           /**
