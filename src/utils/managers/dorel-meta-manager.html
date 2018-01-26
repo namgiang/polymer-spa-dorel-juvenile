@@ -52,10 +52,10 @@
         return [
           '_setTitleAndDescription(currentPage.acf)',
           '_setLanguageMetaTags(currentLanguage)',
-          '_productMetaData(currentProduct)'
+          '_productMetaData(currentProduct)',
+          '_setCanonicalTag(route)'
         ]
       }
-
 
       /**
        * @name _setTitleAndDecription
@@ -67,10 +67,37 @@
         }
         const metaTitle = metaData && metaData.meta_title ? metaData.meta_title : '';
         const metaDescription = metaData && metaData.meta_description ? metaData.meta_description : '';
+
         // add the page title
         document.title = this._defineMetaTitle(metaTitle);
+
         // add the page's description
         this._addMetaEquiv('name', 'description', metaDescription);
+      }
+
+      /**
+       * @description will set the link tag for the canonical url
+       *
+       * @param {string} the current url to add as canonical
+       */
+      _setCanonicalTag(route) {
+        const hostUrl = location.href;
+
+        // replace non www urls with url
+        const tld = !/\.?www./g.test(hostUrl) ? hostUrl.replace("://","://www.") : hostUrl;
+        // replace http url with https urls
+        const canonHref = !/\.?https:./g.test(tld) ? tld.replace(":","s:") : tld;
+
+        // add the link tag to the head
+        const el = document.querySelector("link[rel='canonical']");
+        if(!el) {
+          const link = document.createElement('link');
+          link.rel = 'canonical';
+          link.href = canonHref;
+          document.getElementsByTagName('head')[0].appendChild(link);
+        } else {
+          el.href = canonHref;
+        }
       }
 
       /**
