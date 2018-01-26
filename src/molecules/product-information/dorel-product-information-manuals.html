@@ -3,10 +3,13 @@
 <dom-module id="dorel-product-information-manuals">
   <template>
     <style>
-      h1, h2, h3, h4 {
+      h1, h2, h4 {
         @apply(--theme-header-text-transform);
       }
-
+      h3 {
+        @apply(--theme-paragraph-text);
+        margin: 0;
+      }
       :host {
         float: left;
         width: 100%;
@@ -21,7 +24,7 @@
     <template
       is="dom-repeat"
       items="[[ data.manuals ]]">
-      <dorel-cta title=""
+      <dorel-cta title="[[localize('product_information_manuals#instruction_manual')]]"
                  type="link"
                  link="[[ item.Link_url ]]"
                  size="medium"
@@ -32,7 +35,7 @@
                  gtm-child="dorel-section-hero"
                  gtm-child-index="[[ index ]]"
                  gtm-cta-index="0">
-        [[localize('product_information_manuals#instruction_manual')]]
+        <h3>[[localize('product_information_manuals#instruction_manual')]]</h3>
       </dorel-cta>
     </template>
   </template>

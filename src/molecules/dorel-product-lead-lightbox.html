@@ -7,7 +7,7 @@
 <link rel="import" href="../atoms/dorel-input.html">
 
 <link rel="import" href="../utils/behaviors/single/dorel-overlay-behavior.html">
-<link rel="import" href="../utils/dorel-hatch-collect.html">
+<link rel="import" href="../utils/collects/dorel-hatch-collect.html">
 
 <dom-module id="dorel-product-lead-lightbox">
   <!-- Optional shadow DOM template -->
@@ -41,7 +41,7 @@
         max-width: 580px !important;
         transform: translate(-50%, 0);
         padding: 1rem 0.5rem 0.5rem;
-        max-height: 320px !important;
+        max-height: 480px !important;
         height: 100% !important;
       }
 
@@ -252,105 +252,125 @@
       .close-icon:hover {
         color: var(--theme-color-text-link-active);
       }
-
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
+
     <dorel-hatch-collect
       response="{{hatch}}"
       affiliate-id="[[thirdPartyOptions.hatch.affiliate_id]]"
+      product-sku="[[productSku]]"
       sort="[[thirdPartyOptions.hatch.sort]]"
       tier="[[thirdPartyOptions.hatch.tier]]"></dorel-hatch-collect>
 
     <section class="section-product-lead-lightbox"
-             tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-             desktop-small$="{{ breakpoints.desktopSmall }}"
-             desktop-large$="{{ breakpoints.desktopLarge }}"
-             >
+      tablet-medium-up$="{{breakpoints.tabletMediumUp}}"
+      desktop-small$="{{breakpoints.desktopSmall}}"
+      desktop-large$="{{breakpoints.desktopLarge}}">
       <paper-dialog id="lightbox"
-                    with-backdrop="true"
-                    entry-animation="fade-in-animation"
-                    exit-animation="fade-out-animation"
-                    on-iron-overlay-opened="_disableDocumentScrolling"
-                    on-iron-overlay-closed="_restoreDocumentScrolling">
+        with-backdrop="true"
+        entry-animation="fade-in-animation"
+        exit-animation="fade-out-animation"
+        on-iron-overlay-opened="_disableDocumentScrolling"
+        on-iron-overlay-closed="_restoreDocumentScrolling">
         <div class="lightbox-wrapper layout horizontal">
           <iron-icon
             dialog-confirm
             autofocus
             class="close-icon"
-            icon="dorel-icons:close">
-          </iron-icon>
+            icon="dorel-icons:close"></iron-icon>
           <paper-dialog-scrollable>
-
-            <template is="dom-if"
-                      if="[[_hasStoreLocatorPage(storeLocatorPage)]]">
+            <template
+              is="dom-if"
+              if="[[_hasStoreLocatorPage(storeLocatorPage)]]">
               <dorel-layout-container>
-                <dorel-layout-row align="center">
-                  <dorel-layout-column class="layout-column" desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
+                <dorel-layout-row
+                  align="center">
+                  <dorel-layout-column class="layout-column"
+                    desktop-column-span="12"
+                    tablet-column-span="12"
+                    mobile-column-span="12">
                     <h3 class="lightbox-title">{{localize('Find_a_Store')}}</h3>
-                    <form id="search-location" class="search-form" on-submit="_submitForm">
+                    <form id="search-location" class="search-form"
+                      on-submit="_submitForm">
                       <dorel-input id="address-input"
-                                   name="address"
-                                   class="search-form__input"
-                                   value="{{ addressInput }}"
-                                   placeholder="{{ localize('product_lead_lightbox#address-placeholder') }}"
-                                   invalid$="{{ !addressInput.length }}">
+                        name="address"
+                        class="search-form__input"
+                        value="{{addressInput}}"
+                        placeholder="[[localize('product_lead_lightbox#address-placeholder')]]"
+                        invalid$="[[!addressInput.length]]">
                        </dorel-input>
-                       <button role="submit" class="search-form__submit" enabled$="{{ addressInput.length }}">
-                         <iron-icon icon="dorel-icons:location"></iron-icon>
+                       <button role="submit" class="search-form__submit"
+                        enabled$="{{ addressInput.length }}">
+                         <iron-icon
+                          icon="dorel-icons:location"></iron-icon>
                        </button>
                     </form>
-
                   </dorel-layout-column>
                 </dorel-layout-row>
               </dorel-layout-container>
             </template>
 
-            <template is="dom-if"
-                      if="[[thirdPartyOptions.hatch.toggle]]">
+            <template
+              is="dom-if"
+              if="[[thirdPartyOptions.hatch.toggle]]">
               <dorel-layout-container>
-                <dorel-layout-row align="center">
-                  <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12">
-                    <h3 class="lightbox-title">{{localize('product_lead_lightbox#hatch-title')}}</h3>
-                    <div class="hatch-item">
-                      <template is="dom-if"
-                                if="[[hatch.retailers.retailer.length]]">
-                        <template is="dom-repeat"
-                                  items="[[hatch.retailers.retailer]]"
-                                  as="retailer">
+                <dorel-layout-row
+                  align="center">
+                  <dorel-layout-column
+                    desktop-column-span="12"
+                    tablet-column-span="12"
+                    mobile-column-span="12">
+                    <h3 class="lightbox-title">[[localize('product_lead_lightbox#hatch-title')]]</h3>
+                    <template
+                      is="dom-if"
+                      if="[[hatch.iceleads_interface.retailers.retailer.length]]">
+                      <template
+                        is="dom-repeat"
+                        items="[[hatch.iceleads_interface.retailers.retailer]]"
+                        as="retailer">
+                        <div class="hatch-item">
                           <div class="hatch-column">
-                            <img src$="[[retailer.logo]]">
+                            <img
+                              src$="[[retailer.logo]]">
                           </div>
 
                           <template
                             is="dom-if"
                             if="[[_showStockColumn(thirdPartyOptions.hatch.show_stock)]]">
-
-                            <template is="dom-if" if="[[ _checkStock(retailer.stock_qty) ]]">
+                            <template
+                              is="dom-if"
+                              if="[[_checkStock(retailer.stock_qty)]]">
                               <div class="hatch-column in-stock">
-                                <iron-icon class="in-stock__icon" icon="dorel-icons:check"></iron-icon> {{ localize('product_lead_lightbox#in-stock') }}
+                                <iron-icon class="in-stock__icon" icon="dorel-icons:check"></iron-icon> [[localize('product_lead_lightbox#in-stock')]]
                               </div>
                             </template>
 
-                            <template is="dom-if" if="[[ !_checkStock(retailer.stock_qty) ]]">
+                            <template
+                              is="dom-if"
+                              if="[[!_checkStock(retailer.stock_qty)]]">
                               <div class="hatch-column out-of-stock">
-                                {{ localize('product_lead_lightbox#out-of-stock') }}
+                                [[localize('product_lead_lightbox#out-of-stock')]]
                               </div>
                             </template>
-
                           </template><!--// dom-if thirdPartyOptions.hatch.show_stock -->
 
                           <div class="hatch-column">
-                            <a class="cta" href="[[retailer.purchase_link]]"><iron-icon class="cta__icon" icon="dorel-icons:chevron-right"></iron-icon></a>
+                            <a class="cta" href="[[retailer.purchase_link]]">
+                              <iron-icon class="cta__icon"
+                                icon="dorel-icons:chevron-right"></iron-icon>
+                            </a>
                           </div>
-                        </template><!--// dom-repeat retailers -->
-                      </template>
+                        </div>
+                      </template><!--// dom-repeat retailers -->
+                    </template><!--// if retailers.length -->
 
-                      <template is="dom-if"
-                                if="[[!hatch.retailers.retailer.length]]">
-                        <p>{{ localize('product_lead_lightbox#no-retailers') }}</p>
-                      </template>
-                    </div>
+                    <template
+                      is="dom-if"
+                      if="[[!hatch.iceleads_interface.retailers.retailer.length]]">
+                      <p>[[localize('product_lead_lightbox#no-retailers')]]</p>
+                    </template>
                   </dorel-layout-column>
                 </dorel-layout-row>
               </dorel-layout-container>
@@ -370,8 +390,7 @@
       static get properties() {
         return {
           productSku: {
-            type: String,
-            value: ''
+            type: String
           },
 
           thirdPartyOptions: {

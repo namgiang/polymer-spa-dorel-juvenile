@@ -1,0 +1,88 @@
+<script>
+  (function() {
+
+    const initial = {
+      wpUrl: CONFIG.CMS_URL,
+      dioApiUrl: CONFIG.DIO_API_URL,
+      eComUrl: CONFIG.ECOM_URL,
+      reviewsUrl: CONFIG.REVIEWS_URL,
+      brand: CONFIG.AVAILABLE_BRANDS[CONFIG.SELECTED_BRAND],
+      brands: CONFIG.AVAILABLE_BRANDS,
+      locale: {
+        code: CONFIG.LOCALE.CODE,
+        countryName: CONFIG.LOCALE.COUNTRY_NAME,
+        countryCode: CONFIG.LOCALE.COUNTRY_CODE,
+        linkAlt: CONFIG.LOCALE.LINK_ALT,
+        default: {
+          language: CONFIG.LOCALE.LANGUAGE
+        },
+      },
+      cookie: {
+        toggle: false
+      },
+      cookies: [],
+      grid: {
+        horizontal: false,
+        vertical: false
+      }
+    };
+
+    configReducer = (state = initial, action) => {
+      switch (action.type) {
+        case 'ADD_OPTIONS_SUCCESS':
+          return Object.assign({}, state, action.payload);
+
+        case 'ADD_OPTIONS_FAILED':
+          return Object.assign({}, state);
+
+        case 'SET_VERTICAL_GRID':
+          return Object.assign({}, state, {
+            grid: Object.assign({}, state.grid, {
+              vertical: !state.grid.vertical
+            })
+          });
+
+        case 'SET_HORIZONTAL_GRID':
+          return Object.assign({}, state, {
+            grid: Object.assign({}, state.grid, {
+              horizontal: !state.grid.horizontal
+            })
+          });
+
+        case 'SET_COOKIE':
+          const match = state.cookies.some(cookie_ => cookie_.key === action.payload.key);
+
+          // if no match was found
+          if (!match) {
+            state.cookies.push({
+              key: action.payload.key,
+              value: action.payload.value
+            });
+
+          // if a match was found
+          } else {
+            state.cookies = state.cookies.map(cookie => {
+              if(cookie.key !== action.payload.key) {
+                return cookie;
+              }
+              return {
+                key: action.payload.key,
+                value: action.payload.value
+              }
+            })
+          }
+
+          // set the new cookies state
+          return Object.assign({}, state, {
+            cookies: state.cookies
+          });
+
+        case 'READ_COOKIE':
+          const isSet = state.cookies.some(cookie => cookie.key === action.payload);
+
+        default:
+          return state;
+      }
+    };
+}());
+</script>

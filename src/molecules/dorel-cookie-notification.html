@@ -1,0 +1,240 @@
+<link rel="import" href="../../node_modules/polymer-cookie/polymer-cookie.html">
+
+<dom-module id="dorel-cookie-notification">
+  <template>
+    <style is="custom-style">
+      :host {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        z-index: 99;
+        background-color: var(--theme-color-monochrome-2);
+      }
+      :host::after {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0) 100%);
+        bottom: -.75em;
+        content: "";
+        height: .75em;
+        left: 0;
+        position: absolute;
+        transition: transform 0.20s ease;
+        width: 100%;
+        z-index: 2;
+      }
+      .dorel-cookie-notification__content {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+      }
+      .dorel-cookie-notification__paragraph {
+        display: inline-block;
+        font-size: var(--theme-typography-1);
+        margin-right: .5rem;
+      }
+      .dorel-cookie-notification__more-info {
+        color: var(--theme-color-text-link);
+        transition: color .2s;
+      }
+      .dorel-cookie-notification__more-info:hover {
+        color: var(--theme-color-text-link-active);
+      }
+      .dorel-cookie-notification__proceed-btn {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        margin-right: -.85rem;
+        outline: none;
+        padding: .75rem;
+      }
+      .dorel-cookie-notification__proceed-icon {
+        color: var(--theme-color-text-link);
+        transition: color .2s;
+      }
+      .dorel-cookie-notification__proceed-btn:hover .dorel-cookie-notification__proceed-icon {
+        color: var(--theme-color-text-link-active);
+      }
+    </style>
+
+    <polymer-cookie
+      id="cookie-element"
+      name="[[cookieName]]"
+      value="[[cookieValue]]"
+      time="[[cookieExpiration]]"
+      format="d">
+    </polymer-cookie>
+
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
+
+    <template
+      is="dom-if"
+      if="[[shouldShowNofitication]]">
+        <dorel-layout-container
+          tablet-medium-up$="[[breakpoints.tabletMediumUp]]"
+          desktop-small-up$="[[breakpoints.desktopSmallUp]]">
+          <div class="dorel-cookie-notification__content">
+            <p class="dorel-cookie-notification__paragraph">
+              [[localize('cookie_notification#content')]]
+
+              <template
+                is="dom-if"
+                if="[[cookieInformationLink]]">
+                <a class="dorel-cookie-notification__more-info"
+                  href="[[cookieInformationLink]]"
+                  target="_blank"
+                >[[localize('cookie_notification#link')]]</a>
+              </template>
+            </p>
+
+            <button
+              class="dorel-cookie-notification__proceed-btn"
+              on-click="_agreeToTerms">
+              <iron-icon class="dorel-cookie-notification__proceed-icon"
+                icon="dorel-icons:close"></iron-icon>
+            </button>
+          </div>
+        </dorel-layout-container>
+      </template>
+
+  </template>
+
+  <script>
+    const COOKIE_AGREED_VALUE = 'userAgreedToTerms';
+
+    class DorelCookieNotification extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
+
+      static get is() { return 'dorel-cookie-notification'; }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name cookieName
+           * @description configuration attribute that is used to name the cookie
+           * @readOnly Readonly attribute
+           */
+          cookieName: {
+            type: String,
+            readOnly: true,
+            value: 'DorelCookieAgreement'
+          },
+
+          /**
+           * @attribute
+           * @name cookieValue
+           * @description cookieValue initialy will be set by the `iron-cookie` component
+           * when the value will be set from this component it will automatically update the document.cookie
+           */
+          cookieValue: {
+            type: String
+          },
+
+          /**
+           * @attribute
+           * @name cookieNotificationEnabled
+           * @description Determines if the cookie is enabled in Wordpress
+           * if false it should never show
+           */
+          cookieNotificationEnabled: {
+            type: Boolean,
+            statePath: function(state) {
+              return state.config.cookie.toggle;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieInformationLink
+           * @description holds the link for more information defined in Wordpress
+           */
+          cookieInformationLink: {
+            type: String,
+            statePath: function(state) {
+              return state.config.cookie.information_link;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieExpiration
+           * @description defines how much days until the cookie expires
+           */
+          cookieExpiration: {
+            type: Number,
+            statePath: function(state) {
+              return state.config.cookie.expiration;
+            }
+          },
+
+          /**
+           * @attribute
+           * @name cookieValue
+           * @description determines when the notification will be shown
+           * if there is a key equal to the `cookieName` and if the value is true - will return false
+           * else - will return true
+           */
+          shouldShowNofitication: {
+            type: Boolean,
+            statePath: function(state) {
+              const cookieVal = !state.config.cookies
+                .some(cookie => cookie.key === this.get('cookieName') && cookie.value === 'userAgreedToTerms');
+
+              if(!cookieVal) {
+                return false;
+              } else if (cookieVal && this.get('cookieNotificationEnabled')) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+
+      ready() {
+        super.ready();
+        this._readCookie();
+      }
+
+      _readCookie() {
+        const cookieEl = this.shadowRoot.querySelector('#cookie-element');
+        const cookieVal = cookieEl.readCookie();
+        const cookieName = this.get('cookieName');
+
+        // if cookieValue is not set or empty return
+        if (!cookieVal || cookieVal === '') return;
+
+        // set the main cookieValue
+        this.set('cookieValue', cookieVal);
+
+        // if cookieValue has a value add it to redux
+        this.dispatch('setCookie', { key: cookieName, value: cookieVal });
+      }
+
+      /**
+       * @name _agreeToTerms
+       * @description will set the cookieValue on click
+       **/
+      _agreeToTerms() {
+        const cookieValue = this.get('cookieValue');
+
+        // cookie should be an empty string since, if it isn't jump out
+        if (!cookieValue === '' || cookieValue === 'userAgreedToTerms') return;
+
+        const cookieEl = this.shadowRoot.querySelector('#cookie-element');
+
+        // setting the cookie correctly
+        this.set('cookieValue', 'userAgreedToTerms');
+        cookieEl.createCookie();
+
+        // setting the cookie in redux properly
+        const cookieVal = cookieEl.readCookie();
+        this.dispatch('setCookie', { key: this.get('cookieName'), value: cookieVal });
+
+        this.set('shouldShowNofitication', false);
+      }
+    };
+
+    customElements.define(DorelCookieNotification.is, DorelCookieNotification);
+  </script>
+</dom-module>

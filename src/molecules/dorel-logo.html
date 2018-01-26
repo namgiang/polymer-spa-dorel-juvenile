@@ -1,7 +1,7 @@
 <dom-module id="dorel-logo">
   <template>
     <style>
-      h1, h2, h3, h4 {
+      span {
         @apply(--theme-header-text-transform);
       }
 
@@ -10,6 +10,7 @@
       }
 
       .title {
+        display: block;
         height: 0;
         width: 0;
         overflow: hidden;
@@ -50,12 +51,11 @@
       .logo[alternative-logo] {
         background: var(--theme-logo-alternative);
       }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
 
-    <h1 class="title">[[ brandName ]]</h1>
+    <span class="title">[[ brandName ]]</span>
     <div class="logo"
          alternative-logo$="[[ useAlternativeLogo ]]"
          tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]"
@@ -64,27 +64,28 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-logo',
-      properties: {
-        /**
-         * @attribute
-         * @name brandName
-         * @description defines the brand of the page
-         */
-        brandName: {
-          type: String
-        },
-        /**
-         * @attribute
-         * @name useAlternativeLogo
-         * @description Use the alternative logo (defined in the shared styles)
-         */
-        useAlternativeLogo: {
-          type: Boolean,
-          value: false
-        },
+    class DorelLogo extends Polymer.Element {
+
+      static get is() { return 'dorel-logo'; }
+
+      static get properties() {
+        return {
+          /**
+           * defines the brand of the page
+           */
+          brandName: String,
+
+          /**
+           * Use the alternative logo (defined in the shared styles)
+           */
+          useAlternativeLogo: {
+            type: Boolean,
+            value: false
+          },
+        }
       }
-    });
+    }
+
+    customElements.define(DorelLogo.is, DorelLogo);
   </script>
 </dom-module>

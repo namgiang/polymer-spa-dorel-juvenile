@@ -1,4 +1,4 @@
-<link rel="import" href="../utils/dorel-category-filter-manager.html">
+<link rel="import" href="../utils/managers/dorel-category-filter-manager.html">
 
 <dom-module id="dorel-color-switcher">
   <template>
@@ -63,57 +63,57 @@
 
     <dorel-category-filter-manager
       id="categoryManager"
-      filters="{{ filters }}">
+      filters="{{filters}}">
     </dorel-category-filter-manager>
 
     <template
       is="dom-if"
       if="[[ colorsData.length ]]">
       <div class="color-switcher">
-        <div class="color-name">{{ localize('Color') }}: [[ currentName ]]</div>
+        <div class="color-name">[[localize('Color')]]: [[currentName]]</div>
 
         <ul class="list-group">
           <template
             is="dom-repeat"
-            items="[[ colorsData ]]"
+            items="[[colorsData]]"
             as="item"
-            filter="[[ _filterChildProducts(filters.*) ]]">
-            <li class$="list-group-item {{ _isCurrentColor(currentName, item.collection_colour_theme_name.name) }}">
+            filter="[[_filterChildProducts(filters.*)]]">
+            <li class$="list-group-item [[_isCurrentColor(currentName, item.collection_colour_theme_name.name)]]">
 
-              <template is="dom-if" if="[[ _checkType(item, 'hex') ]]">
-                <span on-click="_changeCurrentColor"
-                      role="button"
-                      tabindex="0"
-                      color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.name ]]"
-                      gtm-action$="[[ gtmAction ]]"
-                      gtm-child$="[[ gtmChild ]]"
-                      gtm-cta-index$="[[ index ]]"
-                      style$="background-color: [[ item.collection_colour_theme_name.value ]];"></span>
+              <template
+                is="dom-if"
+                if="[[_checkType(item, 'hex')]]">
+                <span
+                  on-click="_changeCurrentColor"
+                  role="button"
+                  tabindex="0"
+                  color-image$="[[item.images.image]]"
+                  color-name$="[[item.collection_colour_theme_name.name]]"
+                  style$="background-color: [[item.collection_colour_theme_name.value]];"></span>
               </template>
 
-              <template is="dom-if" if="[[ _checkType(item, 'image') ]]">
-                <span on-click="_changeCurrentColor"
-                      role="button"
-                      tabindex="0"
-                      color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.name ]]"
-                      gtm-action$="[[ gtmAction ]]"
-                      gtm-child$="[[ gtmChild ]]"
-                      gtm-cta-index$="[[ index ]]">
-                  <img src="[[ item.collection_colour_theme_name.value ]]" class="image-color" />
+              <template
+                is="dom-if"
+                if="[[_checkType(item, 'image')]]">
+                <span
+                  on-click="_changeCurrentColor"
+                  role="button"
+                  tabindex="0"
+                  color-image$="[[item.images.image]]"
+                  color-name$="[[item.collection_colour_theme_name.name]]">
+                  <img src="[[item.collection_colour_theme_name.value]]" class="image-color" />
                 </span>
               </template>
 
-              <template is="dom-if" if="[[ _noHexOrSwatch(item) ]]">
-                <span on-click="_changeCurrentColor"
-                      role="button"
-                      tabindex="0"
-                      color-image$="[[ item.images.image ]]"
-                      color-name$="[[ item.collection_colour_theme_name.name ]]"
-                      gtm-action$="[[ gtmAction ]]"
-                      gtm-child$="[[ gtmChild ]]"
-                      gtm-cta-index$="[[ index ]]"></span>
+              <template
+                is="dom-if"
+                if="[[_noHexOrSwatch(item)]]">
+                <span
+                  on-click="_changeCurrentColor"
+                  role="button"
+                  tabindex="0"
+                  color-image$="[[item.images.image]]"
+                  color-name$="[[item.collection_colour_theme_name.name]]"></span>
               </template>
             </li>
           </template>
@@ -144,6 +144,11 @@
           currentImage: {
             type: String,
             value: '',
+            notify: true
+          },
+
+          currentChildSku: {
+            type: String,
             notify: true
           }
         }
@@ -201,6 +206,7 @@
 
         this.set('currentImage', newColor.images.image);
         this.set('currentName', newColor.collection_colour_theme_name.name);
+        this.set('currentChildSku', newColor.sku);
       }
 
       /**
@@ -209,7 +215,7 @@
        * @param e - Object - the clicked object/target
        */
       _changeCurrentColor(event) {
-        var color = event.model.item;
+        const color = event.model.item;
 
         if(typeof color !== 'undefined') {
           this.dispatchEvent(
@@ -220,6 +226,8 @@
             })
           );
         }
+
+        this.set('currentChildSku', color.sku);
 
         // define the new color values
         this.set('newColorImage', event.target.getAttribute('color-image'));
