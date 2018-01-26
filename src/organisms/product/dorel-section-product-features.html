@@ -19,69 +19,89 @@
       }
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-media-query breakpoints="{{breakpoints}}"></dorel-media-query>
 
     <template is="dom-if"
-              if="[[ featuresData.features.length ]]">
+              if="[[featuresData.features.length]]">
 
       <dorel-layout-container>
-        <dorel-titling title="{{localize('product_features#title')}}"></dorel-titling>
+        <dorel-titling
+          title="[[localize('product_features#title')]]"></dorel-titling>
 
         <dorel-layout-row>
-          <template is="dom-if" if="[[ !breakpoints.tabletMediumUp ]]">
+          <template
+            is="dom-if"
+            if="[[!breakpoints.tabletMediumUp]]">
             <template
               is="dom-repeat"
-              items="[[ initialContent ]]"
+              items="[[initialContent]]"
               as="feature">
-              <dorel-layout-column desktop-column-span="3" tablet-column-span="6" mobile-column-span="12">
-                <dorel-product-feature feature-data="[[ feature ]]"></dorel-product-feature>
+              <dorel-layout-column
+                desktop-column-span="3"
+                tablet-column-span="6"
+                mobile-column-span="12">
+                <dorel-product-feature
+                  feature-data="[[feature]]"></dorel-product-feature>
               </dorel-layout-column>
             </template>
-            <template is="dom-if" if="[[ restContent.length ]]">
+            <template
+              is="dom-if"
+              if="[[restContent.length]]">
               <!-- Rest content to expand/collapse -->
               <iron-collapse id="collapse">
                 <template
                   is="dom-repeat"
-                  items="[[ restContent ]]"
+                  items="[[restContent]]"
                   as="feature">
-                  <dorel-layout-column desktop-column-span="3" tablet-column-span="6" mobile-column-span="12">
-                    <dorel-product-feature feature-data="[[ feature ]]"></dorel-product-feature>
+                  <dorel-layout-column
+                    desktop-column-span="3"
+                    tablet-column-span="6"
+                    mobile-column-span="12">
+                    <dorel-product-feature
+                      feature-data="[[feature]]"></dorel-product-feature>
                   </dorel-layout-column>
                 </template>
               </iron-collapse>
               <!-- Toggles expand and collapse -->
-              <template is="dom-if" if="[[ !expanded ]]">
-                <dorel-cta title="{{ localize('Show_all_features') }}"
-                           on-click="_toggle"
-                           type="link"
-                           link=""
-                           size="medium"
-                           class="expand-collapse"
-                           icon="dorel-icons:expand-more">
-                  {{ localize('Show_all_features') }}
-
-                </dorel-cta>
+              <template
+                is="dom-if"
+                if="[[!expanded]]">
+                <dorel-cta
+                  title="[[localize('Show_all_features')]]"
+                  on-click="_toggle"
+                  type="link"
+                  link=""
+                  size="medium"
+                  class="expand-collapse"
+                  icon="dorel-icons:expand-more">[[localize('Show_all_features')]]</dorel-cta>
               </template>
-              <template is="dom-if" if="[[ expanded ]]">
-                <dorel-cta title="{{ localize('Show_less_features') }}"
-                           on-click="_toggle"
-                           type="link"
-                           link=""
-                           size="medium"
-                           class="expand-collapse"
-                           icon="dorel-icons:expand-less">
-                  {{ localize('Show_less_features') }}
-                </dorel-cta>
+              <template
+                is="dom-if"
+                if="[[expanded]]">
+                <dorel-cta
+                  title="{{ localize('Show_less_features') }}"
+                  on-click="_toggle"
+                  type="link"
+                  link=""
+                  size="medium"
+                  class="expand-collapse"
+                  icon="dorel-icons:expand-less">[[localize('Show_less_features')]]</dorel-cta>
               </template>
             </template>
           </template>
-          <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]">
+          <template
+            is="dom-if"
+            if="[[breakpoints.tabletMediumUp]]">
             <template
               is="dom-repeat"
-              items="[[ featuresData.features ]]"
+              items="[[featuresData.features]]"
               as="feature">
-              <dorel-layout-column desktop-column-span="3" tablet-column-span="6" mobile-column-span="12">
-                <dorel-product-feature feature-data="[[ feature ]]"></dorel-product-feature>
+              <dorel-layout-column
+                desktop-column-span="3"
+                tablet-column-span="6"
+                mobile-column-span="12">
+                <dorel-product-feature
+                  feature-data="[[feature]]"></dorel-product-feature>
               </dorel-layout-column>
             </template>
           </template>
