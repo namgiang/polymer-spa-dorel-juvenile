@@ -37,46 +37,54 @@
       [tablet-medium-up] dorel-layout-row {
         margin-top: 1.5em;
       }
-
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <dorel-layout-container tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
-      <dorel-titling title="[[ uspsData.title ]]" description="[[ uspsData.description ]]"></dorel-titling>
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
+
+    <dorel-layout-container
+      tablet-medium-up$="{{breakpoints.tabletMediumUp}}">
+      <dorel-titling
+        title="[[localize('product_usps#title')]]"></dorel-titling>
       <template
         is="dom-if"
-        if="[[ uspsData.usps.length ]]">
+        if="[[uspsData.usps.length]]">
         <dorel-layout-row>
           <template
             is="dom-repeat"
-            items="[[ uspsData.usps ]]"
+            items="[[uspsData.usps]]"
             as="usp">
-            <dorel-layout-column desktop-column-span="4" tablet-column-span="6" mobile-column-span="12">
+            <dorel-layout-column
+              desktop-column-span="4"
+              tablet-column-span="6"
+              mobile-column-span="12">
               <div class="usp">
                 <template
                   is="dom-if"
-                  if="[[ _hasValue(usp.image) ]]">
+                  if="[[_hasValue(usp.image)]]">
                   <dorel-product-image
                     class="usp-image"
                     sizing="contain"
-                    image-url="[[ usp.image ]]">
+                    image-url="[[usp.image]]">
                   </dorel-product-image>
                 </template>
 
                 <div class="usp-content">
                   <template
                     is="dom-if"
-                    if="[[ _hasValue(usp.title) ]]">
+                    if="[[_hasValue(usp.title)]]">
                     <h3 class="usp-title">
-                      <dorel-safe-html html="[[ usp.title ]]"></dorel-safe-html>
+                      <dorel-safe-html
+                        html="[[usp.title]]"></dorel-safe-html>
                     </h3>
                   </template>
 
                   <template
                     is="dom-if"
-                    if="[[ _hasValue(usp.description) ]]">
+                    if="[[_hasValue(usp.description)]]">
                     <div class="usp-description">
-                      <dorel-safe-html html="[[ usp.description ]]"></dorel-safe-html>
+                      <dorel-safe-html
+                        html="[[usp.description]]"></dorel-safe-html>
                     </div>
                   </template>
                 </div>
@@ -91,7 +99,7 @@
 
   </template>
   <script>
-    class DorelSectionProductUsps extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors], Polymer.Element)) {
+    class DorelSectionProductUsps extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
       static get is() {
         return 'dorel-section-product-usps';
       }
