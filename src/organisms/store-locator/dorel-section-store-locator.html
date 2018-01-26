@@ -273,7 +273,7 @@
 
   <script>
 
-    class DorelSectionStoreLocator extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
+    class DorelSectionStoreLocator extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior, GtmBehavior], Polymer.Element)) {
 
       static get is() { return 'dorel-section-store-locator'; }
 
@@ -311,6 +311,14 @@
           _form: {
             type: Object,
             value: () => document.querySelector('#store-locator-form')
+          },
+
+          /**
+           * the endpoint of the dorel api
+           */
+          dioApiUrl: {
+            type: String,
+            statePath: 'config.dioApiUrl'
           },
 
           /**
@@ -417,11 +425,11 @@
           },
 
           /**
-           * the endpoint of the dorel api
+           * default search radius
            */
-          dioApiUrl: {
+          searchRadius: {
             type: String,
-            statePath: 'config.dioApiUrl'
+            value: '5'
           }
         };
       }
@@ -543,6 +551,14 @@
         // if no results are retrieved, handle error handling
         if (!data.detail.response.results.length) {
           this._handleErrors('ZERO_RESULTS');
+          if (data.detail.response.originalLat && data.detail.response.originalLng) {
+
+        this.set('storesResponse', data.detail.response);
+        const storesResponse = this.get('storesResponse');
+            const bounds = new google.maps.LatLngBounds();
+            const userLatLng = new google.maps.LatLng(storesResponse.originalLat, storesResponse.originalLng);
+            bounds.extend(userLatLng);
+          }
           return;
         }
 
@@ -576,7 +592,7 @@
           event.detail.keyboardEvent.preventDefault();
         }
 
-        this.callLocator();
+        this.callLocator(event);
 
         //remove queryParams address
         window.history.pushState({}, null, window.location.pathname);
@@ -586,7 +602,7 @@
       /**
        * call and set the pointers on the map
        */
-      callLocator() {
+      callLocator(event) {
         if (typeof this.get('addressInput') === 'undefined') return;
 
         // handle the validation of the input and errors when the input is empty
@@ -606,16 +622,37 @@
         const query = `${this.get('addressInput')} ${this.get('selectedCountry.label')}`;
         this.set('address', this.get('addressInput'));
 
+        // retarget to the right element to get its attributes
+        const element = (event.target.tagName === 'DOREL-CTA') ? event.target : event.composedPath()[1];
+        const path = event.composedPath();
+        const pathEl = path.filter(el => el.tagName && el.tagName.includes('DOREL-'));
+
+        /**
+         * Tracking on click for cta
+         */
+        const gtmEvent = {
+          action: 'store-locator_search-input',
+          component: 'dorel-section-store-locator',
+          structure: pathEl,
+          element: element,
+          event: 'polymer_event',
+          things: {
+            'currentAddressQuery': query
+          }
+        };
+
+        this._dispatchGtmEvent(gtmEvent);
+
         // retrieve the suggestions by query
         this.set('predictions', this._retrieveSuggestions(query).then((response) => {
 
           // retrieve the geocode to update the map
           this._retrieveGeocode(response.description).then((geometry) => {
             // define our api call
-            let storeParams = '&lat=' + geometry.location.lat();
-            storeParams += '&lng=' + geometry.location.lng();
-            storeParams += '&country=' + this.get('selectedCountry.value');
-            storeParams += '&radius=' + 5;
+            let storeParams = geometry.location.lat() ? `&lat=${geometry.location.lat()}` : '';
+            storeParams += geometry.location.lng() ? `&lng=${geometry.location.lng()}` : '';
+            storeParams += this.get('selectedCountry.value') ? `&country=${this.get('selectedCountry.value')}` : '';
+            storeParams += this.get('searchRadius') ? `&radius=${Number(this.get('searchRadius'))}` : '';
 
             // set the endpoint, when set the api call will automatically commence
             this.set('storesEndPoint',
