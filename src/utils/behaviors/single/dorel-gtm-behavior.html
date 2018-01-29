@@ -4,11 +4,30 @@
    * @polymerBehavior
    */
   GtmBehavior = {
+    prepareGtmEvent: function(tagName, event, gtmObject) {
+      const elName = tagName.toUpperCase();
+
+      // retarget to the right element to get its attributes
+      const path = event.path;
+      const element = (event.target.tagName === elName) ? event.target : path[0];
+      const pathEl = path.filter(el => el.tagName && el.tagName.includes('DOREL-'));
+
+      /**
+       * Tracking on click for cta
+       */
+      const gtmEvt = {
+        ...gtmObject,
+        structure: pathEl,
+        element: element,
+        event: 'polymer_event'
+      };
+
+      this._dispatchGtmEvent(gtmEvt);
+    },
+
     /**
-     * @name _dispatchGtmEvent
-     * @description This function will determine if the global dorel event click
-     * object is defined/changed. If so it will push the data to GA (tagmanager)
-     * in the format defined by Analytics department
+     * This function will determine if the global dorel event click object is defined/changed. If so it will push the data to GA (tagmanager) in the format defined by Analytics department
+     *
      * @param dorelEvt - Object
      */
     _dispatchGtmEvent: function(dorelEvt) {
@@ -22,8 +41,7 @@
     },
 
     /**
-     * @name _hasProps
-     * @description check if the observed data model has properties
+     * check if the observed data model has properties
      */
     _hasProps: function(dataObj) {
       // define dataEmpty variable to check wheter the dorelEvt object is empty or not
