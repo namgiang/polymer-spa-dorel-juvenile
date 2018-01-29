@@ -369,8 +369,20 @@
             }, null, false);
         }
 
-        // tracking of the pageload
-        this._eventTracking(currentPage);
+        /**
+         * Tracking on pageload
+         */
+        const event = {
+          action: 'loaded',
+          component: 'page',
+          element: this,
+          event: 'polymer_event',
+          things: {
+            currentPage: currentPage,
+            globals: this.getState()
+          }
+        };
+        this._dispatchGtmEvent(event);
       }
 
       /**
@@ -411,31 +423,6 @@
         // var placeholder = document.getElementById('load-placeholder');
         // placeholder.remove();
       }
-
-      /**
-       * @name _eventTracking
-       * @description this is for pageload tracking only
-       * more info http://bit.ly/2nb6I7G
-       */
-      _eventTracking(currentPage) {
-        const state = this.getState();
-        const url = state.route.currentRoute.url;
-        /**
-         * Tracking on pageload
-         */
-        const event = {
-          action: 'loaded',
-          component: 'page',
-          element: this,
-          event: 'polymer_event',
-          things: {
-            'currentPage': currentPage,
-            'globals': state
-          }
-        };
-        this._dispatchGtmEvent(event);
-      }
-
       /**
        * function to determine if a header or footer will be shown
        */
