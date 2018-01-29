@@ -200,8 +200,8 @@
                   latitude="[[store.lat]]"
                   longitude="[[store.lng]]"
                   store="[[store]]"
-                  click-events="true"
-                  icon="[[_defineStoreType(store.is_vip)]]">
+                  icon="[[_defineStoreType(store.is_vip)]]"
+                  click-events="true">
 
                   <!-- IMPORTANT! inline styling is required -->
                   <template
@@ -241,16 +241,21 @@
                     if="[[store.phone_number]]">
                     <a
                       style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
-                      href="tel:[[store.phone_number]]" title="Call" target="_blank">
+                      href="tel:[[store.phone_number]]"
+                      title="Call"
+                      target="_blank">
                       [[store.phone_number]]
                       <iron-icon class="theme-cta__icon" icon="dorel-icons:call"></iron-icon>
                     </a>
                   </template>
+
                   <template
                     is="dom-if"
                     if="[[store.online_shop.url]]">
                     <a style="margin-right:1.5em;color: #004178;fill: #004178;text-decoration: none; margin-top: 1.5em"
-                       href="[[store.online_shop.url]]" title="Visit website" target="_blank">
+                       href="[[store.online_shop.url]]"
+                       title="Visit website"
+                       target="_blank">
                       Visit website
                       <iron-icon class="theme-cta__icon" icon="dorel-icons:external-link"></iron-icon>
                     </a>
@@ -437,6 +442,7 @@
       ready () {
         super.ready()
         this.addEventListener('google-map-ready', this._mapLoaded);
+        this.addEventListener('google-map-marker-open', this._trackMarkerClick);
       }
 
 
@@ -622,26 +628,14 @@
         const query = `${this.get('addressInput')} ${this.get('selectedCountry.label')}`;
         this.set('address', this.get('addressInput'));
 
-        // retarget to the right element to get its attributes
-        const element = (event.target.tagName === 'DOREL-CTA') ? event.target : event.composedPath()[1];
-        const path = event.composedPath();
-        const pathEl = path.filter(el => el.tagName && el.tagName.includes('DOREL-'));
-
-        /**
-         * Tracking on click for cta
-         */
-        const gtmEvent = {
+        // track event
+        this.prepareGtmEvent('dorel-cta', event, {
           action: 'store-locator_search-input',
           component: 'dorel-section-store-locator',
-          structure: pathEl,
-          element: element,
-          event: 'polymer_event',
           things: {
-            'currentAddressQuery': query
+            currentAddressQuery: query
           }
-        };
-
-        this._dispatchGtmEvent(gtmEvent);
+        });
 
         // retrieve the suggestions by query
         this.set('predictions', this._retrieveSuggestions(query).then((response) => {
@@ -762,6 +756,21 @@
         }
 
         return hasProps;
+      }
+
+      _trackMarkerClick(event) {
+        const storeInfo = event.composedPath()[0];
+
+        // track event
+        this.prepareGtmEvent('google-map-marker', event, {
+          action: `store-locator_${event.type}`,
+          component: 'dorel-section-store-locator',
+          things: {
+            currentAddressQuery: `${this.get('addressInput')} ${this.get('selectedCountry.label')}`,
+            stores: this.storesResponse.results,
+            selectedStore: storeInfo.store
+          }
+        });
       }
 
     };
