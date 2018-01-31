@@ -33,7 +33,7 @@
 
     <dorel-section-page-nav
       breadcrumbs-toggle="true"
-      rendered-count="[[renderedCount]]"></dorel-section-page-nav>
+      rendered-count="{{renderedCount}}"></dorel-section-page-nav>
 
     <dorel-layout-container>
       <dorel-layout-row
@@ -127,9 +127,7 @@
           products: {
             type: Array,
             statePath: function(state) {
-              return state.product.products.filter(product => {
-                return product && product.categories && product.categories.indexOf(this.category) > -1 ? true : false;
-              });
+              return state.product.products.filter(product => product && product.categories && product.categories.indexOf(this.get('category')) > -1);
             }
           },
 
@@ -183,9 +181,9 @@
         };
       }
 
-      _categoryChanged(category) {
-        if(category && category > -1) {
-          this.dispatch('requestProductsByCategory', category);
+      _categoryChanged(newCategory, oldCategory) {
+        if( (newCategory !== oldCategory) && (newCategory && newCategory > -1) ) {
+          this.dispatch('requestProductsByCategory', newCategory);
         }
       }
     }
