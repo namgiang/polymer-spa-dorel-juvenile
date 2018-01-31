@@ -211,230 +211,215 @@
         @apply(--theme-button-large);
         height: auto;
       }
-
     </style>
 
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
-    <section>
-      <a href$="[[ link ]]"
-         title$="[[ title ]]"
-         target$="[[ target ]]"
-         class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]] [[ invertedCssClass ]]"
-         tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
-         target$="[[ _isExternal(linkTarget) ]]"
-         gtm-action$="[[ gtmAction ]]"
-         gtm-parent$="[[ gtmParent ]]"
-         gtm-parent-index$="[[ gtmParentIndex ]]"
-         gtm-child$="[[ gtmChild ]]"
-         gtm-child-index$="[[ gtmChildIndex ]]"
-         gtm-cta-index$="[[ gtmCtaIndex ]]"
-         on-click="_clickCTA">
 
-        <template
-          is="dom-if"
-          if="[[ extraIcon ]]">
-          <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
-        </template>
+    <a href$="[[ link ]]"
+      title$="[[ title ]]"
+      target$="[[ target ]]"
+      class$="theme-cta theme-cta--[[ type ]] theme-cta--[[ size ]] [[ invertedCssClass ]]"
+      tablet-medium-up$="{{ breakpoints.tabletMediumUp }}"
+      target$="[[ _isExternal(linkTarget) ]]"
+      gtm-action$="[[ gtmAction ]]"
+      gtm-parent$="[[ gtmParent ]]"
+      gtm-parent-index$="[[ gtmParentIndex ]]"
+      gtm-child$="[[ gtmChild ]]"
+      gtm-child-index$="[[ gtmChildIndex ]]"
+      gtm-cta-index$="[[ gtmCtaIndex ]]"
+      on-click="_clickCTA">
+      <template
+        is="dom-if"
+        if="[[ extraIcon ]]">
+        <iron-icon class="theme-cta__icon theme-cta__icon--left" icon="[[ extraIcon ]]"></iron-icon>
+      </template>
 
-        <span class="theme-cta__content"><slot id="content"></slot></span>
+      <span class="theme-cta__content"><slot id="content"></slot></span>
 
-        <template
-          is="dom-if"
-          if="[[ icon ]]">
-          <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
-        </template>
-
-      </a>
-    </section>
+      <template
+        is="dom-if"
+        if="[[ icon ]]">
+        <iron-icon class="theme-cta__icon" icon="[[ icon ]]"></iron-icon>
+      </template>
+    </a>
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-cta',
-      properties: {
+    class DorelCta extends ReduxMixin(Polymer.mixinBehaviors([GtmBehavior], Polymer.Element)) {
 
-        /**
-         * @attribute
-         * @name link
-         * @description defines the href of the CTA
-         */
-        link: {
-          type: String
-        },
-        /**
-         * @attribute
-         * @name target
-         * @description defines the target for the href
-         */
-        target: {
-          type: String
-        },
-        /**
-         * @attribute
-         * @name title
-         * @description defines the title attribut of the CTA, can be the same as it's content
-         */
-        title: {
-          type: String
-        },
-        /**
-         * @attribute
-         * @name linkTarget
-         * @description defines the links target (e.g. _blank for opening in new tab)
-         */
-        linkTarget: {
-          type: String,
-          value: ''
-        },
+      static get is() { return 'dorel-cta'; }
 
-        /**
-         * @attribute
-         * @name type
-         * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary', 'tertiary' and 'link' are supported. Per type, certain css applies to differentiate beteen one another.
-         */
-        type: {
-          type: String,
-          value: 'primary'
-        },
+      static get properties() {
+        return {
+          /**
+           * @redux path
+           * @name currentPage
+           * @description get the currentPage from redux
+           */
+          currentPage: {
+            type: Object,
+            statePath: 'page.currentPage'
+          },
 
-        /**
-         * @attribute
-         * @name inverted
-         * @description for CTA on a dark background. Only implemented for types 'primary' and 'link'
-         */
-        inverted: {
-          type: Boolean,
-          value: false
-        },
+          /**
+           * @attribute
+           * @name link
+           * @description defines the href of the CTA
+           */
+          link: {
+            type: String
+          },
+          /**
+           * @attribute
+           * @name target
+           * @description defines the target for the href
+           */
+          target: {
+            type: String
+          },
+          /**
+           * @attribute
+           * @name title
+           * @description defines the title attribut of the CTA, can be the same as it's content
+           */
+          title: {
+            type: String
+          },
+          /**
+           * @attribute
+           * @name linkTarget
+           * @description defines the links target (e.g. _blank for opening in new tab)
+           */
+          linkTarget: {
+            type: String,
+            value: ''
+          },
 
-        /**
-         * @attribute
-         * @name size
-         * @description defines the size of the CTA. Currently 'medium' and 'large' are supported
-         */
-        size: {
-          type: String,
-          value: 'medium'
-        },
+          /**
+           * @attribute
+           * @name type
+           * @description defines what type of CTA we are dealing with. Currently 'primary', 'secondary', 'tertiary' and 'link' are supported. Per type, certain css applies to differentiate beteen one another.
+           */
+          type: {
+            type: String,
+            value: 'primary'
+          },
 
-        /**
-         * @attribute
-         * @name icon
-         * @description The icon for the CTA. Use the dorel-iconset icons here.For example: dorel-icons:chevron-right
-         */
-        icon: {
-          type: String,
-          value: 'dorel-icons:chevron-right'
-        },
+          /**
+           * @attribute
+           * @name inverted
+           * @description for CTA on a dark background. Only implemented for types 'primary' and 'link'
+           */
+          inverted: {
+            type: Boolean,
+            value: false
+          },
 
-        /**
-         * @attribute
-         * @name extraIcon
-         * @description A large extra icon for emphasizing the CTA. Is placed left of the text.
-         * Use the dorel-iconset icons here. For example: dorel-icons:chevron-right
-         */
-        extraIcon: {
-          type: String
-        },
+          /**
+           * @attribute
+           * @name size
+           * @description defines the size of the CTA. Currently 'medium' and 'large' are supported
+           */
+          size: {
+            type: String,
+            value: 'medium'
+          },
 
-        /**
-         * @attribute
-         * @name disabled
-         * @description Sets the disabled state of the CTA
-         */
-        disabled: {
-          type: Boolean
-        },
+          /**
+           * @attribute
+           * @name icon
+           * @description The icon for the CTA. Use the dorel-iconset icons here.For example: dorel-icons:chevron-right
+           */
+          icon: {
+            type: String,
+            value: 'dorel-icons:chevron-right'
+          },
 
-        /**
-         * @attribute
-         * leftAlignIcon
-         * @description Aligns the main icon to the left of the button label
-         */
+          /**
+           * @attribute
+           * @name extraIcon
+           * @description A large extra icon for emphasizing the CTA. Is placed left of the text.
+           * Use the dorel-iconset icons here. For example: dorel-icons:chevron-right
+           */
+          extraIcon: {
+            type: String
+          },
 
-        leftAlignIcon: {
-          type: Boolean
-        },
+          /**
+           * @attribute
+           * @name disabled
+           * @description Sets the disabled state of the CTA
+           */
+          disabled: {
+            type: Boolean
+          },
 
-        invertedCssClass: {
-          type: String,
-          computed: '_getInvertedStyle(inverted)'
+          /**
+           * @attribute
+           * leftAlignIcon
+           * @description Aligns the main icon to the left of the button label
+           */
+          leftAlignIcon: {
+            type: Boolean
+          },
+
+          /**
+           * @attribute
+           * invertedCssClass
+           * @description define the inverted css class
+           */
+          invertedCssClass: {
+            type: String,
+            computed: '_getInvertedStyle(inverted)'
+          }
         }
-      },
-
-      behaviors: [GtmBehavior],
+      }
 
       /**
        * @name clickCTA
        * @description handle the click on a cta link, very important for Analytics!!!!!!
        */
-      _clickCTA: function (event) {
+      _clickCTA(event) {
         // retarget to the right element to get its attributes
-        if (Polymer.dom(event).rootTarget.tagName === 'A') {
-          var element = Polymer.dom(event).rootTarget;
-        } else {
-          var element = Polymer.dom(event).path[1];
-        }
-
-        var gtmAction = element.getAttribute('gtm-action');
-
-        // build up first part of the structure
-        var structure = {
-          name: this.gtmParent,
-          index: Number(this.gtmParentIndex) + 1
-        };
-
-        if (typeof this.gtmChild !== 'undefined' && this.gtmChild !== null) {
-          structure.child = {
-            name: this.gtmChild,
-            index: Number(this.gtmChildIndex) + 1,
-            event: {
-              name: 'call-to-action',
-              type: this.type,
-              text: this.getContentChildNodes()[0].textContent,
-              index: Number(this.gtmCtaIndex) + 1,
-            }
-          }
-        } else {
-          structure.event = {
-            name: 'call-to-action',
-            type: this.type,
-            text: this.getContentChildNodes()[0].textContent,
-            index: Number(this.gtmCtaIndex) + 1
-          }
-        }
+        const element = (event.target.tagName === 'A') ? event.target : event.composedPath()[1];
+        const gtmAction = element.getAttribute('gtm-action');
+        const path = event.composedPath();
+        const pathEl = path.filter(el => el.tagName && el.tagName.includes('DOREL-'));
 
         /**
          * Tracking on click for cta
          */
-        var event = {
-          action: this.gtmAction ? this.gtmAction : 'click',
+        const gtmEvent = {
+          action: this.get('gtmAction') || 'click',
           component: 'call-to-action',
-          structure: structure,
+          structure: pathEl,
           element: element,
           event: 'polymer_event',
           things: {
-            'currentPage': document.URL,
+            'currentPage': this.get('currentPage') || document.URL,
             'targetPage': element.href
           }
         };
-        this._dispatchGtmEvent(event);
-      },
 
-      /**
-       * @name _isExternal
-       * @description define if the target opens in a new tab or not
-       */
-      _isExternal: function (linkTarget) {
-        return (typeof linkTarget === 'undefined' || !linkTarget) ?
-          '_self' : '_blank';
-      },
-
-      _getInvertedStyle: function(inverted) {
-        return inverted ? 'inverted' : '';
+        this._dispatchGtmEvent(gtmEvent);
       }
 
-    });
-  </script>
+      /**
+       * define if the _target opens in a new tab or not
+       */
+      _isExternal(linkTarget) {
+        return (typeof linkTarget === 'undefined' || !linkTarget) ?
+          '_self' : '_blank';
+      }
 
+      /**
+       * determine if we need to set the inverted css class to
+       */
+      _getInvertedStyle(inverted) {
+        return inverted ? 'inverted' : '';
+      }
+    }
+
+    customElements.define(DorelCta.is, DorelCta);
+  </script>
 </dom-module>

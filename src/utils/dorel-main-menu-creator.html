@@ -101,8 +101,9 @@
         let sub_category_items = await this._getSubCategoryItems(page);
         if(sub_category_items && sub_category_items.length < 2) {
           item.productSwitch = true;
-          const category = this._getMagentoCategoryId(page);
-          this.dispatch('requestProductsByCategory', category);
+          if (this._getMagentoCategoryId(page)) {
+            this.dispatch('requestProductsByCategory', this._getMagentoCategoryId(page));
+          }
         }
         item.category_id = this._getMagentoCategoryId(page);
         item.sub_category_items = sub_category_items;
@@ -130,6 +131,7 @@
     }
 
     _getMagentoCategoryId(page) {
+      if(!page.acf.magento_category_picker) return;
       return Number(page.acf.magento_category_picker);
     }
 

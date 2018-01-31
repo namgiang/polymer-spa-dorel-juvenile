@@ -63,8 +63,7 @@
 
     <dorel-category-filter-manager
       id="categoryManager"
-      filters="{{filters}}">
-    </dorel-category-filter-manager>
+      filters="{{filters}}"></dorel-category-filter-manager>
 
     <template
       is="dom-if"
@@ -76,44 +75,43 @@
           <template
             is="dom-repeat"
             items="[[colorsData]]"
-            as="item"
+            as="color"
             filter="[[_filterChildProducts(filters.*)]]">
-            <li class$="list-group-item [[_isCurrentColor(currentName, item.collection_colour_theme_name.name)]]">
-
+            <li class$="list-group-item [[_isCurrentColor(currentName, color.collection_colour_theme_name.name)]]">
               <template
                 is="dom-if"
-                if="[[_checkType(item, 'hex')]]">
+                if="[[_checkType(color, 'hex')]]">
                 <span
                   on-click="_changeCurrentColor"
                   role="button"
                   tabindex="0"
-                  color-image$="[[item.images.image]]"
-                  color-name$="[[item.collection_colour_theme_name.name]]"
-                  style$="background-color: [[item.collection_colour_theme_name.value]];"></span>
+                  color-image$="[[color.images.image]]"
+                  color-name$="[[color.collection_colour_theme_name.name]]"
+                  style$="background-color: [[color.collection_colour_theme_name.value]];"></span>
               </template>
 
               <template
                 is="dom-if"
-                if="[[_checkType(item, 'image')]]">
+                if="[[_checkType(color, 'image')]]">
                 <span
                   on-click="_changeCurrentColor"
                   role="button"
                   tabindex="0"
-                  color-image$="[[item.images.image]]"
-                  color-name$="[[item.collection_colour_theme_name.name]]">
-                  <img src="[[item.collection_colour_theme_name.value]]" class="image-color" />
+                  color-image$="[[color.images.image]]"
+                  color-name$="[[color.collection_colour_theme_name.name]]">
+                  <img src="[[color.collection_colour_theme_name.value]]" class="image-color" />
                 </span>
               </template>
 
               <template
                 is="dom-if"
-                if="[[_noHexOrSwatch(item)]]">
+                if="[[_noHexOrSwatch(color)]]">
                 <span
                   on-click="_changeCurrentColor"
                   role="button"
                   tabindex="0"
-                  color-image$="[[item.images.image]]"
-                  color-name$="[[item.collection_colour_theme_name.name]]"></span>
+                  color-image$="[[color.images.image]]"
+                  color-name$="[[color.collection_colour_theme_name.name]]"></span>
               </template>
             </li>
           </template>
@@ -124,7 +122,7 @@
   </template>
 
   <script>
-    class DorelColorSwitcher extends Polymer.mixinBehaviors([DorelMultilingualBehavior, GtmBehavior], Polymer.Element) {
+    class DorelColorSwitcher extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior, GtmBehavior], Polymer.Element)){
 
       static get is() { return 'dorel-color-switcher'; }
 
@@ -135,7 +133,8 @@
            */
           colorsData: {
             type: Array,
-            value: []
+            value: [],
+            observer: '_setColors'
           },
 
           /**
@@ -155,6 +154,17 @@
       }
 
       /**
+       * set the initial currentColor for each product
+       *
+       * @param {array} new colors
+       * @param {array} old colors
+       */
+      _setColors(newColorsData, oldColorsData) {
+        if (!newColorsData || JSON.stringify(newColorsData) === JSON.stringify(oldColorsData)) return;
+        this._setCurrentColor(newColorsData[0]);
+      }
+
+      /**
        * a filter that is used by the template
        * Additional functionality is to call _setCurrentColor whenever the filters change
        * to select a color that is included in the filtered colors
@@ -164,13 +174,18 @@
        */
       _filterChildProducts(filters) {
         const colorsData = this.get('colorsData');
+
+        if (!filters || !filters.base.length && !filters.value.length) {
+          this._setCurrentColor(colorsData[0]);
+          return;
+        }
+
         let currentColorSelected = false;
 
         return (color) => {
 
           // if no filters are applied return true
           if (!filters || !filters.base || !filters.base.length) {
-            this._setCurrentColor(colorsData[0]);
             return true;
           }
 
@@ -215,7 +230,7 @@
        * @param e - Object - the clicked object/target
        */
       _changeCurrentColor(event) {
-        const color = event.model.item;
+        const color = event.model.color;
 
         if(typeof color !== 'undefined') {
           this.dispatchEvent(
@@ -292,8 +307,8 @@
        * @param type - string
        * @returns Boolean
        */
-      _checkType(item, type) {
-        return Boolean(item && item.collection_colour_theme_name && item.collection_colour_theme_name.type === type);
+      _checkType(color, type) {
+        return Boolean(color && color.collection_colour_theme_name && color.collection_colour_theme_name.type === type);
       }
 
       /**
@@ -302,8 +317,8 @@
        * @param {object} the color item object containing value, order, type and label
        * @returns {boolean} returns true when the type doesn't exist
        */
-      _noHexOrSwatch(item) {
-        return Boolean(item && item.collection_colour_theme_name && !item.collection_colour_theme_name.type);
+      _noHexOrSwatch(color) {
+        return Boolean(color && color.collection_colour_theme_name && !color.collection_colour_theme_name.type);
       }
     }
 

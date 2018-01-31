@@ -286,7 +286,7 @@
         accordion.toggle();
 
         // event tracking
-        this._eventTracking(e, e.target, state);
+        this._eventTracking(e.target, e, state);
       },
 
       /**
@@ -294,34 +294,17 @@
        * @description this is for cta tracking only
        * more info http://bit.ly/2nb6I7G
        */
-      _eventTracking: function (event, selector, accordionState) {
-
-        var gtmCtaIndex = selector.getAttribute('gtm-cta-index');
-
-        /**
-         * Tracking on click for cta
-         */
-        var events = {
+      _eventTracking: function (selector, event, accordionState) {
+        // track event
+        this.prepareGtmEvent('google-map-marker', event, {
           action: 'toggle-accordion',
           component: 'accordion',
-          structure: {
-            name: this.gtmParent,
-            index: Number(this.gtmParentIndex) + 1,
-            event: {
-              name: 'accordion-heading',
-              index: Number(gtmCtaIndex) + 1,
-              state: (accordionState) ? 'closed' : 'open'
-            }
-          },
           element: selector.innerHTML,
-          event: 'polymer_event',
           things: {
             'currentState': (accordionState) ? 'open' : 'closed',
             'targetState': (accordionState) ? 'closed' : 'open'
           }
-        };
-
-        this._dispatchGtmEvent(events);
+        });
       }
     });
   </script>

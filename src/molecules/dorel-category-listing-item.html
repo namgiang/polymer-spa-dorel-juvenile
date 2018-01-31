@@ -99,7 +99,8 @@
       }
     </style>
 
-    <dorel-media-query breakpoints="{{breakpoints}}"></dorel-media-query>
+    <dorel-media-query
+      breakpoints="[[breakpoints]]"></dorel-media-query>
 
     <section class="category-listing-item"
       fade$="[[fade]]"
@@ -132,68 +133,73 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'dorel-category-listing-item',
-      properties: {
-        fade: {
-          type: Boolean,
-          value: false,
-        },
+    class DorelCategoryListingItem extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+
+      static get is() { return 'dorel-category-listing-item'; }
+
+      static get properties() {
+        return {
+          /**
+           * fading animation enabled/disabled the product listings
+           */
+          fade: {
+            type: Boolean,
+            value: false,
+          },
 
 
-        filters: {
-          type: Array
-        },
+          filters: {
+            type: Array
+          },
 
-        /**
-         * @attribute
-         * @name colorsData
-         * @description array defined on the attribute
-         */
-        colorsData: {
-          type: Array,
-          value: []
-        },
+          /**
+           * array defined on the attribute
+           */
+          colorsData: {
+            type: Array
+          },
 
-        /**
-         * @attribute
-         * @name imageUrl
-         * @description product name on the attribute
-         */
-        imageUrl: {
-          type: String,
-          value: ''
-        },
+          /**
+           * product name on the attribute
+           */
+          imageUrl: {
+            type: String,
+            value: ''
+          },
 
-        /**
-         * @attribute
-         * @name linkUrl
-         * @description product name on the attribute
-         */
-        linkUrl: {
-          type: String,
-          value: ''
-        },
+          /**
+           * product name on the attribute
+           */
+          linkUrl: {
+            type: String,
+            value: ''
+          },
 
-        /**
-         * @attribute
-         * @name productName
-         * @description product name on the attribute
-         */
-        productName: {
-          type: String,
-          value: ''
+          /**
+           * product name on the attribute
+           */
+          productName: {
+            type: String,
+            value: ''
+          },
+
+          /**
+           * the current product image to show
+           */
+          currentProductImage: {
+            type: String,
+            value: ''
+          }
         }
-      },
-
-      behaviors: [DorelMultilingualBehavior],
-
-      _setDynamicProductUrl: function(linkUrl) {
-
-        var windowLocation = window.location.origin + '/' + window.location.pathname.split('/')[1] + '/' + window.location.pathname.split('/')[2] + '/';
-
-        return windowLocation + linkUrl;
       }
-    });
+
+      /**
+       * define the product detail link
+       */
+      _setDynamicProductUrl(linkUrl) {
+        return `${window.location.origin}/${window.location.pathname.split('/')[1]}/${window.location.pathname.split('/')[2]}/${linkUrl}`;
+      }
+    }
+    customElements.define(DorelCategoryListingItem.is, DorelCategoryListingItem);
   </script>
 </dom-module>
