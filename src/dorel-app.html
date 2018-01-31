@@ -238,9 +238,7 @@
 
     class DorelApp extends ReduxMixin(Polymer.mixinBehaviors([GtmBehavior], Polymer.Element)) {
 
-      static get is() {
-        return 'dorel-app';
-      }
+      static get is() { return 'dorel-app'; }
 
       static get properties() {
         return {
@@ -326,8 +324,7 @@
 
       static get observers () {
         return [
-          '_pageChanged(currentPage)',
-          '_brandChanged(brand)'
+          '_pageChanged(currentPage)'
         ]
       }
 
@@ -372,8 +369,20 @@
             }, null, false);
         }
 
-        // tracking of the pageload
-        this._eventTracking();
+        /**
+         * Tracking on pageload
+         */
+        const event = {
+          action: 'loaded',
+          component: 'page',
+          element: this,
+          event: 'polymer_event',
+          things: {
+            currentPage: currentPage,
+            globals: this.getState()
+          }
+        };
+        this._dispatchGtmEvent(event);
       }
 
       /**
@@ -414,80 +423,14 @@
         // var placeholder = document.getElementById('load-placeholder');
         // placeholder.remove();
       }
-
       /**
-       * @name _eventTracking
-       * @description this is for pageload tracking only
-       * more info http://bit.ly/2nb6I7G
+       * function to determine if a header or footer will be shown
        */
-      _eventTracking() {
-        const state = this.getState();
-        const url = state.route.currentRoute.url;
-        /**
-         * Tracking on pageload
-         */
-        const event = {
-          action: 'loaded',
-          component: 'page',
-          element: this,
-          event: 'polymer_event',
-          things: {
-            'currentPage': (typeof url === 'undefined') ?
-              document.URL : url,
-            'globals': state
-          }
-        };
-        this._dispatchGtmEvent(event);
-      }
-
-
       shouldShow(currentPage) {
         return Boolean(currentPage && currentPage.template !== 'product-advisory-tool');
       }
+    };
 
-      /**
-       * @observer
-       * @name _brandChanged
-       * @description the brand was changed, imports the right styles and triggers a change in shared styles
-       * @param brand - Object - the object containing the brand index and label
-       */
-      _brandChanged(brand) {
-        //TODO: This doesn't work well in Polymer 2, hardcoded the maxicosi style for now.
-        /*var self = this;
-
-         // Create the brand identifier string
-         self.brandTheme = ['theme', brand.label, 'shared-styles'].join('-').toLowerCase();
-         // Create the brand path using the brand identifier string
-         self.brandThemeUrl = 'themes/' + self.brandTheme + '.html';
-
-         // First import and load the theme
-         this.importHref(this.resolveUrl(self.brandThemeUrl), function () {
-         //Removed the current shared style from the dom, if it exists.
-         var currentSharedStyle = this.shadowRoot.querySelector('#brand-shared-style');
-
-         if (currentSharedStyle !== null) {
-         currentSharedStyle.parentNode.removeChild(currentSharedStyle);
-         }
-
-         // Build up the right DOM elements to use the stule.
-         var domModuleChild = document.createElement('style');
-         domModuleChild.setAttribute('include', self.brandTheme);
-
-         var domModule = document.createElement('custom-style');
-         domModule.setAttribute('id', 'brand-shared-style');
-         domModule.appendChild(domModuleChild);
-
-         // Add the style to the DOM
-         this.shadowRoot.appendChild(domModule);
-
-         //Render the styles
-         console.log('Rendering new styles');
-         //Polymer.updateStyles();
-         //Polymer.dom.flush();
-         });*/
-      }
-
-  };
-  customElements.define(DorelApp.is, DorelApp);
+    customElements.define(DorelApp.is, DorelApp);
   </script>
 </dom-module>
