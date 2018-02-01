@@ -186,7 +186,7 @@
         <dorel-template-product-listing
           name="product-listing"
           route="[[subroute]]"
-          category="[[category]]"></dorel-template-product-listing>
+          categories="[[categories]]"></dorel-template-product-listing>
 
         <dorel-template-faq-overview
           name="faq-overview"
@@ -243,16 +243,14 @@
       static get properties() {
         return {
           /**
-           * @name route
-           * @description defines the current route
+           * the current route
            */
           route: {
             type: String
           },
 
           /**
-           * @name page
-           * @description define the current page
+           * defines the current page page
            */
           page: {
             type: String,
@@ -260,6 +258,9 @@
             readOnly: false,
           },
 
+          /**
+           * mobile menu drawer indicator
+           */
           mobileMenuOpened: {
             type: Boolean,
             reflectToAttribute: true,
@@ -267,8 +268,7 @@
           },
 
           /**
-           * @name brand
-           * @description The currently selected brand
+           * the current selected brand
            */
           brand: {
             type: Object,
@@ -276,8 +276,7 @@
           },
 
           /**
-           * @name brandNames
-           * @description available brand names (from config), used for switching between brands
+           * available brand names (from config), used for switching between brands
            */
           brandNames: {
             type: Array,
@@ -285,8 +284,7 @@
           },
 
           /**
-           * @name currentPage
-           * @description defines the currentPage
+           * defines the current page object
            */
           currentPage: {
             type: Object,
@@ -294,8 +292,7 @@
           },
 
           /**
-           * @name category
-           * @description the current category of a product listing page
+           * the current language of the application retrieved from the route
            */
           currentLanguage: {
             type: Object,
@@ -303,8 +300,7 @@
           },
 
           /**
-           * @name category
-           * @description the current category of a product listing page
+           * the magento category of a product listing page set in Wordpress
            */
           category: {
             type: Number,
@@ -312,8 +308,21 @@
           },
 
           /**
-           * @name wpUrl
-           * @description the wordpress endpoint
+           * TODO: copy of category (phase out category)
+           * the magento categories of a product listing page set in Wordpress
+           */
+          categories: {
+            type: Array,
+            statePath: function(state) {
+              if(!state.product.productCategoriesPage) return [];
+
+              // check if the state categories is an array (legacy wordpress values can be a string since in the past only one category per page could be selected)
+              return (state.product.productCategoriesPage.constructor !== Array) ? [state.product.productCategoriesPage] : state.product.productCategoriesPage;
+            }
+          },
+
+          /**
+           * the wordpress endpoint
            */
           wpUrl: {
             type: String,
@@ -355,24 +364,25 @@
        * @param currentPage - Object - the previous page
        */
       _pageChanged(currentPage) {
-        if (typeof currentPage === 'undefined' || currentPage === '' || !currentPage || !currentPage.template) {
-          return;
-        }
+        if (!currentPage || !currentPage.template) return;
 
         if (currentPage.template === 'home') {
           this._ensureLazyLoaded();
         } else {
           this.importHref(
-            this.resolveUrl('templates/dorel-template-' + currentPage.template + '.html'),
-            function () {
+            this.resolveUrl(`templates/dorel-template-${currentPage.template}.html`),
+            () => {
               this._ensureLazyLoaded();
-            }, null, false);
+            },
+            null,
+            false
+          );
         }
 
         /**
          * Tracking on pageload
          */
-        const event = {
+        this._dispatchGtmEvent({
           action: 'loaded',
           component: 'page',
           element: this,
@@ -381,25 +391,20 @@
             currentPage: currentPage,
             globals: this.getState()
           }
-        };
-        this._dispatchGtmEvent(event);
+        });
       }
 
       /**
-       * @name _ensureLazyLoaded
-       * @description if the load is completed we will add the resources
-       * the service worker will kick in after that.
+       * if the load is completed we will add the resources the service worker will kick in after that.
        */
       _ensureLazyLoaded() {
-        var self = this;
-
         // scroll up when a page is changed
         window.scrollTo(0, 0);
 
         // load lazy resources after render and set `loadComplete` when done.
         if (!this.loadComplete) {
-          Polymer.RenderStatus.afterNextRender(this, function () {
-            this.importHref(this.resolveUrl('dorel-app-resources.html'), function () {
+          Polymer.RenderStatus.afterNextRender(this, () => {
+            this.importHref(this.resolveUrl('dorel-app-resources.html'), () => {
 
               // Register service worker if supported.
               if ('serviceWorker' in navigator) {
@@ -408,21 +413,28 @@
 
               this.loadComplete = true;
               this._removeLoadPlaceholder();
+
               // import the footer after the pages are loaded
-              this.importHref(this.resolveUrl('organisms/dorel-footer.html'), null, null, false);
+              this.importHref(
+                this.resolveUrl('organisms/dorel-footer.html'),
+                null,
+                null,
+                false
+              );
             });
           });
         }
       }
 
       /**
-       * @name _removeLoadPlaceholder
-       * @description removes loading spinner and placeholders before the page is loaded
+       * TODO: commented out for IE11 bugfixing
+       * removes loading spinner and placeholders before the page is loaded
        */
       _removeLoadPlaceholder() {
         // var placeholder = document.getElementById('load-placeholder');
         // placeholder.remove();
       }
+
       /**
        * function to determine if a header or footer will be shown
        */

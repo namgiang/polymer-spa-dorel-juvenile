@@ -107,11 +107,8 @@
 
       static get properties() {
         return {
-
           /**
-           * @attribute
-           * @name templateData
-           * @description the data coming from ACF/Wordpress which is delegated to the page builder
+           * the data coming from ACF/Wordpress which is delegated to the page builder
            */
           templateData: {
             type: Object,
@@ -120,31 +117,37 @@
           },
 
           /**
-           * @attribute
-           * @name products
-           * @description the data coming from the collect-products component
+           * the data coming from the collect-products component
            */
           products: {
             type: Array,
             statePath: function(state) {
-              return state.product.products.filter(product => product && product.categories && product.categories.indexOf(this.get('category')) > -1);
+              if (!this.get('categories') || !this.get('categories').length) return;
+
+              // (TODO) the wp category ids array items are strings, convert them to integers to compare with the magento product category ids
+              const wpCatIdsToInt = this.get('categories').map(category => parseInt(category));
+
+              // filter the products and get only the products that comply to the wp categories defined for this page
+              const filteredProds = state.product.products.filter(product => {
+                return (product.categories.some(category => {
+                  return wpCatIdsToInt.includes(category);
+                })) ? product : '';
+              });
+
+              return filteredProds;
             }
           },
 
           /**
-           * @attribute
-           * @name category
-           * @description inherit by parent will be used by collect-products
+           * inherit by parent will be used by collect-products
            */
-          category: {
-            type: Number,
-            observer: '_categoryChanged'
+          categories: {
+            type: Array,
+            observer: '_categoriesChanged'
           },
 
           /**
-           * @attribute
-           * @name sort
-           * @description define the default sorting type/order of the product listing
+           * define the default sorting type/order of the product listing
            */
           sort: {
             type: Object,
@@ -157,36 +160,52 @@
           },
 
           /**
-           * @attribute
-           * @name category
-           * @description a loading indicator from the collect-products component
-           * if products are retrieved it will set Boolean to false
-           * if products are being retrieved it will set Boolean to true
-           * initial value is true because component does not have products initially
+           * a loading indicator from the collect-products component if products are retrieving it will set Boolean to true. if products are being retrieved it will set Boolean to true initial value is false because component does not have products initially
            */
           retrievingProducts: {
             type: Boolean,
             statePath: function(state) {
-              const category = state.product.requestedCategories.find(category => category.id === this.category);
-              return category ? category.isLoading : true;
+              // check if current categories are in the requested categories
+              const categories = state.product.requestedCategories.map(category => this.get('categories').indexOf(category.id) > -1 ? category : '');
+
+              // check if there are categories in the current ones that are loading if only one of them is loading set isRetrieving to true
+              let isRetrieving = false;
+              isRetrieving = categories.some((category, index) => {
+                return category.isLoading === true;
+              });
+
+              return isRetrieving;
             }
           },
 
+          /**
+           * the amount of products shown to the user
+           */
           renderedCount: Number,
 
+          /**
+           * the hero header data coming from Wordpress
+           */
           heroHeaderData: Object,
 
+          /**
+           * the left sidebar data coming from Wordpress
+           */
           leftSidebar: Object
-
         };
       }
 
-      _categoryChanged(newCategory, oldCategory) {
-        if( (newCategory !== oldCategory) && (newCategory && newCategory > -1) ) {
-          this.dispatch('requestProductsByCategory', newCategory);
+      /**
+       * change handler for the categories, when changed send out dispatch for the new categories
+       */
+      _categoriesChanged(newCategories, oldCategories) {
+        if(newCategories && newCategories.length
+          && JSON.stringify(newCategories) !== JSON.stringify(oldCategories)) {
+          this.dispatch('requestProductsByCategories', newCategories);
         }
       }
     }
+
     customElements.define(DorelTemplateProductListing.is, DorelTemplateProductListing);
   </script>
 </dom-module>
