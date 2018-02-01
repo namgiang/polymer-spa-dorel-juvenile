@@ -11,10 +11,6 @@
       dorel-layout-row {
         margin-top: -1.5em;
       }
-      dorel-loader {
-        padding-top: 12em;
-        float: left;
-      }
 
       .no-products {
         border-radius: var(--theme-border-radius-2);
@@ -52,8 +48,10 @@
             filters="[[filters]]"></dorel-category-listing-item>
         </dorel-layout-column>
       </template>
+
       <dorel-loader
         loading="[[retrievingProducts]]"></dorel-loader>
+
       <template
         is="dom-if"
         if="[[checkIfProductsAreEmpty(renderedCount, retrievingProducts)]]">
@@ -74,7 +72,6 @@
            */
           productsData: {
             type: Array,
-            value: [],
             observer: '_setProducts'
           },
 
@@ -128,8 +125,12 @@
           this.set('products', []);
           return;
         }
+
         const products = this._sortProducts(newProductsData);
-        const prodsObj = JSON.parse(JSON.stringify(products)); // workaround for deep clone on dom-repeat
+
+        // workaround for deep clone on dom-repeat
+        const prodsObj = JSON.parse(JSON.stringify(products));
+
         this.set('products', prodsObj);
       }
 
@@ -227,7 +228,11 @@
        * @returns Boolean
        */
       checkIfProductsAreEmpty(renderedCount, retrievingProducts) {
-        return Boolean(renderedCount !== 'undefined' && renderedCount === 0 && retrievingProducts === false);
+        return Boolean(
+          renderedCount !== 'undefined'
+          && renderedCount === 0
+          && retrievingProducts === false
+        );
       }
     }
 
