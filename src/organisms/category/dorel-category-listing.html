@@ -136,9 +136,8 @@
        * will set the products with correct sorting
        *
        * @param {array} complete products list
-       * @param {boolean} indicator if the application is retrieving products
        */
-      _setProducts(newProductsData, oldProductsData) {
+      _setProducts(newProductsData) {
         if (!newProductsData.length || this.get('retrievingProducts')) {
           this.set('products', []);
           return;
@@ -175,8 +174,9 @@
       /**
        * helper to do the heavy lifting on sorting the items if value is String/Number
        *
-       * @param {array}
+       * @param {array} the unsorted items
        * @param {object} sorting will will contain `type` and `order`. `type` will select the property to sort on. For example: "name". `order` will determine if it is ordered ascending descending.
+       * @return {array} the sorted items
        */
       _sortString(items, sort) {
         return items.sort((a, b) => {
@@ -236,16 +236,6 @@
           // returns a Boolean - if true it will show the product
           return this.$.categoryManager.shouldShowProduct(product, filters);
         };
-      }
-
-      /**
-       * defines the tablet colspan by taking the itemColSpan and adding 2
-       *
-       * @param {number} the desktop col span set by the itemColSpan attribute
-       * @returns {number} number of col span
-       */
-      _tabletColSpan(desktopColSpan, viewport) {
-        return desktopColSpan + (viewport === 'tablet') ? 3 : 2;
       }
 
       /**
