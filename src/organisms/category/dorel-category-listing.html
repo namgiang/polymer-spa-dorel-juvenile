@@ -38,9 +38,9 @@
         rendered-item-count="{{renderedCount}}">
 
         <dorel-layout-column
-          desktop-column-span="4"
-          tablet-column-span="6"
-          mobile-column-span="12">
+          desktop-column-span$="[[desktopColSpan]]"
+          tablet-column-span$="[[tabletColSpan]]"
+          mobile-column-span$="[[mobileColSpan]]">
           <dorel-category-listing-item
             colors-data="[[product.child_products]]"
             link-url="[[product.url]]"
@@ -110,6 +110,24 @@
           renderedCount: {
             type: Number,
             notify: true
+          },
+
+          /**
+           * the col span per item
+           */
+          desktopColSpan: {
+            type: Number,
+            value: 4
+          },
+
+          tabletColSpan: {
+            type: Number,
+            value: 4
+          },
+
+          mobileColSpan: {
+            type: Number,
+            value: 12
           }
         }
       }
@@ -221,11 +239,21 @@
       }
 
       /**
+       * defines the tablet colspan by taking the itemColSpan and adding 2
+       *
+       * @param {number} the desktop col span set by the itemColSpan attribute
+       * @returns {number} number of col span
+       */
+      _tabletColSpan(desktopColSpan, viewport) {
+        return desktopColSpan + (viewport === 'tablet') ? 3 : 2;
+      }
+
+      /**
        * conditional check to see if there are products shown or not
        *
        * @param {number} number of products rendered
        * @param {boolean} current state of retrieval of products
-       * @returns Boolean
+       * @returns {boolean} if products are empty or filled
        */
       checkIfProductsAreEmpty(renderedCount, retrievingProducts) {
         return Boolean(
