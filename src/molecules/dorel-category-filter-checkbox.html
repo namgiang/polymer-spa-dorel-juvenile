@@ -31,103 +31,87 @@
       [[ filterData.label ]]
     </div>
     <div class="checkboxes">
-      <template is="dom-repeat"
+      <template
         is="dom-repeat"
         id="checkboxes"
         items="[[ checkboxes ]]"
-        restamp="true"
         sort="{{_sort(filterData.sort_values_type)}}"
         as="checkbox">
         <div class="checkbox">
-          <dorel-checkbox on-change="setFilters" checked="{{ checkbox.checked }}" label="[[ checkbox.label ]]" color-code="[[ checkbox.color ]]" image="[[ checkbox.image ]]"></dorel-checkbox>
+          <dorel-checkbox
+            on-change="setFilters"
+            checked="[[ checkbox.checked ]]"
+            label="[[ checkbox.label ]]"
+            color-code="[[ checkbox.color ]]"
+            image="[[ checkbox.image ]]">
+          </dorel-checkbox>
         </div>
       </template>
     </div>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-category-filter-checkbox',
-      properties: {
+    class DorelCategoryFilterCheckbox extends Polymer.Element {
+      static get is() {
+        return 'dorel-category-filter-checkbox';
+      }
 
-        /**
-         * @attribute
-         * @name checkboxes
-         * @description array of checkboxes used by the template
-         */
-        checkboxes: {
-          type: Array,
-          value: function() {
-            return [];
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name checkboxes
+           * @description array of checkboxes used by the template
+           */
+          checkboxes: {
+            type: Array,
+            computed: '_setChecked(queryParams, filterData)'
+          },
+
+          /**
+           * @attribute
+           * @name queryParams
+           * @description Object passed by parent
+           */
+          queryParams: {
+            type: Object
+          },
+
+          /**
+           * @attribute
+           * @name filterData
+           * @description Object passed by parent that contains the filters
+           */
+          filterData: {
+            type: Object
           }
-        },
-
-        /**
-         * @attribute
-         * @name queryParams
-         * @description Object passed by parent
-         */
-        queryParams: {
-          type: Object
-        },
-
-        /**
-         * @attribute
-         * @name filterData
-         * @description Object passed by parent that contains the filters
-         */
-        filterData: {
-          type: Object
-        }
-
-      },
-
-      observers: [
-        '_setInitalChecked(filterData)',
-        '_setChecked(queryParams)'
-      ],
+        };
+      }
 
 
       /**
-        * observer
-       * @name _setInitalChecked
-       * @description If filterData is changed update/set the checkboxes
-       * @param filterData - Object
-       * **/
-      _setInitalChecked: function(filterData) {
-        if(!filterData) {
-          this.set('checkboxes', []);
-          return;
-        }
-        this.set('checkboxes', filterData.values);
-        this.notifyPath('checkboxes', this.checkboxes);
-      },
-
-      /**
-        * observer
-       * @name _setInitalChecked
+        * computed
+       * @name _setChecked
        * @description If queryParams change check what filters are in the queryParams
        * if one of the values match set that checkbox.checked to true else set false
        * send a event to the parent to update the queryParams
        * @param queryParams - Object
        * **/
-      _setChecked: function(queryParams) {
-        var checkboxParams = queryParams[this.filterData.name] ? queryParams[this.filterData.name].split(/[\s,]+/) : [];
-        var filterData = this.get('filterData');
-        if(filterData.values) {
-          var checkboxes = filterData.values.map(function(checkbox){
-            var existsInParams = Boolean(checkboxParams.indexOf(checkbox.value) > -1);
-            checkbox.checked = existsInParams;
-            return checkbox;
-          });
-          var self = this;
-          this.set('checkboxes', []);
-          checkboxes.forEach(function(checkbox) {
-            self.push('checkboxes', checkbox);
-          });
-          this.notifyPath('checkboxes', this.checkboxes);
-
+      _setChecked(queryParams, filterData) {
+        if(!filterData) {
+          return [];
         }
-      },
+        const checkboxParams = queryParams[filterData.name] ? queryParams[filterData.name].split(/[\s,]+/) : [];
+        if(filterData.values) {
+          var checkboxes = filterData.values.map(function(checkbox) {
+            const existsInParams = checkboxParams.indexOf(checkbox.value) > -1;
+            return Object.assign({}, checkbox, {
+              checked: existsInParams
+            });
+          });
+          return checkboxes;
+        }
+        return [];
+      }
 
       /**
        * @name setFilters
@@ -135,16 +119,16 @@
        * either adds or removes a value to the queryParams
        * @param e - Event
        **/
-      setFilters: function(e) {
-        var checkbox = this.$.checkboxes.itemForElement(e.target);
-        var queryParams = this.queryParams || {};
+      setFilters(e) {
+        const checkbox = this.$.checkboxes.itemForElement(e.target);
+        const queryParams = this.queryParams || {};
 
-        var keyArray = queryParams[this.filterData.name] ?  queryParams[this.filterData.name].split(/[\s,]+/) : [];
-        var item = keyArray.indexOf(checkbox.value);
+        const keyArray = queryParams[this.filterData.name] ?  queryParams[this.filterData.name].split(/[\s,]+/) : [];
+        const item = keyArray.indexOf(checkbox.value);
 
         if(item > -1) {
           // remove
-          queryParams[this.filterData.name] = keyArray.filter(function(item) {
+          queryParams[this.filterData.name] = keyArray.filter((item) => {
             return item !== checkbox.value;
           });
           if(!queryParams[this.filterData.name] || !queryParams[this.filterData.name].length) {
@@ -163,11 +147,12 @@
             }
           }
         }
+        this.dispatchEvent(new CustomEvent('update-filter', { bubbles: true, composed: true, detail: {
+          value: queryParams
+        }}));
+      }
 
-        this.fire('update-filter', { value: queryParams });
-      },
-
-      _sort: function(val) {
+      _sort(val) {
         var self = this;
         var order = this.filterData.sort_values_order;
         if(!val) {
@@ -196,24 +181,24 @@
                 return self._sortByOrder(a, b);
               }
           }
-      },
+      }
 
-      _sortByOrder: function(a, b) {
+      _sortByOrder(a, b) {
         if(!a.order || !b.order) {
           return 0;
         }
         a.order = Number(a.order);
         b.order = Number(b.order);
         return (a.order < b.order) ? -1 : (a.order > b.order) ? 1 : 0;
-      },
+      }
 
-      _sortAlphabetical: function(a, b) {
+      _sortAlphabetical(a, b) {
          var textA = a.value.toUpperCase();
          var textB = b.value.toUpperCase();
          return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-      },
+      }
 
-      _sortByColor: function(a, b) {
+      _sortByColor(a, b) {
         if(!a.color || !b.color) {
           return 0;
         }
@@ -248,8 +233,9 @@
 
         return 0
       }
+    }
+    customElements.define(DorelCategoryFilterCheckbox.is, DorelCategoryFilterCheckbox);
 
-    });
   </script>
 
 </dom-module>
