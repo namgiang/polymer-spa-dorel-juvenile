@@ -1,4 +1,4 @@
-<dom-module id="dorel-timeline">
+<dom-module id="dorel-section-timeline">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -198,9 +198,9 @@
   </template>
 
   <script>
-    class DorelTimeline extends Polymer.Element {
+    class DorelSectionTimeline extends Polymer.Element {
 
-      static get is() { return 'dorel-timeline'; }
+      static get is() { return 'dorel-section-timeline'; }
 
       static get properties() {
         return {
@@ -262,7 +262,6 @@
        * @description starts the animation with the given parameters
        */
       start() {
-        const self = this;
         const maxIterations = Number(this.get('maxIterations'));
 
         let moments = this.get('moments');
@@ -284,7 +283,7 @@
 
             // break out of the interval when the max has been reached
             if(currentIteration === maxIterations) {
-              clearInterval(self.get('animation'));
+              clearInterval(this.get('animation'));
             }
 
             // count the iteration
@@ -297,7 +296,7 @@
           }
 
           // force update the dom-repeat (hack, polymer workaround)
-          self._updateMoments(moments);
+          this._updateMoments(moments);
         }, Number(this.get('interval'))));
 
         this.set('status', true);
@@ -356,6 +355,6 @@
     }
 
     // Register the x-custom element with the browser
-    customElements.define(DorelTimeline.is, DorelTimeline);
+    customElements.define(DorelSectionTimeline.is, DorelSectionTimeline);
   </script>
 </dom-module>

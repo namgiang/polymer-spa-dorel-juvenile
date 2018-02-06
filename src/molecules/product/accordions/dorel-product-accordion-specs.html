@@ -1,0 +1,51 @@
+<dom-module id="dorel-product-accordion-specs">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      .image {
+        width: 9em;
+        height: 9em;
+        background-color: var(--theme-color-white);
+        border-radius: var(--theme-border-radius-1);
+        margin: .75em;
+        float: left;
+        display: inline-block;
+      }
+    </style>
+
+    <template
+      is="dom-repeat"
+      items="[[data.images]]">
+      <iron-image
+        class="image"
+        sizing="contain"
+        fade="true"
+        src$="[[item.image]]"></iron-image>
+    </template>
+  </template>
+
+  <script>
+    class DorelProductAccordionSpecs extends Polymer.Element {
+
+      static get is() { return 'dorel-product-accordion-specs'; }
+
+      static get properties() {
+        return {
+          /**
+           * the full accordion content data
+           */
+          data: {
+            type: Object,
+            value: function () {
+              return {};
+            }
+          }
+        }
+      }
+    }
+    customElements.define(DorelProductAccordionSpecs.is, DorelProductAccordionSpecs);
+  </script>
+</dom-module>

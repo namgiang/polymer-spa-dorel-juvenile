@@ -1,0 +1,100 @@
+<dom-module id="dorel-product-accordion-topic">
+  <template>
+    <style>
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      dorel-safe-html {
+        margin-top: -1.5em;
+        float: left;
+        width: 100%;
+      }
+
+      iron-image {
+        width: 9em;
+        height: 9em;
+      }
+
+      .image-container {
+        float: left;
+        display: inline-block;
+        height: 100%;
+        margin: 0 1.5em 1.5em 0;
+      }
+
+      .content-container {
+        float: left;
+        display: inline-block;
+
+        flex: 1 1 400px;
+      }
+
+      .content {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      dorel-safe-html {
+        margin-top: 0;
+      }
+
+      dorel-cta {
+        float: right;
+        margin: 1.5em .75em 0 0;
+      }
+    </style>
+
+    <div class="content">
+      <template
+        is="dom-if"
+        if="[[data.image]]">
+        <div class="image-container">
+          <iron-image
+            class="image"
+            sizing="contain"
+            fade="true"
+            src$="[[data.image]]"></iron-image>
+        </div>
+      </template>
+      <div class="content-container">
+        <dorel-safe-html
+          html="[[data.description]]"></dorel-safe-html>
+        <template
+          is="dom-if"
+          if="[[data.link_text]]">
+          <dorel-cta
+            title="[[data.link_text]]"
+            type="link"
+            link="[[data.link_url]]"
+            size="medium"
+            icon="dorel-icons:chevron-right">
+            [[data.link_text]]
+          </dorel-cta>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class DorelProductAccordionTopic extends Polymer.Element {
+
+      static get is() { return 'dorel-product-accordion-topic'; }
+
+      static get properties() {
+        return {
+          /**
+           * the full accordion content data
+           */
+          data: {
+            type: Object,
+            value: function () {
+              return {};
+            }
+          }
+        }
+      }
+    }
+    customElements.define(DorelProductAccordionTopic.is, DorelProductAccordionTopic);
+  </script>
+</dom-module>

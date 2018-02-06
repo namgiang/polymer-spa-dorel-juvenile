@@ -1,9 +1,8 @@
 <link rel="import" href="../../node_modules/l2t-paper-slider/l2t-paper-slider.html">
-<link rel="import" href="./dorel-video-slide.html">
 <link rel="import" href="../utils/behaviors/single/dorel-value-behavior.html">
 <link rel="import" href="../atoms/dorel-bynder-image.html">
 <link rel="import" href="../atoms/dorel-media-query.html">
-<link rel="import" href="../../node_modules/polymer/lib/elements/dom-if.html">
+<link rel="import" href="dorel-video-slide.html">
 
 
 <dom-module id="dorel-content-carousel">
@@ -159,7 +158,9 @@
 
           <paper-slide class="slider__slide">
 
-            <template is="dom-if" if="[[ _shouldShowType(slide, 'image') ]]">
+            <template
+              is="dom-if"
+              if="[[ _shouldShowType(slide, 'image') ]]">
               <dorel-bynder-image
                 media-id="[[ slide.bynder_image_id ]]"
                 image-alt="[[ slide.bynder_image_alt_text ]]"
@@ -174,18 +175,26 @@
 
               <div class="content">
                 <div class="content__text">
-                  <template is="dom-if" if="[[ slide.content.title ]]">
+                  <template
+                    is="dom-if"
+                    if="[[ slide.content.title ]]">
                     <h3 class="content__title">[[ slide.content.title ]]</h3>
                   </template>
-                  <template is="dom-if" if="[[ slide.content.description ]]">
+                  <template
+                    is="dom-if"
+                    if="[[ slide.content.description ]]">
                     <p class="content__description">[[ slide.content.description ]]</p>
                   </template>
                 </div>
               </div>
             </template>
 
-            <template is="dom-if" if="[[ _shouldShowType(slide, 'video') ]]">
-              <dorel-video-slide slide="[[ slide ]]" is-selected-slide$="[[ _isValue(position, index) ]]"></dorel-video-slide>
+            <template
+              is="dom-if"
+              if="[[ _shouldShowType(slide, 'video') ]]">
+              <dorel-video-slide
+                slide="[[ slide ]]"
+                is-selected-slide$="[[ _isValue(position, index) ]]"></dorel-video-slide>
             </template>
 
           </paper-slide>
