@@ -1,9 +1,8 @@
 <link rel="import" href="../organisms/car-fitting/dorel-car-fitting-nav.html">
-<link rel="import" href="../organisms/car-fitting/dorel-car-fitting-age-selection.html">
-<link rel="import" href="../organisms/car-fitting/dorel-car-fitting-cars-selection.html">
-<link rel="import" href="../organisms/car-fitting/dorel-car-fitting-results.html">
+<link rel="import" href="../organisms/car-fitting/dorel-car-fitting-age-selector.html">
+<link rel="import" href="../organisms/car-fitting/dorel-car-fitting-car-selector.html">
 <link rel="import" href="../organisms/car-fitting/dorel-car-fitting-product-selector.html">
-
+<link rel="import" href="../organisms/car-fitting/dorel-car-fitting-results.html">
 <dom-module id="dorel-template-product-advisory-tool">
   <template>
     <style>
@@ -25,11 +24,23 @@
         display: block;
         min-height: 4px;
       }
+      #background-complementary {
+        background-color: var(--theme-color-monochrome-2);
+        position: absolute;
+        top: 0rem;
+        bottom: 0;
+        right: 0;
+        width: 50%;
+        z-index: -10000;
+      }
     </style>
-
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
+    
+    <br>
 
     <dorel-car-fitting-nav
+      app-cache="[[ appCache ]]"
       load-complete="[[ loadComplete ]]"
       page-title="[[ currentStepTitle ]]"
       previous="[[ isNotFirstStep(currentStep, carFittingSteps) ]]"
@@ -44,47 +55,51 @@
       data="{{ routeData }}"
       tail="{{ subroute }}">
     </app-route>
-
-    <dorel-car-fitting-age-selection
+    
+    <dorel-car-fitting-age-selector
       age-category="{{ ageCategory }}"
       car-data="{{ carData }}"
-      hidden$="[[ !stepData.carFittingAgeSelection.isCurrent ]]"
+      hidden$="[[ !stepData.carFittingAgeSelector.isCurrent ]]"
       product-name="[[ productData.sku ]]"
       step-controller="{{ stepController  }}"
-      step-data="{{ stepData.carFittingAgeSelection }}">
-    </dorel-car-fitting-age-selection>
+      step-data="{{ stepData.carFittingAgeSelector }}">
+    </dorel-car-fitting-age-selector>
 
-    <dorel-car-fitting-cars-selection
+    <dorel-car-fitting-car-selector
       car-data="{{ carData }}"
-      hidden$="[[ !stepData.carFittingSelection.isCurrent ]]"
+      hidden$="[[ !stepData.carFittingCarSelector.isCurrent ]]"
       product-name="[[ requestedProductName ]]"
+      product-sku="[[ requestedProductSKU ]]"
       step-controller="{{ stepController  }}"
-      step-data="{{ stepData.carFittingSelection }}">
-    </dorel-car-fitting-cars-selection>
+      step-data="{{ stepData.carFittingCarSelector }}">
+    </dorel-car-fitting-car-selector>
 
-   <dorel-car-fitting-cars-selection
-      car-data="{{ carData }}"
-      hidden$="[[ !stepData.carFittingAddCar.isCurrent ]]"
-      product-name="[[ requestedProductName ]]"
-      step-controller="{{ stepController  }}"
-      step-data="{{ stepData.carFittingAddCar }}">
-    </dorel-car-fitting-cars-selection>
+    <template is="dom-if" if="{{ standalone }}" restamp="true">
+      <dorel-car-fitting-product-selector
+        age-category="{{ ageCategory }}"
+        car-data="{{ carData }}"
+        hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
+        product-data="{{ productData }}"
+        product-name="{{ requestedProductName }}"
+        step-controller="{{ stepController  }}"
+        step-data="{{ stepData.carFittingResults }}">
+      </dorel-car-fitting-product-selector>
+    </template>
 
-    <dorel-car-fitting-product-selector
-      age-category="{{ ageCategory }}"
-      hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
-      product-data="{{ productData }}"
-      car-data="{{ carData }}">
-    </dorel-car-fitting-product-selector>
+    <template is="dom-if" if="{{ carData }}" restamp="true">
+      <dorel-car-fitting-results
+        car-data="{{ carData }}"
+        hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
+        product-data="[[ productData ]]"
+        step-controller="{{ stepController  }}"
+        step-data="{{ stepData.carFittingResults }}">
+      </dorel-car-fitting-results>
+    </template>
 
-    <dorel-car-fitting-results
-      car-data="{{ carData }}"
-      hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
-      product-data="[[ productData ]]"
-      step-controller="{{ stepController  }}"
-      step-data="{{ stepData.carFittingResults }}">
-    </dorel-car-fitting-results>
 
+    <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]" restamp="true">
+      <div id="background-complementary"></div>
+    </template>
   </template>
 
   <script>
@@ -114,6 +129,10 @@
               }
             }
           },
+          standalone: {
+            type: Boolean,
+            value: true
+          },
           carData: {
             type: Array,
             value: () => {
@@ -123,26 +142,32 @@
           currentStepTitle: String,
           currentProgress: Number,
           requestedProductName: String,
+          requestedProductSKU: String,
           productData: {
             type: Object,
             statePath: function(state) {
-              const product = state.product.products.find(product => product.url === this.requestedProductName)
+              const product = state.product.products.find(product => product.url === this.requestedProductName);
+              if(product) {
+                if(!product.notAvailable) {
+                  this.set('requestedProductSKU', product.sku);
+                }
+              }
               return product ? product : { isLoading: true };
             }
           },
-          requestedProductName: String,
           stepData: {
             type: Object,
             value: () => {
               return {
-                carFittingAgeSelection: {
+                carFittingAgeSelector: {
                   isCurrent: false,
-                  stepName: 'carFittingAgeSelection',
+                  stepName: 'carFittingAgeSelector',
                   stepNumber: 1,
-                  nextStep: 'carFittingSelection',
+                  nextStep: 'carFittingCarSelector',
                   previousStep: null,
                   title: 'car_fitting_age_selection#step_title',
-                  hide_buttons: false,
+                  hide_primary_button: false,
+                  hide_secondary_button: true,
                   main_section: {
                     section_type: 'car-details-form',
                     title: 'car_fitting_age_selection#main_section_title',
@@ -189,69 +214,15 @@
                     previous: 'Back'
                   }
                 },
-                carFittingSelection: {
+                carFittingCarSelector: {
                   isCurrent: false,
-                  stepName: 'carFittingSelection',
-                  stepNumber: 1,
-                  nextStep: 'carFittingAddCar',
-                  previousStep: 'carFittingAgeSelection',
-                  title: 'car_fitting_selection#step_title',
-                  hide_buttons: false,
-                  main_section: {
-                    section_type: 'car-details-form',
-                    title: 'car_fitting_selection#main_section_title',
-                    primary_cta: 'car_fitting_selection#primary_cta',
-                    secondary_cta: 'car_fitting_selection#secondary_cta',
-                    car_display_label: 'car_fitting_selection#car_display_label',
-                    form: {
-                      form_groups: [
-                        {
-                          label: 'car_fitting_selection#brand_input_label',
-                          default_option: {
-                            label: 'Choose a brand',
-                            value: ''
-                          },
-                          options: []
-                        },
-                        {
-                          label: 'car_fitting_selection#model_input_label',
-                          default_option: {
-                            label: 'Choose a model',
-                            value: ''
-                          },
-                          options: []
-                        },
-                        {
-                          label: 'car_fitting_selection#type_input_label',
-                          default_option: {
-                            label: 'Choose a type',
-                            value: ''
-                          },
-                          options: []
-                        }
-                      ]
-                    }
-                  },
-                  sub_section: {
-                    title: '',
-                    notification_1: 'car_fitting_selection#sub_section_notification_1',
-                    notification_2: 'car_fitting_selection#sub_section_notification_2',
-                    notification_3: 'car_fitting_selection#sub_section_notification_3',
-                    background_image_id: CONFIG.BYNDER_DEFAULT_IMAGE
-                  },
-                  options: {
-                    next: 'Show results',
-                    previous: 'Back'
-                  }
-                },
-                carFittingAddCar: {
-                  isCurrent: false,
-                  stepName: 'carFittingAddCar',
+                  stepName: 'carFittingCarSelector',
                   stepNumber: 2,
                   nextStep: 'carFittingResults',
-                  previousStep: 'carFittingSelection',
-                  title: 'car_fitting_add_cars#step_title',
-                  hide_buttons: false,
+                  previousStep: 'carFittingAgeSelector',
+                  title: 'car_fitting_selection#step_title',
+                  hide_primary_button: false,
+                  hide_secondary_button: true,
                   main_section: {
                     section_type: 'car-details-form',
                     title: 'car_fitting_selection#main_section_title',
@@ -292,6 +263,7 @@
                     notification_1: 'car_fitting_selection#sub_section_notification_1',
                     notification_2: 'car_fitting_selection#sub_section_notification_2',
                     notification_3: 'car_fitting_selection#sub_section_notification_3',
+                    warning_1: 'car_fitting_selection#sub_section_warning_1',
                     background_image_id: CONFIG.BYNDER_DEFAULT_IMAGE
                   },
                   options: {
@@ -304,7 +276,7 @@
                   stepName: 'carFittingResults',
                   stepNumber: 3,
                   nextStep: null,
-                  previousStep: 'carFittingAddCar',
+                  previousStep: 'carFittingCarSelector',
                   title: 'car_fitting_results#step_title',
                   main_section: {
                     section_type: 'car-details-form',
@@ -365,15 +337,29 @@
 
       ready() {
         super.ready();
-        if(this.queryParams && this.queryParams.productName) {
-          this.set('requestedProductName', this.queryParams.productName);
+        //if(this.queryParams && this.queryParams.productName) {
+        
+          this.set('requestedProductName', this.queryParams.product);
+          
+          if(this.requestedProductName) {
+            this.set('standalone', false);
+          }
+          
           setTimeout(function(){
-            this.set('stepController.currentStep', 'carFittingAgeSelection');
+            this.set('stepController.currentStep', 'carFittingAgeSelector');
           }.bind(this), 0);
-        } else {
-          this.error('Missing \'productName\' query parameter');
-        }
+        
+        //} else {
+        //  this.error('Missing \'productName\' query parameter');
+        //}
+        //console.log('requestedProductName', this.requestedProductName);
       }
+      
+      //standalone() {
+        //const val = (this.requestedProductName) ? false : true; 
+        //console.log('standalone', val);
+        //return val;
+      //}
 
       setCurrentStep(setStepTo) {
         const currentStepData = this.stepData[Object.keys(this.stepData).filter(function(step) {
@@ -382,6 +368,8 @@
         if(currentStepData) this.set(`stepData.${currentStepData.stepName}.isCurrent`, true);
         this.currentStepTitle = (this.getCurrentStepData()) ? this.getCurrentStepData().title : '';
         this.currentProgress = (this.getCurrentProgess()) ? this.getCurrentProgess() : 0;
+        const backgroundNode = this.shadowRoot.querySelector('#background-complementary');
+        if(backgroundNode) (setStepTo === 'carFittingResults') ? backgroundNode.style.top = '52rem': backgroundNode.style.top = '0rem';
       }
     }
 
