@@ -337,29 +337,15 @@
 
       ready() {
         super.ready();
-        //if(this.queryParams && this.queryParams.productName) {
-        
           this.set('requestedProductName', this.queryParams.product);
-          
           if(this.requestedProductName) {
             this.set('standalone', false);
-          }
-          
-          setTimeout(function(){
+            this.set('stepController.currentStep', 'carFittingCarSelector');
+          } else {
+            this.set('standalone', true);
             this.set('stepController.currentStep', 'carFittingAgeSelector');
-          }.bind(this), 0);
-        
-        //} else {
-        //  this.error('Missing \'productName\' query parameter');
-        //}
-        //console.log('requestedProductName', this.requestedProductName);
+          }
       }
-      
-      //standalone() {
-        //const val = (this.requestedProductName) ? false : true; 
-        //console.log('standalone', val);
-        //return val;
-      //}
 
       setCurrentStep(setStepTo) {
         const currentStepData = this.stepData[Object.keys(this.stepData).filter(function(step) {
