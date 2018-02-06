@@ -48,10 +48,36 @@
             requestedCategories: state.requestedCategories.map(category => category)
           });
 
+        case 'REQUEST_PRODUCTS_BY_CATEGORIES':
+          action.payload.forEach(category => {
+            state.requestedCategories.push({
+              id: category,
+              isLoading: true,
+              notAvailable: false
+            });
+          });
+
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => category)
+          });
+
         case 'REQUEST_PRODUCTS_BY_CATEGORY_SUCCESS':
           return Object.assign({}, state, {
             requestedCategories: state.requestedCategories.map(category => {
               return category.id === action.payload.category ?
+                Object.assign({}, category, { isLoading: false }) : category;
+            }),
+            products: action.payload.products.map(product => {
+              return Object.assign({}, product, { isLoading: false, notAvailable: false })
+            }).concat(state.products.filter(oldItem => {
+              return !action.payload.products.some(newItem => oldItem.sku === newItem.sku)
+            }))
+          });
+
+        case 'REQUEST_PRODUCTS_BY_CATEGORIES_SUCCESS':
+          return Object.assign({}, state, {
+            requestedCategories: state.requestedCategories.map(category => {
+              return action.payload.categories.indexOf(category.id) > -1 ?
                 Object.assign({}, category, { isLoading: false }) : category;
             }),
             products: action.payload.products.map(product => {
@@ -104,7 +130,7 @@
 
         case 'ADD_PRODUCT_CATEGORY_PAGE':
           return Object.assign({}, state, {
-            productCategoryPage: action.payload
+            productCategoriesPage: action.payload
           });
 
         case 'SET_CURRENT_PRODUCT':

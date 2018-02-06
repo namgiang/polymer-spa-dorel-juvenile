@@ -1,26 +1,53 @@
 <script>
 (function() {
 
-
+  /**
+   * retrieves the requested products by category
+   *
+   * @param {string} the category id
+   * return {object} the promise object
+   */
   function requestProductsByCategory(category) {
     if (!category) return;
+
     return (dispatch, getState) => {
       if (shouldFetchCategory(getState(), category)) {
-        dispatch(makeProductsRequest(category))
-        return dispatch(fetchProductsByCategory(getState(), category))
+        dispatch(makeProductsRequest(category));
+        return dispatch(fetchProductsByCategory(getState(), category));
       } else {
-        return Promise.resolve()
+        return Promise.resolve();
       }
-    }
+    };
   }
 
-  function makeProductsRequest(category) {
-    return {
-      type: 'REQUEST_PRODUCTS_BY_CATEGORY',
-      payload: category
-    }
+  /**
+   * retrieves the requested products by category ids
+   *
+   * @param {array} the category ids
+   * @return {object} the promise object
+   */
+  function requestProductsByCategories(categories) {
+    if (!categories && !categories.length) return;
+
+    return (dispatch, getState) => {
+      const categoryIds = categories.map(category => shouldFetchCategory(getState(), category) ? category : '');
+
+      if (categoryIds && categoryIds.length) {
+        dispatch(makeProductsRequestByCategories(categoryIds));
+        return dispatch(fetchProductsByCategories(getState(), categories));
+      } else {
+        return Promise.resolve();
+      }
+    };
   }
 
+  /**
+   * fetches the products by a single category id
+   *
+   * @param {object} the state object
+   * @param {string} category id
+   * @return {object} the promise object outcome
+   */
   function fetchProductsByCategory(state, category) {
     return dispatch => {
       const currentLanguageCode = state.route.currentLanguage.languageCode;
@@ -34,6 +61,35 @@
     }
   }
 
+  /**
+   * fetches the products by a multiple category ids
+   *
+   * @param {object} the state object
+   * @param {string} category id
+   * @return {object} the promise object outcome
+   */
+  function fetchProductsByCategories(state, categories) {
+    return dispatch => {
+      const currentLanguageCode = state.route.currentLanguage.languageCode;
+      const init = { method: 'GET', mode: 'cors', cache: 'default' };
+      const catIds = categories.join(',');
+      const url = `${state.config.eComUrl}/rest/V1/dorel/categorycollection/products?language=${currentLanguageCode}&category_ids=${catIds}`;
+
+      return fetch(url, init)
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(json => dispatch(requestProductsByCategoriesSucces(categories, json)))
+        .catch(() => dispatch(requestProductsByCategoriesFailed(categories)))
+    }
+  }
+
+  /**
+   * checks if the requested category is already retrieved earlier
+   *
+   * @param {object} the state object
+   * @param {category} the category id to retrieve
+   * @return {boolean} to retrieve or not to retrieve
+   */
   function shouldFetchCategory(state, category) {
     const existingCategory = state.product.requestedCategories.find(category_ => category_.id === category);
     if (!existingCategory) {
@@ -42,6 +98,30 @@
       return false;
     } else {
       return existingCategory.notAvailable;
+    }
+  }
+
+  /**
+   * defines the action for the products request by multiple categories
+   *
+   * @param {array} the category id
+   */
+  function makeProductsRequestByCategories(categories) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_CATEGORIES',
+      payload: categories
+    }
+  }
+
+  /**
+   * defines the action for the products request
+   *
+   * @param {string} the category id
+   */
+  function makeProductsRequest(category) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_CATEGORY',
+      payload: category
     }
   }
 
@@ -61,10 +141,33 @@
     }
   }
 
+  function requestProductsByCategoriesSucces(categories, products) {
+    if(products.length) {
+      return {
+        type: 'REQUEST_PRODUCTS_BY_CATEGORIES_SUCCESS',
+        payload: {
+          products,
+          categories
+        }
+      }
+    } else {
+      return (dispatch) => {
+        return dispatch(requestProductsByCategoriesFailed(category))
+      }
+    }
+  }
+
   function requestProductsFailed(category) {
     return {
       type: 'REQUEST_PRODUCTS_BY_CATEGORY_FAILED',
       payload: category
+    }
+  }
+
+  function requestProductsByCategoriesFailed(categories) {
+    return {
+      type: 'REQUEST_PRODUCTS_BY_CATEGORIES_FAILED',
+      payload: categories
     }
   }
 
@@ -76,7 +179,8 @@
   }
 
   productByCategoryActions = {
-    requestProductsByCategory
+    requestProductsByCategory,
+    requestProductsByCategories
   }
 }());
 </script>
