@@ -1,6 +1,7 @@
-<link rel="import" href="../../molecules/dorel-expandable-content.html">
 <link rel="import" href="../../molecules/product/showcase/dorel-showcase-slider.html">
-<link rel="import" href="../../molecules/dorel-product-lead-lightbox.html">
+<link rel="import" href="../../molecules/product/showcase/dorel-showcase-zoom-lightbox.html">
+<link rel="import" href="../../molecules/product/showcase/dorel-showcase-lead-generation-lightbox.html">
+<link rel="import" href="../../molecules/dorel-expandable-content.html">
 
 <dom-module id="dorel-section-product-showcase">
   <template>
@@ -154,6 +155,9 @@
     <dorel-media-query
       breakpoints="{{breakpoints}}"></dorel-media-query>
 
+    <dorel-showcase-zoom-lightbox></dorel-showcase-zoom-lightbox>
+    <dorel-showcase-lead-generation></dorel-showcase-lead-generation>
+
     <template
       is="dom-if"
       if="[[showcaseData]]">
@@ -252,9 +256,9 @@
                   link=""
                   size="medium"
                   icon="dorel-icons:chevron-right">[[localize('Find_a_Store')]]</dorel-cta>
-                <dorel-product-lead-lightbox
+                <dorel-showcase-lead-generation-lightbox
                   product-sku="[[currentChildSku]]"
-                  store-locator-page="[[storeLocatorPage]]"></dorel-product-lead-lightbox>
+                  store-locator-page="[[storeLocatorPage]]"></dorel-showcase-lead-generation-lightbox>
                 <!--// HATCH CTA -->
               </template>
 
@@ -461,7 +465,7 @@
        * handle of the click on the details links
        */
       _openLightbox() {
-        const lightbox = this.$$('dorel-product-lead-lightbox');
+        const lightbox = this.$$('dorel-showcase-lead-generation-lightbox');
         lightbox.open();
         this.lightboxOpened = !this.lightboxOpened;
       }
