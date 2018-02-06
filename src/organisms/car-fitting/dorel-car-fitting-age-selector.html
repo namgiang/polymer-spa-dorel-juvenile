@@ -1,5 +1,5 @@
 <link rel="import" href="../../molecules/dorel-car-details-form.html">
-<dom-module id="dorel-car-fitting-age-selection">
+<dom-module id="dorel-car-fitting-age-selector">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -11,7 +11,7 @@
       }
 
       .inner-col-left-top {
-        min-height: 27rem;
+        min-height: 26rem;
       }
 
       .notification-box {
@@ -41,6 +41,7 @@
       .display-container {
         display: flex;
         margin-top: 1.4rem;
+        border-radius: var(--theme-button-border-radius);
       }
 
       .category-card-sel {
@@ -52,7 +53,7 @@
         background-color: var(--theme-color-monochrome-2);
         border-radius: var(--theme-button-border-radius);
       }
-
+      
       .category-card-res {
         padding: 1rem 1.5rem 1rem 1.5rem;
         width: 100%;
@@ -76,7 +77,7 @@
       .edit-icon {
         border-right: 4px solid white;
       }
-
+      
       .notification-icon {
         --iron-icon-height: 38px;
         --iron-icon-width: 38px;
@@ -86,19 +87,21 @@
       .step-title {
         font-size: var(--theme-typography-5_-_font-size);
         line-height: var(--theme-typography-5_-_line-height);
-        margin-top: var(--theme-typography-5_-_margin-top);
-        margin-bottom: var(--theme-typography-5_-_margin-bottom);
         font-weight: var(--theme-typography-5_-_font-weight);
         font-family: var(--theme-typography-5_-_font-family);
+      }
+      
+      dorel-layout-row, dorel-layout-column {
+        margin-top: 0;
       }
 
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container>
       <dorel-layout-row align="middle">
-        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left">
-            <dorel-layout-row>
-                <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
+        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="12" align="left">
+            <dorel-layout-row align="middle">
+                <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
                   <h1 class="step-title">[[ localize(stepData.main_section.title) ]]</h1>
                   <div class="car-display">
                     <div class="display-container" on-tap="selectAge" data-args="1">
@@ -145,16 +148,17 @@
                 </dorel-layout-column>
             </dorel-layout-row>
             <dorel-layout-row align="middle">
-              <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" align="left" class="col-left-bottom">
+              <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" align="left" class="col-left-bottom">
                 <dorel-layout-row align="right">
-                  <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="4" align="left">
+                  <dorel-layout-column desktop-column-span="7" tablet-column-span="7" mobile-column-span="7" align="left">
                     <dorel-cta title="Call to action"
-                                type="primary"
-                                link=""
-                                size="medium"
-                                on-tap="nextStep"
-                                id="next_button"
-                                hidden$="[[ stepData.hide_buttons ]]">
+                               type="primary"
+                               link=""
+                               size="medium"
+                               on-tap="nextStep"
+                               id="next_button"
+                               disabled
+                               hidden$="[[ stepData.hide_primary_button ]]">
                       [[  localize(stepData.main_section.primary_cta) ]]
                     </dorel-cta>
                   </dorel-layout-column>
@@ -162,9 +166,9 @@
               </dorel-layout-column>
             </dorel-layout-row>
         </dorel-layout-column>
-        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left" class="col-right-top">
+        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="12" align="left" class="col-right-top">
           <dorel-layout-row>
-            <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
+            <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
               <div class="notification-box">
                 <iron-icon class="notification-icon" icon="dorel-icons:light-bulb"></iron-icon>
                 <br><br>
@@ -195,9 +199,9 @@
     /* global Polymer */
     /* global customElements */
     /* global DorelMultilingualBehavior */
-    class DorelCarFittingAgeSelection extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+    class DorelCarFittingAgeSelector extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
       static get is() {
-        return 'dorel-car-fitting-age-selection';
+        return 'dorel-car-fitting-age-selector';
       }
 
       hasBynderImage(id) {
@@ -247,9 +251,12 @@
             selected_3.removeAttribute('hidden');
             break;
         }
+        
+        const button = this.shadowRoot.querySelector('#next_button');
+        button.removeAttribute('disabled');
       }
     }
 
-    customElements.define(DorelCarFittingAgeSelection.is, DorelCarFittingAgeSelection);
+    customElements.define(DorelCarFittingAgeSelector.is, DorelCarFittingAgeSelector);
   </script>
 </dom-module>

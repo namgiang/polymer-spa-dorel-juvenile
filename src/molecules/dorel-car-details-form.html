@@ -55,7 +55,7 @@
         on-response="_carConfigResponse"></iron-ajax>
 
       <!--<h2 class="form_title" on-click="[[ test ]]">[[ formData.form_title ]]</h2>-->
-      
+
 
 
       <!--<template is="dom-if" if="[[ formData.form_groups.length ]]" restamp="true">-->
@@ -339,12 +339,19 @@
       _getCarConfig: function() {
         if(this.values.length) {
           var resultsEl = this.$.carConfig;
-          const brand_id = this._findValue(this.values, 'car_brand_id');
-          const model_name = this._findValue(this.values, 'model_name');
-          const model_type = this._findValue(this.values, 'model_type');
-          const introductipon_year = this._findValue(this.values, 'introduction_year');
-          const doors = this._findValue(this.values, 'doors');
-          resultsEl.url = `${CONFIG.DIO_API_URL}/carseat/${brand_id}?model_name=${model_name}&model_type=${model_type}&introduction_year=${introductipon_year}&doors=${doors}&carseat=${this.productName}`;
+          let car_brand_id = this._findValue(this.values, 'car_brand_id');
+          let model_name = this._findValue(this.values, 'model_name');
+          let model_type = this._findValue(this.values, 'model_type');
+          let introduction_year = this._findValue(this.values, 'introduction_year');
+          let doors = this._findValue(this.values, 'doors');
+          
+          if(car_brand_id === null) car_brand_id = '';
+          if(model_name === null) model_name = '';
+          if(model_type === null) model_type = '';
+          if(introduction_year === null) introduction_year = '';
+          if(doors === null) doors = '';
+          
+          resultsEl.url = `${CONFIG.DIO_API_URL}/carseat/${car_brand_id}?model_name=${model_name}&model_type=${model_type}&introduction_year=${introduction_year}&doors=${doors}&sku=${this.productSku}`;
           resultsEl.generateRequest();
         }
       },
@@ -356,21 +363,25 @@
        * @param response - Object
        */
       _carConfigResponse: function(event) {
-        const result = event.detail.response;
         const brand_name = this._findValue(this.values, 'car_brand_name');
         const model_type = this._findValue(this.values, 'model_type');
+        const model_name = this._findValue(this.values, 'model_name');
         const introduction_year = this._findValue(this.values, 'introduction_year');
-        result.brand_id = this._findValue(this.values, 'car_brand_id');
-        result.model_name = this._findValue(this.values, 'model_name');
-        result.doors = this._findValue(this.values, 'doors');
-        result.introduction_year = introduction_year;
-        result.brand_name = brand_name;
-        result.model_type = model_type;
+        //result.car_brand_id = this._findValue(this.values, 'car_brand_id');
+        //result.model_name = this._findValue(this.values, 'model_name');
+        //result.doors = this._findValue(this.values, 'doors');
+        //result.introduction_year = introduction_year;
+        //result.brand_name = brand_name;
+        //result.model_type = model_type;
+        
         if (event.detail.response.message === 'success') {
-          this.set('carData.result', event.detail.response);        
+          let data = event.detail.response;
+          data.car_information_label = `${brand_name}, ${model_name}, ${introduction_year }`;
+          this.set('carData.result', data);
         } else {
-          result.car_information_label = `${brand_name}, ${model_type}, ${introduction_year }`;
-          this.set('carData.result', result);  
+          let data = event.detail.response;
+          data.car_information_label = `${brand_name}, ${model_name}, ${introduction_year }`;
+          this.set('carData.result', data);
         }
         this.set('carData.active', false);
       },

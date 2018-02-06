@@ -1,0 +1,71 @@
+<link rel="import" href="../../node_modules/iron-image/iron-image.html">
+<!--<link rel="import" href="../molecules/dorel-category-listing-item.html">-->
+
+<link rel="import" href="./dorel-category-listing-item-cfl.html">
+
+<dom-module id="dorel-small-product-slide">
+  <template>
+    <style is="custom-style">
+      product-image: {
+        width: 100%;
+        height: 21rem;
+        border: 1px solid green;
+      }
+    </style>
+
+    <!--<iron-image class="product-image" sizing="contain" fade="true" preload src$="[[ product.image_url ]]"></iron-image>
+
+    <br>
+    <h3>[[ product.sku]]</h3>-->
+
+    <dorel-category-listing-item-cfl
+      colors-data="[[ product.carseat.child_products ]]"
+      link-url="[[ product.carseat.url ]]"
+      filters="[[ filters ]]"
+      product-name="[[ getProductNames(product) ]]"
+      gtm-parent="[[ gtmParent ]]"
+      gtm-parent-index="[[ gtmParentIndex ]]"
+      gtm-child="dorel-category-listing-item"
+      current-product-image="[[ product.carseat.child_products.0.images.image ]]"
+      current-base-image="[[ product.base.child_products.0.images.image ]]"
+      gtm-child-index="[[ index ]]">
+    </dorel-category-listing-item-cfl>
+  
+  </template>
+  <script>
+
+    class DorelSmallProductSlide extends Polymer.Element {
+      static get is() {
+        return 'dorel-small-product-slide';
+      }
+
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name filters
+           * @description Array of the active filters. Will be used by the dom-repeat
+           */
+          filters: {
+            type: Array,
+            value: []
+          }
+        };
+      }        
+      
+      getProductNames(product) {
+        return (product.base ? `${product.carseat.name.value} & ${product.base.name.value}` : product.carseat.name.value);
+        //return (product.base ? `${product.carseat.sku} & ${product.base.sku}` : product.carseat.sku);
+      }
+      
+      //ready() {
+        //super.ready;
+        //var test = this.product;
+        //debugger;
+      //}
+    }
+
+    customElements.define(DorelSmallProductSlide.is, DorelSmallProductSlide);
+  </script>
+
+</dom-module>

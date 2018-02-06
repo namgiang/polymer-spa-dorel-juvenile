@@ -1,23 +1,28 @@
+<link rel="import" href="./dorel-small-product-slide.html">
+
+
 <dom-module id="dorel-slide-selector">
   <template>
     <style is="custom-style">
       :host {
         --slide-wrapper-x: 0px;
-        --slide-width: calc(( var(--max-width-limit) - 3rem) / 3 - 2rem) ;
+        /*--slide-width: calc(( var(--max-width-limit) - 3rem) / 3 - 2rem) ;*/
+        --slide-width: 22rem;
       }
 
       .slideshow {
         position: relative;
         overflow: hidden;
-        height: 12em;
+        height: 36em;
         width: 100%;
+        background-color: white;
       }
 
       .slide {
         position: relative;
         display: inline-block;
         width: var(--slide-width);
-        height: 10rem;
+        height: 34rem;
         margin: 1rem;
         background-color: var(--theme-color-white);
         padding: 1rem;
@@ -58,7 +63,7 @@
       dorel-layout-row {
         position: relative;
         height: 12em;
-        background-color: rgba(0, 0, 0, 0.1)
+        /*background-color: rgba(0, 0, 0, 0.1)*/
       }
 
       .control-item {
@@ -71,7 +76,7 @@
         height: 4rem;
         width: 2rem;
         z-index: 10;
-        border-radius: var(--theme-button-border-radius) 0 0 var(--theme-button-border-radius);
+        border-radius: var(--theme-button-border-radius) var(--theme-button-border-radius) var(--theme-button-border-radius) var(--theme-button-border-radius);
         justify-content: center;
         align-items: center;
         display: flex;
@@ -92,7 +97,7 @@
       .control-item--previous {
         right: auto;
         left: 0;
-        border-radius: 0 var(--theme-button-border-radius) var(--theme-button-border-radius) 0;
+        /*border-radius: 0 var(--theme-button-border-radius) var(--theme-button-border-radius) 0;*/
         transform-origin: left;
       }
 
@@ -140,7 +145,7 @@
           <div id="slideWrapper">
             <template is="dom-repeat" items="[[ slides ]]">
               <div class="slide" selected$="[[ item.selected ]]">
-                [[ item.value ]]
+                <dorel-small-product-slide product="[[ item ]]"></dorel-small-product-slide>
               </div>
             </template>
           </div>
@@ -162,12 +167,13 @@
         return {
           slides: {
             type: Array,
-            value: []
+            value: () => []
           },
           selectedIndex: {
             type: Number,
             value: 0,
-            observer: '_selectedIndexChange'
+            observer: '_selectedIndexChange',
+            // reflectToAttribute: true
           },
           nextEnabled: {
             type: Boolean,
@@ -181,22 +187,15 @@
       }
 
       _selectedIndexChange() {
-        const e = new CustomEvent('selected-index-change', { detail: this.get('selectedIndex')});
-        this.dispatchEvent(e);
-      }
-
-      ready() {
-        super.ready();
-        const slides = [];
-        for (let i = 0; i < 6; i++) {
-          slides.push({ value: i, selected: false });
-        }
-        this.set('slides', slides);
-        this.set('slides.0.selected', true);
+        //const e = new CustomEvent('selected-index-change', { detail: this.get('selectedIndex')});
+        //this.dispatchEvent(e);
+        //console.log('change')
+        const index = this.get('selectedIndex');
+        this.push('selectedIndexGlobal', index);
       }
 
       checkNext(index, slides) {
-        return index < slides.length -1;
+        return slides && index < slides.length -1;
       }
 
       checkPrevious(index) {
@@ -222,16 +221,15 @@
         this.set('selectedIndex', index);
 
         const shiftLeft = this.$.slideWrapper.getBoundingClientRect().width * index / slideCount;
-        this.updateStyles({ '--slide-wrapper-x': '-' + shiftLeft + 'px' });
+        this.updateStyles({ '--slide-wrapper-x': '-' + (shiftLeft + 25) + 'px' });
       }
 
       isSelected(index) {
         return this.get('selectedIndex') === index;
       }
-
     }
 
     customElements.define(DorelSlideSelector.is, DorelSlideSelector);
-  </script>;
+  </script>
 
 </dom-module>

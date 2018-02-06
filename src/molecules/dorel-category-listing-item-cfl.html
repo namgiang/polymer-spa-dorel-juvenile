@@ -1,0 +1,211 @@
+<dom-module id="dorel-category-listing-item-cfl">
+  <template>
+    <style is="custom-style">
+      h1, h2, h3, h4 {
+        @apply(--theme-header-text-transform);
+      }
+
+      :host {
+        --button-margin-spacing: -1.5em;
+        opacity: 0; /* make things invisible upon start */
+        -webkit-animation: fadeIn ease 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+        -moz-animation: fadeIn ease 1;
+        animation: fadeIn ease 1;
+        -webkit-animation-duration: 1s;
+        -moz-animation-duration: .1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+        -moz-animation-fill-mode: forwards;
+        animation-fill-mode: forwards;
+      }
+
+      @-webkit-keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @-moz-keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          opacity: 1 \9; /* IE9 only */
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .category-listing-item {
+        float: left;
+        width: 100%;
+        margin-bottom: 3em;
+      }
+
+      .image-wrapper {
+        border-radius: var(--theme-border-radius-2);
+        width: 100%;
+        height: 21em;
+        /*background-color: var(--theme-color-monochrome-2);*/
+        overflow: hidden;
+        display: flex;
+        padding: .25em;
+        box-sizing: border-box;
+      }
+
+      .content-wrapper {
+        padding: 0 1em;
+      }
+
+      .image {
+        width: 100%;
+        height: 100%;
+        max-width: 17em;
+        max-height: 19.2em;
+        margin: auto;
+        float: none;
+        display: block;
+      }
+
+      .title {
+        @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+      }
+
+      dorel-cta {
+        float: left;
+      }
+
+      dorel-color-switcher {
+        width: 100%;
+      }
+
+      .category-listing-item[fade] {
+        opacity: 1;
+      }
+    </style>
+
+    <dorel-media-query breakpoints="{{breakpoints}}"></dorel-media-query>
+
+    <section class="category-listing-item-cfl"
+      fade$="[[fade]]"
+      tablet-medium-up$="[[breakpoints.tabletMediumUp]]">
+
+      <div class="image-wrapper">
+        <dorel-product-image
+          class="image"
+          sizing="contain"
+          image-url="{{currentProductImage}}"></dorel-product-image>
+        <template is="dom-if" if="{{currentBaseImage}}">
+          <dorel-product-image
+            class="image"
+            sizing="contain"
+            image-url="{{currentBaseImage}}"></dorel-product-image>
+        </template>
+      </div>
+
+        <h2 class="title">[[productName]]</h2>
+
+        <!--<dorel-cta
+          type="link"
+          link="[[_setDynamicProductUrl(linkUrl)]]"
+          size="medium"
+          title="[[localize('See_details')]]"
+          icon="dorel-icons:play-circle-outline">[[localize('See_details')]]</dorel-cta>-->
+      </div>
+
+      <div class="content-wrapper">
+        <dorel-color-switcher
+          current-image="{{currentProductImage}}"
+          colors-data="[[colorsData]]"
+          filters="[[filters]]"></dorel-color-switcher>
+
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'dorel-category-listing-item-cfl',
+      properties: {
+        fade: {
+          type: Boolean,
+          value: false,
+        },
+
+
+        filters: {
+          type: Array
+        },
+
+        /**
+         * @attribute
+         * @name colorsData
+         * @description array defined on the attribute
+         */
+        colorsData: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * @attribute
+         * @name imageUrl
+         * @description product name on the attribute
+         */
+        imageUrl: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * @attribute
+         * @name linkUrl
+         * @description product name on the attribute
+         */
+        linkUrl: {
+          type: String,
+          value: ''
+        },
+
+        /**
+         * @attribute
+         * @name productName
+         * @description product name on the attribute
+         */
+        productName: {
+          type: String,
+          value: ''
+        }
+      },
+      
+      ready: function() {
+        //console.log('colorsData', this.colorsData);
+        //console.log('currentProductImage', this.currentProductImage);
+        //console.log('filters', this.filters);
+      },
+
+      behaviors: [DorelMultilingualBehavior],
+
+      _setDynamicProductUrl: function(linkUrl, testl) {
+
+        var windowLocation = window.location.origin + '/' + window.location.pathname.split('/')[1] + '/' + window.location.pathname.split('/')[2] + '/';
+
+        return windowLocation + linkUrl;
+      }
+    });
+  </script>
+</dom-module>

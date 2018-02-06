@@ -150,6 +150,11 @@
     <dorel-wp-collect-templates
       template-type="page-store-locator.php"
       response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
+      
+
+    <dorel-wp-collect-templates
+      template-type="page-product-advisory-tool.php"
+      response="{{carFittingToolPage}}"></dorel-wp-collect-templates>
 
     <dorel-media-query
       breakpoints="{{breakpoints}}"></dorel-media-query>
@@ -269,6 +274,22 @@
                   size="medium"
                   icon="dorel-icons:chevron-right">[[localize('Find_a_Store')]]</dorel-cta>
                 <!--// STORELOCATOR CTA -->
+              </template>
+
+              <template
+                is="dom-if"
+                if="[[_showStoreLocatorLightbox(storeLocatorPage, hatchOptions.toggle)]]">
+                <!-- CFL CTA -->
+                <dorel-cta
+                  type="secondary"
+                  title="[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]"
+                  link="[[_createCarFittingListLink(carFittingToolPage, showcaseData)]]"
+                  size="medium"
+                  icon="dorel-icons:chevron-right">[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]</dorel-cta>
+                <dorel-product-lead-lightbox
+                  product-sku="[[currentChildSku]]"
+                  store-locator-page="[[storeLocatorPage]]"></dorel-product-lead-lightbox>
+                <!--// CFL CTA -->
               </template>
 
               <template
@@ -474,6 +495,16 @@
       _createStoreLocatorLink(pageObject) {
         const urlArr = window.location.href.split('/');
         return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}`;
+      }
+
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      _createCarFittingListLink(pageObject, productData) {
+        const urlArr = window.location.href.split('/');
+        return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}?product=${productData.url}` ;
       }
     }
     customElements.define(DorelSectionProductShowcase.is, DorelSectionProductShowcase);
