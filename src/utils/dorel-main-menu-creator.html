@@ -151,16 +151,14 @@
         let allChildPages = await this.$.collectPageEl.getChildrenByParentId(page.id);
 
         return allChildPages.map(page => {
-          return this._getCategorySubMenuItems(page => {
-            if(!page) return {};
-
-            return {
-              id: page.id,
-              link: this.cleanUrlToPath(page.link),
-              thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
-              title: page.title.rendered
-            };
-          });
+          return (!page)
+          ? {}
+          : {
+            id: page.id,
+            link: this.cleanUrlToPath(page.link),
+            thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
+            title: page.title.rendered
+          };
         });
       }
 
