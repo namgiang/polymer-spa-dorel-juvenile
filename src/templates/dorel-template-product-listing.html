@@ -129,7 +129,10 @@
           products: {
             type: Array,
             statePath: function(state) {
-              if (!this.get('categories') || !this.get('categories').length) return;
+              if (!this.get('categories')
+                || !this.get('categories').length
+                || !state.product
+                || !state.product.products.length) return;
 
               // (TODO) the wp category ids array items are strings, convert them to integers to compare with the magento product category ids
               const wpCatIdsToInt = this.get('categories').map(category => parseInt(category));
