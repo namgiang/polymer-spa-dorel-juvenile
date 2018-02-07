@@ -9,9 +9,9 @@ function setProductCategoryPage(categoryPage) {
   if(!categoryPage || !categoryPage.acf || categoryPage.template !== 'product-listing') {
     return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: -1 }
   } else {
-    const categoryPicker = categoryPage.acf.magento_category_picker;
-    const category = typeof categoryPicker === 'string' ? parseInt(categoryPicker) : categoryPicker;
-    return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: category }
+    const categoriesPicker = categoryPage.acf.magento_category_picker;
+    const categories = typeof categoriesPicker === 'string' ? [parseInt(categoriesPicker)] : categoriesPicker;
+    return { type: 'ADD_PRODUCT_CATEGORY_PAGE', payload: categories }
   }
 }
 

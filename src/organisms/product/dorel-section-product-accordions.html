@@ -1,7 +1,8 @@
-<link rel="import" href="../../molecules/product-information/dorel-product-information-topic.html">
-<link rel="import" href="../../molecules/product-information/dorel-product-information-faq.html">
-<link rel="import" href="../../molecules/product-information/dorel-product-information-manuals.html">
-<link rel="import" href="../../molecules/product-information/dorel-product-information-specifications.html">
+<link rel="import" href="../../molecules/product/accordions/dorel-product-accordion-faq.html">
+<link rel="import" href="../../molecules/product/accordions/dorel-product-accordion-features.html">
+<link rel="import" href="../../molecules/product/accordions/dorel-product-accordion-manuals.html">
+<link rel="import" href="../../molecules/product/accordions/dorel-product-accordion-specs.html">
+<link rel="import" href="../../molecules/product/accordions/dorel-product-accordion-topic.html">
 
 <dom-module id="dorel-section-product-accordions">
   <template>
@@ -23,53 +24,73 @@
 
     <template
       is="dom-if"
-      if="[[ accordionsData.accordions.length ]]">
+      if="[[accordionsData.accordions.length]]">
 
-      <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+      <dorel-media-query
+        breakpoints="{{breakpoints}}"></dorel-media-query>
 
-      <dorel-layout-container tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
-        <dorel-layout-row align="center">
-          <dorel-layout-column desktop-column-span="8" tablet-column-span="12" mobile-column-span="12">
+      <dorel-layout-container
+        tablet-medium-up$="[[breakpoints.tabletMediumUp]]">
+        <dorel-layout-row
+          align="center">
+          <dorel-layout-column
+            desktop-column-span="8"
+            tablet-column-span="12"
+            mobile-column-span="12">
             <div class="accordion">
 
               <template
                 is="dom-repeat"
-                items="[[ accordionsData.accordions ]]">
+                items="[[accordionsData.accordions]]">
 
                 <dorel-accordion-item
-                  heading="[[_defineHeading(item.accordion_type)]]"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-cta-index$="[[ index ]]">
+                  heading="[[_defineHeading(item.accordion_type)]]">
 
-                  <!-- Product Information Basic -->
-                  <template
-                    is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'topic') ]]">
-                    <dorel-product-information-topic data="[[ item ]]"></dorel-product-information-topic>
-                  </template>
-                  <!--// Product Information Basic -->
-
-                  <!-- Product Information FAQ -->
+                  <!-- TOPIC -->
                   <template
                     is="dom-if"
-                    if="[[ _isPageComponent(item.accordion_type, 'faq') ]]">
-                    <dorel-product-information-faq data="[[ item ]]"></dorel-product-information-faq>
+                    if="[[_isPageComponent(item.accordion_type, 'topic')]]">
+                    <dorel-product-accordion-topic
+                      data="[[item]]"></dorel-product-accordion-topic>
                   </template>
-                  <!--// Product Information FAQ -->
+                  <!--// TOPIC -->
 
-                  <!-- Product Information Manuals -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'manuals') ]]">
-                    <dorel-product-information-manuals data="[[ item ]]"></dorel-product-information-manuals>
+                  <!-- FAQ -->
+                  <template
+                    is="dom-if"
+                    if="[[_isPageComponent(item.accordion_type, 'faq')]]">
+                    <dorel-product-accordion-faq
+                      data="[[item]]"></dorel-product-accordion-faq>
                   </template>
-                  <!--// Product Information Manuals -->
+                  <!--// FAQ -->
 
-                  <!-- Product Information Specifications -->
-                  <template is="dom-if" if="[[ _isPageComponent(item.accordion_type, 'specifications') ]]">
-                    <dorel-product-information-specifications
-                      data="[[ item ]]"></dorel-product-information-specifications>
+                  <!-- MANUALS -->
+                  <template
+                    is="dom-if"
+                    if="[[_isPageComponent(item.accordion_type, 'manuals')]]">
+                    <dorel-product-accordion-manuals
+                      data="[[item]]"></dorel-product-accordion-manuals>
                   </template>
+                  <!--// MANUALS -->
 
-                  <!--// Product Information Specifications -->
+                  <!-- SPECS -->
+                  <template
+                    is="dom-if"
+                    if="[[_isPageComponent(item.accordion_type, 'specifications')]]">
+                    <dorel-product-accordion-specs
+                      data="[[item]]"></dorel-product-accordion-specs>
+                  </template>
+                  <!--// SPECS -->
+
+                  <!-- FEATURES -->
+                  <template
+                    is="dom-if"
+                    if="[[_isPageComponent(item.accordion_type, 'features')]]">
+                    <dorel-product-accordion-features
+                      data="[[item]]"></dorel-product-accordion-features>
+                  </template>
+                  <!--// FEATURES -->
+
                 </dorel-accordion-item>
               </template>
             </div>

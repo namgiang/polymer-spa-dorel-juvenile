@@ -1,6 +1,12 @@
 <dom-module id="dorel-loader">
   <template>
     <style>
+      :host {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
       h1, h2, h3, h4 {
         @apply(--theme-header-text-transform);
       }
@@ -52,10 +58,11 @@
           -webkit-transform: scale(1.0);
         }
       }
-
     </style>
 
-    <template is="dom-if" if="[[ loading ]]">
+    <template
+      is="dom-if"
+      if="[[ loading ]]">
       <div class="loader">
         <div class="loader-element-1"></div>
         <div class="loader-element-2"></div>
@@ -69,9 +76,7 @@
       is: 'dorel-loader',
       properties: {
         /**
-         * @attribute
-         * @name loading
-         * @description indicates if the element should indicate it's loading
+         * indicates if the element should indicate it's loading
          **/
         loading: {
           type: Boolean,

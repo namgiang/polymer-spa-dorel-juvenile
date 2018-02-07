@@ -1,4 +1,4 @@
-<link rel="import" href="../../molecules/dorel-category-listing-item.html">
+<link rel="import" href="../../molecules/category/dorel-category-listing-item.html">
 <link rel="import" href="../../utils/managers/dorel-category-filter-manager.html">
 
 <dom-module id="dorel-category-listing">
@@ -10,10 +10,6 @@
 
       dorel-layout-row {
         margin-top: -1.5em;
-      }
-      dorel-loader {
-        padding-top: 12em;
-        float: left;
       }
 
       .no-products {
@@ -42,9 +38,9 @@
         rendered-item-count="{{renderedCount}}">
 
         <dorel-layout-column
-          desktop-column-span="4"
-          tablet-column-span="6"
-          mobile-column-span="12">
+          desktop-column-span$="[[desktopColSpan]]"
+          tablet-column-span$="[[tabletColSpan]]"
+          mobile-column-span$="[[mobileColSpan]]">
           <dorel-category-listing-item
             colors-data="[[product.child_products]]"
             link-url="[[product.url]]"
@@ -52,8 +48,10 @@
             filters="[[filters]]"></dorel-category-listing-item>
         </dorel-layout-column>
       </template>
+
       <dorel-loader
         loading="[[retrievingProducts]]"></dorel-loader>
+
       <template
         is="dom-if"
         if="[[checkIfProductsAreEmpty(renderedCount, retrievingProducts)]]">
@@ -74,7 +72,6 @@
            */
           productsData: {
             type: Array,
-            value: [],
             observer: '_setProducts'
           },
 
@@ -113,6 +110,24 @@
           renderedCount: {
             type: Number,
             notify: true
+          },
+
+          /**
+           * the col span per item
+           */
+          desktopColSpan: {
+            type: Number,
+            value: 4
+          },
+
+          tabletColSpan: {
+            type: Number,
+            value: 4
+          },
+
+          mobileColSpan: {
+            type: Number,
+            value: 12
           }
         }
       }
@@ -121,15 +136,18 @@
        * will set the products with correct sorting
        *
        * @param {array} complete products list
-       * @param {boolean} indicator if the application is retrieving products
        */
-      _setProducts(newProductsData, oldProductsData) {
+      _setProducts(newProductsData) {
         if (!newProductsData.length || this.get('retrievingProducts')) {
           this.set('products', []);
           return;
         }
+
         const products = this._sortProducts(newProductsData);
-        const prodsObj = JSON.parse(JSON.stringify(products)); // workaround for deep clone on dom-repeat
+
+        // workaround for deep clone on dom-repeat
+        const prodsObj = JSON.parse(JSON.stringify(products));
+
         this.set('products', prodsObj);
       }
 
@@ -156,8 +174,9 @@
       /**
        * helper to do the heavy lifting on sorting the items if value is String/Number
        *
-       * @param {array}
+       * @param {array} the unsorted items
        * @param {object} sorting will will contain `type` and `order`. `type` will select the property to sort on. For example: "name". `order` will determine if it is ordered ascending descending.
+       * @return {array} the sorted items
        */
       _sortString(items, sort) {
         return items.sort((a, b) => {
@@ -224,10 +243,14 @@
        *
        * @param {number} number of products rendered
        * @param {boolean} current state of retrieval of products
-       * @returns Boolean
+       * @returns {boolean} if products are empty or filled
        */
       checkIfProductsAreEmpty(renderedCount, retrievingProducts) {
-        return Boolean(renderedCount !== 'undefined' && renderedCount === 0 && retrievingProducts === false);
+        return Boolean(
+          renderedCount !== 'undefined'
+          && renderedCount === 0
+          && retrievingProducts === false
+        );
       }
     }
 

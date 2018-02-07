@@ -120,46 +120,55 @@
       }
     </style>
 
-    <div class="menu-item" class$="{{ getClasses(mainItem) }}" is-active$="[[ isActive ]]">
-      <template is="dom-if" if="[[ !mainItem.dropdown ]]">
-        <a on-click="clickMainItem"
-          class="link"
-          gtm-parent="dorel-navigation-main"
-          gtm-parent-index="[[ index ]]"
-          href="[[ mainItem.link ]]">
-          <span class="link-text">[[ mainItem.title ]]</span>
+    <div
+      class$="menu-item [[getClasses(mainItem)]]"
+      is-active$="[[isActive]]">
+      <template
+        is="dom-if"
+        if="[[!mainItem.dropdown]]">
+        <a class="link"
+          href$="[[mainItem.link]]"
+          on-click="clickMainItem">
+          <span class="link-text">[[mainItem.title]]</span>
         </a>
       </template>
 
-      <template is="dom-if" if="[[ mainItem.dropdown ]]">
-        <div on-click="toggleDropdown"
-          tabindex="0"
-          class="link"
-          gtm-parent="dorel-navigation-main"
-          gtm-parent-index="[[ index ]]">
-          <span class="link-text">[[ mainItem.title ]]</span>
-          <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
+      <template
+        is="dom-if"
+        if="[[mainItem.dropdown]]">
+        <div class="link"
+          on-click="toggleDropdown"
+          tabindex="0">
+          <span class="link-text">[[mainItem.title]]</span>
+          <iron-icon class="menu-item__icon"
+            opened$="[[opened]]"
+            icon="dorel-icons:expand-more"></iron-icon>
         </div>
 
-        <template is="dom-if" if="[[ checkDropdownType(mainItem, 'default') ]]">
+        <template
+          is="dom-if"
+          if="[[checkDropdownType(mainItem, 'default')]]">
           <dorel-menu-dropdown-default
-            index="[[ index ]]"
-            main-item="[[ mainItem ]]"
-            opened="[[ opened ]]"
-            route="[[ route ]]"
-            dropdown-items="[[ mainItem.dropdown_items ]]">
+            index="[[index]]"
+            main-item="[[mainItem]]"
+            opened="[[opened]]"
+            route="[[route]]"
+            dropdown-items="[[mainItem.dropdown_items]]">
           </dorel-menu-dropdown-default>
         </template>
 
-        <template is="dom-if" if="[[ checkDropdownType(mainItem, 'category') ]]">
-          <div class="category-container" opened$="[[ opened ]]">
+        <template
+          is="dom-if"
+          if="[[checkDropdownType(mainItem, 'category')]]">
+          <div class="category-container"
+            opened$="[[opened]]">
             <dorel-menu-dropdown-category
-              index="[[ index ]]"
-              main-item="[[ mainItem ]]"
-              opened="[[ opened ]]"
-              route="[[ route ]]"
-              featured-items="[[ _contentSwitch(mainItem, products) ]]"
-              dropdown-items="[[ mainItem.dropdown_items ]]">
+              index="[[index]]"
+              main-item="[[mainItem]]"
+              opened="[[opened]]"
+              route="[[route]]"
+              featured-items="[[_contentSwitch(mainItem, products)]]"
+              dropdown-items="[[mainItem.dropdown_items]]">
             </dorel-menu-dropdown-category>
           </div>
         </template>
@@ -171,32 +180,28 @@
   </template>
   <script>
     class DorelMainMenuItem extends ReduxMixin(Polymer.mixinBehaviors([MainMenuBehavior], Polymer.Element)) {
-      static get is() {
-        return 'dorel-main-menu-item';
-      }
+
+      static get is() { return 'dorel-main-menu-item'; }
 
       static get properties() {
         return {
 
           /**
-           * @name mainItem
-           * @description
+           * the menu item object (full wordpress page object)
            */
           mainItem: {
             type: Object
           },
 
           /**
-           * @name index
-           * @description index of the dom-repeat used for the gtm
+           * index of the menu item
            */
           index: {
             type: Number
           },
 
           /**
-           * @name isActive
-           * @description determines if menu item is active
+           * determines if menu item is active
            */
           isActive: {
             type: Boolean,
@@ -204,23 +209,41 @@
           },
 
           /**
-           * @name products
-           * @description will return products based on the category of the mainItem
+           * will return products based on the category of the mainItem
            */
           products: {
             type: Array,
             statePath: function(state) {
-              return state.product.products.filter((product, index) => {
-                return !(product.categories && product.categories.indexOf(this.mainItem.category_id));
-              }).map((product) => {
-                return this.subCategoryItemMold(product);
-              }).filter((item, index) => index < 5);
+              if (!this.get('mainItem') || !this.get('mainItem.category_id') || !state.product.products) return;
+
+              const categoryPicker = this.get('mainItem.category_id');
+
+              if (categoryPicker.constructor === Array) {
+
+                // (TODO) the wp category ids array items are strings, convert them to integers to compare with the magento product category ids
+                const wpCatIdsToInt = categoryPicker.map(category => parseInt(category));
+
+                // filter the products and get only the products that comply to the wp categories defined for this page
+                return state.product.products.filter(product => {
+                  return (product.categories.length && product.categories.some(category => {
+                    return wpCatIdsToInt.includes(category);
+                  })) ? product : '';
+                });
+
+              } else if (!isNaN(categoryPicker)) {
+
+                return state.product.products.filter((product, index) => {
+                  return !(product.categories && product.categories.indexOf(categoryPicker));
+                }).map((product) => {
+                  return this.subCategoryItemMold(product);
+                }).filter((item, index) => index < 5);
+
+              }
             }
           },
 
           /**
-           * @name route
-           * @description current route / url of the application
+           * current route / url of the application
            */
           route: {
             type: Object
@@ -229,14 +252,11 @@
       }
 
       /**
-       * template helper
-       * @name _contentSwitch
-       * @description determines what data is passed down to the child component
-       * if the productSwitch is not true it will set the default pages (sub_category_items) created by the menu-creator component
-       * else it will return the products
-       * @param mainItem - Object
-       * @param products - Array
-       * @returns Array
+       * determines what data is passed down to the child component if the productSwitch is not true it will set the default pages (sub_category_items) created by the menu-creator component else it will return the products. the product switch is there to let the dropdown menu show products or sub categories (when there are more then 2 it will show the sub categories)
+       *
+       * @param {object} the main menu item object (full wordpress page object)
+       * @param {array} array of objects containing the products of this menu item
+       * @returns {array} sub categories or products of this menu item
        */
       _contentSwitch(mainItem, products) {
         if(mainItem && !mainItem.productSwitch) {
@@ -247,9 +267,9 @@
       }
 
       /**
-       * @name clickmainItem
-       * @description closes the mobile menu and calls _emitGtmEvent
-       * @param event - Object
+       * closes the mobile menu and starts analytics tracking
+       *
+       * @param {object} the event object
        */
       clickMainItem(event) {
         this._emitGtmEvent(event);
@@ -257,9 +277,9 @@
       }
 
       /**
-       * @name toggleDropdown
-       * @description if a dropdown is clicked it will dispatch a event with the index
-       * @param event - Object
+       * if a dropdown is clicked it will dispatch a event with the index
+       *
+       * @param {object} the event object
        */
       toggleDropdown(event) {
         this.dispatchEvent(new CustomEvent('toggleDropdown', { bubbles: true, composed: true, detail: {
@@ -268,35 +288,37 @@
       }
 
       /**
-       * @name getClasses
-       * @description template helper that will determine the classes that will be added
-       * @param mainItem - Object
+       * template helper that will determine the classes that will be added
+       *
+       * @param {object} the main menu item full wordpress page object
+       * @return {string} css clas(ses) for the element
        */
       getClasses(mainItem) {
-        if(this.checkDropdownType(mainItem, 'category')) {
-          return 'menu-item category';
-        }
-        return 'menu-item';
+        return (this.checkDropdownType(mainItem, 'category'))
+          ? 'category'
+          : '';
       }
 
       /**
-       * @name subCategoryItemMold
-       * @description a function that returns a suitable data model for a subcategory item
-       * @param product - Object
-       * @returns Object
+       * a function that returns a suitable data model for a subcategory item
+       *
+       * @param {object} the product object data
+       * @returns {object} the product in a card data model the card component understands
        */
       subCategoryItemMold(product) {
         // determines if the product has childproducts and sets either the single or the first childproduct
         const selected = product.child_products ? product.child_products[0] : product;
+
         return {
           id: Number(product.id),
-          link: this.mainItem.link + product.url,
+          link: `${this.get('mainItem.link')}product.url`,
           thumbnail_url: selected.images ? selected.images.image : '',
           title: product.name ? product.name.value : '',
           sub_title: selected.header_section ? selected.header_section.sub_title : ''
         };
       }
     }
+
     customElements.define(DorelMainMenuItem.is, DorelMainMenuItem);
   </script>
 </dom-module>

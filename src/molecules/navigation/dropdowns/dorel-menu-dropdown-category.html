@@ -1,3 +1,4 @@
+<link rel="import" href="../../../utils/behaviors/single/dorel-multilingual-behavior.html">
 <link rel="import" href="../dropdown-items/dorel-dropdown-card.html">
 
 <dom-module id="dorel-menu-dropdown-category">
@@ -67,176 +68,199 @@
         flex-direction: column;
       }
     </style>
-    <dorel-layout-container opened$="[[ opened ]]" id="menu-dropdown">
-      <dorel-layout-row align="right">
+
+    <dorel-layout-container
+      id="menu-dropdown"
+      opened$="[[opened]]">
+      <dorel-layout-row
+        align="right">
+
         <template
           is="dom-repeat"
-          items="[[ featuredItems ]]"
+          items="[[featuredItems]]"
           as="card">
-          <dorel-layout-column desktop-column-span="2" tablet-column-span="4" mobile-column-span="12">
+          <dorel-layout-column
+            desktop-column-span="2"
+            tablet-column-span="4"
+            mobile-column-span="12">
             <dorel-dropdown-card
-              is-active="[[ checkIfActive(card.link, route) ]]"
-              card-data="[[ _transformToCartData(card) ]]"
-              cta-type="[[ ctaType ]]"
-              gtm-parent="[[ gtmParent ]]"
-              gtm-parent-index="[[ gtmParentIndex ]]"
-              gtm-child="dorel-card"
-              cta-type="link"
-              gtm-child-index="[[ index ]]"></dorel-dropdown-card>
+              is-active="[[checkIfActive(card.link, route)]]"
+              card-data="[[_transformToCardData(card)]]"
+              cta-type="[[ctaType]]"
+              cta-type="link"></dorel-dropdown-card>
           </dorel-layout-column>
         </template>
-        <dorel-layout-column desktop-column-span="2" tablet-column-span="4" mobile-column-span="12">
-          <ul class="dropdown-menu" id="dropdownMenu">
-            <template is="dom-repeat" items="[[ _maxItems(dropdownItems) ]]" as="menuItem">
-              <li class="dropdown-menu-item" is-active$="[[ checkIfActive(menuItem.link, route) ]]">
 
-                <dorel-cta title="[[ menuItem.title ]]"
-                           type="link"
-                           on-click="clickMenuItem"
-                           link="[[ menuItem.link ]]"
-                           size="small"
-                           no-margin
-                           icon="dorel-icons:chevron-right"
-                           gtm-parent="dorel-navigation-main"
-                           gtm-parent="[[ gtmParent ]]"
-                           gtm-parent-index="[[ gtmParentIndex ]]"
-                           gtm-child="[[ gtmChild ]]"
-                           gtm-child-index="[[ gtmChildIndex ]]"
-                           gtm-cta-index="[[ index ]]">
-                  [[ menuItem.title ]]
-                </dorel-cta>
+        <dorel-layout-column
+          desktop-column-span="2"
+          tablet-column-span="4"
+          mobile-column-span="12">
+          <ul class="dropdown-menu" id="dropdownMenu">
+
+            <template
+              is="dom-repeat"
+              items="[[_maxItems(dropdownItems)]]"
+              as="menuItem">
+              <li class="dropdown-menu-item"
+                is-active$="[[checkIfActive(menuItem.link, route)]]">
+                <dorel-cta
+                  title="[[menuItem.title]]"
+                  type="link"
+                  on-click="clickMenuItem"
+                  link="[[menuItem.link]]"
+                  size="small"
+                  no-margin
+                  icon="dorel-icons:chevron-right">[[menuItem.title]]</dorel-cta>
               </li>
             </template>
-          </ul>
-          <dorel-cta title="{{ localize('All') }} [[ mainItem.title ]]"
-                     type="primary"
-                     class="view-all-cta"
-                     link="[[ mainItem.link ]]"
-                     size="medium"
-                     no-margin
-                     icon="dorel-icons:chevron-right"
-                     gtm-action="plan-route-retailer"
-                     gtm-parent="[[ gtmParent ]]"
-                     gtm-parent-index="[[ gtmParentIndex ]]"
-                     gtm-child="[[ gtmChild ]]"
-                     gtm-child-index="[[ gtmChildIndex ]]"
-                     gtm-cta-index="0">
-            {{ localize('All') }} [[ _toLowercase(mainItem.title) ]]
 
-          </dorel-cta>
+          </ul>
+
+          <dorel-cta
+            title="[[localize('All')]] [[mainItem.title]]"
+            type="primary"
+            class="view-all-cta"
+            link="[[mainItem.link]]"
+            size="medium"
+            no-margin
+            icon="dorel-icons:chevron-right">[[localize('All')]] [[_toLowercase(mainItem.title)]]</dorel-cta>
         </dorel-layout-column>
       </dorel-layout-row>
     </dorel-layout-container>
-
   </template>
+
   <script>
-    /**
-     * TODO: doc comments to add!
-     **/
-    Polymer({
-      is: 'dorel-menu-dropdown-category',
-      properties: {
+    class DorelMenuDropdownCategory extends Polymer.mixinBehaviors([DorelMultilingualBehavior, MatchUrlBehavior, MainMenuBehavior], Polymer.Element) {
 
-        /**
-         * @name dropdownItems
-         * @description array of links
-         */
-        dropdownItems: {
-          type: Array,
-          value: function () {
-            return [];
+      static get is() { return 'dorel-menu-dropdown-category'; }
+
+      static get properties() {
+        return {
+          /**
+           * array of objects containing the full dropdown items wordpress page objects
+           */
+          dropdownItems: {
+            type: Array,
+            value: []
+          },
+
+          /**
+           * array of featured full wordpress page objects (subcategories or products)
+           */
+          featuredItems: {
+            type: Array,
+            value: []
+          },
+
+          /**
+           * the menu item object (full wordpress page object)
+           */
+          mainItem: {
+            type: Object
+          },
+
+          /**
+           * index of the item
+           */
+          index: {
+            type: Number
+          },
+
+          /**
+           * current route / url of the application
+           */
+          route: {
+            type: Object
+          },
+
+          /**
+           * opened state of the dropdown
+           */
+          opened: {
+            type: Boolean,
+            value: false,
+            notify: true
           }
-        },
-
-        /**
-         * @name featuredItems
-         * @description array of featured links (subcategories or products)
-         */
-        featuredItems: {
-          type: Array,
-          value: function () {
-            return [];
-          }
-        },
-
-        /**
-         * @name mainItem
-         * @description the main link
-         */
-        mainItem: {
-          type: Object
-        },
-
-        /**
-         * @name index
-         * @description index of the item
-         */
-        index: {
-          type: Number
-        },
-
-        /**
-         * @name route
-         * @description current route / url of the application
-         */
-        route: {
-          type: Object
-        },
-
-        /**
-         * @name opened
-         * @description opened state of the dropdown
-         */
-        opened: {
-          type: Boolean,
-          value: false,
-          notify: true
-        }
-
-      },
-
-      behaviors: [DorelMultilingualBehavior, MatchUrlBehavior, MainMenuBehavior],
-
-
-      /**
-       * @name clickMenuItem
-       * @description closes the mobile menu and calls _emitGtmEvent
-       * @param event - Object
-       */
-      clickMenuItem: function (event) {
-        this._emitGtmEvent(event);
-      },
-
-      setDropdownId: function (mainItem) {
-        return 'dropdown' + mainItem.id;
-      },
-
-      _transformToCartData: function (item) {
-        var card = {
-          card_title: item.title,
-          link: item.link,
-          sub_title: item.sub_title
         };
-
-        if (item.thumbnail_url) {
-          card.image_url = item.thumbnail_url;
-        } else {
-          card.bynder_card_image = item.thumbnail;
-        }
-        return card;
-      },
-
-      _maxItems: function (dropdownItems) {
-        return dropdownItems.filter(function (item, index) {
-          return index < 4 ? true : false;
-        })
-      },
-
-      _toLowercase: function(text) {
-        return text.toLowerCase();
       }
 
-    });
+      /**
+       * closes the mobile menu and calls _emitGtmEvent
+       *
+       * @param {object} the event object
+       */
+      clickMenuItem(event) {
+        this._emitGtmEvent(event);
+      }
 
+      /**
+       * set the element html id of the dropdown menu item
+       *
+       * @param {object} the main menu item full wordpress page object
+       * @return {string} the css id
+       */
+      setDropdownId(mainItem) {
+        return 'dropdown' + mainItem.id;
+      }
+
+      /**
+       * transforms the featured wordpress page object to a data model the card element understands
+       *
+       * @param {object} featured wordpress page object
+       * @return {object} card data model
+       */
+      _transformToCardData(item) {
+        let card = {};
+
+        if (!item.hasOwnProperty("sku")) {
+          card = {
+            card_title: item.title,
+            link: item.link,
+            sub_title: item.sub_title
+          };
+
+          if (item.thumbnail_url) {
+            card.image_url = item.thumbnail_url;
+          } else {
+            card.bynder_card_image = item.thumbnail;
+          }
+
+        } else {
+
+          card = {
+            card_title: item.name.label === 'Commercial product name' ? item.name.value : 'No product name defined',
+            link: (item.url)
+              ? `${window.location.origin}${this.get('mainItem.link')}${item.url}`
+              : '#',
+            sub_title: '',
+            image_url: item.child_products[0].images.thumbnail
+          };
+
+        }
+
+        return card;
+      }
+
+      /**
+       * maximize the dropdown items to 4
+       *
+       * @param {array} the dropdown items
+       * @return {array} the first 4 of the original dropdown items list
+       */
+      _maxItems(dropdownItems) {
+        return dropdownItems.filter((item, index) => index < 4);
+      }
+
+      /**
+       * transforms a string to lower case
+       *
+       * @param {string} a text string to lower case
+       * @return {string} the lower cased string
+       */
+      _toLowercase(text) {
+        return text.toLowerCase();
+      }
+    }
+    customElements.define(DorelMenuDropdownCategory.is, DorelMenuDropdownCategory);
   </script>
 </dom-module>

@@ -40,46 +40,53 @@
         align="left">
 
         <!-- Sidebar -->
-        <dorel-layout-column
-          desktop-column-span="3"
-          tablet-column-span="5"
-          mobile-column-span="12">
+        <template
+          is="dom-if"
+          if="[[_shouldShowSidebar(leftSidebar)]]">
+          <dorel-layout-column
+            desktop-column-span="3"
+            tablet-column-span="5"
+            mobile-column-span="12">
 
-          <template
-            is="dom-if"
-            if="[[leftSidebar.productSubCategories.toggle]]">
-            <dorel-accordion-item
-              heading="[[localize('Subcategories')]]"
-              opened
-              small>
-              <dorel-category-submenu
-                items="[[leftSidebar.productSubCategories.sub_categories]]">
-              </dorel-category-submenu>
-            </dorel-accordion-item>
-          </template>
+            <template
+              is="dom-if"
+              if="[[leftSidebar.productSubCategories.toggle]]">
+              <dorel-accordion-item
+                heading="[[localize('Subcategories')]]"
+                opened
+                small>
+                <dorel-category-submenu
+                  items="[[leftSidebar.productSubCategories.sub_categories]]">
+                </dorel-category-submenu>
+              </dorel-accordion-item>
+            </template>
 
-          <template
-            is="dom-if"
-            if="[[leftSidebar.filters.toggle]]">
-            <dorel-accordion-item
-              heading="[[localize('Filters')]]"
-              opened
-              small>
-              <dorel-category-filter
-                filter-data="[[leftSidebar.filters.filter_groups]]"
-                retrieving-products="[[retrievingProducts]]"
-                product-data="[[products]]">
-              </dorel-category-filter>
-            </dorel-accordion-item>
-          </template>
-        </dorel-layout-column>
+            <template
+              is="dom-if"
+              if="[[leftSidebar.filters.toggle]]">
+              <dorel-accordion-item
+                heading="[[localize('Filters')]]"
+                opened
+                small>
+                <dorel-category-filter
+                  filter-data="[[leftSidebar.filters.filter_groups]]"
+                  retrieving-products="[[retrievingProducts]]"
+                  product-data="[[products]]">
+                </dorel-category-filter>
+              </dorel-accordion-item>
+            </template>
+          </dorel-layout-column>
+        </template>
         <!--// Sidebar -->
 
         <dorel-layout-column
-          desktop-column-span="9"
-          tablet-column-span="7"
+          desktop-column-span$="[[_colSpan(leftSidebar, 'list', 'desktop')]]"
+          tablet-column-span$="[[_colSpan(leftSidebar, 'list', 'tablet')]]"
           mobile-column-span="12">
           <dorel-category-listing
+            desktop-col-span="[[_colSpan(leftSidebar, 'item', 'desktop')]]"
+            tablet-col-span="[[_colSpan(leftSidebar, 'item', 'tablet')]]"
+            mobile-col-span="[[_colSpan(leftSidebar, 'item', 'mobile')]]"
             products-data="[[products]]"
             retrieving-products="[[retrievingProducts]]"
             sort="[[sort]]"
@@ -107,11 +114,8 @@
 
       static get properties() {
         return {
-
           /**
-           * @attribute
-           * @name templateData
-           * @description the data coming from ACF/Wordpress which is delegated to the page builder
+           * the data coming from ACF/Wordpress which is delegated to the page builder
            */
           templateData: {
             type: Object,
@@ -120,31 +124,40 @@
           },
 
           /**
-           * @attribute
-           * @name products
-           * @description the data coming from the collect-products component
+           * the data coming from the collect-products component
            */
           products: {
             type: Array,
             statePath: function(state) {
-              return state.product.products.filter(product => product && product.categories && product.categories.indexOf(this.get('category')) > -1);
+              if (!this.get('categories')
+                || !this.get('categories').length
+                || !state.product
+                || !state.product.products.length) return;
+
+              // (TODO) the wp category ids array items are strings, convert them to integers to compare with the magento product category ids
+              const wpCatIdsToInt = this.get('categories').map(category => parseInt(category));
+
+              // filter the products and get only the products that comply to the wp categories defined for this page
+              const filteredProds = state.product.products.filter(product => {
+                return (product.categories.some(category => {
+                  return wpCatIdsToInt.includes(category);
+                })) ? product : '';
+              });
+
+              return filteredProds;
             }
           },
 
           /**
-           * @attribute
-           * @name category
-           * @description inherit by parent will be used by collect-products
+           * inherit by parent will be used by collect-products
            */
-          category: {
-            type: Number,
-            observer: '_categoryChanged'
+          categories: {
+            type: Array,
+            observer: '_categoriesChanged'
           },
 
           /**
-           * @attribute
-           * @name sort
-           * @description define the default sorting type/order of the product listing
+           * define the default sorting type/order of the product listing
            */
           sort: {
             type: Object,
@@ -157,36 +170,86 @@
           },
 
           /**
-           * @attribute
-           * @name category
-           * @description a loading indicator from the collect-products component
-           * if products are retrieved it will set Boolean to false
-           * if products are being retrieved it will set Boolean to true
-           * initial value is true because component does not have products initially
+           * a loading indicator from the collect-products component if products are retrieving it will set Boolean to true. if products are being retrieved it will set Boolean to true initial value is false because component does not have products initially
            */
           retrievingProducts: {
             type: Boolean,
             statePath: function(state) {
-              const category = state.product.requestedCategories.find(category => category.id === this.category);
-              return category ? category.isLoading : true;
+              // check if current categories are in the requested categories
+              const categories = state.product.requestedCategories.map(category => this.get('categories').indexOf(category.id) > -1 ? category : '');
+
+              // check if there are categories in the current ones that are loading if only one of them is loading set isRetrieving to true
+              let isRetrieving = false;
+              isRetrieving = categories.some((category, index) => {
+                return category.isLoading === true;
+              });
+
+              return isRetrieving;
             }
           },
 
+          /**
+           * the amount of products shown to the user
+           */
           renderedCount: Number,
 
+          /**
+           * the hero header data coming from Wordpress
+           */
           heroHeaderData: Object,
 
+          /**
+           * the left sidebar data coming from Wordpress
+           */
           leftSidebar: Object
-
         };
       }
 
-      _categoryChanged(newCategory, oldCategory) {
-        if( (newCategory !== oldCategory) && (newCategory && newCategory > -1) ) {
-          this.dispatch('requestProductsByCategory', newCategory);
+      /**
+       * calculate col span depending on left sidebar
+       *
+       * @param {object} leftSidebar object settings from wordpress
+       * @param {string} breakpoint desktop/tablet
+       * @return {number} colspan
+       */
+      _colSpan(leftSidebar, type, viewport) {
+        switch(viewport) {
+          case 'desktop':
+            return (type === 'list')
+            ? (this._shouldShowSidebar(leftSidebar)) ? 9 : 12
+            : (this._shouldShowSidebar(leftSidebar)) ? 4 : 3;
+
+          case 'tablet':
+            return (type === 'list')
+            ? (this._shouldShowSidebar(leftSidebar)) ? 7 : 12
+            : (this._shouldShowSidebar(leftSidebar)) ? 4 : 6;
         }
       }
+
+      /**
+       * change handler for the categories, when changed send out dispatch for the new categories
+       *
+       * @param {array} new categories received
+       * @param {array} previous categories
+       */
+      _categoriesChanged(newCategories, oldCategories) {
+        if(newCategories && newCategories.length
+          && JSON.stringify(newCategories) !== JSON.stringify(oldCategories)) {
+          this.dispatch('requestProductsByCategories', newCategories);
+        }
+      }
+
+      /**
+       * defines if the left sidebar is shown
+       *
+       * @param {object} leftSidebar object settings from wordpress
+       * @return {boolean} if one of the toggles in the sidebar is true or both not
+       */
+      _shouldShowSidebar(leftSidebar) {
+        return leftSidebar && (leftSidebar.productSubCategories.toggle || leftSidebar.filters.toggle);
+      }
     }
+
     customElements.define(DorelTemplateProductListing.is, DorelTemplateProductListing);
   </script>
 </dom-module>

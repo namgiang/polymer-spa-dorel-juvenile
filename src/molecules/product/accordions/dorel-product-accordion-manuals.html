@@ -1,6 +1,6 @@
-<link rel="import" href="../../utils/behaviors/single/dorel-multilingual-behavior.html">
+<link rel="import" href="../../../utils/behaviors/single/dorel-multilingual-behavior.html">
 
-<dom-module id="dorel-product-information-manuals">
+<dom-module id="dorel-product-accordion-manuals">
   <template>
     <style>
       h1, h2, h4 {
@@ -23,36 +23,34 @@
     </style>
     <template
       is="dom-repeat"
-      items="[[ data.manuals ]]">
-      <dorel-cta title="[[localize('product_information_manuals#instruction_manual')]]"
-                 type="link"
-                 link="[[ item.Link_url ]]"
-                 size="medium"
-                 left-align-icon
-                 icon="dorel-icons:picture-as-pdf"
-                 gtm-parent="[[ gtmParent ]]"
-                 gtm-parent-index="[[ gtmParentIndex ]]"
-                 gtm-child="dorel-section-hero"
-                 gtm-child-index="[[ index ]]"
-                 gtm-cta-index="0">
+      items="[[data.manuals]]">
+      <dorel-cta
+        title="[[localize('product_information_manuals#instruction_manual')]]"
+        type="link"
+        link="[[item.Link_url]]"
+        size="medium"
+        left-align-icon
+        icon="dorel-icons:picture-as-pdf">
         <h3>[[localize('product_information_manuals#instruction_manual')]]</h3>
       </dorel-cta>
     </template>
   </template>
 
   <script>
-    class DorelProductInformationManuals extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+    class DorelProductAccordionManuals extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
 
-      static get is() { return 'dorel-product-information-manuals'; }
+      static get is() { return 'dorel-product-accordion-manuals'; }
 
       static get properties() {
         return {
           /**
-           * Content data
+           * the full accordion content data
            */
           data: {
             type: Object,
-            value: () => ({})
+            value: function () {
+              return {};
+            }
           }
         }
       }
@@ -71,6 +69,6 @@
     }
 
     // Register the x-custom element with the browser
-    customElements.define(DorelProductInformationManuals.is, DorelProductInformationManuals);
+    customElements.define(DorelProductAccordionManuals.is, DorelProductAccordionManuals);
   </script>
 </dom-module>

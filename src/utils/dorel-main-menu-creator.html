@@ -4,144 +4,189 @@
   <template>
 
     <dorel-wp-collect-page
-      pages="[[ pages ]]"
+      pages="[[pages]]"
       id="collectPageEl">
     </dorel-wp-collect-page>
 
   </template>
 
   <script>
-  class DorelMainMenuCreator extends ReduxMixin(Polymer.Element) {
-    static get is() {
-      return 'dorel-main-menu-creator';
-    }
+    class DorelMainMenuCreator extends ReduxMixin(Polymer.Element) {
+      static get is() { return 'dorel-main-menu-creator'; }
 
-    static get properties() {
-      return {
+      static get properties() {
+        return {
 
-        /**
-         * @attribute
-         * @name pages
-         * @description pages
-         */
-        pages: {
-          type: Array,
-          statePath: 'pages'
-        },
+          /**
+           * all the previously retrieved pages in an array from the redux state
+           */
+          pages: {
+            type: Array,
+            statePath: 'pages'
+          },
 
-        /**
-         * @attribute
-         * @name currentLanguage
-         * @description the currentLanguage from the redux state
-         */
-        currentLanguage: {
-          type: Object,
-          statePath: 'route.currentLanguage'
-        },
+          /**
+           * the currentLanguage from the redux state
+           */
+          currentLanguage: {
+            type: Object,
+            statePath: 'route.currentLanguage'
+          },
 
-        /**
-         * @attribute
-         * @name mainMenuOptions
-         * @description the menu items from the initial options
-         * with this data the menu is generated
-         */
-        mainMenuOptions: {
-          type: Array,
-          statePath: 'config.main_menu'
-        }
-      }
-    }
-    static get observers () {
-      return [
-      '_createMenuDataModel(mainMenuOptions)'
-      ]
-    }
-
-    _createMenuDataModel(mainMenu) {
-      if(!mainMenu) {
-        return;
-      }
-      new Promise((resolve, reject) => {
-        resolve(this._createLinks(mainMenu));
-      }).then(mainMenu => {
-        return this.dispatch('addMenu', mainMenu);
-      });
-    }
-
-    async _createLinks(menuItems) {
-      const promises = menuItems.map((item) => {
-        return new Promise((resolve, reject) => {
-          resolve(this.$.collectPageEl.getPageById(item.page_object.ID));
-        }).then((page) => {
-          return this._createMenuItem(item, page);
-        });
-      });
-      const links = await Promise.all(promises);
-      return links;
-    }
-
-   async _createMenuItem(item, page) {
-      item.id = page.id;
-      item.link = this.cleanUrlToPath(page.link);
-      item.opened = false;
-      if(item.dropdown === true && item.dropdown_items && item.dropdown_items.length) {
-        const promises = item.dropdown_items.map((_item) => {
-          return new Promise((resolve, reject) => {
-            resolve(this.$.collectPageEl.getPageById(_item.page_object.ID));
-          }).then((page) => {
-            return this._createMenuItem(_item, page);
-          });
-        });
-        const dropdown_items = await Promise.all(promises);
-        item.dropdown_items = dropdown_items;
-      } else {
-        item.dropdown_items = [];
-      }
-      if(item.dropdown_type === 'category') {
-        let sub_category_items = await this._getSubCategoryItems(page);
-        if(sub_category_items && sub_category_items.length < 2) {
-          item.productSwitch = true;
-          if (this._getMagentoCategoryId(page)) {
-            this.dispatch('requestProductsByCategory', this._getMagentoCategoryId(page));
+          /**
+           * the menu items from the initial options with this data the menu is generated
+           */
+          mainMenuOptions: {
+            type: Array,
+            statePath: 'config.main_menu'
           }
         }
-        item.category_id = this._getMagentoCategoryId(page);
-        item.sub_category_items = sub_category_items;
       }
-      return Object.assign({}, item);
-    }
-
-    async _getSubCategoryItems(page) {
-      let allChildPages = await this.$.collectPageEl.getChildrenByParentId(page.id);
-      return allChildPages.map(page => {
-        return this._getCategorySubMenuItems(page);
-      });
-    }
-
-    _getCategorySubMenuItems(page) {
-      if(!page) {
-        return {};
+      static get observers () {
+        return [
+        '_createMenuDataModel(mainMenuOptions)'
+        ]
       }
-      return {
-        id: page.id,
-        link: this.cleanUrlToPath(page.link),
-        thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
-        title: page.title.rendered
-      };
-    }
 
-    _getMagentoCategoryId(page) {
-      if(!page.acf.magento_category_picker) return;
-      return Number(page.acf.magento_category_picker);
-    }
+      /**
+       * creates the data model for the menu to use, when the main menu is retrieved from Wordpress
+       *
+       * @param {object} the main menu items
+       */
+      _createMenuDataModel(mainMenu) {
+        if(!mainMenu) return;
 
-    cleanUrlToPath(url) {
-      const urlArray = url.split('/');
-      const path = '/' + urlArray.slice(3).join('/');
-      return path;
-    }
-  };
-  customElements.define(DorelMainMenuCreator.is, DorelMainMenuCreator);
+        // after links are created add the menu to redux
+        new Promise((resolve, reject) => {
+          resolve(this._retrieveFullPageObject(mainMenu));
+        }).then(mainMenu => {
+          return this.dispatch('addMenu', mainMenu);
+        });
+      }
 
+      /**
+       * retrieves the full page object. what is present in the main menu is the menu page object and not the full page object of the wordpress page. this function retrieves all wordpress page info in an object
+       *
+       * @param {array} menu items of this menu
+       */
+      async _retrieveFullPageObject(menuItems) {
+        // for each menu item retrieve its full wordpress page object *not the menu page_object
+        const promises = menuItems.map((item) => {
+          return new Promise((resolve, reject) => {
+            resolve(this.$.collectPageEl.getPageById(item.page_object.ID));
+          }).then((page) => {
+            // when retrieval of the full page object succeeds start creating the menu item
+            return this._createMenuItem(item, page);
+          });
+        });
+
+        const links = await Promise.all(promises);
+
+        return links;
+      }
+
+      /**
+       * build up the full menu item with dropdown items or if of the type `category` present sub categories or attached products of the `category`
+       *
+       * @param {object} the menu page object of the (parent || sub) item
+       * @param {object} the full page object of the (parent || sub) item
+       * @return {object} the newly created menu item object with sub/dropdown items
+       */
+      async _createMenuItem(item, page) {
+        item.id = page.id;
+        item.link = this.cleanUrlToPath(page.link);
+        item.opened = false;
+
+        // the dropdown `default` type
+        if (item.dropdown === true && item.dropdown_items && item.dropdown_items.length) {
+
+          // retrieve all full page objects of the dropdown items
+          const promises = item.dropdown_items.map((_item) => {
+            return new Promise((resolve, reject) => {
+              resolve(this.$.collectPageEl.getPageById(_item.page_object.ID));
+            }).then((page) => {
+              return this._createMenuItem(_item, page);
+            });
+          });
+
+          // wait untill all dropdown item page objects are retrieved
+          const dropdown_items = await Promise.all(promises);
+
+          // add the dropdown items to the main item
+          item.dropdown_items = dropdown_items;
+        } else {
+
+          // return an empty array if no drop down items are defined but the type is dropdown
+          item.dropdown_items = [];
+        }
+
+        // the dropdown `catgory` type can have sub categories. if there are less then 2 sub categories the application should show products of this `category`
+        if (item.dropdown_type === 'category') {
+
+          // retrieve the sub categories if they exist for this category
+          let sub_category_items = await this._getSubCategoryItems(page);
+
+          // if this parent item has less then 2 sub categories defined retrieve the products of this parent
+          if(sub_category_items && sub_category_items.length < 2) {
+            item.productSwitch = true;
+
+            const categoryPicker = this._getMagentoCategoriesId(page.acf.magento_category_picker);
+            if (categoryPicker.length) {
+              this.dispatch('requestProductsByCategories', categoryPicker);
+              item.category_id = categoryPicker;
+            }
+          }
+          item.sub_category_items = sub_category_items;
+        }
+        return Object.assign({}, item);
+      }
+
+      /**
+       * helper to get the sub category items from a given parent item
+       *
+       * @param {object} the parent page object
+       * @return {array} sub category items of the given parent page object
+       */
+      async _getSubCategoryItems(page) {
+        let allChildPages = await this.$.collectPageEl.getChildrenByParentId(page.id);
+
+        return allChildPages.map(page => {
+          return (!page)
+          ? {}
+          : {
+            id: page.id,
+            link: this.cleanUrlToPath(page.link),
+            thumbnail: page.acf && page.acf.hero_header && page.acf.hero_header.length && page.acf.hero_header[0].bynder_background_image ? page.acf.hero_header[0].bynder_background_image : null,
+            title: page.title.rendered
+          };
+        });
+      }
+
+      /**
+       * retrieves the magento category id's or id since there is old legacy implementation from Wordpress where category ids/id can return an array or a string. this function straightens this out to always return an array
+       *
+       * @param {array || string} category id or ids
+       * @return {array} the category ids in an array
+       */
+      _getMagentoCategoriesId(categoryPicker) {
+        if (!categoryPicker) return [];
+
+        return (categoryPicker.constructor === Array) ? categoryPicker : [categoryPicker];
+      }
+
+      /**
+       * cleans out the link of the page
+       *
+       * @param {string} the wordpress url of the page object
+       * @return {string} a correct polymer routing url
+       */
+      cleanUrlToPath(url) {
+        const urlArray = url.split('/');
+        const path = '/' + urlArray.slice(3).join('/');
+        return path;
+      }
+    };
+
+    customElements.define(DorelMainMenuCreator.is, DorelMainMenuCreator);
   </script>
 </dom-module>

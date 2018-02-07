@@ -3,41 +3,44 @@
 
 <dom-module id="dorel-category-filter-manager">
   <template>
-    <style include="iron-flex iron-flex-alignment">
-      :host {
-      }
-    </style>
     <app-location route="{{ route }}" query-params="{{ queryParams }}"></app-location>
   </template>
   <script>
-    Polymer({
-      is: 'dorel-category-filter-manager',
+    class DorelCategoryFilterManager extends ReduxMixin(Polymer.Element) {
 
-      properties: {
-        /**
-         * @name route
-         * @description this is passed by the app-route component
-         */
-        route: {
-          type: Object,
-          value: function() { return {}; }
-        },
+      static get is() {
+        return 'dorel-category-filter-manager';
+      }
 
-        /**
-         * @name filters
-         * @description Array of filters that will be passed to parent
-         */
-        filters: {
-          type: Array,
-          notify: true,
-          reflectToAttribute: true,
-          value: function() { return []; }
-        }
-      },
+      static get properties() {
+        return {
+          /**
+           * @name route
+           * @description this is passed by the app-route component
+           */
+          route: {
+            type: Object,
+            value: function() { return {}; }
+          },
 
-      observers: [
-        '_getQueryParams(route, queryParams)'
-      ],
+          /**
+           * @name filters
+           * @description Array of filters that will be passed to parent
+           */
+          filters: {
+            type: Array,
+            notify: true,
+            reflectToAttribute: true,
+            value: function() { return []; }
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_getQueryParams(route, queryParams)'
+        ];
+      }
 
       /**
        * observer
@@ -47,21 +50,21 @@
        * if the route changes it will check if there are queryParams in the route
        * if there are queryParams it will loop over the queryParams and set the filters Array
        */
-      _getQueryParams: function(route, queryParams) {
+      _getQueryParams(route, queryParams) {
         this.set('filters', []);
         if(!queryParams || !Object.keys(queryParams).length) {
           return;
         }
         var self = this;
-        var filters = Object.keys(queryParams).map(function(key, value) {
+        var filters = Object.keys(queryParams).map((key, value) => {
           var filterItem = {};
           if(queryParams[key].split(' ').length >= 2) {
-            filterItem.values = queryParams[key].split(' ').map(function(value) {
+            filterItem.values = queryParams[key].split(' ').map((value) => {
               return { value: value };
             });
             filterItem.option = 'match-every';
           } else {
-            filterItem.values = queryParams[key].split(',').map(function(value) {
+            filterItem.values = queryParams[key].split(',').map((value) => {
               return { value: value };
             });
             filterItem.option = 'match-some';
@@ -70,7 +73,7 @@
           return filterItem;
         });
         self.set('filters', filters);
-      },
+      }
 
       /**
        * @name shouldShowProduct
@@ -79,10 +82,10 @@
        * @param filters - Array
        * @returns Boolean if all the conditions are met return true too show the product
        */
-      shouldShowProduct: function(product, filters) {
+      shouldShowProduct(product, filters) {
         var self = this;
 
-        return filters.value.every(function(filter) {
+        return filters.value.every((filter) => {
           var group = self._findFilterGroup(product, filter.key);
           // if product has child_products check child_products too
           if(product.child_products && product.child_products.length) {
@@ -93,7 +96,7 @@
             return self._resultByKey(filter.values, group.values, filter.key, group.type, filter.option);
           }
         });
-      },
+      }
 
       /**
        * @name _resultByKey
@@ -103,7 +106,7 @@
        * @param key - String
        * @returns Boolean
        */
-      _resultByKey: function(filterValues, productValues, key, type, option) {
+      _resultByKey(filterValues, productValues, key, type, option) {
         if(!productValues) {
           return false;
         }
@@ -115,7 +118,7 @@
         } else {
           return this._checkIfSomeValueMatches(filterValues, productValues);
         }
-      },
+      }
 
       /**
        * @name _checkIfValueIsMatch
@@ -124,13 +127,13 @@
        * @param productValues - Array
        * @returns Boolean
        */
-      _checkIfValueIsBigger: function(filterValues, productValues) {
-          return productValues.some(function(productValue) {
-            return filterValues.some(function(filterValue) {
+      _checkIfValueIsBigger(filterValues, productValues) {
+          return productValues.some((productValue) => {
+            return filterValues.some((filterValue) => {
               return Number(filterValue.value) >= Number(productValue.value);
             });
           });
-      },
+      }
 
       /**
        * @name _checkIfSomeValueMatches
@@ -139,13 +142,13 @@
        * @param productValues - Array
        * @returns Boolean
        */
-      _checkIfSomeValueMatches: function(filterValues, productValues) {
-        return productValues.some(function(productValue) {
-          return filterValues.some(function(filterValue) {
+      _checkIfSomeValueMatches(filterValues, productValues) {
+        return productValues.some((productValue) => {
+          return filterValues.some((filterValue) => {
             return filterValue.value === productValue.value.replace(/\s/g, '-');
           })
         });
-      },
+      }
 
       /**
        * @name _checkIfEveryValueMatches
@@ -154,13 +157,13 @@
        * @param productValues - Array
        * @returns Boolean
        */
-      _checkIfEveryValueMatches: function(filterValues, productValues) {
-        return filterValues.every(function(filterValue) {
-          return productValues.some(function(productValue) {
+      _checkIfEveryValueMatches(filterValues, productValues) {
+        return filterValues.every((filterValue) => {
+          return productValues.some((productValue) => {
             return productValue.value === filterValue.value;
           })
         });
-      },
+      }
 
       /**
        * @name _findInFilterGroup
@@ -169,17 +172,17 @@
        * @param key - String
        * @returns Object
        */
-      _findFilterGroup: function(product, key) {
+      _findFilterGroup(product, key) {
         if(!product || !product.filter_groups || !product.filter_groups.length) {
           return {};
         }
-        var group = product.filter_groups.find(function(item) {
+        var group = product.filter_groups.find((item) => {
           return item.name === key;
         });
         return group ? group : {};
       }
-    });
-
+    }
+    customElements.define(DorelCategoryFilterManager.is, DorelCategoryFilterManager);
   </script>
 
 </dom-module>
