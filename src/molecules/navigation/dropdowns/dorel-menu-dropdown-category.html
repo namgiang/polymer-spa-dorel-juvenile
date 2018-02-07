@@ -76,15 +76,12 @@
           <dorel-layout-column desktop-column-span="2" tablet-column-span="4" mobile-column-span="12">
             <dorel-dropdown-card
               is-active="[[ checkIfActive(card.link, route) ]]"
-              card-data="[[ _transformToCartData(card) ]]"
+              card-data="[[ _transformToCardData(card) ]]"
               cta-type="[[ ctaType ]]"
-              gtm-parent="[[ gtmParent ]]"
-              gtm-parent-index="[[ gtmParentIndex ]]"
-              gtm-child="dorel-card"
-              cta-type="link"
-              gtm-child-index="[[ index ]]"></dorel-dropdown-card>
+              cta-type="link"></dorel-dropdown-card>
           </dorel-layout-column>
         </template>
+
         <dorel-layout-column desktop-column-span="2" tablet-column-span="4" mobile-column-span="12">
           <ul class="dropdown-menu" id="dropdownMenu">
             <template is="dom-repeat" items="[[ _maxItems(dropdownItems) ]]" as="menuItem">
@@ -96,13 +93,7 @@
                            link="[[ menuItem.link ]]"
                            size="small"
                            no-margin
-                           icon="dorel-icons:chevron-right"
-                           gtm-parent="dorel-navigation-main"
-                           gtm-parent="[[ gtmParent ]]"
-                           gtm-parent-index="[[ gtmParentIndex ]]"
-                           gtm-child="[[ gtmChild ]]"
-                           gtm-child-index="[[ gtmChildIndex ]]"
-                           gtm-cta-index="[[ index ]]">
+                           icon="dorel-icons:chevron-right">
                   [[ menuItem.title ]]
                 </dorel-cta>
               </li>
@@ -114,13 +105,7 @@
                      link="[[ mainItem.link ]]"
                      size="medium"
                      no-margin
-                     icon="dorel-icons:chevron-right"
-                     gtm-action="plan-route-retailer"
-                     gtm-parent="[[ gtmParent ]]"
-                     gtm-parent-index="[[ gtmParentIndex ]]"
-                     gtm-child="[[ gtmChild ]]"
-                     gtm-child-index="[[ gtmChildIndex ]]"
-                     gtm-cta-index="0">
+                     icon="dorel-icons:chevron-right">
             {{ localize('All') }} [[ _toLowercase(mainItem.title) ]]
 
           </dorel-cta>
@@ -211,18 +196,35 @@
         return 'dropdown' + mainItem.id;
       },
 
-      _transformToCartData: function (item) {
-        var card = {
-          card_title: item.title,
-          link: item.link,
-          sub_title: item.sub_title
-        };
+      _transformToCardData: function (item) {
+        let card = {};
 
-        if (item.thumbnail_url) {
-          card.image_url = item.thumbnail_url;
+        if (!item.hasOwnProperty("sku")) {
+          card = {
+            card_title: item.title,
+            link: item.link,
+            sub_title: item.sub_title
+          };
+
+          if (item.thumbnail_url) {
+            card.image_url = item.thumbnail_url;
+          } else {
+            card.bynder_card_image = item.thumbnail;
+          }
+
         } else {
-          card.bynder_card_image = item.thumbnail;
+
+          card = {
+            card_title: item.name.label === 'Commercial product name' ? item.name.value : 'No product name defined',
+            link: (item.url)
+              ? `${window.location.origin}${this.get('mainItem.link')}${item.url}`
+              : '#',
+            sub_title: '',
+            image_url: item.child_products[0].images.thumbnail
+          };
+
         }
+
         return card;
       },
 
