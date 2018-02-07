@@ -214,7 +214,10 @@
           products: {
             type: Array,
             statePath: function(state) {
-              if (!this.get('mainItem') || !this.get('mainItem.category_id') || !state.product.products) return;
+              if (!this.get('mainItem')
+                || !this.get('mainItem.category_id')
+                || !state.product
+                || !state.product.products) return;
 
               const categoryPicker = this.get('mainItem.category_id');
 
@@ -225,7 +228,8 @@
 
                 // filter the products and get only the products that comply to the wp categories defined for this page
                 return state.product.products.filter(product => {
-                  return (product.categories.length && product.categories.some(category => {
+                  // product.categories can be undefined or no length
+                  return (product.categories && product.categories.length && product.categories.some(category => {
                     return wpCatIdsToInt.includes(category);
                   })) ? product : '';
                 });
