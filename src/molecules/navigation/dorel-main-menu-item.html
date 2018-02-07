@@ -210,6 +210,8 @@
 
           /**
            * will return products based on the category of the mainItem
+           *
+           * TODO: refactor this part retrieval for a main category is done here and also on the category listing page as well. Sorting is also duplicated here and on the category listing page to mimic the same sorting
            */
           products: {
             type: Array,
@@ -227,13 +229,37 @@
                 const wpCatIdsToInt = categoryPicker.map(category => parseInt(category));
 
                 // filter the products and get only the products that comply to the wp categories defined for this page
-                return state.product.products.filter(product => {
+                const filteredProducts = state.product.products.filter(product => {
                   // product.categories can be undefined or no length
                   return (product.categories && product.categories.length && product.categories.some(category => {
                     return wpCatIdsToInt.includes(category);
                   })) ? product : '';
                 });
 
+                // sort filtered products
+                return filteredProducts.sort((a, b) => {
+
+                  // if the sort type created_at is set and they are not yet converted to a Date in milliseconds
+                  if (typeof a['created_at'].value === 'string') {
+                    a['created_at'].value = new Date(a['created_at'].value).getTime();
+                  }
+                  if (typeof b['created_at'].value === 'string') {
+                    b['created_at'].value = new Date(b['created_at'].value).getTime();
+                  }
+
+                  if (a['created_at'].value < b['created_at'].value) {
+                    return 1;
+                  }
+
+                  if (a['created_at'].value < b['created_at'].value) {
+                    return 1;
+                  } else if (a['created_at'].value > b['created_at'].value) {
+                    return -1;
+                  }
+
+                });
+
+              // handle old version of category picker (single number type)
               } else if (!isNaN(categoryPicker)) {
 
                 return state.product.products.filter((product, index) => {
