@@ -124,8 +124,6 @@
       <template is="dom-if" if="[[ !mainItem.dropdown ]]">
         <a on-click="clickMainItem"
           class="link"
-          gtm-parent="dorel-navigation-main"
-          gtm-parent-index="[[ index ]]"
           href="[[ mainItem.link ]]">
           <span class="link-text">[[ mainItem.title ]]</span>
         </a>
@@ -134,9 +132,7 @@
       <template is="dom-if" if="[[ mainItem.dropdown ]]">
         <div on-click="toggleDropdown"
           tabindex="0"
-          class="link"
-          gtm-parent="dorel-navigation-main"
-          gtm-parent-index="[[ index ]]">
+          class="link">
           <span class="link-text">[[ mainItem.title ]]</span>
           <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
         </div>
@@ -210,11 +206,31 @@
           products: {
             type: Array,
             statePath: function(state) {
-              return state.product.products.filter((product, index) => {
-                return !(product.categories && product.categories.indexOf(this.mainItem.category_id));
-              }).map((product) => {
-                return this.subCategoryItemMold(product);
-              }).filter((item, index) => index < 5);
+              if (!this.get('mainItem') || !this.get('mainItem.category_id')) return;
+
+              const categoryPicker = this.get('mainItem.category_id');
+
+              if (categoryPicker.constructor === Array) {
+
+                // (TODO) the wp category ids array items are strings, convert them to integers to compare with the magento product category ids
+                const wpCatIdsToInt = categoryPicker.map(category => parseInt(category));
+
+                // filter the products and get only the products that comply to the wp categories defined for this page
+                return state.product.products.filter(product => {
+                  return (product.categories.some(category => {
+                    return wpCatIdsToInt.includes(category);
+                  })) ? product : '';
+                });
+
+              } else if (!isNaN(categoryPicker)) {
+
+                return state.product.products.filter((product, index) => {
+                  return !(product.categories && product.categories.indexOf(categoryPicker));
+                }).map((product) => {
+                  return this.subCategoryItemMold(product);
+                }).filter((item, index) => index < 5);
+
+              }
             }
           },
 
