@@ -55,20 +55,22 @@
         @apply(--theme-typography-3);
         margin-top: 0;
       }
-
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
 
-    <section tablet-medium-up$="{{ breakpoints.tabletMediumUp }}">
+    <section
+      tablet-medium-up$="{{breakpoints.tabletMediumUp}}">
       <div class="feature">
         <div class="feature-wrapper">
           <template
             is="dom-if"
             if="[[ _hasValue(featureData.image) ]]">
-            <dorel-product-image class="feature-image"
-                        sizing="contain"
-                        image-url="[[ featureData.image ]]">
+            <dorel-product-image
+              class="feature-image"
+              sizing="contain"
+              image-url="[[ featureData.image ]]">
             </dorel-product>
           </template>
           <div class="feature-content">
@@ -76,14 +78,16 @@
               is="dom-if"
               if="[[ _hasValue(featureData.title) ]]">
               <h3 class="feature-title">
-                <dorel-safe-html html="[[ featureData.title ]]"></dorel-safe-html>
+                <dorel-safe-html
+                  html="[[ featureData.title ]]"></dorel-safe-html>
               </h3>
             </template>
             <template
               is="dom-if"
               if="[[ _hasValue(featureData.description) ]]">
               <p class="feature-description">
-                <dorel-safe-html html="[[ featureData.description ]]"></dorel-safe-html>
+                <dorel-safe-html
+                  html="[[ featureData.description ]]"></dorel-safe-html>
               </p>
             </template>
           </div>
@@ -93,27 +97,24 @@
   </template>
 
   <script>
+    class DorelProductFeature extends Polymer.mixinBehaviors([ConditionalBehaviors], Polymer.Element) {
 
-    Polymer({
-      is: 'dorel-product-feature',
+      static get is() { return 'dorel-product-feature'; }
 
-      properties: {
-        /**
-         * @attribute
-         * @name featureData
-         * @description data retrieved from ACF/Wordpress to build up this page
-         */
-        featureData: {
-          type: Object,
-          value: function () {
-            return {};
+      static get properties() {
+        return {
+          /**
+           * @attribute
+           * @name featureData
+           * @description data retrieved from ACF/Wordpress to build up this page
+           */
+          featureData: {
+            type: Object,
+            value: () => ({})
           }
         }
-      },
-
-      behaviors: [ConditionalBehaviors]
-    });
-
+      }
+    }
+    customElements.define(DorelProductFeature.is, DorelProductFeature);
   </script>
-
 </dom-module>
