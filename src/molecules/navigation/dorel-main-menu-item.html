@@ -120,42 +120,55 @@
       }
     </style>
 
-    <div class="menu-item" class$="{{ getClasses(mainItem) }}" is-active$="[[ isActive ]]">
-      <template is="dom-if" if="[[ !mainItem.dropdown ]]">
-        <a on-click="clickMainItem"
-          class="link"
-          href="[[ mainItem.link ]]">
-          <span class="link-text">[[ mainItem.title ]]</span>
+    <div
+      class$="menu-item [[getClasses(mainItem)]]"
+      is-active$="[[isActive]]">
+      <template
+        is="dom-if"
+        if="[[!mainItem.dropdown]]">
+        <a class="link"
+          href$="[[mainItem.link]]"
+          on-click="clickMainItem">
+          <span class="link-text">[[mainItem.title]]</span>
         </a>
       </template>
 
-      <template is="dom-if" if="[[ mainItem.dropdown ]]">
-        <div on-click="toggleDropdown"
-          tabindex="0"
-          class="link">
-          <span class="link-text">[[ mainItem.title ]]</span>
-          <iron-icon class="menu-item__icon" opened$="[[ opened ]]" icon="dorel-icons:expand-more"></iron-icon>
+      <template
+        is="dom-if"
+        if="[[mainItem.dropdown]]">
+        <div class="link"
+          on-click="toggleDropdown"
+          tabindex="0">
+          <span class="link-text">[[mainItem.title]]</span>
+          <iron-icon class="menu-item__icon"
+            opened$="[[opened]]"
+            icon="dorel-icons:expand-more"></iron-icon>
         </div>
 
-        <template is="dom-if" if="[[ checkDropdownType(mainItem, 'default') ]]">
+        <template
+          is="dom-if"
+          if="[[checkDropdownType(mainItem, 'default')]]">
           <dorel-menu-dropdown-default
-            index="[[ index ]]"
-            main-item="[[ mainItem ]]"
-            opened="[[ opened ]]"
-            route="[[ route ]]"
-            dropdown-items="[[ mainItem.dropdown_items ]]">
+            index="[[index]]"
+            main-item="[[mainItem]]"
+            opened="[[opened]]"
+            route="[[route]]"
+            dropdown-items="[[mainItem.dropdown_items]]">
           </dorel-menu-dropdown-default>
         </template>
 
-        <template is="dom-if" if="[[ checkDropdownType(mainItem, 'category') ]]">
-          <div class="category-container" opened$="[[ opened ]]">
+        <template
+          is="dom-if"
+          if="[[checkDropdownType(mainItem, 'category')]]">
+          <div class="category-container"
+            opened$="[[opened]]">
             <dorel-menu-dropdown-category
-              index="[[ index ]]"
-              main-item="[[ mainItem ]]"
-              opened="[[ opened ]]"
-              route="[[ route ]]"
-              featured-items="[[ _contentSwitch(mainItem, products) ]]"
-              dropdown-items="[[ mainItem.dropdown_items ]]">
+              index="[[index]]"
+              main-item="[[mainItem]]"
+              opened="[[opened]]"
+              route="[[route]]"
+              featured-items="[[_contentSwitch(mainItem, products)]]"
+              dropdown-items="[[mainItem.dropdown_items]]">
             </dorel-menu-dropdown-category>
           </div>
         </template>
@@ -282,8 +295,8 @@
        */
       getClasses(mainItem) {
         return (this.checkDropdownType(mainItem, 'category'))
-          ? 'menu-item category'
-          : 'menu-item';
+          ? 'category'
+          : '';
       }
 
       /**
