@@ -13,10 +13,10 @@ clickOutsideBehavior = {
   clickOutsideListen: function () {
     // run this method to start listening
     this._clickOutsideUnlisten();
-    window.addEventListener('click', this.clickOutsideListenerBinded, false);
+    window.addEventListener('click', this.clickOutsideListenerBinded, {passive: true});
   },
   _clickOutsideUnlisten: function () {
-    window.removeEventListener('click', this.clickOutsideListenerBinded, false);
+    window.removeEventListener('click', this.clickOutsideListenerBinded, {passive: true});
   },
   _clickOutsideListener: function (ev) {
     // check if the user has clicked on my component or on my children
