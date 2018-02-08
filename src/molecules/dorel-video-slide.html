@@ -247,7 +247,7 @@
         }
         this.set('playing', true);
         this.$.video.resume();
-        this.addEventListener('mousemove', this.handleMouseMove);
+        this.addEventListener('mousemove', this.handleMouseMove, {passive: true});
         this.hideButtonLater();
       }
 
@@ -261,7 +261,7 @@
         }
         this.set('playing', false);
         this.$.video.pause();
-        this.removeEventListener('mousemove', this.handleMouseMove);
+        this.removeEventListener('mousemove', this.handleMouseMove, {passive: true});
         clearTimeout(this.get('hideButtonTimeout'));
         this.set('hideButton', false);
       }
@@ -282,7 +282,7 @@
        */
       hideButtonLater () {
         clearTimeout(this.get('hideButtonTimeout'));
-        this.set('hideButtonTimeout', setTimeout( () => {
+        this.set('hideButtonTimeout', setTimeout(() => {
           this.set('hideButton', true);
         },1200));
       }
