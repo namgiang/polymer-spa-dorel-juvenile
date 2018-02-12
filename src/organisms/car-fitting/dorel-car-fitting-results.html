@@ -258,7 +258,6 @@
                     <br> 
                     <small class="image-message">[[stepData.main_section.info]]</small>
                      [[ loadImage(car.result, carIndex) ]]
-                    <div id="positron"></div>
                     <div id="svg_container_[[carIndex]]" class="svg_container"></div>
                   </template>
                 </dorel-layout-column>
@@ -417,9 +416,15 @@
         }.bind(this));
         return iconsUsed;
       }
+      
+      offset(el) {
+        const rect = el.getBoundingClientRect(),
+        scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+        scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+      }
 
       loadImage(data, carIndex) {
-        //debugger;
         if(data) {
           if(data.carseat_positions) {
 
@@ -430,10 +435,6 @@
             this.iconsUsed.icon_green.used = false; 
             this.iconsUsed.icon_top_tether.used = false;
 
-            let positron = this.shadowRoot.querySelector('#positron');
-            let coords = positron.getBoundingClientRect();
-            //console.log('co', coords.left, coords.bottom);
-            
             let self = this;
             let svgCarNode = null;
             function onSVGLoaded(loadedFragment) {
@@ -471,12 +472,11 @@
                   const greenIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_green #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
                   greenIcon.mousemove(function(event) {
-                    let coord = event.currentTarget.getBoundingClientRect();
-                    notice.style.left = `${coord.left + 40}px`;
+                    const offset = self.offset(event.currentTarget);
+                    notice.style.left = `${offset.left + 40}px`;
                     notice.style.display = 'block';
-                    const noticeHeight = notice.clientHeight;
-                    notice.style.top = `${coord.top - (noticeHeight / 2)}px`;
-                    t
+                    const height = notice.clientHeight;
+                    notice.style.top = `${offset.top - (height - (height / 3))}px`;
                   });
                   greenIcon.mouseout(function(event) {
                     notice.style.display = 'none';
@@ -493,14 +493,24 @@
                   svgCarNode.select(`#seat_${item.seat_position} #icon_orange`).attr({'visibility': 'visible'});
                   const orangeIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_orange #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
-                  orangeIcon.mousemove(function(event) {
-                    let coord = event.currentTarget.getBoundingClientRect();
-                    //console.log('bcr', test.left, test.top);
-                    //console.log('ev', event.clientX, event.clientY);
-                    notice.style.left = `${coord.left + 40}px`;
+                  orangeIcon.mousemove(function(event) {                
+                    const offset = self.offset(event.currentTarget);
                     notice.style.display = 'block';
-                    const noticeHeight = notice.clientHeight;
-                    notice.style.top = `${coord.top - (noticeHeight / 2)}px`;
+                    notice.style.top = '0px';
+                    notice.style.left = '0px';
+                    const width = notice.clientWidth;
+                    const height = notice.clientHeight;
+                    //if(self.breakpoints.mobileSmall || self.breakpoints.mobileMedium) {
+                    //  setTimeout(function(){
+                    //    const top = (offset.top - (height + 30));
+                    //    console.log(offset.top, height, top);
+                    //    notice.style.top = `${top}px`;
+                    //    notice.style.left = `${(document.documentElement.clientWidth / 2) - (width / 2)}px`; 
+                    //  }, 200);
+                    //} else {
+                      notice.style.top = `${offset.top - (height - (height / 3))}px`;
+                      notice.style.left = `${offset.left + 40}px`;
+                    //}
                   });
                   orangeIcon.mouseout(function(event) {
                     notice.style.display = 'none';
@@ -512,11 +522,11 @@
                   const tetherIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_tether #hover_area`);
                   const tether = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_tether`);
                   tetherIcon.mousemove(function(event) {
-                    let coord = event.currentTarget.getBoundingClientRect();
-                    tether.style.left = `${coord.left + 20}px`;
+                    const offset = self.offset(event.currentTarget);
+                    tether.style.left = `${offset.left + 20}px`;
                     tether.style.display = 'block';
-                    const noticeHeight = tether.clientHeight;
-                    tether.style.top = `${coord.top - (noticeHeight / 2)}px`;
+                    const height = tether.clientHeight;
+                    tether.style.top = `${offset.top - (height - (height / 3))}px`;
                   });
                   tetherIcon.mouseout(function(event) {
                     tether.style.display = 'none';
@@ -544,11 +554,6 @@
       previousStep() {
         this.set('stepData.isCurrent', false);
         this.set('stepController.currentStep', this.stepData.previousStep);
-      }
-      
-      ready() {
-        super.ready();
-        //debugger;
       }
     }
     

@@ -230,7 +230,8 @@
 
       static get observers() {
         return [
-            'updateStep(carData.*)'
+            'updateStep(carData.*)',
+            'updateStep(productList.*)'
         ];
       }
 
@@ -294,10 +295,14 @@
       }
 
       updateStep() {
+        //debugger;
         if(this.carData.length > 0 && this.carData[0].result) {
-          this.$.next_button.removeAttribute('disabled');
-          this.$.add_button.removeAttribute('disabled');
-          this.$.add_button.removeAttribute('hidden');
+          if(this.carData[0].result.message) {
+            //debugger;
+            this.$.next_button.removeAttribute('disabled');
+            this.$.add_button.removeAttribute('disabled');
+            this.$.add_button.removeAttribute('hidden');            
+          }
         } else {
           this.$.next_button.setAttribute('disabled', true);
           this.$.add_button.setAttribute('disabled', true);
