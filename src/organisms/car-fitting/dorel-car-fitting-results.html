@@ -346,6 +346,7 @@
             computed: 'getProductImage(productData)'
           },
           iconsUsed2: Array,
+          carGraphics: String,
           iconsUsed: {
             type: Object,
             value: {
@@ -384,10 +385,15 @@
         };
       }
       
-      // measureMe (e) {
-      //   var rect = e.currentTarget.getBoundingClientRect();
-      //   alert(JSON.stringify(rect));
-      // }
+      static get observers() {
+        return [
+          'productChanged(productData.*)' 
+        ];
+      }
+      
+      productChanged() {
+        //debugger;  
+      }
 
       getFitOrNoFit (data) {
         //debugger;
@@ -545,7 +551,13 @@
               const container = this.shadowRoot.querySelector(`#svg_container_${carIndex}`);
               container.innerHTML = `<svg id="car_${carIndex}" class="svg_node"></svg>`;
               svgCarNode = Snap(this.shadowRoot.querySelector(`#car_${carIndex}`));
-              Snap.load(`/assets/images/car-fitting/car_graphics.svg`, onSVGLoaded);
+              if(data.car_body_configuration.includes('bench')) {
+                self.set('carGraphics', 'car_graphics_bench');
+              } else {
+                self.set('carGraphics', 'car_graphics_normal');
+              }
+              const svgFile = this.get('carGraphics');
+              Snap.load(`/assets/images/car-fitting/${svgFile}.svg`, onSVGLoaded);
             }, 0);
           }
         }
