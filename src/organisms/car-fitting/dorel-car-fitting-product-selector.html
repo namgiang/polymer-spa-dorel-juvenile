@@ -134,7 +134,9 @@
       
       productListFromState(state) {
         let list = [];
-        this.productDisplayListFromCFL.forEach(function(element) {
+        //console.log('new run')
+        this.productDisplayListFromCFL.forEach(function(element, index) {
+          //console.log(index, '->', JSON.stringify(element));
           function findCarseatProduct(product) {
             return product.sku === element[0];
           }
@@ -145,12 +147,12 @@
           
           const carseat = state.product.products.find(findCarseatProduct);
           const base = state.product.products.find(findBaseProduct);
-          
           if(carseat && element.length === 1) {
             if(!carseat.isLoading && carseat.sku && carseat.name) {
               const product = {
                 carseat: carseat
               }
+              //console.log('name', carseat.name.value)
               list.push(product);
             }
           }
@@ -162,6 +164,7 @@
                   carseat: carseat,
                   base: base
                 }
+                //console.log('name', carseat.name.value + '&' + base.name.value)
                 list.push(product);
               }
             }
@@ -253,27 +256,27 @@
         const data = this.$.carProducts.lastResponse;
         if(data) {
           let productDataRequestList = [];
-          const productDisplayListFromCFL = data.product_results.reduce(function(result, element) {
+          let productDisplayListFromCFL = [];
+          data.product_results.map(function(element) {
             const SKUS = element.sku.split('-');            
-            console.log('->', JSON.stringify(element), 'length', SKUS.length);
+            //console.log('->', JSON.stringify(element), 'length', SKUS.length);
             if(SKUS.length === 1) {
               if(String(SKUS[0]).substring(0, 2) === 'MC' || String(SKUS[0]).substring(0, 2) === 'BB') {
+                //console.log('1', JSON.stringify(element.carseat_name));
                 productDataRequestList = productDataRequestList.concat(SKUS);
-                console.log('1', JSON.stringify(element.carseat_name));
-                result.push(SKUS);
+                productDisplayListFromCFL.push(SKUS);
               }
             }
             if(SKUS.length === 2) {
               if(String(SKUS[0]).substring(0, 2) === 'MC' || String(SKUS[0]).substring(0, 2) === 'BB' || String(SKUS[1]).substring(0, 2) === 'MC' || String(SKUS[1]).substring(0, 2) === 'BB') {
+                //console.log('2', JSON.stringify(element.carseat_name));
                 productDataRequestList = productDataRequestList.concat(SKUS);
-                console.log('2', JSON.stringify(element.carseat_name));
-                result.push(SKUS);
+                productDisplayListFromCFL.push(SKUS);
               }
             }
-            return result;
-          }, []);
-          
-          console.log(JSON.stringify(productDisplayListFromCFL));
+          });
+          //console.log('productDisplayListFromCFL', JSON.stringify(productDisplayListFromCFL));
+          //console.log('productDataRequestList', JSON.stringify(productDataRequestList));
           this.set('productDisplayListFromCFL', productDisplayListFromCFL);
           this.set('productDataRequestList', productDataRequestList);
           this.dispatch('requestProductsBySku', productDataRequestList);
