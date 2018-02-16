@@ -548,6 +548,23 @@
                     notice.style.display = 'none';
                   });
                 }
+                if(item.icon === 'blue') {
+                  self.iconsUsed.icon_blue.used = true;
+                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`#seat_${item.seat_position} #icon_blue`).attr({'visibility': 'visible'});
+                  const blueIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_blue #hover_area`);
+                  const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
+                  blueIcon.mousemove(function(event) {
+                    const offset = self.offset(event.currentTarget);
+                    notice.style.left = `${offset.left + 40}px`;
+                    notice.style.display = 'block';
+                    const height = notice.clientHeight;
+                    notice.style.top = `${offset.top - (height - (height / 3))}px`;
+                  });
+                  blueIcon.mouseout(function(event) {
+                    notice.style.display = 'none';
+                  });
+                }
                 if(item.icon === 'red') {
                   self.iconsUsed.icon_red.used = true;
                   svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
