@@ -26,16 +26,16 @@
         padding: 1.8rem;
         margin-bottom: 1.5rem;
       }
-      .image {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 50%;
-        display: flex;
-        flex: 1;
-        z-index: -1000;
-      }
+      /*.image-wrapper {*/
+      /*  position: absolute;*/
+      /*  top: 0;*/
+      /*  right: 0;*/
+      /*  bottom: 0;*/
+      /*  width: 50%;*/
+      /*  display: flex;*/
+      /*  flex: 1;*/
+      /*  z-index: -1000;*/
+      /*}*/
       .car-selection, .car-display {
         width: auto;
         height: auto;
@@ -125,7 +125,7 @@
         align-content: center;
         justify-content: flex-start;
       }
-      .imgwrap {
+      .selected-product {
         text-align: left;
       }
       .imgwrapicon {
@@ -143,7 +143,16 @@
         margin: 10px 10px 0px 20px;
       }
       .info {
-        margin: 25px 10px 10px 20px;
+        /*margin: 25px 10px 10px 20px;*/
+        height: 6rem;
+      }
+      .info .title {
+         @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+        margin: 0 0 1rem 0;
+        padding: 0;
+        color: var(--theme-brand-color-1);       
       }
       .timeAgo {
         font-size: 11px;
@@ -231,14 +240,37 @@
       dorel-layout-row, dorel-layout-column {
         margin-top: 0;
       }
+      
+      .image-wrapper {
+        border-radius: var(--theme-border-radius-2);
+        width: 100%;
+        height: 15em;
+        /*background-color: var(--theme-color-monochrome-2);*/
+        overflow: hidden;
+        display: flex;
+        padding: .25em;
+        box-sizing: border-box;
+      }
+      
+      .image-selected {
+        width: 100%;
+        height: 100%;
+        max-width: 17em;
+        max-height: 19.2em;
+        margin: auto;
+        float: none;
+        display: block;
+      }
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container>
       <dorel-layout-row align="middle">
          <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12" align="left">
-          <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
-            [[ localize('common#back') ]]
-          </dorel-cta>
+          <template is="dom-if" if="[[ !standalone ]]" restamp="true">
+            <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+              [[ localize('common#back') ]]
+            </dorel-cta>
+          </template>
         </dorel-layout-column>
       </dorel-layout-row>
       <br><br>
@@ -267,16 +299,30 @@
           <dorel-layout-row>
             <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
               <div class="notification-box">
-                    <div class="imgwrap">
+                    <div class="selected-product">
                       <h2 class="content-title">[[ stepData.selected_product.title ]]</h2>
-                      <iron-image src="[[ productImage ]]"
-                        class="photo card-image__background"
-                        position="center" sizing="contain">
-                      </iron-image>
-                      <div class="timeAgo">Explore other suitable solutions</div>
+                      <div class="image-wrapper">
+                        <dorel-product-image
+                          class="image-selected"
+                          sizing="contain"
+                          image-url="[[currentProductImage]]"></dorel-product-image>
+                        <template is="dom-if" if="[[currentBaseImage]]">
+                          <dorel-product-image
+                            class="image-selected"
+                            sizing="contain"
+                            image-url="[[currentBaseImage]]"></dorel-product-image>
+                        </template>
+                      </div>
+                      <!--<div class="timeAgo">Explore other suitable solutions</div>-->
                     </div>
                     <div class="info">
-                      <h2 class="title">[[ productData.name.value ]]</h2>
+                      <h2 class="title">[[ selectedProductName ]]</h2>
+                      <dorel-cta
+                        type="primary"
+                        title="[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]"
+                        link="[[ productURL ]]"
+                        size="medium"
+                        icon="dorel-icons:chevron-right">[[localize('See_details')]]</dorel-cta>
                     </div>
               </div>
               <div class="notification-box">
@@ -312,7 +358,9 @@
         <div id="car_[[ carIndex ]]_seat_[[ seat.seat_position ]]_notification" class="notification">
           <div class="effect7">
             <object data="/assets/images/car-fitting/icon_[[ seat.icon ]].svg" type="image/svg+xml"></object>
-            <strong class="notification-title">Safety warning</strong>
+            <template is="dom-if" if="[[isSafetywarning(seat.icon)]]">
+              <strong class="notification-title">[[localize('car_fitting_results#safety_warning')]]</strong>
+            </template>
             <ul>
               <template is="dom-repeat" items="[[ seat.notices ]]" as="notification" restamp="true">
                 <li>[[ localize(notification) ]]</li>
@@ -341,10 +389,10 @@
       
       static get properties() {
         return {
-          productImage: {
-            type: String,
-            computed: 'getProductImage(productData)'
-          },
+          // productImage: {
+          //   type: String,
+          //   computed: 'getProductImage(selectedProduct)'
+          // },
           iconsUsed2: Array,
           carGraphics: String,
           iconsUsed: {
@@ -387,8 +435,24 @@
       
       static get observers() {
         return [
-          'productChanged(productData.*)' 
+          'productChanged(productData.*)',
+          'productDataChanged(selectedProduct.*)'
         ];
+      }
+      
+      productDataChanged(data) {
+        if(data.value.carseat) {
+          this.selectedProductName = (data.value.base ? `${data.value.carseat.name.value} & ${data.value.base.name.value}` : data.value.carseat.name.value);
+          this.currentProductImage = data.value.carseat.child_products[0].images.image;
+          this.currentBaseImage = (data.value.base) ? data.value.base.child_products[0].images.image : null;
+          //this.productURL = `${window.location.origin}/${window.location.pathname.split('/')[1]}/${window.location.pathname.split('/')[2]}/${data.value.carseat.linkUrl}`;
+          /* @todo read out product template en link there */ 
+          this.productURL = `/gb-en/car-seats/${data.value.carseat.url}`;
+        }
+      }      
+        
+      isSafetywarning(icon) {
+        return (icon === 'orange') ? true : false;
       }
       
       productChanged() {
@@ -407,10 +471,6 @@
 
       getLabelOrNotListed (data) {
         if(data) return (data.carseat_positions);
-      }
-
-      getProductImage() {
-        if(this.productData && this.productData.child_products) return this.productData.child_products[0].images.image;
       }
 
       renderLegend() {

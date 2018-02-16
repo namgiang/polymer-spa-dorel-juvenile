@@ -102,10 +102,10 @@
             value: []
           },
 
-          productData: {
-            type: Object,
-            value: () => {}
-          },
+          // productData: {
+          //   type: Object,
+          //   value: () => {}
+          // },
 
           productList: {
             type: Array,
@@ -124,14 +124,14 @@
           'productsFetched(productList.*)'
         ];
       }
-      
+
       productsFetched(e) {
         const list = this.get('productList');
         if(list.length > 0) {
           this.push('selectedIndexGlobal', 0);
         }
       }
-      
+
       productListFromState(state) {
         let list = [];
         //console.log('new run')
@@ -185,12 +185,14 @@
             
             if(product.base) {
               sku = `${product.carseat.sku}-${product.base.sku}`;
+              this.set('productName', `${product.carseat.name.value} & ${product.base.name.value}`);
             } else {
               sku = product.carseat.sku;
+              this.set('productName', product.carseat.name.value);
             }
-            
-            this.set('requestedProductName', product.carseat.name.value);
-            
+
+            this.set('selectedProduct.0', product);
+              
             const cars = this.get('carData').map((item) => this.getCarSelection(item.result.formData));
 
             /* begin hack */

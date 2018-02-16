@@ -80,6 +80,7 @@
         car-data="{{ carData }}"
         hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
         product-data="{{ productData }}"
+        selected-product="{{ selectedProduct }}"
         product-name="{{ requestedProductName }}"
         step-controller="{{ stepController  }}"
         step-data="{{ stepData.carFittingResults }}">
@@ -88,9 +89,11 @@
 
     <template is="dom-if" if="{{ carData }}" restamp="true">
       <dorel-car-fitting-results
+        standalone="[[ standalone ]]"
         car-data="{{ carData }}"
         hidden$="[[ !stepData.carFittingResults.isCurrent ]]"
         product-data="[[ productData ]]"
+        selected-product="[[ selectedProduct ]]"
         step-controller="{{ stepController  }}"
         step-data="{{ stepData.carFittingResults }}">
       </dorel-car-fitting-results>
@@ -134,6 +137,12 @@
             value: true
           },
           carData: {
+            type: Array,
+            value: () => {
+              return []
+            }
+          },
+          selectedProduct: {
             type: Array,
             value: () => {
               return []
@@ -303,7 +312,7 @@
       static get observers() {
         return [
             'setCurrentStep(stepController.currentStep)',
-            '_productNameChanged(requestedProductName)'
+            '_productNameChanged(requestedProductName)',
         ];
       }
 
@@ -314,7 +323,7 @@
        * @returns Boolean
        */
       _productNameChanged(productName) {
-        debugger;
+        //debugger;
         if(productName) {
           this.dispatch('requestProduct', productName);
         }

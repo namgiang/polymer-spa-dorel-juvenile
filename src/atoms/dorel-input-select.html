@@ -178,12 +178,26 @@
       Polymer.IronFormElementBehavior,
     ],
 
+    getPath: function(event) {
+      var path = [];
+      var currentElem = event.target;
+      while (currentElem) {
+        path.push(currentElem);
+        currentElem = currentElem.parentElement;
+      }
+      if (path.indexOf(window) === -1 && path.indexOf(document) === -1)
+        path.push(document);
+      if (path.indexOf(window) === -1)
+        path.push(window);
+      return path;
+    },
+
     /**
      * @name _onChange
      * @description detects a change in the selected input, and propagates it to the selected property
      */
     _onChange: function (event) {
-      var selectedValue = event.path[0].value;
+      var selectedValue = this.getPath(event)[0].value;
       var selectedOption = this.get('options').find(function (option) {
         return option.value === selectedValue || option.value === parseInt(selectedValue);
       });

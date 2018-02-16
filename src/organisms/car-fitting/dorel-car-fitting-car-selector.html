@@ -295,13 +295,15 @@
       }
 
       updateStep() {
-        //debugger;
         if(this.carData.length > 0 && this.carData[0].result) {
           if(this.carData[0].result.message) {
-            //debugger;
             this.$.next_button.removeAttribute('disabled');
             this.$.add_button.removeAttribute('disabled');
             this.$.add_button.removeAttribute('hidden');            
+          } else {
+            this.$.next_button.setAttribute('disabled', true);
+            this.$.add_button.setAttribute('disabled', true);
+            this.$.add_button.setAttribute('hidden', true);
           }
         } else {
           this.$.next_button.setAttribute('disabled', true);
