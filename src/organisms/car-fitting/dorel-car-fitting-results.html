@@ -382,7 +382,7 @@
     /* global Snap */
     /* global CustomEvent */
     /* global customElements */
-    class DorelCarFittingResults extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+    class DorelCarFittingResults extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-car-fitting-results';
@@ -394,6 +394,12 @@
           //   type: String,
           //   computed: 'getProductImage(selectedProduct)'
           // },
+          productList: {
+            type: Array,
+            statePath: function (state) {
+             return this.productListFromState(state);
+            },
+          },
           iconsUsed2: Array,
           carGraphics: String,
           iconsUsed: {
@@ -440,7 +446,16 @@
           'productDataChanged(selectedProduct.*)'
         ];
       }
-      
+
+      productListFromState(state) {
+          const data = {
+            carseat: state.product.products[0]
+          };
+          if(data.carseat.isLoading === false && data.carseat.notAvailable === false) {
+            this.set('selectedProduct', data);
+          }
+      }
+
       productDataChanged(data) {
         if(data.value.carseat) {
           this.selectedProductName = (data.value.base ? `${data.value.carseat.name.value} & ${data.value.base.name.value}` : data.value.carseat.name.value);
@@ -450,8 +465,8 @@
           /* @todo read out product template en link there */ 
           this.productURL = `/gb-en/car-seats/${data.value.carseat.url}`;
         }
-      }      
-        
+      }
+
       isSafetywarning(icon) {
         return (icon === 'orange') ? true : false;
       }
@@ -463,7 +478,6 @@
       getFitOrNoFit (data) {
         //debugger;
       }
-
 
       getIconLabel(icon) {
         var test = this.iconsUsed[icon].label;
