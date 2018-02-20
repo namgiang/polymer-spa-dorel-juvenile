@@ -7,6 +7,11 @@
         display: block;
         clear: both;
       }
+
+      [hidden] {
+        display: none;
+      }
+
       .step-title {
         font-size: var(--theme-typography-5_-_font-size);
         line-height: var(--theme-typography-5_-_line-height);
@@ -51,7 +56,7 @@
     </dorel-layout-container>
   </template>
   <script>
-  class DorelCarFittingProductSelector extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {     
+  class DorelCarFittingProductSelector extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-car-fitting-product-selector';
@@ -225,8 +230,8 @@
         const form = carData[index].result.formData;
         let data = event.detail.response;
         const car = this.getCarSelection(form);
-        const car_information_label = `${car.car_brand_name}, ${car.model_name}, ${car.introduction_year}`;
-        data.car_information_label = car_information_label;
+        //const car_information_label = `${car.car_brand_name}, ${car.model_name}, ${car.introduction_year}`;
+        //data.car_information_label = car_information_label;
         data.formData = form;
         this.set(`carData.${index}.result`, data);
         this.set(`carData.${index}.active`, false);
