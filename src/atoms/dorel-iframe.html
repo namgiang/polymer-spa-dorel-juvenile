@@ -56,82 +56,98 @@
       }
 
       #iframe-id {width: 1px;min-width: 100%;}
-
     </style>
 
     <div id="iframe-wrap"></div>
   </template>
-</dom-module>
 
-<script>
-  Polymer({
-    is: 'dorel-iframe',
-    properties: {
+  <script>
+    class DorelIframe extends Polymer.mixinBehaviors([Polymer.IronFormElementBehavior], Polymer.Element) {
 
-      /**
-       * @attribute
-       * @name url
-       * @description the url of the iframe
-       */
-      url: {
-        type: String,
-        value: ''
-      },
+      static get is() { return 'dorel-iframe'; }
 
-      /**
-       * @attribute
-       * @name scrolling
-       * @description enable or disable scrolling of the iframe
-       */
-      scrolling: {
-        type: Boolean,
-        value: true
-      },
+      static get properties() {
+        return {
+          iframe: Object,
 
-      /**
-       * @attribute
-       * @name frameborder
-       * @description enable or disable the border of the iframe
-       */
-      frameborder: {
-        type: Boolean,
-        value: false
-      },
+          /**
+           * the url of the iframe
+           */
+          url: String,
 
-      /**
-       * @attribute
-       * @name width
-       * @description define the width of the iframe
-       */
-      width: {
-        type: String,
-        value: '100%'
+          /**
+           * the page to redirect to on form success
+           */
+          successUrl: String,
+
+          /**
+           * enable or disable scrolling of the iframe
+           */
+          scrolling: {
+            type: Boolean,
+            value: true
+          },
+
+          /**
+           * enable or disable the border of the iframe
+           */
+          frameborder: {
+            type: Boolean,
+            value: false
+          },
+
+          /**
+           * define the width of the iframe
+           */
+          width: {
+            type: String,
+            value: '100%'
+          },
+
+          /**
+           * boolean if the iframe has been loaded
+           */
+          loadTime: {
+            type: Number,
+            value: 0
+          }
+        }
       }
-    },
 
-    /**
-     * Inherits behaviour form Iron Form elements
-     */
-    behaviors: [
-      Polymer.IronFormElementBehavior,
-    ],
+      /**
+       * @description when the component is ready it will create
+       * the iframe with the given parameters as attributes
+       */
+      ready() {
+        super.ready();
 
-    /**
-     * @description when the component is ready it will create
-     * the iframe with the given parameters as attributes
-     */
-    ready: function() {
-      var iframe = document.createElement('iframe');
-      var wrap = this.$['iframe-wrap'];
+        this.set('iframe', document.createElement('iframe'));
 
-      iframe.src = this.get('url');
-      iframe.id = 'iframe-id';
-      iframe.setAttribute('width', this.get('width'));
-      iframe.setAttribute('height', this.get('height'));
-      iframe.setAttribute('frameborder', this.get('frameborder'));
-      iframe.setAttribute('scrolling', this.get('scrolling'));
+        const iframe = this.get('iframe');
+        const wrap = this.$['iframe-wrap'];
+        let loadCount = 0;
 
-      wrap.appendChild(iframe);
+        iframe.src = this.get('url');
+        iframe.id = 'iframe-id';
+        iframe.setAttribute('width', this.get('width'));
+        iframe.setAttribute('height', this.get('height'));
+        iframe.setAttribute('frameborder', this.get('frameborder'));
+        iframe.setAttribute('scrolling', this.get('scrolling'));
+
+        // TODO: bick hack to scroll to top when iframe shows the form-success template
+        iframe.onload = data => {
+          loadCount++;
+          if (loadCount > 1) {
+            iframe.height = '0px';
+            window.location.href = this.get('successUrl');
+          }
+
+          iframe.contentWindow.scrollTo(0, 0);
+        }
+
+        wrap.appendChild(iframe);
+      }
     }
-  });
-</script>
+    customElements.define(DorelIframe.is, DorelIframe);
+  </script>
+</dom-module>
