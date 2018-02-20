@@ -1,5 +1,6 @@
 <link rel="import" href="../../node_modules/google-youtube/google-youtube.html">
 <link rel="import" href="../atoms/dorel-bynder-responsive-image.html">
+
 <dom-module id="dorel-youtube-video">
   <template>
     <style is="custom-style">
@@ -60,194 +61,173 @@
     </style>
     <section>
       <slot id="content"></slot>
-      <div playing$="[[ playing ]]">
-        <google-youtube id="googleYouTube"
-                        playsupported="{{ playSupported }}"
-                        video-id="[[ videoId ]]"
-                        state="{{ state }}"
-                        currenttime="{{ currentTime }}"
-                        currenttimeformatted="{{ currentTimeFormatted }}"
-                        duration="{{ duration }}"
-                        durationformatted="{{ durationFormatted }}"
-                        fractionloaded="{{ fractionLoaded }}"
-                        volume="{{ volume }}"
-                        playbackrate="{{ playbackRate }}"
-                        playbackquality="{{ playbackQuality }}"
-                        playbackstarted="{{ playbackstarted }}"
-                        width="100vw"
-                        chromeless="true"
-                        modestbranding="0"
-                        autoplay="{{ autoplay }}"
-                        on-google-youtube-state-change="handleStateChange"
-                        on-google-youtube-error="handleYouTubeError">
+      <div playing$="[[playing]]">
+        <google-youtube id="googleYoutube"
+          playsupported="{{playSupported}}"
+          video-id="[[videoId]]"
+          state="{{state}}"
+          currenttime="{{currentTime}}"
+          currenttimeformatted="{{currentTimeFormatted}}"
+          duration="{{duration}}"
+          durationformatted="{{durationFormatted}}"
+          fractionloaded="{{fractionLoaded}}"
+          volume="{{volume}}"
+          playbackrate="{{playbackRate}}"
+          playbackquality="{{playbackQuality}}"
+          playbackstarted="{{playbackstarted}}"
+          width="100vw"
+          chromeless="true"
+          modestbranding="0"
+          on-google-youtube-state-change="handleStateChange"
+          on-google-youtube-error="handleYouTubeError">
         </google-youtube>
 
-        <template is="dom-if"
-                  if="[[ videoError ]]">
+        <template
+          is="dom-if"
+          if="[[videoError]]">
           An error occurred while playing your video. Check the video id or try again.
         </template>
 
         <dorel-bynder-responsive-image
-          media-id="[[ thumbnail ]]" image-type="[[ imageType ]]"></dorel-bynder-responsive-image>
+          sizing="contain"
+          media-id="[[thumbnail]]"
+          image-type="[[imageType]]"></dorel-bynder-responsive-image>
       </div>
   </template>
-</dom-module>
-<script>
-  Polymer({
-    is: 'dorel-youtube-video',
-    properties: {
-      thumbnail: {
-        type: String
-      },
-      videoId: {
-        type: String,
-      },
-      playSupported: {
-        type: Boolean
-      },
-      state: {
-        type: Number
-      },
-      currentTime: {
-        type: Number
-      },
-      currentTimeFormatted: {
-        type: String
-      },
-      duration: {
-        type: Number
-      },
-      durationFormatted: {
-        type: String
-      },
-      fractionLoaded: {
-        type: Number
-      },
-      volume: {
-        type: Number
-      },
-      playbackRate: {
-        type: Number
-      },
-      playbackQuality: {
-        type: String
-      },
-      playbackstarted: {
-        type: Boolean
-      },
-      isHero: {
-        type: Boolean,
-        value: false
-      },
-      playing: {
-        type: Boolean,
-        reflectToAttribute: true
-      },
-      imageType: {
-        type: String,
-        value: 'full-screen'
-      },
-      videoError: {
-        type: Boolean,
-        value: false,
-        notify: true
-      }
-    },
 
-    listeners: {
-      'tap': '_pauseAfterTap'
-    },
+  <script>
+    class DorelYoutubeVideo extends Polymer.Element {
 
-    /**
-     * @name handleStateChange
-     * @description loop video
-     */
-    handleStateChange: function (ev) {
-      //Restart the video when it's ended
-      if (this.state === 0) {
-        this.playing = true;
-        this.$.googleYouTube.play();
-      }
-    },
+      static get is() { return 'dorel-youtube-video'; }
 
-    /**
-     * @name handleYouTubeError
-     * @description show console message on error
-     */
-    handleYouTubeError: function (ev) {
-      // console.error('YouTube playback error', ev.detail);
-      this.set('videoError', true);
-    },
-
-    /**
-     * @name play
-     * @description public function to play video
-    */
-    play: function () {
-      this.playing = true;
-      this.$.googleYouTube.seekTo(0);
-      this.$.googleYouTube.play();
-    },
-
-    /**
-     * @name stop
-     * @description public function to stop video
-    */
-    stop: function () {
-      this.playing = false;
-      this.$.googleYouTube.pause();
-      this.$.googleYouTube.seekTo(0);
-    },
-
-    /**
-     * @name pause
-     * @description public function to pause video
-    */
-    pause: function () {
-      this.$.googleYouTube.pause();
-    },
-
-    /**
-     * @name resume
-     * @description public function to resume video afterpause
-    */
-    resume: function () {
-      if (this.state === -1) {
-        this.playing = true;
-        this.$.googleYouTube.seekTo(0);
-      }
-      this.$.googleYouTube.play();
-    },
-
-    /**
-     * @name _pauseAfterTap
-     * @description private function for instantly (faster then stop) stopping the video after tap if a cta dialog-dimiss or dialog-confirm is seen
-     */
-    _pauseAfterTap: function (event) {
-      var path = Polymer.dom(event).path;
-      for (var i = 0, l = path.indexOf(this); i < l; i++) {
-        var target = path[i];
-        if (target.hasAttribute && (target.hasAttribute('dialog-dismiss') || target.hasAttribute('dialog-confirm'))) {
-          this.$.googleYouTube.pause();
+      static get properties() {
+        return {
+          autoplay: Number,
+          thumbnail: String,
+          videoId: String,
+          playSupported: Boolean,
+          state: Number,
+          currentTime: Number,
+          currentTimeFormatted: String,
+          duration: Number,
+          durationFormatted: String,
+          fractionLoaded: Number,
+          volume: Number,
+          playbackRate: Number,
+          playbackQuality: String,
+          playbackstarted: Boolean,
+          isHero: {
+            type: Boolean,
+            value: false
+          },
+          playing: {
+            type: Boolean,
+            reflectToAttribute: true
+          },
+          imageType: {
+            type: String,
+            value: 'full-screen'
+          },
+          videoError: {
+            type: Boolean,
+            value: false,
+            notify: true
+          }
         }
       }
-    },
 
-    /**
-     * @name on ready
-     * @description add event listener for muting video when hero
-     */
-    ready: function (ev) {
-      if (this.isHero) {
-        this.updateStyles({
-          '--video-border-radius': 0
-        })
-      }
-      this.$.googleYouTube.addEventListener('google-youtube-ready', function () {
-        if (this.isHero) {
-          this.$.googleYouTube.mute();
+      ready() {
+        super.ready();
+
+        this.addEventListener('tap', this._pauseAfterTap, {passive: true});
+        this.addEventListener('google-youtube-ready', () => {
+          if (this.get('isHero')) {
+            this.$.googleYoutube.mute();
+            this.play();
+          }
+        });
+
+        if (this.get('isHero')) {
+          this.updateStyles({
+            '--video-border-radius': 0
+          })
         }
-      }.bind(this));
+      }
+
+      /**
+       * loop video the video when the state ends
+       */
+      handleStateChange() {
+        // Restart the video when it's ended
+        if (this.state === 0) {
+          this.playing = true;
+          this.$.googleYoutube.play();
+        }
+      }
+
+      /**
+       * when an error occurs set the `videoError` variable to true
+       */
+      handleYouTubeError() {
+        // console.error('YouTube playback error', ev.detail);
+        this.set('videoError', true);
+      }
+
+      /**
+       * public function to play video (it sets the video position to 0 and starts it)
+       */
+      play() {
+        this.set('playing', true);
+        this.$.googleYoutube.seekTo(0);
+        this.$.googleYoutube.play();
+      }
+
+      /**
+       * public function to play video (it stops the video and sets the video position to 0)
+       */
+      stop() {
+        this.set('playing', false);
+        this.$.googleYoutube.pause();
+        this.$.googleYoutube.seekTo(0);
+      }
+
+      /**
+       * public function to pause video
+       */
+      pause() {
+        this.$.googleYoutube.pause();
+      }
+
+      /**
+       * public function to resume video after pause
+       */
+      resume() {
+        if (this.get('state') === -1) {
+          this.set('playing', true);
+          this.$.googleYoutube.seekTo(0);
+        }
+        this.$.googleYoutube.play();
+      }
+
+      /**
+       * private function for instantly (faster then stop) stopping the video after tap if a cta dialog-dimiss or dialog-confirm is seen
+       *
+       * @param {object} event the event object
+       */
+      _pauseAfterTap(event) {
+        const path = Polymer.dom(event).path;
+
+        for (let i = 0, l = path.indexOf(this); i < l; i++) {
+          const target = path[i];
+
+          if (target.hasAttribute
+            && (target.hasAttribute('dialog-dismiss')
+            || target.hasAttribute('dialog-confirm'))) {
+            this.$.googleYoutube.pause();
+          }
+        }
+      }
     }
-  });
-</script>
+    customElements.define(DorelYoutubeVideo.is, DorelYoutubeVideo);
+  </script>
+</dom-module>
