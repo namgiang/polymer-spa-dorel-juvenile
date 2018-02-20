@@ -14,7 +14,7 @@
       }
       
       #positron {
-        position: relative;  
+        position: relative;
       }
       
       .inner-col-left-top {
@@ -152,7 +152,7 @@
         width: 100%;
         margin: 0 0 1rem 0;
         padding: 0;
-        color: var(--theme-brand-color-1);       
+        color: var(--theme-brand-color-1);
       }
       .timeAgo {
         font-size: 11px;
@@ -363,7 +363,6 @@
             </template>
             <ul>
               <template is="dom-repeat" items="[[ seat.notices ]]" as="notification" restamp="true">
-
                 <li>[[ localize(notification) ]]</li>
               </template>
             </ul>
@@ -387,21 +386,17 @@
       static get is() {
         return 'dorel-car-fitting-results';
       }
-      
+
       static get properties() {
         return {
-          // productImage: {
-          //   type: String,
-          //   computed: 'getProductImage(selectedProduct)'
-          // },
           productList: {
             type: Array,
             statePath: function (state) {
-             return this.productListFromState(state);
-            },
+              return this.productListFromState(state);
+              },
           },
           iconsUsed2: Array,
-          carGraphics: String,
+          //carFrontRow: String,
           iconsUsed: {
             type: Object,
             value: {
@@ -439,7 +434,7 @@
           }
         };
       }
-      
+
       static get observers() {
         return [
           'productChanged(productData.*)',
@@ -448,15 +443,14 @@
       }
 
       productListFromState(state) {
-          const data = {
-            carseat: state.product.products[0]
-          };
-          
-          if(this.requestedProductName) {
-            if(data.carseat.isLoading === false && data.carseat.notAvailable === false) {
-              this.set('selectedProduct', data);
-            }
+        const data = {
+          carseat: state.product.products[0]
+        };
+        if(this.requestedProductName) {
+          if(data.carseat.isLoading === false && data.carseat.notAvailable === false) {
+            this.set('selectedProduct', data);
           }
+        }
       }
 
       productDataChanged(data) {
@@ -473,9 +467,9 @@
       isSafetywarning(icon) {
         return (icon === 'orange') ? true : false;
       }
-      
+
       productChanged() {
-        //debugger;  
+        //debugger;
       }
 
       getFitOrNoFit (data) {
@@ -501,7 +495,7 @@
         }.bind(this));
         return iconsUsed;
       }
-      
+
       offset(el) {
         const rect = el.getBoundingClientRect(),
         scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
@@ -522,6 +516,9 @@
 
             let self = this;
             let svgCarNode = null;
+
+            const carFrontRow = (data.car_body_configuration.includes('bench') ? 'front_row_bench' : 'front_row_normal');
+
             function onSVGLoaded(loadedFragment) {
               svgCarNode.append(loadedFragment);
               svgCarNode.attr({
@@ -534,13 +531,48 @@
               for(var seat in seats) {
                 const seatNode = svgCarNode.select(`#seat_${seats[seat]}`);
                 if(seatNode) {
-                  svgCarNode.select(`#seat_${seats[seat]}`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  if(seat === '0') {
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  }
+
+                  if(seat === '1') {
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  }
+
+                  if(seat !== '0' || seat !== '1') {
+                    svgCarNode.select(`#seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  }
+
+                  const hideDriverPosition = (carFrontRow === 'front_row_normal') ? 'front_row_bench' : 'front_row_normal';
+
+                  svgCarNode.select(`#${hideDriverPosition} #steering_wheel`).attr({'visibility': 'hidden'});
+                  svgCarNode.select(`#${hideDriverPosition} #seat_driver`).attr({'visibility': 'hidden'});
                 }
               }
               if(data.car_body_configuration.includes('bench')) {
@@ -549,13 +581,13 @@
               } else {
                 svgCarNode.select(`#${data.car_body_configuration}`).attr({'visibility': 'visible'});
               }
-
-              data.carseat_positions.forEach(function(item) {
+              data.carseat_positions.forEach(function(item, index) {
+                const frontPositionContainer = (index === 0 || index === 1) ?  `#${carFrontRow} ` : '';
                 if(item.icon === 'green') {
                   self.iconsUsed.icon_green.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_green`).attr({'visibility': 'visible'});
-                  const greenIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_green #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_green`).attr({'visibility': 'visible'});
+                  const greenIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_green #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
                   greenIcon.mousemove(function(event) {
                     const offset = self.offset(event.currentTarget);
@@ -568,12 +600,11 @@
                     notice.style.display = 'none';
                   });
                 }
-
                 if(item.icon === 'blue') {
                   self.iconsUsed.icon_blue.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_blue`).attr({'visibility': 'visible'});
-                  const blueIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_blue #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_blue`).attr({'visibility': 'visible'});
+                  const blueIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_blue #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
                   blueIcon.mousemove(function(event) {
                     const offset = self.offset(event.currentTarget);
@@ -593,11 +624,11 @@
                 }
                 if(item.icon === 'orange') {
                   self.iconsUsed.icon_orange.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_orange`).attr({'visibility': 'visible'});
-                  const orangeIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_orange #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_orange`).attr({'visibility': 'visible'});
+                  const orangeIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_orange #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
-                  orangeIcon.mousemove(function(event) {                
+                  orangeIcon.mousemove(function(event) {
                     const offset = self.offset(event.currentTarget);
                     notice.style.display = 'block';
                     notice.style.top = '0px';
@@ -622,8 +653,8 @@
                 }
                 if(item.top_tether_position !== '' && data.product.top_tether) {
                   self.iconsUsed.icon_top_tether.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_tether`).attr({'visibility': 'visible'});
-                  const tetherIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_tether #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_tether`).attr({'visibility': 'visible'});
+                  const tetherIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_tether #hover_area`);
                   const tether = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_tether`);
                   tetherIcon.mousemove(function(event) {
                     const offset = self.offset(event.currentTarget);
@@ -649,13 +680,12 @@
               const container = this.shadowRoot.querySelector(`#svg_container_${carIndex}`);
               container.innerHTML = `<svg id="car_${carIndex}" class="svg_node"></svg>`;
               svgCarNode = Snap(this.shadowRoot.querySelector(`#car_${carIndex}`));
-              if(data.car_body_configuration.includes('bench')) {
-                self.set('carGraphics', 'car_graphics_bench');
-              } else {
-                self.set('carGraphics', 'car_graphics_normal');
-              }
-              const svgFile = this.get('carGraphics');
-              Snap.load(`/assets/images/car-fitting/${svgFile}.svg`, onSVGLoaded);
+              // if(data.car_body_configuration.includes('bench')) {
+              //   self.set('carFrontRow', 'front_row_bench');
+              // } else {
+              //   self.set('carFrontRow', 'front_row_normal');
+              // }
+              Snap.load(`/assets/images/car-fitting/car_graphics.svg`, onSVGLoaded);
             }, 0);
           }
         }
