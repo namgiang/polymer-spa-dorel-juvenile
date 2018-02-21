@@ -37,7 +37,9 @@
         visibility: visible;
         transition: all 0.25s;
       }
-
+      dorel-layout-container[opened][compact-menu] {
+        top: var(--theme-menu-offset-compact);
+      }
       .dropdown-menu {
         list-style-type: none;
         margin: 0;
@@ -71,7 +73,7 @@
 
     <dorel-layout-container
       id="menu-dropdown"
-      opened$="[[opened]]">
+      opened$="[[opened]]" compact-menu$="[[compactMenu]]">
       <dorel-layout-row
         align="right">
 
@@ -242,13 +244,13 @@
       }
 
       /**
-       * maximize the dropdown items to 4
+       * maximize the dropdown items to 5
        *
        * @param {array} the dropdown items
-       * @return {array} the first 4 of the original dropdown items list
+       * @return {array} the first 5 of the original dropdown items list
        */
       _maxItems(items) {
-        return items.filter((item, index) => index < 4);
+        return items.filter((item, index) => index < 5);
       }
 
       /**

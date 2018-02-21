@@ -64,9 +64,11 @@
       iframe { overflow: hidden; }
     </style>
 
-    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-media-query
+      breakpoints="{{breakpoints}}"></dorel-media-query>
 
-    <section tablet-medium-up$="[[ breakpoints.tabletMediumUp ]]">
+    <section
+      tablet-medium-up$="[[breakpoints.tabletMediumUp]]">
       <!-- section-hero-header -->
       <template
         is="dom-if"
@@ -76,9 +78,9 @@
           info-header="true"></dorel-section-header>
         <template
           is="dom-if"
-          if="[[ templateData.acf.breadcrumbs_toggle ]]">
+          if="[[templateData.acf.breadcrumbs_toggle]]">
           <dorel-section-page-nav
-            breadcrumbs-toggle="[[ templateData.acf.breadcrumbs_toggle ]]"></dorel-section-page-nav>
+            breadcrumbs-toggle="[[templateData.acf.breadcrumbs_toggle]]"></dorel-section-page-nav>
         </template>
       </template>
 
@@ -86,23 +88,23 @@
         <!-- show when acf.page_builder has components -->
         <template
           is="dom-if"
-          if="{{ templateData.acf.page_builder.length }}">
+          if="{{templateData.acf.page_builder.length}}">
 
 
           <!-- iterate over page_builder components -->
           <template
             is="dom-repeat"
-            items="[[ templateData.acf.page_builder ]]"
+            items="[[templateData.acf.page_builder]]"
             as="component"
             targetFramerate="1000">
 
             <!-- dorel wysiwyg content-->
             <template
               is="dom-if"
-              if="[[ _isPageComponent(component.acf_fc_layout, 'section_wysiwyg') ]]">
+              if="[[_isPageComponent(component.acf_fc_layout, 'section_wysiwyg')]]">
               <div class="max-width-container">
                 <dorel-wysiwyg-html
-                  html="[[ component.wysiwyg ]]"></dorel-wysiwyg-html>
+                  html="[[component.wysiwyg]]"></dorel-wysiwyg-html>
               </div>
             </template>
             <!--// dorel wysiwyg content-->
@@ -110,11 +112,13 @@
             <!-- dorel FormAssembly -->
             <template
               is="dom-if"
-              if="[[ _isPageComponent(component.acf_fc_layout, 'section_formassembly') ]]">
+              if="[[_isPageComponent(component.acf_fc_layout, 'section_formassembly')]]">
               <div class="max-width-container">
                 <dorel-iframe
-                  url="https://dorel.tfaforms.net/[[ component.formassembly_form_id ]]"
-                  height="[[ component.form_height ]]"></dorel-iframe>
+                  id="formassembly"
+                  url="https://dorel.tfaforms.net/[[component.formassembly_form_id]]"
+                  height="[[component.form_height]]"
+                  success-url="[[component.form_success_page]]"></dorel-iframe>
               </div>
             </template>
             <!--// dorel FormAssembly -->
@@ -122,14 +126,14 @@
             <!-- dorel bynder image -->
             <template
               is="dom-if"
-              if="[[ _isPageComponent(component.acf_fc_layout, 'section_image') ]]">
+              if="[[_isPageComponent(component.acf_fc_layout, 'section_image')]]">
               <div class="image-container">
                 <dorel-bynder-image
-                  media-id="[[ component.bynder_image ]]"
+                  media-id="[[component.bynder_image]]"
                   image-alt="[[component.bynder_image_alt_text]]"
                   derivative-identifier="Fullscreen Retina landscape"
                   mobile-derivative-identifier="Fullscreen Small landscape"
-                  alt="[[ component.image_alt ]]"
+                  alt="[[component.image_alt]]"
                   mobile-width="100%"
                   mobile-height="18em"
                   tablet-width="100%"
@@ -144,10 +148,10 @@
             <!-- dorel video wrap -->
             <template
               is="dom-if"
-              if="[[ _isPageComponent(component.acf_fc_layout, 'section_Video') ]]">
+              if="[[_isPageComponent(component.acf_fc_layout, 'section_Video')]]">
               <div class="video-container">
                 <dorel-video-wrap
-                  video-id="[[ component.video_id ]]"
+                  video-id="[[component.video_id]]"
                   video-type="youtube"></dorel-video-wrap>
               </div>
             </template>
@@ -156,18 +160,18 @@
             <!-- dorel section hubspot -->
             <template
               is="dom-if"
-              if="[[ _isPageComponent(component.acf_fc_layout, 'section_hubspot') ]]">
+              if="[[_isPageComponent(component.acf_fc_layout, 'section_hubspot')]]">
               <dorel-hubspot
-                hubspot-loaded="[[ config.hubspot_loaded ]]"
-                portal-id="[[ config.hubspot_portal_id ]]"
-                form-id="{{ component.hubspot_form_id }}"></dorel-hubspot>
+                hubspot-loaded="[[config.hubspot_loaded]]"
+                portal-id="[[config.hubspot_portal_id]]"
+                form-id="{{component.hubspot_form_id}}"></dorel-hubspot>
             </template>
             <!--// dorel section hubspot -->
 
             <!-- dorel video wrap -->
             <template
               is="dom-if"
-              if="[[ _isPageComponent(component.acf_fc_layout, 'section_cards') ]]">
+              if="[[_isPageComponent(component.acf_fc_layout, 'section_cards')]]">
               <dorel-section-cards
                 cards-data="[[component]]"
                 cta-type="secondary"
@@ -185,13 +189,10 @@
   <script>
     class DorelTemplateInfo extends ReduxMixin(Polymer.mixinBehaviors([TemplateBehaviors], Polymer.Element)) {
 
-      static get is() {
-        return 'dorel-template-info';
-      }
+      static get is() { return 'dorel-template-info'; }
 
       static get properties() {
         return {
-
           config: {
             type: Object,
             statePath: 'config'
@@ -216,9 +217,9 @@
             type: Object,
             value: () => ({})
           }
-       };
-     }
-   }
-   customElements.define(DorelTemplateInfo.is, DorelTemplateInfo);
+        };
+      }
+    }
+    customElements.define(DorelTemplateInfo.is, DorelTemplateInfo);
   </script>
 </dom-module>
