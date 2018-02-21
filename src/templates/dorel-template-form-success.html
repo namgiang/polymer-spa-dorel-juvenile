@@ -18,8 +18,17 @@
           desktop-column-span="6"
           tablet-column-span="8"
           mobile-column-span="12">
-          <span class="title">[[localize('form_title#success')]]</span>
-          <p>[[localize('form_description#success')]]</p>
+          <template
+            is="dom-if"
+            if="[[_shouldShow(templateData.acf.title)]]">
+            <span class="title">[[templateData.acf.title]]</span>
+          </template>
+
+          <template
+            is="dom-if"
+            if="[[_shouldShow(templateData.acf.description)]]">
+            <p>[[templateData.acf.description]]</p>
+          </template>
         </dorel-layout-column>
       </dorel-layout-row>
     </dorel-layout-container>
@@ -31,7 +40,13 @@
       static get is() { return 'dorel-template-form-success'; }
 
       static get properties() {
-        return {}
+        return {
+          templateData: Object
+        }
+      }
+
+      _shouldShow(string) {
+        return typeof string !== 'undefined' || string !== '';
       }
     }
 
