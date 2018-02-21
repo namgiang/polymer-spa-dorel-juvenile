@@ -583,6 +583,7 @@
               }
               data.carseat_positions.forEach(function(item, index) {
                 const frontPositionContainer = (item.seat_position === 0 || item.seat_position === 1) ?  `#${carFrontRow} ` : '';
+
                 if(item.icon === 'green') {
                   self.iconsUsed.icon_green.used = true;
                   svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
@@ -619,8 +620,8 @@
                 }
                 if(item.icon === 'red') {
                   self.iconsUsed.icon_red.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_red`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_red`).attr({'visibility': 'visible'});
                 }
                 if(item.icon === 'orange') {
                   self.iconsUsed.icon_orange.used = true;
