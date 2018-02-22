@@ -157,12 +157,12 @@
       .timeAgo {
         font-size: 11px;
       }
-      
+
       .content p {
         margin: 0;
         padding: 0;
       }
-      
+
       .notification {
         position: absolute;
         width: 270px;
@@ -236,11 +236,11 @@
              -o-transform:skew(8deg) rotate(3deg);
                 transform:skew(8deg) rotate(3deg);
       }
-      
+
       dorel-layout-row, dorel-layout-column {
         margin-top: 0;
       }
-      
+
       .image-wrapper {
         border-radius: var(--theme-border-radius-2);
         width: 100%;
@@ -251,7 +251,7 @@
         padding: .25em;
         box-sizing: border-box;
       }
-      
+
       .image-selected {
         width: 100%;
         height: 100%;
@@ -261,16 +261,23 @@
         float: none;
         display: block;
       }
-      
+
       .disclaimer {
         @apply(--theme-typography-4);
-        /*float: left;*/
-        /*width: 100%;*/
-        /*margin: 0 0 1rem 0;*/
-        /*padding: 0;*/
         color: var(--theme-color-black);
         font-size: var(--theme-typography-1_-_font-size);
         line-height: var(--theme-typography-1_-_line-height);
+      }
+
+      .car_notices {
+        @apply(--theme-typography-4);
+        color: darkred;
+        font-size: var(--theme-typography-1_-_font-size);
+        line-height: var(--theme-typography-1_-_line-height);
+      }
+
+      img.floor_storage {
+        width: 10rem;
       }
     </style>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
@@ -302,6 +309,17 @@
                     <small class="image-message">[[stepData.main_section.info]]</small>
                      [[ loadImage(car.result, carIndex) ]]
                     <div id="svg_container_[[carIndex]]" class="svg_container"></div>
+                    <div class="car_notices">
+                      <ul>
+                        <template is="dom-repeat" items="[[ car.result.notices ]]" as="notification" restamp="true">
+                          <li>[[ localize(notification) ]]</li>
+                          <template is="dom-if" if="[[ getFloorStorageImage(notification) ]]">
+                            <br>
+                            <img class="floor_storage" src="[[ getFloorStorageImage(notification) ]]">
+                          </template>
+                        </template>
+                      </ul>
+                    </div>
                   </template>
                 </dorel-layout-column>
             </dorel-layout-row>
@@ -452,6 +470,11 @@
           'productChanged(productData.*)',
           'productDataChanged(selectedProduct.*)'
         ];
+      }
+
+      getFloorStorageImage(messageTag) {
+        const image = `/assets/images/car-fitting/floor_storage_${messageTag.slice(-1)}.png`;
+        return (messageTag.substring(0, 42)=== 'car_fitting_results#floor_storage_warning_') ? image : false; 
       }
 
       productListFromState(state) {
