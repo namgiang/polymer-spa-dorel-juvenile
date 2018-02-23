@@ -279,7 +279,21 @@
       img.floor_storage {
         width: 10rem;
       }
+      
+      .no-result-title {
+        @apply(--theme-typography-4);
+        color: var(--theme-brand-color-1);
+      }
+      .no-result-link {
+        
+      }
+      #store-locator-button {
+        width: 4rem;
+      }
     </style>
+    <dorel-wp-collect-templates
+      template-type="page-store-locator.php"
+      response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container>
       <dorel-layout-row align="middle">
@@ -300,26 +314,39 @@
                   <template id="carResults" is="dom-repeat" items="[[ carData ]]" as="car" index-as="carIndex" restamp="true">
                     <br>
                     <strong hidden$="[[ !getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ car.result.car_information_label ]]</strong>
-                    <strong hidden$="[[ getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ localize('car_fitting_results#not_listed') ]]</strong>
-                    <br>
-                    <br>
-                    <!--<object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
-                    <strong class="fit-title">Fit</strong>-->
-                    <br> 
-                    <small class="image-message">[[stepData.main_section.info]]</small>
-                     [[ loadImage(car.result, carIndex) ]]
-                    <div id="svg_container_[[carIndex]]" class="svg_container"></div>
-                    <div class="car_notices">
-                      <ul>
-                        <template is="dom-repeat" items="[[ car.result.notices ]]" as="notification" restamp="true">
-                          <li>[[ localize(notification) ]]</li>
-                          <template is="dom-if" if="[[ getFloorStorageImage(notification) ]]">
-                            <br>
-                            <img class="floor_storage" src="[[ getFloorStorageImage(notification) ]]">
+                    <strong hidden$="[[ getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ localize('car_fitting_results#no_result_for_car') ]]</strong>
+                    <template is="dom-if" if="[[ shouldShowCarResult(car.result) ]]">
+                      <br>
+                      <br>
+                      <!--<object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
+                      <strong class="fit-title">Fit</strong>-->
+                      <br> 
+                      <small class="image-message">[[stepData.main_section.info]]</small>
+                       [[ loadImage(car.result, carIndex) ]]
+                      <div id="svg_container_[[carIndex]]" class="svg_container"></div>
+                      <div class="car_notices">
+                        <ul>
+                          <template is="dom-repeat" items="[[ car.result.notices ]]" as="notification" restamp="true">
+                            <li>[[ localize(notification) ]]</li>
+                            <template is="dom-if" if="[[ getFloorStorageImage(notification) ]]">
+                              <br>
+                              <img class="floor_storage" src="[[ getFloorStorageImage(notification) ]]">
+                            </template>
                           </template>
-                        </template>
-                      </ul>
-                    </div>
+                        </ul>
+                      </div>
+                    </template>
+                    <template is="dom-if" if="[[ !shouldShowCarResult(car.result) ]]">
+                      <h1 class='no-result-title'>[[ localize('car_fitting_results#no_result_title') ]]</h1>
+                      <p>[[ localize('car_fitting_results#no_result_message') ]]</p>
+                      <dorel-cta
+                        id="store-locator-button"
+                        type="primary"
+                        title="[[localize('cta#find_a_store')]]"
+                        link="[[createStoreLocatorLink(storeLocatorPage)]]"
+                        size="medium"
+                        icon="dorel-icons:chevron-right">[[localize('cta#find_a_store')]]</dorel-cta>
+                    </template>
                   </template>
                 </dorel-layout-column>
             </dorel-layout-row>
@@ -471,6 +498,40 @@
           'productDataChanged(selectedProduct.*)'
         ];
       }
+      
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      createStoreLocatorLink(pageObject) {
+        const urlArr = window.location.href.split('/');
+        const ret = `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}`;
+        //debugger;
+        return ret;
+      }
+
+      shouldShowCarResult(data) {
+        let result = false;
+        if(data) {
+          result = (data.message === 'success') ? true : false;
+        }
+        return result;
+      }
+      
+      shouldShowUniversalMessage(data) {
+        let result = false;
+        if(data) {
+          if(data.product) {
+            result = (data.product.product_category === 'Universal') ? true : false;
+          }
+        }
+        return result;
+      }
+      
+      getLabelOrNotListed (data) {
+        if(data) return (data.carseat_positions);
+      }
 
       getFloorStorageImage(messageTag) {
         const image = `/assets/images/car-fitting/floor_storage_${messageTag.slice(-1)}.png`;
@@ -515,10 +576,6 @@
         var test = this.iconsUsed[icon].label;
         //debugger;
         return this.iconsUsed[icon].label;
-      }
-
-      getLabelOrNotListed (data) {
-        if(data) return (data.carseat_positions);
       }
 
       renderLegend() {

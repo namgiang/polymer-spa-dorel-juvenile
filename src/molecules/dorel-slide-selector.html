@@ -189,6 +189,24 @@
           },
         }
       }
+      
+      static get observers() {
+        return [
+          'initialize(slides.*)'
+        ];
+      }
+
+      initialize(data) {
+        if(data.base.length > 0 && !this.initialized) {
+          this.set('selectedIndex', 0);
+          this.push('selectedIndexGlobal', 0);
+          this.updateStyles({ '--slide-wrapper-x': '-' + 0 + 'px' });
+          this.set('initialized', true);
+          console.log('initialized');
+        } else {
+          this.set('initialized', false);
+        }
+      }
 
       _selectedIndexChange() {
         //const e = new CustomEvent('selected-index-change', { detail: this.get('selectedIndex')});
