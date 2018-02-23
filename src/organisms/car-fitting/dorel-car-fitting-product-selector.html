@@ -24,6 +24,11 @@
       dorel-layout-row, dorel-layout-column {
         margin-top: 0;
       }
+
+      .previous_button_container {
+        width: 5rem;
+        height: 3rem;
+      }
     </style>
     <iron-ajax
       id="carConfig"
@@ -41,9 +46,11 @@
     <dorel-layout-container>
       <dorel-layout-row align="middle">
         <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12" align="left">
-          <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
-            [[ localize('common#back') ]]
-          </dorel-cta>
+          <div class="previous_button_container">
+            <dorel-cta id="previous_button" title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+              [[ localize('common#back') ]]
+            </dorel-cta>
+          </div>
           <h1 class="step-title">[[ localize('car_fitting_product_selector#title') ]]</h1>
           <br>
         </dorel-layout-column>
@@ -71,7 +78,11 @@
             }
           },
           
-          
+          isPreviousButtonHidden: {
+            type: Boolean,
+            value: false
+          },
+
           selectedCar: {
             type: String,
             value:''
@@ -126,8 +137,17 @@
         return [
           'handleSelectionChange(selectedIndexGlobal.*)',
           'handleCarData(carData.*)',
-          'productsFetched(productList.*)'
+          'productsFetched(productList.*)',
+          'setPreviousButtonState(isPreviousButtonHidden)'
         ];
+      }
+
+      setPreviousButtonState(isPreviousButtonHidden) {
+        if(isPreviousButtonHidden) {
+          this.$.previous_button.setAttribute('hidden', true);
+        } else {
+          this.$.previous_button.removeAttribute('hidden');
+        }
       }
 
       productsFetched(e) {
@@ -209,6 +229,7 @@
               self.set('carData.${index}.result.message', null);
               const resultsEl = self.$.carConfig;
               resultsEl.url = `${CONFIG.DIO_API_URL}/carseat/${item.car_brand_id}?index=${index}&model_name=${item.model_name}&model_type=${item.model_type}&introduction_year=${item.introduction_year}&doors=${item.doors}&sku=${sku}`;
+              self.set('isPreviousButtonHidden', true);
               resultsEl.generateRequest();
             });
           }
@@ -235,6 +256,7 @@
         data.formData = form;
         this.set(`carData.${index}.result`, data);
         this.set(`carData.${index}.active`, false);
+        this.set('isPreviousButtonHidden', false);
       }
 
       handleCarData() {
