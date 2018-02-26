@@ -1,24 +1,29 @@
+<link rel="import" href="./dorel-small-product-slide.html">
+
+
 <dom-module id="dorel-slide-selector">
   <template>
     <style is="custom-style">
       :host {
         --slide-wrapper-x: 0px;
-        --slide-width: calc(( var(--max-width-limit) - 3rem) / 3 - 2rem) ;
+        /*--slide-width: calc(( var(--max-width-limit) - 3rem) / 3 - 2rem) ;*/
+        --slide-width: 20rem;
       }
 
       .slideshow {
         position: relative;
         overflow: hidden;
-        height: 12em;
+        height: 29em;
         width: 100%;
+        background-color: white;
       }
 
       .slide {
         position: relative;
         display: inline-block;
         width: var(--slide-width);
-        height: 10rem;
-        margin: 1rem;
+        height: 28rem;
+        margin: 0 1.5rem 0 0;
         background-color: var(--theme-color-white);
         padding: 1rem;
         font-size: 1rem;
@@ -58,25 +63,25 @@
       dorel-layout-row {
         position: relative;
         height: 12em;
-        background-color: rgba(0, 0, 0, 0.1)
+        /*background-color: rgba(0, 0, 0, 0.1)*/
       }
 
       .control-item {
         position: absolute;
         transform: translate(0, -50%) scale(0);
         transform-origin: right;
-        top: 50%;
+        top: 42%;
         right: 0;
         background-color: var(--theme-color-monochrome-4);
         height: 4rem;
         width: 2rem;
         z-index: 10;
-        border-radius: var(--theme-button-border-radius) 0 0 var(--theme-button-border-radius);
+        border-radius: var(--theme-button-border-radius) var(--theme-button-border-radius) var(--theme-button-border-radius) var(--theme-button-border-radius);
         justify-content: center;
         align-items: center;
         display: flex;
         cursor: pointer;
-        box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.15);
+        /*box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.15);*/
         pointer-events: none;
         opacity: 0.6;
         transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s, opacity 0.2s;
@@ -92,7 +97,7 @@
       .control-item--previous {
         right: auto;
         left: 0;
-        border-radius: 0 var(--theme-button-border-radius) var(--theme-button-border-radius) 0;
+        /*border-radius: 0 var(--theme-button-border-radius) var(--theme-button-border-radius) 0;*/
         transform-origin: left;
       }
 
@@ -108,7 +113,7 @@
 
       .control-item:hover {
         background-color: var(--theme-color-monochrome-2);
-        box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.25);
+        /*box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.25);*/
         opacity: 1;
       }
 
@@ -121,6 +126,10 @@
 
       .control-item:hover .control-item__icon {
         color: var(--theme-color-monochrome-5);
+      }
+      
+      dorel-layout-container section {
+        padding: 0;  
       }
     </style>
 
@@ -135,18 +144,18 @@
         <iron-icon class="control-item__icon" icon="dorel-icons:chevron-left"></iron-icon>
       </div>
 
-      <dorel-layout-container>
-        <dorel-layout-row>
+      <!--<dorel-layout-container style="border: 1px solid red">
+        <dorel-layout-row style="border: 1px solid green">-->
           <div id="slideWrapper">
             <template is="dom-repeat" items="[[ slides ]]">
               <div class="slide" selected$="[[ item.selected ]]">
-                [[ item.value ]]
+                <dorel-small-product-slide product="[[ item ]]" on-tap="handleClick"></dorel-small-product-slide>
               </div>
             </template>
           </div>
-        </dorel-layout-row>
+        <!--</dorel-layout-row>
 
-      </dorel-layout-container>
+      </dorel-layout-container>-->
 
     </section>
 
@@ -158,16 +167,22 @@
         return 'dorel-slide-selector';
       }
 
+      constructor() {
+        super();
+        this.initialized = false;
+      }
+
       static get properties() {
         return {
           slides: {
             type: Array,
-            value: []
+            value: () => []
           },
           selectedIndex: {
             type: Number,
-            value: 0,
-            observer: '_selectedIndexChange'
+            value: -1,
+            observer: '_selectedIndexChange',
+            // reflectToAttribute: true
           },
           nextEnabled: {
             type: Boolean,
@@ -179,24 +194,39 @@
           },
         }
       }
-
-      _selectedIndexChange() {
-        const e = new CustomEvent('selected-index-change', { detail: this.get('selectedIndex')});
-        this.dispatchEvent(e);
+      
+      static get observers() {
+        return [
+          'initialize(slides.*)'
+        ];
       }
 
-      ready() {
-        super.ready();
-        const slides = [];
-        for (let i = 0; i < 6; i++) {
-          slides.push({ value: i, selected: false });
+      initialize(data) {
+        if(data.base.length > 0 && !this.initialized) {
+          this.set('selectedIndex', 0);
+          this.set('selectedIndexGlobal.index', 0);
+          this.updateStyles({ '--slide-wrapper-x': '-' + 0 + 'px' });
+          this.set('initialized', true);
         }
-        this.set('slides', slides);
-        this.set('slides.0.selected', true);
+
+        if(data.base.length === 0) {
+          this.set('initialized', false);
+        }
+      }
+
+      _selectedIndexChange(data) {
+        const index = this.get('selectedIndex');
+        if(data >= 0) {
+          this.set('selectedIndexGlobal.index', index);
+        }
+      }
+      
+      handleClick(e) {
+        this.moveToIndex(e.model.index);
       }
 
       checkNext(index, slides) {
-        return index < slides.length -1;
+        return slides && index < slides.length -1;
       }
 
       checkPrevious(index) {
@@ -222,16 +252,15 @@
         this.set('selectedIndex', index);
 
         const shiftLeft = this.$.slideWrapper.getBoundingClientRect().width * index / slideCount;
-        this.updateStyles({ '--slide-wrapper-x': '-' + shiftLeft + 'px' });
+        this.updateStyles({ '--slide-wrapper-x': '-' + (shiftLeft + 0) + 'px' });
       }
 
       isSelected(index) {
         return this.get('selectedIndex') === index;
       }
-
     }
 
     customElements.define(DorelSlideSelector.is, DorelSlideSelector);
-  </script>;
+  </script>
 
 </dom-module>
