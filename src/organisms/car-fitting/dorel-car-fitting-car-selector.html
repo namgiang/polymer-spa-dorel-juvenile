@@ -1,6 +1,6 @@
 <link rel="import" href="../../molecules/dorel-car-details-form.html">
-
-<dom-module id="dorel-car-fitting-selection">
+<link rel="import" href="../../atoms/dorel-checkbox.html">
+<dom-module id="dorel-car-fitting-car-selector">
   <template>
     <style>
       h1, h2, h3, h4 {
@@ -20,6 +20,10 @@
         border-radius: var(--theme-button-border-radius);
         padding: 1.8rem;
         margin-top: 1.5rem;
+      }
+
+      .warning-box {
+        color: darkred;
       }
 
       .image {
@@ -75,27 +79,44 @@
         color: var(--theme-brand-color-1);
       }
 
+      .warning-icon {
+        color: darkred;
+      }
+
       .step-title {
-        font-size: var(--theme-typography-5_-_font-size);
-        line-height: var(--theme-typography-5_-_line-height);
-        margin-top: var(--theme-typography-5_-_margin-top);
-        margin-bottom: var(--theme-typography-5_-_margin-bottom);
-        font-weight: var(--theme-typography-5_-_font-weight);
-        font-family: var(--theme-typography-5_-_font-family);
+        @apply(--theme-typography-4);
+        color: var(--theme-color-black);
+      }
+
+      dorel-layout-row, dorel-layout-column {
+        margin-top: 0;
       }
 
     </style>
+
+    <dorel-wp-collect-templates
+      template-type="page-product-advisory-tool.php"
+      response="{{carFittingToolPage}}"></dorel-wp-collect-templates>
+
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container>
       <dorel-layout-row align="middle">
-        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left">
+         <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12" align="left">
+          <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+              [[ localize('common#back') ]]
+          </dorel-cta>
+        </dorel-layout-column>
+      </dorel-layout-row>
+      <dorel-layout-row align="middle">
+        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="12" align="left">
             <dorel-layout-row>
-                <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
+                <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
                   <h1 class="step-title">[[ localize(stepData.main_section.title) ]]</h1>
                   <template is="dom-repeat" items="{{ carData }}" as="car">
                     <div class="car-selection" hidden$="[[ car.result ]]">
                       <dorel-car-details-form
                         product-name="[[ productName ]]"
+                        product-sku="[[ productSku ]]"
                         car-data="{{ car }}">
                       </dorel-car-details-form>
                     </div>
@@ -113,10 +134,18 @@
                   </template>
                 </dorel-layout-column>
             </dorel-layout-row>
+            <!--<dorel-layout-row>
+              <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
+                <form>
+                  <dorel-checkbox label="Regular checkbox"></dorel-checkbox>
+                  <dorel-checkbox label="Checked checkbox" checked="true"></dorel-checkbox>
+                </form>
+              </dorel-layout-column>
+            </dorel-layout-row>-->
             <dorel-layout-row align="middle">
-              <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" align="left" class="col-left-bottom">
-                <dorel-layout-row align="left">
-                  <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="4" align="left">
+              <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" align="left" class="col-left-bottom">
+                <dorel-layout-row align="right">
+                  <!--<dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="7" align="left">
                     <dorel-cta title="primary"
                                 type="secondary"
                                 link=""
@@ -125,35 +154,41 @@
                                 on-tap="addCar"
                                 id="add_button"
                                 disabled
-                                hidden$="[[ stepData.hide_buttons ]]">
-                      [[  localize(stepData.main_section.secondary_cta) ]]
+                                hidden$="[[ stepData.hide_secondary_button ]]">
+                      [[ localize(stepData.main_section.secondary_cta) ]]
                     </dorel-cta>
-                  </dorel-layout-column>
-                  <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="4" align="left">
+                  </dorel-layout-column>-->
+                  <br><br><br>
+                  <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="7" align="left">
                     <dorel-cta title="Call to action"
                                 type="primary"
-                                link=""
+                                link="[[createCarFittingListLink(carFittingToolPage, showcaseData)]]"
                                 size="medium"
                                 on-tap="nextStep"
                                 id="next_button"
                                 disabled
-                                hidden$="[[ stepData.hide_buttons ]]">
-                      [[  localize(stepData.main_section.primary_cta) ]]
+                                hidden$="[[ stepData.hide_primary_button ]]">
+                      [[ localize(stepData.main_section.primary_cta) ]]
                     </dorel-cta>
                   </dorel-layout-column>
                 </dorel-layout-row>
               </dorel-layout-column>
             </dorel-layout-row>
         </dorel-layout-column>
-        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left" class="col-right-top">
+        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="12" align="left" class="col-right-top">
           <dorel-layout-row>
-            <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
-              <div class="notification-box">
+            <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
+              <div id="notification" class="notification-box">
                 <iron-icon class="notification-icon" icon="dorel-icons:light-bulb"></iron-icon>
                 <br><br>
                 [[ localize(stepData.sub_section.notification_1) ]] <strong>[[ productName ]]</strong> [[ localize(stepData.sub_section.notification_2) ]]
                 <br><br>
                 [[ localize(stepData.sub_section.notification_3) ]]
+              </div>
+              <div id="warning" class="notification-box warning-box" hidden>
+                <iron-icon class="notification-icon warning-icon" icon="dorel-icons:light-bulb"></iron-icon>
+                <br><br>
+                [[ localize(stepData.sub_section.warning_1) ]]
               </div>
             </dorel-layout-column>
           </dorel-layout-row>
@@ -178,9 +213,9 @@
     /* global Polymer */
     /* global customElements */
     /* global DorelMultilingualBehavior */
-    class DorelCarFittingSelection extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+    class DorelCarFittingCarSelector extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
       static get is() {
-        return 'dorel-car-fitting-selection';
+        return 'dorel-car-fitting-car-selector';
       }
 
       static get properties() {
@@ -192,15 +227,20 @@
             computed: 'updateNextButton(next)'
           }
         };
-      }
+      }  
 
       static get observers() {
         return [
-            'updateStep(carData.*)'
+            'updateStep(carData.*)',
+            'updateStep(productList.*)'
         ];
       }
 
       addCar() {
+        if(this.carData.length !== 0) {
+          this.$.notification.setAttribute('hidden', true);
+          this.$.warning.removeAttribute('hidden');
+        }
         this.push('carData', {
           result: null,
           form: Object.create(this.stepData.main_section.form)
@@ -211,6 +251,8 @@
         if(this.carData.length > 1) {
           this.splice(`carData`, event.model.index, 1);
         } else {
+          this.$.warning.setAttribute('hidden', true);
+          this.$.notification.removeAttribute('hidden');
           this.splice(`carData`, 0, 1);
           this.addCar();
         }
@@ -237,7 +279,7 @@
         super.ready();
         if(this.carData.length < 1) this.addCar();
       }
-
+      
       shouldShow(step) {
         let show;
         if(this.stepController.currentStep && this.stepController.currentStep === step) {
@@ -245,23 +287,43 @@
         } else {
           show = false;
         }
-        return show;
+        return show; 
+      }
+
+      previousStep() {
+        this.set('stepData.isCurrent', false);
+        this.set('stepController.currentStep', this.stepData.previousStep);
       }
 
       updateStep() {
         if(this.carData.length > 0 && this.carData[0].result) {
-          if(this.stepController.currentStep === 'carFittingSelection') {
-            this.nextStep();
+          if(this.carData[0].result.message) {
+            this.$.next_button.removeAttribute('disabled');
+            /*this.$.add_button.removeAttribute('disabled');
+            this.$.add_button.removeAttribute('hidden');*/
+          } else {
+            this.$.next_button.setAttribute('disabled', true);
+            /*this.$.add_button.setAttribute('disabled', true);
+            this.$.add_button.setAttribute('hidden', true);*/
           }
-          this.$.next_button.removeAttribute('disabled');
-          this.$.add_button.removeAttribute('disabled');
         } else {
           this.$.next_button.setAttribute('disabled', true);
-          this.$.add_button.setAttribute('disabled', true);
+          /*this.$.add_button.setAttribute('disabled', true);
+          this.$.add_button.setAttribute('hidden', true);*/
         }
+      }
+      
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      createCarFittingListLink(pageObject) {
+        const urlArr = window.location.href.split('/');
+        return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}` ;
       }
     }
 
-    customElements.define(DorelCarFittingSelection.is, DorelCarFittingSelection);
+    customElements.define(DorelCarFittingCarSelector.is, DorelCarFittingCarSelector);
   </script>
 </dom-module>
