@@ -3,64 +3,369 @@
 <dom-module id="dorel-car-fitting-product-selector">
   <template>
     <style is="custom-style">
+      :host {
+        display: block;
+        clear: both;
+      }
 
+      [hidden] {
+        display: none;
+      }
+
+      .step-title {
+        @apply(--theme-typography-4);
+        color: var(--theme-color-black);
+      }
+
+      dorel-layout-row, dorel-layout-column {
+        margin-top: 0;
+      }
+
+      .previous_button_container {
+        width: 5rem;
+        height: 3rem;
+      }
     </style>
-    <section>
-      <div>
-        <dorel-slide-selector id="productSelector" selectedIndex="[[selectedIndex]]"></dorel-slide-selector>
-        <h1>Age Categgory: [[ ageCategory.category ]]<h1>
-        <strong>[[ localize(ageCategory.label) ]]</strong>
-      </div>
-    </section>
+    <dorel-wp-collect-templates
+      template-type="page-product-advisory-tool.php"
+      response="{{carFittingToolPage}}"></dorel-wp-collect-templates>
+    <iron-ajax
+      id="carConfig"
+      handle-as="json"
+      on-response="carConfigResponse">
+    </iron-ajax>
+    <iron-ajax
+      id="carProducts"
+      content-type='application/json'
+      handle-as="json"
+      method="post"
+      on-response="carProductsResponse">
+    </iron-ajax>
+    <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
+    <dorel-layout-container>
+      <dorel-layout-row align="middle">
+        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12" align="left">
+          <div class="previous_button_container">
+            <dorel-cta id="previous_button" title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="[[createCarFittingListLink(carFittingToolPage)]]" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+              [[ localize('common#back') ]]
+            </dorel-cta>
+          </div>
+          <h1 class="step-title">[[ localize('car_fitting_product_selector#title') ]]</h1>
+          <br>
+        </dorel-layout-column>
+      </dorel-layout-row>
+      <dorel-layout-row align="middle">
+        <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12" align="left">
+          <dorel-slide-selector id="productSelector" slides="[[ productList ]]" selected-index-global="{{ selectedIndexGlobal }}"></dorel-slide-selector>
+        </dorel-layout-column>
+      </dorel-layout-row>
+    </dorel-layout-container>
   </template>
   <script>
-    class DorelCarFittingProductSelector extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+  class DorelCarFittingProductSelector extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-car-fitting-product-selector';
       }
 
+      constructor() {
+        super();
+        this.selectedIndexGlobal = {
+          index: -1
+        };
+      }
+
       static get properties() {
         return {
-          carData: {
-            type: Object,
-            value: {}
+          // selectedIndexGlobal: {
+          //   type: Array,
+          //   value: () => {
+          //     return [8]
+          //   }
+          // },
+          
+          isPreviousButtonHidden: {
+            type: Boolean,
+            value: false
           },
-          productData: {
-            type: Object,
-            value: {}
+
+          selectedCar: {
+            type: String,
+            value:''
           },
-          selectedIndex: {
-            type: Number,
-            value: 0,
+          
+          // requestedProductName: {
+          //   type: String,
+          //   value: ''
+          // },
+            
+          values: {
+            type: Array,
+            value: []
+          },
+
+          skuList: {
+            type: Array,
+            value: []
+          },
+
+          productDataRequestList: {
+            type: Array,
+            value: []
+          },
+
+          carsRequestList: {
+            type: Array,
+            value: []
+          },
+
+          productDisplayListFromCFL: {
+            type: Array,
+            value: []
+          },
+
+          // productData: {
+          //   type: Object,
+          //   value: () => {}
+          // },
+
+          productList: {
+            type: Array,
+            statePath: function (state) {
+             return this.productListFromState(state);
+            },
+          }
+
+        }
+      }
+
+      static get observers() {
+        return [
+          'handleSelectionChange(selectedIndexGlobal.*)',
+          'handleCarData(carData.*)',
+          'productsFetched(productList.*)',
+          'setPreviousButtonState(isPreviousButtonHidden)'
+        ];
+      }
+
+      setPreviousButtonState(isPreviousButtonHidden) {
+        if(isPreviousButtonHidden) {
+          this.$.previous_button.setAttribute('hidden', true);
+        } else {
+          this.$.previous_button.removeAttribute('hidden');
+        }
+      }
+
+      // productsFetched(e) {
+      //   const list = this.get('productList');
+      //   if(list.length > 0) {
+      //     //this.push('selectedIndexGlobal', 0);
+      //   }
+      // }
+
+      productListFromState(state) {
+        let list = [];
+        this.productDisplayListFromCFL.forEach(function(element, index) {
+          function findCarseatProduct(product) {
+            return product.sku === element[0];
+          }
+
+          function findBaseProduct(product) {
+            return product.sku === element[1];
+          }
+          
+          const carseat = state.product.products.find(findCarseatProduct);
+          const base = state.product.products.find(findBaseProduct);
+          if(carseat && element.length === 1) {
+            if(!carseat.isLoading && carseat.sku && carseat.name) {
+              const product = {
+                carseat: carseat
+              }
+              list.push(product);
+            }
+          }
+          
+          if(carseat && base && element.length === 2) {
+            if(!carseat.isLoading && carseat.sku && carseat.name) {
+              if(!base.isLoading && base.sku && base.name) {
+                const product = {
+                  carseat: carseat,
+                  base: base
+                }
+                list.push(product);
+              }
+            }
+          }
+        })
+
+        if(list.length > 0) list[0].selected = true;
+        return list;
+      }
+
+      handleSelectionChange(ev) {
+        const index = ev.base.index;
+        const list = this.get('productList');
+        let product, sku;
+        if(list) {
+          if(list.length > 0) {
+            product = list[index];
+            if(product.base) {
+              sku = `${product.carseat.sku}-${product.base.sku}`;
+              this.set('productName', `${product.carseat.name.value} & ${product.base.name.value}`);
+            } else {
+              sku = product.carseat.sku;
+              this.set('productName', product.carseat.name.value);
+            }
+            this.set('selectedProduct.0', product);
+            const cars = this.get('carData').map((item) => this.getCarSelection(item.result.formData));
+            const self = this;
+            cars.forEach(function(item, index) {
+              self.set(`carData.${index}.result.message`, null);
+              const resultsEl = self.$.carConfig;
+              resultsEl.url = `${CONFIG.DIO_API_URL}/carseat/${item.car_brand_id}?index=${index}&model_name=${item.model_name}&model_type=${item.model_type}&introduction_year=${item.introduction_year}&doors=${item.doors}&sku=${sku}`;
+              self.set('isPreviousButtonHidden', true);
+              resultsEl.generateRequest();
+            });
           }
         }
       }
 
-      ready() {
-        super.ready()
-        // get carseat products compatible with this car
-
-
-
-
-        this.$.productSelector.addEventListener('selected-index-change', this._handleSelectionChange);
+      /**
+       * Response
+       * @name _resultResponse
+       * @description response of the carfitting call
+       * @param response - Object
+       */
+      carConfigResponse(event) {
+        //debugger;
+        const url = event.detail.url;
+        const n = url.indexOf('index');
+        const index = url.substring(n + 6, n + 7);
+        const carData = this.get('carData');
+        const form = carData[index].result.formData;
+        let data = event.detail.response;
+        const car = this.getCarSelection(form);
+        //const car_information_label = `${car.car_brand_name}, ${car.model_name}, ${car.introduction_year}`;
+        //data.car_information_label = car_information_label;
+        data.formData = form;
+        this.set(`carData.${index}.result`, data);
+        this.set(`carData.${index}.active`, false);
+        this.set('isPreviousButtonHidden', false);
       }
 
-      _handleSelectionChange(ev) {
-        console.log('yes something changed', ev.detail)
+      handleCarData() {
+        const carData = this.get('carData').filter((item) => item.result);
+        if(carData.length > 0) {
+            const stored = this.get('carsRequestList');
+            const form = carData.map((item) => item.result.formData);
+            if(form[0]) {
+              const cars = carData.map((item) => this.getCarSelection(item.result.formData));
+              if(JSON.stringify(stored) !== JSON.stringify(cars)) {
+                this.set('carsRequestList', cars);
+                const carProducts = this.$.carProducts;
+                let postData = [{
+                  age_category: this.get('ageCategory').category,
+                  cars: this.get('carsRequestList')
+                }];
+                carProducts.body = postData;
+                carProducts.url = CONFIG.DIO_API_URL + '/carproducts';
+                carProducts.generateRequest();
+              }
+            }
+        }
       }
 
-/*
-      opel: 48
+      carProductsResponse() {
+        const self = this;
+        const data = this.$.carProducts.lastResponse;
+        if(data) {
+          let productDataRequestList = [];
+          let productDisplayListFromCFL = [];
+          data.product_results.map(function(element) {
+            const SKUS = element.sku.split('-');
+            if(SKUS.length === 1) {
+              if(String(SKUS[0]).substring(0, 2) === 'MC' || String(SKUS[0]).substring(0, 2) === 'BB') {
+                productDataRequestList = productDataRequestList.concat(SKUS);
+                productDisplayListFromCFL.push(SKUS);
+              }
+            }
+            if(SKUS.length === 2) {
+              if(String(SKUS[0]).substring(0, 2) === 'MC' || String(SKUS[0]).substring(0, 2) === 'BB' || String(SKUS[1]).substring(0, 2) === 'MC' || String(SKUS[1]).substring(0, 2) === 'BB') {
+                productDataRequestList = productDataRequestList.concat(SKUS);
+                productDisplayListFromCFL.push(SKUS);
+              }
+            }
+          });
+          this.set('productDisplayListFromCFL', productDisplayListFromCFL);
+          this.set('productDataRequestList', productDataRequestList);
+          this.dispatch('requestProductsBySku', productDataRequestList);
+        }
+      }
 
+      findValue (results, filterName) {
+        var item = results.find(function(_item) {
+          return _item.filter === filterName;
+        });
+        return item.value;
+      }
 
+      getCarSelection(form) {
+          let brandName = this.findValue(form, 'car_brand_name');
+          let brandId = this.findValue(form, 'car_brand_id');
+          let modelName = this.findValue(form, 'model_name');
+          let modelType = this.findValue(form, 'model_type');
+          let introductionYear = this.findValue(form, 'introduction_year');
+          let doors = this.findValue(form, 'doors');
 
-*/
+          return {
+              car_brand_name: (brandName !== null) ? brandName : '',
+              car_brand_id: (brandId !== null) ? brandId : '',
+              model_name: (modelName !== null) ? modelName : '',
+              model_type: (modelType !== null) ? modelType : '',
+              introduction_year: (introductionYear !== null) ? introductionYear : '',
+              doors: (doors !== null) ? doors : '',
+          }
+      }
 
+      validate (formGroups) {
+        var self = this;
+        if(formGroups.value && formGroups.value && formGroups.value.length) {
+          var isValid = formGroups.value.every(function(group) {
+            return Boolean(group && group.selected && group.selected.value && group.selected.value !== '');
+          })
+          this.values = []
+          if(isValid) {
+            var group_values = formGroups.value.map(function(group) {
+              return group.selected.value;
+            });
+            group_values.forEach(function(group) {
+              group.forEach(function(item) {
+                self.values.push(item);
+              });
+            });
+          }
+        }
+      }
+
+      previousStep() {
+        this.set('carData.0.result.message', null);
+        this.set('stepData.isCurrent', false);
+        this.set('stepController.currentStep', this.stepData.previousStep);
+        this.splice('productList', 0, this.productList.length);
+      }
+      
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      createCarFittingListLink(pageObject) {
+        const urlArr = window.location.href.split('/');
+        return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}` ;
+      }
     }
 
     customElements.define(DorelCarFittingProductSelector.is, DorelCarFittingProductSelector);
-  </script>;
+  </script>
 
 </dom-module>
