@@ -317,8 +317,9 @@
                       <br>
                       <!--<object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
                       <strong class="fit-title">Fit</strong>-->
-                      <br> 
                       <small class="image-message">[[stepData.main_section.info]]</small>
+                      <br>
+                      <br>
                       <template is="dom-if" if='[[ car.result.message ]]' restamp='true'>
                         [[ loadImage(car.result, carIndex) ]]
                         <div id="svg_container_[[carIndex]]" class="svg_container"></div>
@@ -776,12 +777,8 @@
               const container = this.shadowRoot.querySelector(`#svg_container_${carIndex}`);
               container.innerHTML = `<svg id="car_${carIndex}" class="svg_node"></svg>`;
               svgCarNode = Snap(this.shadowRoot.querySelector(`#car_${carIndex}`));
-              // if(data.car_body_configuration.includes('bench')) {
-              //   self.set('carFrontRow', 'front_row_bench');
-              // } else {
-              //   self.set('carFrontRow', 'front_row_normal');
-              // }
               Snap.load(`/assets/images/car-fitting/car_graphics.svg`, onSVGLoaded);
+              //svgCarNode.attr({viewBox: '0, 0, 320, 154'});
             }, 0);
           }
         }
