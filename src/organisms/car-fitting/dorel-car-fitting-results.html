@@ -1,6 +1,6 @@
-<script src="../../../node_modules/snapsvg/dist/snap.svg.js"></script>
 <link rel="import" href="../../atoms/dorel-cta.html">
 <link rel="import" href="../../atoms/dorel-bynder-image.html">
+<script src="../../../node_modules/snapsvg/dist/snap.svg.js"></script>
 
 <dom-module id="dorel-car-fitting-results">
   <template>
@@ -12,6 +12,11 @@
       [hidden] {
         display: none;
       }
+      
+      #positron {
+        position: relative;
+      }
+      
       .inner-col-left-top {
         min-height: 27rem;
       }
@@ -21,16 +26,16 @@
         padding: 1.8rem;
         margin-bottom: 1.5rem;
       }
-      .image {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 50%;
-        display: flex;
-        flex: 1;
-        z-index: -1000;
-      }
+      /*.image-wrapper {*/
+      /*  position: absolute;*/
+      /*  top: 0;*/
+      /*  right: 0;*/
+      /*  bottom: 0;*/
+      /*  width: 50%;*/
+      /*  display: flex;*/
+      /*  flex: 1;*/
+      /*  z-index: -1000;*/
+      /*}*/
       .car-selection, .car-display {
         width: auto;
         height: auto;
@@ -66,12 +71,8 @@
         color: var(--theme-brand-color-1);
       }
       .step-title {
-        font-size: var(--theme-typography-5_-_font-size);
-        line-height: var(--theme-typography-5_-_line-height);
-        margin-top: var(--theme-typography-5_-_margin-top);
-        margin-bottom: var(--theme-typography-5_-_margin-bottom);
-        font-weight: var(--theme-typography-5_-_font-weight);
-        font-family: var(--theme-typography-5_-_font-family);
+        @apply(--theme-typography-4);
+        color: var(--theme-color-black);
       }
       .product-title {
         font-size: var(--theme-typography-5_-_font-size);
@@ -103,15 +104,15 @@
         width: 100%;
         justify-content: flex-end;
       }
-      .background-complementary {
-        background-color: var(--theme-color-monochrome-2);
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        width: 50%;
-        z-index: -1000;
-      }
+      /*.background-complementary {*/
+      /*  background-color: var(--theme-color-monochrome-2);*/
+      /*  position: absolute;*/
+      /*  top: 0;*/
+      /*  bottom: 0;*/
+      /*  right: 0;*/
+      /*  width: 50%;*/
+      /*  z-index: -1000;*/
+      /*}*/
       .post {
         height: 220px;
         width: 370px;
@@ -120,7 +121,7 @@
         align-content: center;
         justify-content: flex-start;
       }
-      .imgwrap {
+      .selected-product {
         text-align: left;
       }
       .imgwrapicon {
@@ -138,7 +139,16 @@
         margin: 10px 10px 0px 20px;
       }
       .info {
-        margin: 25px 10px 10px 20px;
+        /*margin: 25px 10px 10px 20px;*/
+        height: 6rem;
+      }
+      .info .title {
+         @apply(--theme-typography-4);
+        float: left;
+        width: 100%;
+        margin: 0 0 1rem 0;
+        padding: 0;
+        color: var(--theme-brand-color-1);
       }
       .timeAgo {
         font-size: 11px;
@@ -173,6 +183,7 @@
         position: absolute;
         width: 150px;
         height: auto;
+        /*border: 1px solid red;*/
         border-radius: 10px;
         /*padding: 25px;*/
         top: 0;
@@ -221,49 +232,152 @@
              -o-transform:skew(8deg) rotate(3deg);
                 transform:skew(8deg) rotate(3deg);
       }
+
+      dorel-layout-row, dorel-layout-column {
+        margin-top: 0;
+      }
+
+      .image-wrapper {
+        border-radius: var(--theme-border-radius-2);
+        width: 100%;
+        height: 15em;
+        /*background-color: var(--theme-color-monochrome-2);*/
+        overflow: hidden;
+        display: flex;
+        padding: .25em;
+        box-sizing: border-box;
+      }
+
+      .image-selected {
+        width: 100%;
+        height: 100%;
+        max-width: 17em;
+        max-height: 19.2em;
+        margin: auto;
+        float: none;
+        display: block;
+      }
+
+      .disclaimer {
+        @apply(--theme-typography-1);
+        color: var(--theme-color-black);
+      }
+
+      .car_notices {
+        @apply(--theme-typography-4);
+        color: darkred;
+        font-size: var(--theme-typography-1_-_font-size);
+        line-height: var(--theme-typography-1_-_line-height);
+      }
+
+      img.floor_storage {
+        width: 10rem;
+      }
+      
+      .no-result-title {
+        @apply(--theme-typography-4);
+        color: var(--theme-brand-color-1);
+      }
+      .no-result-link {
+        
+      }
+      #store-locator-button {
+        width: 4rem;
+      }
     </style>
+    <dorel-wp-collect-templates
+      template-type="page-product-advisory-tool.php"
+      response="{{carFittingToolPage}}"></dorel-wp-collect-templates>
+    <dorel-wp-collect-templates
+      template-type="page-store-locator.php"
+      response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
     <dorel-media-query breakpoints="{{ breakpoints }}"></dorel-media-query>
     <dorel-layout-container>
       <dorel-layout-row align="middle">
-        <dorel-layout-column desktop-column-span="1" tablet-column-span="1" mobile-column-span="1" align="left">
-          <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
-              Back
-          </dorel-cta>
+         <dorel-layout-column desktop-column-span="12" tablet-column-span="12" mobile-column-span="12" align="left">
+          <template is="dom-if" if="[[ !standalone ]]" restamp="true">
+            <dorel-cta title="[[ stepData.options.previous ]]" rotate no-margin type="link" link="[[createCarFittingListLink(carFittingToolPage)]]" size="medium" icon="dorel-icons:chevron-right" on-click="previousStep">
+              [[ localize('common#back') ]]
+            </dorel-cta>
+          </template>
         </dorel-layout-column>
-        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left">
+      </dorel-layout-row>
+      <br><br>
+      <dorel-layout-row align="middle">
+        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="12" align="left">
             <dorel-layout-row>
-                <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
+                <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
                   <h1 class="step-title">[[ localize('car_fitting_results#main_section_title') ]]</h1>
                   <template id="carResults" is="dom-repeat" items="[[ carData ]]" as="car" index-as="carIndex" restamp="true">
                     <br>
                     <strong hidden$="[[ !getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ car.result.car_information_label ]]</strong>
-                    <strong hidden$="[[ getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ localize('car_fitting_results#not_listed') ]]</strong>
-                    <br>
-                    <br>
-                    <object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
-                    <strong class="fit-title">Fit</strong>
-                    <br>
-                    <small class="image-message">[[stepData.main_section.info]]</small>
-                    [[ loadImage(car.result, carIndex) ]]
-                    <div id="svg_container_[[carIndex]]" class="svg_container"></div>
+                    <strong hidden$="[[ getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ localize('car_fitting_results#no_result_for_car') ]]</strong>
+                    <template is="dom-if" if="[[ shouldShowCarResult(car.result) ]]">
+                      <br>
+                      <br>
+                      <!--<object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
+                      <strong class="fit-title">Fit</strong>-->
+                      <br> 
+                      <small class="image-message">[[stepData.main_section.info]]</small>
+                      <template is="dom-if" if='[[ car.result.message ]]' restamp='true'>
+                        [[ loadImage(car.result, carIndex) ]]
+                        <div id="svg_container_[[carIndex]]" class="svg_container"></div>
+                      </template>
+                      <div class="car_notices">
+                        <ul>
+                          <template is="dom-repeat" items="[[ car.result.notices ]]" as="notification" restamp="true">
+                            <li>[[ localize(notification) ]]</li>
+                            <template is="dom-if" if="[[ getFloorStorageImage(notification) ]]">
+                              <br>
+                              <img class="floor_storage" src="[[ getFloorStorageImage(notification) ]]">
+                            </template>
+                          </template>
+                        </ul>
+                      </div>
+                    </template>
+                    <template is="dom-if" if="[[ !shouldShowCarResult(car.result) ]]">
+                      <h1 class='no-result-title'>[[ localize('car_fitting_results#no_result_title') ]]</h1>
+                      <p>[[ localize('car_fitting_results#no_result_message') ]]</p>
+                      <dorel-cta
+                        id="store-locator-button"
+                        type="primary"
+                        title="[[localize('cta#find_a_store')]]"
+                        link="[[createStoreLocatorLink(storeLocatorPage)]]"
+                        size="medium"
+                        icon="dorel-icons:chevron-right">[[localize('cta#find_a_store')]]</dorel-cta>
+                    </template>
                   </template>
                 </dorel-layout-column>
             </dorel-layout-row>
         </dorel-layout-column>
-        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="4" align="left" class="col-right-top">
+        <dorel-layout-column desktop-column-span="5" tablet-column-span="5" mobile-column-span="12" align="left" class="col-right-top">
           <dorel-layout-row>
-            <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="8" class="inner-col-left-top">
+            <dorel-layout-column desktop-column-span="9" tablet-column-span="9" mobile-column-span="12" class="inner-col-left-top">
               <div class="notification-box">
-                    <div class="imgwrap">
+                    <div class="selected-product">
                       <h2 class="content-title">[[ stepData.selected_product.title ]]</h2>
-                      <iron-image src="[[ productImage ]]"
-                        class="photo card-image__background"
-                        position="center" sizing="contain">
-                      </iron-image>
-                      <div class="timeAgo">Explore other suitable solutions</div>
+                      <div class="image-wrapper">
+                        <dorel-product-image
+                          class="image-selected"
+                          sizing="contain"
+                          image-url="[[currentProductImage]]"></dorel-product-image>
+                        <template is="dom-if" if="[[currentBaseImage]]">
+                          <dorel-product-image
+                            class="image-selected"
+                            sizing="contain"
+                            image-url="[[currentBaseImage]]"></dorel-product-image>
+                        </template>
+                      </div>
+                      <!--<div class="timeAgo">Explore other suitable solutions</div>-->
                     </div>
                     <div class="info">
-                      <h2 class="title">[[ productData.sku ]]</h2>
+                      <h2 class="title">[[ selectedProductName ]]</h2>
+                      <dorel-cta
+                        type="primary"
+                        title="[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]"
+                        link="[[ productURL ]]"
+                        size="medium"
+                        icon="dorel-icons:chevron-right">[[localize('See_details')]]</dorel-cta>
                     </div>
               </div>
               <div class="notification-box">
@@ -276,12 +390,11 @@
                   </div>
                 </div>
                 </template>
+                <h3 class="disclaimer">[[localize('car_fitting_results#disclaimer')]]</h3>
               </div>
             </dorel-layout-column>
           </dorel-layout-row>
-        </dorel-layout-column>
-        <dorel-layout-column desktop-column-span="1" tablet-column-span="1" mobile-column-span="1" align="left">
-        </dorel-layout-column>
+        </dorel-layout-column> 
       </dorel-layout-row>
       <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]" restamp="true">
         <template is="dom-if" if="[[ hasBynderImage(stepData.sub_section.background_image_id) ]]">
@@ -295,16 +408,15 @@
                       media-id$="[[ stepData.sub_section.background_image_id ]]"></dorel-bynder-image>
         </template>
       </template>
-      <template is="dom-if" if="[[ breakpoints.tabletMediumUp ]]" restamp="true">
-        <div class="background-complementary"></div>
-      </template>
     </dorel-layout-container>
     <template is="dom-repeat" items="[[ carData ]]" as="car" index-as="carIndex" restamp="true">
       <template is="dom-repeat" items="[[ car.result.carseat_positions ]]" as="seat" restamp="true">
         <div id="car_[[ carIndex ]]_seat_[[ seat.seat_position ]]_notification" class="notification">
           <div class="effect7">
             <object data="/assets/images/car-fitting/icon_[[ seat.icon ]].svg" type="image/svg+xml"></object>
-            <strong class="notification-title">Safety warning</strong>
+            <template is="dom-if" if="[[isSafetywarning(seat.icon)]]">
+              <strong class="notification-title">[[localize('car_fitting_results#safety_warning')]]</strong>
+            </template>
             <ul>
               <template is="dom-repeat" items="[[ seat.notices ]]" as="notification" restamp="true">
                 <li>[[ localize(notification) ]]</li>
@@ -325,19 +437,27 @@
     /* global Snap */
     /* global CustomEvent */
     /* global customElements */
-    class DorelCarFittingResults extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
+    class DorelCarFittingResults extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element)) {
 
       static get is() {
         return 'dorel-car-fitting-results';
       }
 
+      constructor() {
+        super();
+        this.redraw = false;
+      }
+
       static get properties() {
         return {
-          productImage: {
-            type: String,
-            computed: 'getProductImage(productData)'
+          productList: {
+            type: Array,
+            statePath: function (state) {
+              return this.productListFromState(state);
+              },
           },
           iconsUsed2: Array,
+          //carFrontRow: String,
           iconsUsed: {
             type: Object,
             value: {
@@ -376,22 +496,86 @@
         };
       }
 
-      getFitOrNoFit (data) {
-        debugger;
+      static get observers() {
+        return [
+          'productChanged(productData.*)',
+          'productDataChanged(selectedProduct.*)',
+          'renderCarGraphics(carData.*)'
+        ];
+      }
+      
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      createStoreLocatorLink(pageObject) {
+        const urlArr = window.location.href.split('/');
+        const ret = `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}`;
+        //debugger;
+        return ret;
+      }
+      
+      renderCarGraphics(data) {
+        //debugger;
+        return true;
       }
 
-      getIconLabel(icon) {
-        var test = this.iconsUsed[icon].label;
-        debugger;
-        return this.iconsUsed[icon].label;
+      shouldShowCarResult(data) {
+        let result = false;
+        if(data) {
+          result = (data.message === 'success') ? true : false;
+        }
+        return result;
       }
 
       getLabelOrNotListed (data) {
         if(data) return (data.carseat_positions);
       }
 
-      getProductImage() {
-        if(this.productData && this.productData.child_products) return this.productData.child_products[0].images.image;
+      getFloorStorageImage(messageTag) {
+        const image = `/assets/images/car-fitting/floor_storage_${messageTag.slice(-1)}.png`;
+        return (messageTag.substring(0, 42)=== 'car_fitting_results#floor_storage_warning_' && messageTag.slice(-1) > 1) ? image : false; 
+      }
+
+      productListFromState(state) {
+        const data = {
+          carseat: state.product.products[0]
+        };
+        if(this.requestedProductName) {
+          if(data.carseat.isLoading === false && data.carseat.notAvailable === false) {
+            this.set('selectedProduct', data);
+          }
+        }
+      }
+
+      productDataChanged(data) {
+        if(data.value.carseat) {
+          this.selectedProductName = (data.value.base ? `${data.value.carseat.name.value} & ${data.value.base.name.value}` : data.value.carseat.name.value);
+          this.currentProductImage = data.value.carseat.child_products[0].images.image;
+          this.currentBaseImage = (data.value.base) ? data.value.base.child_products[0].images.image : null;
+          //this.productURL = `${window.location.origin}/${window.location.pathname.split('/')[1]}/${window.location.pathname.split('/')[2]}/${data.value.carseat.linkUrl}`;
+          /* @todo read out product template en link there */ 
+          this.productURL = `/gb-en/car-seats/${data.value.carseat.url}`;
+        }
+      }
+
+      isSafetywarning(icon) {
+        return (icon === 'orange') ? true : false;
+      }
+
+      productChanged() {
+        //debugger;
+      }
+
+      getFitOrNoFit (data) {
+        //debugger;
+      }
+
+      getIconLabel(icon) {
+        var test = this.iconsUsed[icon].label;
+        //debugger;
+        return this.iconsUsed[icon].label;
       }
 
       renderLegend() {
@@ -404,78 +588,180 @@
         return iconsUsed;
       }
 
+      offset(el) {
+        const rect = el.getBoundingClientRect(),
+        scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+        scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+      }
+
       loadImage(data, carIndex) {
+        console.log('index: ', carIndex);
+        console.log('data: ', JSON.stringify(data));
+        
         if(data) {
           if(data.carseat_positions) {
+
+            this.iconsUsed.icon_green.used = false;
+            this.iconsUsed.icon_orange.used = false;
+            this.iconsUsed.icon_red.used = false;
+            this.iconsUsed.icon_blue_2.used = false;
+            this.iconsUsed.icon_green.used = false; 
+            this.iconsUsed.icon_top_tether.used = false;
+
             let self = this;
             let svgCarNode = null;
+
+            const carFrontRow = (data.car_body_configuration.includes('bench') ? 'front_row_bench' : 'front_row_normal');
+
             function onSVGLoaded(loadedFragment) {
               svgCarNode.append(loadedFragment);
+
               svgCarNode.attr({
                 opacity: 0
               });
+
+              console.log('svgCarNode', svgCarNode);
               svgCarNode.select('#small_car').attr({'visibility': 'hidden'});
+              console.log('here 2');
               svgCarNode.select('#normal_car').attr({'visibility': 'hidden'});
               svgCarNode.select('#big_car').attr({'visibility': 'hidden'});
-              const seats = ['1', '2', '3', '4', '5', '6', '7'];
+              const seats = ['0', '1', '2', '3', '4', '5', '6', '7'];
               for(var seat in seats) {
                 const seatNode = svgCarNode.select(`#seat_${seats[seat]}`);
                 if(seatNode) {
-                  svgCarNode.select(`#seat_${seats[seat]}`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
-                  svgCarNode.select(`#seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  if(seat === '0') {
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  }
+
+                  if(seat === '1') {
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_normal #seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#front_row_bench #seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  }
+
+                  if(seat !== '0' || seat !== '1') {
+                    svgCarNode.select(`#seat_${seats[seat]}`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_green`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_red`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_orange`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_blue`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_blue_2`).attr({'visibility': 'hidden'});
+                    svgCarNode.select(`#seat_${seats[seat]} #icon_tether`).attr({'visibility': 'hidden'});
+                  }
+
+                  const hideDriverPosition = (carFrontRow === 'front_row_normal') ? 'front_row_bench' : 'front_row_normal';
+
+                  svgCarNode.select(`#${hideDriverPosition} #steering_wheel`).attr({'visibility': 'hidden'});
+                  svgCarNode.select(`#${hideDriverPosition} #seat_driver`).attr({'visibility': 'hidden'});
                 }
               }
-              svgCarNode.select(`#${data.car_body_configuration}`).attr({'visibility': 'visible'});
-              data.carseat_positions.forEach(function(item) {
+              if(data.car_body_configuration.includes('bench')) {
+                const car_body = data.car_body_configuration.substring(0, data.car_body_configuration.length - 6);
+                svgCarNode.select(`#${car_body}`).attr({'visibility': 'visible'});
+              } else {
+                svgCarNode.select(`#${data.car_body_configuration}`).attr({'visibility': 'visible'});
+              }
+              data.carseat_positions.forEach(function(item, index) {
+                const frontPositionContainer = (item.seat_position === 0 || item.seat_position === 1) ?  `#${carFrontRow} ` : '';
+
                 if(item.icon === 'green') {
                   self.iconsUsed.icon_green.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_green`).attr({'visibility': 'visible'});
-                  const greenIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_green #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_green`).attr({'visibility': 'visible'});
+                  const greenIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_green #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
                   greenIcon.mousemove(function(event) {
-                    notice.style.left = `${event.clientX + 20}px`;
-                    notice.style.top = `${event.clientY - 80}px`;
+                    const offset = self.offset(event.currentTarget);
+                    notice.style.left = `${offset.left + 40}px`;
                     notice.style.display = 'block';
+                    const height = notice.clientHeight;
+                    notice.style.top = `${offset.top - (height - (height / 3))}px`;
                   });
                   greenIcon.mouseout(function(event) {
                     notice.style.display = 'none';
                   });
                 }
+                if(item.icon === 'blue') {
+                  self.iconsUsed.icon_blue.used = true;
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_blue`).attr({'visibility': 'visible'});
+                  const blueIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_blue #hover_area`);
+                  const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
+                  blueIcon.mousemove(function(event) {
+                    const offset = self.offset(event.currentTarget);
+                    notice.style.left = `${offset.left + 40}px`;
+                    notice.style.display = 'block';
+                    const height = notice.clientHeight;
+                    notice.style.top = `${offset.top - (height - (height / 3))}px`;
+                  });
+                  blueIcon.mouseout(function(event) {
+                    notice.style.display = 'none';
+                  });
+                }
                 if(item.icon === 'red') {
                   self.iconsUsed.icon_red.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_red`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_red`).attr({'visibility': 'visible'});
                 }
                 if(item.icon === 'orange') {
                   self.iconsUsed.icon_orange.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position}`).attr({'visibility': 'visible'});
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_orange`).attr({'visibility': 'visible'});
-                  const orangeIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_orange #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position}`).attr({'visibility': 'visible'});
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_orange`).attr({'visibility': 'visible'});
+                  const orangeIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_orange #hover_area`);
                   const notice = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_notification`);
                   orangeIcon.mousemove(function(event) {
-                    notice.style.left = `${event.clientX + 20}px`;
-                    notice.style.top = `${event.clientY - 80}px`;
+                    const offset = self.offset(event.currentTarget);
                     notice.style.display = 'block';
+                    notice.style.top = '0px';
+                    notice.style.left = '0px';
+                    const width = notice.clientWidth;
+                    const height = notice.clientHeight;
+                    //if(self.breakpoints.mobileSmall || self.breakpoints.mobileMedium) {
+                    //  setTimeout(function(){
+                    //    const top = (offset.top - (height + 30));
+                    //    console.log(offset.top, height, top);
+                    //    notice.style.top = `${top}px`;
+                    //    notice.style.left = `${(document.documentElement.clientWidth / 2) - (width / 2)}px`; 
+                    //  }, 200);
+                    //} else {
+                      notice.style.top = `${offset.top - (height - (height / 3))}px`;
+                      notice.style.left = `${offset.left + 40}px`;
+                    //}
                   });
                   orangeIcon.mouseout(function(event) {
                     notice.style.display = 'none';
                   });
                 }
-                if(item.top_tether_position !== '') {
+                if(item.top_tether_position !== '' && data.product.top_tether) {
                   self.iconsUsed.icon_top_tether.used = true;
-                  svgCarNode.select(`#seat_${item.seat_position} #icon_tether`).attr({'visibility': 'visible'});
-                  const tetherIcon = svgCarNode.select(`#seat_${item.seat_position} #icon_tether #hover_area`);
+                  svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_tether`).attr({'visibility': 'visible'});
+                  const tetherIcon = svgCarNode.select(`${frontPositionContainer}#seat_${item.seat_position} #icon_tether #hover_area`);
                   const tether = self.shadowRoot.querySelector(`#car_${carIndex}_seat_${item.seat_position}_tether`);
                   tetherIcon.mousemove(function(event) {
-                    tether.style.left = `${event.clientX + 20}px`;
-                    tether.style.top = `${event.clientY - 80}px`;
+                    const offset = self.offset(event.currentTarget);
+                    tether.style.left = `${offset.left + 20}px`;
                     tether.style.display = 'block';
+                    const height = tether.clientHeight;
+                    tether.style.top = `${offset.top - (height - (height / 3))}px`;
                   });
                   tetherIcon.mouseout(function(event) {
                     tether.style.display = 'none';
@@ -487,13 +773,19 @@
                 opacity: 100
               });
             }
-
+              
             setTimeout(() => {
               const svgOldCarNode = this.shadowRoot.querySelector(`#car_${carIndex}`);
               if(svgOldCarNode) svgOldCarNode.remove();
               const container = this.shadowRoot.querySelector(`#svg_container_${carIndex}`);
               container.innerHTML = `<svg id="car_${carIndex}" class="svg_node"></svg>`;
               svgCarNode = Snap(this.shadowRoot.querySelector(`#car_${carIndex}`));
+              // if(data.car_body_configuration.includes('bench')) {
+              //   self.set('carFrontRow', 'front_row_bench');
+              // } else {
+              //   self.set('carFrontRow', 'front_row_normal');
+              // }
+              console.log('load SVG');
               Snap.load(`/assets/images/car-fitting/car_graphics.svg`, onSVGLoaded);
             }, 0);
           }
@@ -504,8 +796,18 @@
         this.set('stepData.isCurrent', false);
         this.set('stepController.currentStep', this.stepData.previousStep);
       }
+
+      /**
+       * @param {string} the complete storeLocatore pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      createCarFittingListLink(pageObject) {
+        const urlArr = window.location.href.split('/');
+        return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}` ;
+      }
     }
 
     customElements.define(DorelCarFittingResults.is, DorelCarFittingResults);
-  </script>
+  </script>  
 </dom-module>

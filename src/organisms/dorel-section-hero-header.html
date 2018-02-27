@@ -109,7 +109,6 @@
     <section class="hero-header"
       tablet-small$="[[breakpoints.tabletSmall]]"
       tablet-medium-up$="[[breakpoints.tabletMediumUp]]">
-
       <!-- Show video on larger screens -->
       <template
         is="dom-if"
@@ -117,7 +116,7 @@
         <!-- Show video in header if there is a video -->
         <template
           is="dom-if"
-          if="[[showVideoLoop]]">
+          if="[[_hasVideoLoop(heroHeaderData)]]">
           <dorel-youtube-video
             video-id="[[heroHeaderData.looping_video_id]]"
             thumbnail="[[heroHeaderData.bynder_background_image]]"
@@ -127,7 +126,7 @@
         <!-- Show image in header if there is no video -->
         <template
           is="dom-if"
-          if="[[!showVideoLoop]]">
+          if="[[!_hasVideoLoop(heroHeaderData)]]">
           <dorel-bynder-responsive-image
             media-id="[[heroHeaderData.bynder_background_image]]"
             image-alt="[[heroHeaderData.bynder_image_alt_text]]"></dorel-bynder-responsive-image>
@@ -160,9 +159,10 @@
                 if="[[heroHeaderData.sub_title]]">
                 <h4 class="subtitle">[[heroHeaderData.sub_title]]</h4>
               </template>
+
               <template
                 is="dom-if"
-                if="[[showTextCta]]">
+                if="[[_hasTextCTA(heroHeaderData)]]">
                 <div>
                   <dorel-cta
                     title="[[heroHeaderData.cta_text]]"
@@ -171,18 +171,32 @@
                     link="[[heroHeaderData.cta_href]]">[[heroHeaderData.cta_text]]</dorel-cta>
                 </div>
               </template>
+
               <template
                 is="dom-if"
-                if="[[showVideoCta]]">
-                <div>
+                if="[[_hasVideoCTA(heroHeaderData)]]">
+                <template
+                  is="dom-if"
+                  if="[[heroHeaderData.cta_text]]">
                   <dorel-cta
+                    title="[[heroHeaderData.cta_text]]"
                     icon="dorel-icons:play-circle-outline"
                     inverted
                     link=""
-                    on-click="openYouTubeLightbox">
-                    [[localize('Watch_video')]]
-                  </dorel-cta>
-                </div>
+                    on-click="openYouTubeLightbox">[[heroHeaderData.cta_text]]</dorel-cta>
+                </template>
+
+                <template
+                  is="dom-if"
+                  if="[[!heroHeaderData.cta_text]]">
+                  <dorel-cta
+                    title="[[localize('hero_header#watch_video')]]"
+                    icon="dorel-icons:play-circle-outline"
+                    inverted
+                    link=""
+                    on-click="openYouTubeLightbox">[[localize('hero_header#watch_video')]]</dorel-cta>
+                </template>
+
               </template>
             </header>
           </dorel-layout-column>
@@ -207,8 +221,7 @@
            * @description all data defined by ACF/Wordpress to build this component
            */
           heroHeaderData: {
-            type: Object,
-            value: () => ({})
+            type: Object
           },
 
           /**
@@ -220,35 +233,12 @@
             type: String,
             value: 'right',
             observer: '_setAlignment'
-          },
-
-          /**
-           * @name showVideoCta
-           * @description show the 'Watch video' button if a cta_video_id is provided
-           */
-          showVideoCta: {
-            type: Boolean,
-            computed: '_hasVideoCTA(heroHeaderData)'
-          },
-
-          /**
-           * @name showTextCta
-           * @description show the cta button if a cta_text and cta_href are provided
-           */
-          showTextCta: {
-            type: Boolean,
-            computed: '_hasTextCTA(heroHeaderData)'
-          },
-
-          /**
-           * @name showVideoLoop
-           * @description show the looping video if toggle is set and a video_id is provided
-           */
-          showVideoLoop: {
-            type: Boolean,
-            computed: '_hasVideoLoop(heroHeaderData)'
           }
         }
+      }
+
+      ready() {
+        super.ready();
       }
 
       /**
@@ -296,7 +286,7 @@
        * open a ligthbox with a You-Tube video
        */
       openYouTubeLightbox() {
-        var youtubeLigthbox = this.shadowRoot.querySelector('dorel-youtube-lightbox');
+        const youtubeLigthbox = this.shadowRoot.querySelector('dorel-youtube-lightbox');
         youtubeLigthbox.open();
       }
     }

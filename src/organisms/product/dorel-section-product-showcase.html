@@ -152,6 +152,10 @@
       template-type="page-store-locator.php"
       response="{{storeLocatorPage}}"></dorel-wp-collect-templates>
 
+    <dorel-wp-collect-templates
+      template-type="page-product-advisory-tool.php"
+      response="{{carFittingToolPage}}"></dorel-wp-collect-templates>
+
     <dorel-media-query
       breakpoints="{{breakpoints}}"></dorel-media-query>
 
@@ -251,11 +255,11 @@
                 <!-- HATCH CTA -->
                 <dorel-cta
                   type="primary"
-                  title="[[localize('Find_a_Store')]]"
+                  title="[[localize('cta#find_a_store')]]"
                   on-click="_openLightbox"
                   link=""
                   size="medium"
-                  icon="dorel-icons:chevron-right">[[localize('Find_a_Store')]]</dorel-cta>
+                  icon="dorel-icons:chevron-right">[[localize('cta#find_a_store')]]</dorel-cta>
                 <dorel-showcase-lead-generation-lightbox
                   product-sku="[[currentChildSku]]"
                   store-locator-page="[[storeLocatorPage]]"></dorel-showcase-lead-generation-lightbox>
@@ -268,27 +272,31 @@
                 <!-- STORELOCATOR CTA -->
                 <dorel-cta
                   type="primary"
-                  title="[[localize('Find_a_Store')]]"
+                  title="[[localize('cta#find_a_store')]]"
                   link="[[_createStoreLocatorLink(storeLocatorPage)]]"
                   size="medium"
-                  icon="dorel-icons:chevron-right">[[localize('Find_a_Store')]]</dorel-cta>
+                  icon="dorel-icons:chevron-right">[[localize('cta#find_a_store')]]</dorel-cta>
                 <!--// STORELOCATOR CTA -->
               </template>
 
+                <!-- @todo: add to acf -->
+                <dorel-cta
+                  type="secondary"
+                  title="[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]"
+                  link="[[_createCarFittingListLink(carFittingToolPage, showcaseData)]]"
+                  size="medium"
+                  icon="dorel-icons:chevron-right">[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]</dorel-cta>
+
               <template
                 is="dom-if"
-                if="[[ _hasAccessories(showcaseData) ]]">
+                if="[[_hasAccessories(showcaseData)]]">
                 <dorel-cta
                   type="link"
-                  title="{{ localize('View_Accessories') }}"
+                  title="[[localize('View_Accessories')]]"
                   on-click="_viewAccessories"
                   size="medium"
-                  icon="dorel-icons:expand-more"
-                  gtm-action="scroll-to-accessories"
-                  gtm-parent="[[ gtmParent ]]"
-                  gtm-parent-index="[[ gtmParentIndex ]]"
-                  gtm-cta-index="0">
-                  {{ localize('View_Accessories') }}
+                  icon="dorel-icons:expand-more">
+                  [[localize('View_Accessories')]]
                 </dorel-cta>
               </template>
             </div><!--// .actions -->
@@ -317,7 +325,7 @@
   </template>
 
   <script>
-    class DorelSectionProductShowcase extends ReduxMixin(Polymer.mixinBehaviors([ConditionalBehaviors, TemplateBehaviors, DorelMultilingualBehavior], Polymer.Element)) {
+    class DorelSectionProductShowcase extends ReduxMixin(Polymer.mixinBehaviors([DorelMultilingualBehavior, ConditionalBehaviors, TemplateBehaviors], Polymer.Element)) {
 
       static get is() {
         return 'dorel-section-product-showcase';
