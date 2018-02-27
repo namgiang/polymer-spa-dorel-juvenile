@@ -198,7 +198,13 @@
           }
         })
 
-        if(list.length > 0) list[0].selected = true;
+        if(list.length > 0 && Number.isInteger(this.selectedIndexGlobal.index)) {
+          if(this.selectedIndexGlobal.index === -1) {
+            list[0].selected = true
+          } else {
+            list[this.selectedIndexGlobal.index].selected = true;
+          }
+        }
         return list;
       }
 
