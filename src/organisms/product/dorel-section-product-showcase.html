@@ -279,13 +279,20 @@
                 <!--// STORELOCATOR CTA -->
               </template>
 
-                <!-- @todo: add to acf -->
+              <template
+                is="dom-if"
+                if="[[_showCflCta(carFittingToolPage)]]">
+                <!-- CFL CTA -->
                 <dorel-cta
                   type="secondary"
                   title="[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]"
                   link="[[_createCarFittingListLink(carFittingToolPage, showcaseData)]]"
                   size="medium"
                   icon="dorel-icons:chevron-right">[[localize('dorel_section_product_showcase#does_it_fit_my_car')]]</dorel-cta>
+                <!--// CFL CTA -->
+              </template>
+
+
 
               <template
                 is="dom-if"
@@ -450,6 +457,16 @@
       }
 
       /**
+       * check to see if a cfl page is set and returns a boolean
+       *
+       * @param {object} the page object containing the cfl page
+       * @return Boolean
+       */
+      _showCflCta(pageObject) {
+        return (typeof pageObject !== 'undefined' && pageObject !== '' && this._hasProperties(pageObject));
+      }
+
+      /**
        * check if a store-locator page is defined and
        * if the toggle is enabled in WP
        *
@@ -486,6 +503,16 @@
       _createStoreLocatorLink(pageObject) {
         const urlArr = window.location.href.split('/');
         return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}`;
+      }
+
+      /**
+       * @param {string} the complete carFittingToolPage pageObject
+       *
+       * @return {string} newly formed url of the link
+       */
+      _createCarFittingListLink(pageObject, productData) {
+        const urlArr = window.location.href.split('/');
+        return `${urlArr[0]}//${urlArr[2]}/${urlArr[3]}/${pageObject.post_name}?product=${productData.url}` ;
       }
     }
     customElements.define(DorelSectionProductShowcase.is, DorelSectionProductShowcase);
