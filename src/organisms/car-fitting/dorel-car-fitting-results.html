@@ -93,7 +93,7 @@
       }
       .svg_container {
         width: 100%;
-        height: 240px;
+        height: auto;
       }
       .svg_node {
         width: 100%;
@@ -264,10 +264,13 @@
       }
 
       .car_notices {
-        @apply(--theme-typography-4);
+        @apply(--theme-typography-1);
         color: darkred;
-        font-size: var(--theme-typography-1_-_font-size);
-        line-height: var(--theme-typography-1_-_line-height);
+      }
+
+      .universal_notice {
+        @apply(--theme-typography-1);
+        color: var(--theme-color-black);
       }
 
       img.floor_storage {
@@ -311,12 +314,16 @@
                   <template id="carResults" is="dom-repeat" items="[[ carData ]]" as="car" index-as="carIndex" restamp="true">
                     <br>
                     <strong hidden$="[[ !getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ car.result.car_information_label ]]</strong>
-                    <strong hidden$="[[ getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ localize('car_fitting_results#no_result_for_car') ]]</strong>
+                    <strong hidden$="[[ getLabelOrNotListed(car.result) ]]">[[ localize('car_fitting_results#car_information_label_title') ]] [[ car.result.car_information_label ]]</strong>
                     <template is="dom-if" if="[[ shouldShowCarResult(car.result) ]]">
                       <br>
                       <br>
                       <!--<object id="fit" data="/assets/images/car-fitting/icon_green.svg" type="image/svg+xml"></object>
                       <strong class="fit-title">Fit</strong>-->
+                      <template is="dom-if" if="[[ showUniversalMessage(car.result) ]]">
+                        <h1 class="universal_notice">[[localize('car_fitting_results#universal_fitting')]]</h1>
+                        <br>
+                      </template>
                       <small class="image-message">[[stepData.main_section.info]]</small>
                       <br>
                       <br>
@@ -341,7 +348,7 @@
                       <p>[[ localize('car_fitting_results#no_result_message') ]]</p>
                       <dorel-cta
                         id="store-locator-button"
-                        type="primary"
+                        type="secondary"
                         title="[[localize('cta#find_a_store')]]"
                         link="[[createStoreLocatorLink(storeLocatorPage)]]"
                         size="medium"
@@ -500,6 +507,23 @@
         ];
       }
       
+      showUniversalMessage(data) {
+        let result;
+
+        function findBlueIcon(item) {
+            return item.icon === 'blue';
+        }
+
+        if(data.product.product_category) {
+          if(data.product.product_category === 'Universal' && data.carseat_positions.find(findBlueIcon)) {
+            result = true;
+          } else {
+            result = false;
+          }
+        }
+        return result;
+      }
+
       /**
        * @param {string} the complete storeLocatore pageObject
        *
