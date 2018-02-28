@@ -38,7 +38,7 @@
       }
 
       .car-selection, .car-display {
-        width: auto;
+        width: 100%;
         height: auto;
         /*background-color: var(--theme-color-monochrome-2);*/
         border-radius: var(--theme-button-border-radius);
@@ -90,6 +90,10 @@
 
       dorel-layout-row, dorel-layout-column {
         margin-top: 0;
+      }
+
+      .loading-wrapper {
+        margin-left: -200px;
       }
 
     </style>
@@ -160,6 +164,7 @@
                   </dorel-layout-column>-->
                   <br><br><br>
                   <dorel-layout-column desktop-column-span="6" tablet-column-span="6" mobile-column-span="7" align="left">
+                    <dorel-loader class="loading-wrapper" loading="[[ isLoading(carData.0.result.message) ]]"></dorel-loader>
                     <dorel-cta title="Call to action"
                                 type="primary"
                                 link="[[createCarFittingListLink(carFittingToolPage, showcaseData)]]"
@@ -216,6 +221,15 @@
     class DorelCarFittingCarSelector extends Polymer.mixinBehaviors([DorelMultilingualBehavior], Polymer.Element) {
       static get is() {
         return 'dorel-car-fitting-car-selector';
+      }
+
+      constructor() {
+        super();
+      }
+
+      isLoading(data) {
+        return (data === 'loading') ? true : false;
+        //return true;
       }
 
       static get properties() {
@@ -297,22 +311,28 @@
 
       updateStep() {
         if(this.carData.length > 0 && this.carData[0].result) {
-          if(this.carData[0].result.message) {
+          if(this.carData[0].result.message && this.carData[0].result.message !== 'loading') {
             this.$.next_button.removeAttribute('disabled');
+            //this.$.loading_wrapper.setAttribute('hidden', true);
+            //this.set('load', false);
             /*this.$.add_button.removeAttribute('disabled');
             this.$.add_button.removeAttribute('hidden');*/
           } else {
             this.$.next_button.setAttribute('disabled', true);
+            //this.$.loading_wrapper.removeAttribute('hidden');
+            //this.set('load', true);
             /*this.$.add_button.setAttribute('disabled', true);
             this.$.add_button.setAttribute('hidden', true);*/
           }
         } else {
           this.$.next_button.setAttribute('disabled', true);
+          //this.$.loading_wrapper.removeAttribute('hidden');
+          //this.set('load', true);
           /*this.$.add_button.setAttribute('disabled', true);
           this.$.add_button.setAttribute('hidden', true);*/
         }
       }
-      
+
       /**
        * @param {string} the complete storeLocatore pageObject
        *
